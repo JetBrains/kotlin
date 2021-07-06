@@ -7,25 +7,21 @@ package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import kotlinx.metadata.KmProperty
 import org.jetbrains.kotlin.commonizer.cir.CirContainingClass
-import org.jetbrains.kotlin.commonizer.mergedtree.PropertyApproximationKey
+import org.jetbrains.kotlin.commonizer.cir.CirName
+import org.jetbrains.kotlin.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.commonizer.metadata.CirDeserializers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
-import org.jetbrains.kotlin.commonizer.tree.CirTreeProperty
 import org.jetbrains.kotlin.commonizer.utils.isFakeOverride
 
 object CirTreePropertyDeserializer {
-    operator fun invoke(property: KmProperty, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirTreeProperty? {
+    operator fun invoke(property: KmProperty, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirProperty? {
         if (property.isFakeOverride()) return null
         val propertyTypeResolver = typeResolver.create(property.typeParameters)
-        val approximationKey = PropertyApproximationKey(property, propertyTypeResolver)
-        return CirTreeProperty(
-            approximationKey = PropertyApproximationKey(property, propertyTypeResolver),
-            property = CirDeserializers.property(
-                name = approximationKey.name,
-                source = property,
-                containingClass = containingClass,
-                typeResolver = propertyTypeResolver
-            )
+        return CirDeserializers.property(
+            name = CirName.create(property.name),
+            source = property,
+            containingClass = containingClass,
+            typeResolver = propertyTypeResolver
         )
     }
 }

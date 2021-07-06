@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.commonizer.tree.deserializer
 import kotlinx.metadata.KmFunction
 import org.jetbrains.kotlin.commonizer.cir.CirClass
 import org.jetbrains.kotlin.commonizer.cir.CirContainingClass
-import org.jetbrains.kotlin.commonizer.mergedtree.FunctionApproximationKey
+import org.jetbrains.kotlin.commonizer.cir.CirFunction
+import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.metadata.CirDeserializers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
-import org.jetbrains.kotlin.commonizer.tree.CirTreeFunction
 import org.jetbrains.kotlin.commonizer.utils.isFakeOverride
 import org.jetbrains.kotlin.commonizer.utils.isKniBridgeFunction
 import org.jetbrains.kotlin.commonizer.utils.isTopLevelDeprecatedFunction
 
 object CirTreeFunctionDeserializer {
-    operator fun invoke(function: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirTreeFunction? {
+    operator fun invoke(function: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction? {
         val functionTypeResolver = typeResolver.create(function.typeParameters)
         if (function.isFakeOverride()
             || function.isKniBridgeFunction()
@@ -26,15 +26,11 @@ object CirTreeFunctionDeserializer {
             return null
         }
 
-        val approximationKey = FunctionApproximationKey(function, functionTypeResolver)
-        return CirTreeFunction(
-            approximationKey = approximationKey,
-            function = CirDeserializers.function(
-                name = approximationKey.name,
-                source = function,
-                containingClass = containingClass,
-                typeResolver = functionTypeResolver
-            )
+        return CirDeserializers.function(
+            name = CirName.create(function.name),
+            source = function,
+            containingClass = containingClass,
+            typeResolver = functionTypeResolver
         )
     }
 }

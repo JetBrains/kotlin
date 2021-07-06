@@ -85,29 +85,41 @@ expect fun functionMismatchedParameterNames29(vararg variadicArguments: Int)
 expect fun functionMismatchedParameterNames30(arg0: Int, vararg variadicArguments: Int)
 
 expect fun functionMismatchedParameterNames31(i: Int, s: String)
+
+@kotlin.commonizer.ObjCCallable
 expect fun functionMismatchedParameterNames34(i: Int, s: String)
 
+@kotlin.commonizer.ObjCCallable
 expect fun functionMismatchedParameterNames37(arg0: Int, arg1: String)
 
 // hasStableParameterNames=false
+@kotlin.commonizer.ObjCCallable
 expect fun functionMismatchedParameterNames38(i: Int, s: String)
 
 // hasStableParameterNames=false
+@kotlin.commonizer.ObjCCallable
 expect fun functionMismatchedParameterNames39(i: Int, s: String)
 
 // hasStableParameterNames=false
+@kotlin.commonizer.ObjCCallable
 expect fun functionMismatchedParameterNames40(i: Int, s: String)
 
 // hasStableParameterNames=false
+@kotlin.commonizer.ObjCCallable
 expect fun functionMismatchedParameterNames41(arg0: Int, arg1: String)
 
 // hasStableParameterNames=false
+@kotlin.commonizer.ObjCCallable
 expect fun functionMismatchedParameterNames42(arg0: Int, arg1: String)
 
 // hasStableParameterNames=false
+@kotlin.commonizer.ObjCCallable
 expect fun functionMismatchedParameterNames43(arg0: Int, arg1: String)
 
+@kotlin.commonizer.ObjCCallable
 expect fun overloadedFunctionByParameterNames(i: Int, s: String)
+
+@kotlin.commonizer.ObjCCallable
 expect fun overloadedFunctionByParameterNames(xi: Int, xs: String)
 
 expect inline fun inlineFunction1(lazyMessage: () -> String)

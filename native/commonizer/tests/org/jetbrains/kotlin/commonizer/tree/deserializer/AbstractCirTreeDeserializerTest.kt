@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
+import org.jetbrains.kotlin.commonizer.cir.CirFunction
+import org.jetbrains.kotlin.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.commonizer.tree.*
 import org.jetbrains.kotlin.commonizer.utils.KtInlineSourceCommonizerTestCase
 
@@ -14,14 +16,14 @@ abstract class AbstractCirTreeDeserializerTest : KtInlineSourceCommonizerTestCas
             ?: kotlin.test.fail("Expected single package. Found ${packages.map { it.pkg.packageName }}")
     }
 
-    protected fun CirTreeModule.assertSingleProperty(): CirTreeProperty {
+    protected fun CirTreeModule.assertSingleProperty(): CirProperty {
         return assertSinglePackage().properties.singleOrNull()
-            ?: kotlin.test.fail("Expected single property. Found ${assertSinglePackage().properties.map { it.property.name }}")
+            ?: kotlin.test.fail("Expected single property. Found ${assertSinglePackage().properties.map { it.name }}")
     }
 
-    protected fun CirTreeModule.assertSingleFunction(): CirTreeFunction {
+    protected fun CirTreeModule.assertSingleFunction(): CirFunction {
         return assertSinglePackage().functions.singleOrNull()
-            ?: kotlin.test.fail("Expected single property. Found ${assertSinglePackage().functions.map { it.function.name }}")
+            ?: kotlin.test.fail("Expected single property. Found ${assertSinglePackage().functions.map { it.name }}")
     }
 
     protected fun CirTreeModule.assertSingleClass(): CirTreeClass {

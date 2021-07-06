@@ -18,13 +18,14 @@ class ClassConstructorCommonizer(
     private val visibility = VisibilityCommonizer.equalizing()
     private val typeParameters = TypeParameterListCommonizer(classifiers)
     private val valueParameters = CallableValueParametersCommonizer(classifiers)
+    private val annotationsCommonizer = AnnotationsCommonizer()
 
     override fun commonizationResult(): CirClassConstructor {
         val valueParameters = valueParameters.result
         valueParameters.patchCallables()
 
         return CirClassConstructor.create(
-            annotations = emptyList(),
+            annotations = annotationsCommonizer.result,
             typeParameters = typeParameters.result,
             visibility = visibility.result,
             containingClass = CONTAINING_CLASS_DOES_NOT_MATTER, // does not matter
@@ -45,6 +46,7 @@ class ClassConstructorCommonizer(
                 && visibility.commonizeWith(next)
                 && typeParameters.commonizeWith(next.typeParameters)
                 && valueParameters.commonizeWith(next)
+                && annotationsCommonizer.commonizeWith(next.annotations)
     }
 
     companion object {

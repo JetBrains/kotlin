@@ -18,8 +18,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
     fun `test simple val property`() {
         val module = createCirTreeFromSourceCode("val x: Int = 42")
 
-        val (key, property) = module.assertSingleProperty()
-        assertEquals(PropertyApproximationKey(CirName.Companion.create("x"), null), key)
+        val property = module.assertSingleProperty()
 
         assertEquals("x", property.name.toStrippedString())
         assertFalse(property.isConst, "Expected property to is *no* const")
@@ -33,7 +32,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test simple var property`() {
         val module = createCirTreeFromSourceCode("var x: Int = 42")
-        val (_, property) = module.assertSingleProperty()
+        val property = module.assertSingleProperty()
         assertNotNull(property.getter, "Expected property has getter")
         assertNotNull(property.setter, "Expected property has setter")
         assertFalse(property.isLateInit, "Expected property to be not lateinit")
@@ -42,7 +41,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test lateinit var property`() {
         val module = createCirTreeFromSourceCode("lateinit var x: Int")
-        val (_, property) = module.assertSingleProperty()
+        val property = module.assertSingleProperty()
 
         assertNotNull(property.getter, "Expected property has getter")
         assertNotNull(property.setter, "Expected property has setter")
@@ -52,7 +51,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test generic var property`() {
         val module = createCirTreeFromSourceCode("var <T> T.x: T get() = this")
-        val (_, property) = module.assertSingleProperty()
+        val property = module.assertSingleProperty()
 
         assertNotNull(property.extensionReceiver, "Expected property has extension receiver")
         assertTrue(
@@ -74,8 +73,8 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
         val pkg = module.assertSinglePackage()
         assertEquals(4, pkg.properties.size, "Expected exactly 4 properties in package")
 
-        val answerProperty = pkg.properties.single { it.property.name.toStrippedString() == "answer" }
-        val answerReturnType = answerProperty.property.returnType as? CirClassType
+        val answerProperty = pkg.properties.single { it.name.toStrippedString() == "answer" }
+        val answerReturnType = answerProperty.returnType as? CirClassType
             ?: kotlin.test.fail("Expected answer return type is class")
         assertEquals("kotlin/Int", answerReturnType.classifierId.toString())
         assertTrue(answerReturnType.isMarkedNullable, "Expected answer return type being marked nullable")
