@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextFor
 class TypeApproximator(
     builtIns: KotlinBuiltIns,
     languageVersionSettings: LanguageVersionSettings,
-) : AbstractTypeApproximator(ClassicTypeSystemContextForCS(builtIns), languageVersionSettings) {
+) : AbstractTypeApproximator(ClassicTypeSystemContextForCS(builtIns, languageVersionSettings), languageVersionSettings) {
     fun approximateDeclarationType(baseType: KotlinType, local: Boolean): UnwrappedType {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return baseType.unwrap()
 
