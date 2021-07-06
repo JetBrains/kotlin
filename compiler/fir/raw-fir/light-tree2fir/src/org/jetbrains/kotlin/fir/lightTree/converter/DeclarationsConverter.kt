@@ -1240,7 +1240,9 @@ class DeclarationsConverter(
         val sourceElement = getterOrSetter.toFirSourceElement()
         val visibilityDifference = accessorVisibility.compareTo(propertyVisibility)
         val getterWithGreaterVisibility = visibilityDifference != null && visibilityDifference > 0
-        if (block == null && expression == null && !getterWithGreaterVisibility) {
+        val returnTypeAsIfItIsGetter = returnType ?: propertyTypeRef
+        val getterWithDifferentType = returnTypeAsIfItIsGetter != propertyTypeRef
+        if (block == null && expression == null && !getterWithGreaterVisibility && !getterWithDifferentType) {
             return FirDefaultPropertyAccessor
                 .createGetterOrSetter(
                     sourceElement,
