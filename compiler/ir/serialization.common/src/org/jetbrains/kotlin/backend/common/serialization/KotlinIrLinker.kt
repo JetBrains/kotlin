@@ -36,12 +36,12 @@ abstract class KotlinIrLinker(
 ) : IrDeserializer, FileLocalAwareLinker {
 
     // Kotlin-MPP related data. Consider some refactoring
-    internal val expectUniqIdToActualUniqId = mutableMapOf<IdSignature, IdSignature>()
-    internal val topLevelActualUniqItToDeserializer = mutableMapOf<IdSignature, IrModuleDeserializer>()
+    val expectUniqIdToActualUniqId = mutableMapOf<IdSignature, IdSignature>()
+    val topLevelActualUniqItToDeserializer = mutableMapOf<IdSignature, IrModuleDeserializer>()
     internal val expectSymbols = mutableMapOf<IdSignature, IrSymbol>()
     internal val actualSymbols = mutableMapOf<IdSignature, IrSymbol>()
 
-    internal val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
+    val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
 
     // TODO: replace with Map<Name, IrModuleDeserializer>
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrModuleDeserializer>()
@@ -51,7 +51,7 @@ abstract class KotlinIrLinker(
     abstract val translationPluginContext: TranslationPluginContext?
 
     internal val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
-    internal val deserializedSymbols = mutableSetOf<IrSymbol>()
+    val deserializedSymbols = mutableSetOf<IrSymbol>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
@@ -299,7 +299,7 @@ abstract class KotlinIrLinker(
         return deserializerForModule.moduleFragment
     }
 
-    private fun maybeWrapWithBuiltInAndInit(
+    protected open fun maybeWrapWithBuiltInAndInit(
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer =

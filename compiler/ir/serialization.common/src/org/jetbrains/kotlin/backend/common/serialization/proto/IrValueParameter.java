@@ -27,7 +27,11 @@ public final class IrValueParameter extends
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  public static final int INDEX_FIELD_NUMBER = 5;
+  public static final int BASE_FIELD_NUMBER = 1;
+  public static final int NAME_TYPE_FIELD_NUMBER = 2;
+  public static final int VARARG_ELEMENT_TYPE_FIELD_NUMBER = 3;
+  public static final int DEFAULT_VALUE_FIELD_NUMBER = 4;
+  public static final int INDEX_FIELD_NUMBER = 105;
   public static org.jetbrains.kotlin.protobuf.Parser<IrValueParameter> PARSER =
       new org.jetbrains.kotlin.protobuf.AbstractParser<IrValueParameter>() {
     public IrValueParameter parsePartialFrom(
@@ -37,73 +41,13 @@ public final class IrValueParameter extends
       return new IrValueParameter(input, extensionRegistry);
     }
   };
-
-  @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<IrValueParameter> getParserForType() {
-    return PARSER;
-  }
-
   private int bitField0_;
-  public static final int BASE_FIELD_NUMBER = 1;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base_;
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1;</code>
-   */
-  public boolean hasBase() {
-    return ((bitField0_ & 0x00000001) == 0x00000001);
-  }
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase() {
-    return base_;
-  }
-
-  public static final int NAME_TYPE_FIELD_NUMBER = 2;
   private long nameType_;
-  /**
-   * <code>required int64 name_type = 2;</code>
-   */
-  public boolean hasNameType() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
-  }
-  /**
-   * <code>required int64 name_type = 2;</code>
-   */
-  public long getNameType() {
-    return nameType_;
-  }
-
-  public static final int VARARG_ELEMENT_TYPE_FIELD_NUMBER = 3;
   private int varargElementType_;
-  /**
-   * <code>optional int32 vararg_element_type = 3;</code>
-   */
-  public boolean hasVarargElementType() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
-  }
-  /**
-   * <code>optional int32 vararg_element_type = 3;</code>
-   */
-  public int getVarargElementType() {
-    return varargElementType_;
-  }
-
-  public static final int DEFAULT_VALUE_FIELD_NUMBER = 4;
   private int defaultValue_;
-  /**
-   * <code>optional int32 default_value = 4;</code>
-   */
-  public boolean hasDefaultValue() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
-  }
-  /**
-   * <code>optional int32 default_value = 4;</code>
-   */
-  public int getDefaultValue() {
-    return defaultValue_;
-  }
   private int index_;
+
   private IrValueParameter(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -158,7 +102,7 @@ public final class IrValueParameter extends
             defaultValue_ = input.readInt32();
             break;
           }
-          case 40: {
+          case 840: {
             bitField0_ |= 0x00000010;
             index_ = input.readInt32();
             break;
@@ -182,14 +126,75 @@ public final class IrValueParameter extends
     }
   }
 
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<IrValueParameter> getParserForType() {
+    return PARSER;
+  }
+
   /**
-   * <code>optional int32 index = 5;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1;</code>
+   */
+  public boolean hasBase() {
+    return ((bitField0_ & 0x00000001) == 0x00000001);
+  }
+
+  /**
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase() {
+    return base_;
+  }
+
+  /**
+   * <code>required int64 name_type = 2;</code>
+   */
+  public boolean hasNameType() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
+  }
+
+  /**
+   * <code>required int64 name_type = 2;</code>
+   */
+  public long getNameType() {
+    return nameType_;
+  }
+
+  /**
+   * <code>optional int32 vararg_element_type = 3;</code>
+   */
+  public boolean hasVarargElementType() {
+    return ((bitField0_ & 0x00000004) == 0x00000004);
+  }
+
+  /**
+   * <code>optional int32 vararg_element_type = 3;</code>
+   */
+  public int getVarargElementType() {
+    return varargElementType_;
+  }
+
+  /**
+   * <code>optional int32 default_value = 4;</code>
+   */
+  public boolean hasDefaultValue() {
+    return ((bitField0_ & 0x00000008) == 0x00000008);
+  }
+
+  /**
+   * <code>optional int32 default_value = 4;</code>
+   */
+  public int getDefaultValue() {
+    return defaultValue_;
+  }
+
+  /**
+   * <code>optional int32 index = 105;</code>
    */
   public boolean hasIndex() {
     return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
-   * <code>optional int32 index = 5;</code>
+   * <code>optional int32 index = 105;</code>
    */
   public int getIndex() {
     return index_;
@@ -240,7 +245,7 @@ public final class IrValueParameter extends
       output.writeInt32(4, defaultValue_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt32(5, index_);
+      output.writeInt32(105, index_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -269,7 +274,7 @@ public final class IrValueParameter extends
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(5, index_);
+        .computeInt32Size(105, index_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -363,24 +368,6 @@ public final class IrValueParameter extends
       return new Builder();
     }
 
-    private int index_ ;
-
-    public Builder clone() {
-      return create().mergeFrom(buildPartial());
-    }
-
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
-    }
-
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter build() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
     public Builder clear() {
       super.clear();
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
@@ -394,6 +381,16 @@ public final class IrValueParameter extends
       index_ = 0;
       bitField0_ = (bitField0_ & ~0x00000010);
       return this;
+    }
+
+    private int index_ ;
+
+    public Builder clone() {
+      return create().mergeFrom(buildPartial());
+    }
+
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
     }
 
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter buildPartial() {
@@ -421,6 +418,14 @@ public final class IrValueParameter extends
       }
       result.index_ = index_;
       result.bitField0_ = to_bitField0_;
+      return result;
+    }
+
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter result = buildPartial();
+      if (!result.isInitialized()) {
+        throw newUninitializedMessageException(result);
+      }
       return result;
     }
 
@@ -639,19 +644,19 @@ public final class IrValueParameter extends
     }
 
     /**
-     * <code>optional int32 index = 5;</code>
+     * <code>optional int32 index = 105;</code>
      */
     public boolean hasIndex() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>optional int32 index = 5;</code>
+     * <code>optional int32 index = 105;</code>
      */
     public int getIndex() {
       return index_;
     }
     /**
-     * <code>optional int32 index = 5;</code>
+     * <code>optional int32 index = 105;</code>
      */
     public Builder setIndex(int value) {
       bitField0_ |= 0x00000010;
@@ -660,7 +665,7 @@ public final class IrValueParameter extends
       return this;
     }
     /**
-     * <code>optional int32 index = 5;</code>
+     * <code>optional int32 index = 105;</code>
      */
     public Builder clearIndex() {
       bitField0_ = (bitField0_ & ~0x00000010);

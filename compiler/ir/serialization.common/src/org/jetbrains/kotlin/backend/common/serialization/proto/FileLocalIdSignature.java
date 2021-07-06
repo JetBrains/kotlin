@@ -27,53 +27,6 @@ public final class FileLocalIdSignature extends
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  public static final int FILE_FIELD_NUMBER = 3;
-  public static org.jetbrains.kotlin.protobuf.Parser<FileLocalIdSignature> PARSER =
-      new org.jetbrains.kotlin.protobuf.AbstractParser<FileLocalIdSignature>() {
-    public FileLocalIdSignature parsePartialFrom(
-        org.jetbrains.kotlin.protobuf.CodedInputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return new FileLocalIdSignature(input, extensionRegistry);
-    }
-  };
-
-  @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<FileLocalIdSignature> getParserForType() {
-    return PARSER;
-  }
-
-  private int bitField0_;
-  public static final int CONTAINER_FIELD_NUMBER = 1;
-  private int container_;
-  /**
-   * <code>required int32 container = 1;</code>
-   */
-  public boolean hasContainer() {
-    return ((bitField0_ & 0x00000001) == 0x00000001);
-  }
-  /**
-   * <code>required int32 container = 1;</code>
-   */
-  public int getContainer() {
-    return container_;
-  }
-
-  public static final int LOCAL_ID_FIELD_NUMBER = 2;
-  private long localId_;
-  /**
-   * <code>required int64 local_id = 2;</code>
-   */
-  public boolean hasLocalId() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
-  }
-  /**
-   * <code>required int64 local_id = 2;</code>
-   */
-  public long getLocalId() {
-    return localId_;
-  }
-  private int file_;
   private FileLocalIdSignature(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -133,7 +86,55 @@ public final class FileLocalIdSignature extends
       makeExtensionsImmutable();
     }
   }
+  public static final int CONTAINER_FIELD_NUMBER = 1;
+  public static final int LOCAL_ID_FIELD_NUMBER = 2;
+  public static final int FILE_FIELD_NUMBER = 3;
+  public static org.jetbrains.kotlin.protobuf.Parser<FileLocalIdSignature> PARSER =
+      new org.jetbrains.kotlin.protobuf.AbstractParser<FileLocalIdSignature>() {
+    public FileLocalIdSignature parsePartialFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return new FileLocalIdSignature(input, extensionRegistry);
+    }
+  };
+  private int bitField0_;
+  private int container_;
+  private long localId_;
+  private int file_;
 
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<FileLocalIdSignature> getParserForType() {
+    return PARSER;
+  }
+
+  /**
+   * <code>required int32 container = 1;</code>
+   */
+  public boolean hasContainer() {
+    return ((bitField0_ & 0x00000001) == 0x00000001);
+  }
+
+  /**
+   * <code>required int32 container = 1;</code>
+   */
+  public int getContainer() {
+    return container_;
+  }
+
+  /**
+   * <code>required int64 local_id = 2;</code>
+   */
+  public boolean hasLocalId() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
+  }
+
+  /**
+   * <code>required int64 local_id = 2;</code>
+   */
+  public long getLocalId() {
+    return localId_;
+  }
   /**
    * <code>optional int32 file = 3;</code>
    */
@@ -313,17 +314,6 @@ public final class FileLocalIdSignature extends
       return result;
     }
 
-    public Builder clear() {
-      super.clear();
-      container_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000001);
-      localId_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000002);
-      file_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000004);
-      return this;
-    }
-
     public org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature buildPartial() {
       org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature(this);
       int from_bitField0_ = bitField0_;
@@ -342,6 +332,17 @@ public final class FileLocalIdSignature extends
       result.file_ = file_;
       result.bitField0_ = to_bitField0_;
       return result;
+    }
+
+    public Builder clear() {
+      super.clear();
+      container_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000001);
+      localId_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000002);
+      file_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      return this;
     }
 
     public final boolean isInitialized() {
@@ -455,7 +456,6 @@ public final class FileLocalIdSignature extends
 
       return this;
     }
-
     /**
      * <code>optional int32 file = 3;</code>
      */

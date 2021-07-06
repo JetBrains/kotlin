@@ -32,60 +32,20 @@ public final class IrOperation extends
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  public static final int RETURNABLE_BLOCK_RETURN_FIELD_NUMBER = 38;
   public static final int BLOCK_FIELD_NUMBER = 1;
   public static final int BREAK_FIELD_NUMBER = 2;
   public static final int CALL_FIELD_NUMBER = 3;
   public static final int CLASS_REFERENCE_FIELD_NUMBER = 4;
   public static final int COMPOSITE_FIELD_NUMBER = 5;
   public static final int CONST_FIELD_NUMBER = 6;
-      public static final int CONTINUE_FIELD_NUMBER = 7;;
-  public static final int DELEGATING_CONSTRUCTOR_CALL_FIELD_NUMBER = 8;
+  public static final int CONTINUE_FIELD_NUMBER = 7;
+    public static final int DELEGATING_CONSTRUCTOR_CALL_FIELD_NUMBER = 8;;
+  public static final int RAW_FUNCTION_REFERENCE_FIELD_NUMBER = 136;
   public static final int DO_WHILE_FIELD_NUMBER = 9;
+  public static final int RETURNABLE_BLOCK_FIELD_NUMBER = 137;
+  public static final int RETURNABLE_BLOCK_RETURN_FIELD_NUMBER = 138;
   public static final int ENUM_CONSTRUCTOR_CALL_FIELD_NUMBER = 10;
-  public static final int FUNCTION_REFERENCE_FIELD_NUMBER = 11;
-  public static final int GET_CLASS_FIELD_NUMBER = 12;
-  public static final int GET_ENUM_VALUE_FIELD_NUMBER = 13;
-  public static final int GET_FIELD_FIELD_NUMBER = 14;
-  public static final int GET_OBJECT_FIELD_NUMBER = 15;
-  public static final int GET_VALUE_FIELD_NUMBER = 16;
-  public static final int INSTANCE_INITIALIZER_CALL_FIELD_NUMBER = 17;
-  public static final int PROPERTY_REFERENCE_FIELD_NUMBER = 18;
-  public static final int RETURN_FIELD_NUMBER = 19;
-  public static final int SET_FIELD_FIELD_NUMBER = 20;
-  public static final int SET_VALUE_FIELD_NUMBER = 21;
-  public static final int STRING_CONCAT_FIELD_NUMBER = 22;
-  public static final int THROW_FIELD_NUMBER = 23;
-  public static final int TRY_FIELD_NUMBER = 24;
-  public static final int TYPE_OP_FIELD_NUMBER = 25;
-  public static final int VARARG_FIELD_NUMBER = 26;
-  public static final int WHEN_FIELD_NUMBER = 27;
-  public static final int WHILE_FIELD_NUMBER = 28;
-  public static final int DYNAMIC_MEMBER_FIELD_NUMBER = 29;
-  public static final int DYNAMIC_OPERATOR_FIELD_NUMBER = 30;
-  public static final int LOCAL_DELEGATED_PROPERTY_REFERENCE_FIELD_NUMBER = 31;
-  public static final int CONSTRUCTOR_CALL_FIELD_NUMBER = 32;
-  public static final int FUNCTION_EXPRESSION_FIELD_NUMBER = 33;
-  public static final int ERROR_EXPRESSION_FIELD_NUMBER = 34;
-  public static final int ERROR_CALL_EXPRESSION_FIELD_NUMBER = 35;
-  public static final int RAW_FUNCTION_REFERENCE_FIELD_NUMBER = 36;
-  public static final int RETURNABLE_BLOCK_FIELD_NUMBER = 37;
-  public static org.jetbrains.kotlin.protobuf.Parser<IrOperation> PARSER =
-      new org.jetbrains.kotlin.protobuf.AbstractParser<IrOperation>() {
-    public IrOperation parsePartialFrom(
-        org.jetbrains.kotlin.protobuf.CodedInputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return new IrOperation(input, extensionRegistry);
-    }
-  };
-  private int bitField0_;
-  private int bitField1_;
-  private int operationCase_ = 0;
-  private java.lang.Object operation_;
-  private byte memoizedIsInitialized = -1;
-private int memoizedSerializedSize = -1;
-
+  private int memoizedSerializedSize = -1;
   private IrOperation(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -568,9 +528,9 @@ private int memoizedSerializedSize = -1;
             operationCase_ = 35;
             break;
           }
-          case 290: {
+          case 1090: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.Builder subBuilder = null;
-            if (operationCase_ == 36) {
+            if (operationCase_ == 136) {
               subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_).toBuilder();
             }
             operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.PARSER, extensionRegistry);
@@ -578,12 +538,12 @@ private int memoizedSerializedSize = -1;
               subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
               operation_ = subBuilder.buildPartial();
             }
-            operationCase_ = 36;
+            operationCase_ = 136;
             break;
           }
-          case 298: {
+          case 1098: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.Builder subBuilder = null;
-            if (operationCase_ == 37) {
+            if (operationCase_ == 137) {
               subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_).toBuilder();
             }
             operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.PARSER, extensionRegistry);
@@ -591,12 +551,12 @@ private int memoizedSerializedSize = -1;
               subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
               operation_ = subBuilder.buildPartial();
             }
-            operationCase_ = 37;
+            operationCase_ = 137;
             break;
           }
-          case 306: {
+          case 1106: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.Builder subBuilder = null;
-            if (operationCase_ == 38) {
+            if (operationCase_ == 138) {
               subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_).toBuilder();
             }
             operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.PARSER, extensionRegistry);
@@ -604,7 +564,7 @@ private int memoizedSerializedSize = -1;
               subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
               operation_ = subBuilder.buildPartial();
             }
-            operationCase_ = 38;
+            operationCase_ = 138;
             break;
           }
         }
@@ -625,6 +585,7 @@ private int memoizedSerializedSize = -1;
       makeExtensionsImmutable();
     }
   }
+  public static final int FUNCTION_REFERENCE_FIELD_NUMBER = 11;
 
   public OperationCase
   getOperationCase() {
@@ -638,6 +599,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasBlock() {
     return operationCase_ == 1;
   }
+  public static final int GET_CLASS_FIELD_NUMBER = 12;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock block = 1;</code>
@@ -655,6 +617,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasBreak() {
     return operationCase_ == 2;
   }
+  public static final int GET_ENUM_VALUE_FIELD_NUMBER = 13;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak break = 2;</code>
@@ -672,6 +635,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasCall() {
     return operationCase_ == 3;
   }
+  public static final int GET_FIELD_FIELD_NUMBER = 14;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrCall call = 3;</code>
@@ -689,6 +653,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasClassReference() {
     return operationCase_ == 4;
   }
+  public static final int GET_OBJECT_FIELD_NUMBER = 15;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference class_reference = 4;</code>
@@ -706,6 +671,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasComposite() {
     return operationCase_ == 5;
   }
+  public static final int GET_VALUE_FIELD_NUMBER = 16;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite composite = 5;</code>
@@ -723,6 +689,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasConst() {
     return operationCase_ == 6;
   }
+  public static final int INSTANCE_INITIALIZER_CALL_FIELD_NUMBER = 17;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrConst const = 6;</code>
@@ -740,6 +707,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasContinue() {
     return operationCase_ == 7;
   }
+  public static final int PROPERTY_REFERENCE_FIELD_NUMBER = 18;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue continue = 7;</code>
@@ -757,6 +725,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasDelegatingConstructorCall() {
     return operationCase_ == 8;
   }
+  public static final int RETURN_FIELD_NUMBER = 19;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall delegating_constructor_call = 8;</code>
@@ -774,6 +743,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasDoWhile() {
     return operationCase_ == 9;
   }
+  public static final int SET_FIELD_FIELD_NUMBER = 20;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile do_while = 9;</code>
@@ -791,6 +761,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasEnumConstructorCall() {
     return operationCase_ == 10;
   }
+  public static final int SET_VALUE_FIELD_NUMBER = 21;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall enum_constructor_call = 10;</code>
@@ -808,6 +779,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasFunctionReference() {
     return operationCase_ == 11;
   }
+  public static final int STRING_CONCAT_FIELD_NUMBER = 22;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference function_reference = 11;</code>
@@ -825,6 +797,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasGetClass() {
     return operationCase_ == 12;
   }
+  public static final int THROW_FIELD_NUMBER = 23;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass get_class = 12;</code>
@@ -842,6 +815,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasGetEnumValue() {
     return operationCase_ == 13;
   }
+  public static final int TRY_FIELD_NUMBER = 24;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue get_enum_value = 13;</code>
@@ -859,6 +833,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasGetField() {
     return operationCase_ == 14;
   }
+  public static final int TYPE_OP_FIELD_NUMBER = 25;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField get_field = 14;</code>
@@ -876,6 +851,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasGetObject() {
     return operationCase_ == 15;
   }
+  public static final int VARARG_FIELD_NUMBER = 26;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject get_object = 15;</code>
@@ -893,6 +869,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasGetValue() {
     return operationCase_ == 16;
   }
+  public static final int WHEN_FIELD_NUMBER = 27;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue get_value = 16;</code>
@@ -910,6 +887,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasInstanceInitializerCall() {
     return operationCase_ == 17;
   }
+  public static final int WHILE_FIELD_NUMBER = 28;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall instance_initializer_call = 17;</code>
@@ -927,6 +905,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasPropertyReference() {
     return operationCase_ == 18;
   }
+  public static final int DYNAMIC_MEMBER_FIELD_NUMBER = 29;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference property_reference = 18;</code>
@@ -944,6 +923,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasReturn() {
     return operationCase_ == 19;
   }
+  public static final int DYNAMIC_OPERATOR_FIELD_NUMBER = 30;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn return = 19;</code>
@@ -961,6 +941,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasSetField() {
     return operationCase_ == 20;
   }
+  public static final int LOCAL_DELEGATED_PROPERTY_REFERENCE_FIELD_NUMBER = 31;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField set_field = 20;</code>
@@ -978,6 +959,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasSetValue() {
     return operationCase_ == 21;
   }
+  public static final int CONSTRUCTOR_CALL_FIELD_NUMBER = 32;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
@@ -995,6 +977,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasStringConcat() {
     return operationCase_ == 22;
   }
+  public static final int FUNCTION_EXPRESSION_FIELD_NUMBER = 33;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat string_concat = 22;</code>
@@ -1012,6 +995,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasThrow() {
     return operationCase_ == 23;
   }
+  public static final int ERROR_EXPRESSION_FIELD_NUMBER = 34;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow throw = 23;</code>
@@ -1029,6 +1013,7 @@ private int memoizedSerializedSize = -1;
   public boolean hasTry() {
     return operationCase_ == 24;
   }
+  public static final int ERROR_CALL_EXPRESSION_FIELD_NUMBER = 35;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTry try = 24;</code>
@@ -1124,6 +1109,15 @@ private int memoizedSerializedSize = -1;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression.getDefaultInstance();
   }
+  public static org.jetbrains.kotlin.protobuf.Parser<IrOperation> PARSER =
+      new org.jetbrains.kotlin.protobuf.AbstractParser<IrOperation>() {
+    public IrOperation parsePartialFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return new IrOperation(input, extensionRegistry);
+    }
+  };
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression dynamic_operator = 30;</code>
@@ -1141,6 +1135,7 @@ private int memoizedSerializedSize = -1;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression.getDefaultInstance();
   }
+  private int bitField0_;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
@@ -1158,6 +1153,7 @@ private int memoizedSerializedSize = -1;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference.getDefaultInstance();
   }
+  private int bitField1_;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall constructor_call = 32;</code>
@@ -1175,6 +1171,7 @@ private int memoizedSerializedSize = -1;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.getDefaultInstance();
   }
+  private int operationCase_ = 0;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression function_expression = 33;</code>
@@ -1192,6 +1189,7 @@ private int memoizedSerializedSize = -1;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression.getDefaultInstance();
   }
+  private java.lang.Object operation_;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression error_expression = 34;</code>
@@ -1217,6 +1215,7 @@ private int memoizedSerializedSize = -1;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression.getDefaultInstance();
   }
+  private byte memoizedIsInitialized = -1;
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression error_call_expression = 35;</code>
@@ -1235,62 +1234,63 @@ private int memoizedSerializedSize = -1;
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression.getDefaultInstance();
   }
 
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
-   */
-  public boolean hasRawFunctionReference() {
-    return operationCase_ == 36;
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<IrOperation> getParserForType() {
+    return PARSER;
   }
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
+   */
+  public boolean hasRawFunctionReference() {
+    return operationCase_ == 136;
+  }
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference getRawFunctionReference() {
-    if (operationCase_ == 36) {
+    if (operationCase_ == 136) {
        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance();
   }
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
    */
   public boolean hasReturnableBlock() {
-    return operationCase_ == 37;
+    return operationCase_ == 137;
   }
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getReturnableBlock() {
-    if (operationCase_ == 37) {
+    if (operationCase_ == 137) {
        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.getDefaultInstance();
   }
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
    */
   public boolean hasReturnableBlockReturn() {
-    return operationCase_ == 38;
-  }
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn getReturnableBlockReturn() {
-    if (operationCase_ == 38) {
-       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_;
-    }
-    return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.getDefaultInstance();
-  }
-
-  @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<IrOperation> getParserForType() {
-    return PARSER;
+    return operationCase_ == 138;
   }
 
   private void initFields() {
+  }
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn getReturnableBlockReturn() {
+    if (operationCase_ == 138) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.getDefaultInstance();
   }
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
@@ -1631,14 +1631,14 @@ private int memoizedSerializedSize = -1;
     if (operationCase_ == 35) {
       output.writeMessage(35, (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression) operation_);
     }
-    if (operationCase_ == 36) {
-      output.writeMessage(36, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
+    if (operationCase_ == 136) {
+      output.writeMessage(136, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
     }
-    if (operationCase_ == 37) {
-      output.writeMessage(37, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
+    if (operationCase_ == 137) {
+      output.writeMessage(137, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
     }
-    if (operationCase_ == 38) {
-      output.writeMessage(38, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
+    if (operationCase_ == 138) {
+      output.writeMessage(138, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -1788,17 +1788,17 @@ private int memoizedSerializedSize = -1;
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(35, (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression) operation_);
     }
-    if (operationCase_ == 36) {
+    if (operationCase_ == 136) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(36, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
+        .computeMessageSize(136, (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_);
     }
-    if (operationCase_ == 37) {
+    if (operationCase_ == 137) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(37, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
+        .computeMessageSize(137, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
     }
-    if (operationCase_ == 38) {
+    if (operationCase_ == 138) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(38, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
+        .computeMessageSize(138, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -1841,9 +1841,9 @@ public enum OperationCase
     FUNCTION_EXPRESSION(33),
     ERROR_EXPRESSION(34),
     ERROR_CALL_EXPRESSION(35),
-    RAW_FUNCTION_REFERENCE(36),
-    RETURNABLE_BLOCK(37),
-    RETURNABLE_BLOCK_RETURN(38),
+    RAW_FUNCTION_REFERENCE(136),
+    RETURNABLE_BLOCK(137),
+    RETURNABLE_BLOCK_RETURN(138),
     OPERATION_NOT_SET(0);
     private int value = 0;
     private OperationCase(int value) {
@@ -1886,9 +1886,9 @@ public enum OperationCase
         case 33: return FUNCTION_EXPRESSION;
         case 34: return ERROR_EXPRESSION;
         case 35: return ERROR_CALL_EXPRESSION;
-        case 36: return RAW_FUNCTION_REFERENCE;
-        case 37: return RETURNABLE_BLOCK;
-        case 38: return RETURNABLE_BLOCK_RETURN;
+        case 136: return RAW_FUNCTION_REFERENCE;
+        case 137: return RETURNABLE_BLOCK;
+        case 138: return RETURNABLE_BLOCK_RETURN;
         case 0: return OPERATION_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -2125,13 +2125,13 @@ public enum OperationCase
       if (operationCase_ == 35) {
         result.operation_ = operation_;
       }
-      if (operationCase_ == 36) {
+      if (operationCase_ == 136) {
         result.operation_ = operation_;
       }
-      if (operationCase_ == 37) {
+      if (operationCase_ == 137) {
         result.operation_ = operation_;
       }
-      if (operationCase_ == 38) {
+      if (operationCase_ == 138) {
         result.operation_ = operation_;
       }
       result.bitField0_ = to_bitField0_;
@@ -4829,22 +4829,22 @@ public enum OperationCase
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public boolean hasRawFunctionReference() {
-      return operationCase_ == 36;
+      return operationCase_ == 136;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference getRawFunctionReference() {
-      if (operationCase_ == 36) {
+      if (operationCase_ == 136) {
         return (org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_;
       }
       return org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public Builder setRawFunctionReference(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference value) {
       if (value == null) {
@@ -4852,24 +4852,24 @@ public enum OperationCase
       }
       operation_ = value;
 
-      operationCase_ = 36;
+      operationCase_ = 136;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public Builder setRawFunctionReference(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.Builder builderForValue) {
       operation_ = builderForValue.build();
 
-      operationCase_ = 36;
+      operationCase_ = 136;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public Builder mergeRawFunctionReference(org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference value) {
-      if (operationCase_ == 36 &&
+      if (operationCase_ == 136 &&
           operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.getDefaultInstance()) {
         operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference) operation_)
             .mergeFrom(value).buildPartial();
@@ -4877,14 +4877,14 @@ public enum OperationCase
         operation_ = value;
       }
 
-      operationCase_ = 36;
+      operationCase_ = 136;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 36;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference raw_function_reference = 136;</code>
      */
     public Builder clearRawFunctionReference() {
-      if (operationCase_ == 36) {
+      if (operationCase_ == 136) {
         operationCase_ = 0;
         operation_ = null;
         
@@ -4893,22 +4893,22 @@ public enum OperationCase
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public boolean hasReturnableBlock() {
-      return operationCase_ == 37;
+      return operationCase_ == 137;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getReturnableBlock() {
-      if (operationCase_ == 37) {
+      if (operationCase_ == 137) {
         return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_;
       }
       return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public Builder setReturnableBlock(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock value) {
       if (value == null) {
@@ -4916,24 +4916,24 @@ public enum OperationCase
       }
       operation_ = value;
 
-      operationCase_ = 37;
+      operationCase_ = 137;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public Builder setReturnableBlock(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.Builder builderForValue) {
       operation_ = builderForValue.build();
 
-      operationCase_ = 37;
+      operationCase_ = 137;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public Builder mergeReturnableBlock(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock value) {
-      if (operationCase_ == 37 &&
+      if (operationCase_ == 137 &&
           operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.getDefaultInstance()) {
         operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_)
             .mergeFrom(value).buildPartial();
@@ -4941,14 +4941,14 @@ public enum OperationCase
         operation_ = value;
       }
 
-      operationCase_ = 37;
+      operationCase_ = 137;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 37;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 137;</code>
      */
     public Builder clearReturnableBlock() {
-      if (operationCase_ == 37) {
+      if (operationCase_ == 137) {
         operationCase_ = 0;
         operation_ = null;
         
@@ -4957,22 +4957,22 @@ public enum OperationCase
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public boolean hasReturnableBlockReturn() {
-      return operationCase_ == 38;
+      return operationCase_ == 138;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn getReturnableBlockReturn() {
-      if (operationCase_ == 38) {
+      if (operationCase_ == 138) {
         return (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_;
       }
       return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public Builder setReturnableBlockReturn(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn value) {
       if (value == null) {
@@ -4980,24 +4980,24 @@ public enum OperationCase
       }
       operation_ = value;
 
-      operationCase_ = 38;
+      operationCase_ = 138;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public Builder setReturnableBlockReturn(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.Builder builderForValue) {
       operation_ = builderForValue.build();
 
-      operationCase_ = 38;
+      operationCase_ = 138;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public Builder mergeReturnableBlockReturn(org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn value) {
-      if (operationCase_ == 38 &&
+      if (operationCase_ == 138 &&
           operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.getDefaultInstance()) {
         operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn) operation_)
             .mergeFrom(value).buildPartial();
@@ -5005,14 +5005,14 @@ public enum OperationCase
         operation_ = value;
       }
 
-      operationCase_ = 38;
+      operationCase_ = 138;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 38;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn returnable_block_return = 138;</code>
      */
     public Builder clearReturnableBlockReturn() {
-      if (operationCase_ == 38) {
+      if (operationCase_ == 138) {
         operationCase_ = 0;
         operation_ = null;
         

@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -47,7 +48,7 @@ class IrSymbolDeserializer(
 
     private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol = symbolTable.run {
         when (symbolKind) {
-            BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> IrAnonymousInitializerSymbolImpl()
+            BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> if (useGlobalSignatures) IrAnonymousInitializerPublicSymbolImpl(idSig) else IrAnonymousInitializerSymbolImpl()
             BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClassFromLinker(idSig)
             BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructorFromLinker(idSig)
             BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameterFromLinker(idSig)
@@ -58,8 +59,8 @@ class IrSymbolDeserializer(
             BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAliasFromLinker(idSig)
             BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referencePropertyFromLinker(idSig)
             BinarySymbolData.SymbolKind.VARIABLE_SYMBOL -> IrVariableSymbolImpl()
-            BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
-            BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
+            BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> if (useGlobalSignatures) IrValueParameterPublicSymbolImpl(idSig) else IrValueParameterSymbolImpl()
+            BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> if (useGlobalSignatures) IrValueParameterPublicSymbolImpl(idSig) else IrValueParameterSymbolImpl()
             BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
                 IrLocalDelegatedPropertySymbolImpl()
             BinarySymbolData.SymbolKind.FILE_SYMBOL -> (idSig as IdSignature.FileSignature).symbol
@@ -102,10 +103,14 @@ class IrSymbolDeserializer(
 
     fun parseSymbolData(code: Long): BinarySymbolData = BinarySymbolData.decode(code)
 
+    private val symbolCache = HashMap<Long, IrSymbol>()
+
     fun deserializeIrSymbol(code: Long): IrSymbol {
-        val symbolData = parseSymbolData(code)
-        val signature = deserializeIdSignature(symbolData.signatureId)
-        return deserializeIrSymbolData(signature, symbolData.kind)
+        return symbolCache.getOrPut(code) {
+            val symbolData = parseSymbolData(code)
+            val signature = deserializeIdSignature(symbolData.signatureId)
+            deserializeIrSymbolData(signature, symbolData.kind)
+        }
     }
 
     private fun readSignature(index: Int): CodedInputStream =
@@ -115,9 +120,13 @@ class IrSymbolDeserializer(
         return ProtoIdSignature.parseFrom(readSignature(index), ExtensionRegistryLite.newInstance())
     }
 
+    private val signatureCache = HashMap<Int, IdSignature>()
+
     fun deserializeIdSignature(index: Int): IdSignature {
-        val sigData = loadSignatureProto(index)
-        return deserializeSignatureData(sigData)
+        return signatureCache.getOrPut(index) {
+            val sigData = loadSignatureProto(index)
+            deserializeSignatureData(sigData)
+        }
     }
 
     /* -------------------------------------------------------------- */
@@ -187,3 +196,12 @@ class IrSymbolDeserializer(
         }
     }
 }
+
+// TODO: make internal and move to deserializer
+private class IrAnonymousInitializerPublicSymbolImpl(sig: IdSignature, descriptor: ClassDescriptor? = null) :
+    IrBindablePublicSymbolBase<ClassDescriptor, IrAnonymousInitializer>(sig, descriptor),
+    IrAnonymousInitializerSymbol
+
+private class IrValueParameterPublicSymbolImpl(sig: IdSignature, descriptor: ParameterDescriptor? = null) :
+    IrBindablePublicSymbolBase<ParameterDescriptor, IrValueParameter>(sig, descriptor),
+    IrValueParameterSymbol

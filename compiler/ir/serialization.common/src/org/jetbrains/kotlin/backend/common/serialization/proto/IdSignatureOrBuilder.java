@@ -45,10 +45,18 @@ public interface IdSignatureOrBuilder extends
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 105;</code>
+   *
+   * <pre>
+   * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
+   * </pre>
    */
   boolean hasIcSig();
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 105;</code>
+   *
+   * <pre>
+   * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
+   * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature getIcSig();
 
