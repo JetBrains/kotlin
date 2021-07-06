@@ -18,7 +18,7 @@ enum class JdkMajorVersion(
     JDK_1_6(6, targetName = "1.6", overrideMajorVersion = 8),
     JDK_1_7(7, targetName = "1.7", overrideMajorVersion = 8),
     JDK_1_8(8, targetName = "1.8"),
-    JDK_9(9),
+    JDK_9(9, overrideMajorVersion = 11),
     JDK_10(10, mandatory = false),
     JDK_11(11, mandatory = false),
     JDK_15(15, mandatory = false),
