@@ -4,14 +4,14 @@ abstract class My {
         <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     abstract val y: Int
-        <!GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, REDUNDANT_GETTER_VISIBILITY_CHANGE!>protected<!> get
+        <!GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>protected<!> get
 
     abstract protected var z: Int
-        <!REDUNDANT_GETTER_VISIBILITY_CHANGE!>internal<!> get
+        <!GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>internal<!> get
         <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     abstract internal val w: Int
-        <!REDUNDANT_GETTER_VISIBILITY_CHANGE!>protected<!> get
+        <!GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>protected<!> get
 
     abstract var u: Int
         protected set

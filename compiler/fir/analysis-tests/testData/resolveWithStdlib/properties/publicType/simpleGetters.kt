@@ -10,7 +10,7 @@ class SomeClass {
         <!MORE_VISIBLE_GETTER_WITH_BODY!>protected get(): List<String> = field<!>
 
     val balalitems = mutableListOf<String>()
-        <!GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY!>protected<!> get(): List<String> = field
+        <!GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>protected<!> get(): List<String> = field
 
     val rhymetems = mutableListOf<String>()
         get(): <!REDUNDANT_GETTER_TYPE_CHANGE!>List<String><!> = field

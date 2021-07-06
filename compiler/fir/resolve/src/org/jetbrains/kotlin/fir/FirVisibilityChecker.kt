@@ -64,9 +64,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val visible = isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
 
         if (visible) {
-            candidate.possiblyInvisibleDependentCandidate?.let {
-                it.mustBeInvisible = true
-            }
+            candidate.possiblyInvisibleDependentCandidate?.mustBeInvisible = true
         }
 
         return visible

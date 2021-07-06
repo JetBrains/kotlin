@@ -1238,11 +1238,15 @@ class DeclarationsConverter(
                 isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
             }
         val sourceElement = getterOrSetter.toFirSourceElement()
-        val visibilityDifference = accessorVisibility.compareTo(propertyVisibility)
-        val getterWithGreaterVisibility = visibilityDifference != null && visibilityDifference > 0
-        val returnTypeAsIfItIsGetter = returnType ?: propertyTypeRef
-        val getterWithDifferentType = returnTypeAsIfItIsGetter != propertyTypeRef
-        if (block == null && expression == null && !getterWithGreaterVisibility && !getterWithDifferentType) {
+        var isShortGetter = false
+        if (isGetter == true) {
+            val visibilityDifference = accessorVisibility.compareTo(propertyVisibility)
+            val withGreaterVisibility = visibilityDifference != null && visibilityDifference > 0
+            val returnTypeAsIfItIsGetter = returnType ?: propertyTypeRef
+            val withDifferentType = returnTypeAsIfItIsGetter != propertyTypeRef
+            isShortGetter = withGreaterVisibility || withDifferentType
+        }
+        if (block == null && expression == null && !isShortGetter) {
             return FirDefaultPropertyAccessor
                 .createGetterOrSetter(
                     sourceElement,

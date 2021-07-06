@@ -361,12 +361,16 @@ open class RawFirBuilder(
                     isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
                             this@toFirPropertyAccessor?.hasModifier(EXTERNAL_KEYWORD) == true
                 }
-            val visibilityDifference = this?.visibility?.compareTo(property.visibility)
-            val getterWithGreaterVisibility = visibilityDifference != null && visibilityDifference > 0
+            var isShortGetter = false
             val returnTypeAsIfItIsGetter = this?.returnTypeReference?.convertSafe() ?: propertyTypeRef
-            val getterWithDifferentType = returnTypeAsIfItIsGetter != propertyTypeRef
+            if (this?.isGetter == true) {
+                val visibilityDifference = this.visibility.compareTo(property.visibility)
+                val withGreaterVisibility = visibilityDifference != null && visibilityDifference > 0
+                val withDifferentType = returnTypeAsIfItIsGetter != propertyTypeRef
+                isShortGetter = withGreaterVisibility || withDifferentType
+            }
             return when {
-                this != null && (hasBody() || getterWithGreaterVisibility || getterWithDifferentType) -> {
+                this != null && (hasBody() || isShortGetter) -> {
                     // Property has a non-default getter or setter.
                     // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
                     val source = this.toFirSourceElement()

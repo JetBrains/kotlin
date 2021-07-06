@@ -2091,8 +2091,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY) { firDiagnostic ->
-        GetterVisibilitySmallerThanPropertyVisibilityImpl(
+    add(FirErrors.GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY) { firDiagnostic ->
+        GetterVisibilityLessOrInconsistentWithPropertyVisibilityImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

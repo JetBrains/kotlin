@@ -33,16 +33,13 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
 
         withSuppressedDiagnostics(getter, context) {
             checkAccessorForDelegatedProperty(property, getter, context, reporter)
+            var visibilitiesAreCompatible = true
             val difference = getter.visibility.compareTo(property.visibility)
-//            if (difference != null && difference < 0) {
-//                reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, context)
-//            }
-            if (difference != null) {
-                if (difference < 0) {
-                    reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, context)
-                } else if (difference > 0 && getter.hasBody) {
-                    reporter.reportOn(getter.source, FirErrors.MORE_VISIBLE_GETTER_WITH_BODY, context)
-                }
+            if (difference == null || difference < 0) {
+                visibilitiesAreCompatible = false
+                reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY, context)
+            } else if (difference > 0 && getter.hasBody) {
+                reporter.reportOn(getter.source, FirErrors.MORE_VISIBLE_GETTER_WITH_BODY, context)
             }
             if (property.symbol.callableId.classId != null && getter.body != null && property.delegate == null) {
                 if (isLegallyAbstract(property, context)) {
@@ -58,7 +55,10 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
                 return
             }
 
+            var typesAreCompatible = true
+
             if (!property.returnTypeRef.coneType.isSubtypeOf(context.session.typeContext, getterReturnType)) {
+                typesAreCompatible = false
                 val getterReturnTypeSource = getterReturnTypeRef.source
                 withSuppressedDiagnostics(getterReturnTypeRef, context) {
                     reporter.reportOn(getterReturnTypeSource, FirErrors.WRONG_GETTER_RETURN_TYPE, propertyType, getterReturnType, context)
@@ -67,6 +67,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
 
             if (
                 property.returnTypeRef.coneType != getterReturnType &&
+                typesAreCompatible &&
                 getter.visibility == property.visibility
             ) {
                 val getterReturnTypeSource = getterReturnTypeRef.source
@@ -81,7 +82,8 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
                 }
             } else if (
                 property.returnTypeRef.coneType == getterReturnType &&
-                getter.visibility != property.visibility
+                getter.visibility != property.visibility &&
+                visibilitiesAreCompatible
             ) {
                 reporter.reportOn(getter.source, FirErrors.REDUNDANT_GETTER_VISIBILITY_CHANGE, context)
             }

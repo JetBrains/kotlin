@@ -2384,10 +2384,10 @@ internal class InitializerTypeMismatchImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class GetterVisibilitySmallerThanPropertyVisibilityImpl(
+internal class GetterVisibilityLessOrInconsistentWithPropertyVisibilityImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.GetterVisibilitySmallerThanPropertyVisibility(), KtAbstractFirDiagnostic<KtModifierListOwner> {
+) : KtFirDiagnostic.GetterVisibilityLessOrInconsistentWithPropertyVisibility(), KtAbstractFirDiagnostic<KtModifierListOwner> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 

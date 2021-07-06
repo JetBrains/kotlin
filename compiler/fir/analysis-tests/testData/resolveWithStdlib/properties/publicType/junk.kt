@@ -12,13 +12,13 @@ class Something {
         get() = field
 
     protected val junk5 = "some junk"
-        <!GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, REDUNDANT_GETTER_VISIBILITY_CHANGE!>private<!> get
+        <!GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>private<!> get
 
     protected val junk6 = "some junk"
-        <!GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY, REDUNDANT_GETTER_VISIBILITY_CHANGE!>private<!> get()
+        <!GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>private<!> get()
 
     protected val junk7 = "some junk"
-        <!GETTER_VISIBILITY_SMALLER_THAN_PROPERTY_VISIBILITY!>private<!> get(): Any? {
+        <!GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>private<!> get(): Any? {
             return field
         }
 }
