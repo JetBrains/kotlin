@@ -58,12 +58,12 @@ class CirTreePackageDeserializerTest : AbstractCirTreeDeserializerTest() {
             )
 
             kotlin.test.assertTrue(
-                properties.any { it.property.name.toStrippedString() == "rootProperty" },
+                properties.any { it.name.toStrippedString() == "rootProperty" },
                 "Expected 'rootProperty'"
             )
 
             kotlin.test.assertTrue(
-                functions.any { it.function.name.toStrippedString() == "rootFunction" },
+                functions.any { it.name.toStrippedString() == "rootFunction" },
                 "Expected 'rootFunction'"
             )
 
@@ -80,12 +80,12 @@ class CirTreePackageDeserializerTest : AbstractCirTreeDeserializerTest() {
             )
 
             kotlin.test.assertTrue(
-                properties.any { it.property.name.toStrippedString() == "pkg1Property" },
+                properties.any { it.name.toStrippedString() == "pkg1Property" },
                 "Expected 'pkg1Property'"
             )
 
             kotlin.test.assertTrue(
-                functions.any { it.function.name.toStrippedString() == "pkg1Function" },
+                functions.any { it.name.toStrippedString() == "pkg1Function" },
                 "Expected 'pkg1Function'"
             )
 
@@ -102,12 +102,12 @@ class CirTreePackageDeserializerTest : AbstractCirTreeDeserializerTest() {
             )
 
             kotlin.test.assertTrue(
-                properties.any { it.property.name.toStrippedString() == "pkg2Property" },
+                properties.any { it.name.toStrippedString() == "pkg2Property" },
                 "Expected 'pkg2Property'"
             )
 
             kotlin.test.assertTrue(
-                functions.any { it.function.name.toStrippedString() == "pkg2Function" },
+                functions.any { it.name.toStrippedString() == "pkg2Function" },
                 "Expected 'pkg2Function'"
             )
 

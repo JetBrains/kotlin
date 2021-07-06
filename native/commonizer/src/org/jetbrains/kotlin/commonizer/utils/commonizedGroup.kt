@@ -25,8 +25,13 @@ class CommonizedGroup<T : Any>(
 
     operator fun set(index: Int, value: T) {
         val oldValue = this[index]
-        check(oldValue == null) { "$oldValue can not be overwritten with $value at index $index" }
+        check(oldValue == null) {
+            "$oldValue can not be overwritten with $value at index $index"
+        }
 
         elements[index] = value
     }
 }
+
+interface I<T>
+

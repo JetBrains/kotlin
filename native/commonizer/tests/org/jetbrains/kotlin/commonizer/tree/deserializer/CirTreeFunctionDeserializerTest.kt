@@ -17,7 +17,7 @@ class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test simple function`() {
         val module = createCirTreeFromSourceCode("fun x() = Unit")
-        val (_, function) = module.assertSingleFunction()
+        val function = module.assertSingleFunction()
 
         assertNull(function.containingClass, "Expected function to *not* have containing class")
         assertEquals(Visibilities.Public, function.visibility, "Expected function to be public")
@@ -30,7 +30,7 @@ class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test generic function`() {
         val module = createCirTreeFromSourceCode("""fun <T: Any> T.isHappy(): Boolean = true""")
-        val (_, function) = module.assertSingleFunction()
+        val function = module.assertSingleFunction()
 
         val extensionReceiver = assertNotNull(function.extensionReceiver, "Expected function being extension receiver")
         val extensionReceiverType = extensionReceiver.type as? CirTypeParameterType
@@ -59,8 +59,8 @@ class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
         )
 
         val parent = module.assertSingleClass()
-        val function = parent.functions.singleOrNull()?.function
-            ?: kotlin.test.fail("Expected single function in parent. Found ${parent.functions.map { it.function.name }}")
+        val function = parent.functions.singleOrNull()
+            ?: kotlin.test.fail("Expected single function in parent. Found ${parent.functions.map { it.name }}")
 
         val containingClass = assertIs<CirClass>(kotlin.test.assertNotNull(function.containingClass))
         assertEquals(ClassKind.OBJECT, containingClass.kind, "Expected containing class being object")

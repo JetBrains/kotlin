@@ -150,12 +150,12 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
         val clazz = module.assertSingleClass()
 
         fun assertContainsProperty(name: String) {
-            clazz.properties.singleOrNull { it.property.name.toStrippedString() == name }
+            clazz.properties.singleOrNull { it.name.toStrippedString() == name }
                 ?: kotlin.test.fail("Missing property '$name'")
         }
 
         fun assertContainsFunction(name: String) {
-            clazz.functions.singleOrNull { it.function.name.toStrippedString() == name }
+            clazz.functions.singleOrNull { it.name.toStrippedString() == name }
                 ?: kotlin.test.fail("Missing function '$name'")
         }
 
