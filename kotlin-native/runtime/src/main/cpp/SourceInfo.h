@@ -27,7 +27,9 @@ struct SourceInfo {
 extern "C" {
 #endif
 
-struct SourceInfo Kotlin_getSourceInfo(void* addr);
+// returns number of filled elements in buffer
+// there can be several frames because of inlining
+int Kotlin_getSourceInfo(void* addr, SourceInfo *result, int result_size);
 
 #ifdef __cplusplus
 } // extern "C"

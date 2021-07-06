@@ -70,8 +70,8 @@ _Unwind_Reason_Code unwindCallback(struct _Unwind_Context* context, void* arg) {
 THREAD_LOCAL_VARIABLE bool disallowSourceInfo = false;
 
 #if !KONAN_NO_BACKTRACE && !USE_GCC_UNWIND
-SourceInfo getSourceInfo(void* symbol) {
-    return disallowSourceInfo ? SourceInfo{.fileName = nullptr, .lineNumber = -1, .column = -1} : Kotlin_getSourceInfo(symbol);
+int getSourceInfo(void* symbol, SourceInfo *result, int result_len) {
+    return disallowSourceInfo ? 0 : Kotlin_getSourceInfo(symbol, result, result_len);
 }
 #endif
 
@@ -137,22 +137,37 @@ KStdVector<KStdString> kotlin::GetStackTraceStrings(void* const* stackTrace, siz
 
         for (size_t index = 0; index < stackTraceSize; ++index) {
             KNativePtr address = stackTrace[index];
-            auto sourceInfo = getSourceInfo(address);
+            SourceInfo buffer[10];
+            int frames = getSourceInfo(address, buffer, std::size(buffer));
             const char* symbol = symbols[index];
-            const char* result;
+            // returned symbol starts with frame number
+            // we need to override it, because of inlining, so let's just drop first token
+            while (*symbol != '\0' && *symbol != ' ') symbol++;
+            while (*symbol == ' ') symbol++;
+            // probably, this can't happen, but let's print at least something
+            if (*symbol == '\0') symbol = symbols[index];
+            bool isSomethingPrinted = false;
             char line[1024];
-            if (sourceInfo.fileName != nullptr) {
-                if (sourceInfo.lineNumber != -1) {
-                    konan::snprintf(
-                            line, sizeof(line) - 1, "%s (%s:%d:%d)", symbol, sourceInfo.fileName, sourceInfo.lineNumber, sourceInfo.column);
-                } else {
-                    konan::snprintf(line, sizeof(line) - 1, "%s (%s:<unknown>)", symbol, sourceInfo.fileName);
+            for (int frame = 0; frame < frames; frame++) {
+                auto &sourceInfo = buffer[frame];
+                if (sourceInfo.fileName != nullptr) {
+                    const char* inline_tag = (frame == frames - 1) ? "" : "[inlined] ";
+                    if (sourceInfo.lineNumber != -1) {
+                        konan::snprintf(
+                                line, sizeof(line) - 1, "%-4zd %s %s(%s:%d:%d)", strings.size(), symbol, inline_tag,
+                                sourceInfo.fileName, sourceInfo.lineNumber, buffer[frame].column);
+                    } else {
+                        konan::snprintf(line, sizeof(line) - 1, "%-4zd %s %s(%s:<unknown>)", strings.size(), symbol, inline_tag,
+                                        sourceInfo.fileName);
+                    }
+                    isSomethingPrinted = true;
+                    strings.push_back(line);
                 }
-                result = line;
-            } else {
-                result = symbol;
             }
-            strings.push_back(result);
+            if (!isSomethingPrinted) {
+                konan::snprintf(line, sizeof(line) - 1, "%-4zd %s", strings.size(), symbol);
+                strings.push_back(line);
+            }
         }
         // Not konan::free. Used to free memory allocated in backtrace_symbols where malloc is used.
         free(symbols);

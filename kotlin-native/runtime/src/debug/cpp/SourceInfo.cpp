@@ -127,7 +127,8 @@ typedef struct {
   int end;
 } SymbolSourceInfoLimits;
 
-extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
+extern "C" int Kotlin_getSourceInfo(void* addr, SourceInfo *result_buffer, int result_size) {
+  if (result_size == 0) return 0;
   __block SourceInfo result = { .fileName = nullptr, .lineNumber = -1, .column = -1 };
   __block bool continueUpdateResult = true;
   __block SymbolSourceInfoLimits limits = {.start = -1, .end = -1};
@@ -139,10 +140,10 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
 
     CSSymbolOwnerRef symbolOwner = CSSymbolicatorGetSymbolOwnerWithAddressAtTime(symbolicator, address, kCSNow);
     if (CSIsNull(symbolOwner))
-      return result;
+      return 0;
     CSSymbolRef symbol = CSSymbolOwnerGetSymbolWithAddress(symbolOwner, address);
     if (CSIsNull(symbol))
-      return result;
+      return 0;
     SYM_LOG("Kotlin_getSourceInfo: address: (%p) {\n", addr);
     SYM_DUMP(symbol);
 
@@ -204,13 +205,14 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
    });
   }
   SYM_LOG("}\n");
-  return result;
+  result_buffer[0] = result;
+  return 1;
 }
 
 #else // KONAN_CORE_SYMBOLICATION
 
-extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
-  return (SourceInfo) { .fileName = nullptr, .lineNumber = -1, .column = -1 };
+extern "C" int Kotlin_getSourceInfo(void* addr, SourceInfo *result, int result_size) {
+    return 0;
 }
 
 #endif // KONAN_CORE_SYMBOLICATION
