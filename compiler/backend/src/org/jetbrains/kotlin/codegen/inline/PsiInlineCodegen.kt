@@ -194,7 +194,7 @@ class PsiExpressionLambda(
     expression: KtExpression,
     private val state: GenerationState,
     val isCrossInline: Boolean,
-    override val isBoundCallableReference: Boolean
+    val isBoundCallableReference: Boolean
 ) : ExpressionLambda() {
     override val lambdaClassType: Type
 
@@ -204,7 +204,7 @@ class PsiExpressionLambda(
 
     override val invokeMethodParameters: List<KotlinType?>
         get() {
-            val actualInvokeDescriptor = if (isSuspend)
+            val actualInvokeDescriptor = if (invokeMethodDescriptor.isSuspend)
                 getOrCreateJvmSuspendFunctionView(invokeMethodDescriptor, state)
             else
                 invokeMethodDescriptor
@@ -221,8 +221,6 @@ class PsiExpressionLambda(
     val functionWithBodyOrCallableReference: KtExpression = (expression as? KtLambdaExpression)?.functionLiteral ?: expression
 
     override val returnLabels: Map<String, Label?>
-
-    override val isSuspend: Boolean
 
     val closure: CalculatedClosure
 
@@ -252,7 +250,6 @@ class PsiExpressionLambda(
             ?: throw AssertionError("null closure for lambda ${expression.text}")
         returnLabels = getDeclarationLabels(expression, invokeMethodDescriptor).associateWith { null }
         invokeMethod = state.typeMapper.mapAsmMethod(invokeMethodDescriptor)
-        isSuspend = invokeMethodDescriptor.isSuspend
     }
 
     // This can only be computed after generating the body, hence `lazy`.

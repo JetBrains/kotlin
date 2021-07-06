@@ -119,16 +119,10 @@ class IrExpressionLambdaImpl(
     val reference: IrFunctionReference,
     irValueParameter: IrValueParameter
 ) : ExpressionLambda(), IrExpressionLambda {
-    override val isExtensionLambda: Boolean = irValueParameter.type.isExtensionFunctionType
+    override val isExtensionLambda: Boolean = irValueParameter.type.isExtensionFunctionType && reference.extensionReceiver == null
 
     val function: IrFunction
         get() = reference.symbol.owner
-
-    override val isBoundCallableReference: Boolean
-        get() = reference.extensionReceiver != null
-
-    override val isSuspend: Boolean
-        get() = reference.symbol.owner.isSuspend
 
     override val hasDispatchReceiver: Boolean
         get() = false
@@ -148,20 +142,17 @@ class IrExpressionLambdaImpl(
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
         val capturedParameters = reference.getArgumentsWithIr()
-        val (startCapture, endCapture) = when {
-            isBoundCallableReference -> 0 to 1 // (bound receiver, real parameters...)
-            isExtensionLambda -> 1 to capturedParameters.size + 1 // (unbound receiver, captures..., real parameters...)
-            else -> 0 to capturedParameters.size // (captures..., real parameters...)
-        }
+        val captureStart = if (isExtensionLambda) 1 else 0 // extension receiver comes before captures
+        val captureEnd = captureStart + capturedParameters.size
         capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunctionTypeOrSubtype()
-            capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[startCapture + index], isSuspend)
+            capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[captureStart + index], isSuspend)
         }
         // The parameter list should include the continuation if this is a suspend lambda. In the IR backend,
         // the lambda is suspend iff the inline function's parameter is marked suspend, so FunctionN.invoke call
         // inside the inline function already has a (real) continuation value as the last argument.
-        val freeParameters = function.explicitParameters.let { it.take(startCapture) + it.drop(endCapture) }
-        val freeAsmParameters = asmMethod.argumentTypes.let { it.take(startCapture) + it.drop(endCapture) }
+        val freeParameters = function.explicitParameters.let { it.take(captureStart) + it.drop(captureEnd) }
+        val freeAsmParameters = asmMethod.argumentTypes.let { it.take(captureStart) + it.drop(captureEnd) }
         // The return type, on the other hand, should be the original type if this is a suspend lambda that returns
         // an unboxed inline class value so that the inliner will box it (FunctionN.invoke should return a boxed value).
         val unboxedReturnType = function.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
