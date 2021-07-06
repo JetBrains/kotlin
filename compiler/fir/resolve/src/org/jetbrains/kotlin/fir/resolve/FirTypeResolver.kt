@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 

@@ -1537,7 +1537,7 @@ internal class NoTypeArgumentsOnRhsImpl(
 }
 
 internal class OuterClassArgumentsRequiredImpl(
-    override val outer: KtNamedClassOrObjectSymbol,
+    override val outer: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.OuterClassArgumentsRequired(), KtAbstractFirDiagnostic<PsiElement> {

@@ -958,7 +958,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class OuterClassArgumentsRequired : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OuterClassArgumentsRequired::class
-        abstract val outer: KtNamedClassOrObjectSymbol
+        abstract val outer: KtClassLikeSymbol
     }
 
     abstract class TypeParametersInObject : KtFirDiagnostic<PsiElement>() {

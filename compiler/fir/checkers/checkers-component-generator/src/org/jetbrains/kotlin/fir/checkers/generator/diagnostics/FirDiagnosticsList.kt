@@ -446,14 +446,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val TYPE_ARGUMENTS_NOT_ALLOWED by error<PsiElement>()
         val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error<PsiElement> {
             parameter<Int>("expectedCount")
-            parameter<FirClassLikeSymbol<*>>("classifier")
+            parameter<FirRegularClassSymbol>("classifier")
         }
         val NO_TYPE_ARGUMENTS_ON_RHS by error<PsiElement> {
             parameter<Int>("expectedCount")
             parameter<FirClassLikeSymbol<*>>("classifier")
         }
-        val OUTER_CLASS_ARGUMENTS_REQUIRED by error<PsiElement>() {
-            parameter<FirRegularClass>("outer")
+        val OUTER_CLASS_ARGUMENTS_REQUIRED by error<PsiElement> {
+            parameter<FirRegularClassSymbol>("outer")
         }
         val TYPE_PARAMETERS_IN_OBJECT by error<PsiElement>()
         val ILLEGAL_PROJECTION_USAGE by error<PsiElement>()

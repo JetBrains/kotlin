@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
-import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -47,7 +44,6 @@ open class FirBodyResolveTransformer(
     internal open val expressionsTransformer = FirExpressionsResolveTransformer(this)
     protected open val declarationsTransformer = FirDeclarationsResolveTransformer(this)
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
-    private val classDeclarations = mutableListOf<FirRegularClass>()
 
     override fun transformFile(file: FirFile, data: ResolutionMode): FirFile {
         checkSessionConsistency(file)
@@ -70,7 +66,13 @@ open class FirBodyResolveTransformer(
             typeRef
         } else {
             typeResolverTransformer.withFile(context.file) {
-                transformTypeRef(typeRef, ScopeClassDeclaration(FirCompositeScope(components.createCurrentScopeList()), classDeclarations))
+                transformTypeRef(
+                    typeRef,
+                    ScopeClassDeclaration(
+                        FirCompositeScope(components.createCurrentScopeList()),
+                        context.topClassDeclaration
+                    )
+                )
             }
         }
         return resolvedTypeRef.transformAnnotations(this, data)
@@ -263,10 +265,7 @@ open class FirBodyResolveTransformer(
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
-        classDeclarations.add(regularClass)
-        val result = declarationsTransformer.transformRegularClass(regularClass, data)
-        classDeclarations.removeAt(classDeclarations.lastIndex)
-        return result
+        return declarationsTransformer.transformRegularClass(regularClass, data)
     }
 
     override fun transformAnonymousObject(

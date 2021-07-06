@@ -717,7 +717,7 @@ class FirDefaultErrorMessages {
                 WRONG_NUMBER_OF_TYPE_ARGUMENTS,
                 "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected for {1}",
                 null,
-                SYMBOL
+                RENDER_CLASS_OR_OBJECT_NAME
             )
             map.put(
                 OUTER_CLASS_ARGUMENTS_REQUIRED,

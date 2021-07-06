@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.typeResolver
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef

@@ -1,8 +1,7 @@
 interface A0<T : A0<T>>
 interface A1<<!FINITE_BOUNDS_VIOLATION!>T : A1<*><!>>
 interface A2<<!FINITE_BOUNDS_VIOLATION!>T : A2<out T><!>>
-// StackOverflowError
-//interface A3<T : A3<in T>>
+interface A3<<!FINITE_BOUNDS_VIOLATION!>T : A3<in T><!>>
 interface A4<<!FINITE_BOUNDS_VIOLATION!>T : A4<*>?<!>>
 
 interface B0<<!FINITE_BOUNDS_VIOLATION!>T : B1<*><!>>

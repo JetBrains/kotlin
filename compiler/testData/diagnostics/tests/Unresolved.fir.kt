@@ -3,7 +3,7 @@ package unresolved
 class Pair<A, B>(val a: A, val b: B)
 
 fun testGenericArgumentsCount() {
-    val p1: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Pair<Int><!> = Pair(2, 2)
+    val p1: Pair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> = Pair(2, 2)
     val p2: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Pair<!> = Pair(2, 2)
 }
 

@@ -1336,7 +1336,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS) { firDiagnostic ->
         WrongNumberOfTypeArgumentsImpl(
             firDiagnostic.a,
-            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b.fir as FirClass),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b.fir),
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
@@ -1351,7 +1351,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED) { firDiagnostic ->
         OuterClassArgumentsRequiredImpl(
-            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a) as KtNamedClassOrObjectSymbol,
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

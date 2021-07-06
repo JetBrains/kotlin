@@ -9,9 +9,9 @@ abstract class My<T : Some> {
 
     abstract fun foo(arg: T)
 
-    abstract val y: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>My.T<!>
+    abstract val y: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>My<!>.T
 
-    abstract val z: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>test.My.T<!>
+    abstract val z: test.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>My<!>.T
 
     class Some : <!SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, UNRESOLVED_REFERENCE!>T<!>()
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.symbols.impl
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -35,5 +36,8 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
 
     val isReified: Boolean
         get() = fir.isReified
+
+    val containingDeclarationSymbol: FirBasedSymbol<*>?
+        get() = fir.containingDeclarationSymbol
 }
 

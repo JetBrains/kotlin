@@ -1,6 +1,6 @@
 public fun foo(a: Any, b: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>) {
     when (a) {
-        is <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<Int><!> -> {}
+        is Map<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> -> {}
         is <!NO_TYPE_ARGUMENTS_ON_RHS!>Map<!> -> {}
         is Map<out Any?, Any?> -> {}
         is Map<*, *> -> {}

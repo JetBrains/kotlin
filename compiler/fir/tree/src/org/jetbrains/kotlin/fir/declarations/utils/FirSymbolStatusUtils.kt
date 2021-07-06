@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 
 // ---------------------- callables with status ----------------------
@@ -107,6 +103,9 @@ inline val FirTypeAliasSymbol.isFun: Boolean get() = resolvedStatus.isFun
 // ---------------------- common classes ----------------------
 
 inline val FirClassLikeSymbol<*>.isLocal: Boolean get() = classId.isLocal
+
+inline val FirClassSymbol<*>.isLocalClassOrAnonymousObject: Boolean
+    get() = classId.isLocal || this is FirAnonymousObjectSymbol
 
 inline val FirClassSymbol<*>.isInterface: Boolean
     get() = classKind.isInterface

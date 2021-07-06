@@ -68,9 +68,9 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source ?: source)
     is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.createOn(source, this.name.asString())
     is ConeWrongNumberOfTypeArgumentsError ->
-        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.type)
+        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source ?: qualifiedAccessSource ?: source, this.desiredCount, this.symbol)
     is ConeOuterClassArgumentsRequired ->
-        FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(qualifiedAccessSource ?: source, this.type)
+        FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(qualifiedAccessSource ?: source, this.symbol)
     is ConeNoTypeArgumentsOnRhsError ->
         FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.type)
     is ConeSimpleDiagnostic -> when (source.kind) {

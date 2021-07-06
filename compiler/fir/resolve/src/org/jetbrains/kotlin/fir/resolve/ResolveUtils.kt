@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByTypeRef
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
@@ -449,14 +451,17 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
 fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
 
-fun isValidTypeParameter(typeParameter: FirTypeParameterRef, classDeclaration: FirRegularClass?, session: FirSession): Boolean {
-    if (typeParameter !is FirOuterClassTypeParameterRef || classDeclaration == null) {
-        return true
+fun isValidTypeParameterFromOuterClass(
+    typeParameterSymbol: FirTypeParameterSymbol,
+    classDeclaration: FirRegularClass?,
+    session: FirSession
+): Boolean {
+    if (classDeclaration == null) {
+        return true  // Extra check is required because of classDeclaration will be resolved later
     }
 
     fun containsTypeParameter(currentClassDeclaration: FirRegularClass): Boolean {
-        val result = currentClassDeclaration.typeParameters.any { it.symbol == typeParameter.symbol }
-        if (result) {
+        if (currentClassDeclaration.typeParameters.any { it.symbol == typeParameterSymbol }) {
             return true
         }
 
@@ -473,18 +478,28 @@ fun isValidTypeParameter(typeParameter: FirTypeParameterRef, classDeclaration: F
     return containsTypeParameter(classDeclaration)
 }
 
-fun getClassThatContainsTypeParameter(klass: FirRegularClass, typeParameter: FirTypeParameterRef): FirRegularClass? {
-    if (klass.typeParameters.any { param -> param.symbol == typeParameter.symbol }) {
-        return klass
+fun getOuterClassAndActualTypeParametersCount(klass: FirRegularClass, session: FirSession): Pair<FirRegularClass?, Int> {
+    var result = klass.typeParameters.size
+
+    if (!klass.isInner) {
+        return Pair(null, result)
     }
 
-    for (declaration in klass.declarations) {
-        if (declaration is FirRegularClass) {
-            val result = getClassThatContainsTypeParameter(declaration, typeParameter)
-            if (result != null) {
-                return result
-            }
-        }
+    val outerClass = getOuterClass(klass, session)
+    if (outerClass != null) {
+        result -= outerClass.typeParameters.size
+    }
+
+    return Pair(outerClass, result)
+}
+
+fun getOuterClass(klass: FirRegularClass, session: FirSession): FirRegularClass? {
+    val classId = klass.symbol.classId
+    val parentId = classId.relativeClassName.parent()
+    if (!parentId.isRoot) {
+        val outerClassId = ClassId(classId.packageFqName, parentId, false)
+        val parentSymbol = session.symbolProvider.getClassLikeSymbolByFqName(outerClassId)
+        return (parentSymbol as? FirRegularClassSymbol)?.fir
     }
 
     return null
