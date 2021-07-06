@@ -65,6 +65,7 @@ abstract class LambdaInfo : FunctionalArgument {
 
 object NonInlineableArgumentForInlineableParameterCalledInSuspend : FunctionalArgument
 object NonInlineableArgumentForInlineableSuspendParameter : FunctionalArgument
+object DefaultValueOfInlineParameter : FunctionalArgument
 
 abstract class ExpressionLambda : LambdaInfo() {
     fun generateLambdaBody(sourceCompiler: SourceCompilerForInline) {

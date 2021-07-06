@@ -70,7 +70,7 @@ class IrInlineCodegen(
                 IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> ValueKind.METHOD_HANDLE_IN_DEFAULT
                 else -> when {
                     argumentExpression is IrContainerExpression && argumentExpression.origin == IrStatementOrigin.DEFAULT_VALUE ->
-                        ValueKind.DEFAULT_PARAMETER
+                        if (isInlineParameter) ValueKind.DEFAULT_INLINE_PARAMETER else ValueKind.DEFAULT_PARAMETER
                     // TODO ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND?
                     isInlineParameter && irValueParameter.type.isSuspendFunctionTypeOrSubtype() ->
                         ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
@@ -78,20 +78,17 @@ class IrInlineCodegen(
                 }
             }
 
-            val onStack = when {
-                kind == ValueKind.METHOD_HANDLE_IN_DEFAULT -> StackValue.constant(null, AsmTypes.OBJECT_TYPE)
-                kind == ValueKind.DEFAULT_MASK -> StackValue.constant((argumentExpression as IrConst<*>).value, Type.INT_TYPE)
-                kind == ValueKind.DEFAULT_PARAMETER -> StackValue.createDefaultValue(parameterType)
-                irValueParameter.index >= 0
-                    // Reuse an existing local if possible. NOTE: when stopping at a breakpoint placed
-                    // in an inline function, arguments which reuse an existing local will not be visible
-                    // in the debugger.
-                -> codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+            val onStack = when (kind) {
+                ValueKind.METHOD_HANDLE_IN_DEFAULT -> StackValue.constant(null, AsmTypes.OBJECT_TYPE)
+                ValueKind.DEFAULT_MASK -> StackValue.constant((argumentExpression as IrConst<*>).value, Type.INT_TYPE)
+                ValueKind.DEFAULT_PARAMETER, ValueKind.DEFAULT_INLINE_PARAMETER -> StackValue.createDefaultValue(parameterType)
+                // Here we replicate the old backend: reusing the locals for everything except extension receivers.
+                // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
+                //   local will not be visible in the debugger, so this needs to be reconsidered.
+                else -> if (irValueParameter.index >= 0)
+                    codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
                 else
-                    // Do not reuse locals for receivers. While it's actually completely fine, the non-IR
-                    // backend does not do it for internal reasons, and here we replicate the debugging
-                    // experience.
-                -> codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                    codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
             }
 
             val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
@@ -115,13 +112,6 @@ class IrInlineCodegen(
     override fun genCycleStub(text: String, codegen: ExpressionCodegen) {
         generateStub(text, codegen)
     }
-
-    override fun computeDefaultLambdaOffsets(): Set<Int> =
-        parameterOffsets(function.isStatic, jvmSignature.valueParameters)
-            .drop(if (function.extensionReceiverParameter != null) 1 else 0)
-            .filterIndexedTo(mutableSetOf()) { index, _ ->
-                function.valueParameters[index].let { it.defaultValue != null && it.isInlineParameter() }
-            }
 }
 
 class IrExpressionLambdaImpl(
