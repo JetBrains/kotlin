@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -75,6 +76,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         fun toKotlinType(type: KT): KotlinType
 
         fun reportSuspendTypeUnsupported()
+        fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name)
     }
 
     companion object {

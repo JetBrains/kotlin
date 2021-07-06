@@ -44,9 +44,9 @@ fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
     val typeParameter = type.typeConstructor().getTypeParameterClassifier()
     if (typeParameter != null) {
         if (!doesTypeContainTypeParametersWithRecursiveBounds(type)) {
-            throw UnsupportedOperationException(
-                "Non-reified type parameters with recursive bounds are not supported yet: ${typeParameter.getName()}"
-            )
+            intrinsicsSupport.reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameter.getName())
+            v.aconst(null)
+            return
         }
 
         generateNonReifiedTypeParameter(v, typeParameter, intrinsicsSupport)

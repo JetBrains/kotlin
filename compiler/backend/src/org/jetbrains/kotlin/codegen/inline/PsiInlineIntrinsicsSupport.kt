@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.TYPEOF_SUSPEND_TYPE
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
@@ -72,5 +74,9 @@ class PsiInlineIntrinsicsSupport(
 
     override fun reportSuspendTypeUnsupported() {
         state.diagnostics.report(TYPEOF_SUSPEND_TYPE.on(reportErrorsOn))
+    }
+
+    override fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name) {
+        state.diagnostics.report(TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND.on(reportErrorsOn, typeParameterName.asString()))
     }
 }

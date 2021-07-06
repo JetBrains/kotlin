@@ -661,6 +661,12 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         }
 
         @Test
+        @TestMetadata("nonReifiedTypeParameterWithRecursiveBound.kt")
+        public void testNonReifiedTypeParameterWithRecursiveBound() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/typeOf/nonReifiedTypeParameterWithRecursiveBound.kt");
+        }
+
+        @Test
         @TestMetadata("suspendType.kt")
         public void testSuspendType() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJvmBackend/typeOf/suspendType.kt");
