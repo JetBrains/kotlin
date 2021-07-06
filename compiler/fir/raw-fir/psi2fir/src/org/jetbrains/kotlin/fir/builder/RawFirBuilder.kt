@@ -1489,8 +1489,9 @@ open class RawFirBuilder(
 
                             do {
                                 val firQualifier = FirQualifierPartImpl(
+                                    referenceExpression!!.toFirSourceElement(),
                                     referenceExpression!!.getReferencedNameAsName(),
-                                    FirTypeArgumentListImpl(source).apply {
+                                    FirTypeArgumentListImpl(ktQualifier?.typeArgumentList?.toFirPsiSourceElement() ?: source).apply {
                                         for (typeArgument in ktQualifier!!.typeArguments) {
                                             typeArguments += typeArgument.convert<FirTypeProjection>()
                                         }

@@ -1,14 +1,14 @@
 package rest
 
 abstract class Foo<T> {
-    abstract val x: <!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Int><!>
+    abstract val x: T<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>
 
-    abstract fun foo(): <!TYPE_ARGUMENTS_NOT_ALLOWED!>T<String><!>
+    abstract fun foo(): T<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>
 }
 
 fun <T> foo() {
-    bar<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Int><!>>()
-    bar<List<List<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Boolean><!>>>>()
+    bar<T<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>>()
+    bar<List<List<T<!TYPE_ARGUMENTS_NOT_ALLOWED!><Boolean><!>>>>()
 }
 
 fun <T> bar() {}
@@ -26,9 +26,9 @@ class C<F<!SYNTAX!><<!><!SYNTAX!>Boolean<!><!SYNTAX!>><!><!SYNTAX!>><!> <!SYNTAX
 fun <G> gest() {}
 
 fun <T> fest() {
-    val b: List<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Double><!>>
-    gest<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Char><!>>()
+    val b: List<T<!TYPE_ARGUMENTS_NOT_ALLOWED!><Double><!>>
+    gest<T<!TYPE_ARGUMENTS_NOT_ALLOWED!><Char><!>>()
     gest<T>()
-    val c: List<List<List<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<String><!>>>>
-    gest<List<List<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Boolean><!>>>>()
+    val c: List<List<List<T<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>>>>
+    gest<List<List<T<!TYPE_ARGUMENTS_NOT_ALLOWED!><Boolean><!>>>>()
 }

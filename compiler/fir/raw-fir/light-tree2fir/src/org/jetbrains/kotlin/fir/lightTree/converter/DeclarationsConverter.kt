@@ -1843,12 +1843,20 @@ class DeclarationsConverter(
     ): FirTypeRef {
         var simpleFirUserType: FirUserTypeRef? = null
         var identifier: String? = null
+        var identifierSource: FirSourceElement? = null
         val firTypeArguments = mutableListOf<FirTypeProjection>()
+        var typeArgumentsSource: FirSourceElement? = null
         userType.forEachChildren {
             when (it.tokenType) {
                 USER_TYPE -> simpleFirUserType = convertUserType(typeRefSource, it) as? FirUserTypeRef //simple user type
-                REFERENCE_EXPRESSION -> identifier = it.asText
-                TYPE_ARGUMENT_LIST -> firTypeArguments += convertTypeArguments(it)
+                REFERENCE_EXPRESSION -> {
+                    identifierSource = it.toFirSourceElement()
+                    identifier = it.asText
+                }
+                TYPE_ARGUMENT_LIST -> {
+                    typeArgumentsSource = it.toFirSourceElement()
+                    firTypeArguments += convertTypeArguments(it)
+                }
             }
         }
 
@@ -1859,8 +1867,9 @@ class DeclarationsConverter(
             }
 
         val qualifierPart = FirQualifierPartImpl(
+            identifierSource!!,
             identifier.nameAsSafeName(),
-            FirTypeArgumentListImpl(typeRefSource).apply {
+            FirTypeArgumentListImpl(typeArgumentsSource ?: typeRefSource).apply {
                 typeArguments += firTypeArguments
             }
         )

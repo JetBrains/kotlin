@@ -15,4 +15,8 @@ class FirTypeArgumentListImpl(override val source: FirSourceElement) : FirTypeAr
     override val typeArguments = mutableListOf<FirTypeProjection>()
 }
 
-class FirQualifierPartImpl(override val name: Name, override val typeArgumentList: FirTypeArgumentList) : FirQualifierPart
+class FirQualifierPartImpl(
+    override val source: FirSourceElement,
+    override val name: Name,
+    override val typeArgumentList: FirTypeArgumentList
+) : FirQualifierPart

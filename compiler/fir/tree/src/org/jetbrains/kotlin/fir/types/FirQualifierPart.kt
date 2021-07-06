@@ -14,6 +14,7 @@ interface FirTypeArgumentList {
 }
 
 interface FirQualifierPart {
+    val source: FirSourceElement
     val name: Name
     val typeArgumentList: FirTypeArgumentList
 }
