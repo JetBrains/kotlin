@@ -5446,6 +5446,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("assertIs.kt")
+            public void testAssertIs() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts/assertIs.kt");
+            }
+
+            @Test
             @TestMetadata("tryWithLambdaInside.kt")
             public void testTryWithLambdaInside() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts/tryWithLambdaInside.kt");

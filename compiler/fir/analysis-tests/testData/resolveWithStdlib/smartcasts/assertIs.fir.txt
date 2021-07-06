@@ -1,0 +1,5 @@
+FILE: assertIs.kt
+    public final fun foo(arg: R|kotlin/Any|): R|kotlin/Unit| {
+        R|kotlin/test/assertIs|<R|kotlin/String|>(R|<local>/arg|, String())
+        R|<local>/arg|.R|kotlin/String.length|
+    }

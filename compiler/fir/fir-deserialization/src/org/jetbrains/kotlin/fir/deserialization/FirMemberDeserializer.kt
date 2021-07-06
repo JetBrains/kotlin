@@ -426,6 +426,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             versionRequirementsTable = c.versionRequirementTable
         }
         if (proto.hasContract()) {
+            val contractDeserializer = if (proto.typeParameterList.isEmpty()) this.contractDeserializer else FirContractDeserializer(local)
             val contractDescription = contractDeserializer.loadContract(proto.contract, simpleFunction)
             if (contractDescription != null) {
                 simpleFunction.replaceContractDescription(contractDescription)
