@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
-import org.jetbrains.kotlin.resolve.calls.inference.hasDeclaredUpperBoundSelfTypes
+import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
+import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -66,7 +67,7 @@ class VariableFixationFinder(
     ): TypeVariableFixationReadiness = when {
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
-        isTypeInferenceForSelfTypesSupported && hasDeclaredUpperBoundSelfTypes(variable) ->
+        isTypeInferenceForSelfTypesSupported && hasOnlyDeclaredUpperBoundSelfTypes(variable) ->
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
@@ -174,9 +175,13 @@ class VariableFixationFinder(
         }
     }
 
-    private fun Context.hasDeclaredUpperBoundSelfTypes(variable: TypeConstructorMarker): Boolean {
+    private fun Context.hasOnlyDeclaredUpperBoundSelfTypes(variable: TypeConstructorMarker): Boolean {
         val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
-        return constraints.isNotEmpty() && constraints.all(::hasDeclaredUpperBoundSelfTypes)
+        return constraints.isNotEmpty() && constraints.all {
+            val typeConstructor = it.type.typeConstructor()
+            it.position.from is DeclaredUpperBoundConstraintPosition<*>
+                    && (hasRecursiveTypeParametersWithGivenSelfType(typeConstructor) || isRecursiveTypeParameter(typeConstructor))
+        }
     }
 }
 
