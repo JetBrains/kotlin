@@ -17,17 +17,18 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -47,9 +48,9 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-private val INLINE_ONLY_ANNOTATION_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
+private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
-fun FirClass.unsubstitutedScope(context: CheckerContext) =
+fun FirClass.unsubstitutedScope(context: CheckerContext): FirTypeScope =
     this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
 
 /**
@@ -122,29 +123,18 @@ fun FirTypeRef.toRegularClass(session: FirSession): FirRegularClass? {
 }
 
 /**
- * Returns FirSimpleFunction based on the given FirFunctionCall
- */
-inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
-    return this.calleeReference.safeAs<FirResolvedNamedReference>()
-        ?.resolvedSymbol
-        ?.fir as? T
-}
-
-/**
  * Returns the ClassLikeDeclaration where the Fir object has been defined
  * or null if no proper declaration has been found.
  */
-fun FirDeclaration.getContainingClass(context: CheckerContext): FirClassLikeDeclaration? =
-    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(context.session)?.fir
+fun FirDeclaration.getContainingClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? =
+    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(context.session)
 
-fun FirClassLikeSymbol<*>.outerClass(context: CheckerContext): FirClassLikeSymbol<*>? {
+fun FirBasedSymbol<*>.getContainingClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? = fir.getContainingClassSymbol(context)
+
+fun FirClassLikeSymbol<*>.outerClassSymbol(context: CheckerContext): FirClassLikeSymbol<*>? {
     if (this !is FirClassSymbol<*>) return null
     val outerClassId = classId.outerClassId ?: return null
     return context.session.symbolProvider.getClassLikeSymbolByFqName(outerClassId)
-}
-
-fun FirClass.outerClass(context: CheckerContext): FirClass? {
-    return symbol.outerClass(context)?.fir as? FirClass
 }
 
 /**
@@ -290,10 +280,10 @@ fun FirClass.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? {
     return null
 }
 
-val FirFunctionCall.isIterator
+val FirFunctionCall.isIterator: Boolean
     get() = this.calleeReference.name.asString() == "<iterator>"
 
-fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession) =
+fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession): Boolean =
     session.builtinTypes.throwableType.type.isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
 
 val FirValueParameter.hasValOrVar: Boolean
@@ -302,10 +292,10 @@ val FirValueParameter.hasValOrVar: Boolean
         return source.getChild(VAL_VAR_TOKEN_SET) != null
     }
 
-fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
+fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
     type != null && AbstractTypeChecker.isSubtypeOf(context, type, this)
 
-fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
+fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
     type != null && AbstractTypeChecker.isSubtypeOf(context, this, type)
 
 fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
@@ -380,7 +370,8 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
     return false
 }
 
-fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && (this as FirAnnotatedDeclaration).hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
+fun FirMemberDeclaration.isInlineOnly(): Boolean =
+    isInline && (this as FirAnnotatedDeclaration).hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
 
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
     val subtypeFullyExpanded = subtype.fullyExpandedType(context.session)

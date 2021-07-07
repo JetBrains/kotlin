@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.util.ImplementationStatus
 
@@ -166,5 +167,5 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
     }
 
     private fun FirCallableDeclaration.isFromInterfaceOrEnum(context: CheckerContext): Boolean =
-        (getContainingClass(context) as? FirRegularClass)?.let { it.isInterface || it.isEnumClass } == true
+        (getContainingClassSymbol(context) as? FirRegularClassSymbol)?.let { it.isInterface || it.isEnumClass } == true
 }

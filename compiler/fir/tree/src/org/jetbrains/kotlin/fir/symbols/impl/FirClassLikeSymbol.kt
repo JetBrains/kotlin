@@ -57,6 +57,9 @@ class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(
             ensureResolved(FirResolvePhase.STATUS)
             return fir.status as FirResolvedDeclarationStatus
         }
+
+    val companionObjectSymbol: FirRegularClassSymbol?
+        get() = fir.companionObject?.symbol
 }
 
 val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName.topLevel(Name.special("<anonymous>")), true)

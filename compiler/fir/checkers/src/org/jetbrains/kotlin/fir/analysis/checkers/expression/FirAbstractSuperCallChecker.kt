@@ -9,16 +9,17 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
-import org.jetbrains.kotlin.fir.analysis.checkers.getDeclaration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker() {
@@ -33,16 +34,11 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker() {
 
         if (closestClass.classKind == ClassKind.CLASS) {
             // handles all the FirSimpleFunction/FirProperty/etc.
-            val item = expression.getDeclaration<FirCallableDeclaration>()
-                ?: return
+            val declarationSymbol = expression.toResolvedCallableSymbol() ?: return
 
-            val declaration = item.getContainingClass(context).safeAs<FirRegularClass>()
-                ?: return
+            val containingClassSymbol = declarationSymbol.containingClass()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
 
-            if (
-                declaration.modality == Modality.ABSTRACT &&
-                item.modality == Modality.ABSTRACT
-            ) {
+            if (containingClassSymbol.isAbstract && declarationSymbol.isAbstract) {
                 reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL, context)
             }
         }

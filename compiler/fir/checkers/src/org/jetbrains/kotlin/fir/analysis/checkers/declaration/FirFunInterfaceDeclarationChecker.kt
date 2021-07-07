@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
@@ -31,6 +31,7 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
         if (!declaration.isInterface || !declaration.isFun) return
 
         val scope = declaration.unsubstitutedScope(context)
+        val classSymbol = declaration.symbol
 
         var abstractFunction: FirSimpleFunction? = null
 
@@ -52,7 +53,7 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
                 val firProperty = property.fir as? FirProperty ?: continue
                 if (firProperty.isAbstract) {
                     val source =
-                        if (firProperty.getContainingClass(context) != declaration)
+                        if (firProperty.getContainingClassSymbol(context) != classSymbol)
                             declaration.source
                         else
                             firProperty.source
@@ -67,7 +68,7 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
             return
         }
 
-        val inFunInterface = abstractFunction.getContainingClass(context) === declaration
+        val inFunInterface = abstractFunction.getContainingClassSymbol(context) === classSymbol
 
         when {
             abstractFunction.typeParameters.isNotEmpty() ->

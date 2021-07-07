@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEnumEntryInitializer
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
-import org.jetbrains.kotlin.fir.analysis.checkers.outerClass
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.outerClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
     // Initialization order: member property initializers, enum entries, companion object (including members in it).
@@ -68,17 +72,17 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         if (source.kind is FirFakeSourceElementKind) return
 
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
-        val calleeDeclaration = reference.resolvedSymbol.fir
-        val calleeContainingClass = calleeDeclaration.getContainingClass(context) as? FirRegularClass ?: return
+        val calleeSymbol = reference.resolvedSymbol
+        val calleeContainingClassSymbol = calleeSymbol.getContainingClassSymbol(context) as? FirRegularClassSymbol ?: return
         // We're looking for members/entries/companion object in an enum class or members in companion object of an enum class.
-        val calleeIsInsideEnum = calleeContainingClass.isEnumClass
+        val calleeIsInsideEnum = calleeContainingClassSymbol.isEnumClass
         val calleeIsInsideEnumCompanion =
-            calleeContainingClass.isCompanion && (calleeContainingClass.outerClass(context) as? FirRegularClass)?.isEnumClass == true
+            calleeContainingClassSymbol.isCompanion && (calleeContainingClassSymbol.outerClassSymbol(context) as? FirRegularClassSymbol)?.isEnumClass == true
         if (!calleeIsInsideEnum && !calleeIsInsideEnumCompanion) return
 
-        val enumClass =
-            if (calleeIsInsideEnum) calleeContainingClass
-            else calleeContainingClass.outerClass(context) as? FirRegularClass ?: return
+        val enumClassSymbol =
+            if (calleeIsInsideEnum) calleeContainingClassSymbol
+            else calleeContainingClassSymbol.outerClassSymbol(context) as? FirRegularClassSymbol ?: return
 
         // An accessed context within the enum class of interest. We should look up until either enum members or enum entries are found,
         // not just last containing declaration. For example,
@@ -99,11 +103,11 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
             //     INSTANCE(EnumCompanion2.foo())
             //   }
             // find an accessed context within the same enum class.
-            it.getContainingClass(context) == enumClass
-        } ?: return
+            it.getContainingClassSymbol(context) == enumClassSymbol
+        }?.symbol ?: return
 
-        val enumMemberProperties = enumClass.declarations.filterIsInstance<FirProperty>()
-        val enumEntries = enumClass.declarations.filterIsInstance<FirEnumEntry>()
+        val enumMemberProperties = enumClassSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()
+        val enumEntries = enumClassSymbol.declarationSymbols.filterIsInstance<FirEnumEntrySymbol>()
 
         // When checking enum member properties, accesses to enum entries in lazy delegation is legitimate, e.g.,
         //   enum JvmTarget(...) {
@@ -114,7 +118,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         //     }
         //   }
         if (accessedContext in enumMemberProperties) {
-            val lazyDelegation = (accessedContext as FirProperty).lazyDelegation
+            val lazyDelegation = (accessedContext as FirPropertySymbol).lazyDelegation
             if (lazyDelegation != null && lazyDelegation == context.containingDeclarations.lastOrNull()) {
                 return
             }
@@ -135,10 +139,10 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         }
 
         // Members inside the companion object of an enum class
-        if (calleeContainingClass == enumClass.companionObject) {
+        if (calleeContainingClassSymbol == enumClassSymbol.companionObjectSymbol) {
             // Uninitialized from the point of view of members or enum entries of that enum class
             if (accessedContext in enumMemberProperties || accessedContext in enumEntries) {
-                if (calleeDeclaration is FirProperty) {
+                if (calleeSymbol is FirProperty) {
                     // From KT-11769
                     // enum class Fruit(...) {
                     //   APPLE(...);
@@ -147,7 +151,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
                     //   }
                     //   val score = ... <!>common<!>
                     // }
-                    reporter.reportOn(source, FirErrors.UNINITIALIZED_VARIABLE, calleeDeclaration.symbol, context)
+                    reporter.reportOn(source, FirErrors.UNINITIALIZED_VARIABLE, calleeSymbol.symbol, context)
                 } else {
                     // enum class EnumCompanion2(...) {
                     //   INSTANCE(<!>foo<!>())
@@ -156,18 +160,18 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
                     //   }
                     // }
                     // <!>Companion<!>.foo() v.s. <!>foo<!>()
-                    if ((expression.explicitReceiver as? FirResolvedQualifier)?.symbol?.fir == enumClass.companionObject) {
+                    if ((expression.explicitReceiver as? FirResolvedQualifier)?.symbol == enumClassSymbol.companionObjectSymbol) {
                         reporter.reportOn(
                             expression.explicitReceiver!!.source,
                             FirErrors.UNINITIALIZED_ENUM_COMPANION,
-                            enumClass.symbol,
+                            enumClassSymbol,
                             context
                         )
                     } else {
                         reporter.reportOn(
                             expression.calleeReference.source,
                             FirErrors.UNINITIALIZED_ENUM_COMPANION,
-                            enumClass.symbol,
+                            enumClassSymbol,
                             context
                         )
                     }
@@ -176,8 +180,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         }
 
         // The enum entries of an enum class
-        if (calleeDeclaration in enumEntries) {
-            val calleeEnumEntry = calleeDeclaration as FirEnumEntry
+        if (calleeSymbol in enumEntries) {
+            val calleeEnumEntry = calleeSymbol as FirEnumEntrySymbol
             // Uninitialized from the point of view of members of that enum class
             if (accessedContext in enumMemberProperties) {
                 // From KT-6054
@@ -188,7 +192,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
                 //     <!>B<!> -> ...
                 //   }
                 // }
-                reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry.symbol, context)
+                reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry, context)
             }
             // enum class A(...) {
             //   A1(<!>A2<!>),
@@ -198,7 +202,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
             if (accessedContext in enumEntries) {
                 // Technically, this is equal to `enumEntries.indexOf(accessedContext) <= enumEntries.indexOf(calleeDeclaration)`.
                 // Instead of double `indexOf`, we can iterate entries just once until either one appears.
-                var precedingEntry: FirEnumEntry? = null
+                var precedingEntry: FirEnumEntrySymbol? = null
                 enumEntries.forEach {
                     if (precedingEntry != null) return@forEach
                     if (it == calleeEnumEntry || it == accessedContext) {
@@ -206,16 +210,17 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
                     }
                 }
                 if (precedingEntry == accessedContext) {
-                    reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry.symbol, context)
+                    reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry, context)
                 }
             }
         }
     }
 
-    private val FirProperty.lazyDelegation: FirAnonymousFunction?
+    private val FirPropertySymbol.lazyDelegation: FirAnonymousFunction?
         get() {
-            if (delegate == null || delegate !is FirFunctionCall) return null
-            val delegateCall = delegate as FirFunctionCall
+            ensureResolved(FirResolvePhase.BODY_RESOLVE)
+            if (fir.delegate == null || fir.delegate !is FirFunctionCall) return null
+            val delegateCall = fir.delegate as FirFunctionCall
             val callee =
                 (delegateCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirSimpleFunction ?: return null
             if (callee.symbol.callableId.asSingleFqName().asString() != "kotlin.lazy") return null
