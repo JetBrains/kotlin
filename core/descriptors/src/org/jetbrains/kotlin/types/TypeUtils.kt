@@ -216,6 +216,7 @@ private fun KotlinType.extractTypeParametersFromUpperBounds(
     }
 }
 
+@JvmOverloads
 fun hasTypeParameterRecursiveBounds(
     typeParameter: TypeParameterDescriptor,
     selfConstructor: TypeConstructor? = null,
