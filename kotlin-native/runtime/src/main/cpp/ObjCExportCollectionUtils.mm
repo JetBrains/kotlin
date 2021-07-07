@@ -53,22 +53,35 @@ static inline KInt objCSizeToKotlinOrThrow(NSUInteger size) {
 
 // Exported to ObjCExportUtils.kt:
 
+// Note: a lot of functions below call Objective-C virtual methods of arbitrary classes
+// in Runnable thread state. Some these functions are marked with NO_EXTERNAL_CALLS_CHECK.
+// On the one hand, these calls aren't guaranteed to be fast, and also can call back to Kotlin.
+// Anything of this is harmful in Runnable state.
+// On the other hand, anything of this is unlikely to actually happen, and switching thread state
+// to Native might kill the performance, because these functions are just tiny wrappers for tiny functions.
+// So let's just ignore this for now, and deal with it later.
+// TODO: come up with a proper solution.
+
+NO_EXTERNAL_CALLS_CHECK
 extern "C" KInt Kotlin_NSArrayAsKList_getSize(KRef obj) {
   NSArray* array = (NSArray*) GetAssociatedObject(obj);
   return objCSizeToKotlinOrThrow([array count]);
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSArrayAsKList_get, KRef obj, KInt index) {
   NSArray* array = (NSArray*) GetAssociatedObject(obj);
   id element = [array objectAtIndex:index];
   RETURN_RESULT_OF(refFromObjCOrNSNull, element);
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" void Kotlin_NSMutableArrayAsKMutableList_add(KRef thiz, KInt index, KRef element) {
   NSMutableArray* mutableArray = (NSMutableArray*) GetAssociatedObject(thiz);
   [mutableArray insertObject:refToObjCOrNSNull(element) atIndex:index];
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSMutableArrayAsKMutableList_removeAt, KRef thiz, KInt index) {
   NSMutableArray* mutableArray = (NSMutableArray*) GetAssociatedObject(thiz);
 
@@ -78,6 +91,7 @@ extern "C" OBJ_GETTER(Kotlin_NSMutableArrayAsKMutableList_removeAt, KRef thiz, K
   return res;
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSMutableArrayAsKMutableList_set, KRef thiz, KInt index, KRef element) {
   NSMutableArray* mutableArray = (NSMutableArray*) GetAssociatedObject(thiz);
 
@@ -87,6 +101,7 @@ extern "C" OBJ_GETTER(Kotlin_NSMutableArrayAsKMutableList_set, KRef thiz, KInt i
   return res;
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" void Kotlin_NSEnumeratorAsKIterator_computeNext(KRef thiz) {
   NSEnumerator* enumerator = (NSEnumerator*) GetAssociatedObject(thiz);
   id next = [enumerator nextObject];
@@ -98,16 +113,19 @@ extern "C" void Kotlin_NSEnumeratorAsKIterator_computeNext(KRef thiz) {
   }
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" KInt Kotlin_NSSetAsKSet_getSize(KRef thiz) {
   NSSet* set = (NSSet*) GetAssociatedObject(thiz);
   return objCSizeToKotlinOrThrow(set.count);
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" KBoolean Kotlin_NSSetAsKSet_contains(KRef thiz, KRef element) {
   NSSet* set = (NSSet*) GetAssociatedObject(thiz);
   return [set containsObject:refToObjCOrNSNull(element)];
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSSetAsKSet_getElement, KRef thiz, KRef element) {
   NSSet* set = (NSSet*) GetAssociatedObject(thiz);
   id res = [set member:refToObjCOrNSNull(element)];
@@ -118,21 +136,25 @@ static inline OBJ_GETTER(CreateKIteratorFromNSEnumerator, NSEnumerator* enumerat
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSEnumeratorAsKIterator_create, objc_retain(enumerator));
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSSetAsKSet_iterator, KRef thiz) {
   NSSet* set = (NSSet*) GetAssociatedObject(thiz);
   RETURN_RESULT_OF(CreateKIteratorFromNSEnumerator, [set objectEnumerator]);
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" KInt Kotlin_NSDictionaryAsKMap_getSize(KRef thiz) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   return objCSizeToKotlinOrThrow(dict.count);
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsKey(KRef thiz, KRef key) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   return [dict objectForKey:refToObjCOrNSNull(key)] != nullptr;
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsValue(KRef thiz, KRef value) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   id objCValue = refToObjCOrNSNull(value);
@@ -145,12 +167,14 @@ extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsValue(KRef thiz, KRef valu
   return false;
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_get, KRef thiz, KRef key) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   id value = [dict objectForKey:refToObjCOrNSNull(key)];
   RETURN_RESULT_OF(refFromObjCOrNSNull, value);
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_getOrThrowConcurrentModification, KRef thiz, KRef key) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   id value = [dict objectForKey:refToObjCOrNSNull(key)];
@@ -161,16 +185,19 @@ extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_getOrThrowConcurrentModification
   RETURN_RESULT_OF(refFromObjCOrNSNull, value);
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" KBoolean Kotlin_NSDictionaryAsKMap_containsEntry(KRef thiz, KRef key, KRef value) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   return [refToObjCOrNSNull(value) isEqual:[dict objectForKey:refToObjCOrNSNull(key)]];
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_keyIterator, KRef thiz) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   RETURN_RESULT_OF(CreateKIteratorFromNSEnumerator, [dict keyEnumerator]);
 }
 
+NO_EXTERNAL_CALLS_CHECK
 extern "C" OBJ_GETTER(Kotlin_NSDictionaryAsKMap_valueIterator, KRef thiz) {
   NSDictionary* dict = (NSDictionary*) GetAssociatedObject(thiz);
   RETURN_RESULT_OF(CreateKIteratorFromNSEnumerator, [dict objectEnumerator]);

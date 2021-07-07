@@ -74,13 +74,18 @@ extern "C" id Kotlin_ObjCExport_ExceptionAsNSError(KRef exception, const TypeInf
 }
 
 extern "C" id Kotlin_ObjCExport_WrapExceptionToNSError(KRef exception) {
-  NSMutableDictionary<NSErrorUserInfoKey, id>* userInfo = [[NSMutableDictionary new] autorelease];
-  userInfo[@"KotlinException"] = Kotlin_ObjCExport_refToObjC(exception);
-  userInfo[@"KotlinExceptionOrigin"] = @(&kotlinExceptionOriginChar); // Support for different Kotlin runtimes loaded.
-
   ObjHolder messageHolder;
   KRef message = Kotlin_Throwable_getMessage(exception, messageHolder.slot());
   NSString* description = Kotlin_Interop_CreateNSStringFromKString(message);
+
+  id exceptionObjCRef = Kotlin_ObjCExport_refToObjC(exception);
+
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+
+  NSMutableDictionary<NSErrorUserInfoKey, id>* userInfo = [[NSMutableDictionary new] autorelease];
+  userInfo[@"KotlinException"] = exceptionObjCRef;
+  userInfo[@"KotlinExceptionOrigin"] = @(&kotlinExceptionOriginChar); // Support for different Kotlin runtimes loaded.
+
   if (description != nullptr) {
     userInfo[NSLocalizedDescriptionKey] = description;
   }
@@ -97,9 +102,12 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_NSErrorAsExceptionImpl, KRef message, KR
 
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_NSErrorAsException, id error) {
   NSString* description;
+  id wrappedKotlinException = nullptr;
 
   NSError* e = (NSError*) error;
   if (e != nullptr) {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+
     auto userInfo = e.userInfo;
     if (userInfo != nullptr) {
       id kotlinException = userInfo[@"KotlinException"];
@@ -107,12 +115,16 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_NSErrorAsException, id error) {
       if (kotlinException != nullptr &&
             kotlinExceptionOrigin != nullptr && [kotlinExceptionOrigin isEqual:@(&kotlinExceptionOriginChar)]
       ) {
-        RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, kotlinException);
+        wrappedKotlinException = kotlinException;
       }
     }
     description = e.localizedDescription;
   } else {
     description = nullptr;
+  }
+
+  if (wrappedKotlinException != nullptr) {
+    RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, wrappedKotlinException);
   }
 
   ObjHolder messageHolder, errorHolder;
