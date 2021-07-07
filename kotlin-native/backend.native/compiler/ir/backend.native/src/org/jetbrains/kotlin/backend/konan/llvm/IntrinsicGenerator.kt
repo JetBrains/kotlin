@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
@@ -63,6 +64,7 @@ internal enum class IntrinsicType {
     IDENTITY,
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
+    IS_EXPERIMENTAL_MM,
     // Enums
     ENUM_VALUES,
     ENUM_VALUE_OF,
@@ -237,6 +239,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.IDENTITY -> emitIdentity(args)
                 IntrinsicType.GET_CONTINUATION -> emitGetContinuation()
                 IntrinsicType.INTEROP_MEMORY_COPY -> emitMemoryCopy(callSite, args)
+                IntrinsicType.IS_EXPERIMENTAL_MM -> emitIsExperimentalMM()
                 IntrinsicType.RETURN_IF_SUSPENDED,
                 IntrinsicType.INTEROP_BITS_TO_FLOAT,
                 IntrinsicType.INTEROP_BITS_TO_DOUBLE,
@@ -268,6 +271,9 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitIdentity(args: List<LLVMValueRef>): LLVMValueRef =
             args.single()
+
+    private fun FunctionGenerationContext.emitIsExperimentalMM(): LLVMValueRef =
+            Int1(if (context.memoryModel == MemoryModel.EXPERIMENTAL) 1 else 0).llvm
 
     private fun FunctionGenerationContext.emitListOfInternal(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         val varargExpression = callSite.getValueArgument(0) as IrVararg

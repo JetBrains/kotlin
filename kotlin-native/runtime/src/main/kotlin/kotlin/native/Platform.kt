@@ -5,6 +5,8 @@
 package kotlin.native
 
 import kotlin.native.internal.GCUnsafeCall
+import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.IntrinsicType
 
 /**
  * Operating system family.
@@ -131,3 +133,7 @@ private external fun Platform_getCleanersLeakChecker(): Boolean
 
 @GCUnsafeCall("Konan_Platform_setCleanersLeakChecker")
 private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
+
+@TypedIntrinsic(IntrinsicType.IS_EXPERIMENTAL_MM)
+@ExperimentalStdlibApi
+external fun isExperimentalMM(): Boolean

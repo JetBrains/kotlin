@@ -4296,6 +4296,11 @@ task interop_sourceCodeStruct(type: KonanLocalTest) {
     source = "codegen/intrinsics/interop_sourceCodeStruct.kt"
 }
 
+standaloneTest("isExperimentalMM") {
+    source = "codegen/intrinsics/isExperimentalMM.kt"
+    flags = [ "-tr" ]
+}
+
 interopTest("interop_cppClass") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/cpp/cppClass.kt"
