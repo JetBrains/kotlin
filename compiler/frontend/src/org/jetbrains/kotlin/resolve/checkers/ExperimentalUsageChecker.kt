@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.checkers
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
@@ -404,7 +405,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
         private fun checkUsageOfKotlinExperimentalOrUseExperimental(element: PsiElement, context: CheckerContext) {
             val useExperimentalFqNames = context.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
-            if (REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames &&
+            if (!context.languageVersionSettings.supportsFeature(LanguageFeature.OptInRelease) &&
+                REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames &&
                 OLD_EXPERIMENTAL_FQ_NAME.asString() !in useExperimentalFqNames
             ) {
                 context.trace.report(Errors.EXPERIMENTAL_IS_NOT_ENABLED.on(element))

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
@@ -55,8 +56,11 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val useExperimentalFqNames = context.session.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
-        if (OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames) {
+        val languageVersionSettings = context.session.languageVersionSettings
+        val useExperimentalFqNames = languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.OptInRelease) &&
+            OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames
+        ) {
             reporter.reportOn(element, FirErrors.EXPERIMENTAL_IS_NOT_ENABLED, context)
         }
     }

@@ -1,0 +1,8 @@
+package
+
+@kotlin.RequiresOptIn @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class Marker : kotlin.Annotation {
+    public constructor Marker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
