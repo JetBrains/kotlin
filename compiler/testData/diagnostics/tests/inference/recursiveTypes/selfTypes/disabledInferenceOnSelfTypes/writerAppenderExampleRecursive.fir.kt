@@ -1,10 +1,10 @@
 // !LANGUAGE: -TypeInferenceOnCallsWithSelfTypes
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*>")!>WriterAppender.newBuilder()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<out WriterAppender.Builder1<*>>")!>WriterAppender.Builder1()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter B")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newBuilder<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<ERROR CLASS: Cannot infer argument for type parameter B>")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Builder1<!>()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Builder1<*> & Builder2<*>}")!>WriterAppender.intersectTwoSelfTypes()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter B")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>intersectTwoSelfTypes<!>()<!>
 }
 
 object WriterAppender {
@@ -12,7 +12,7 @@ object WriterAppender {
 
     class Builder1<B : Builder1<B>> {
         fun asBuilder(): B {
-            return this <!UNCHECKED_CAST!>as B<!>
+            return this as B
         }
     }
 

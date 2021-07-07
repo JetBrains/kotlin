@@ -22,14 +22,14 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*>")!>WriterAppender.newBuilder()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<out WriterAppender.Builder1<*>>")!>WriterAppender.Builder1()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Builder1<*> & Builder2<*>}")!>WriterAppender.intersectTwoSelfTypes()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*> & WriterAppender.Builder2<*>")!>WriterAppender.intersectTwoSelfTypes()<!>
 }
 
 fun testJava(appender: JavaWriterAppender) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*>")!>appender.newBuilder()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<out WriterAppender.Builder1<*>>")!>appender.Builder1()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?!")!>appender.newBuilder()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<out JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?!>")!>appender.Builder1()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Builder1<*> & Builder2<*>}")!>appender.intersectTwoSelfTypes()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("JavaWriterAppender.Builder1<*>..JavaWriterAppender.Builder1<*>?! & JavaWriterAppender.Builder2<*>..JavaWriterAppender.Builder2<*>?!..JavaWriterAppender.Builder1<*>? & JavaWriterAppender.Builder2<*>?")!>appender.intersectTwoSelfTypes()<!>
 }
 
 object WriterAppender {
@@ -37,7 +37,7 @@ object WriterAppender {
 
     class Builder1<B : Builder1<B>> {
         fun asBuilder(): B {
-            return this <!UNCHECKED_CAST!>as B<!>
+            return this as B
         }
     }
 

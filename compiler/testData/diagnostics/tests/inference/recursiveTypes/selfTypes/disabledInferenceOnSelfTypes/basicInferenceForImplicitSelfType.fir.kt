@@ -6,17 +6,17 @@ class Builder<B : Builder<B>> {
 }
 
 fun testStar(builder: Builder<*>) {
-    builder.test()
+    builder.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!>()
 
     builder
-        .test()
-        .foo()
+        .<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!>()
+        .<!UNRESOLVED_REFERENCE!>foo<!>()
 }
 
 fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
-    builder.test()
+    builder.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!>()
 
     builder
-        .test()
-        .foo()
+        .<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!>()
+        .<!UNRESOLVED_REFERENCE!>foo<!>()
 }
