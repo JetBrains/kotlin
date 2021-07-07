@@ -73,7 +73,7 @@ object CirDeserializers {
 
     private val ALWAYS_HAS_ANNOTATIONS: Flags = flagsOf(Flag.Common.HAS_ANNOTATIONS)
 
-    private fun typeParameter(source: KmTypeParameter, typeResolver: CirTypeResolver): CirTypeParameter = CirTypeParameter.create(
+    private fun typeParameter(source: KmTypeParameter, typeResolver: CirTypeResolver): CirTypeParameter = CirTypeParameter(
         annotations = annotations(ALWAYS_HAS_ANNOTATIONS, typeResolver, source::annotations),
         name = CirName.create(source.name),
         isReified = Flag.TypeParameter.IS_REIFIED(source.flags),
