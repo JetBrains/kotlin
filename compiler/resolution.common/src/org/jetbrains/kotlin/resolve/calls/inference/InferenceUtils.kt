@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.types.model.*
 
 fun ConstraintStorage.buildCurrentSubstitutor(
@@ -49,10 +47,27 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
     )
 }
 
-fun TypeSystemInferenceExtensionContext.hasDeclaredUpperBoundSelfTypes(constraint: Constraint): Boolean {
-    val typeConstructor = constraint.type.typeConstructor()
+fun TypeSystemInferenceExtensionContext.hasRecursiveTypeParametersWithGivenSelfType(selfTypeConstructor: TypeConstructorMarker) =
+    selfTypeConstructor.getParameters().any { it.hasRecursiveBounds(selfTypeConstructor) }
 
-    return constraint.position.from is DeclaredUpperBoundConstraintPosition<*>
-            && (typeConstructor.getParameters().any { it.hasRecursiveBounds(typeConstructor) }
-            || typeConstructor.getTypeParameterClassifier()?.hasRecursiveBounds() == true)
+fun TypeSystemInferenceExtensionContext.isRecursiveTypeParameter(typeConstructor: TypeConstructorMarker) =
+    typeConstructor.getTypeParameterClassifier()?.hasRecursiveBounds() == true
+
+fun TypeSystemInferenceExtensionContext.extractTypeForGivenRecursiveTypeParameter(
+    type: KotlinTypeMarker,
+    typeParameter: TypeParameterMarker
+): KotlinTypeMarker? {
+    for (argument in type.getArguments()) {
+        if (argument.isStarProjection()) continue
+        val typeConstructor = argument.getType().typeConstructor()
+        if (typeConstructor is TypeVariableTypeConstructorMarker
+            && typeConstructor.typeParameter == typeParameter
+            && typeConstructor.typeParameter?.hasRecursiveBounds(type.typeConstructor()) == true
+        ) {
+            return type
+        }
+        extractTypeForGivenRecursiveTypeParameter(argument.getType(), typeParameter)?.let { return it }
+    }
+
+    return null
 }

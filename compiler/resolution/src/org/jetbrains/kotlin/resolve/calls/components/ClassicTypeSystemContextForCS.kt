@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class ClassicTypeSystemContextForCS(
-    override val builtIns: KotlinBuiltIns,
-    private val languageVersionSettings: LanguageVersionSettings
-) : TypeSystemInferenceExtensionContextDelegate,
+class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : TypeSystemInferenceExtensionContextDelegate,
     ClassicTypeSystemContext,
     BuiltInsProvider {
 
@@ -48,16 +45,13 @@ class ClassicTypeSystemContextForCS(
         require(lowerType is UnwrappedType?, lowerType::errorMessage)
         require(constructorProjection is TypeProjectionBase, constructorProjection::errorMessage)
 
-        val isTypeInferenceForSelfTypesSupported =
-            languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
-
         @Suppress("UNCHECKED_CAST")
         val newCapturedTypeConstructor = NewCapturedTypeConstructor(
             constructorProjection,
             constructorSupertypes as List<UnwrappedType>
         )
         return NewCapturedType(
-            if (isTypeInferenceForSelfTypesSupported) captureStatus else CaptureStatus.FOR_INCORPORATION,
+            captureStatus,
             newCapturedTypeConstructor,
             lowerType = lowerType
         )
@@ -117,5 +111,5 @@ fun NewConstraintSystemImpl(
     constraintInjector: ConstraintInjector,
     builtIns: KotlinBuiltIns
 ): NewConstraintSystemImpl {
-    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, constraintInjector.languageVersionSettings))
+    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns))
 }
