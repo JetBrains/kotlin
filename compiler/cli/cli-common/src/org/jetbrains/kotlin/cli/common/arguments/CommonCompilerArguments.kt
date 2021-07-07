@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import java.util.*
@@ -379,9 +380,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             val experimentalFqNames = experimental?.toList().orEmpty()
             if (experimentalFqNames.isNotEmpty()) {
                 put(AnalysisFlags.experimental, experimentalFqNames)
-                collector.report(CompilerMessageSeverity.WARNING, "'-Xexperimental' is deprecated and will be removed in a future release")
+                collector.report(WARNING, "'-Xexperimental' is deprecated and will be removed in a future release")
             }
-            put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty() + optIn?.toList().orEmpty())
+            val useExperimentalFqNames = useExperimental?.toList().orEmpty()
+            if (useExperimentalFqNames.isNotEmpty()) {
+                collector.report(WARNING, "'-Xuse-experimental' is deprecated and will be removed in a future release")
+            }
+            put(AnalysisFlags.useExperimental, useExperimentalFqNames + optIn?.toList().orEmpty())
             put(AnalysisFlags.expectActualLinker, expectActualLinker)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)

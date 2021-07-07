@@ -9,3 +9,6 @@ annotation class Warning1
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
 annotation class Warning2
+
+@RequiresOptIn
+annotation class OneMore

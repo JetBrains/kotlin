@@ -1,4 +1,5 @@
 warning: '-Xexperimental' is deprecated and will be removed in a future release
+warning: '-Xuse-experimental' is deprecated and will be removed in a future release
 warning: opt-in requirement marker org.test.Warning2 is deprecated. Warning2
 warning: opt-in requirement marker org.test.Warning1 is deprecated. Warning1
 OK
