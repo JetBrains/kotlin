@@ -295,7 +295,6 @@ class AnonymousObjectTransformer(
         capturedBuilder: ParametersBuilder,
         isConstructor: Boolean
     ): InlineResult {
-        val typeParametersToReify = inliningContext.root.inlineMethodReifier.reifyInstructions(sourceNode)
         val parameters =
             if (isConstructor) capturedBuilder.buildParameters() else getMethodParametersWithCaptured(capturedBuilder, sourceNode)
 
@@ -304,7 +303,10 @@ class AnonymousObjectTransformer(
             transformationInfo.capturedLambdasToInline, parentRemapper, isConstructor
         )
 
-        val inliner = MethodInliner(
+        val reifiedTypeParametersUsages = if (inliningContext.shouldReifyTypeParametersInObjects)
+            inliningContext.root.inlineMethodReifier.reifyInstructions(sourceNode)
+        else null
+        val result = MethodInliner(
             sourceNode,
             parameters,
             inliningContext.subInline(transformationInfo.nameGenerator),
@@ -319,10 +321,8 @@ class AnonymousObjectTransformer(
                 inliningContext.callSiteInfo.file,
                 inliningContext.callSiteInfo.lineNumber
             ), null
-        )
-
-        val result = inliner.doInline(deferringVisitor, LocalVarRemapper(parameters, 0), false, mapOf())
-        result.reifiedTypeParametersUsages.mergeAll(typeParametersToReify)
+        ).doInline(deferringVisitor, LocalVarRemapper(parameters, 0), false, mapOf())
+        reifiedTypeParametersUsages?.let(result.reifiedTypeParametersUsages::mergeAll)
         deferringVisitor.visitMaxs(-1, -1)
         return result
     }

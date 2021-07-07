@@ -3085,6 +3085,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
             runTest("compiler/testData/codegen/boxInline/reified/kt9637_2.kt");
         }
 
+        @TestMetadata("nameClash.kt")
+        public void testNameClash() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/nameClash.kt");
+        }
+
         @TestMetadata("nonCapturingObjectInLambda.kt")
         public void testNonCapturingObjectInLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/nonCapturingObjectInLambda.kt");
