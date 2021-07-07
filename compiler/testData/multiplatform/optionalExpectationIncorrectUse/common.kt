@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// ADDITIONAL_COMPILER_ARGUMENTS: -Xopt-in=kotlin.ExperimentalMultiplatform
+// ADDITIONAL_COMPILER_ARGUMENTS: -opt-in=kotlin.ExperimentalMultiplatform
 
 @OptionalExpectation
 expect annotation class A()

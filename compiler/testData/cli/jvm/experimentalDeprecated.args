@@ -1,8 +1,11 @@
 $TESTDATA_DIR$/experimentalDeprecated.kt
 -d
 $TEMP_DIR$
--Xopt-in=kotlin.RequiresOptIn
+-opt-in
+kotlin.RequiresOptIn
 -Xexperimental=org.test.Error1
 -Xexperimental=org.test.Hidden1
--Xopt-in=org.test.Error2
--Xopt-in=org.test.Hidden2
+-opt-in
+org.test.Error2
+-opt-in
+org.test.Hidden2

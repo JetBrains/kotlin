@@ -19,6 +19,7 @@ where possible options include:
   -help (-h)                 Print a synopsis of standard options
   -kotlin-home <path>        Path to the home directory of Kotlin compiler used for discovery of runtime libraries
   -language-version <version> Provide source compatibility with the specified version of Kotlin
+  -opt-in <fq.name>          Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name
   -P plugin:<pluginId>:<optionName>=<value>
                              Pass an option to a plugin
   -progressive               Enable progressive compiler mode.

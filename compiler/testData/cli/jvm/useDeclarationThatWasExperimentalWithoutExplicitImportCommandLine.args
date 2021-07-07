@@ -3,4 +3,5 @@ $TESTDATA_DIR$/useDeclarationThatWasExperimentalWithoutMarker.kt
 $TEMP_DIR$
 -language-version
 1.3
--Xopt-in=kotlin.ExperimentalStdlibApi
+-opt-in
+kotlin.ExperimentalStdlibApi

@@ -1,6 +1,9 @@
 $TESTDATA_DIR$/experimentalUnresolved.kt
 -d
 $TEMP_DIR$
--Xopt-in=org.test.Unresolved1
+-opt-in
+org.test.Unresolved1
+-opt-in
+org.test.Unresolved3
 -Xexperimental=org.test.Unresolved2
--Xopt-in=org.test.Unresolved3
+

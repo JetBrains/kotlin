@@ -2,4 +2,5 @@ $TESTDATA_DIR$/experimentalIsNotMarker.kt
 -d
 $TEMP_DIR$
 -Xexperimental=org.test.NotAMarker1
--Xopt-in=org.test.NotAMarker2
+-opt-in
+org.test.NotAMarker2

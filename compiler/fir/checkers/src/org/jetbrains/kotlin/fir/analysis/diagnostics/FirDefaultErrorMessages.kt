@@ -596,7 +596,7 @@ class FirDefaultErrorMessages {
             map.put(EXPERIMENTAL_OVERRIDE, "{1}", TO_STRING, STRING)
             map.put(EXPERIMENTAL_OVERRIDE_ERROR, "{1}", TO_STRING, STRING)
 
-            map.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xopt-in=kotlin.RequiresOptIn'")
+            map.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'")
             map.put(EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation")
             map.put(
                 EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL,
