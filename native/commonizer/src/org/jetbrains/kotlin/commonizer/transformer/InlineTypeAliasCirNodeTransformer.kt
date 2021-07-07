@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Composite.Companion.plus
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.PreferredNode
-import org.jetbrains.kotlin.commonizer.transformer.CirNodeTransformer.Context
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.storage.StorageManager
@@ -19,7 +18,7 @@ internal class InlineTypeAliasCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers
 ) : CirNodeTransformer {
-    override fun Context.invoke(root: CirRootNode) {
+    override fun invoke(root: CirRootNode) {
         root.modules.values.forEach(::invoke)
     }
 
@@ -88,21 +87,21 @@ internal class InlineTypeAliasCirNodeTransformer(
             val aliasedConstructor = aliasedConstructorNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.constructors.getOrPut(key) {
                 buildClassConstructorNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
-            }.targetDeclarations[targetIndex] = aliasedConstructor.withContainingClass(intoClass).markedArtificial()
+            }.targetDeclarations[targetIndex] = aliasedConstructor.withContainingClass(intoClass)
         }
 
         fromAliasedClassNode.functions.forEach { (key, aliasedFunctionNode) ->
             val aliasedFunction = aliasedFunctionNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.functions.getOrPut(key) {
                 buildFunctionNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
-            }.targetDeclarations[targetIndex] = aliasedFunction.withContainingClass(intoClass).markedArtificial()
+            }.targetDeclarations[targetIndex] = aliasedFunction.withContainingClass(intoClass)
         }
 
         fromAliasedClassNode.properties.forEach { (key, aliasedPropertyNode) ->
             val aliasedProperty = aliasedPropertyNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.properties.getOrPut(key) {
                 buildPropertyNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
-            }.targetDeclarations[targetIndex] = aliasedProperty.withContainingClass(intoClass).markedArtificial()
+            }.targetDeclarations[targetIndex] = aliasedProperty.withContainingClass(intoClass)
         }
     }
 
@@ -132,7 +131,7 @@ private fun ClassNodeIndex(module: CirModuleNode): ClassNodeIndex = module.packa
 private data class ArtificialAliasedCirClass(
     val pointingTypeAlias: CirTypeAlias,
     val pointedClass: CirClass
-) : CirClass by pointedClass, ArtificialCirDeclaration {
+) : CirClass by pointedClass {
     override val name: CirName = pointingTypeAlias.name
     override var companion: CirName?
         get() = null
@@ -143,4 +142,4 @@ private fun CirTypeAlias.toArtificialCirClass(): CirClass = CirClass.create(
     annotations = emptyList(), name = name, typeParameters = typeParameters,
     visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
     companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
-).also { it.supertypes = emptyList() }.markedArtificial()
+).also { it.supertypes = emptyList() }
