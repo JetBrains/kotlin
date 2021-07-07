@@ -42,7 +42,6 @@ open class FirImportResolveTransformer protected constructor(
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
-        file.replaceResolvePhase(transformerPhase)
         return file.also {
             val prevValue = currentFile
             currentFile = file

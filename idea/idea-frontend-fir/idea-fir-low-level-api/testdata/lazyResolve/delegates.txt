@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: delegates.kt
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
@@ -97,7 +96,7 @@ FILE: delegates.kt
 
 SUPER_TYPES:
 FILE: delegates.kt
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -145,7 +144,7 @@ FILE: delegates.kt
 
 TYPES:
 FILE: delegates.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -193,7 +192,7 @@ FILE: delegates.kt
 
 STATUS:
 FILE: delegates.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -241,7 +240,7 @@ FILE: delegates.kt
 
 CONTRACTS:
 FILE: delegates.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -289,7 +288,7 @@ FILE: delegates.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: delegates.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -337,49 +336,49 @@ FILE: delegates.kt
 
 BODY_RESOLVE:
 FILE: delegates.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/valueWithExplicitType|)
         R|/receive|(R|/valueWithImplicitType|)
         R|/variableWithExplicitType| = Int(10)
         R|/variableWithImplicitType| = Int(10)
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
-        private [BODY_RESOLVE] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+    public final [STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+        private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
-        public final override operator [BODY_RESOLVE] fun getValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+        public final override operator [RAW_FIR] fun getValue([RAW_FIR] thisRef: R|kotlin/Any?|, [RAW_FIR] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
             ^getValue Int(1)
         }
 
-        public final override operator [BODY_RESOLVE] fun setValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|, [BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
+        public final override operator [RAW_FIR] fun setValue([RAW_FIR] thisRef: R|kotlin/Any?|, [RAW_FIR] property: R|kotlin/reflect/KProperty<*>|, [RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
     }
 
         [BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val valueWithExplicitType: R|kotlin/Int|by delegate#
+    public final [STATUS] val valueWithExplicitType: R|kotlin/Int|by delegate#
         [STATUS] public get(): <implicit> {
             ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [STATUS] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [STATUS] public get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithExplicitType: R|kotlin/Int|by delegate#
+    public final [STATUS] var variableWithExplicitType: R|kotlin/Int|by delegate#
         [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([STATUS] <set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [STATUS] public get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }
-        [BODY_RESOLVE] public set([BODY_RESOLVE] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }
 
@@ -433,97 +432,97 @@ FILE: delegates.kt
 
 BodyResolveWithChildren:
 FILE: delegates.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/valueWithExplicitType|)
         R|/receive|(R|/valueWithImplicitType|)
         R|/variableWithExplicitType| = Int(10)
         R|/variableWithImplicitType| = Int(10)
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
-        private [BODY_RESOLVE] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+    public final [STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+        private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
-        public final override operator [BODY_RESOLVE] fun getValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+        public final override operator [RAW_FIR] fun getValue([RAW_FIR] thisRef: R|kotlin/Any?|, [RAW_FIR] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
             ^getValue Int(1)
         }
 
-        public final override operator [BODY_RESOLVE] fun setValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|, [BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
+        public final override operator [RAW_FIR] fun setValue([RAW_FIR] thisRef: R|kotlin/Any?|, [RAW_FIR] property: R|kotlin/reflect/KProperty<*>|, [RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
     }
 
         [BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val valueWithExplicitType: R|kotlin/Int|by delegate#
+    public final [STATUS] val valueWithExplicitType: R|kotlin/Int|by delegate#
         [STATUS] public get(): <implicit> {
             ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [STATUS] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [STATUS] public get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithExplicitType: R|kotlin/Int|by delegate#
+    public final [STATUS] var variableWithExplicitType: R|kotlin/Int|by delegate#
         [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([STATUS] <set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [STATUS] public get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }
-        [BODY_RESOLVE] public set([BODY_RESOLVE] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }
 
 CallableBodyResolve:
 FILE: delegates.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/valueWithExplicitType|)
         R|/receive|(R|/valueWithImplicitType|)
         R|/variableWithExplicitType| = Int(10)
         R|/variableWithImplicitType| = Int(10)
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
-        private [BODY_RESOLVE] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+    public final [STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+        private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
-        public final override operator [BODY_RESOLVE] fun getValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+        public final override operator [RAW_FIR] fun getValue([RAW_FIR] thisRef: R|kotlin/Any?|, [RAW_FIR] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
             ^getValue Int(1)
         }
 
-        public final override operator [BODY_RESOLVE] fun setValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|, [BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
+        public final override operator [RAW_FIR] fun setValue([RAW_FIR] thisRef: R|kotlin/Any?|, [RAW_FIR] property: R|kotlin/reflect/KProperty<*>|, [RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
     }
 
         [BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val valueWithExplicitType: R|kotlin/Int|by delegate#
+    public final [STATUS] val valueWithExplicitType: R|kotlin/Int|by delegate#
         [STATUS] public get(): <implicit> {
             ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [STATUS] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [STATUS] public get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithExplicitType: R|kotlin/Int|by delegate#
+    public final [STATUS] var variableWithExplicitType: R|kotlin/Int|by delegate#
         [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([STATUS] <set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [STATUS] public get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }
-        [BODY_RESOLVE] public set([BODY_RESOLVE] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }
 
@@ -577,7 +576,7 @@ FILE: delegates.kt
 
 AnnotationType:
 FILE: delegates.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -625,55 +624,55 @@ FILE: delegates.kt
 
 AnnotationsArguments:
 FILE: delegates.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/valueWithExplicitType|)
         R|/receive|(R|/valueWithImplicitType|)
         R|/variableWithExplicitType| = Int(10)
         R|/variableWithImplicitType| = Int(10)
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
-        private [BODY_RESOLVE] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+    public final [STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+        private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
-        public final override operator [BODY_RESOLVE] fun getValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+        public final override operator [RAW_FIR] fun getValue([RAW_FIR] thisRef: R|kotlin/Any?|, [RAW_FIR] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
             ^getValue Int(1)
         }
 
-        public final override operator [BODY_RESOLVE] fun setValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|, [BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
+        public final override operator [RAW_FIR] fun setValue([RAW_FIR] thisRef: R|kotlin/Any?|, [RAW_FIR] property: R|kotlin/reflect/KProperty<*>|, [RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
     }
 
         [BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val valueWithExplicitType: R|kotlin/Int|by delegate#
+    public final [STATUS] val valueWithExplicitType: R|kotlin/Int|by delegate#
         [STATUS] public get(): <implicit> {
             ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [STATUS] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [STATUS] public get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithExplicitType: R|kotlin/Int|by delegate#
+    public final [STATUS] var variableWithExplicitType: R|kotlin/Int|by delegate#
         [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([STATUS] <set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [STATUS] public get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }
-        [BODY_RESOLVE] public set([BODY_RESOLVE] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }
 
 CallableContracts:
 FILE: delegates.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -721,7 +720,7 @@ FILE: delegates.kt
 
 DeclarationStatus:
 FILE: delegates.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -769,7 +768,7 @@ FILE: delegates.kt
 
 ValueParametersTypes:
 FILE: delegates.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -817,7 +816,7 @@ FILE: delegates.kt
 
 TypeParametersTypes:
 FILE: delegates.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
         variableWithExplicitType# = IntegerLiteral(10)
@@ -865,15 +864,15 @@ FILE: delegates.kt
 
 FILE RAW TO BODY:
 FILE: delegates.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/valueWithExplicitType|)
         R|/receive|(R|/valueWithImplicitType|)
         R|/variableWithExplicitType| = Int(10)
         R|/variableWithImplicitType| = Int(10)
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+    public final [BODY_RESOLVE] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
         private [BODY_RESOLVE] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
@@ -888,22 +887,22 @@ FILE: delegates.kt
     }
 
         [BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] val valueWithExplicitType: R|kotlin/Int|by R|/delegate|
+    public final [BODY_RESOLVE] val valueWithExplicitType: R|kotlin/Int|by R|/delegate|
         [BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/valueWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+    public final [BODY_RESOLVE] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
         [BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var variableWithExplicitType: R|kotlin/Int|by R|/delegate|
+    public final [BODY_RESOLVE] var variableWithExplicitType: R|kotlin/Int|by R|/delegate|
         [BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/variableWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithExplicitType|)
         }
         [BODY_RESOLVE] public set([BODY_RESOLVE] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+    public final [BODY_RESOLVE] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
         [BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }

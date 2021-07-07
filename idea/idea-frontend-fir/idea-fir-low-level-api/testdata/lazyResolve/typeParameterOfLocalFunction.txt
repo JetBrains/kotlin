@@ -8,7 +8,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 IMPORTS:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -16,7 +16,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 SUPER_TYPES:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -24,7 +24,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 TYPES:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -32,7 +32,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 STATUS:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -40,7 +40,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 CONTRACTS:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -48,7 +48,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -56,7 +56,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 BODY_RESOLVE:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -72,7 +72,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 BodyResolveWithChildren:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -80,7 +80,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 AnnotationType:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -88,7 +88,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 AnnotationsArguments:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -96,7 +96,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 DeclarationStatus:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -104,7 +104,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 ValueParametersTypes:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -112,7 +112,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 TypeParametersTypes:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 
@@ -120,7 +120,7 @@ FILE: typeParameterOfLocalFunction.kt
 
 FILE RAW TO BODY:
 FILE: typeParameterOfLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
         }
 

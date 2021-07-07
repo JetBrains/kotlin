@@ -66,7 +66,6 @@ class FirClassDeclaredMemberScope(
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is D) {
-                symbol.ensureResolvedForCalls()
                 processor(symbol)
             }
         }

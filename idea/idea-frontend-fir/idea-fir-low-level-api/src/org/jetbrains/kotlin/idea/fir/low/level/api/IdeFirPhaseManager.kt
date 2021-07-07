@@ -27,7 +27,7 @@ internal class IdeFirPhaseManager(
     ) {
         val fir = symbol.fir as FirDeclaration
         try {
-            if (fir.resolvePhase < requiredPhase) { //TODO Make thread safe
+            if (fir.resolvePhase < requiredPhase) {
                 lazyDeclarationResolver.lazyResolveDeclaration(
                     firDeclarationToResolve = fir,
                     moduleFileCache = cache,

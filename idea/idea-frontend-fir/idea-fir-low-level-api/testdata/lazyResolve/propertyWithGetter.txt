@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: propertyWithGetter.kt
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
@@ -25,7 +24,7 @@ FILE: propertyWithGetter.kt
 
 SUPER_TYPES:
 FILE: propertyWithGetter.kt
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -37,7 +36,7 @@ FILE: propertyWithGetter.kt
 
 TYPES:
 FILE: propertyWithGetter.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -49,7 +48,7 @@ FILE: propertyWithGetter.kt
 
 STATUS:
 FILE: propertyWithGetter.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -61,7 +60,7 @@ FILE: propertyWithGetter.kt
 
 CONTRACTS:
 FILE: propertyWithGetter.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -73,7 +72,7 @@ FILE: propertyWithGetter.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: propertyWithGetter.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -85,12 +84,12 @@ FILE: propertyWithGetter.kt
 
 BODY_RESOLVE:
 FILE: propertyWithGetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val withGetter: R|kotlin/Int|
+    public final [STATUS] val withGetter: R|kotlin/Int|
         [STATUS] public get(): R|kotlin/Int| {
             ^ IntegerLiteral(42)
         }
@@ -109,24 +108,24 @@ FILE: propertyWithGetter.kt
 
 BodyResolveWithChildren:
 FILE: propertyWithGetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val withGetter: R|kotlin/Int|
+    public final [STATUS] val withGetter: R|kotlin/Int|
         [STATUS] public get(): R|kotlin/Int| {
             ^ IntegerLiteral(42)
         }
 
 CallableBodyResolve:
 FILE: propertyWithGetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val withGetter: R|kotlin/Int|
+    public final [STATUS] val withGetter: R|kotlin/Int|
         [STATUS] public get(): R|kotlin/Int| {
             ^ IntegerLiteral(42)
         }
@@ -145,7 +144,7 @@ FILE: propertyWithGetter.kt
 
 AnnotationType:
 FILE: propertyWithGetter.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -157,19 +156,19 @@ FILE: propertyWithGetter.kt
 
 AnnotationsArguments:
 FILE: propertyWithGetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] val withGetter: R|kotlin/Int|
+    public final [STATUS] val withGetter: R|kotlin/Int|
         [STATUS] public get(): R|kotlin/Int| {
             ^ IntegerLiteral(42)
         }
 
 CallableContracts:
 FILE: propertyWithGetter.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -181,7 +180,7 @@ FILE: propertyWithGetter.kt
 
 DeclarationStatus:
 FILE: propertyWithGetter.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -193,7 +192,7 @@ FILE: propertyWithGetter.kt
 
 ValueParametersTypes:
 FILE: propertyWithGetter.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -205,7 +204,7 @@ FILE: propertyWithGetter.kt
 
 TypeParametersTypes:
 FILE: propertyWithGetter.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -217,12 +216,12 @@ FILE: propertyWithGetter.kt
 
 FILE RAW TO BODY:
 FILE: propertyWithGetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] val withGetter: R|kotlin/Int|
+    public final [BODY_RESOLVE] val withGetter: R|kotlin/Int|
         [BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ Int(42)
         }

@@ -27,19 +27,7 @@ abstract class FirAbstractPhaseTransformer<D>(
 
     override fun transformFile(file: FirFile, data: D): FirFile {
         checkSessionConsistency(file)
-        if (file.resolvePhase < transformerPhase) {
-            file.replaceResolvePhase(transformerPhase)
-        }
-
         return super.transformFile(file, data)
-    }
-
-    override fun transformDeclaration(declaration: FirDeclaration, data: D): FirDeclaration {
-        if (declaration.resolvePhase < transformerPhase) {
-            declaration.replaceResolvePhase(transformerPhase)
-        }
-
-        return super.transformDeclaration(declaration, data)
     }
 
     protected fun checkSessionConsistency(file: FirFile) {

@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: superTypesLoop.kt
     public? open [RAW_FIR] class resolveMe : C {
@@ -55,25 +54,25 @@ FILE: superTypesLoop.kt
 
 SUPER_TYPES:
 FILE: superTypesLoop.kt
-    public? open [SUPER_TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class resolveMe : R|C| {
-        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [SUPER_TYPES] class resolveMe : R|C| {
+        public? [SUPER_TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<C>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public? open [RAW_FIR] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
             super<A>()
         }
@@ -82,26 +81,26 @@ FILE: superTypesLoop.kt
 
 TYPES:
 FILE: superTypesLoop.kt
-    public? open [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|C| {
+    public? open [TYPES] class resolveMe : R|C| {
         public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
     public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
+        public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
             super<A>()
         }
 
@@ -109,26 +108,26 @@ FILE: superTypesLoop.kt
 
 STATUS:
 FILE: superTypesLoop.kt
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] class resolveMe : R|C| {
+    public open [STATUS] class resolveMe : R|C| {
         public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
+    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }
 
@@ -136,26 +135,26 @@ FILE: superTypesLoop.kt
 
 CONTRACTS:
 FILE: superTypesLoop.kt
-    public open [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] class resolveMe : R|C| {
+    public open [CONTRACTS] class resolveMe : R|C| {
         public [CONTRACTS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
+    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }
 
@@ -163,26 +162,26 @@ FILE: superTypesLoop.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: superTypesLoop.kt
-    public open [IMPLICIT_TYPES_BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] class resolveMe : R|C| {
-        public [CONTRACTS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [IMPLICIT_TYPES_BODY_RESOLVE] class resolveMe : R|C| {
+        public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
+    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }
 
@@ -190,25 +189,25 @@ FILE: superTypesLoop.kt
 
 BODY_RESOLVE:
 FILE: superTypesLoop.kt
-    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|C| {
+    public open [BODY_RESOLVE] class resolveMe : R|C| {
         public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [STATUS] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }
@@ -244,25 +243,25 @@ FILE: superTypesLoop.kt
 
 BodyResolveWithChildren:
 FILE: superTypesLoop.kt
-    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|C| {
+    public open [BODY_RESOLVE] class resolveMe : R|C| {
         public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [STATUS] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }
@@ -271,26 +270,26 @@ FILE: superTypesLoop.kt
 
 AnnotationType:
 FILE: superTypesLoop.kt
-    public? open [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|C| {
+    public? open [TYPES] class resolveMe : R|C| {
         public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
     public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
+        public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
             super<A>()
         }
 
@@ -298,25 +297,25 @@ FILE: superTypesLoop.kt
 
 AnnotationsArguments:
 FILE: superTypesLoop.kt
-    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|C| {
+    public open [BODY_RESOLVE] class resolveMe : R|C| {
         public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [STATUS] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }
@@ -325,25 +324,25 @@ FILE: superTypesLoop.kt
 
 ClassSuperTypes:
 FILE: superTypesLoop.kt
-    public? open [SUPER_TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class resolveMe : R|C| {
-        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [SUPER_TYPES] class resolveMe : R|C| {
+        public? [SUPER_TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<C>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public? open [RAW_FIR] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
             super<A>()
         }
@@ -352,26 +351,26 @@ FILE: superTypesLoop.kt
 
 DeclarationStatus:
 FILE: superTypesLoop.kt
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] class resolveMe : R|C| {
+    public open [STATUS] class resolveMe : R|C| {
         public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
-    public open [STATUS] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
+    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }
 
@@ -379,26 +378,26 @@ FILE: superTypesLoop.kt
 
 ValueParametersTypes:
 FILE: superTypesLoop.kt
-    public? open [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|C| {
+    public? open [TYPES] class resolveMe : R|C| {
         public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
     public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
+        public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
             super<A>()
         }
 
@@ -406,26 +405,26 @@ FILE: superTypesLoop.kt
 
 TypeParametersTypes:
 FILE: superTypesLoop.kt
-    public? open [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] class resolveMe : R|C| {
+    public? open [TYPES] class resolveMe : R|C| {
         public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [SUPER_TYPES] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<B>()
         }
 
     }
-    public? open [SUPER_TYPES] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             super<C>()
         }
 
     }
     public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
+        public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
             super<A>()
         }
 
@@ -433,25 +432,25 @@ FILE: superTypesLoop.kt
 
 FILE RAW TO BODY:
 FILE: superTypesLoop.kt
-    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class resolveMe : R|C| {
+    public open [BODY_RESOLVE] class resolveMe : R|C| {
         public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [BODY_RESOLVE] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public [BODY_RESOLVE] [ContainingClassKey=A] constructor(): R|A| {
             super<R|B|>()
         }
 
     }
-    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [BODY_RESOLVE] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public [BODY_RESOLVE] [ContainingClassKey=B] constructor(): R|B| {
             super<R|C|>()
         }
 
     }
-    public open [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [BODY_RESOLVE] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [BODY_RESOLVE] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }

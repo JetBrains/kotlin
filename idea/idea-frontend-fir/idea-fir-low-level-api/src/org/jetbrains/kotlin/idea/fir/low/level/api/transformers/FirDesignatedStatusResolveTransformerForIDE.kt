@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensureDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
 /**
@@ -25,15 +23,11 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
     private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val declarationPhaseDowngraded: Boolean,
 ) : FirLazyTransformerForIDE {
     private inner class FirDesignatedStatusResolveTransformerForIDE :
         FirStatusResolveTransformer(session, scopeSession, StatusComputationSession.Regular()) {
 
         val designationTransformer = IDEDeclarationTransformer(designation)
-
-        override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
-            firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
 
         override fun transformDeclarationContent(declaration: FirDeclaration, data: FirResolvedDeclarationStatus?): FirDeclaration =
             designationTransformer.transformDeclarationContent(this, declaration, data) {
@@ -42,9 +36,8 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
     }
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
-        if (designation.isResolvedForAllDeclarations(FirResolvePhase.STATUS, declarationPhaseDowngraded)) return
-        designation.declaration.updateResolvedPhaseForDeclarationAndChildren(FirResolvePhase.STATUS)
-        designation.ensureDesignation(FirResolvePhase.TYPES)
+        if (designation.declaration.resolvePhase >= FirResolvePhase.STATUS) return
+        designation.declaration.ensurePhase(FirResolvePhase.TYPES)
 
         val transformer = FirDesignatedStatusResolveTransformerForIDE()
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {
@@ -52,7 +45,7 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
         }
 
         transformer.designationTransformer.ensureDesignationPassed()
-        designation.path.forEach(::ensureResolved)
+        updatePhaseDeep(designation.declaration, FirResolvePhase.STATUS)
         ensureResolved(designation.declaration)
         ensureResolvedDeep(designation.declaration)
     }

@@ -18,7 +18,7 @@ FILE: parameterOfLocalSetter.kt
 
 IMPORTS:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -36,7 +36,7 @@ FILE: parameterOfLocalSetter.kt
 
 SUPER_TYPES:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -54,7 +54,7 @@ FILE: parameterOfLocalSetter.kt
 
 TYPES:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -72,7 +72,7 @@ FILE: parameterOfLocalSetter.kt
 
 STATUS:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -90,7 +90,7 @@ FILE: parameterOfLocalSetter.kt
 
 CONTRACTS:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -108,7 +108,7 @@ FILE: parameterOfLocalSetter.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -126,7 +126,7 @@ FILE: parameterOfLocalSetter.kt
 
 BODY_RESOLVE:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -162,7 +162,7 @@ FILE: parameterOfLocalSetter.kt
 
 BodyResolveWithChildren:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -180,7 +180,7 @@ FILE: parameterOfLocalSetter.kt
 
 CallableBodyResolve:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -198,7 +198,7 @@ FILE: parameterOfLocalSetter.kt
 
 CallableReturnType:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -216,7 +216,7 @@ FILE: parameterOfLocalSetter.kt
 
 AnnotationType:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -234,7 +234,7 @@ FILE: parameterOfLocalSetter.kt
 
 AnnotationsArguments:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -252,7 +252,7 @@ FILE: parameterOfLocalSetter.kt
 
 CallableContracts:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -270,7 +270,7 @@ FILE: parameterOfLocalSetter.kt
 
 DeclarationStatus:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -288,7 +288,7 @@ FILE: parameterOfLocalSetter.kt
 
 ValueParametersTypes:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -306,7 +306,7 @@ FILE: parameterOfLocalSetter.kt
 
 TypeParametersTypes:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
@@ -324,7 +324,7 @@ FILE: parameterOfLocalSetter.kt
 
 FILE RAW TO BODY:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
             public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()

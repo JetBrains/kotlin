@@ -71,7 +71,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         transformer.firTowerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
-        transformer.replaceDeclarationResolvePhaseIfNeeded(declaration, transformerPhase)
         return transformer.transformDeclarationContent(declaration, data)
     }
 
@@ -89,7 +88,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             callableMember.valueParameters.forEach {
                 it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
                 it.transformVarargTypeToArrayType()
-                it.replaceResolvePhase(FirResolvePhase.STATUS)
             }
         }
     }
@@ -102,14 +100,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
         for (typeParameter in declaration.typeParameters) {
-            (typeParameter as? FirTypeParameter)?.let { transformer.replaceDeclarationResolvePhaseIfNeeded(it, FirResolvePhase.STATUS) }
             typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
         }
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
         if (implicitTypeOnly || enumEntry.initializerResolved) return enumEntry
-        transformer.replaceDeclarationResolvePhaseIfNeeded(enumEntry, transformerPhase)
         return context.forEnumEntry {
             (enumEntry.transformChildren(this, data) as FirEnumEntry)
         }
@@ -152,7 +148,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     property.transformAccessors()
                 }
             }
-            transformer.replaceDeclarationResolvePhaseIfNeeded(property, transformerPhase)
             dataFlowAnalyzer.exitProperty(property)?.let {
                 property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
             }
@@ -174,7 +169,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             if (field.initializer != null) {
                 storeVariableReturnType(field)
             }
-            transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
             dataFlowAnalyzer.exitField(field)
             field
         }
@@ -283,7 +277,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         variable.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
         context.storeVariable(variable)
-        transformer.replaceDeclarationResolvePhaseIfNeeded(variable, transformerPhase)
         dataFlowAnalyzer.exitLocalVariableDeclaration(variable)
         return variable
     }
@@ -386,7 +379,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         typeAlias.transformAnnotations(transformer, data)
         transformer.firTowerDataContextCollector?.addDeclarationContext(typeAlias, context.towerDataContext)
         typeAlias.transformExpandedTypeRef(transformer, data)
-        transformer.replaceDeclarationResolvePhaseIfNeeded(typeAlias, transformerPhase)
         return typeAlias
     }
 
@@ -564,7 +556,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         val owningClass = context.containerIfAny as? FirRegularClass
 
-        transformer.replaceDeclarationResolvePhaseIfNeeded(constructor, transformerPhase)
         dataFlowAnalyzer.enterFunction(constructor)
 
         constructor.transformTypeParameters(transformer, data)
@@ -604,7 +595,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
-            transformer.replaceDeclarationResolvePhaseIfNeeded(valueParameter, transformerPhase)
             valueParameter.replaceReturnTypeRef(
                 valueParameter.returnTypeRef.errorTypeFromPrototype(
                     ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation)

@@ -55,6 +55,4 @@ internal class FirFileAnnotationsResolveTransformer(
     }
 
     override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")
-
-    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = false
 }

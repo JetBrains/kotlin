@@ -24,72 +24,72 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 SUPER_TYPES:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [SUPER_TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
+    public? final? [RAW_FIR] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 TYPES:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 STATUS:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public final [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 CONTRACTS:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public final [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [CONTRACTS] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [IMPLICIT_TYPES_BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 BODY_RESOLVE:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
@@ -108,79 +108,79 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 BodyResolveWithChildren:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 AnnotationType:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 AnnotationsArguments:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 DeclarationStatus:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public final [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public final [STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 ValueParametersTypes:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 TypeParametersTypes:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }
 
 FILE RAW TO BODY:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class X : R|kotlin/Any| {
+    public final [BODY_RESOLVE] class X : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }

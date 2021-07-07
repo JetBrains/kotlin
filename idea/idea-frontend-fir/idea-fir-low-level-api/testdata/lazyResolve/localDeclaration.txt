@@ -22,12 +22,12 @@ FILE: localDeclaration.kt
 
 IMPORTS:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -44,12 +44,12 @@ FILE: localDeclaration.kt
 
 SUPER_TYPES:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -66,12 +66,12 @@ FILE: localDeclaration.kt
 
 TYPES:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -88,12 +88,12 @@ FILE: localDeclaration.kt
 
 STATUS:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -110,12 +110,12 @@ FILE: localDeclaration.kt
 
 CONTRACTS:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -132,12 +132,12 @@ FILE: localDeclaration.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -154,12 +154,12 @@ FILE: localDeclaration.kt
 
 BODY_RESOLVE:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -198,12 +198,12 @@ FILE: localDeclaration.kt
 
 BodyResolveWithChildren:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -220,12 +220,12 @@ FILE: localDeclaration.kt
 
 AnnotationType:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -242,12 +242,12 @@ FILE: localDeclaration.kt
 
 AnnotationsArguments:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -264,12 +264,12 @@ FILE: localDeclaration.kt
 
 ClassSuperTypes:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -286,12 +286,12 @@ FILE: localDeclaration.kt
 
 DeclarationStatus:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -308,12 +308,12 @@ FILE: localDeclaration.kt
 
 ValueParametersTypes:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -330,12 +330,12 @@ FILE: localDeclaration.kt
 
 TypeParametersTypes:
 FILE: localDeclaration.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
             local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
                 public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
@@ -352,7 +352,7 @@ FILE: localDeclaration.kt
 
 FILE RAW TO BODY:
 FILE: localDeclaration.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class A : R|kotlin/Any| {
+    public final [BODY_RESOLVE] class A : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }

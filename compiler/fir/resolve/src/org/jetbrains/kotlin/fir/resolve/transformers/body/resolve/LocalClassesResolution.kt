@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.runStatusResolveForLocalClass
@@ -22,7 +20,7 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
     firTowerDataContextCollector: FirTowerDataContextCollector?,
     firProviderInterceptor: FirProviderInterceptor?,
 ): F {
-    if (this.resolvePhase > FirResolvePhase.RAW_FIR) return this
+    if (this is FirMemberDeclaration && status is FirResolvedDeclarationStatus) return this
     if (this is FirRegularClass) {
         components.context.storeClassIfNotNested(this)
     }

@@ -69,8 +69,6 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
         return declaration
     }
 
-    val needReplacePhase: Boolean get() = isInsideTargetDeclaration
-
     fun ensureDesignationPassed() {
         check(designationPassed) { "Designation not passed for declaration ${designation.declaration::class.simpleName}" }
     }

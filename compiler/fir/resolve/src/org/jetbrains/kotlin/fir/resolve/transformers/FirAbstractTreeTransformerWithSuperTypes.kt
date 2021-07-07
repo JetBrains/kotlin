@@ -33,8 +33,6 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
     protected val classDeclarationsStack = ArrayDeque<FirRegularClass>()
     protected val towerScope = FirCompositeScope(scopes.asReversed())
 
-    protected open fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = transformerPhase > firDeclaration.resolvePhase
-
     protected inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
         val sizeBefore = scopes.size
         val result = l()
@@ -56,9 +54,6 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
         firClass: FirClass,
         data: Any?
     ): FirStatement {
-        if (needReplacePhase(firClass)) {
-            firClass.replaceResolvePhase(transformerPhase)
-        }
         return withScopeCleanup {
             // Otherwise annotations may try to resolve
             // themselves as inner classes of the `firClass`

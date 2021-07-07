@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.transformers
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.*
@@ -21,8 +20,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.isResolvedForAllDeclarations
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updateResolvedPhaseForDeclarationAndChildren
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
@@ -33,7 +31,6 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val declarationPhaseDowngraded: Boolean,
     private val moduleFileCache: ModuleFileCache,
     private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
     private val firProviderInterceptor: FirProviderInterceptor?,
@@ -63,27 +60,6 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
 
     private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDeclarationDesignation) :
         FirApplySupertypesTransformer(supertypeComputationSession) {
-
-        override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
-            firDeclaration !is FirFile && super.needReplacePhase(firDeclaration)
-
-        override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
-            return if (regularClass.resolvePhase >= FirResolvePhase.SUPER_TYPES)
-                transformDeclarationContent(regularClass, data) as FirStatement
-            else super.transformRegularClass(regularClass, data)
-        }
-
-        override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
-            return if (anonymousObject.resolvePhase >= FirResolvePhase.SUPER_TYPES)
-                transformDeclarationContent(anonymousObject, data) as FirStatement
-            else super.transformAnonymousObject(anonymousObject, data)
-        }
-
-        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirStatement {
-            return if (typeAlias.resolvePhase >= FirResolvePhase.SUPER_TYPES)
-                transformDeclarationContent(typeAlias, data) as FirTypeAlias
-            else super.transformTypeAlias(typeAlias, data)
-        }
 
         val declarationTransformer = IDEDeclarationTransformer(classDesignation)
 
@@ -153,27 +129,26 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     }
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
-        check(designation.firFile.resolvePhase >= FirResolvePhase.IMPORTS) {
-            "Invalid resolve phase of file. Should be IMPORTS but found ${designation.firFile.resolvePhase}"
-        }
+        if (designation.declaration.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
+        designation.firFile.ensurePhase(FirResolvePhase.IMPORTS)
 
         val targetDesignation = if (designation.declaration !is FirClassLikeDeclaration) {
-            val resolvableTarget = designation.path.lastOrNull() ?: return
+            val resolvableTarget = designation.path.lastOrNull()
+            if (resolvableTarget == null) {
+                updatePhaseDeep(designation.declaration, FirResolvePhase.SUPER_TYPES)
+                return
+            }
             check(resolvableTarget is FirClassLikeDeclaration)
             val targetPath = designation.path.dropLast(1)
             FirDeclarationDesignationWithFile(targetPath, resolvableTarget, designation.firFile)
         } else designation
-
-        if (targetDesignation.isResolvedForAllDeclarations(FirResolvePhase.SUPER_TYPES, declarationPhaseDowngraded)) return
-        targetDesignation.declaration.updateResolvedPhaseForDeclarationAndChildren(FirResolvePhase.SUPER_TYPES)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.SUPER_TYPES) {
             val collected = collect(targetDesignation)
             supertypeComputationSession.breakLoops(session)
             apply(collected)
         }
-
-        designation.path.forEach(::ensureResolved)
+        updatePhaseDeep(designation.declaration, FirResolvePhase.SUPER_TYPES)
         ensureResolved(designation.declaration)
         ensureResolvedDeep(designation.declaration)
     }

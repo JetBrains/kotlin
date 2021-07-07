@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: secondaryConstructor.kt
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
@@ -31,7 +30,7 @@ FILE: secondaryConstructor.kt
 
 SUPER_TYPES:
 FILE: secondaryConstructor.kt
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -46,7 +45,7 @@ FILE: secondaryConstructor.kt
 
 TYPES:
 FILE: secondaryConstructor.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -61,7 +60,7 @@ FILE: secondaryConstructor.kt
 
 STATUS:
 FILE: secondaryConstructor.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -76,7 +75,7 @@ FILE: secondaryConstructor.kt
 
 CONTRACTS:
 FILE: secondaryConstructor.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -91,7 +90,7 @@ FILE: secondaryConstructor.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: secondaryConstructor.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -106,13 +105,13 @@ FILE: secondaryConstructor.kt
 
 BODY_RESOLVE:
 FILE: secondaryConstructor.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|A|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|A|): R|kotlin/Unit| {
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A, ResolvePhaseWithForAllDeclarationsKey=STATUS] constructor([STATUS] x: R|kotlin/Int|): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| {
             super<R|kotlin/Any|>()
             [RAW_FIR] lval a: <implicit> = x#
         }
@@ -136,13 +135,13 @@ FILE: secondaryConstructor.kt
 
 BodyResolveWithChildren:
 FILE: secondaryConstructor.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|A|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|A|): R|kotlin/Unit| {
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A, ResolvePhaseWithForAllDeclarationsKey=STATUS] constructor([STATUS] x: R|kotlin/Int|): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| {
             super<R|kotlin/Any|>()
             [RAW_FIR] lval a: <implicit> = x#
         }
@@ -151,13 +150,13 @@ FILE: secondaryConstructor.kt
 
 CallableBodyResolve:
 FILE: secondaryConstructor.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|A|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|A|): R|kotlin/Unit| {
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A, ResolvePhaseWithForAllDeclarationsKey=STATUS] constructor([STATUS] x: R|kotlin/Int|): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| {
             super<R|kotlin/Any|>()
             [RAW_FIR] lval a: <implicit> = x#
         }
@@ -181,7 +180,7 @@ FILE: secondaryConstructor.kt
 
 AnnotationType:
 FILE: secondaryConstructor.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -196,13 +195,13 @@ FILE: secondaryConstructor.kt
 
 AnnotationsArguments:
 FILE: secondaryConstructor.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|A|): R|kotlin/Unit| {
+    public final [STATUS] fun receive([RAW_FIR] value: R|A|): R|kotlin/Unit| {
     }
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A, ResolvePhaseWithForAllDeclarationsKey=STATUS] constructor([STATUS] x: R|kotlin/Int|): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor([RAW_FIR] x: R|kotlin/Int|): R|A| {
             super<R|kotlin/Any|>()
             [RAW_FIR] lval a: <implicit> = x#
         }
@@ -211,7 +210,7 @@ FILE: secondaryConstructor.kt
 
 CallableContracts:
 FILE: secondaryConstructor.kt
-    public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -226,7 +225,7 @@ FILE: secondaryConstructor.kt
 
 DeclarationStatus:
 FILE: secondaryConstructor.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -241,7 +240,7 @@ FILE: secondaryConstructor.kt
 
 ValueParametersTypes:
 FILE: secondaryConstructor.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -256,7 +255,7 @@ FILE: secondaryConstructor.kt
 
 TypeParametersTypes:
 FILE: secondaryConstructor.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -271,12 +270,12 @@ FILE: secondaryConstructor.kt
 
 FILE RAW TO BODY:
 FILE: secondaryConstructor.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|A|): R|kotlin/Unit| {
+    public final [BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|A|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class A : R|kotlin/Any| {
+    public final [BODY_RESOLVE] class A : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=A] constructor([BODY_RESOLVE] x: R|kotlin/Int|): R|A| {
             super<R|kotlin/Any|>()
             [BODY_RESOLVE] lval a: R|kotlin/Int| = R|<local>/x|

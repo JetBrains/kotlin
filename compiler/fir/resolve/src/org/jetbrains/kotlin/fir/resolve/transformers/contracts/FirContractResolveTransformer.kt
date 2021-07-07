@@ -54,7 +54,6 @@ open class FirContractResolveTransformer(
             simpleFunction: FirSimpleFunction,
             data: ResolutionMode
         ): FirSimpleFunction {
-            simpleFunction.updatePhase()
             if (!simpleFunction.hasContractToResolve) {
                 return simpleFunction
             }
@@ -76,17 +75,14 @@ open class FirContractResolveTransformer(
         }
 
         override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
-            property.updatePhase()
             if (
                 property.getter?.hasContractToResolve != true && property.setter?.hasContractToResolve != true ||
                 property.isLocal || property.delegate != null
             ) {
-                property.updatePhaseForAccessors()
                 return property
             }
             if (property is FirSyntheticProperty) {
                 transformSimpleFunction(property.getter.delegate, data)
-                property.updatePhaseForAccessors()
                 return property
             }
             context.withProperty(property) {
@@ -96,13 +92,7 @@ open class FirContractResolveTransformer(
             return property
         }
 
-        private fun FirProperty.updatePhaseForAccessors() {
-            getter?.updatePhase()
-            setter?.updatePhase()
-        }
-
         override fun transformField(field: FirField, data: ResolutionMode): FirField {
-            field.updatePhase()
             return field
         }
 
@@ -110,7 +100,6 @@ open class FirContractResolveTransformer(
             propertyAccessor: FirPropertyAccessor,
             owner: FirProperty
         ): FirStatement {
-            propertyAccessor.updatePhase()
             if (!propertyAccessor.hasContractToResolve) {
                 return propertyAccessor
             }
@@ -229,7 +218,6 @@ open class FirContractResolveTransformer(
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
-            regularClass.updatePhase()
             regularClass.transformCompanionObject(this, data)
             context.withRegularClass(regularClass, components, forContracts = true) {
                 transformDeclarationContent(regularClass, data)
@@ -241,7 +229,6 @@ open class FirContractResolveTransformer(
             anonymousObject: FirAnonymousObject,
             data: ResolutionMode
         ): FirStatement {
-            anonymousObject.updatePhase()
             context.withAnonymousObject(anonymousObject, components) {
                 transformDeclarationContent(anonymousObject, data)
             }
@@ -252,17 +239,14 @@ open class FirContractResolveTransformer(
             anonymousInitializer: FirAnonymousInitializer,
             data: ResolutionMode
         ): FirAnonymousInitializer {
-            anonymousInitializer.updatePhase()
             return anonymousInitializer
         }
 
         override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
-            constructor.updatePhase()
             return constructor
         }
 
         override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
-            enumEntry.updatePhase()
             return enumEntry
         }
 
@@ -274,10 +258,6 @@ open class FirContractResolveTransformer(
 
         private val FirContractDescriptionOwner.hasContractToResolve: Boolean
             get() = contractDescription is FirLegacyRawContractDescription || contractDescription is FirRawContractDescription
-
-        private fun FirDeclaration.updatePhase() {
-            transformer.replaceDeclarationResolvePhaseIfNeeded(this, FirResolvePhase.CONTRACTS)
-        }
     }
 }
 

@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: classMembers.kt
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
@@ -51,12 +50,12 @@ FILE: classMembers.kt
 
 SUPER_TYPES:
 FILE: classMembers.kt
-    public? final? [SUPER_TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
@@ -76,24 +75,24 @@ FILE: classMembers.kt
 
 TYPES:
 FILE: classMembers.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public? final? [SUPER_TYPES] val x: Int = IntegerLiteral(10)
+            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public? final? [SUPER_TYPES] fun functionWithLazyBody(): String {
             ^functionWithLazyBody String(42)
         }
 
@@ -101,24 +100,24 @@ FILE: classMembers.kt
 
 STATUS:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+        public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public? final? [SUPER_TYPES] val x: Int = IntegerLiteral(10)
+            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public? final? [SUPER_TYPES] fun functionWithLazyBody(): String {
             ^functionWithLazyBody String(42)
         }
 
@@ -126,24 +125,24 @@ FILE: classMembers.kt
 
 CONTRACTS:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+        public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public? final? [SUPER_TYPES] val x: Int = IntegerLiteral(10)
+            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public? final? [SUPER_TYPES] fun functionWithLazyBody(): String {
             ^functionWithLazyBody String(42)
         }
 
@@ -151,24 +150,24 @@ FILE: classMembers.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public final [STATUS] val x: R|kotlin/Int| = IntegerLiteral(10)
+            [STATUS] [ContainingClassKey=A] public get(): R|kotlin/Int| {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
         }
 
@@ -176,24 +175,24 @@ FILE: classMembers.kt
 
 BODY_RESOLVE:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
             this@R|/A|.R|/A.receive|(this@R|/A|.R|/A.functionWithLazyBody|())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public final [STATUS] val x: R|kotlin/Int| = IntegerLiteral(10)
+            [STATUS] [ContainingClassKey=A] public get(): R|kotlin/Int| {
                 ^ field#
             }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| {
+        public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+        public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
         }
 
@@ -226,24 +225,24 @@ FILE: classMembers.kt
 
 BodyResolveWithChildren:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
             this@R|/A|.R|/A.receive|(this@R|/A|.R|/A.functionWithLazyBody|())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public final [STATUS] val x: R|kotlin/Int| = IntegerLiteral(10)
+            [STATUS] [ContainingClassKey=A] public get(): R|kotlin/Int| {
                 ^ field#
             }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| {
+        public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+        public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
         }
 
@@ -251,24 +250,24 @@ FILE: classMembers.kt
 
 CallableBodyResolve:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
             this@R|/A|.R|/A.receive|(this@R|/A|.R|/A.functionWithLazyBody|())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public final [STATUS] val x: R|kotlin/Int| = IntegerLiteral(10)
+            [STATUS] [ContainingClassKey=A] public get(): R|kotlin/Int| {
                 ^ field#
             }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| {
+        public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+        public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
         }
 
@@ -301,24 +300,24 @@ FILE: classMembers.kt
 
 AnnotationType:
 FILE: classMembers.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public? final? [SUPER_TYPES] val x: Int = IntegerLiteral(10)
+            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public? final? [SUPER_TYPES] fun functionWithLazyBody(): String {
             ^functionWithLazyBody String(42)
         }
 
@@ -326,24 +325,24 @@ FILE: classMembers.kt
 
 AnnotationsArguments:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
             this@R|/A|.R|/A.receive|(this@R|/A|.R|/A.functionWithLazyBody|())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public final [STATUS] val x: R|kotlin/Int| = IntegerLiteral(10)
+            [STATUS] [ContainingClassKey=A] public get(): R|kotlin/Int| {
                 ^ field#
             }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| {
+        public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+        public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
         }
 
@@ -351,24 +350,24 @@ FILE: classMembers.kt
 
 CallableContracts:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+        public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public? final? [SUPER_TYPES] val x: Int = IntegerLiteral(10)
+            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public? final? [SUPER_TYPES] fun functionWithLazyBody(): String {
             ^functionWithLazyBody String(42)
         }
 
@@ -376,24 +375,24 @@ FILE: classMembers.kt
 
 DeclarationStatus:
 FILE: classMembers.kt
-    public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public final [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] fun resolveMe(): R|kotlin/Unit| {
+        public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public? final? [SUPER_TYPES] val x: Int = IntegerLiteral(10)
+            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public? final? [SUPER_TYPES] fun functionWithLazyBody(): String {
             ^functionWithLazyBody String(42)
         }
 
@@ -401,24 +400,24 @@ FILE: classMembers.kt
 
 ValueParametersTypes:
 FILE: classMembers.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public? final? [SUPER_TYPES] val x: Int = IntegerLiteral(10)
+            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public? final? [SUPER_TYPES] fun functionWithLazyBody(): String {
             ^functionWithLazyBody String(42)
         }
 
@@ -426,24 +425,24 @@ FILE: classMembers.kt
 
 TypeParametersTypes:
 FILE: classMembers.kt
-    public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
-        public? final? [RAW_FIR] val x: Int = IntegerLiteral(10)
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int {
+        public? final? [SUPER_TYPES] val x: Int = IntegerLiteral(10)
+            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int {
                 ^ field#
             }
 
-        public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
+        public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
         }
 
-        public? final? [RAW_FIR] fun functionWithLazyBody(): String {
+        public? final? [SUPER_TYPES] fun functionWithLazyBody(): String {
             ^functionWithLazyBody String(42)
         }
 
@@ -451,7 +450,7 @@ FILE: classMembers.kt
 
 FILE RAW TO BODY:
 FILE: classMembers.kt
-    public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=BODY_RESOLVE] class A : R|kotlin/Any| {
+    public final [BODY_RESOLVE] class A : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }

@@ -18,7 +18,6 @@ internal object LazyTransformerFactory {
         phase: FirResolvePhase,
         designation: FirDeclarationDesignationWithFile,
         scopeSession: ScopeSession,
-        declarationPhaseDowngraded: Boolean,
         moduleFileCache: ModuleFileCache,
         lazyDeclarationResolver: FirLazyDeclarationResolver,
         towerDataContextCollector: FirTowerDataContextCollector?,
@@ -30,7 +29,6 @@ internal object LazyTransformerFactory {
             designation = designation,
             session = designation.firFile.moduleData.session,
             scopeSession = scopeSession,
-            declarationPhaseDowngraded = declarationPhaseDowngraded,
             moduleFileCache = moduleFileCache,
             firLazyDeclarationResolver = lazyDeclarationResolver,
             firProviderInterceptor = firProviderInterceptor,
@@ -40,32 +38,27 @@ internal object LazyTransformerFactory {
             designation,
             designation.firFile.moduleData.session,
             scopeSession,
-            declarationPhaseDowngraded,
         )
         FirResolvePhase.STATUS -> FirDesignatedStatusResolveTransformerForIDE(
             designation,
             designation.firFile.moduleData.session,
             scopeSession,
-            declarationPhaseDowngraded,
         )
         FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
             designation,
             designation.firFile.moduleData.session,
             scopeSession,
-            declarationPhaseDowngraded,
         )
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> FirDesignatedImplicitTypesTransformerForIDE(
             designation,
             designation.firFile.moduleData.session,
             scopeSession,
-            declarationPhaseDowngraded,
             towerDataContextCollector
         )
         FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
             designation,
             designation.firFile.moduleData.session,
             scopeSession,
-            declarationPhaseDowngraded,
             towerDataContextCollector,
             firProviderInterceptor,
         )

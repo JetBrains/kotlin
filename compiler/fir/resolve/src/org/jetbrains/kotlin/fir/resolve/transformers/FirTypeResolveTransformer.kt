@@ -96,9 +96,6 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): FirEnumEntry {
-        if (needReplacePhase(enumEntry)) {
-            enumEntry.replaceResolvePhase(FirResolvePhase.TYPES)
-        }
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformAnnotations(this, data)
@@ -108,14 +105,6 @@ open class FirTypeResolveTransformer(
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty {
         return withScopeCleanup {
             property.addTypeParametersScope()
-            if (needReplacePhase(property)) {
-                property.replaceResolvePhase(FirResolvePhase.TYPES)
-                property.getter?.replaceResolvePhase(FirResolvePhase.TYPES)
-                property.setter?.replaceResolvePhase(FirResolvePhase.TYPES)
-                property.setter?.valueParameters?.forEach {
-                    it.replaceResolvePhase(FirResolvePhase.TYPES)
-                }
-            }
             property.transformTypeParameters(this, data)
                 .transformReturnTypeRef(this, data)
                 .transformReceiverTypeRef(this, data)
@@ -136,9 +125,6 @@ open class FirTypeResolveTransformer(
 
     override fun transformField(field: FirField, data: Any?): FirField {
         return withScopeCleanup {
-            if (needReplacePhase(field)) {
-                field.replaceResolvePhase(FirResolvePhase.TYPES)
-            }
             field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
             field
         }

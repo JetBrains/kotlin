@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.RawFirNonLocalDe
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.resolvePhaseForDeclarationAndChildren
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -137,7 +136,7 @@ internal class ReanalyzableFunctionStructureElement(
                 replaceResolvePhase(upgradedPhase)
             }
             designation.toSequence(includeTarget = true).forEach {
-                it.resolvePhaseForDeclarationAndChildren = minOf(it.resolvePhaseForDeclarationAndChildren, upgradedPhase)
+                it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
             }
 
             firLazyDeclarationResolver.lazyResolveDeclaration(
@@ -146,7 +145,6 @@ internal class ReanalyzableFunctionStructureElement(
                 scopeSession = ScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true,
-                declarationPhaseDowngraded = true,
             )
 
             ReanalyzableFunctionStructureElement(
@@ -206,7 +204,6 @@ internal class ReanalyzablePropertyStructureElement(
                 scopeSession = ScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true,
-                declarationPhaseDowngraded = true,
             )
 
             ReanalyzablePropertyStructureElement(
