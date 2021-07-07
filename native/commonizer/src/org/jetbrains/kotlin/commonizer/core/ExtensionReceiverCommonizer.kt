@@ -14,7 +14,7 @@ class ExtensionReceiverCommonizer(classifiers: CirKnownClassifiers) :
         wrappedCommonizerFactory = { TypeCommonizer(classifiers).asCommonizer() },
         extractor = { it.type },
         builder = { receiverType ->
-            CirExtensionReceiver.create(
+            CirExtensionReceiver(
                 annotations = emptyList(),
                 type = receiverType
             )

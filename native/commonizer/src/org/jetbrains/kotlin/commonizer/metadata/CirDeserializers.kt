@@ -84,7 +84,7 @@ object CirDeserializers {
     private fun extensionReceiver(
         receiverParameterType: KmType,
         typeResolver: CirTypeResolver
-    ): CirExtensionReceiver = CirExtensionReceiver.create(
+    ): CirExtensionReceiver = CirExtensionReceiver(
         annotations = emptyList(), // TODO nowhere to read receiver annotations from, see KT-42490
         type = type(receiverParameterType, typeResolver)
     )
