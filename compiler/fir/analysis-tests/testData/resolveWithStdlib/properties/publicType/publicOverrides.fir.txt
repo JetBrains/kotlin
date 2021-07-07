@@ -1,0 +1,133 @@
+FILE: publicOverrides.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open var items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/List<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+        public final fun put(item: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/A|.R|/A.items|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/item|)
+        }
+
+        public final fun use(other: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit| {
+            this@R|/A|.R|/A.items| = R|<local>/other|
+        }
+
+        public open override fun toString(): R|kotlin/String| {
+            ^toString <strcat>(String(Items: ), this@R|/A|.R|/A.items|)
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        private final val realItems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>| = this@R|/B|.R|/B.realItems|
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+        public final override fun toString(): R|kotlin/String| {
+            ^toString <strcat>(String(Items: ), this@R|/B|.R|/B.items|, String(, Real Items: ), this@R|/B|.R|/B.realItems|)
+        }
+
+    }
+    public final class C : R|A| {
+        public constructor(): R|C| {
+            super<R|A|>()
+        }
+
+        private final val itemsSource: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(A), String(B), String(C)))
+            private get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        private final var itemsSink: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/MutableList<kotlin/String>|
+            private set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>|
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>| {
+                ^ this@R|/C|.R|/C.itemsSource|
+            }
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit| {
+                this@R|/C|.R|/C.itemsSink| = R|<local>/value|
+            }
+
+        public final override fun toString(): R|kotlin/String| {
+            ^toString <strcat>(String(Items: ), this@R|/C|.R|/C.items|, String(, Source: ), this@R|/C|.R|/C.itemsSource|, String(, Sink: ), this@R|/C|.R|/C.itemsSink|)
+        }
+
+    }
+    public final class D : R|A| {
+        public constructor(): R|D| {
+            super<R|A|>()
+        }
+
+        public final override fun toString(): R|kotlin/String| {
+            ^toString <strcat>(String(Items: ), this@R|/D|.R|/A.items|)
+        }
+
+        public final fun add(item: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/D|.R|/A.items|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/item|)
+        }
+
+    }
+    public final class E : R|A| {
+        public constructor(): R|E| {
+            super<R|A|>()
+        }
+
+        private final val realItems: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/List<kotlin/String>|
+
+        protected final override var items: R|kotlin/collections/List<kotlin/String>| = this@R|/E|.R|/E.realItems|
+            protected get(): R|kotlin/collections/List<kotlin/String>|
+            protected set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+
+        public final override fun toString(): R|kotlin/String| {
+            ^toString <strcat>(String(Items: ), this@R|/E|.R|/E.items|, String(, Real Items: ), this@R|/E|.R|/E.realItems|)
+        }
+
+        public final fun add(item: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/E|.R|/E.items|.<Unresolved name: add>#(R|<local>/item|)
+        }
+
+    }
+    public final class F : R|A| {
+        public constructor(): R|F| {
+            super<R|A|>()
+        }
+
+        private final val realItems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>| = this@R|/F|.R|/F.realItems|
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+        public final override fun toString(): R|kotlin/String| {
+            ^toString <strcat>(String(Items: ), this@R|/F|.R|/F.items|, String(, Real Items: ), this@R|/F|.R|/F.realItems|)
+        }
+
+        public final fun add(item: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/F|.R|/F.items|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/item|)
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval b: R|B| = R|/B.B|()
+        R|<local>/b|.R|/A.put|(String(Test))
+        R|kotlin/io/println|(R|<local>/b|)
+        R|<local>/b|.R|/A.use|(R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(X), String(Y), String(Z), String(W))))
+        R|kotlin/io/println|(R|<local>/b|)
+        lval c: R|C| = R|/C.C|()
+        R|<local>/c|.R|/A.put|(String(Rest))
+        R|kotlin/io/println|(R|<local>/c|)
+        R|<local>/c|.R|/A.use|(R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(X), String(Y), String(Z), String(W))))
+        R|kotlin/io/println|(R|<local>/c|)
+    }

@@ -96,16 +96,34 @@ abstract class AbstractConeCallConflictResolver(
         }
     }
 
-    protected fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
-        return when (val declaration = call.symbol.fir) {
-            is FirSimpleFunction -> createFlatSignature(call, declaration)
-            is FirConstructor -> createFlatSignature(call, declaration)
-            is FirVariable -> createFlatSignature(call, declaration)
-            is FirClass -> createFlatSignature(call, declaration)
-            is FirTypeAlias -> createFlatSignature(call, declaration)
+    protected fun createFlatSignature(call: Candidate): FlatSignature<Candidate>? {
+        val declaration = call.symbol.fir
+        return when {
+            declaration is FirSimpleFunction -> createFlatSignature(call, declaration)
+            declaration is FirConstructor -> createFlatSignature(call, declaration)
+            declaration is FirVariable -> createFlatSignature(call, declaration)
+            declaration is FirClass -> createFlatSignature(call, declaration)
+            declaration is FirTypeAlias -> createFlatSignature(call, declaration)
+            // it's a getter with a greater visibility;
+            // it's property's candidate also makes its way here
+            declaration is FirPropertyAccessor && declaration.isGetter -> null
+//            declaration is FirPropertyAccessor && declaration.isGetter -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
         }
     }
+
+//    private fun createFlatSignature(call: Candidate, accessor: FirPropertyAccessor): FlatSignature<Candidate> {
+//        return FlatSignature(
+//            call,
+//            emptyList(),
+//            listOfNotNull(accessor.receiverTypeRef?.coneType),
+//            accessor.receiverTypeRef != null,
+//            false,
+//            0,
+//            accessor.isExpect == true,
+//            false // TODO
+//        )
+//    }
 
     protected fun createFlatSignature(call: Candidate, variable: FirVariable): FlatSignature<Candidate> {
         return FlatSignature(

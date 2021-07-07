@@ -5439,9 +5439,33 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
+                @TestMetadata("explicitType.kt")
+                public void testExplicitType() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/explicitType.kt");
+                }
+
+                @Test
                 @TestMetadata("junk.kt")
                 public void testJunk() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/junk.kt");
+                }
+
+                @Test
+                @TestMetadata("protectedOverrides.kt")
+                public void testProtectedOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/protectedOverrides.kt");
+                }
+
+                @Test
+                @TestMetadata("publicOverrides.kt")
+                public void testPublicOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/publicOverrides.kt");
+                }
+
+                @Test
+                @TestMetadata("publicTypeImposter.kt")
+                public void testPublicTypeImposter() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/publicTypeImposter.kt");
                 }
 
                 @Test
