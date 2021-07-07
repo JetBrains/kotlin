@@ -164,15 +164,15 @@ internal fun CirProperty.serializeProperty(
         property.receiverParameterType = receiver.type.serializeType(context)
     }
     setter?.takeIf { !it.isDefault }?.let { setter ->
-        property.setterParameter = object : CirValueParameter {
-            override val annotations get() = setter.parameterAnnotations
-            override val name get() = DEFAULT_SETTER_VALUE_NAME
-            override val returnType get() = this@serializeProperty.returnType
-            override val varargElementType: CirType? get() = null
-            override val declaresDefaultValue get() = false
-            override val isCrossinline get() = false
-            override val isNoinline get() = false
-        }.serializeValueParameter(context)
+        property.setterParameter = CirValueParameter.createInterned(
+            annotations = setter.parameterAnnotations,
+            name = DEFAULT_SETTER_VALUE_NAME,
+            returnType = this@serializeProperty.returnType,
+            varargElementType = null,
+            declaresDefaultValue = false,
+            isCrossinline = false,
+            isNoinline = false
+        ).serializeValueParameter(context)
     }
     property.returnType = returnType.serializeType(context)
 }

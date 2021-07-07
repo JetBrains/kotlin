@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.commonizer.cir.CirName
-import org.jetbrains.kotlin.commonizer.cir.CirType
 import org.jetbrains.kotlin.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.commonizer.core.CirValueParameterTestImpl.Companion.areEqual
 import org.jetbrains.kotlin.commonizer.core.TypeCommonizerTest.Companion.areEqual
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
@@ -156,45 +153,34 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         ): CirValueParameter {
             val returnType = mockClassType(returnTypeClassId)
 
-            return CirValueParameterTestImpl(
+            return CirValueParameter.createInterned(
                 name = CirName.create(name),
                 returnType = returnType,
                 varargElementType = returnType.takeIf { hasVarargElementType }, // the vararg type itself does not matter here, only it's presence matters
                 isCrossinline = isCrossinline,
                 isNoinline = isNoinline,
-                declaresDefaultValue = declaresDefaultValue
+                declaresDefaultValue = declaresDefaultValue,
+                annotations = emptyList()
             )
         }
     }
 }
 
-internal data class CirValueParameterTestImpl(
-    override val name: CirName,
-    override val returnType: CirType,
-    override val varargElementType: CirType?,
-    override val declaresDefaultValue: Boolean,
-    override val isCrossinline: Boolean,
-    override val isNoinline: Boolean
-) : CirValueParameter {
-    override val annotations: List<CirAnnotation> get() = emptyList()
-
-    companion object {
-        fun areEqual(classifiers: CirKnownClassifiers, a: CirValueParameter, b: CirValueParameter): Boolean {
-            if (a.name != b.name
-                || !areEqual(classifiers, a.returnType, b.returnType)
-                || a.declaresDefaultValue != b.declaresDefaultValue
-                || a.isCrossinline != b.isCrossinline
-                || a.isNoinline != b.isNoinline
-            ) {
-                return false
-            }
-
-            val aVarargElementType = a.varargElementType
-            val bVarargElementType = b.varargElementType
-
-            return (aVarargElementType === bVarargElementType)
-                    || (aVarargElementType != null && bVarargElementType != null
-                    && areEqual(classifiers, aVarargElementType, bVarargElementType))
-        }
+fun areEqual(classifiers: CirKnownClassifiers, a: CirValueParameter, b: CirValueParameter): Boolean {
+    if (a.name != b.name
+        || !areEqual(classifiers, a.returnType, b.returnType)
+        || a.declaresDefaultValue != b.declaresDefaultValue
+        || a.isCrossinline != b.isCrossinline
+        || a.isNoinline != b.isNoinline
+    ) {
+        return false
     }
+
+    val aVarargElementType = a.varargElementType
+    val bVarargElementType = b.varargElementType
+
+    return (aVarargElementType === bVarargElementType)
+            || (aVarargElementType != null && bVarargElementType != null
+            && areEqual(classifiers, aVarargElementType, bVarargElementType))
 }
+
