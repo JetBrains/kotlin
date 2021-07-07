@@ -26,9 +26,9 @@ fun Project.configureJava9Compilation(
     tasks.named("compileJava9Java", JavaCompile::class.java) {
         dependsOn(moduleOutputs)
 
-        javaCompiler.set(getToolchainCompilerFor(JdkMajorVersion.JDK_9))
         targetCompatibility = JavaVersion.VERSION_1_9.toString()
         sourceCompatibility = JavaVersion.VERSION_1_9.toString()
+        configureTaskToolchain(JdkMajorVersion.JDK_9)
 
         // module-info.java should be in java9 source set by convention
         val java9SourceSet = sourceSets["java9"].java

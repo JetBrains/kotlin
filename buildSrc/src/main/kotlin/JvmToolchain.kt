@@ -151,7 +151,7 @@ fun Project.updateJvmTarget(
     }
 }
 
-fun Project.getToolchainCompilerFor(
+private fun Project.getToolchainCompilerFor(
     jdkVersion: JdkMajorVersion
 ): Provider<JavaCompiler> {
     val service = project.extensions.getByType<JavaToolchainService>()
