@@ -56,11 +56,7 @@ fun box() {
 // LINENUMBERS
 // test.kt:13 foo
 // test.kt:14 foo
-// LINENUMBERS JVM
-// test.kt:13 foo
-// LINENUMBERS JVM_IR
 // test.kt:10 foo
-// LINENUMBERS
 // test.kt:15 foo
 // test.kt:30 box
 // test.kt:31 box
@@ -74,4 +70,7 @@ fun box() {
 // test.kt:11 foo
 // test.kt:25 mightThrow2
 // test.kt:14 foo
+// LINENUMBERS JVM
+// test.kt:10 foo
+// LINENUMBERS JVM_IR
 // test.kt:13 foo

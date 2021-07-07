@@ -34,10 +34,25 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
+        if (!methodNode.hasOptimizableConditions()) {
+            return
+        }
         do {
             val changes = ConstantConditionsOptimization(internalClassName, methodNode).run()
         } while (changes)
     }
+
+    private fun MethodNode.hasOptimizableConditions(): Boolean {
+        val insns = instructions.toArray()
+        return insns.any { it.isIntJump() } && insns.any { it.isIntConst() }
+    }
+
+    private fun AbstractInsnNode.isIntConst() =
+        opcode in Opcodes.ICONST_M1..Opcodes.ICONST_5 || opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH ||
+                (opcode == Opcodes.LDC && this is LdcInsnNode && cst is Int)
+
+    private fun AbstractInsnNode.isIntJump() =
+        opcode in Opcodes.IFEQ..Opcodes.IFLE || opcode in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE
 
     private class ConstantConditionsOptimization(val internalClassName: String, val methodNode: MethodNode) {
         fun run(): Boolean {
