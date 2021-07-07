@@ -86,7 +86,7 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
             isReified: Boolean = false,
             variance: Variance = Variance.INVARIANT,
             upperBounds: List<String> = listOf("kotlin/Any")
-        ) = CirTypeParameter.create(
+        ) = CirTypeParameter(
             annotations = emptyList(),
             name = CirName.create(name),
             isReified = isReified,
