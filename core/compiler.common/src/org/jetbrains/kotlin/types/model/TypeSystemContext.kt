@@ -177,6 +177,16 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker
     fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker
 
+    fun KotlinTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker) =
+        when (this) {
+            is SimpleTypeMarker -> replaceArguments(replacement)
+            is FlexibleTypeMarker -> createFlexibleType(
+                lowerBound().replaceArguments(replacement),
+                upperBound().replaceArguments(replacement)
+            )
+            else -> error("sealed")
+        }
+
     fun KotlinTypeMarker.hasExactAnnotation(): Boolean
     fun KotlinTypeMarker.hasNoInferAnnotation(): Boolean
 
@@ -252,16 +262,18 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun createCapturedStarProjectionForSelfType(
         typeVariable: TypeVariableTypeConstructorMarker,
-        selfType: SimpleTypeMarker,
+        typesForRecursiveTypeParameters: List<KotlinTypeMarker>,
     ): SimpleTypeMarker? {
         val typeParameter = typeVariable.typeParameter ?: return null
         val starProjection = createStarProjection(typeParameter)
-        val superType = selfType.replaceArguments {
-            val constructor = it.getType().typeConstructor()
-            if (constructor is TypeVariableTypeConstructorMarker && constructor == typeVariable) {
-                starProjection
-            } else it
-        }
+        val superType = intersectTypes(
+            typesForRecursiveTypeParameters.map { type ->
+                type.replaceArguments {
+                    val constructor = it.getType().typeConstructor()
+                    if (constructor is TypeVariableTypeConstructorMarker && constructor == typeVariable) starProjection else it
+                }
+            }
+        )
 
         return createCapturedType(starProjection, listOf(superType), lowerType = null, CaptureStatus.FROM_EXPRESSION)
     }
@@ -310,6 +322,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.argumentsCount(): Int
     fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker
+    fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker>
 
     fun SimpleTypeMarker.getArgumentOrNull(index: Int): TypeArgumentMarker? {
         if (index in 0 until argumentsCount()) return getArgument(index)

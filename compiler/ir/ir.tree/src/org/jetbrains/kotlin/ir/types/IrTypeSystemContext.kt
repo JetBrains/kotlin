@@ -128,6 +128,12 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
                 error("Type $this has no arguments")
         }
 
+    override fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker> =
+        when (this) {
+            is IrSimpleType -> arguments
+            else -> error("Type $this has no arguments")
+        }
+
     override fun KotlinTypeMarker.asTypeArgument() = this as IrTypeArgument
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? = (this as IrCapturedType).lowerType
