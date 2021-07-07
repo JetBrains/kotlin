@@ -66,7 +66,29 @@ gradleEnterprise {
     }
 }
 
-BuildCacheKt.setupBuildCache(settings)
+buildCache {
+    local {
+        enabled = buildProperties.localBuildCacheEnabled
+        if (buildProperties.localBuildCacheDirectory != null) {
+            directory = buildProperties.localBuildCacheDirectory
+        }
+    }
+
+    if (buildProperties.buildCacheUrl != null) {
+        remote(HttpBuildCache) {
+            url = buildProperties.buildCacheUrl
+            push = buildProperties.pushToBuildCache
+            if (buildProperties.buildCacheUser != null && buildProperties.buildCachePassword != null) {
+                credentials.username = buildProperties.buildCacheUser
+                credentials.password = buildProperties.buildCachePassword
+            }
+
+            // ADM-44444
+            allowUntrustedServer = true
+            allowInsecureProtocol = true
+        }
+    }
+}
 
 // modules
 include ":benchmarks",
