@@ -16,7 +16,7 @@ open class A {
 class B : A() {
     private val realItems = mutableListOf<String>()
 
-    override var items = realItems
+    <!INCOMPLETE_PROPERTY_OVERRIDE!>override var items = realItems<!>
 
     override fun toString() = "Items: $items, Real Items: $realItems"
 }
@@ -25,11 +25,11 @@ class C: A() {
     private val itemsSource = mutableListOf("A", "B", "C")
     private var itemsSink = mutableListOf<String>()
 
-    override var items
+    <!INCOMPLETE_PROPERTY_OVERRIDE!>override var items
         get() = itemsSource
         set(value) {
             itemsSink = value
-        }
+        }<!>
 
     override fun toString() = "Items: $items, Source: $itemsSource, Sink: $itemsSink"
 }
@@ -45,7 +45,7 @@ class D : A() {
 class E : A() {
     private val realItems = listOf<String>()
 
-    override var <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>items<!> = realItems
+    <!INCOMPLETE_PROPERTY_OVERRIDE!>override var <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>items<!> = realItems<!>
 
     override fun toString() = "Items: $items, Real Items: $realItems"
 
@@ -57,7 +57,7 @@ class E : A() {
 class F : A() {
     private val realItems = mutableListOf<String>()
 
-    override var items = realItems
+    <!INCOMPLETE_PROPERTY_OVERRIDE!>override var items = realItems<!>
 
     override fun toString() = "Items: $items, Real Items: $realItems"
 

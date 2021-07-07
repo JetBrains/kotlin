@@ -177,6 +177,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPLETE_PROPERTY_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
@@ -1053,6 +1054,12 @@ class FirDefaultErrorMessages {
             map.put(
                 MORE_VISIBLE_GETTER_WITH_BODY,
                 "Custom bodies are not supported for getters with a more permissive visibility than the visibility of the property"
+            )
+            map.put(
+                INCOMPLETE_PROPERTY_OVERRIDE,
+                "This overridden property has a lesser visibility (''1'') than the one required (''0'')",
+                VISIBILITY,
+                VISIBILITY
             )
             map.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations")
 

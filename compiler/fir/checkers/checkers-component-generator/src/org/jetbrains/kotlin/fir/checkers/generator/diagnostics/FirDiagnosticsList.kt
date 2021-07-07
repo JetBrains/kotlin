@@ -757,6 +757,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val REDUNDANT_GETTER_VISIBILITY_CHANGE by warning<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val MORE_VISIBLE_GETTER_WITH_BODY by error<KtPropertyAccessor>()
+        val INCOMPLETE_PROPERTY_OVERRIDE by error<KtProperty> {
+            parameter<Visibility>("requiredVisibility")
+            parameter<Visibility>("actualVisibility")
+        }
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
     }
 

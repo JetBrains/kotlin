@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -109,26 +110,57 @@ object FirOverrideChecker : FirClassChecker() {
         return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir?.safeAs()
     }
 
+    private fun FirMemberDeclaration.getGetterWithGreaterVisibility(): FirPropertyAccessor? {
+        if (this !is FirProperty) {
+            return null
+        }
+
+        val getterVisibility = getter?.visibility
+        val difference = getterVisibility?.compareTo(visibility)
+
+        if (difference != null && difference > 0) {
+            return getter
+        }
+
+        return null
+    }
+
     private fun FirCallableMemberDeclaration.checkVisibility(
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
+        val selfPermissiveGetter = getGetterWithGreaterVisibility()
+        val selfVisibility = selfPermissiveGetter?.visibility ?: visibility
+
         val visibilities = overriddenSymbols.mapNotNull {
-            if (it.fir !is FirMemberDeclaration) return@mapNotNull null
-            it to (it.fir as FirMemberDeclaration).visibility
+            val fir = it.fir
+
+            if (fir !is FirMemberDeclaration) {
+                return@mapNotNull null
+            }
+
+            val memberPermissiveGetter = fir.getGetterWithGreaterVisibility()
+            val memberVisibility = memberPermissiveGetter?.visibility ?: fir.visibility
+            val memberHasPermissiveGetter = memberPermissiveGetter != null
+
+            Triple(fir, memberVisibility, memberHasPermissiveGetter)
         }.sortedBy { pair ->
             // Regard `null` compare as Int.MIN so that we can report CANNOT_CHANGE_... first deterministically
-            Visibilities.compare(visibility, pair.second) ?: Int.MIN_VALUE
+            Visibilities.compare(selfVisibility, pair.second) ?: Int.MIN_VALUE
         }
 
-        for ((overridden, overriddenVisibility) in visibilities) {
-            val compare = Visibilities.compare(visibility, overriddenVisibility)
+        for ((overridden, overriddenVisibility, overriddenHasPermissiveGetter) in visibilities) {
+            val compare = Visibilities.compare(selfVisibility, overriddenVisibility)
             if (compare == null) {
-                reporter.reportCannotChangeAccessPrivilege(this, overridden.fir, context)
+                reporter.reportCannotChangeAccessPrivilege(this, overridden, context)
                 return
             } else if (compare < 0) {
-                reporter.reportCannotWeakenAccessPrivilege(this, overridden.fir, context)
+                if (selfPermissiveGetter == null && overriddenHasPermissiveGetter) {
+                    reporter.reportIncompletePropertyOverride(overriddenVisibility, this, context)
+                } else {
+                    reporter.reportCannotWeakenAccessPrivilege(this, overridden, context)
+                }
                 return
             }
         }
@@ -255,6 +287,20 @@ object FirOverrideChecker : FirClassChecker() {
         context: CheckerContext
     ) {
         reportOn(overriding.source, FirErrors.VAR_OVERRIDDEN_BY_VAL, overriding, overridden, context)
+    }
+
+    private fun DiagnosticReporter.reportIncompletePropertyOverride(
+        requiredVisibility: Visibility,
+        overriding: FirMemberDeclaration,
+        context: CheckerContext
+    ) {
+        reportOn(
+            overriding.source,
+            FirErrors.INCOMPLETE_PROPERTY_OVERRIDE,
+            requiredVisibility,
+            overriding.visibility,
+            context
+        )
     }
 
     private fun DiagnosticReporter.reportCannotWeakenAccessPrivilege(

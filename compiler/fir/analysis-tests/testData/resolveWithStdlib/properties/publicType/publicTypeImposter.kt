@@ -6,7 +6,7 @@ open class SomeType1 {
 class Imposter1 : SomeType1() {
     private val realItems = mutableListOf<String>()
 
-    override var items = realItems
+    <!INCOMPLETE_PROPERTY_OVERRIDE!>override var items = realItems<!>
 }
 
 class Imposter2 : SomeType1() {

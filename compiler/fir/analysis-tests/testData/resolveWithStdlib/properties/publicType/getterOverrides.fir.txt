@@ -30,6 +30,17 @@ FILE: getterOverrides.kt
             }
 
     }
+    public final class Derived3 : R|Base| {
+        public constructor(): R|Derived3| {
+            super<R|Base|>()
+        }
+
+        public final override val foo: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(Test)
+            }
+
+    }
     public abstract interface Fooer : R|kotlin/Any| {
         public abstract val foo: R|kotlin/Number|
             public get(): R|kotlin/Number|
