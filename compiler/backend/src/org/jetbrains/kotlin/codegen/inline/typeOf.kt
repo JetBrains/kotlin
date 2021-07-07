@@ -98,6 +98,8 @@ fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
     if (intrinsicsSupport.state.stableTypeOf) {
         if (intrinsicsSupport.isMutableCollectionType(type)) {
             v.invokestatic(REFLECTION, "mutableCollectionType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
+        } else if (type.typeConstructor().isNothingConstructor()) {
+            v.invokestatic(REFLECTION, "nothingType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
         }
 
         if (type.isFlexible()) {

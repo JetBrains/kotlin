@@ -29830,6 +29830,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/typeOf/mutableCollections_before.kt");
             }
 
+            @TestMetadata("nothing_after.kt")
+            public void testNothing_after() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/nothing_after.kt");
+            }
+
+            @TestMetadata("nothing_before.kt")
+            public void testNothing_before() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/nothing_before.kt");
+            }
+
             @TestMetadata("rawTypes_after.kt")
             public void testRawTypes_after() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes_after.kt");
@@ -29898,6 +29908,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("mutableCollections_before.kt")
                 public void testMutableCollections_before() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/mutableCollections_before.kt");
+                }
+
+                @TestMetadata("nothing_after.kt")
+                public void testNothing_after() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_after.kt");
+                }
+
+                @TestMetadata("nothing_before.kt")
+                public void testNothing_before() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_before.kt");
                 }
 
                 @TestMetadata("rawTypes_after.kt")

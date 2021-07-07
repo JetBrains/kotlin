@@ -157,6 +157,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         return TypeOfImplKt.createMutableCollectionKType(type);
     }
 
+    // @Override // JPS
+    public KType nothingType(KType type) {
+        return TypeOfImplKt.createNothingType(type);
+    }
+
     // Misc
 
     public static void clearCaches() {

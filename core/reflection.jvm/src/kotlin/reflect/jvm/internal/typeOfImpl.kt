@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import kotlin.reflect.KType
 
 internal fun createPlatformKType(lowerBound: KType, upperBound: KType): KType {
@@ -38,4 +39,12 @@ private fun ClassDescriptor.readOnlyToMutable(): ClassDescriptor {
     val fqName = JavaToKotlinClassMap.readOnlyToMutable(fqNameUnsafe)
         ?: throw IllegalArgumentException("Not a readonly collection: $this")
     return builtIns.getBuiltInClassByFqName(fqName)
+}
+
+internal fun createNothingType(type: KType): KType {
+    val kotlinType = (type as KTypeImpl).type
+    require(kotlinType is SimpleType) { "Non-simple type cannot be a Nothing type: $type" }
+    return KTypeImpl(
+        KotlinTypeFactory.simpleType(kotlinType, constructor = kotlinType.builtIns.nothing.typeConstructor)
+    )
 }

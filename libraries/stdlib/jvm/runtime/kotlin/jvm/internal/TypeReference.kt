@@ -13,26 +13,28 @@ import kotlin.reflect.*
 public class TypeReference /* @SinceKotlin("1.6") constructor */(
     override val classifier: KClassifier,
     override val arguments: List<KTypeProjection>,
-    override val isMarkedNullable: Boolean,
-    internal val platformTypeUpperBound: KType?,
-    internal val mutableCollectionType: Boolean,
+    /* @SinceKotlin("1.6") */ internal val platformTypeUpperBound: KType?,
+    /* @SinceKotlin("1.6") */ internal val flags: Int,
 ) : KType {
     constructor(
         classifier: KClassifier,
         arguments: List<KTypeProjection>,
         isMarkedNullable: Boolean,
-    ) : this(classifier, arguments, isMarkedNullable, null, false)
+    ) : this(classifier, arguments, null, if (isMarkedNullable) IS_MARKED_NULLABLE else 0)
 
     override val annotations: List<Annotation>
         get() = emptyList()
 
+    override val isMarkedNullable: Boolean
+        get() = flags and IS_MARKED_NULLABLE != 0
+
     override fun equals(other: Any?): Boolean =
         other is TypeReference &&
-                classifier == other.classifier && arguments == other.arguments && isMarkedNullable == other.isMarkedNullable &&
-                platformTypeUpperBound == other.platformTypeUpperBound && mutableCollectionType == other.mutableCollectionType
+                classifier == other.classifier && arguments == other.arguments && platformTypeUpperBound == other.platformTypeUpperBound &&
+                flags == other.flags
 
     override fun hashCode(): Int =
-        (classifier.hashCode() * 31 + arguments.hashCode()) * 31 + isMarkedNullable.hashCode()
+        (classifier.hashCode() * 31 + arguments.hashCode()) * 31 + flags.hashCode()
 
     override fun toString(): String =
         asString(false) + Reflection.REFLECTION_NOT_AVAILABLE
@@ -41,6 +43,7 @@ public class TypeReference /* @SinceKotlin("1.6") constructor */(
         val javaClass = (classifier as? KClass<*>)?.java
         val klass = when {
             javaClass == null -> classifier.toString()
+            flags and IS_NOTHING_TYPE != 0 -> "kotlin.Nothing"
             javaClass.isArray -> javaClass.arrayClassName
             convertPrimitiveToWrapper && javaClass.isPrimitive -> (classifier as KClass<*>).javaObjectType.name
             else -> javaClass.name
@@ -77,5 +80,12 @@ public class TypeReference /* @SinceKotlin("1.6") constructor */(
             KVariance.IN -> "in $typeString"
             KVariance.OUT -> "out $typeString"
         }
+    }
+
+    // @SinceKotlin("1.6")
+    internal companion object {
+        internal const val IS_MARKED_NULLABLE = 1 shl 0
+        internal const val IS_MUTABLE_COLLECTION_TYPE = 1 shl 1
+        internal const val IS_NOTHING_TYPE = 1 shl 2
     }
 }
