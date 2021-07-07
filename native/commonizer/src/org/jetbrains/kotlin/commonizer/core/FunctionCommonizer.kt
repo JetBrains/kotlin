@@ -17,7 +17,7 @@ class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
         val valueParameters = valueParameters.result
         valueParameters.patchCallables()
 
-        return CirFunction.create(
+        return CirFunction(
             annotations = annotations.result,
             name = name,
             typeParameters = typeParameters.result,

@@ -169,7 +169,7 @@ object CirDeserializers {
         }
 
     fun function(name: CirName, source: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction =
-        CirFunction.create(
+        CirFunction(
             annotations = annotations(source.flags, typeResolver, source::annotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
