@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -49,10 +51,12 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         val dedupReporter = reporter.deduplicating()
 
         for (name in classScope.getCallableNames()) {
-            classScope.processFunctionsByName(name) { checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it) }
+            classScope.processFunctionsByName(name) {
+                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it, classScope)
+            }
             classScope.processPropertiesByName(name) {
-                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it)
-                checkValOverridesVar(declaration, context, dedupReporter, it)
+                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it, classScope)
+                checkValOverridesVar(declaration, context, dedupReporter, it, classScope)
             }
             checkConflictingMembers(declaration, context, dedupReporter, classScope, name)
         }
@@ -63,7 +67,8 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter,
         typeCheckerContext: ConeTypeCheckerContext,
-        symbol: FirCallableSymbol<*>
+        symbol: FirCallableSymbol<*>,
+        classScope: FirTypeScope
     ) {
         fun reportTypeMismatch(member1: FirCallableDeclaration, member2: FirCallableDeclaration, isDelegation: Boolean) {
             val error = when {
@@ -96,9 +101,15 @@ object FirImplementationMismatchChecker : FirClassChecker() {
                 AbstractTypeChecker.isSubtypeOf(typeCheckerContext, inheritedTypeSubstituted, baseType)
         }
 
-        if (symbol.callableId.classId != containingClass.classId) return
-        if (symbol !is FirIntersectionCallableSymbol) return
-        val withTypes = symbol.intersections.map {
+        val intersectionSymbols = when {
+            symbol.fir.delegatedWrapperData != null ->
+                classScope.getDirectOverriddenMembers(symbol) + symbol
+            symbol is FirIntersectionCallableSymbol && symbol.callableId.classId == containingClass.classId ->
+                symbol.intersections
+            else -> return
+        }
+
+        val withTypes = intersectionSymbols.map {
             it.fir to context.returnTypeCalculator.tryCalculateReturnType(it.fir).coneType
         }
 
@@ -107,7 +118,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         var delegation: FirCallableDeclaration? = null
         val implementations = mutableListOf<FirCallableDeclaration>()
 
-        for (intSymbol in symbol.intersections) {
+        for (intSymbol in intersectionSymbols) {
             val fir = intSymbol.fir
             if (fir.delegatedWrapperData?.containingClass?.classId == containingClass.classId) {
                 delegation = fir
@@ -149,24 +160,18 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         containingClass: FirClass,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        symbol: FirVariableSymbol<*>
+        symbol: FirVariableSymbol<*>,
+        classScope: FirTypeScope
     ) {
-        if (symbol.callableId.classId != containingClass.classId) return
-        if (symbol !is FirIntersectionOverridePropertySymbol) return
+        if (symbol !is FirPropertySymbol || symbol.fir.isVar) return
+        if (symbol.fir.delegatedWrapperData == null) return
 
-        val (delegates, others) = symbol.intersections.partition {
-            val fir = it.fir as? FirProperty ?: return@partition false
-            fir.isVal && fir.delegatedWrapperData?.containingClass?.classId == containingClass.classId
-        }
+        val overriddenVar =
+            classScope.getDirectOverriddenProperties(symbol, true)
+                .find { it.fir.isVar }
+                ?: return
 
-        val delegatedVal = delegates.firstOrNull() ?: return
-        val baseVar = others.find {
-            it is FirPropertySymbol && it.fir.isVar
-        }
-
-        if (baseVar != null) {
-            reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, delegatedVal.fir, baseVar.fir, context)
-        }
+        reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, symbol.fir, overriddenVar.fir, context)
     }
 
     private fun checkConflictingMembers(

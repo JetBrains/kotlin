@@ -51,7 +51,7 @@ abstract <!PROPERTY_TYPE_MISMATCH_ON_INHERITANCE!>class Test8<!> : IGeneric<Stri
 
 abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED, PROPERTY_TYPE_MISMATCH_ON_INHERITANCE!>class Test10<!> : IInt by CInt(), IStr by CStr(), IAny by CAny()
 
-abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Test11<!> : IInt, IStr by CStr(), IAny by CAny()
+abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED, PROPERTY_TYPE_MISMATCH_ON_INHERITANCE!>class Test11<!> : IInt, IStr by CStr(), IAny by CAny()
 
 abstract <!PROPERTY_TYPE_MISMATCH_ON_INHERITANCE!>class Test12<!> : IInt, IStr, IAny by CAny()
 
