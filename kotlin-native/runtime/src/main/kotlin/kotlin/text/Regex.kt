@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.text
@@ -150,6 +150,12 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
     actual fun containsMatchIn(input: CharSequence): Boolean = find(input) != null
 
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    public actual fun matchesAt(input: CharSequence, index: Int): Boolean =
+        // TODO: expand and simplify
+        matchAt(input, index) != null
+
     /**
      * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
      *
@@ -196,6 +202,23 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * @return An instance of [MatchResult] if the entire input matches or `null` otherwise.
      */
     actual fun matchEntire(input: CharSequence): MatchResult?= doMatch(input, Mode.MATCH)
+
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    public actual fun matchAt(input: CharSequence, index: Int): MatchResult? {
+        if (index < 0 || index > input.length) {
+            throw IndexOutOfBoundsException("index is out of bounds: $index, input length: ${input.length}")
+        }
+        val matchResult = MatchResultImpl(input, this)
+        matchResult.mode = Mode.FIND
+        matchResult.startIndex = index
+        val matches = startNode.matches(index, input, matchResult) >= 0
+        if (!matches) {
+            return null
+        }
+        matchResult.finalizeMatch()
+        return matchResult
+    }
 
     private fun processReplacement(match: MatchResult, replacement: String): String {
         val result = StringBuilder(replacement.length)

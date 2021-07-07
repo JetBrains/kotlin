@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -177,6 +177,39 @@ class RegexTest {
 
         assertEquals("aaaab", regex.find(input)!!.value)
         assertEquals("aaaabbbb", regex.matchEntire(input)!!.value)
+    }
+
+    @Test fun matchAt() {
+        val regex = Regex("[a-z][1-5]", RegexOption.IGNORE_CASE)
+        val input = "...a4...B1"
+        val positions = 0..input.length
+
+        val matchIndices = positions.filter { index -> regex.matchesAt(input, index) }
+        assertEquals(listOf(3, 8), matchIndices)
+        val reversedIndices = positions.reversed().filter { index -> regex.matchesAt(input, index) }.reversed()
+        assertEquals(matchIndices, reversedIndices)
+
+        val matches = positions.mapNotNull { index -> regex.matchAt(input, index)?.let { index to it } }
+        assertEquals(matchIndices, matches.map { it.first })
+        matches.forEach { (index, match) ->
+            assertEquals(index..index + 1, match.range)
+            assertEquals(input.substring(match.range), match.value)
+        }
+
+        for (index in listOf(-1, input.length + 1)) {
+            assertFailsWith<IndexOutOfBoundsException> { regex.matchAt(input, index) }
+            assertFailsWith<IndexOutOfBoundsException> { regex.matchesAt(input, index) }
+        }
+
+        val anchoringRegex = Regex("^[a-z]")
+        assertFalse(anchoringRegex.matchesAt(input, 3))
+        assertNull(anchoringRegex.matchAt(input, 3))
+
+        val lookbehindRegex = Regex("(?<=[a-z])\\d")
+        assertTrue(lookbehindRegex.matchesAt(input, 4))
+        assertNotNull(lookbehindRegex.matchAt(input, 4)).let { match ->
+            assertEquals("4", match.value)
+        }
     }
 
     @Test fun escapeLiteral() {

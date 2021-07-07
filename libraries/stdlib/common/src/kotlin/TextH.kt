@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,31 @@ expect class Regex {
 
     fun matchEntire(input: CharSequence): MatchResult?
     infix fun matches(input: CharSequence): Boolean
+
+    /**
+     * Attempts to match a regular expression exactly at the specified [index] in the [input] char sequence.
+     *
+     * Unlike [matchEntire] function, it doesn't require the match to span to the end of [input].
+     *
+     * @return An instance of [MatchResult] if the input matches this [Regex] at the specified [index] or `null` otherwise.
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of the [input] char sequence.
+     */
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    fun matchAt(input: CharSequence, index: Int): MatchResult?
+
+    /**
+     * Checks if a regular expression matches a part of the specified [input] char sequence
+     * exactly at the specified [index].
+     *
+     * Unlike [matches] function, it doesn't require the match to span to the end of [input].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of the [input] char sequence.
+     */
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    fun matchesAt(input: CharSequence, index: Int): Boolean
+
     fun containsMatchIn(input: CharSequence): Boolean
     fun replace(input: CharSequence, replacement: String): String
     fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String

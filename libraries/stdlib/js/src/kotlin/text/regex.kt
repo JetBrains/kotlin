@@ -20,6 +20,8 @@ public actual enum class RegexOption(val value: String) {
     MULTILINE("m")
 }
 
+private fun Iterable<RegexOption>.toFlags(prepend: String): String = joinToString("", prefix = prepend) { it.value }
+
 
 /**
  * Represents the results from a single capturing group within a [MatchResult] of [Regex].
@@ -51,7 +53,11 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     public actual val pattern: String = pattern
     /** The set of options that were used to create this regular expression. */
     public actual val options: Set<RegexOption> = options.toSet()
-    private val nativePattern: RegExp = RegExp(pattern, options.joinToString(separator = "", prefix = "gu") { it.value })
+    private val nativePattern: RegExp = RegExp(pattern, options.toFlags("gu"))
+    private var nativeStickyPattern: RegExp? = null
+    private fun initStickyPattern(): RegExp =
+        nativeStickyPattern ?: RegExp(pattern, options.toFlags("yu")).also { nativeStickyPattern = it }
+
 
     /** Indicates whether the regular expression matches the entire [input]. */
     public actual infix fun matches(input: CharSequence): Boolean {
@@ -64,6 +70,17 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     public actual fun containsMatchIn(input: CharSequence): Boolean {
         nativePattern.reset()
         return nativePattern.test(input.toString())
+    }
+
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    public actual fun matchesAt(input: CharSequence, index: Int): Boolean {
+        if (index < 0 || index > input.length) {
+            throw IndexOutOfBoundsException("index out of bounds: $index, input length: ${input.length}")
+        }
+        val pattern = initStickyPattern()
+        pattern.lastIndex = index
+        return pattern.test(input.toString())
     }
 
     /**
@@ -108,6 +125,16 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
         else
             return Regex("^${pattern.trimStart('^').trimEnd('$')}$", options).find(input)
     }
+
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    public actual fun matchAt(input: CharSequence, index: Int): MatchResult? {
+        if (index < 0 || index > input.length) {
+            throw IndexOutOfBoundsException("index out of bounds: $index, input length: ${input.length}")
+        }
+        return initStickyPattern().findNext(input.toString(), index)
+    }
+
 
     /**
      * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
