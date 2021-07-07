@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.backend.common.lower.loops.isInductionVariable
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
@@ -109,42 +110,20 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         AsmUtil.isPrimitive(context.typeMapper.mapType(this))
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildren(Transformer(), null)
+        irFile.transformChildren(Transformer(irFile.findInlineCallSites(context)), null)
     }
 
-    inner class Transformer : IrElementTransformer<IrClass?> {
-
+    private inner class Transformer(private val inlineScopeResolver: IrInlineScopeResolver) : IrElementTransformer<IrDeclaration?> {
         private val dontTouchTemporaryVals = HashSet<IrVariable>()
 
-        // Thread the current class through the transformations in order to replace
-        // final default accessor calls with direct backing field access when
-        // possible.
-        override fun visitClass(declaration: IrClass, data: IrClass?): IrStatement {
-            declaration.transformChildren(this, declaration)
-            return declaration
-        }
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?): IrStatement =
+            super.visitDeclaration(declaration, declaration)
 
-        // For some functions, we clear the current class field since the code could end up
-        // in another class then the one it is nested under in the IR.
-        // TODO: replace this with the code from SyntheticAccessorLowering that returns the current class
-        //   or package accounting for all inline functions and lambdas.
-        override fun visitFunction(declaration: IrFunction, data: IrClass?): IrStatement {
-            val codeMightBeGeneratedInDifferentClass = declaration.isSuspend ||
-                    declaration.isInline ||
-                    declaration.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA
-            declaration.transformChildren(this, data.takeUnless { codeMightBeGeneratedInDifferentClass })
-            return declaration
-        }
-
-        override fun visitCall(expression: IrCall, data: IrClass?): IrExpression {
+        override fun visitCall(expression: IrCall, data: IrDeclaration?): IrExpression {
             expression.transformChildren(this, data)
 
             if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
-                if (data == null) return expression
-                val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return expression
-                val property = simpleFunction.correspondingPropertySymbol?.owner ?: return expression
-                if (property.isLateinit) return expression
-                return optimizePropertyAccess(expression, simpleFunction, property, data)
+                return optimizePropertyAccess(expression, data)
             }
 
             if (isNegation(expression, context) && isNegation(expression.dispatchReceiver!!, context)) {
@@ -212,39 +191,33 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 }
             }
 
-        private fun optimizePropertyAccess(
-            expression: IrCall,
-            accessor: IrSimpleFunction,
-            property: IrProperty,
-            currentClass: IrClass
-        ): IrExpression {
-            if (accessor.parentAsClass == currentClass &&
-                property.backingField?.parentAsClass == currentClass &&
-                accessor.modality == Modality.FINAL &&
-                !accessor.isExternal
-            ) {
-                val backingField = property.backingField!!
-                val receiver = expression.dispatchReceiver
-                return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
-                    if (backingField.isStatic && receiver != null && receiver !is IrGetValue) {
-                        // If the field is static, evaluate the receiver for potential side effects.
-                        +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
-                    }
-                    if (accessor.valueParameters.isNotEmpty()) {
-                        +irSetField(
-                            receiver.takeUnless { backingField.isStatic },
-                            backingField,
-                            expression.getValueArgument(expression.valueArgumentsCount - 1)!!
-                        )
-                    } else {
-                        +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
-                    }
+        private fun optimizePropertyAccess(expression: IrCall, data: IrDeclaration?): IrExpression {
+            val accessor = expression.symbol.owner as? IrSimpleFunction ?: return expression
+            if (accessor.modality != Modality.FINAL || accessor.isExternal) return expression
+            val property = accessor.correspondingPropertySymbol?.owner ?: return expression
+            if (property.isLateinit) return expression
+            val backingField = property.backingField ?: return expression
+            val scope = data?.let(inlineScopeResolver::findContainer) ?: return expression
+            if (scope != accessor.parent || scope != backingField.parent) return expression
+            val receiver = expression.dispatchReceiver
+            return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
+                if (backingField.isStatic && receiver != null && receiver !is IrGetValue) {
+                    // If the field is static, evaluate the receiver for potential side effects.
+                    +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
+                }
+                if (accessor.valueParameters.isNotEmpty()) {
+                    +irSetField(
+                        receiver.takeUnless { backingField.isStatic },
+                        backingField,
+                        expression.getValueArgument(expression.valueArgumentsCount - 1)!!
+                    )
+                } else {
+                    +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
                 }
             }
-            return expression
         }
 
-        override fun visitWhen(expression: IrWhen, data: IrClass?): IrExpression {
+        override fun visitWhen(expression: IrWhen, data: IrDeclaration?): IrExpression {
             val isCompilerGenerated = expression.origin == null
             expression.transformChildren(this, data)
             // Remove all branches with constant false condition.
@@ -390,13 +363,13 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             }
         }
 
-        override fun visitBlockBody(body: IrBlockBody, data: IrClass?): IrBody {
+        override fun visitBlockBody(body: IrBlockBody, data: IrDeclaration?): IrBody {
             body.transformChildren(this, data)
             removeUnnecessaryTemporaryVariables(body.statements)
             return body
         }
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: IrClass?): IrExpression {
+        override fun visitContainerExpression(expression: IrContainerExpression, data: IrDeclaration?): IrExpression {
             val safeCall = parseSafeCall(expression)
             if (safeCall != null) {
                 // Don't optimize out temporary values for safe calls (yet), so that safe call-based equality checks can be optimized.
@@ -450,6 +423,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 isConst = false, isLateinit = false
             )
             newLoopVariable.initializer = inductionVariable.initializer
+            newLoopVariable.parent = inductionVariable.parent
 
             loopInitialization.statements[inductionVariableIndex] = newLoopVariable
             loopVariableContainer.statements.removeAt(loopVariableIndex)
@@ -519,7 +493,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             }
         }
 
-        override fun visitGetValue(expression: IrGetValue, data: IrClass?): IrExpression {
+        override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?): IrExpression {
             // Replace IrGetValue of an immutable temporary variable with a constant
             // initializer with the constant initializer.
             val variable = expression.symbol.owner
