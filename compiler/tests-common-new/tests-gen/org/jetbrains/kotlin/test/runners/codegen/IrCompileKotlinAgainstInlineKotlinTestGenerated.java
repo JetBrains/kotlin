@@ -3823,6 +3823,12 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
         }
 
         @Test
+        @TestMetadata("nameClash.kt")
+        public void testNameClash() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/nameClash.kt");
+        }
+
+        @Test
         @TestMetadata("nonCapturingObjectInLambda.kt")
         public void testNonCapturingObjectInLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/nonCapturingObjectInLambda.kt");

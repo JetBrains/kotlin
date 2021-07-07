@@ -318,14 +318,8 @@ class MethodInliner(
                         super.visitMethodInsn(opcode, owner, name, desc, itf)
                     }
                 } else if (ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))) {
-                    // Consider this arrangement:
-                    //     inline fun <reified T> f(x: () -> Unit = { /* uses `T` in a local class */ }) = x()
-                    //     inline fun <reified V> g() = f<...> { /* uses `V` in a local class */ }
-                    // When inlining `f` into `g`, we need to erase class reification markers from `f` and the default lambda
-                    // (they will be recreated by `handleAnonymousObjectRegeneration` above if `T` is instantiated with another
-                    // reified type parameter), but not from the lambda passed to `f` in `g` (as reified type parameters inside
-                    // it do not belong to `f`, thus we cannot substitute them yet).
-                    if (inliningContext.isInliningLambda && inliningContext.lambdaInfo !is DefaultLambda) {
+                    // If objects are reified, the marker will be recreated by `handleAnonymousObjectRegeneration` above.
+                    if (!inliningContext.shouldReifyTypeParametersInObjects) {
                         super.visitMethodInsn(opcode, owner, name, desc, itf)
                     }
                 } else {
