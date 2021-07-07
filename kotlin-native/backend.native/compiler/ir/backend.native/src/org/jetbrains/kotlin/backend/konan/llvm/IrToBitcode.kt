@@ -2246,8 +2246,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
     private val kImmZero = Int32(0).llvm
     private val kImmOne  = Int32(1).llvm
-    private val kTrue    = Int1(1).llvm
-    private val kFalse   = Int1(0).llvm
+    private val kTrue    = Int1(true).llvm
+    private val kFalse   = Int1(false).llvm
 
     // TODO: Intrinsify?
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {

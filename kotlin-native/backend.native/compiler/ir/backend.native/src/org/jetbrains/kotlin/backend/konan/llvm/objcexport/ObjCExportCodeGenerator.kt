@@ -363,7 +363,7 @@ internal class ObjCExportCodeGenerator(
         if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
             replaceExternalWeakOrCommonGlobal(
                     "Kotlin_ObjCExport_initTypeAdapters",
-                    Int1(1),
+                    Int1(true),
                     context.standardLlvmSymbolsOrigin
             )
         }

@@ -273,7 +273,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             args.single()
 
     private fun FunctionGenerationContext.emitIsExperimentalMM(): LLVMValueRef =
-            Int1(if (context.memoryModel == MemoryModel.EXPERIMENTAL) 1 else 0).llvm
+            Int1(context.memoryModel == MemoryModel.EXPERIMENTAL).llvm
 
     private fun FunctionGenerationContext.emitListOfInternal(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         val varargExpression = callSite.getValueArgument(0) as IrVararg

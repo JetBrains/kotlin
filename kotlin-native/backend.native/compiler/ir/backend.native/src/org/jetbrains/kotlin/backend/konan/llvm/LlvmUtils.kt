@@ -115,8 +115,8 @@ internal val vector128Type get() = LLVMVectorType(floatType, 4)!!
 
 internal val voidType get() = LLVMVoidTypeInContext(llvmContext)!!
 
-internal class Int1(val value: Byte) : ConstValue {
-    override val llvm = LLVMConstInt(int1Type, value.toLong(), 1)!!
+internal class Int1(val value: Boolean) : ConstValue {
+    override val llvm = LLVMConstInt(int1Type, if (value) 1 else 0, 1)!!
 }
 
 internal class Int8(val value: Byte) : ConstValue {

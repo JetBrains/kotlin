@@ -270,7 +270,7 @@ internal class StackLocalsManagerImpl(
                     listOf(bitcast(kInt8Ptr, stackSlot),
                             Int8(0).llvm,
                             Int32(LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8).llvm,
-                            Int1(0).llvm))
+                            Int1(false).llvm))
 
             val objectHeader = structGep(stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
@@ -328,7 +328,7 @@ internal class StackLocalsManagerImpl(
                             Int8(0).llvm,
                             Int32(constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData,
                                     arrayToElementType[irClass.symbol]).toInt() / 8).llvm,
-                            Int1(0).llvm))
+                            Int1(false).llvm))
             StackLocal(true, irClass, arraySlot, arrayHeaderSlot)
         }
 
@@ -367,7 +367,7 @@ internal class StackLocalsManagerImpl(
                         listOf(bodyWithSkippedServiceInfoPtr,
                                 Int8(0).llvm,
                                 Int32(bodySize - serviceInfoSize).llvm,
-                                Int1(0).llvm))
+                                Int1(false).llvm))
             }
         }
     }
@@ -1353,7 +1353,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 call(context.llvm.memsetFunction,
                         listOf(slotsMem, Int8(0).llvm,
                                 Int32(slotCount * codegen.runtime.pointerSize).llvm,
-                                Int1(0).llvm))
+                                Int1(false).llvm))
                 call(context.llvm.enterFrameFunction, listOf(slots, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
