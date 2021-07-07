@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isReadOfCrossinline
-import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
@@ -99,11 +98,10 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
 
 private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val inlineReferences = IrInlineReferenceLocator.scan(context, irFile)
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitBlock(expression: IrBlock): IrExpression {
                 val reference = expression.statements.lastOrNull() as? IrFunctionReference ?: return super.visitBlock(expression)
-                if (reference.isSuspend && reference.origin.isLambda && reference !in inlineReferences) {
+                if (reference.isSuspend && reference.origin.isLambda) {
                     assert(expression.statements.size == 2 && expression.statements[0] is IrFunction)
                     expression.transformChildrenVoid(this)
                     val parent = currentDeclarationParent ?: error("No current declaration parent at ${reference.dump()}")

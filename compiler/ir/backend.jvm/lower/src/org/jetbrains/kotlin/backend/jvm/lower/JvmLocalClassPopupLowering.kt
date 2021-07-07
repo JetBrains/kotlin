@@ -8,23 +8,17 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.findInlineLambdas
 import org.jetbrains.kotlin.backend.jvm.isGeneratedLambdaClass
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 
 class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLowering(context) {
     private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
 
     override fun lower(irFile: IrFile) {
-        irFile.accept(object : IrInlineReferenceLocator(context as JvmBackendContext) {
-            override fun visitInlineLambda(
-                argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration
-            ) {
-                inlineLambdaToScope[argument.symbol.owner] = scope
-            }
-        }, null)
+        irFile.findInlineLambdas(context as JvmBackendContext) { argument, _, _, scope ->
+            inlineLambdaToScope[argument.symbol.owner] = scope
+        }
         super.lower(irFile)
         inlineLambdaToScope.clear()
     }
