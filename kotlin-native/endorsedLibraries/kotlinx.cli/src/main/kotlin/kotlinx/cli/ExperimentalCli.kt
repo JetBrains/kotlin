@@ -15,7 +15,7 @@ import kotlin.annotation.AnnotationTarget.*
  *
  * Any usage of a declaration annotated with `@ExperimentalCli` must be accepted either by
  * annotating that usage with the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalCli::class)`,
- * or by using the compiler argument `-Xuse-experimental=kotlinx.cli.ExperimentalCli`.
+ * or by using the compiler argument `-Xopt-in=kotlinx.cli.ExperimentalCli`.
  */
 @RequiresOptIn("This API is experimental. It may be changed in the future without notice.", RequiresOptIn.Level.WARNING)
 @Retention(AnnotationRetention.BINARY)

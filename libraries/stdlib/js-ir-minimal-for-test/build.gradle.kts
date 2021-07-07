@@ -122,9 +122,8 @@ tasks.withType<KotlinCompile<*>> {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xallow-result-return-type",
-        "-Xuse-experimental=kotlin.Experimental",
-        "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
-        "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+        "-Xopt-in=kotlin.ExperimentalMultiplatform",
+        "-Xopt-in=kotlin.contracts.ExperimentalContracts",
         "-Xinline-classes",
         "-Xopt-in=kotlin.RequiresOptIn",
         "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
