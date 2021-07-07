@@ -5445,6 +5445,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("getterOverrides.kt")
+                public void testGetterOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/getterOverrides.kt");
+                }
+
+                @Test
                 @TestMetadata("junk.kt")
                 public void testJunk() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/junk.kt");
