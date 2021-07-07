@@ -57,7 +57,8 @@ public class MappingClassesForWhenByEnumCodegen {
         generateFields(cb, mappings);
         generateInitialization(cb, mappings);
 
-        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cb, state);
+        boolean publicAbi = mappings.stream().anyMatch(WhenByEnumsMapping::isPublicAbi);
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cb, state, publicAbi);
 
         cb.done();
     }

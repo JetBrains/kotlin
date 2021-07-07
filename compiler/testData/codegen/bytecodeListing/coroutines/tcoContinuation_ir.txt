@@ -81,6 +81,7 @@ public final class TcoContinuationKt$foo$$inlined$flow$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
+    // source: 'tcoContinuation.kt'
     enclosing method TcoContinuationKt$foo$$inlined$map$1$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
@@ -115,6 +116,7 @@ public final class TcoContinuationKt$foo$$inlined$map$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$1$1 {
+    // source: 'tcoContinuation.kt'
     enclosing method TcoContinuationKt$map$$inlined$transform$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
@@ -128,6 +130,7 @@ public final class TcoContinuationKt$map$$inlined$transform$1$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class TcoContinuationKt$map$$inlined$transform$1$2$1 {
+    // source: 'tcoContinuation.kt'
     enclosing method TcoContinuationKt$map$$inlined$transform$1$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
@@ -167,6 +170,7 @@ public final class TcoContinuationKt$map$$inlined$transform$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$1$1 {
+    // source: 'tcoContinuation.kt'
     enclosing method TcoContinuationKt$transform$$inlined$flow$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
@@ -192,6 +196,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$lambda-1$$inlined$collect$1$1 {
+    // source: 'tcoContinuation.kt'
     enclosing method TcoContinuationKt$transform$lambda-1$$inlined$collect$1.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object

@@ -138,7 +138,7 @@ public class SamWrapperCodegen {
         );
         cv.visitSource(file.getName(), null);
 
-        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv, state);
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv, state, isInsideInline);
 
         generateInnerClassInformation(file, asmType, cv);
 

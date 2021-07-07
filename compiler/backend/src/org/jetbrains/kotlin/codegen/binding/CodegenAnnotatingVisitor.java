@@ -1060,7 +1060,15 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         ClassDescriptor classDescriptor = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
         assert classDescriptor != null : "because it's enum";
 
-        WhenByEnumsMapping mapping = new WhenByEnumsMapping(classDescriptor, currentClassName, fieldNumber);
+        boolean isPublicAbi = false;
+        for (FunctionDescriptor descriptor : functionsStack) {
+            if (descriptor.isInline()) {
+                isPublicAbi = !DescriptorVisibilities.isPrivate(descriptor.getVisibility());
+                break;
+            }
+        }
+
+        WhenByEnumsMapping mapping = new WhenByEnumsMapping(classDescriptor, currentClassName, fieldNumber, isPublicAbi);
 
         for (ConstantValue<?> constant : switchCodegenProvider.getAllConstants(expression)) {
             if (constant instanceof NullValue) continue;

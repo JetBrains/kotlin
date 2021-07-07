@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -252,7 +252,17 @@ class ClassCodegen private constructor(
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_SCRIPT_FLAG
         }
 
-        writeKotlinMetadata(visitor, state, kind, extraFlags) {
+        // There are three kinds of classes which are regenerated during inlining.
+        // 1) Anonymous classes which are in the scope of an inline function.
+        // 2) SAM wrappers used in an inline function. These are identified by name, since they
+        //    can be reused in different functions and are thus generated in the enclosing top-level
+        //    class instead of inside of an inline function.
+        // 3) WhenMapping classes used from inline functions. These are collected in
+        //    `JvmBackendContext.publicAbiSymbols` in `MappedEnumWhenLowering`.
+        val isPublicAbi = irClass.symbol in context.publicAbiSymbols || irClass.isInlineSamWrapper ||
+                type.isAnonymousClass && irClass.isInPublicInlineScope
+
+        writeKotlinMetadata(visitor, state, kind, isPublicAbi, extraFlags) {
             if (metadata != null) {
                 metadataSerializer.serialize(metadata)?.let { (proto, stringTable) ->
                     DescriptorAsmUtil.writeAnnotationData(it, proto, stringTable)
@@ -451,6 +461,9 @@ class ClassCodegen private constructor(
     private val IrClass.isAnonymousInnerClass: Boolean
         get() = isSamWrapper || name.isSpecial // NB '<Continuation>' is treated as anonymous inner class here
 
+    private val IrClass.isInlineSamWrapper: Boolean
+        get() = isSamWrapper && visibility == DescriptorVisibilities.PUBLIC
+
     private val IrClass.isSamWrapper: Boolean
         get() = origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
 
@@ -467,20 +480,10 @@ class ClassCodegen private constructor(
     private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
         get() {
             val psiElement = PsiSourceManager.findPsiElement(this)
-            // For declarations inside lambdas, produce a descriptor which refers back to the original function.
-            // This is needed for plugins which check for lambdas inside of inline functions using the descriptor
-            // contained in JvmDeclarationOrigin. This matches the behavior of the JVM backend.
-            // TODO: this is really not very useful, as this does nothing for other anonymous objects.
-            val isLambda = irClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                    irClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
-            val descriptor = if (isLambda)
-                irClass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.owner?.toIrBasedDescriptor() ?: toIrBasedDescriptor()
-            else
-                toIrBasedDescriptor()
             return if (origin == IrDeclarationOrigin.FILE_CLASS)
-                JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, descriptor)
+                JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, toIrBasedDescriptor())
             else
-                OtherOrigin(psiElement, descriptor)
+                OtherOrigin(psiElement, toIrBasedDescriptor())
         }
 
     companion object {
@@ -567,3 +570,7 @@ private val Modality.flags: Int
 
 private val DescriptorVisibility.flags: Int
     get() = DescriptorAsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
+
+// From `isAnonymousClass` in inlineCodegenUtils.kt
+private val Type.isAnonymousClass: Boolean
+    get() = internalName.substringAfterLast("$", "").toIntOrNull() != null

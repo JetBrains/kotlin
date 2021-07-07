@@ -23,13 +23,11 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.LabelResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -77,7 +75,7 @@ class PsiSourceCompilerForInline(
             return InlineCallSiteInfo(
                 parentCodegen.className,
                 signature.asmMethod,
-                context.functionDescriptor.isInlineOrInsideInline(),
+                context.functionDescriptor.getInlineCallSiteVisibility(),
                 callElement.containingFile,
                 CodegenUtil.getLineNumberForElement(callElement, false) ?: 0
             )
@@ -420,8 +418,22 @@ class PsiSourceCompilerForInline(
 }
 
 fun DeclarationDescriptor.isInlineOrInsideInline(): Boolean =
-    if (this is FunctionDescriptor && isInline) true
-    else containingDeclaration?.isInlineOrInsideInline() == true
+    getInlineCallSiteVisibility() != null
+
+fun DeclarationDescriptor.getInlineCallSiteVisibility(): DescriptorVisibility? {
+    var declaration: DeclarationDescriptor? = this
+    var result: DescriptorVisibility? = null
+    while (declaration != null) {
+        if (declaration is FunctionDescriptor && declaration.isInline) {
+            if (!DescriptorVisibilities.isPrivate(declaration.visibility)) {
+                return declaration.visibility
+            }
+            result = declaration.visibility
+        }
+        declaration = declaration.containingDeclaration
+    }
+    return result
+}
 
 fun getDeclarationLabels(lambdaOrFun: PsiElement?, descriptor: DeclarationDescriptor): Set<String> {
     val result = HashSet<String>()

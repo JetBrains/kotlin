@@ -16,4 +16,5 @@ fun box(): String {
     return result
 }
 
-// 1 INVOKESPECIAL TestKt\$sam\$i\$java_lang_Runnable\$0.<init> \(Lkotlin/jvm/functions/Function0;\)V
+// 1 INVOKESPECIAL TestKt\$sam\$java_lang_Runnable\$0.<init> \(Lkotlin/jvm/functions/Function0;\)V
+// 0 INVOKESPECIAL TestKt\$sam\$i\$java_lang_Runnable\$0.<init> \(Lkotlin/jvm/functions/Function0;\)V

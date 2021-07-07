@@ -658,7 +658,7 @@ internal fun createSingletonLambda(
         areturn(kSerializerType)
     }
 
-    writeSyntheticClassMetadata(lambdaClassBuilder, lambdaCodegen.state)
+    writeSyntheticClassMetadata(lambdaClassBuilder, lambdaCodegen.state, false)
     lambdaClassBuilder.done()
 
     return lambdaType

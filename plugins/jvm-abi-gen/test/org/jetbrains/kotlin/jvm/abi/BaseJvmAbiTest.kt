@@ -64,8 +64,12 @@ abstract class BaseJvmAbiTest : TestCase() {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
             classpath = (abiDependencies + kotlinJvmStdlib).joinToString(File.pathSeparator) { it.canonicalPath }
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
-            pluginOptions = arrayOf(abiOption("outputDir", compilation.abiDir.canonicalPath))
+            pluginOptions = listOfNotNull(
+                abiOption(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.optionName, compilation.abiDir.canonicalPath),
+                if (useLegacyAbiGen) abiOption("useLegacyAbiGen", "true") else null
+            ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
+            useOldBackend = !useIrBackend
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {
@@ -73,6 +77,12 @@ abstract class BaseJvmAbiTest : TestCase() {
             error(errorLines.joinToString("\n"))
         }
     }
+
+    protected open val useIrBackend: Boolean
+        get() = false
+
+    protected open val useLegacyAbiGen: Boolean
+        get() = false
 
     protected val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
         check(it.exists()) { "Stdlib file '$it' does not exist" }

@@ -116,6 +116,7 @@ public final class flow/InnerObjectRetransformationKt$flow$1 {
 
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1 {
+    // source: 'innerObjectRetransformation.kt'
     enclosing method flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1.collect(Lflow/FlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.RootContext
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
@@ -369,7 +370,8 @@ class GenerationState private constructor(
                 extension.interceptClassBuilderFactory(classBuilderFactory, originalFrontendBindingContext, diagnostics)
             }
 
-        this.factory = ClassFileFactory(this, interceptedBuilderFactory)
+        val finalizers = ClassFileFactoryFinalizerExtension.getInstances(project)
+        this.factory = ClassFileFactory(this, interceptedBuilderFactory, finalizers)
     }
 
     fun beforeCompile() {

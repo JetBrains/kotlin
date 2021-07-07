@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.AnalysisFlags;
 import org.jetbrains.kotlin.config.JvmAnalysisFlags;
@@ -59,6 +60,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
+    private final List<ClassFileFactoryFinalizerExtension> finalizers;
     private final Map<String, OutAndSourceFileList> generators = Collections.synchronizedMap(new LinkedHashMap<>());
 
     private boolean isDone = false;
@@ -66,9 +68,10 @@ public class ClassFileFactory implements OutputFileCollection {
     private final Set<File> sourceFiles = new HashSet<>();
     private final PackagePartRegistry packagePartRegistry = new PackagePartRegistry();
 
-    public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
+    public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory, @NotNull List<ClassFileFactoryFinalizerExtension> finalizers) {
         this.state = state;
         this.builderFactory = builderFactory;
+        this.finalizers = finalizers;
     }
 
     public GenerationState getGenerationState() {
@@ -120,6 +123,9 @@ public class ClassFileFactory implements OutputFileCollection {
         if (!isDone) {
             isDone = true;
             writeModuleMappings();
+            for (ClassFileFactoryFinalizerExtension extension : finalizers) {
+                extension.finalizeClassFactory(this);
+            }
         }
     }
 

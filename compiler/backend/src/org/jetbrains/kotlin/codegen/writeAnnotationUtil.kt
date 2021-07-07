@@ -27,6 +27,7 @@ fun writeKotlinMetadata(
     cb: ClassBuilder,
     state: GenerationState,
     kind: KotlinClassHeader.Kind,
+    publicAbi: Boolean,
     extraFlags: Int,
     action: (AnnotationVisitor) -> Unit
 ) {
@@ -43,6 +44,9 @@ fun writeKotlinMetadata(
     if (state.languageVersionSettings.getFlag(JvmAnalysisFlags.strictMetadataVersionSemantics)) {
         flags = flags or JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG
     }
+    if (publicAbi) {
+        flags = flags or JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG
+    }
     if (flags != 0) {
         av.visit(JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME, flags)
     }
@@ -50,8 +54,8 @@ fun writeKotlinMetadata(
     av.visitEnd()
 }
 
-fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState) {
-    writeKotlinMetadata(cb, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { _ ->
+fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState, publicAbi: Boolean) {
+    writeKotlinMetadata(cb, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0) { _ ->
         // Do nothing
     }
 }

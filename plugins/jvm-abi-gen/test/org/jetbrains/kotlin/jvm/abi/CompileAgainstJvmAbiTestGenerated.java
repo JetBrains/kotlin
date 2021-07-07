@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +23,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvmAbiTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
     }
 
     public void testAllFilesPresentInCompile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, false);
     }
 
     @TestMetadata("anonymousObject")
@@ -54,9 +55,19 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
     }
 
+    @TestMetadata("inlineNoRegeneration")
+    public void testInlineNoRegeneration() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration/");
+    }
+
     @TestMetadata("inlineReifiedFunction")
     public void testInlineReifiedFunction() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/inlineReifiedFunction/");
+    }
+
+    @TestMetadata("innerObjectRegeneration")
+    public void testInnerObjectRegeneration() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/innerObjectRegeneration/");
     }
 
     @TestMetadata("privateOnlyConstructors")
