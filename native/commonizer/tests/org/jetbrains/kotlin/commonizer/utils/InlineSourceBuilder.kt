@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.InlineSourcesCommonizationTestDsl
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -19,6 +20,7 @@ interface InlineSourceBuilder {
         val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>
     )
 
+    @InlineSourcesCommonizationTestDsl
     @ModuleBuilderDsl
     class ModuleBuilder {
         var name: String = "test-module"
@@ -26,16 +28,19 @@ interface InlineSourceBuilder {
         private var dependencies: List<Module> = emptyList()
 
 
+        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun source(@Language("kotlin") content: String, name: String = "test.kt") {
             sourceFiles = sourceFiles + SourceFile(name, content)
         }
 
+        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun dependency(builder: ModuleBuilder.() -> Unit) {
             dependency(ModuleBuilder().also(builder).build())
         }
 
+        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun dependency(module: Module) {
             this.dependencies += module.copy(name = "${this.name}-dependency-${module.name}-${dependencies.size}")
