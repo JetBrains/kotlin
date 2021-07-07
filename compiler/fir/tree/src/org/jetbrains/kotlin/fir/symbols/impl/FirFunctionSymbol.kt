@@ -5,16 +5,30 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 sealed class FirFunctionSymbol<D : FirFunction>(
     override val callableId: CallableId
-) : FirCallableSymbol<D>()
+) : FirCallableSymbol<D>() {
+    val valueParameterSymbols: List<FirValueParameterSymbol>
+        get() = fir.valueParameters.map { it.symbol }
+
+    val resolvedContractDescription: FirResolvedContractDescription?
+        get() {
+            ensureResolved(FirResolvePhase.CONTRACTS)
+            return when (this) {
+                is FirNamedFunctionSymbol -> fir.contractDescription
+                is FirPropertyAccessorSymbol -> fir.contractDescription
+                else -> null
+            } as? FirResolvedContractDescription
+        }
+}
 
 // ------------------------ named ------------------------
 
