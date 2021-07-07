@@ -34508,6 +34508,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("experimentalAnnotationOnConstructorProperty.kt")
+            public void testExperimentalAnnotationOnConstructorProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalAnnotationOnConstructorProperty.kt");
+            }
+
+            @Test
             @TestMetadata("experimentalIsNotEnabled.kt")
             public void testExperimentalIsNotEnabled() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalIsNotEnabled.kt");

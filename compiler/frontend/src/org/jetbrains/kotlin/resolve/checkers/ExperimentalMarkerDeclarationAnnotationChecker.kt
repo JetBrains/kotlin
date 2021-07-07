@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -55,20 +56,21 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
             }
             val annotationClass = annotation.annotationClass ?: continue
             if (annotationClass.annotations.any { it.fqName in OptInNames.EXPERIMENTAL_FQ_NAMES }) {
+                val possibleTargets = AnnotationChecker.applicableTargetSet(annotationClass).orEmpty().intersect(actualTargets)
                 val annotationUseSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
-                if (KotlinTarget.PROPERTY_GETTER in actualTargets ||
+                if (PROPERTY_GETTER in possibleTargets ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER
                 ) {
                     trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "getter"))
                 }
-                if (KotlinTarget.VALUE_PARAMETER in actualTargets && annotationUseSiteTarget == null ||
+                if (VALUE_PARAMETER in possibleTargets && annotationUseSiteTarget == null ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.RECEIVER ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
                 ) {
                     trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "parameter"))
                 }
-                if (KotlinTarget.LOCAL_VARIABLE in actualTargets) {
+                if (LOCAL_VARIABLE in possibleTargets) {
                     trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "variable"))
                 }
                 if (annotationUseSiteTarget == AnnotationUseSiteTarget.FIELD ||
