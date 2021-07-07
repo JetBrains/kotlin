@@ -42,6 +42,16 @@ abstract class TypeSubstitution {
     open fun filterAnnotations(annotations: Annotations) = annotations
 
     fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
+
+    fun replaceWithNonApproximating() = object : TypeSubstitution() {
+        override fun get(key: KotlinType) = this@TypeSubstitution[key]
+        override fun approximateCapturedTypes() = false
+        override fun approximateContravariantCapturedTypes() = false
+        override fun filterAnnotations(annotations: Annotations) = this@TypeSubstitution.filterAnnotations(annotations)
+        override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
+            this@TypeSubstitution.prepareTopLevelType(topLevelType, position)
+        override fun isEmpty() = this@TypeSubstitution.isEmpty()
+    }
 }
 
 abstract class TypeConstructorSubstitution : TypeSubstitution() {
