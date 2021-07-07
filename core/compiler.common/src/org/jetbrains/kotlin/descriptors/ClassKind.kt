@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.descriptors
 
-package org.jetbrains.kotlin.descriptors;
-
-public enum ClassKind {
+enum class ClassKind {
     CLASS,
     INTERFACE,
     ENUM_CLASS,
@@ -24,7 +23,6 @@ public enum ClassKind {
     ANNOTATION_CLASS,
     OBJECT;
 
-    public boolean isSingleton() {
-        return this == OBJECT || this == ENUM_ENTRY;
-    }
+    val isSingleton: Boolean
+        get() = this == OBJECT || this == ENUM_ENTRY
 }
