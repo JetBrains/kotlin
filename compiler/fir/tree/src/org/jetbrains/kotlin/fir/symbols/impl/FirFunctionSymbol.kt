@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.name.Name
 
 sealed class FirFunctionSymbol<D : FirFunction>(
     override val callableId: CallableId
-) : FirCallableSymbol<D>() {
-    open val parameters: List<ConeKotlinType>
-        get() = emptyList()
-}
+) : FirCallableSymbol<D>()
 
 // ------------------------ named ------------------------
 
@@ -47,10 +44,7 @@ open class FirAccessorSymbol(
 
 sealed class FirFunctionWithoutNameSymbol<F : FirFunction>(
     stubName: Name
-) : FirFunctionSymbol<F>(CallableId(FqName("special"), stubName)) {
-    override val parameters: List<ConeKotlinType>
-        get() = emptyList()
-}
+) : FirFunctionSymbol<F>(CallableId(FqName("special"), stubName))
 
 class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(Name.identifier("anonymous"))
 
