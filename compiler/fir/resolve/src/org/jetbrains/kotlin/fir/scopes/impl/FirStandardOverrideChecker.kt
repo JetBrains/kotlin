@@ -132,8 +132,8 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
 
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
 
-        overrideCandidate.ensureResolved(FirResolvePhase.TYPES, useSiteSession = session)
-        baseDeclaration.ensureResolved(FirResolvePhase.TYPES, useSiteSession = session)
+        overrideCandidate.ensureResolved(FirResolvePhase.TYPES)
+        baseDeclaration.ensureResolved(FirResolvePhase.TYPES)
 
         if (!isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, substitutor)) return false
 

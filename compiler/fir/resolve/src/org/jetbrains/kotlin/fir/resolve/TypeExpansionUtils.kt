@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.utils.component2
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
-        alias.ensureResolved(FirResolvePhase.SUPER_TYPES, useSiteSession)
+        alias.ensureResolved(FirResolvePhase.SUPER_TYPES)
         alias.expandedConeType
     },
 ): ConeClassLikeType {
@@ -61,7 +61,7 @@ private fun ConeClassLikeType.fullyExpandedTypeNoCache(
 fun ConeClassLikeType.directExpansionType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
-        alias.ensureResolved(FirResolvePhase.SUPER_TYPES, useSiteSession)
+        alias.ensureResolved(FirResolvePhase.SUPER_TYPES)
         alias.expandedConeType
     },
 ): ConeClassLikeType? {

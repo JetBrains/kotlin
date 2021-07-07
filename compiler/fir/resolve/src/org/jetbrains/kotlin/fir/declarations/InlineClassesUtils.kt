@@ -30,7 +30,7 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
         ?.lookupTag
         ?.toSymbol(session) as? FirRegularClassSymbol
         ?: return null
-    symbol.ensureResolved(FirResolvePhase.STATUS, session)
+    symbol.ensureResolved(FirResolvePhase.STATUS)
     return symbol.fir.getInlineClassUnderlyingParameter()?.returnTypeRef?.coneType
 }
 

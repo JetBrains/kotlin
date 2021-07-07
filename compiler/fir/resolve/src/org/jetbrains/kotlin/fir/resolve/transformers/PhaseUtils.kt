@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 fun FirBasedSymbol<*>.ensureResolvedForCalls(
-    useSiteSession: FirSession,
+    @Suppress("UNUSED_PARAMETER") useSiteSession: FirSession,
 ) {
     if (fir.resolvePhase >= FirResolvePhase.DECLARATIONS) return
 
@@ -35,7 +35,7 @@ fun FirBasedSymbol<*>.ensureResolvedForCalls(
 
     val requiredPhase = FirResolvePhase.DECLARATIONS
 
-    ensureResolved(requiredPhase, useSiteSession)
+    ensureResolved(requiredPhase)
 }
 
 fun ConeKotlinType.ensureResolvedTypeDeclaration(
@@ -44,8 +44,8 @@ fun ConeKotlinType.ensureResolvedTypeDeclaration(
 ) {
     if (this !is ConeClassLikeType) return
 
-    lookupTag.toSymbol(useSiteSession)?.ensureResolved(requiredPhase, useSiteSession)
-    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(requiredPhase, useSiteSession)
+    lookupTag.toSymbol(useSiteSession)?.ensureResolved(requiredPhase)
+    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(requiredPhase)
 }
 
 fun FirTypeRef.ensureResolvedTypeDeclaration(

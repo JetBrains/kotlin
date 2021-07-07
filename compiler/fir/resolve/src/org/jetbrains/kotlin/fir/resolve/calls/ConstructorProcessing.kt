@@ -173,7 +173,7 @@ private fun processConstructors(
         if (matchedSymbol != null) {
             val scope = when (matchedSymbol) {
                 is FirTypeAliasSymbol -> {
-                    matchedSymbol.ensureResolved(FirResolvePhase.TYPES, session)
+                    matchedSymbol.ensureResolved(FirResolvePhase.TYPES)
                     val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
                     val basicScope = type.scope(session, bodyResolveComponents.scopeSession, FakeOverrideTypeCalculator.DoNothing)
 

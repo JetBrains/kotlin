@@ -49,7 +49,7 @@ class FirDelegatedMemberScope(
     }
 
     private fun buildScope(delegateField: FirField): FirTypeScope? {
-        delegateField.ensureResolved(FirResolvePhase.TYPES, session)
+        delegateField.ensureResolved(FirResolvePhase.TYPES)
         return delegateField.returnTypeRef.coneType.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     }
 

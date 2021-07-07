@@ -70,7 +70,7 @@ class FirSealedClassInheritorsProcessor(
             return when (classLikeSymbol) {
                 is FirRegularClassSymbol -> classLikeSymbol.fir
                 is FirTypeAliasSymbol -> {
-                    classLikeSymbol.ensureResolved(FirResolvePhase.SUPER_TYPES, symbolProvider.session)
+                    classLikeSymbol.ensureResolved(FirResolvePhase.SUPER_TYPES)
                     extractClassFromTypeRef(symbolProvider, classLikeSymbol.fir.expandedTypeRef)
                 }
                 else -> null

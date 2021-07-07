@@ -63,7 +63,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             val fullyExpandedType = fullyExpandedType(useSiteSession)
             val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
 
-            fir.symbol.ensureResolved(requiredPhase, useSiteSession)
+            fir.symbol.ensureResolved(requiredPhase)
 
             val substitution = createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession)
 

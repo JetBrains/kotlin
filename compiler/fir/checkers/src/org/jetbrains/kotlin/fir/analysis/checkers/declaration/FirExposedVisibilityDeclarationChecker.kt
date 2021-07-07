@@ -200,7 +200,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
     ): FirMemberDeclaration? {
         val type = this as? ConeClassLikeType ?: return null
         val fir = type.fullyExpandedType(context.session).lookupTag.toSymbol(context.session)?.let { firSymbol ->
-            firSymbol.ensureResolved(FirResolvePhase.DECLARATIONS, context.session)
+            firSymbol.ensureResolved(FirResolvePhase.DECLARATIONS)
             firSymbol.fir
         } ?: return null
 

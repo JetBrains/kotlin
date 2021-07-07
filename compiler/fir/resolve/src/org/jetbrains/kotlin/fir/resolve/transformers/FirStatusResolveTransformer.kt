@@ -159,7 +159,7 @@ open class FirDesignatedStatusResolveTransformer(
         data: FirResolvedDeclarationStatus?
     ): FirStatement {
         if (shouldSkipClass(regularClass)) return regularClass
-        regularClass.symbol.ensureResolved(FirResolvePhase.TYPES, session)
+        regularClass.symbol.ensureResolved(FirResolvePhase.TYPES)
         val classLocated = this.classLocated
         /*
          * In designated status resolve we should resolve status only of target class and it's members
@@ -393,7 +393,7 @@ abstract class AbstractFirStatusResolveTransformer(
 
     private fun forceResolveStatusOfCorrespondingClass(typeRef: FirTypeRef) {
         val superClass = typeRef.coneType.toSymbol(session)?.fir
-        superClass?.ensureResolved(FirResolvePhase.SUPER_TYPES, session)
+        superClass?.ensureResolved(FirResolvePhase.SUPER_TYPES)
         when (superClass) {
             is FirRegularClass -> forceResolveStatusesOfClass(superClass)
             is FirTypeAlias -> forceResolveStatusOfCorrespondingClass(superClass.expandedTypeRef)
