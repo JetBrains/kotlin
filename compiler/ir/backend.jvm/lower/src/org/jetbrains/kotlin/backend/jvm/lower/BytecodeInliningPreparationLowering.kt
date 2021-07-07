@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -41,8 +41,8 @@ private class BytecodeInliningPreparationLowering(val context: JvmBackendContext
 
             override fun visitFunctionReference(expression: IrFunctionReference, data: String) {
                 // Remove inline lambdas from their declaration parents. They should not appear in the output
-                // bytecode in non-inlined form.
-                if (expression.origin.isInlineIrExpression()) {
+                // bytecode in non-inlined form. TODO: this does not remove unused lambdas; need to mark function origin?
+                if (expression.origin == JvmLoweredStatementOrigin.INLINE_LAMBDA) {
                     loweredLambdasToDelete.add(expression.symbol.owner)
                 }
                 super.visitFunctionReference(expression, data)

@@ -37,44 +37,30 @@ internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext
     override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) {
         super.visitFunction(declaration, data)
         if (declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null && !declaration.isInlineOnly()) {
-            declaration.addFakeInliningLocalVariables()
+            val currentFunctionName = context.methodSignatureMapper.mapFunctionName(declaration)
+            val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION}$currentFunctionName"
+            declaration.addFakeLocalVariable(localName)
         }
     }
 
     override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
         val lambda = argument.symbol.owner
-        if (lambda.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
-            val argumentToFunctionName = context.methodSignatureMapper.mapFunctionName(callee)
-            val lambdaReferenceName = context.getLocalClassType(argument)!!.internalName.substringAfterLast("/")
-            val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT}-$argumentToFunctionName-$lambdaReferenceName"
-            lambda.addFakeLocalVariable(localName)
-        }
-    }
-
-    private fun IrFunction.addFakeInliningLocalVariables() {
-        val currentFunctionName = context.methodSignatureMapper.mapFunctionName(this)
-        val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION}$currentFunctionName"
-        addFakeLocalVariable(localName)
+        val argumentToFunctionName = context.methodSignatureMapper.mapFunctionName(callee)
+        val lambdaReferenceName = context.getLocalClassType(argument)!!.internalName.substringAfterLast("/")
+        val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT}-$argumentToFunctionName-$lambdaReferenceName"
+        lambda.addFakeLocalVariable(localName)
     }
 
     private fun IrFunction.addFakeLocalVariable(name: String) {
-        val oldBody = body
-        context.createIrBuilder(symbol).run {
-            body = irBlockBody {
-                // Create temporary variable, but make sure it's origin is `DEFINED` so that
-                // it will materialize in the code.
-                // Also, do not forget to remove $$forInline suffix, otherwise, IDE will not be able to navigate to inline function.
-                createTmpVariable(irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED)
-                when (oldBody) {
-                    is IrExpressionBody -> {
-                        +irReturn(oldBody.expression)
-                    }
-                    is IrBlockBody ->
-                        oldBody.statements.forEach { +it }
-                    else -> {
-                        throw AssertionError("Unexpected body:\n${this@addFakeLocalVariable.dump()}")
-                    }
-                }
+        body = context.createIrBuilder(symbol).irBlockBody {
+            // Create temporary variable, but make sure it's origin is `DEFINED` so that
+            // it will materialize in the code.
+            // Also, do not forget to remove $$forInline suffix, otherwise, IDE will not be able to navigate to inline function.
+            createTmpVariable(irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED)
+            when (val oldBody = body) {
+                is IrExpressionBody -> +irReturn(oldBody.expression)
+                is IrBlockBody -> oldBody.statements.forEach { +it }
+                else -> throw AssertionError("Unexpected body:\n${this@addFakeLocalVariable.dump()}")
             }
         }
     }

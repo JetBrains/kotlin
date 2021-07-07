@@ -7,59 +7,34 @@ package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
+import org.jetbrains.kotlin.backend.jvm.codegen.unwrapInlineLambda
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-open class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?> {
-    override fun visitElement(element: IrElement, data: IrDeclaration?) {
-        element.acceptChildren(this, data)
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?) {
-        val scope = if (declaration is IrVariable) data else declaration
-        declaration.acceptChildren(this, scope)
-    }
+abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?> {
+    override fun visitElement(element: IrElement, data: IrDeclaration?) =
+        element.acceptChildren(this, if (element is IrDeclaration && element !is IrVariable) element else data)
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.valueParameters) {
-                if (!parameter.isInlineParameter())
-                    continue
-
-                val valueArgument = expression.getValueArgument(parameter.index) ?: continue
-                if (!valueArgument.isInlineIrExpression())
-                    continue
-
-                if (valueArgument is IrBlock) {
-                    visitInlineLambda(valueArgument.statements.last() as IrFunctionReference, function, parameter, data!!)
-                } else if (valueArgument is IrCallableReference<*>) {
-                    visitInlineReference(valueArgument)
-                }
+                val lambda = expression.getValueArgument(parameter.index)?.unwrapInlineLambda() ?: continue
+                visitInlineLambda(lambda, function, parameter, data!!)
             }
         }
         return super.visitFunctionAccess(expression, data)
     }
 
-    open fun visitInlineReference(argument: IrCallableReference<*>) {}
-
-    open fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) =
-        visitInlineReference(argument)
-
-    companion object {
-        fun scan(context: JvmBackendContext, element: IrElement): Set<IrCallableReference<*>> =
-            mutableSetOf<IrCallableReference<*>>().apply {
-                element.accept(object : IrInlineReferenceLocator(context) {
-                    override fun visitInlineReference(argument: IrCallableReference<*>) {
-                        add(argument)
-                    }
-                }, null)
-            }
-    }
+    abstract fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration)
 }
+
+inline fun IrFile.findInlineLambdas(
+    context: JvmBackendContext, crossinline onLambda: (IrFunctionReference, IrFunction, IrValueParameter, IrDeclaration) -> Unit
+) = accept(object : IrInlineReferenceLocator(context) {
+    override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) =
+        onLambda(argument, callee, parameter, scope)
+}, null)

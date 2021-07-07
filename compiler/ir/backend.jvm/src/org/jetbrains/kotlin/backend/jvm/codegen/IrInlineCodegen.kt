@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.codegen.IrExpressionLambda
 import org.jetbrains.kotlin.codegen.JvmKotlinType
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -85,10 +87,9 @@ class IrInlineCodegen(
         codegen: ExpressionCodegen,
         blockInfo: BlockInfo
     ) {
-        val isInlineParameter = irValueParameter.isInlineParameter()
-        if (isInlineParameter && argumentExpression.isInlineIrExpression()) {
-            val irReference = (argumentExpression as IrBlock).statements.last() as IrFunctionReference
-            val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference)
+        val inlineLambda = argumentExpression.unwrapInlineLambda()
+        if (inlineLambda != null) {
+            val lambdaInfo = IrExpressionLambdaImpl(codegen, inlineLambda)
             rememberClosure(parameterType, irValueParameter.index, lambdaInfo)
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
@@ -97,6 +98,7 @@ class IrInlineCodegen(
                 putCapturedToLocalVal(onStack, param, ir.type.toIrBasedKotlinType())
             }
         } else {
+            val isInlineParameter = irValueParameter.isInlineParameter()
             val kind = when {
                 irValueParameter.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION ->
                     ValueKind.DEFAULT_MASK
@@ -210,19 +212,11 @@ class IrExpressionLambdaImpl(
     }
 }
 
-fun IrExpression.isInlineIrExpression() =
-    when (this) {
-        is IrBlock -> origin.isInlineIrExpression()
-        is IrCallableReference<*> -> true.also {
-            assert((0 until valueArgumentsCount).none { getValueArgument(it) != null }) {
-                "Expecting 0 value arguments for bound callable reference: ${dump()}"
-            }
-        }
-        else -> false
-    }
-
-fun IrStatementOrigin?.isInlineIrExpression() =
-    isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
+fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
+    is IrBlock -> statements.lastOrNull()?.unwrapInlineLambda()
+    is IrFunctionReference -> takeIf { it.origin == JvmLoweredStatementOrigin.INLINE_LAMBDA }
+    else -> null
+}
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
     (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && (isInline || isInlineArrayConstructor(context))

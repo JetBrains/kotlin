@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.indy.LambdaMetafactoryArguments
@@ -45,42 +46,26 @@ internal val functionReferencePhase = makeIrFilePhase(
 )
 
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    // This pass ignores function references used as inline arguments. `InlineCallableReferenceToLambdaPhase`
-    // converts them into lambdas instead, so that after inlining there is only a direct call left, with no
-    // function reference classes needed.
-    private val ignoredFunctionReferences = mutableSetOf<IrCallableReference<*>>()
-
     private val crossinlineLambdas = HashSet<IrSimpleFunction>()
 
     private val IrFunctionReference.isIgnored: Boolean
-        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || ignoredFunctionReferences.contains(this)
+        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || origin == JvmLoweredStatementOrigin.INLINE_LAMBDA
 
-    // `suspend` function references are the same as non-`suspend` ones, just with a `suspend` invoke;
-    // however, suspending lambdas require different generation implemented in AddContinuationLowering
+    // `suspend` function references are the same as non-`suspend` ones, just with an extra continuation parameter;
+    // however, suspending lambdas require different generation implemented in SuspendLambdaLowering
     // because they are also their own continuation classes.
     // TODO: Currently, origin of callable references explicitly written in source code is null. Do we need to create one?
     private fun IrFunctionReference.isSuspendFunctionReference(): Boolean = isSuspend &&
             (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION)
 
     override fun lower(irFile: IrFile) {
-        irFile.accept(
-            object : IrInlineReferenceLocator(context) {
-                override fun visitInlineLambda(
-                    argument: IrFunctionReference,
-                    callee: IrFunction,
-                    parameter: IrValueParameter,
-                    scope: IrDeclaration
-                ) {
-                    ignoredFunctionReferences.add(argument)
-                    val argumentFun = argument.symbol.owner
-                    if (parameter.isCrossinline && argumentFun is IrSimpleFunction) {
-                        crossinlineLambdas.add(argumentFun)
-                    }
-                }
-            },
-            null
-        )
+        irFile.findInlineLambdas(context) { argument, _, parameter, _ ->
+            if (parameter.isCrossinline) {
+                crossinlineLambdas.add(argument.symbol.owner as IrSimpleFunction)
+            }
+        }
         irFile.transformChildrenVoid(this)
+        crossinlineLambdas.clear()
     }
 
     private val shouldGenerateIndySamConversions =
