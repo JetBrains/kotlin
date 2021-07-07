@@ -9,47 +9,15 @@ import org.jetbrains.kotlin.commonizer.utils.Interner
 import org.jetbrains.kotlin.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.commonizer.utils.hashCode
 
-interface CirValueParameter : CirHasAnnotations, CirHasName {
-    val returnType: CirType
-    val varargElementType: CirType?
-    val declaresDefaultValue: Boolean
-    val isCrossinline: Boolean
-    val isNoinline: Boolean
-
-    companion object {
-        fun createInterned(
-            annotations: List<CirAnnotation>,
-            name: CirName,
-            returnType: CirType,
-            varargElementType: CirType?,
-            declaresDefaultValue: Boolean,
-            isCrossinline: Boolean,
-            isNoinline: Boolean
-        ): CirValueParameter = interner.intern(
-            CirValueParameterInternedImpl(
-                annotations = annotations,
-                name = name,
-                returnType = returnType,
-                varargElementType = varargElementType,
-                declaresDefaultValue = declaresDefaultValue,
-                isCrossinline = isCrossinline,
-                isNoinline = isNoinline
-            )
-        )
-
-        private val interner = Interner<CirValueParameterInternedImpl>()
-    }
-}
-
-private class CirValueParameterInternedImpl(
+class CirValueParameter private constructor(
     override val annotations: List<CirAnnotation>,
     override val name: CirName,
-    override val returnType: CirType,
-    override val varargElementType: CirType?,
-    override val declaresDefaultValue: Boolean,
-    override val isCrossinline: Boolean,
-    override val isNoinline: Boolean
-) : CirValueParameter {
+    val returnType: CirType,
+    val varargElementType: CirType?,
+    val declaresDefaultValue: Boolean,
+    val isCrossinline: Boolean,
+    val isNoinline: Boolean
+) : CirHasAnnotations, CirHasName {
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0
 
@@ -72,7 +40,7 @@ private class CirValueParameterInternedImpl(
 
     override fun equals(other: Any?) = when {
         other === this -> true
-        other is CirValueParameterInternedImpl -> {
+        other is CirValueParameter -> {
             name == other.name
                     && returnType == other.returnType
                     && annotations == other.annotations
@@ -90,4 +58,47 @@ private class CirValueParameterInternedImpl(
         append(": ")
         append(returnType)
     }
+
+    companion object {
+        private val interner = Interner<CirValueParameter>()
+
+        fun createInterned(
+            annotations: List<CirAnnotation>,
+            name: CirName,
+            returnType: CirType,
+            varargElementType: CirType?,
+            declaresDefaultValue: Boolean,
+            isCrossinline: Boolean,
+            isNoinline: Boolean
+        ): CirValueParameter = interner.intern(
+            CirValueParameter(
+                annotations = annotations,
+                name = name,
+                returnType = returnType,
+                varargElementType = varargElementType,
+                declaresDefaultValue = declaresDefaultValue,
+                isCrossinline = isCrossinline,
+                isNoinline = isNoinline
+            )
+        )
+
+        fun CirValueParameter.copyInterned(
+            annotations: List<CirAnnotation> = this.annotations,
+            name: CirName = this.name,
+            returnType: CirType = this.returnType,
+            varargElementType: CirType? = this.varargElementType,
+            declaresDefaultValue: Boolean = this.declaresDefaultValue,
+            isCrossinline: Boolean = this.isCrossinline,
+            isNoinline: Boolean = this.isNoinline
+        ): CirValueParameter = createInterned(
+            annotations = annotations,
+            name = name,
+            returnType = returnType,
+            varargElementType = varargElementType,
+            declaresDefaultValue = declaresDefaultValue,
+            isCrossinline = isCrossinline,
+            isNoinline = isNoinline
+        )
+    }
+
 }
