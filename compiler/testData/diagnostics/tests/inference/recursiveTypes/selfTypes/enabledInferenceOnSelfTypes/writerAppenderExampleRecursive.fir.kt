@@ -1,10 +1,35 @@
 // !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
+// FILE: JavaWriterAppender.java
+public class JavaWriterAppender {
+    interface Builder2<K extends Builder2<K>> {}
+
+    class Builder1<B extends Builder1<B>> {
+        B asBuilder() { return null; }
+    }
+
+    <B extends Builder1<B>> B newBuilder() {
+        return null;
+    }
+
+    <B extends Builder1<B> & Builder2<B>> B intersectTwoSelfTypes() {
+        return null;
+    }
+}
+
+// FILE: main.kt
 fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*>")!>WriterAppender.newBuilder()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<out WriterAppender.Builder1<*>>")!>WriterAppender.Builder1()<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("{Builder1<*> & Builder2<*>}")!>WriterAppender.intersectTwoSelfTypes()<!>
+}
+
+fun testJava(appender: JavaWriterAppender) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<*>")!>appender.newBuilder()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("WriterAppender.Builder1<out WriterAppender.Builder1<*>>")!>appender.Builder1()<!>
+
+    <!DEBUG_INFO_EXPRESSION_TYPE("{Builder1<*> & Builder2<*>}")!>appender.intersectTwoSelfTypes()<!>
 }
 
 object WriterAppender {

@@ -546,13 +546,15 @@ object AbstractTypeChecker {
         targetType: KotlinTypeMarker
     ): TypeParameterMarker? {
         for (i in 0 until baseType.argumentsCount()) {
-            val typeArgument = baseType.getArgument(i).takeIf { !it.isStarProjection() } ?: continue
+            val typeArgument = baseType.getArgument(i).takeIf { !it.isStarProjection() }?.getType() ?: continue
+            val areBothTypesCaptured =
+                typeArgument.lowerBoundIfFlexible().isCapturedType() && targetType.lowerBoundIfFlexible().isCapturedType()
 
-            if (typeArgument.getType() == targetType) {
+            if (typeArgument == targetType || (areBothTypesCaptured && typeArgument.typeConstructor() == targetType.typeConstructor())) {
                 return baseType.typeConstructor().getParameter(i)
             }
 
-            getTypeParameterForArgumentInBaseIfItEqualToTarget(typeArgument.getType(), targetType)?.let { return it }
+            getTypeParameterForArgumentInBaseIfItEqualToTarget(typeArgument, targetType)?.let { return it }
         }
 
         return null
