@@ -50,7 +50,7 @@ class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionRecei
     override fun createCommonizer() = ExtensionReceiverCommonizer(MOCK_CLASSIFIERS)
 }
 
-private fun mockExtensionReceiver(receiverClassId: String) = CirExtensionReceiver.create(
+private fun mockExtensionReceiver(receiverClassId: String) = CirExtensionReceiver(
     annotations = emptyList(),
     type = mockClassType(receiverClassId)
 )

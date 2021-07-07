@@ -5,22 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-interface CirExtensionReceiver : CirHasAnnotations {
-    val type: CirType
-
-    companion object {
-        @Suppress("NOTHING_TO_INLINE")
-        inline fun create(
-            annotations: List<CirAnnotation>,
-            type: CirType
-        ): CirExtensionReceiver = CirExtensionReceiverImpl(
-            annotations = annotations,
-            type = type
-        )
-    }
-}
-
-data class CirExtensionReceiverImpl(
+data class CirExtensionReceiver(
     override val annotations: List<CirAnnotation>,
-    override val type: CirType
-) : CirExtensionReceiver
+    val type: CirType
+) : CirHasAnnotations
