@@ -27991,6 +27991,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/classes/nestedClasses.kt");
             }
 
+            @TestMetadata("nestedClassesInScript.kt")
+            public void testNestedClassesInScript() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/classes/nestedClassesInScript.kt");
+            }
+
             @TestMetadata("nestedClassesJava.kt")
             public void testNestedClassesJava() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/classes/nestedClassesJava.kt");

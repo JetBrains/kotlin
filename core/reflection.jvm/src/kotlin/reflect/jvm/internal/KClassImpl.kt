@@ -99,7 +99,7 @@ internal class KClassImpl<T : Any>(
         val nestedClasses: Collection<KClass<*>> by ReflectProperties.lazySoft {
             descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry)
                 .mapNotNull { nestedClass ->
-                    val jClass = (nestedClass as ClassDescriptor).toJavaClass()
+                    val jClass = (nestedClass as? ClassDescriptor)?.toJavaClass()
                     jClass?.let { KClassImpl(it) }
                 }
         }
