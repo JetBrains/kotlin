@@ -44,7 +44,6 @@ abstract class NodeJsSetupTask : DefaultTask() {
         configuration.get().files.single()
     }
 
-    @Suppress("unused") // as it called by Gradle before task execution and used to resolve artifact
     @get:Classpath
     val nodeJsDist: File by lazy {
         val repo = project.repositories.ivy { repo ->

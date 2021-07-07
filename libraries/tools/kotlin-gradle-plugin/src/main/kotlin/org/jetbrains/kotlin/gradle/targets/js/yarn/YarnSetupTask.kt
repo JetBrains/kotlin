@@ -57,7 +57,6 @@ open class YarnSetupTask : DefaultTask() {
         configuration.get().files.single()
     }
 
-    @Suppress("unused") // as it called by Gradle before task execution and used to resolve artifact
     @get:Classpath
     val yarnDist: File by lazy {
         val repo = project.repositories.ivy { repo ->
