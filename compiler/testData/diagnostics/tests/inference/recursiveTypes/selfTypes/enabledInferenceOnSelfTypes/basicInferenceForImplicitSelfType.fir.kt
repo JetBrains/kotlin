@@ -1,5 +1,14 @@
 // !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
+// FILE: JavaBuilder.java
+public class JavaBuilder<B extends JavaBuilder<B>> {
+    <T extends B> T test() {
+        return null;
+    }
+    void foo() { }
+}
+
+// FILE: main.kt
 class Builder<B : Builder<B>> {
     fun <T : B> test(): T = TODO()
 
@@ -7,7 +16,7 @@ class Builder<B : Builder<B>> {
 }
 
 fun testStar(builder: Builder<*>) {
-    builder.test()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Builder<*>")!>builder.test()<!>
 
     builder
         .test()
@@ -15,7 +24,23 @@ fun testStar(builder: Builder<*>) {
 }
 
 fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
-    builder.test()
+    <!DEBUG_INFO_EXPRESSION_TYPE("K")!>builder.test()<!>
+
+    builder
+        .test()
+        .foo()
+}
+
+fun testStarJava(builder: JavaBuilder<*>) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("Builder<*>")!>builder.test()<!>
+
+    builder
+        .test()
+        .foo()
+}
+
+fun <K : JavaBuilder<K>> testTypeParamJava(builder: JavaBuilder<K>) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("K")!>builder.test()<!>
 
     builder
         .test()
