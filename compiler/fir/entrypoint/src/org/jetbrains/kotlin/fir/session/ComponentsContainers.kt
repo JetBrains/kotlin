@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
-import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
+import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache

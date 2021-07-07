@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElementFinder
-import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
-import org.jetbrains.kotlin.analyzer.SdkInfoBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
@@ -18,7 +14,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
-import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -28,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
-import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
+import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
@@ -52,8 +47,6 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import java.nio.file.Path
-import java.nio.file.Paths
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal object FirIdeSessionFactory {

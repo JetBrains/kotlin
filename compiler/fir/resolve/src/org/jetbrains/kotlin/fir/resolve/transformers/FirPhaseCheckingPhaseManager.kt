@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 
 object FirPhaseCheckingPhaseManager : FirPhaseManager() {
     override fun ensureResolved(symbol: FirBasedSymbol<*>, requiredPhase: FirResolvePhase) {
