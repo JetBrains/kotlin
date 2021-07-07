@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class My {
 
     lateinit var x: String
@@ -13,7 +14,7 @@ class My {
         // Ok, private var / private set
         private set
 
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> protected var v: String
+    lateinit protected var v: String
         <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>public<!> set
 
     lateinit public var u: String
