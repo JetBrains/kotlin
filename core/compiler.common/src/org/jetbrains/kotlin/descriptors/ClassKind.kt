@@ -26,3 +26,9 @@ enum class ClassKind {
     val isSingleton: Boolean
         get() = this == OBJECT || this == ENUM_ENTRY
 }
+
+inline val ClassKind.isInterface: Boolean
+    get() = this == ClassKind.INTERFACE
+
+inline val ClassKind.isEnumClass: Boolean
+    get() = this == ClassKind.ENUM_CLASS

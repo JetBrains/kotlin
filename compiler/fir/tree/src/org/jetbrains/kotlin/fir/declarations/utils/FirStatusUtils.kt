@@ -51,10 +51,10 @@ inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
 
 inline val FirClass.isInterface: Boolean
-    get() = classKind == ClassKind.INTERFACE
+    get() = classKind.isInterface
 
 inline val FirClass.isEnumClass: Boolean
-    get() = classKind == ClassKind.ENUM_CLASS
+    get() = classKind.isEnumClass
 
 inline val FirRegularClass.isSealed: Boolean get() = status.modality == Modality.SEALED
 
