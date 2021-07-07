@@ -1080,7 +1080,7 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
             throw IllegalArgumentException("No components")
         value[index] == 'P' -> {
             if (++index == length) throw IllegalArgumentException()
-            val signedDigits = "+-0123456789."
+            val nonDigitSymbols = "+-."
             var isTimeComponent = false
             var prevUnit: DurationUnit? = null
             while (index < length) {
@@ -1089,7 +1089,7 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                     isTimeComponent = true
                     continue
                 }
-                val component = value.substringWhile(index) { it in signedDigits }
+                val component = value.substringWhile(index) { it in '0'..'9' || it in nonDigitSymbols }
                 if (component.isEmpty()) throw IllegalArgumentException()
                 index += component.length
                 val unitChar = value.getOrElse(index) { throw IllegalArgumentException("Missing unit for value $component") }
@@ -1114,7 +1114,6 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
         }
         else -> {
             // parse default string format
-            val digits = "0123456789."
             var prevUnit: DurationUnit? = null
             var afterFirst = false
             var allowSpaces = !isNegative
@@ -1127,7 +1126,7 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                     index = value.skipWhile(index) { it == ' ' }
                 }
                 afterFirst = true
-                val component = value.substringWhile(index) { it in digits }
+                val component = value.substringWhile(index) { it in '0'..'9' || it == '.' }
                 if (component.isEmpty()) throw IllegalArgumentException()
                 index += component.length
                 val unitName = value.substringWhile(index) { it in 'a'..'z' }
