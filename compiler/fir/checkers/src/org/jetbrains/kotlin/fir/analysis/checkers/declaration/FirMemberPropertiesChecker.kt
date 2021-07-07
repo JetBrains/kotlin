@@ -39,7 +39,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             mutableMapOf<FirPropertySymbol, EventOccurrencesRange>().withDefault { EventOccurrencesRange.ZERO }
 
         // If all member properties have its own initializer, we don't need to collect property initialization info at all.
-        if (memberPropertySymbols.any { it.fir.initializer == null }) {
+        if (memberPropertySymbols.any { !it.hasInitializer }) {
             collectPropertyInitialization(declaration, memberPropertySymbols, initializedInConstructor, initializedInInitOrOtherProperty)
         }
 
@@ -137,7 +137,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             collectInfoFromGraph(graph, initializedInInitOrOtherProperty, EventOccurrencesRange::plus)
         }
 
-        val propertyInitGraphs = memberPropertySymbols.mapNotNull { it.fir.controlFlowGraphReference?.controlFlowGraph }
+        val propertyInitGraphs = memberPropertySymbols.mapNotNull { it.controlFlowGraphReference?.controlFlowGraph }
         for (graph in propertyInitGraphs) {
             collectInfoFromGraph(graph, initializedInInitOrOtherProperty, EventOccurrencesRange::plus)
         }
@@ -187,8 +187,8 @@ object FirMemberPropertiesChecker : FirClassChecker() {
                         reporter.reportOn(
                             it,
                             FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
-                            property,
-                            containingDeclaration,
+                            property.symbol,
+                            containingDeclaration.symbol,
                             context
                         )
                         return

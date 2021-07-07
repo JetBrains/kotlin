@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.createSessionForTests
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -39,6 +40,7 @@ import java.io.File
 import java.io.IOException
 import kotlin.reflect.jvm.javaField
 
+@OptIn(SymbolInternals::class)
 abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
     private lateinit var javaFilesDir: File
 

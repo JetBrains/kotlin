@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
 object FirValReassignmentChecker : FirVariableAssignmentChecker() {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -30,16 +30,16 @@ object FirValReassignmentChecker : FirVariableAssignmentChecker() {
         reporter: DiagnosticReporter
     ) {
         val backingFieldReference = expression.lValue as? FirBackingFieldReference ?: return
-        val property = backingFieldReference.resolvedSymbol.fir
-        if (property.isVar) return
-        val closestGetter = context.findClosest<FirPropertyAccessor> { it.isGetter } ?: return
-        if (property.getter != closestGetter) return
+        val propertySymbol = backingFieldReference.resolvedSymbol
+        if (propertySymbol.isVar) return
+        val closestGetter = context.findClosest<FirPropertyAccessor> { it.isGetter }?.symbol ?: return
+        if (propertySymbol.getterSymbol != closestGetter) return
 
         backingFieldReference.source?.let {
             if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfValReassignmentViaBackingField)) {
-                reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, property.symbol, context)
+                reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, propertySymbol, context)
             } else {
-                reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, property.symbol, context)
+                reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, propertySymbol, context)
             }
         }
     }
@@ -49,7 +49,7 @@ object FirValReassignmentChecker : FirVariableAssignmentChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val valueParameter = (expression.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirValueParameter ?: return
-        reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, valueParameter.symbol, context)
+        val valueParameter = (expression.lValue as? FirResolvedNamedReference)?.resolvedSymbol as? FirValueParameterSymbol ?: return
+        reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, valueParameter, context)
     }
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -22,13 +22,13 @@ object FirNotASupertypeChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val superReference = expression.calleeReference.safeAs<FirSuperReference>()?.takeIf { it.hadExplicitTypeInSource() }
 
-        val targetClass = superReference
+        val targetClassSymbol = superReference
             ?.superTypeRef
-            ?.toRegularClass(context.session)
+            ?.toRegularClassSymbol(context.session)
             ?: return
 
         val surrounding = context.findClosestClass(superReference.labelName) ?: return
-        if (!targetClass.isSupertypeOf(surrounding, context.session)) {
+        if (!targetClassSymbol.isSupertypeOf(surrounding.symbol, context.session)) {
             reporter.reportOn(expression.source, FirErrors.NOT_A_SUPERTYPE, context)
         }
     }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -65,9 +65,9 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
         // No need to check implicit call to the constructor of `kotlin.Any`.
         val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
         if (constructedTypeRef is FirImplicitAnyTypeRef) return
-        val superClass = constructedTypeRef.coneType.toRegularClass(context.session) ?: return
+        val superClassSymbol = constructedTypeRef.coneType.toRegularClassSymbol(context.session) ?: return
         // Subclassing a singleton should be reported as SINGLETON_IN_SUPERTYPE
-        if (superClass.classKind.isSingleton) return
+        if (superClassSymbol.classKind.isSingleton) return
         if (regularClass.isEffectivelyExpect(containingClass, context) ||
             regularClass.isEffectivelyExternal(containingClass, context)
         ) {
@@ -75,7 +75,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
         }
         val delegatedCallSource = delegatedConstructorCall.source ?: return
         if (delegatedCallSource.kind !is FirFakeSourceElementKind) return
-        if (superClass.symbol.classId == StandardClassIds.Enum) return
+        if (superClassSymbol.classId == StandardClassIds.Enum) return
         if (delegatedCallSource.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
             reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED, context)
         }

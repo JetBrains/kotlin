@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
@@ -422,7 +421,7 @@ internal class SuperclassNotAccessibleFromInterfaceImpl(
 }
 
 internal class QualifiedSupertypeExtendedByOtherSupertypeImpl(
-    override val otherSuperType: KtClassLikeSymbol,
+    override val otherSuperType: KtSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.QualifiedSupertypeExtendedByOtherSupertype(), KtAbstractFirDiagnostic<KtTypeReference> {
@@ -1854,7 +1853,7 @@ internal class ExpressionOfNullableTypeInClassLiteralLhsImpl(
 }
 
 internal class NothingToOverrideImpl(
-    override val declaration: KtSymbol,
+    override val declaration: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NothingToOverride(), KtAbstractFirDiagnostic<KtModifierListOwner> {
@@ -2043,8 +2042,8 @@ internal class DelegatedMemberHidesSupertypeOverrideImpl(
 }
 
 internal class ReturnTypeMismatchOnOverrideImpl(
-    override val function: KtSymbol,
-    override val superFunction: KtSymbol,
+    override val function: KtCallableSymbol,
+    override val superFunction: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ReturnTypeMismatchOnOverride(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
@@ -2052,8 +2051,8 @@ internal class ReturnTypeMismatchOnOverrideImpl(
 }
 
 internal class PropertyTypeMismatchOnOverrideImpl(
-    override val property: KtSymbol,
-    override val superProperty: KtSymbol,
+    override val property: KtCallableSymbol,
+    override val superProperty: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.PropertyTypeMismatchOnOverride(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
@@ -2061,8 +2060,8 @@ internal class PropertyTypeMismatchOnOverrideImpl(
 }
 
 internal class VarTypeMismatchOnOverrideImpl(
-    override val variable: KtSymbol,
-    override val superVariable: KtSymbol,
+    override val variable: KtCallableSymbol,
+    override val superVariable: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.VarTypeMismatchOnOverride(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
@@ -2070,8 +2069,8 @@ internal class VarTypeMismatchOnOverrideImpl(
 }
 
 internal class VarOverriddenByValImpl(
-    override val overridingDeclaration: KtSymbol,
-    override val overriddenDeclaration: KtSymbol,
+    override val overridingDeclaration: KtCallableSymbol,
+    override val overriddenDeclaration: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.VarOverriddenByVal(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
@@ -2093,8 +2092,8 @@ internal class NonFinalMemberInObjectImpl(
 }
 
 internal class VirtualMemberHiddenImpl(
-    override val declared: KtSymbol,
-    override val overriddenContainer: KtNamedClassOrObjectSymbol,
+    override val declared: KtCallableSymbol,
+    override val overriddenContainer: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.VirtualMemberHidden(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
@@ -2148,7 +2147,7 @@ internal class LocalInterfaceNotAllowedImpl(
 }
 
 internal class AbstractFunctionInNonAbstractClassImpl(
-    override val function: KtSymbol,
+    override val function: KtCallableSymbol,
     override val containingClass: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
@@ -2157,7 +2156,7 @@ internal class AbstractFunctionInNonAbstractClassImpl(
 }
 
 internal class AbstractFunctionWithBodyImpl(
-    override val function: KtSymbol,
+    override val function: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AbstractFunctionWithBody(), KtAbstractFirDiagnostic<KtFunction> {
@@ -2165,7 +2164,7 @@ internal class AbstractFunctionWithBodyImpl(
 }
 
 internal class NonAbstractFunctionWithNoBodyImpl(
-    override val function: KtSymbol,
+    override val function: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NonAbstractFunctionWithNoBody(), KtAbstractFirDiagnostic<KtFunction> {
@@ -2173,7 +2172,7 @@ internal class NonAbstractFunctionWithNoBodyImpl(
 }
 
 internal class PrivateFunctionWithNoBodyImpl(
-    override val function: KtSymbol,
+    override val function: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.PrivateFunctionWithNoBody(), KtAbstractFirDiagnostic<KtFunction> {
@@ -2181,7 +2180,7 @@ internal class PrivateFunctionWithNoBodyImpl(
 }
 
 internal class NonMemberFunctionNoBodyImpl(
-    override val function: KtSymbol,
+    override val function: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NonMemberFunctionNoBody(), KtAbstractFirDiagnostic<KtFunction> {
@@ -2288,7 +2287,7 @@ internal class FunInterfaceWithSuspendFunctionImpl(
 }
 
 internal class AbstractPropertyInNonAbstractClassImpl(
-    override val property: KtSymbol,
+    override val property: KtCallableSymbol,
     override val containingClass: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
@@ -2607,7 +2606,7 @@ internal class UninitializedVariableImpl(
 }
 
 internal class UninitializedParameterImpl(
-    override val parameter: KtVariableLikeSymbol,
+    override val parameter: KtSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UninitializedParameter(), KtAbstractFirDiagnostic<KtSimpleNameExpression> {
@@ -2615,7 +2614,7 @@ internal class UninitializedParameterImpl(
 }
 
 internal class UninitializedEnumEntryImpl(
-    override val enumEntry: KtVariableLikeSymbol,
+    override val enumEntry: KtSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UninitializedEnumEntry(), KtAbstractFirDiagnostic<KtSimpleNameExpression> {

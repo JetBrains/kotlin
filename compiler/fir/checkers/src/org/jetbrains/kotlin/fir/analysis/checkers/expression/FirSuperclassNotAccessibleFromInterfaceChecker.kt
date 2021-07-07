@@ -29,9 +29,9 @@ object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessExpres
 
         if (closestClass.classKind == ClassKind.INTERFACE) {
             val containingClassSymbol =
-                expression.toResolvedCallableSymbol()?.getContainingClassSymbol(context) as? FirRegularClassSymbol ?: return
+                expression.toResolvedCallableSymbol()?.getContainingClassSymbol(context.session) as? FirRegularClassSymbol ?: return
 
-            if (containingClassSymbol.classKind == ClassKind.CLASS) {
+            if (containingClassSymbol.source != null && containingClassSymbol.classKind == ClassKind.CLASS) {
                 reporter.reportOn(expression.explicitReceiver?.source, FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, context)
             }
         }

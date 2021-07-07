@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirControlFlowGraphRenderVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -55,6 +56,7 @@ import java.io.File
  * After that you can run action `XDot` in editor with source of test (or with cfg dump)
  *   and it will opens xdot with dump for that test
  */
+@OptIn(SymbolInternals::class)
 abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     companion object {
         const val DUMP_CFG_DIRECTIVE = "DUMP_CFG"

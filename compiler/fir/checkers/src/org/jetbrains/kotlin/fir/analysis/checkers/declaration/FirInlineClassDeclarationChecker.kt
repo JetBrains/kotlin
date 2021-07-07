@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.calls.isPotentiallyArray
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -47,7 +48,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
         }
 
         for (supertypeEntry in declaration.superTypeRefs) {
-            if (supertypeEntry.toRegularClass(context.session)?.isInterface != true) {
+            if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface != true) {
                 reporter.reportOnWithSuppression(supertypeEntry, FirErrors.INLINE_CLASS_CANNOT_EXTEND_CLASSES, context)
             }
         }
@@ -200,16 +201,18 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
     private fun ConeKotlinType.isRecursiveInlineClassType(visited: HashSet<ConeKotlinType>, session: FirSession): Boolean {
         if (!visited.add(this)) return true
 
-        val asRegularClass = this.toRegularClass(session) ?: return false
+        val asRegularClass = this.toRegularClassSymbol(session) ?: return false
 
-        return asRegularClass.isInlineOrValueClass() &&
-                asRegularClass.primaryConstructor
-                    ?.takeIf { it.source?.kind is FirRealSourceElementKind }
-                    ?.valueParameters
-                    ?.firstOrNull()
-                    ?.returnTypeRef
-                    ?.coneType
-                    ?.isRecursiveInlineClassType(visited, session) == true
+        if (!asRegularClass.isInlineOrValueClass()) return false
+        val primaryConstructor = asRegularClass.declarationSymbols
+            .firstOrNull { it is FirConstructorSymbol && it.isPrimary } as FirConstructorSymbol?
+            ?: return false
+        return primaryConstructor
+            .valueParameterSymbols
+            .firstOrNull()
+            ?.resolvedReturnTypeRef
+            ?.coneType
+            ?.isRecursiveInlineClassType(visited, session) == true
     }
 
     private fun FirRegularClass.isSubtypeOfCloneable(session: FirSession): Boolean {

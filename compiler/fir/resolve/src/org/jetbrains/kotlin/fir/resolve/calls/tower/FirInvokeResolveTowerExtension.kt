@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
@@ -284,7 +285,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
             candidate
         )
         dispatchReceiver = candidate.dispatchReceiverExpression()
-        this.typeRef = returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+        this.typeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir as FirTypedDeclaration)
 
         if (!invokeBuiltinExtensionMode) {
             extensionReceiver = extensionReceiverExpression

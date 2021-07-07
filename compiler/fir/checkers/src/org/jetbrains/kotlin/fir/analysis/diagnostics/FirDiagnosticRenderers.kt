@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
@@ -14,10 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.render
 
@@ -50,43 +49,33 @@ object FirDiagnosticRenderers {
     }
 
     val VARIABLE_NAME = Renderer { symbol: FirVariableSymbol<*> ->
-        symbol.fir.name.asString()
+        symbol.name.asString()
     }
 
     val FIR = Renderer { element: FirElement ->
         element.render()
     }
 
-    val NAME = Renderer { element: FirElement ->
-        when (element) {
-            is FirMemberDeclaration -> DECLARATION_NAME.render(element)
-            is FirCallableDeclaration -> element.symbol.callableId.callableName.asString()
-            else -> "???"
-        }
-    }
-
     val VISIBILITY = Renderer { visibility: Visibility ->
         visibility.externalDisplayName
     }
 
-    val DECLARATION_NAME = Renderer { declaration: FirMemberDeclaration ->
-        val name = when (declaration) {
-            is FirProperty -> declaration.name
-            is FirSimpleFunction -> declaration.name
-            is FirRegularClass -> declaration.name
-            is FirTypeAlias -> declaration.name
-            is FirEnumEntry -> declaration.name
-            is FirField -> declaration.name
-            is FirValueParameter -> declaration.name
-            is FirConstructor -> return@Renderer "constructor"
+    val DECLARATION_NAME = Renderer { symbol: FirBasedSymbol<*> ->
+        val name = when (symbol) {
+            is FirCallableSymbol<*> -> symbol.name
+            is FirClassLikeSymbol<*> -> symbol.classId.shortClassName
             else -> return@Renderer "???"
         }
         name.asString()
     }
 
-    val RENDER_CLASS_OR_OBJECT = Renderer { firClass: FirClass ->
-        val name = firClass.classId.relativeClassName.asString()
-        val classOrObject = if (firClass is FirRegularClass) "Class" else "Object"
+    val RENDER_CLASS_OR_OBJECT = Renderer { classSymbol: FirClassSymbol<*> ->
+        val name = classSymbol.classId.relativeClassName.asString()
+        val classOrObject = when (classSymbol.classKind) {
+            ClassKind.OBJECT -> "Object"
+            ClassKind.INTERFACE -> "Interface"
+            else -> "Class"
+        }
         "$classOrObject $name"
     }
 
@@ -95,8 +84,9 @@ object FirDiagnosticRenderers {
         t.render()
     }
 
-    val FQ_NAMES_IN_TYPES = Renderer { element: FirElement ->
-        element.render(mode = FirRenderer.RenderMode.WithFqNamesExceptAnnotationAndBody)
+    val FQ_NAMES_IN_TYPES = Renderer { symbol: FirBasedSymbol<*> ->
+        @OptIn(SymbolInternals::class)
+        symbol.fir.render(mode = FirRenderer.RenderMode.WithFqNamesExceptAnnotationAndBody)
     }
 
     val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->

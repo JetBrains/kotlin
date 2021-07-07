@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -23,7 +23,7 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val constructorSymbol =
             (expression.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol ?: return
-        val declarationClass = constructorSymbol.fir.returnTypeRef.coneType.toRegularClass(context.session)
+        val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol(context.session)
 
         if (declarationClass != null) {
             if (declarationClass.isAbstract && declarationClass.classKind == ClassKind.CLASS) {

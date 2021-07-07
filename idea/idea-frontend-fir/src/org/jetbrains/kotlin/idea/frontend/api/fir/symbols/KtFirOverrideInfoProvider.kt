@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtOverrideInfoProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -49,8 +50,8 @@ class KtFirOverrideInfoProvider(
         return memberSymbol.firRef.withFir { memberFir ->
             if (memberFir !is FirCallableDeclaration) return@withFir null
             parentClassSymbol.firRef.withFir inner@{ parentClassFir ->
-                if (parentClassFir !is FirClass) return@inner null
-                memberFir.getImplementationStatus(SessionHolderImpl(firAnalysisSession.rootModuleSession, ScopeSession()), parentClassFir)
+                if (parentClassSymbol !is FirClassSymbol<*>) return@inner null
+                memberFir.symbol.getImplementationStatus(SessionHolderImpl(firAnalysisSession.rootModuleSession, ScopeSession()), parentClassSymbol)
             }
         }
     }

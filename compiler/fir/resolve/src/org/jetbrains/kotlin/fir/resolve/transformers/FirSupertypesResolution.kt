@@ -571,7 +571,7 @@ class SupertypeComputationSession {
     }
 }
 
-fun FirTypeRef.firClassLike(session: FirSession): FirClassLikeDeclaration? {
+internal fun FirTypeRef.firClassLike(session: FirSession): FirClassLikeDeclaration? {
     val type = coneTypeSafe<ConeClassLikeType>() ?: return null
     return type.lookupTag.toSymbol(session)?.fir
 }

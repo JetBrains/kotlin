@@ -192,7 +192,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         override fun visitFunctionCallNode(node: FunctionCallNode, data: IllegalScopeContext) {
             val functionSymbol = node.fir.toResolvedCallableSymbol() as? FirFunctionSymbol<*>?
-            val contractDescription = functionSymbol?.fir?.contractDescription
+            val contractDescription = functionSymbol?.resolvedContractDescription
 
             val callSource = node.fir.explicitReceiver?.source ?: node.fir.source
             data.checkExpressionForLeakedSymbols(node.fir.explicitReceiver, callSource) {
@@ -255,7 +255,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             var dataForNode = visitNode(node, data)
 
             val functionSymbol = node.fir.toResolvedCallableSymbol() as? FirFunctionSymbol<*>?
-            val contractDescription = functionSymbol?.fir?.contractDescription
+            val contractDescription = functionSymbol?.resolvedContractDescription
 
             dataForNode = dataForNode.checkReference(node.fir.explicitReceiver.toQualifiedReference()) {
                 when {
@@ -303,9 +303,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         return this?.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
     }
 
-    private val FirFunction.contractDescription: FirContractDescription?
-        get() = (this as? FirContractDescriptionOwner)?.contractDescription
-
     private fun FirContractDescription?.getParameterCallsEffectDeclaration(index: Int): ConeCallsEffectDeclaration? {
         val effects = this?.coneEffects
         val callsEffect = effects?.find { it is ConeCallsEffectDeclaration && it.valueParameterReference.parameterIndex == index }
@@ -313,13 +310,13 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
     }
 
     private fun FirFunctionCall.getArgumentCallsEffect(arg: FirExpression): EventOccurrencesRange? {
-        val function = (this.toResolvedCallableSymbol() as? FirFunctionSymbol<*>?)?.fir
-        val contractDescription = function?.contractDescription
+        val functionSymbol = (this.toResolvedCallableSymbol() as? FirFunctionSymbol<*>?)
+        val contractDescription = functionSymbol?.resolvedContractDescription
         val resolvedArguments = argumentList as? FirResolvedArgumentList
 
-        return if (function != null && resolvedArguments != null) {
+        return if (functionSymbol != null && resolvedArguments != null) {
             val parameter = resolvedArguments.mapping[arg]
-            contractDescription.getParameterCallsEffect(function.valueParameters.indexOf(parameter))
+            contractDescription.getParameterCallsEffect(functionSymbol.valueParameterSymbols.indexOf(parameter?.symbol))
         } else null
     }
 

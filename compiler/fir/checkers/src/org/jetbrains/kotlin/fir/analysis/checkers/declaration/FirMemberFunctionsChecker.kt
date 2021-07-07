@@ -35,6 +35,7 @@ object FirMemberFunctionsChecker : FirClassChecker() {
     ) {
         val source = function.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
+        val functionSymbol = function.symbol
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = source.getModifierList()
@@ -45,13 +46,13 @@ object FirMemberFunctionsChecker : FirClassChecker() {
                 reporter.reportOn(
                     source,
                     FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
-                    function,
-                    containingDeclaration,
+                    functionSymbol,
+                    containingDeclaration.symbol,
                     context
                 )
             }
             if (function.hasBody) {
-                reporter.reportOn(source, FirErrors.ABSTRACT_FUNCTION_WITH_BODY, function, context)
+                reporter.reportOn(source, FirErrors.ABSTRACT_FUNCTION_WITH_BODY, functionSymbol, context)
             }
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
@@ -59,13 +60,13 @@ object FirMemberFunctionsChecker : FirClassChecker() {
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
                 if (Visibilities.isPrivate(function.visibility)) {
-                    reporter.reportOn(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY, function, context)
+                    reporter.reportOn(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY, functionSymbol, context)
                 }
                 if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
                     reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
                 }
             } else if (!isInsideExpectClass && !hasAbstractModifier && !function.isExternal) {
-                reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, function, context)
+                reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, functionSymbol, context)
             }
         }
 

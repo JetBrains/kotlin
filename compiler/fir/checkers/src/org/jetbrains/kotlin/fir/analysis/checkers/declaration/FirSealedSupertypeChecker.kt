@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSealedSupertypeChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -36,11 +36,9 @@ object FirSealedSupertypeChecker : FirClassChecker() {
                 continue
             }
 
-            val fir = context.session.symbolProvider.getClassLikeSymbolByFqName(classId)
-                ?.fir.safeAs<FirRegularClass>()
-                ?: continue
+            val classSymbol = context.session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: continue
 
-            if (fir.status.modality == Modality.SEALED && declaration.classId.packageFqName != fir.classId.packageFqName) {
+            if (classSymbol.modality == Modality.SEALED && declaration.classId.packageFqName != classSymbol.classId.packageFqName) {
                 reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE, context)
                 continue
             }
@@ -55,11 +53,9 @@ object FirSealedSupertypeChecker : FirClassChecker() {
                 continue
             }
 
-            val fir = context.session.symbolProvider.getClassLikeSymbolByFqName(classId)
-                ?.fir.safeAs<FirRegularClass>()
-                ?: continue
+            val classSymbol = context.session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: continue
 
-            if (fir.status.modality == Modality.SEALED) {
+            if (classSymbol.modality == Modality.SEALED) {
                 reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS, context)
                 return
             }

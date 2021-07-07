@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -49,8 +49,8 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
     ) {
         val type = typeRef.coneTypeSafe<ConeClassLikeType>()
         val fullyExpandedType = type?.fullyExpandedType(context.session) ?: return
-        val declaration = fullyExpandedType.toSymbol(context.session)?.fir.safeAs<FirRegularClass>() ?: return
-        val typeParameters = declaration.typeParameters
+        val declaration = fullyExpandedType.toSymbol(context.session) as? FirRegularClassSymbol ?: return
+        val typeParameters = declaration.typeParameterSymbols
         val typeArguments = type.typeArguments
 
         val size = minOf(typeParameters.size, typeArguments.size)
@@ -60,9 +60,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
             val actual = typeArguments[it]
             val fullyExpandedProjection = fullyExpandedType.typeArguments[it]
 
-            val protoVariance = proto.safeAs<FirTypeParameterRef>()
-                ?.symbol?.fir
-                ?.variance
+            val protoVariance = proto.variance
 
             val projectionRelation = if (fullyExpandedProjection is ConeKotlinTypeConflictingProjection ||
                 actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||

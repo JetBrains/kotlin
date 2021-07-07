@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.getOrPutNullable
@@ -61,6 +62,10 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
 fun FirSession.declaredMemberScope(klass: FirClass): FirClassDeclaredMemberScope {
     return declaredMemberScopeProvider
         .declaredMemberScope(klass, useLazyNestedClassifierScope = false, existingNames = null, symbolProvider = null)
+}
+
+fun FirSession.declaredMemberScope(klass: FirClassSymbol<*>): FirClassDeclaredMemberScope {
+    return declaredMemberScope(klass.fir)
 }
 
 fun FirSession.declaredMemberScopeWithLazyNestedScope(

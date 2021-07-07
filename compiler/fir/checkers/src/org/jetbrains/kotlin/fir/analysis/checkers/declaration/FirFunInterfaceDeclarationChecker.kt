@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
 
@@ -33,16 +35,16 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
         val scope = declaration.unsubstitutedScope(context)
         val classSymbol = declaration.symbol
 
-        var abstractFunction: FirSimpleFunction? = null
+        var abstractFunctionSymbol: FirNamedFunctionSymbol? = null
 
         for (name in scope.getCallableNames()) {
             val functions = scope.getFunctions(name)
             val properties = scope.getProperties(name)
 
             for (function in functions) {
-                if (function.fir.isAbstract) {
-                    if (abstractFunction == null) {
-                        abstractFunction = function.fir
+                if (function.isAbstract) {
+                    if (abstractFunctionSymbol == null) {
+                        abstractFunctionSymbol = function
                     } else {
                         reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, context)
                     }
@@ -50,10 +52,10 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
             }
 
             for (property in properties) {
-                val firProperty = property.fir as? FirProperty ?: continue
+                val firProperty = property as? FirPropertySymbol ?: continue
                 if (firProperty.isAbstract) {
                     val source =
-                        if (firProperty.getContainingClassSymbol(context) != classSymbol)
+                        if (firProperty.getContainingClassSymbol(context.session) != classSymbol)
                             declaration.source
                         else
                             firProperty.source
@@ -63,33 +65,33 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
-        if (abstractFunction == null) {
+        if (abstractFunctionSymbol == null) {
             reporter.reportOn(declaration.source, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, context)
             return
         }
 
-        val inFunInterface = abstractFunction.getContainingClassSymbol(context) === classSymbol
+        val inFunInterface = abstractFunctionSymbol.getContainingClassSymbol(context.session) === classSymbol
 
         when {
-            abstractFunction.typeParameters.isNotEmpty() ->
+            abstractFunctionSymbol.typeParameterSymbols.isNotEmpty() ->
                 reporter.reportOn(
-                    if (inFunInterface) abstractFunction.source else declaration.source,
+                    if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
                     FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS,
                     context
                 )
 
-            abstractFunction.isSuspend ->
+            abstractFunctionSymbol.isSuspend ->
                 if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionsInFunInterfaces)) {
                     reporter.reportOn(
-                        if (inFunInterface) abstractFunction.source else declaration.source,
+                        if (inFunInterface) abstractFunctionSymbol.source else declaration.source,
                         FUN_INTERFACE_WITH_SUSPEND_FUNCTION,
                         context
                     )
                 }
         }
 
-        abstractFunction.valueParameters.forEach {
-            if (it.defaultValue != null) {
+        abstractFunctionSymbol.valueParameterSymbols.forEach {
+            if (it.hasDefaultValue) {
                 reporter.reportOn(
                     if (inFunInterface) it.source else declaration.source,
                     FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE,

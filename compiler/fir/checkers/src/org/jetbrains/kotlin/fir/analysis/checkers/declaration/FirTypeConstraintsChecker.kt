@@ -24,7 +24,7 @@ object FirTypeConstraintsChecker : FirBasicDeclarationChecker() {
                 constraint.source,
                 FirErrors.NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER,
                 constraint.name,
-                declaration,
+                declaration.symbol,
                 context
             )
         }

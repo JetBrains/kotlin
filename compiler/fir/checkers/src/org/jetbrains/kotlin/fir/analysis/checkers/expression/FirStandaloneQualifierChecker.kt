@@ -26,7 +26,7 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker() {
 
         when (val symbol = expression.symbol) {
             is FirRegularClassSymbol -> {
-                if (symbol.fir.classKind == ClassKind.OBJECT) return
+                if (symbol.classKind == ClassKind.OBJECT) return
                 reporter.reportOn(expression.source, FirErrors.NO_COMPANION_OBJECT, symbol, context)
             }
             null -> {

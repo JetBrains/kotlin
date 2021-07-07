@@ -50,7 +50,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
     }
 
     private fun FirProperty.isNullable() = when (val type = returnTypeRef.coneType) {
-        is ConeTypeParameterType -> type.isNullable || type.lookupTag.typeParameterSymbol.fir.bounds.any { it.coneType.isNullable }
+        is ConeTypeParameterType -> type.isNullable || type.lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
         else -> type.isNullable
     }
 

@@ -12,14 +12,16 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-
         val cyclicConstructors = mutableSetOf<FirConstructor>()
         var hasPrimaryConstructor = false
 
@@ -91,8 +93,12 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
         return null
     }
 
-    private fun FirConstructor.getDelegated(): FirConstructor? = delegatedConstructor
-        ?.calleeReference.safeAs<FirResolvedNamedReference>()
-        ?.resolvedSymbol
-        ?.fir as? FirConstructor?
+    private fun FirConstructor.getDelegated(): FirConstructor? {
+        this.symbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+        val delegatedConstructorSymbol = delegatedConstructor
+            ?.calleeReference.safeAs<FirResolvedNamedReference>()
+            ?.resolvedSymbol
+        @OptIn(SymbolInternals::class)
+        return delegatedConstructorSymbol?.fir as? FirConstructor
+    }
 }

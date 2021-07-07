@@ -20,6 +20,12 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
 ) : FirClassifierSymbol<D>() {
     abstract override fun toLookupTag(): ConeClassLikeLookupTag
 
+    val deprecation: DeprecationsPerUseSite?
+        get() {
+            ensureResolved(FirResolvePhase.STATUS)
+            return fir.deprecation
+        }
+
     override fun toString(): String = "${this::class.simpleName} ${classId.asString()}"
 }
 

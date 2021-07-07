@@ -133,9 +133,8 @@ object FirForLoopChecker : FirBlockChecker() {
             is FirResolvedNamedReference -> {
                 val symbol = calleeReference.resolvedSymbol
                 if (symbol is FirNamedFunctionSymbol) {
-                    val function = symbol.fir
-                    if (!function.isOperator) {
-                        reporter.reportOn(reportSource, OPERATOR_MODIFIER_REQUIRED, symbol, function.name.asString(), context)
+                    if (!symbol.isOperator) {
+                        reporter.reportOn(reportSource, OPERATOR_MODIFIER_REQUIRED, symbol, symbol.name.asString(), context)
                         // Don't return true as we want to report other errors
                     }
                 }

@@ -47,7 +47,10 @@ class FirIntersectionOverrideFunctionSymbol(
 
 class FirConstructorSymbol(
     callableId: CallableId
-) : FirFunctionSymbol<FirConstructor>(callableId)
+) : FirFunctionSymbol<FirConstructor>(callableId) {
+    val isPrimary: Boolean
+        get() = fir.isPrimary
+}
 
 open class FirAccessorSymbol(
     callableId: CallableId,

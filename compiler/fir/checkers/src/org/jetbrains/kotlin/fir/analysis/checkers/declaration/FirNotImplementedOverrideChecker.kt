@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -48,6 +47,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         if (declaration is FirRegularClass && declaration.isExpect) return
         val classKind = declaration.classKind
         if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) return
+        val classSymbol = declaration.symbol
 
         val classScope = declaration.unsubstitutedScope(context)
 
@@ -59,23 +59,21 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()
 
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
-            val fir = symbol.fir
-
-            val delegatedWrapperData = fir.delegatedWrapperData
+            val delegatedWrapperData = symbol.delegatedWrapperData
             if (delegatedWrapperData != null) {
                 val directOverriddenMembers = classScope.getDirectOverriddenMembers(
                     symbol,
                     unwrapIntersectionAndSubstitutionOverride = true
                 )
 
-                val delegatedTo = delegatedWrapperData.wrapped.unwrapFakeOverrides()
+                val delegatedTo = delegatedWrapperData.wrapped.unwrapFakeOverrides().symbol
 
-                if (symbol.fir.multipleDelegatesWithTheSameSignature == true) {
+                if (symbol.multipleDelegatesWithTheSameSignature == true) {
                     manyImplementationsDelegationSymbols.add(symbol)
                 }
 
-                val firstFinal = directOverriddenMembers.firstOrNull { it.fir.isFinal }
-                val firstOpen = directOverriddenMembers.firstOrNull { it.fir.isOpen && delegatedTo != it.unwrapFakeOverrides().fir }
+                val firstFinal = directOverriddenMembers.firstOrNull { it.isFinal }
+                val firstOpen = directOverriddenMembers.firstOrNull { it.isOpen && delegatedTo != it.unwrapFakeOverrides() }
 
                 when {
                     firstFinal != null ->
@@ -87,10 +85,10 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
 
                 return
             }
-            when (fir.getImplementationStatus(context.sessionHolder, declaration)) {
+            when (symbol.getImplementationStatus(context.sessionHolder, classSymbol)) {
                 ImplementationStatus.AMBIGUOUSLY_INHERITED -> notImplementedIntersectionSymbols.add(symbol)
                 ImplementationStatus.NOT_IMPLEMENTED -> when {
-                    fir.isVisibleInClass(declaration) -> notImplementedSymbols.add(symbol)
+                    symbol.isVisibleInClass(classSymbol) -> notImplementedSymbols.add(symbol)
                     else -> invisibleSymbols.add(symbol)
                 }
                 else -> {
@@ -105,32 +103,32 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         }
 
         if (!canHaveAbstractDeclarations && notImplementedSymbols.isNotEmpty()) {
-            val notImplemented = notImplementedSymbols.first().unwrapFakeOverrides().fir
+            val notImplemented = notImplementedSymbols.first().unwrapFakeOverrides()
             if (notImplemented.isFromInterfaceOrEnum(context)) {
-                reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
+                reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplemented, context)
             } else {
-                reporter.reportOn(source, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
+                reporter.reportOn(source, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplemented, context)
             }
         }
         if (!canHaveAbstractDeclarations && invisibleSymbols.isNotEmpty()) {
-            val invisible = invisibleSymbols.first().fir
+            val invisible = invisibleSymbols.first()
             if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses)) {
-                reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, declaration, invisible, context)
+                reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, classSymbol, invisible, context)
             } else {
-                reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING, declaration, invisible, context)
+                reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING, classSymbol, invisible, context)
             }
         }
 
         manyImplementationsDelegationSymbols.firstOrNull()?.let {
-            reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, declaration, it.fir, context)
+            reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, it, context)
         }
 
         delegationOverrideOfFinal.firstOrNull()?.let { (delegated, final) ->
             reporter.reportOn(
                 source,
                 OVERRIDING_FINAL_MEMBER_BY_DELEGATION,
-                delegated.fir,
-                final.fir,
+                delegated,
+                final,
                 context
             )
         }
@@ -139,33 +137,32 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             reporter.reportOn(
                 source,
                 DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE,
-                delegated.fir,
-                open.fir,
+                delegated,
+                open,
                 context
             )
         }
 
         if (manyImplementationsDelegationSymbols.isEmpty() && notImplementedIntersectionSymbols.isNotEmpty()) {
             val notImplementedIntersectionSymbol = notImplementedIntersectionSymbols.first()
-            val notImplementedIntersection = notImplementedIntersectionSymbol.fir
             val intersections = (notImplementedIntersectionSymbol as FirIntersectionCallableSymbol).intersections
             if (intersections.any {
-                    (it.containingClass()?.toSymbol(context.session)?.fir as? FirRegularClass)?.classKind == ClassKind.CLASS
+                    (it.containingClass()?.toSymbol(context.session) as? FirRegularClassSymbol)?.classKind == ClassKind.CLASS
                 }
             ) {
-                reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, declaration, notImplementedIntersection, context)
+                reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
             } else {
                 reporter.reportOn(
                     source,
                     FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
-                    declaration,
-                    notImplementedIntersection,
+                    classSymbol,
+                    notImplementedIntersectionSymbol,
                     context
                 )
             }
         }
     }
 
-    private fun FirCallableDeclaration.isFromInterfaceOrEnum(context: CheckerContext): Boolean =
-        (getContainingClassSymbol(context) as? FirRegularClassSymbol)?.let { it.isInterface || it.isEnumClass } == true
+    private fun FirCallableSymbol<*>.isFromInterfaceOrEnum(context: CheckerContext): Boolean =
+        (getContainingClassSymbol(context.session) as? FirRegularClassSymbol)?.let { it.isInterface || it.isEnumClass } == true
 }

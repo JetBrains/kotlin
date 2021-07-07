@@ -10,7 +10,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
@@ -242,7 +242,7 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
     }
 
     fun getRegularClass(typeRef: FirTypeRef): FirRegularClass? {
-        return typeRef.toRegularClass(firSession)
+        return typeRef.toRegularClassSymbol(firSession)?.fir
     }
 
     fun toClassSymbol(classId: ClassId) =

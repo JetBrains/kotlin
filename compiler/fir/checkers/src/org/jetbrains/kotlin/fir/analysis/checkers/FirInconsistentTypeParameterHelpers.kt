@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 fun checkInconsistentTypeParameters(
-    firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClass>>,
+    firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClassSymbol>>,
     context: CheckerContext,
     reporter: DiagnosticReporter,
     source: FirSourceElement?,
@@ -55,7 +55,7 @@ fun checkInconsistentTypeParameters(
 }
 
 private fun buildDeepSubstitutionMultimap(
-    firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClass>>,
+    firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClassSymbol>>,
     context: CheckerContext,
 ): Map<FirTypeParameterSymbol, ClassSymbolAndProjections> {
     val result = mutableMapOf<FirTypeParameterSymbol, ClassSymbolAndProjections>()
@@ -63,10 +63,10 @@ private fun buildDeepSubstitutionMultimap(
     val session = context.session
     val typeContext = session.typeContext
 
-    fun fillInDeepSubstitutor(typeArguments: Array<out ConeTypeProjection>?, firClass: FirRegularClass) {
+    fun fillInDeepSubstitutor(typeArguments: Array<out ConeTypeProjection>?, classSymbol: FirRegularClassSymbol) {
         if (typeArguments != null) {
-            val typeParameters = firClass.typeParameters
-            val count = minOf(typeArguments.size, typeParameters.size)
+            val typeParameterSymbols = classSymbol.typeParameterSymbols
+            val count = minOf(typeArguments.size, typeParameterSymbols.size)
 
             for (index in 0 until count) {
                 val typeArgument = typeArguments[index]
@@ -74,14 +74,14 @@ private fun buildDeepSubstitutionMultimap(
                 val substitutedArgument = ConeSubstitutorByMap(substitution, session).substituteArgument(typeArgument) ?: typeArgument
                 val substitutedType = substitutedArgument.type ?: continue
 
-                val typeParameterSymbol = typeParameters[index].symbol
+                val typeParameterSymbol = typeParameterSymbols[index]
 
                 substitution[typeParameterSymbol] = substitutedType
                 var classSymbolAndProjections = result[typeParameterSymbol]
                 val projections: MutableList<ConeKotlinType>
                 if (classSymbolAndProjections == null) {
                     projections = mutableListOf()
-                    classSymbolAndProjections = ClassSymbolAndProjections(firClass.symbol, projections)
+                    classSymbolAndProjections = ClassSymbolAndProjections(classSymbol, projections)
                     result[typeParameterSymbol] = classSymbolAndProjections
                 } else {
                     projections = classSymbolAndProjections.projections
@@ -95,12 +95,12 @@ private fun buildDeepSubstitutionMultimap(
             }
         }
 
-        for (superTypeRef in firClass.superTypeRefs) {
+        for (superTypeRef in classSymbol.resolvedSuperTypeRefs) {
             withSuppressedDiagnostics(superTypeRef, context) {
                 val fullyExpandedType = superTypeRef.coneType.fullyExpandedType(session)
-                val superTypeClass = fullyExpandedType.toRegularClass(session)
-                if (!fullyExpandedType.isEnum && superTypeClass != null) {
-                    fillInDeepSubstitutor(fullyExpandedType.typeArguments, superTypeClass)
+                val superClassSymbol = fullyExpandedType.toRegularClassSymbol(session)
+                if (!fullyExpandedType.isEnum && superClassSymbol != null) {
+                    fillInDeepSubstitutor(fullyExpandedType.typeArguments, superClassSymbol)
                 }
             }
         }

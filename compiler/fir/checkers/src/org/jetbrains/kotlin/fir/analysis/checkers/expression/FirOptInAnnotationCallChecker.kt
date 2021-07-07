@@ -36,7 +36,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                     val annotationClasses = expression.findArgumentByName(OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS)
                     for (classSymbol in annotationClasses?.extractClassesFromArgument().orEmpty()) {
                         with(FirOptInUsageBaseChecker) {
-                            if (classSymbol.fir.loadExperimentalityForMarkerAnnotation() == null) {
+                            if (classSymbol.loadExperimentalityForMarkerAnnotation() == null) {
                                 reporter.reportOn(
                                     expression.source,
                                     FirErrors.USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER,

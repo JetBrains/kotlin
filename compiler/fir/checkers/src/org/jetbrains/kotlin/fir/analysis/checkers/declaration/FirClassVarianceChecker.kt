@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
@@ -110,10 +111,10 @@ object FirClassVarianceChecker : FirClassChecker() {
     ) {
         if (type is ConeTypeParameterType) {
             val fullyExpandedType = type.fullyExpandedType(context.session)
-            val typeParameter = type.lookupTag.typeParameterSymbol.fir
+            val typeParameterSymbol = type.lookupTag.typeParameterSymbol
             val resultSource = source ?: typeRef?.source
             if (resultSource != null &&
-                !typeParameter.variance.allowsPosition(variance) &&
+                !typeParameterSymbol.variance.allowsPosition(variance) &&
                 !fullyExpandedType.attributes.contains(CompilerConeAttributes.UnsafeVariance)
             ) {
                 val factory =
@@ -121,8 +122,8 @@ object FirClassVarianceChecker : FirClassChecker() {
                 reporter.reportOn(
                     resultSource,
                     factory,
-                    typeParameter.symbol,
-                    typeParameter.variance,
+                    typeParameterSymbol,
+                    typeParameterSymbol.variance,
                     variance,
                     containingType,
                     context
@@ -133,10 +134,10 @@ object FirClassVarianceChecker : FirClassChecker() {
 
         if (type is ConeClassLikeType) {
             val fullyExpandedType = type.fullyExpandedType(context.session)
-            val declFir = fullyExpandedType.lookupTag.toSymbol(context.session)?.fir
-            if (declFir is FirClass) {
+            val classSymbol = fullyExpandedType.lookupTag.toSymbol(context.session)
+            if (classSymbol is FirClassSymbol<*>) {
                 for ((index, typeArgument) in fullyExpandedType.typeArguments.withIndex()) {
-                    val paramVariance = (declFir.typeParameters.getOrNull(index) as? FirTypeParameter)?.variance ?: continue
+                    val paramVariance = classSymbol.typeParameterSymbols.getOrNull(index)?.variance ?: continue
 
                     val argVariance = when (typeArgument.kind) {
                         ProjectionKind.IN -> Variance.IN_VARIANCE
@@ -147,8 +148,7 @@ object FirClassVarianceChecker : FirClassChecker() {
 
                     val typeArgumentType = typeArgument.type ?: continue
 
-                    val projectionKind = TypeCheckingProcedure.getEffectiveProjectionKind(paramVariance, argVariance)!!
-                    val newVariance = when (projectionKind) {
+                    val newVariance = when (TypeCheckingProcedure.getEffectiveProjectionKind(paramVariance, argVariance)!!) {
                         TypeCheckingProcedure.EnrichedProjectionKind.OUT -> variance
                         TypeCheckingProcedure.EnrichedProjectionKind.IN -> variance.opposite()
                         TypeCheckingProcedure.EnrichedProjectionKind.INV -> Variance.INVARIANT

@@ -75,7 +75,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             }
 
             this is FirConstructor -> {
-                val classSymbol = this.getContainingClassSymbol(context)
+                val classSymbol = this.getContainingClassSymbol(context.session)
                 if (
                     classSymbol is FirRegularClassSymbol
                     && (classSymbol.isEnumClass || classSymbol.isSealed)
@@ -99,28 +99,14 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         val overriddenFunctions = function.overriddenFunctions(currentClass, context)
         var visibility: Visibility = Visibilities.Private
         for (func in overriddenFunctions) {
-            val currentVisibility = func.fir.visibility()
-            if (currentVisibility != null) {
-                val compareResult = Visibilities.compare(currentVisibility, visibility)
-                if (compareResult != null && compareResult > 0) {
-                    visibility = currentVisibility
-                }
+            val currentVisibility = func.visibility
+            val compareResult = Visibilities.compare(currentVisibility, visibility)
+            if (compareResult != null && compareResult > 0) {
+                visibility = currentVisibility
             }
         }
 
         return visibility
-    }
-
-    private fun FirFunction.visibility(): Visibility? {
-        (symbol.fir as? FirMemberDeclaration)?.visibility?.let {
-            return it
-        }
-
-        (symbol.fir as? FirPropertyAccessor)?.visibility?.let {
-            return it
-        }
-
-        return null
     }
 
     private val CheckerContext.containingPropertyVisibility

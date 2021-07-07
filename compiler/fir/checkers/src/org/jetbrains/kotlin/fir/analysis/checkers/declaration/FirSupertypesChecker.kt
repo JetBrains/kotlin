@@ -47,13 +47,13 @@ object FirSupertypesChecker : FirClassChecker() {
                     extensionFunctionSupertypeReported = true
                 }
                 val lookupTag = coneType.safeAs<ConeClassLikeType>()?.lookupTag ?: return@withSuppressedDiagnostics
-                val superTypeFir = lookupTag.toSymbol(context.session)?.fir
+                val superTypeSymbol = lookupTag.toSymbol(context.session)
 
-                if (superTypeFir is FirRegularClass) {
-                    if (!superClassSymbols.add(superTypeFir.symbol)) {
+                if (superTypeSymbol is FirRegularClassSymbol) {
+                    if (!superClassSymbols.add(superTypeSymbol)) {
                         reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_APPEARS_TWICE, context)
                     }
-                    if (superTypeFir.classKind != ClassKind.INTERFACE) {
+                    if (superTypeSymbol.classKind != ClassKind.INTERFACE) {
                         if (classAppeared) {
                             reporter.reportOn(superTypeRef.source, FirErrors.MANY_CLASSES_IN_SUPERTYPE_LIST, context)
                         } else {
@@ -64,8 +64,8 @@ object FirSupertypesChecker : FirClassChecker() {
                             interfaceWithSuperclassReported = true
                         }
                     }
-                    val isObject = superTypeFir.classKind == ClassKind.OBJECT
-                    if (!finalSupertypeReported && !isObject && superTypeFir.modality == Modality.FINAL) {
+                    val isObject = superTypeSymbol.classKind == ClassKind.OBJECT
+                    if (!finalSupertypeReported && !isObject && superTypeSymbol.modality == Modality.FINAL) {
                         reporter.reportOn(superTypeRef.source, FirErrors.FINAL_SUPERTYPE, context)
                         finalSupertypeReported = true
                     }
@@ -93,7 +93,7 @@ object FirSupertypesChecker : FirClassChecker() {
         checkDelegationNotToInterface(declaration, context, reporter)
 
         if (declaration is FirRegularClass && declaration.superTypeRefs.size > 1) {
-            checkInconsistentTypeParameters(listOf(Pair(null, declaration)), context, reporter, declaration.source, true)
+            checkInconsistentTypeParameters(listOf(Pair(null, declaration.symbol)), context, reporter, declaration.source, true)
         }
     }
 
@@ -148,7 +148,7 @@ object FirSupertypesChecker : FirClassChecker() {
         coneType: ConeKotlinType,
         context: CheckerContext
     ) {
-        if (symbol is FirRegularClassSymbol && symbol.fir.classKind == ClassKind.INTERFACE) {
+        if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.INTERFACE) {
             for (typeArgument in fullyExpandedType.typeArguments) {
                 if (typeArgument.isConflictingOrNotInvariant) {
                     reporter.reportOn(superTypeRef.source, FirErrors.EXPANDED_TYPE_CANNOT_BE_INHERITED, coneType, context)
@@ -169,8 +169,8 @@ object FirSupertypesChecker : FirClassChecker() {
                     subDeclaration.name.isSpecial &&
                     subDeclaration.name.isDelegated
                 ) {
-                    val subDeclFir = subDeclaration.returnTypeRef.toRegularClass(context.session)
-                    if (subDeclFir is FirRegularClass && subDeclFir.classKind != ClassKind.INTERFACE) {
+                    val delegatedClassSymbol = subDeclaration.returnTypeRef.toRegularClassSymbol(context.session)
+                    if (delegatedClassSymbol != null && delegatedClassSymbol.classKind != ClassKind.INTERFACE) {
                         reporter.reportOn(subDeclaration.returnTypeRef.source, FirErrors.DELEGATION_NOT_TO_INTERFACE, context)
                     }
                 }

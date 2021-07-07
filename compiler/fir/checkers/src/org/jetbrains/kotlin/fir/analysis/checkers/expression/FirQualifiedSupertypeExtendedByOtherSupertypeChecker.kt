@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
-import org.jetbrains.kotlin.fir.analysis.checkers.followAllAlias
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
+import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccessExpressionChecker() {
@@ -26,8 +26,8 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
             ?: return
 
         val explicitType = superReference.superTypeRef
-            .firClassLike(context.session)
-            ?.followAllAlias(context.session).safeAs<FirClass>()
+            .toClassLikeSymbol(context.session)
+            ?.fullyExpandedClass(context.session) as? FirClassSymbol<*>
             ?: return
 
         val surroundingType = context.findClosestClassOrObject()
@@ -37,11 +37,11 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
         // have `explicitType` as their supertype or
         // equal to it
         var count = 0
-        var candidate: FirClass? = null
+        var candidate: FirClassSymbol<*>? = null
 
         for (it in surroundingType.superTypeRefs) {
-            val that = it.firClassLike(context.session)
-                ?.followAllAlias(context.session).safeAs<FirClass>()
+            val that = it.toClassLikeSymbol(context.session)
+                ?.fullyExpandedClass(context.session) as? FirClassSymbol<*>
                 ?: continue
 
             val isSupertype = explicitType.isSupertypeOf(that, context.session)

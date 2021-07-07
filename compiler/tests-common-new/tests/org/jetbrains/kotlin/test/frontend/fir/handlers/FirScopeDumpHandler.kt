@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.render
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
 
+@OptIn(SymbolInternals::class)
 class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     private val dumper = MultiModuleInfoDumperImpl()
 

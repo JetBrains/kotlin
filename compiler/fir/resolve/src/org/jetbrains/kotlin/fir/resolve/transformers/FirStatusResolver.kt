@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -278,3 +280,9 @@ private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {
 
 private object PublishedApiEffectiveVisibilityKey : FirDeclarationDataKey()
 var FirDeclaration.publishedApiEffectiveVisibility: EffectiveVisibility? by FirDeclarationDataRegistry.data(PublishedApiEffectiveVisibilityKey)
+
+inline val FirCallableSymbol<*>.publishedApiEffectiveVisibility: EffectiveVisibility?
+    get() {
+        ensureResolved(FirResolvePhase.STATUS)
+        return fir.publishedApiEffectiveVisibility
+    }

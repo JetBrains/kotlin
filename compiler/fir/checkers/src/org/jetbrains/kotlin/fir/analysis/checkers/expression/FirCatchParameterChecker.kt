@@ -31,7 +31,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
 
             val coneType = catchParameter.returnTypeRef.coneType
             if (coneType is ConeTypeParameterType) {
-                val isReified = coneType.lookupTag.typeParameterSymbol.fir.isReified
+                val isReified = coneType.lookupTag.typeParameterSymbol.isReified
 
                 if (isReified) {
                     reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE, context)

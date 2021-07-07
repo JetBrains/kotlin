@@ -16,15 +16,12 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 object FirDeprecatedTypeChecker : FirTypeRefChecker() {
-
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.findClosest<FirPropertyAccessor>() != null) return
 
         val resolved = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return
         val symbol = resolved.lookupTag.toSymbol(context.session) ?: return
-        val referencedFir = symbol.fir
 
-        FirDeprecationChecker.reportDeprecationIfNeeded(typeRef.source, referencedFir, null, context, reporter)
+        FirDeprecationChecker.reportDeprecationIfNeeded(typeRef.source, symbol, null, context, reporter)
     }
-    
 }

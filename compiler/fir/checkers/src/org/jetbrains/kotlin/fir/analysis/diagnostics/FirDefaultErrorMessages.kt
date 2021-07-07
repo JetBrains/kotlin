@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_POSITION_VARIANCE
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.commaSeparated
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTION_PARAMETERS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NOT_RENDERED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULLABLE_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
@@ -474,7 +472,7 @@ class FirDefaultErrorMessages {
             map.put(
                 QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE,
                 "Explicitly qualified supertype is extended by another supertype ''{0}''",
-                TO_STRING
+                SYMBOL
             )
             map.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes")
             map.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot inherit from a class")
@@ -670,7 +668,7 @@ class FirDefaultErrorMessages {
             map.put(NON_VARARG_SPREAD, "The spread operator (*foo) may only be applied in a vararg position")
             map.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES)
             map.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter")
-            map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''", NAME)
+            map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''", DECLARATION_NAME)
             map.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", TO_STRING)
             map.put(MANY_LAMBDA_EXPRESSION_ARGUMENTS, "Only one lambda expression is allowed outside a parenthesized argument list")
             map.put(SPREAD_OF_NULLABLE, "The spread operator (*foo) may not be applied to an argument of nullable type")
@@ -798,7 +796,7 @@ class FirDefaultErrorMessages {
                 NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER,
                 "{0} does not refer to a type parameter of {1}",
                 TO_STRING,
-                NAME
+                DECLARATION_NAME
             )
 
             map.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters")
@@ -826,7 +824,7 @@ class FirDefaultErrorMessages {
             map.put(
                 EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
                 "''{0}'' is a member and an extension at the same time. References to such elements are not allowed",
-                NAME
+                DECLARATION_NAME
             )
             map.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left-hand side of a callable reference cannot be a type parameter")
             map.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated")
@@ -872,20 +870,20 @@ class FirDefaultErrorMessages {
                 FQ_NAMES_IN_TYPES
             )
 
-            map.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, TO_STRING)
+            map.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", DECLARATION_NAME, TO_STRING)
 
             map.put(
                 CANNOT_WEAKEN_ACCESS_PRIVILEGE,
                 "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''",
                 VISIBILITY,
-                NAME,
+                DECLARATION_NAME,
                 TO_STRING
             )
             map.put(
                 CANNOT_CHANGE_ACCESS_PRIVILEGE,
                 "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''",
                 VISIBILITY,
-                NAME,
+                DECLARATION_NAME,
                 TO_STRING
             )
 
@@ -893,25 +891,25 @@ class FirDefaultErrorMessages {
                 ABSTRACT_MEMBER_NOT_IMPLEMENTED,
                 "{0} is not abstract and does not implement abstract member {1}",
                 RENDER_CLASS_OR_OBJECT,
-                NAME
+                DECLARATION_NAME
             )
             map.put(
                 ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
                 "{0} is not abstract and does not implement abstract base class member {1}",
                 RENDER_CLASS_OR_OBJECT,
-                NAME
+                DECLARATION_NAME
             )
             map.put(
                 MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
                 "{0} must override {1} because it inherits many implementations of it",
                 RENDER_CLASS_OR_OBJECT,
-                NAME
+                DECLARATION_NAME
             )
             map.put(
                 MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
                 "{0} must override {1} because it inherits multiple interface methods of it",
                 RENDER_CLASS_OR_OBJECT,
-                NAME
+                DECLARATION_NAME
             )
 
             map.put(
@@ -964,49 +962,49 @@ class FirDefaultErrorMessages {
             map.put(
                 RETURN_TYPE_MISMATCH_ON_INHERITANCE,
                 "''{0}'' clashes with ''{1}'': return types are incompatible",
-                NAME,
-                NAME
+                DECLARATION_NAME,
+                DECLARATION_NAME
             )
 
             map.put(
                 PROPERTY_TYPE_MISMATCH_ON_INHERITANCE,
                 "''{0}'' clashes with ''{1}'': property types are incompatible",
-                NAME,
-                NAME
+                DECLARATION_NAME,
+                DECLARATION_NAME
             )
 
             map.put(
                 VAR_TYPE_MISMATCH_ON_INHERITANCE,
                 "''{0}'' clashes with ''{1}'': property types do not match",
-                NAME,
-                NAME
+                DECLARATION_NAME,
+                DECLARATION_NAME
             )
 
             map.put(
                 RETURN_TYPE_MISMATCH_BY_DELEGATION,
                 "Type of ''{0}'' is not a subtype of overridden by delegation ''{1}''",
-                NAME,
-                NAME
+                DECLARATION_NAME,
+                DECLARATION_NAME
             )
 
             map.put(
                 PROPERTY_TYPE_MISMATCH_BY_DELEGATION,
                 "Type of property ''{0}'' is not a subtype of overridden by delegation ''{1}''",
-                NAME,
-                NAME
+                DECLARATION_NAME,
+                DECLARATION_NAME
             )
 
             map.put(
                 VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION,
                 "Val-property ''{0}'' implicitly overrides a var-property ''{1}'' by delegation",
-                NAME,
-                NAME
+                DECLARATION_NAME,
+                DECLARATION_NAME
             )
 
             map.put(
                 CONFLICTING_INHERITED_MEMBERS,
                 "{0} inherits conflicting members: {1}",
-                commaSeparated(NAME)
+                commaSeparated(DECLARATION_NAME)
             )
 
             // Redeclarations
@@ -1032,7 +1030,7 @@ class FirDefaultErrorMessages {
                 ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
                 "Abstract function ''{0}'' in non-abstract class ''{1}''",
                 DECLARATION_NAME,
-                NAME
+                DECLARATION_NAME
             )
             map.put(ABSTRACT_FUNCTION_WITH_BODY, "A function ''{0}'' with body cannot be abstract", DECLARATION_NAME)
             map.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without a body must be abstract", DECLARATION_NAME)
@@ -1068,7 +1066,7 @@ class FirDefaultErrorMessages {
                 ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
                 "Abstract property ''{0}'' in non-abstract class ''{1}''",
                 DECLARATION_NAME,
-                NAME
+                DECLARATION_NAME
             )
             map.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private")
 

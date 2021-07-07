@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
@@ -73,7 +75,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
 
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
         val calleeSymbol = reference.resolvedSymbol
-        val calleeContainingClassSymbol = calleeSymbol.getContainingClassSymbol(context) as? FirRegularClassSymbol ?: return
+        val calleeContainingClassSymbol = calleeSymbol.getContainingClassSymbol(context.session) as? FirRegularClassSymbol ?: return
         // We're looking for members/entries/companion object in an enum class or members in companion object of an enum class.
         val calleeIsInsideEnum = calleeContainingClassSymbol.isEnumClass
         val calleeIsInsideEnumCompanion =
@@ -103,7 +105,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
             //     INSTANCE(EnumCompanion2.foo())
             //   }
             // find an accessed context within the same enum class.
-            it.getContainingClassSymbol(context) == enumClassSymbol
+            it.getContainingClassSymbol(context.session) == enumClassSymbol
         }?.symbol ?: return
 
         val enumMemberProperties = enumClassSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()
@@ -142,7 +144,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         if (calleeContainingClassSymbol == enumClassSymbol.companionObjectSymbol) {
             // Uninitialized from the point of view of members or enum entries of that enum class
             if (accessedContext in enumMemberProperties || accessedContext in enumEntries) {
-                if (calleeSymbol is FirProperty) {
+                if (calleeSymbol is FirPropertySymbol) {
                     // From KT-11769
                     // enum class Fruit(...) {
                     //   APPLE(...);
@@ -151,7 +153,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
                     //   }
                     //   val score = ... <!>common<!>
                     // }
-                    reporter.reportOn(source, FirErrors.UNINITIALIZED_VARIABLE, calleeSymbol.symbol, context)
+                    reporter.reportOn(source, FirErrors.UNINITIALIZED_VARIABLE, calleeSymbol, context)
                 } else {
                     // enum class EnumCompanion2(...) {
                     //   INSTANCE(<!>foo<!>())
@@ -219,11 +221,13 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
     private val FirPropertySymbol.lazyDelegation: FirAnonymousFunction?
         get() {
             ensureResolved(FirResolvePhase.BODY_RESOLVE)
-            if (fir.delegate == null || fir.delegate !is FirFunctionCall) return null
-            val delegateCall = fir.delegate as FirFunctionCall
-            val callee =
-                (delegateCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirSimpleFunction ?: return null
-            if (callee.symbol.callableId.asSingleFqName().asString() != "kotlin.lazy") return null
+            @OptIn(SymbolInternals::class)
+            val property = this.fir
+            if (property.delegate == null || property.delegate !is FirFunctionCall) return null
+            val delegateCall = property.delegate as FirFunctionCall
+            val calleeSymbol =
+                (delegateCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
+            if (calleeSymbol.callableId.asSingleFqName().asString() != "kotlin.lazy") return null
             val lazyCallArgument = delegateCall.argumentList.arguments.singleOrNull() as? FirLambdaArgumentExpression ?: return null
             return (lazyCallArgument.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
         }

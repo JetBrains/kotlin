@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isFunctionForExpectTypeFromCastFeature
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.isFunctionForExpectTypeFromCastFeature
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -68,8 +68,8 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
     ): Boolean {
         return if (shouldCheckForExactType) {
             if (arg is FirFunctionCall) {
-                val function = arg.toResolvedCallableSymbol()?.fir as? FirFunction
-                if (function != null && function.isFunctionForExpectTypeFromCastFeature()) return false
+                val functionSymbol = arg.toResolvedCallableSymbol() as? FirFunctionSymbol<*>
+                if (functionSymbol != null && functionSymbol.isFunctionForExpectTypeFromCastFeature()) return false
             }
 
             isExactTypeCast(context, candidateType, targetType)

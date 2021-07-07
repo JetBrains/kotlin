@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
+@OptIn(SymbolInternals::class)
 abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCase() {
     /**
      * Since fir symbol providers can't get all names in package (only fir provider can do it),

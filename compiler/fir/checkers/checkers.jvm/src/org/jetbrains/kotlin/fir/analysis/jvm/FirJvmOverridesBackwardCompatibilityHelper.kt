@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.fir.analysis.jvm
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
@@ -55,13 +58,15 @@ object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatib
         visitedSymbols: MutableSet<FirCallableSymbol<*>>,
         context: CheckerContext
     ): Boolean {
-        val fir = symbol.fir
-        if (fir.isFinal) return false
+        if (symbol.isFinal) return false
 
         if (symbol in visitedSymbols) return true
         visitedSymbols += symbol
 
-        val originalMember = fir.originalOrSelf()
+        val originalMemberSymbol = symbol.originalOrSelf()
+        originalMemberSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+        @OptIn(SymbolInternals::class)
+        val originalMember = originalMemberSymbol.fir
         if (originalMember.annotations.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == platformDependentAnnotation }) {
             return true
         }
@@ -81,7 +86,7 @@ object FirJvmOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatib
         }
 
         val scope =
-            symbol.dispatchReceiverTypeOrNull()?.toRegularClass(context.session)?.unsubstitutedScope(context) ?: return false
+            symbol.dispatchReceiverTypeOrNull()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return false
         val overriddenSymbols = when (originalMember) {
             is FirSimpleFunction -> scope.getDirectOverriddenFunctions(originalMember.symbol)
             is FirProperty -> scope.getDirectOverriddenProperties(originalMember.symbol)

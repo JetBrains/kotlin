@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
@@ -91,6 +92,14 @@ fun FirClass.unsubstitutedScope(
     val scope = scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession)
     if (withForcedTypeCalculator) return FirScopeWithFakeOverrideTypeCalculator(scope, FakeOverrideTypeCalculator.Forced)
     return scope
+}
+
+fun FirClassSymbol<*>.unsubstitutedScope(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    withForcedTypeCalculator: Boolean
+): FirTypeScope {
+    return fir.unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator)
 }
 
 fun FirClass.scopeForClass(

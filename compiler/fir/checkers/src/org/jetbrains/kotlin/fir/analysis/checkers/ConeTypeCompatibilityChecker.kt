@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.calls.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -104,7 +103,7 @@ internal object ConeTypeCompatibilityChecker {
         upperBounds: Set<ConeClassLikeType>,
         lowerBounds: Set<ConeClassLikeType>,
         compatibilityUpperBound: Compatibility,
-        checkedTypeParameters: MutableSet<FirTypeParameterRef> = mutableSetOf(),
+        checkedTypeParameters: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
     ): Compatibility {
         val upperBoundClasses: Set<FirClassWithSuperClasses> = upperBounds.mapNotNull { it.toFirClassWithSuperClasses(this) }.toSet()
 
@@ -134,7 +133,7 @@ internal object ConeTypeCompatibilityChecker {
 
         // Base types are compatible. Now we check type parameters.
 
-        val typeArgumentMapping = mutableMapOf<FirTypeParameterRef, BoundTypeArguments>().apply {
+        val typeArgumentMapping = mutableMapOf<FirTypeParameterSymbol, BoundTypeArguments>().apply {
             for (type in upperBounds) {
                 collectTypeArgumentMapping(type, this@areCompatible, compatibilityUpperBound)
             }
@@ -277,7 +276,7 @@ internal object ConeTypeCompatibilityChecker {
      *   - type parameter of `Collection` -> upper:[`String`, `Int`], lower:[]
      *   - type parameter of `Iterable` -> upper:[`String`, `Int`], lower:[]
      */
-    private fun MutableMap<FirTypeParameterRef, BoundTypeArguments>.collectTypeArgumentMapping(
+    private fun MutableMap<FirTypeParameterSymbol, BoundTypeArguments>.collectTypeArgumentMapping(
         coneType: ConeClassLikeType,
         ctx: ConeInferenceContext,
         compatibilityUpperBound: Compatibility
@@ -300,12 +299,12 @@ internal object ConeTypeCompatibilityChecker {
     @OptIn(ExperimentalStdlibApi::class)
     private fun ConeClassLikeType.toTypeArgumentMapping(
         ctx: ConeInferenceContext,
-        envMapping: Map<FirTypeParameterRef, BoundTypeArgument> = emptyMap(),
+        envMapping: Map<FirTypeParameterSymbol, BoundTypeArgument> = emptyMap(),
     ): TypeArgumentMapping? {
         val typeParameterOwner = getClassLikeElement(ctx) ?: return null
-        val mapping = buildMap<FirTypeParameterRef, BoundTypeArgument> {
+        val mapping = buildMap<FirTypeParameterSymbol, BoundTypeArgument> {
             typeArguments.forEachIndexed { index, coneTypeProjection ->
-                val typeParameter: FirTypeParameterRef = typeParameterOwner.getTypeParameter(index) ?: return@forEachIndexed
+                val typeParameter = typeParameterOwner.getTypeParameter(index) ?: return@forEachIndexed
                 var boundTypeArgument: BoundTypeArgument = when (coneTypeProjection) {
                     // Ignore star since it doesn't provide any constraints.
                     ConeStarProjection -> return@forEachIndexed
@@ -315,7 +314,7 @@ internal object ConeTypeCompatibilityChecker {
                     is ConeKotlinTypeProjectionOut -> BoundTypeArgument(coneTypeProjection.type, Variance.OUT_VARIANCE)
                     is ConeKotlinTypeConflictingProjection -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
                     is ConeKotlinType ->
-                        when ((typeParameter as? FirTypeParameter)?.variance) {
+                        when (typeParameter.variance) {
                             Variance.IN_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.IN_VARIANCE)
                             Variance.OUT_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.OUT_VARIANCE)
                             else -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
@@ -323,7 +322,7 @@ internal object ConeTypeCompatibilityChecker {
                 }
                 val coneKotlinType = boundTypeArgument.type
                 if (coneKotlinType is ConeTypeParameterType) {
-                    val envTypeParameter = coneKotlinType.lookupTag.typeParameterSymbol.fir
+                    val envTypeParameter = coneKotlinType.lookupTag.typeParameterSymbol
                     val envTypeArgument = envMapping[envTypeParameter]
                     if (envTypeArgument != null) {
                         boundTypeArgument = envTypeArgument
@@ -335,10 +334,10 @@ internal object ConeTypeCompatibilityChecker {
         return TypeArgumentMapping(typeParameterOwner, mapping)
     }
 
-    private fun MutableMap<FirTypeParameterRef, BoundTypeArguments>.collect(
+    private fun MutableMap<FirTypeParameterSymbol, BoundTypeArguments>.collect(
         ctx: ConeInferenceContext,
-        typeParameterOwner: FirClassLikeDeclaration,
-        parameter: FirTypeParameterRef,
+        typeParameterOwner: FirClassLikeSymbol<*>,
+        parameter: FirTypeParameterSymbol,
         boundTypeArgument: BoundTypeArgument,
         compatibilityUpperBound: Compatibility,
     ) {
@@ -346,8 +345,8 @@ internal object ConeTypeCompatibilityChecker {
             // the semantic of type parameter in Enum and KClass are fixed: values of types with incompatible type parameters are always
             // incompatible.
             val compatibilityUpperBoundForTypeArg =
-                if ((ctx.prohibitComparisonOfIncompatibleEnums && typeParameterOwner.symbol.classId == StandardClassIds.Enum) ||
-                    (ctx.prohibitComparisonOfIncompatibleClasses && typeParameterOwner.symbol.classId == StandardClassIds.KClass)
+                if ((ctx.prohibitComparisonOfIncompatibleEnums && typeParameterOwner.classId == StandardClassIds.Enum) ||
+                    (ctx.prohibitComparisonOfIncompatibleClasses && typeParameterOwner.classId == StandardClassIds.KClass)
                 ) {
                     compatibilityUpperBound
                 } else {
@@ -365,29 +364,29 @@ internal object ConeTypeCompatibilityChecker {
         }
     }
 
-    private fun FirClassLikeDeclaration.getSuperTypes(): List<ConeClassLikeType> {
+    private fun FirClassLikeSymbol<*>.getSuperTypes(): List<ConeClassLikeType> {
         return when (this) {
-            is FirTypeAlias -> listOfNotNull(expandedTypeRef.coneTypeSafe())
-            is FirClass -> superTypeRefs.mapNotNull { it.coneTypeSafe() }
+            is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneTypeSafe())
+            is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneTypeSafe() }
             else -> emptyList()
         }
     }
 
-    private fun ConeClassLikeType.getClassLikeElement(ctx: ConeInferenceContext): FirClassLikeDeclaration? =
-        ctx.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir
+    private fun ConeClassLikeType.getClassLikeElement(ctx: ConeInferenceContext): FirClassLikeSymbol<*>? =
+        ctx.symbolProvider.getSymbolByLookupTag(lookupTag)
 
-    private fun FirClassLikeDeclaration.getTypeParameter(index: Int): FirTypeParameterRef? {
+    private fun FirClassLikeSymbol<*>.getTypeParameter(index: Int): FirTypeParameterSymbol? {
         return when (this) {
-            is FirTypeAlias -> typeParameters[index]
-            is FirClass -> typeParameters[index]
+            is FirTypeAliasSymbol -> typeParameterSymbols[index]
+            is FirClassSymbol<*> -> typeParameterSymbols[index]
             else -> return null
         }
     }
 
     /** A class declaration and the arguments bound to the declared type parameters. */
     private data class TypeArgumentMapping(
-        val typeParameterOwner: FirClassLikeDeclaration,
-        val mapping: Map<FirTypeParameterRef, BoundTypeArgument>
+        val typeParameterOwner: FirClassLikeSymbol<*>,
+        val mapping: Map<FirTypeParameterSymbol, BoundTypeArgument>
     )
 
     /** A single bound type argument to a type parameter declared in a class. */
@@ -406,13 +405,13 @@ internal object ConeTypeCompatibilityChecker {
 
     private fun ConeClassLikeLookupTag.toFirClassWithSuperClasses(
         ctx: ConeInferenceContext
-    ): FirClassWithSuperClasses? = when (val klass = ctx.symbolProvider.getSymbolByLookupTag(this)?.fir) {
-        is FirTypeAlias -> klass.fullyExpandedClass(ctx.session)?.let { FirClassWithSuperClasses(it, ctx) }
-        is FirClass -> FirClassWithSuperClasses(klass, ctx)
+    ): FirClassWithSuperClasses? = when (val klass = ctx.symbolProvider.getSymbolByLookupTag(this)) {
+        is FirTypeAliasSymbol -> klass.fullyExpandedClass(ctx.session)?.let { FirClassWithSuperClasses(it, ctx) }
+        is FirClassSymbol<*> -> FirClassWithSuperClasses(klass, ctx)
         else -> null
     }
 
-    private data class FirClassWithSuperClasses(val firClass: FirClass, val ctx: ConeInferenceContext) {
+    private data class FirClassWithSuperClasses(val firClass: FirClassSymbol<*>, val ctx: ConeInferenceContext) {
         val isInterface: Boolean get() = firClass.isInterface
 
         val superClasses: Set<FirClassWithSuperClasses> by lazy {
@@ -451,15 +450,15 @@ internal object ConeTypeCompatibilityChecker {
                     firClass.isPrimitiveType() ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && firClass.classId == StandardClassIds.KClass) ||
                     firClass.classId == StandardClassIds.String || firClass.classId == StandardClassIds.Unit ||
-                    (firClass is FirRegularClass && (firClass.isData || firClass.isInline))
+                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInline))
         }
 
-        private val FirClass.isFinal: Boolean
+        private val FirClassSymbol<*>.isFinal: Boolean
             get() {
                 return when (this) {
-                    is FirAnonymousObject -> true
-                    is FirRegularClass -> status.modality == Modality.FINAL
-                    else -> throw java.lang.IllegalStateException("unknown type of FirClass $this")
+                    is FirAnonymousObjectSymbol -> true
+                    is FirRegularClassSymbol -> modality == Modality.FINAL
+                    else -> error("unknown type of FirClass $this")
                 }
             }
     }

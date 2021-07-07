@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -28,9 +31,8 @@ internal fun checkConstantArguments(
     session: FirSession,
 ): ConstantArgumentKind? {
     val expressionSymbol = expression.toResolvedCallableSymbol()
-        ?.fir
     val classKindOfParent = (expressionSymbol
-        ?.getReferencedClass(session) as? FirRegularClass)
+        ?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)
         ?.classKind
 
     when {
@@ -38,9 +40,9 @@ internal fun checkConstantArguments(
             if (expression.operation == FirOperation.AS) return ConstantArgumentKind.NOT_CONST
         }
         expression is FirConstExpression<*>
-                || expressionSymbol is FirEnumEntry
-                || (expressionSymbol as? FirMemberDeclaration)?.isConst == true
-                || expressionSymbol is FirConstructor && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
+                || expressionSymbol is FirEnumEntrySymbol
+                || expressionSymbol?.isConst == true
+                || expressionSymbol is FirConstructorSymbol && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
             //DO NOTHING
         }
         classKindOfParent == ClassKind.ENUM_CLASS -> {
@@ -81,15 +83,15 @@ internal fun checkConstantArguments(
         expressionSymbol == null -> {
             //DO NOTHING
         }
-        expressionSymbol is FirField -> {
+        expressionSymbol is FirFieldSymbol -> {
             //TODO: fix checking of Java fields initializer
             if (
-                !(expressionSymbol as FirMemberDeclaration).status.isStatic
-                || (expressionSymbol as FirMemberDeclaration).status.modality != Modality.FINAL
+                !expressionSymbol.isStatic
+                || expressionSymbol.modality != Modality.FINAL
             )
                 return ConstantArgumentKind.NOT_CONST
         }
-        expressionSymbol is FirConstructor -> {
+        expressionSymbol is FirConstructorSymbol -> {
             if (expression.typeRef.coneType.isUnsignedType) {
                 (expression as FirFunctionCall).arguments.forEach { argumentExpression ->
                     checkConstantArguments(argumentExpression, session)?.let { return it }
@@ -158,9 +160,8 @@ internal fun checkConstantArguments(
             }
         }
         expression is FirQualifiedAccessExpression -> {
-
             when {
-                (expressionSymbol as FirProperty).isLocal || expressionSymbol.symbol.callableId.className?.isRoot == false ->
+                (expressionSymbol as FirPropertySymbol).isLocal || expressionSymbol.callableId.className?.isRoot == false ->
                     return ConstantArgumentKind.NOT_CONST
                 expression.typeRef.coneType.classId == StandardClassIds.KClass ->
                     return ConstantArgumentKind.NOT_KCLASS_LITERAL
@@ -169,10 +170,11 @@ internal fun checkConstantArguments(
                 expression.dispatchReceiver is FirThisReceiverExpression ->
                     return null
             }
-
-            return when ((expressionSymbol as? FirProperty)?.initializer) {
+            @OptIn(SymbolInternals::class)
+            val property = expressionSymbol.fir as? FirProperty
+            return when (property?.initializer) {
                 is FirConstExpression<*> -> {
-                    if ((expressionSymbol as? FirVariable)?.isVal == true)
+                    if (property.isVal)
                         ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
                     else
                         ConstantArgumentKind.NOT_CONST
@@ -189,12 +191,11 @@ internal fun checkConstantArguments(
     return null
 }
 
-private fun FirTypedDeclaration?.getReferencedClass(session: FirSession): FirDeclaration? =
-    this?.returnTypeRef
+private fun FirCallableSymbol<*>?.getReferencedClassSymbol(session: FirSession): FirBasedSymbol<*>? =
+    this?.resolvedReturnTypeRef
         ?.coneTypeSafe<ConeLookupTagBasedType>()
         ?.lookupTag
         ?.toSymbol(session)
-        ?.fir
 
 private val CONVERSION_NAMES = listOf(
     "toInt", "toLong", "toShort", "toByte", "toFloat", "toDouble", "toChar", "toBoolean"

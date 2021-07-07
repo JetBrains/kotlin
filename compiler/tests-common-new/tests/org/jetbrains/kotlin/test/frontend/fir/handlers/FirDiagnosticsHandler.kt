@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@OptIn(SymbolInternals::class)
 class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     companion object {
         private val allowedKindsForDebugInfo = setOf(

@@ -202,6 +202,9 @@ private object MultipleDelegatesWithTheSameSignatureKey : FirDeclarationDataKey(
 
 var FirCallableDeclaration.multipleDelegatesWithTheSameSignature: Boolean? by FirDeclarationDataRegistry.data(MultipleDelegatesWithTheSameSignatureKey)
 
+val FirCallableSymbol<*>.multipleDelegatesWithTheSameSignature: Boolean?
+    get() = fir.multipleDelegatesWithTheSameSignature
+
 private object DelegatedWrapperDataKey : FirDeclarationDataKey()
 class DelegatedWrapperData<D : FirCallableDeclaration>(
     val wrapped: D,
@@ -210,6 +213,9 @@ class DelegatedWrapperData<D : FirCallableDeclaration>(
 )
 var <D : FirCallableDeclaration>
         D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
+
+val <D : FirCallableDeclaration> FirCallableSymbol<out D>.delegatedWrapperData: DelegatedWrapperData<D>?
+    get() = fir.delegatedWrapperData
 
 
 // From the definition of function interfaces in the Java specification (pt. 9.8):

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -55,7 +56,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         if (containingDeclaration is FirSimpleFunction && containingDeclaration.isOverride) return
         if (containingDeclaration is FirProperty && containingDeclaration.isOverride) return
 
-        declaration.symbol.fir.bounds.forEach { bound ->
+        declaration.symbol.resolvedBounds.forEach { bound ->
             if (!bound.coneType.canHaveSubtypes(context.session)) {
                 reporter.reportOn(bound.source, FirErrors.FINAL_UPPER_BOUND, bound.coneType, context)
             }
@@ -63,7 +64,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
     }
 
     private fun checkExtensionFunctionTypeBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
-        declaration.symbol.fir.bounds.forEach { bound ->
+        declaration.symbol.resolvedBounds.forEach { bound ->
             if (bound.isExtensionFunctionType(context.session)) {
                 reporter.reportOn(bound.source, FirErrors.UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, context)
             }
@@ -107,13 +108,13 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
     }
 
     private fun checkBoundUniqueness(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
-        val seenClasses = mutableSetOf<FirRegularClass>()
+        val seenClasses = mutableSetOf<FirRegularClassSymbol>()
         val allNonErrorBounds = declaration.bounds.filter { it !is FirErrorTypeRef }
         val uniqueBounds = allNonErrorBounds.distinctBy { it.coneType.classId ?: it.coneType }
 
         uniqueBounds.forEach { bound ->
-            bound.coneType.toRegularClass(context.session)?.let { clazz ->
-                if (classKinds.contains(clazz.classKind) && seenClasses.add(clazz) && seenClasses.size > 1) {
+            bound.coneType.toRegularClassSymbol(context.session)?.let { symbol ->
+                if (classKinds.contains(symbol.classKind) && seenClasses.add(symbol) && seenClasses.size > 1) {
                     reporter.reportOn(bound.source, FirErrors.ONLY_ONE_CLASS_BOUND_ALLOWED, context)
                 }
             }
@@ -163,19 +164,19 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
     ) {
         if (declaration.bounds.size <= 1) return
 
-        val firTypeRefClasses = mutableListOf<Pair<FirTypeRef, FirRegularClass>>()
-        val firRegularClassesSet = mutableSetOf<FirRegularClass>()
+        val firTypeRefClasses = mutableListOf<Pair<FirTypeRef, FirRegularClassSymbol>>()
+        val firRegularClassesSet = mutableSetOf<FirRegularClassSymbol>()
 
         for (bound in declaration.bounds) {
-            val firRegularClass = bound.toRegularClass(context.session)
-            if (firRegularClassesSet.contains(firRegularClass)) {
+            val classSymbol = bound.toRegularClassSymbol(context.session)
+            if (firRegularClassesSet.contains(classSymbol)) {
                 // no need to throw INCONSISTENT_TYPE_PARAMETER_BOUNDS diagnostics here because REPEATED_BOUNDS diagnostic is already exist
                 return
             }
 
-            if (firRegularClass != null) {
-                firRegularClassesSet.add(firRegularClass)
-                firTypeRefClasses.add(Pair(bound, firRegularClass))
+            if (classSymbol != null) {
+                firRegularClassesSet.add(classSymbol)
+                firTypeRefClasses.add(Pair(bound, classSymbol))
             }
         }
 

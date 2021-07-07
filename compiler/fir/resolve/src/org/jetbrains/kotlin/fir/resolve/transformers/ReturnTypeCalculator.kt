@@ -10,11 +10,16 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
 interface ReturnTypeCalculator {
     fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef
+
+    fun tryCalculateReturnType(symbol: FirCallableSymbol<*>): FirResolvedTypeRef {
+        return tryCalculateReturnType(symbol.fir)
+    }
 }
 
 class ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator {

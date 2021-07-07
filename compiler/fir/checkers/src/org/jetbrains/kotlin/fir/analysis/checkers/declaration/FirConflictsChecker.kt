@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.scopes.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -76,6 +78,8 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             conflictingFile: FirFile?,
             session: FirSession
         ) {
+            conflictingSymbol.ensureResolved(FirResolvePhase.STATUS)
+            @OptIn(SymbolInternals::class)
             val conflicting = conflictingSymbol.fir as? FirDeclaration ?: return
             if (declaration.moduleData != conflicting.moduleData) return
             val actualConflictingPresentation = conflictingPresentation ?: presenter.represent(conflicting)
@@ -116,6 +120,8 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                             )
                         }
                         packageMemberScope.processClassifiersByNameWithSubstitution(declarationName) { symbol, _ ->
+                            symbol.ensureResolved(FirResolvePhase.STATUS)
+                            @OptIn(SymbolInternals::class)
                             val classWithSameName = symbol.fir as? FirRegularClass
                             classWithSameName?.onConstructors { constructor ->
                                 collectExternalConflict(

@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.analysis.checkers.collectEnumEntries
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.followAllAlias
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isStatic
@@ -44,9 +45,9 @@ object FirImportsChecker : FirFileChecker() {
         val fqName = import.importedFqName ?: return
         if (fqName.isRoot || fqName.parent().isRoot) return
         val classId = ClassId.topLevel(fqName.parent())
-        val classFir = classId.resolveToClass(context) ?: return
-        if (classFir.isEnumClass && classFir.collectEnumEntries().any { it.name == fqName.shortName() }) {
-            reporter.reportOn(import.source, FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, classFir.name, context)
+        val classSymbol = classId.resolveToClass(context) ?: return
+        if (classSymbol.isEnumClass && classSymbol.collectEnumEntries().any { it.callableId.callableName == fqName.shortName() }) {
+            reporter.reportOn(import.source, FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, classSymbol.classId.shortClassName, context)
         }
     }
 
@@ -58,10 +59,10 @@ object FirImportsChecker : FirFileChecker() {
 
         val classId = (import as? FirResolvedImport)?.resolvedClassId
         if (classId != null) {
-            val classFir = classId.resolveToClass(context) ?: return
-            if (classFir.classKind.isSingleton) return
+            val classSymbol = classId.resolveToClass(context) ?: return
+            if (classSymbol.classKind.isSingleton) return
 
-            if (!classFir.canBeImported(context, importedName)) {
+            if (!classSymbol.canBeImported(context, importedName)) {
                 reporter.reportOn(import.source, FirErrors.CANNOT_BE_IMPORTED, importedName, context)
             }
         } else {
@@ -106,7 +107,7 @@ object FirImportsChecker : FirFileChecker() {
             classFir.classKind.isSingleton && classFir.hasFunction(context, importedName) { it.isOperator }
         } else {
             context.session.symbolProvider.getTopLevelFunctionSymbols(import.packageFqName, importedName).any {
-                it.fir.isOperator
+                it.isOperator
             }
         }
         if (illegalRename) {
@@ -130,26 +131,30 @@ object FirImportsChecker : FirFileChecker() {
         }
     }
 
-    private fun ClassId.resolveToClass(context: CheckerContext): FirRegularClass? {
+    private fun ClassId.resolveToClass(context: CheckerContext): FirRegularClassSymbol? {
         val classSymbol = context.session.symbolProvider.getClassLikeSymbolByFqName(this) ?: return null
         return when (classSymbol) {
-            is FirRegularClassSymbol -> classSymbol.fir
-            is FirTypeAliasSymbol -> classSymbol.fir.followAllAlias(context.session) as? FirRegularClass
+            is FirRegularClassSymbol -> classSymbol
+            is FirTypeAliasSymbol -> classSymbol.fullyExpandedClass(context.session)
             else -> null
         }
     }
 
-    private fun FirRegularClass.hasFunction(context: CheckerContext, name: Name, predicate: (FirSimpleFunction) -> Boolean): Boolean {
+    private fun FirRegularClassSymbol.hasFunction(
+        context: CheckerContext,
+        name: Name,
+        predicate: (FirNamedFunctionSymbol) -> Boolean
+    ): Boolean {
         var result = false
         context.session.declaredMemberScope(this).processFunctionsByName(name) { sym ->
             if (!result) {
-                result = predicate(sym.fir)
+                result = predicate(sym)
             }
         }
         return result
     }
 
-    private fun FirRegularClass.canBeImported(
+    private fun FirRegularClassSymbol.canBeImported(
         context: CheckerContext,
         name: Name
     ): Boolean {

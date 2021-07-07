@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -25,9 +28,14 @@ import org.jetbrains.kotlin.name.Name
 private val RETENTION_PARAMETER_NAME = Name.identifier("value")
 private val TARGET_PARAMETER_NAME = Name.identifier("allowedTargets")
 
+@OptIn(SymbolInternals::class)
 fun FirAnnotationCall.getRetention(session: FirSession): AnnotationRetention {
-    val annotationClass = (this.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
-    return annotationClass?.getRetention() ?: AnnotationRetention.RUNTIME
+    val annotationClassSymbol =
+        (this.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
+            ?: return AnnotationRetention.RUNTIME
+    annotationClassSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+    val annotationClass = annotationClassSymbol.fir
+    return annotationClass.getRetention()
 }
 
 fun FirRegularClass.getRetention(): AnnotationRetention {
@@ -41,10 +49,13 @@ fun FirRegularClass.getRetention(): AnnotationRetention {
 
 private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
 
+@OptIn(SymbolInternals::class)
 fun FirAnnotationCall.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.values().toSet()
-    val annotationClass = (this.annotationTypeRef.coneType as? ConeClassLikeType)
-        ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
+    val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
+        ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
+    annotationClassSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+    val annotationClass = annotationClassSymbol.fir as? FirRegularClass
     return annotationClass?.getAllowedAnnotationTargets() ?: defaultAnnotationTargets
 }
 

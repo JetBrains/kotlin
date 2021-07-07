@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -24,7 +25,7 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker() {
         val processed = mutableSetOf<Name>()
         val cycles = mutableSetOf<Name>()
         val graph = declaration.typeParameters.associate { param ->
-            param.symbol.name to param.symbol.fir.bounds.flatMap { extractTypeParamNames(it) }.toSet()
+            param.symbol.name to param.symbol.resolvedBounds.flatMap { extractTypeParamNames(it) }.toSet()
         }
         val graphFunc = { name: Name -> graph.getOrDefault(name, emptySet()) }
         val path = mutableListOf<Name>()
@@ -51,7 +52,7 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker() {
                 .forEach { param ->
                     //for some reason FE 1.0 report differently for class declarations
                     val targets = if (declaration is FirRegularClass) {
-                        param.symbol.fir.originalBounds().filter { cycles.contains(extractTypeParamName(it.coneType)) }
+                        param.symbol.originalBounds().filter { cycles.contains(extractTypeParamName(it.coneType)) }
                             .mapNotNull { it.source }
                     } else {
                         listOf(param.source)
@@ -63,7 +64,7 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun FirTypeParameter.originalBounds() = bounds.flatMap { it.unwrapBound() }
+    private fun FirTypeParameterSymbol.originalBounds() = resolvedBounds.flatMap { it.unwrapBound() }
 
     private fun FirTypeRef.unwrapBound(): List<FirTypeRef> =
         if (this is FirErrorTypeRef && diagnostic is ConeCyclicTypeBound) {

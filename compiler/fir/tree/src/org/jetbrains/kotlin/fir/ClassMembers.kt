@@ -39,9 +39,13 @@ private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 
-val FirCallableDeclaration.isIntersectionOverride get() = origin == FirDeclarationOrigin.IntersectionOverride
-val FirCallableDeclaration.isSubstitutionOverride get() = origin == FirDeclarationOrigin.SubstitutionOverride
-val FirCallableDeclaration.isSubstitutionOrIntersectionOverride get() = isSubstitutionOverride || isIntersectionOverride
+val FirCallableDeclaration.isIntersectionOverride: Boolean get() = origin == FirDeclarationOrigin.IntersectionOverride
+val FirCallableDeclaration.isSubstitutionOverride: Boolean get() = origin == FirDeclarationOrigin.SubstitutionOverride
+val FirCallableDeclaration.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
+
+val FirCallableSymbol<*>.isIntersectionOverride: Boolean get() = origin == FirDeclarationOrigin.IntersectionOverride
+val FirCallableSymbol<*>.isSubstitutionOverride: Boolean get() = origin == FirDeclarationOrigin.SubstitutionOverride
+val FirCallableSymbol<*>.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
 
 inline val <reified D : FirCallableDeclaration> D.originalForSubstitutionOverride: D?
     get() = if (isSubstitutionOverride) originalForSubstitutionOverrideAttr else null

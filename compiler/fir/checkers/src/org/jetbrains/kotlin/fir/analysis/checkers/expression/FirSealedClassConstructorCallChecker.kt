@@ -10,29 +10,30 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val constructorFir = expression.calleeReference.safeAs<FirResolvedNamedReference>()
-            ?.resolvedSymbol
-            ?.fir.safeAs<FirConstructor>()
+        val constructorSymbol = expression.calleeReference.safeAs<FirResolvedNamedReference>()
+            ?.resolvedSymbol as? FirConstructorSymbol
             ?: return
 
-        val typeFir = constructorFir.returnTypeRef.coneType
+        val typeSymbol = constructorSymbol.resolvedReturnTypeRef.coneType
+            .fullyExpandedType(context.session)
             .safeAs<ConeClassLikeType>()
-            ?.lookupTag?.toSymbol(context.session)
-            ?.fir as? FirRegularClass
+            ?.lookupTag?.toSymbol(context.session) as? FirRegularClassSymbol
             ?: return
 
-        if (typeFir.status.modality == Modality.SEALED) {
+        if (typeSymbol.modality == Modality.SEALED) {
             reporter.reportOn(expression.source, FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL, context)
         }
     }

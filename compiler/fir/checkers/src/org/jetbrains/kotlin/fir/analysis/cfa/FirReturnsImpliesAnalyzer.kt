@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -157,8 +158,11 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         context: CheckerContext
     ): MutableTypeStatements? {
         fun buildTypeStatements(arg: ConeValueParameterReference, exactType: Boolean, type: ConeKotlinType): MutableTypeStatements? {
-            val fir = function.getParameterSymbol(arg.parameterIndex, context).fir
-            val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
+            val parameterSymbol = function.getParameterSymbol(arg.parameterIndex, context)
+
+            @OptIn(SymbolInternals::class)
+            val parameter = parameterSymbol.fir
+            val realVar = variableStorage.getOrCreateRealVariable(flow, parameterSymbol, parameter)
                 ?.takeIf {
                     it.stability == PropertyStability.STABLE_VALUE ||
                             // TODO: consider removing the part below

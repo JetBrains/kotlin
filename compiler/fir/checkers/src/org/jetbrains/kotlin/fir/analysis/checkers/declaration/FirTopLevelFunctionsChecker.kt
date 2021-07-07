@@ -35,7 +35,7 @@ object FirTopLevelFunctionsChecker : FirFileChecker() {
         if (function.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return
         if (function.isExternal) return
         if (!function.hasBody && !function.isExpect) {
-            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, function, context)
+            reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, function.symbol, context)
         }
 
         checkExpectDeclarationVisibilityAndBody(function, source, reporter, context)
