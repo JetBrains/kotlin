@@ -1025,7 +1025,7 @@ open class IrFileSerializer(
         expression.label?.let {
             proto.label = serializeString(it)
         }
-        val loopId = loopIndex[expression.loop]!!
+        val loopId = loopIndex[expression.loop] ?: -1
         proto.loopId = loopId
 
         return proto.build()
