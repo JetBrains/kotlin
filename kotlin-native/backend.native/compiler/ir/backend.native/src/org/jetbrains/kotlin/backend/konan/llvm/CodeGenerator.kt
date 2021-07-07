@@ -266,11 +266,7 @@ internal class StackLocalsManagerImpl(
         val stackLocal = appendingTo(bbInitStackLocals) {
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
 
-            call(context.llvm.memsetFunction,
-                    listOf(bitcast(kInt8Ptr, stackSlot),
-                            Int8(0).llvm,
-                            Int32(LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8).llvm,
-                            Int1(false).llvm))
+            memset(bitcast(kInt8Ptr, stackSlot), 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
 
             val objectHeader = structGep(stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
@@ -323,12 +319,10 @@ internal class StackLocalsManagerImpl(
             val sizeField = structGep(arrayHeaderSlot, 1, "count_")
             store(count, sizeField)
 
-            call(context.llvm.memsetFunction,
-                    listOf(bitcast(kInt8Ptr, structGep(arraySlot, 1, "arrayBody")),
-                            Int8(0).llvm,
-                            Int32(constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData,
-                                    arrayToElementType[irClass.symbol]).toInt() / 8).llvm,
-                            Int1(false).llvm))
+            memset(bitcast(kInt8Ptr, structGep(arraySlot, 1, "arrayBody")),
+                    0,
+                    constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
+            )
             StackLocal(true, irClass, arraySlot, arrayHeaderSlot)
         }
 
@@ -363,11 +357,7 @@ internal class StackLocalsManagerImpl(
                 val serviceInfoSize = runtime.pointerSize
                 val serviceInfoSizeLlvm = LLVMConstInt(codegen.intPtrType, serviceInfoSize.toLong(), 1)!!
                 val bodyWithSkippedServiceInfoPtr = intToPtr(add(bodyPtr, serviceInfoSizeLlvm), kInt8Ptr)
-                call(context.llvm.memsetFunction,
-                        listOf(bodyWithSkippedServiceInfoPtr,
-                                Int8(0).llvm,
-                                Int32(bodySize - serviceInfoSize).llvm,
-                                Int1(false).llvm))
+                memset(bodyWithSkippedServiceInfoPtr, 0, bodySize - serviceInfoSize)
             }
         }
     }
@@ -589,6 +579,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             Runnable -> call(context.llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
         }.let {} // Force exhaustive.
     }
+
+    fun memset(pointer: LLVMValueRef, value: Byte, size: Int, isVolatile: Boolean = false) =
+            call(context.llvm.memsetFunction,
+                    listOf(pointer,
+                            Int8(value).llvm,
+                            Int32(size).llvm,
+                            Int1(isVolatile).llvm))
 
     fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
              resultLifetime: Lifetime = Lifetime.IRRELEVANT,
@@ -1350,10 +1347,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
-                call(context.llvm.memsetFunction,
-                        listOf(slotsMem, Int8(0).llvm,
-                                Int32(slotCount * codegen.runtime.pointerSize).llvm,
-                                Int1(false).llvm))
+                memset(slotsMem, 0, slotCount * codegen.runtime.pointerSize)
                 call(context.llvm.enterFrameFunction, listOf(slots, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
