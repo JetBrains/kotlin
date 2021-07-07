@@ -11,17 +11,16 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.hasMangledParameters
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
-import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
+import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
 import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -36,54 +35,13 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-    data class LambdaCallSite(val scope: IrDeclaration, val crossinline: Boolean)
-
-    private val pendingAccessorsToAdd = mutableListOf<IrFunction>()
-    private val inlineLambdaToCallSite = mutableMapOf<IrFunction, LambdaCallSite>()
-    private val inlineFunctionToCallSites = mutableMapOf<IrFunction, Set<IrElement>>()
-
+internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.accept(object : IrInlineReferenceLocator(context) {
-            override fun visitInlineLambda(
-                argument: IrFunctionReference,
-                callee: IrFunction,
-                parameter: IrValueParameter,
-                scope: IrDeclaration
-            ) {
-                // suspendCoroutine and suspendCoroutineUninterceptedOrReturn accept crossinline lambdas to disallow non-local returns,
-                // but these lambdas are effectively inline
-                inlineLambdaToCallSite[argument.symbol.owner] =
-                    LambdaCallSite(scope, parameter.isCrossinline && !callee.isCoroutineIntrinsic())
-            }
-
-            override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
-                if (declaration.isPrivateInline) {
-                    inlineFunctionToCallSites.putIfAbsent(declaration, mutableSetOf())
-                }
-                super.visitSimpleFunction(declaration, data)
-            }
-
-            override fun visitCall(expression: IrCall, data: IrDeclaration?) {
-                val callee = expression.symbol.owner
-                if (callee.isPrivateInline && callee.fileParent == irFile && data != null) {
-                    (inlineFunctionToCallSites.getOrPut(callee) { mutableSetOf() } as MutableSet).add(data)
-                }
-                super.visitCall(expression, data)
-            }
-
-            private inline val IrSimpleFunction.isPrivateInline
-                get() = isInline && DescriptorVisibilities.isPrivate(visibility)
-        }, null)
-
-        irFile.transformChildrenVoid(this)
-        inlineLambdaToCallSite.clear()
-        inlineFunctionToCallSites.clear()
-
+        val pendingAccessorsToAdd = mutableListOf<IrFunction>()
+        irFile.transformChildrenVoid(SyntheticAccessorTransformer(context, irFile.findInlineCallSites(context), pendingAccessorsToAdd))
         for (accessor in pendingAccessorsToAdd) {
             assert(accessor.fileOrNull == irFile) {
                 "SyntheticAccessorLowering should not attempt to modify other files!\n" +
@@ -92,9 +50,14 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             }
             (accessor.parent as IrDeclarationContainer).declarations.add(accessor)
         }
-        pendingAccessorsToAdd.clear()
     }
+}
 
+private class SyntheticAccessorTransformer(
+    val context: JvmBackendContext,
+    val inlineScopeResolver: IrInlineScopeResolver,
+    val pendingAccessorsToAdd: MutableList<IrFunction>
+) : IrElementTransformerVoidWithContext() {
     private data class FieldKey(val fieldSymbol: IrFieldSymbol, val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
     private data class FunctionKey(
@@ -259,7 +222,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // We have a protected member.
         // It is accessible from a synthetic proxy class (created by LambdaMetafactory)
         // if it belongs to the current class.
-        return getScopeClassOrPackage() == owner.parentAsClass
+        return inlineScopeResolver.findContainer(currentScope!!.irElement) == owner.parentAsClass
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
@@ -762,7 +725,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }
 
         val ownerClass = declaration.parent as? IrClass ?: return true // locals are always accessible
-        val scopeClassOrPackage = getScopeClassOrPackage() ?: return false
+        val scopeClassOrPackage = inlineScopeResolver.findContainer(currentScope!!.irElement) ?: return false
         val samePackage = ownerClass.getPackageFragment()?.fqName == scopeClassOrPackage.getPackageFragment()?.fqName
         return when {
             jvmVisibility == 0 /* package only */ -> samePackage
@@ -776,83 +739,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                     (thisObjReference == null || thisObjReference.owner.isSubclassOf(scopeClassOrPackage))
         }
     }
-
-    private fun getScopeClassOrPackage(): IrDeclarationContainer? =
-        getScopeClassOrPackage(currentScope?.irElement, approximateToPackage = false)
-
-    // Get the class from which all accesses in the current scope will be done after bytecode generation.
-    // If the current scope is a crossinline lambda, this is not possible, as the lambda maybe inlined
-    // into some other class; in that case, get at least the package.
-    private tailrec fun getScopeClassOrPackage(context: IrElement?, approximateToPackage: Boolean): IrDeclarationContainer? {
-        val callSite = inlineLambdaToCallSite[context]
-        return when {
-            // Crossinline lambdas can be inlined into some other class in the same package. However,
-            // classes within crossinline lambdas should not be regenerated, so if we've already found
-            // a class *before* reaching this lambda, it's valid:
-            //     class C {
-            //         fun f() {}
-            //         fun g() = inlineFunctionWithCrossinlineArgument {
-            //             f() // this call is done in some unknown class within C's package
-            //             object { val x = f() } // this call is done in C$g$1$1
-            //         }
-            //     }
-            callSite != null -> getScopeClassOrPackage(callSite.scope, approximateToPackage || callSite.crossinline)
-            // Inline functions can be inlined into anywhere. Not even private inline functions are safe:
-            //     class C {
-            //         fun f() {}
-            //         private inline fun g1() = f() // `f` is called from C?
-            //         fun g2() = { g1() } // ...or from C$g2$1 in the same package?
-            //         inline fun g3() = g1() // ...or from some other package that calls g3?
-            //     }
-            // However, for private ones we at least know where they're called, so just like inline lambdas,
-            // we can navigate there.
-            //
-            // TODO: this has some weird effects for inline functions in local classes, e.g. they
-            //   access the capture fields (package-private) through accessors; this may or may not
-            //   be necessary - local types should in theory not be usable outside the current file.
-            context is IrFunction && context.isInline -> {
-                val callSites = inlineFunctionToCallSites[context] ?: return null
-                when {
-                    callSites.isEmpty() -> getScopeClassOrPackage(context.parent, approximateToPackage)
-                    callSites.size == 1 -> getScopeClassOrPackage(callSites.single(), approximateToPackage)
-                    else -> {
-                        // TODO: cache the results
-                        @Suppress("NON_TAIL_RECURSIVE_CALL")
-                        val results = callSites.map { getScopeClassOrPackage(it, approximateToPackage = false) ?: return null }
-                        // If all call sites are within a single class, use it. Otherwise, all scopes must be within
-                        // the current file's package.
-                        val single = results.first().takeIf { results.all { other -> it === other } }
-                        getScopeClassOrPackage(single ?: context.parent, approximateToPackage || single == null)
-                    }
-                }
-            }
-            // TODO: if this class is an object local to an inline function, it could be regenerated,
-            //  so the scope depends on the declaration accessed (see KT-48508):
-            //     class C {
-            //         fun f1()
-            //         inline fun inlineFun() = object {
-            //             fun f2() {}
-            //             fun g1() {
-            //                 f1() // this access can be anywhere
-            //                 f2() // can pretend this access is from C$foo$1
-            //             }
-            //         }
-            //     }
-            //  Further complicating things, the accessor for `f1` cannot be in `C$inlineFun$1`, as otherwise
-            //  the accessor itself will be regenerated (and thus not work) at `inlineFun` call sites.
-            context is IrClass && !approximateToPackage -> context
-            // Inline lambdas have already been moved out to the containing class, but we still need to check
-            // the containing function (again, see above), so navigate there instead.
-            context is IrDeclaration -> getScopeClassOrPackage(context.parent, approximateToPackage)
-            // The only non-declaration parent should be the package.
-            else -> context as? IrPackageFragment
-        }
-    }
 }
-
-private fun IrFunction.isCoroutineIntrinsic(): Boolean =
-    (name.asString() == "suspendCoroutine" && getPackageFragment()?.fqName == FqName("kotlin.coroutines")) ||
-            (name.asString() == "suspendCoroutineUninterceptedOrReturn" && getPackageFragment()?.fqName == FqName("kotlin.coroutines.intrinsics"))
 
 private fun IrClass.syntheticAccessorToSuperSuffix(): String =
     // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
