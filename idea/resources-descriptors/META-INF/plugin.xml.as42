@@ -18,7 +18,11 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <idea-version since-build="202.6397.94" until-build="202.*"/>
 
   <change-notes><![CDATA[
+    <h3>1.5.21</h3>
+    A bug fix release for Kotlin 1.5.20. Learn more in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.21">changelog</a>.
+    <br><br>
     <h3>1.5.20</h3>
+    Released: <b>June 24, 2021</b>
     <ul>
       <li>String concatenation uses invokedynamic on JVM by default.</li>
       <li>Annotations on function type parameters are emitted to the bytecode on JVM 1.8+.</li>
