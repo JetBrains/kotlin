@@ -62,6 +62,13 @@ projectTest(jUnit5Enabled = true) {
 
 testsJar()
 
+allprojects {
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+        kotlinOptions {
+            freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
+        }
+    }
+}
 
 val generatorClasspath by configurations.creating
 

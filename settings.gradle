@@ -262,7 +262,8 @@ include ":benchmarks",
         ":wasm:wasm.ir"
 
 
-include ":compiler:fir:cones",
+include ":compiler:fir",
+        ":compiler:fir:cones",
         ":compiler:fir:tree",
         ":compiler:fir:tree:tree-generator",
         ":compiler:fir:raw-fir:raw-fir.common",
