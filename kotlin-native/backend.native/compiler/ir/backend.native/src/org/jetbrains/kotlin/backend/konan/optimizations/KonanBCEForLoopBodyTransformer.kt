@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.loops.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -50,14 +48,14 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             irExpression.transformChildrenVoid(this)
     }
 
-    private fun IrGetValue.compareConstValue(compare: (IrExpression) -> Boolean): Boolean {
+    private inline fun IrGetValue.compareConstValue(compare: (IrExpression) -> Boolean): Boolean {
         val variable = symbol.owner
         return if (variable is IrVariable && !variable.isVar && variable.initializer != null) {
             compare(variable.initializer!!)
         } else false
     }
 
-    private fun IrExpression.compareIntegerNumericConst(compare: (Long) -> Boolean): Boolean {
+    private inline fun IrExpression.compareIntegerNumericConst(compare: (Long) -> Boolean): Boolean {
         @Suppress("UNCHECKED_CAST")
         return when (this) {
             is IrConst<*> -> value is Number && compare((value as Number).toLong())
@@ -66,7 +64,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         }
     }
 
-    private fun IrExpression.compareFloatNumericConst(compare: (Double) -> Boolean): Boolean {
+    private inline fun IrExpression.compareFloatNumericConst(compare: (Double) -> Boolean): Boolean {
         @Suppress("UNCHECKED_CAST")
         return when (this) {
             is IrConst<*> -> value is Number && compare((value as Number).toDouble())
@@ -102,16 +100,16 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         return BoundsCheckAnalysisResult(boundsAreSafe, array)
     }
 
-    private fun checkIrGetValue(value: IrGetValue, arraySizeCheck: (IrExpression) -> BoundsCheckAnalysisResult): BoundsCheckAnalysisResult {
+    private inline fun checkIrGetValue(value: IrGetValue, condition: (IrExpression) -> BoundsCheckAnalysisResult): BoundsCheckAnalysisResult {
         val variable = value.symbol.owner
         return if (variable is IrVariable && !variable.isVar && variable.initializer != null) {
-            arraySizeCheck(variable.initializer!!)
+            condition(variable.initializer!!)
         } else {
             BoundsCheckAnalysisResult(false, null)
         }
     }
 
-    private fun checkIrCallCondition(expression: IrExpression, condition: (IrCall) -> BoundsCheckAnalysisResult): BoundsCheckAnalysisResult =
+    private inline fun checkIrCallCondition(expression: IrExpression, condition: (IrCall) -> BoundsCheckAnalysisResult): BoundsCheckAnalysisResult =
             when (expression) {
                 is IrCall -> condition(expression)
                 is IrGetValue -> checkIrGetValue(expression) { valueInitializer -> checkIrCallCondition(valueInitializer, condition) }
@@ -196,13 +194,12 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                                 if (untilFunction?.symbol?.owner?.name?.asString() == "until" && untilFunction.extensionReceiver?.compareIntegerNumericConst { it >= 0 } == true) {
                                     val last = untilFunction.getValueArgument(0)!!
                                     analysisResult = checkIrCallCondition(last) { call ->
-                                        var result = lessThanSize(call)
                                         // `isLastInclusive` for current case is set to true.
                                         // This case isn't fully optimized in ForLoopsLowering.
-                                        if (call.isGetSizeCall()) {
-                                            result = BoundsCheckAnalysisResult(true, (call.dispatchReceiver as? IrGetValue)?.symbol)
-                                        }
-                                        result
+                                        if (call.isGetSizeCall())
+                                            BoundsCheckAnalysisResult(true, (call.dispatchReceiver as? IrGetValue)?.symbol)
+                                        else
+                                            lessThanSize(call)
                                     }
                                 }
                             }
