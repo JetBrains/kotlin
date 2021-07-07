@@ -5201,8 +5201,10 @@ public final class kotlin/text/Regex : java/io/Serializable {
 	public static synthetic fun findAll$default (Lkotlin/text/Regex;Ljava/lang/CharSequence;IILjava/lang/Object;)Lkotlin/sequences/Sequence;
 	public final fun getOptions ()Ljava/util/Set;
 	public final fun getPattern ()Ljava/lang/String;
+	public final fun matchAt (Ljava/lang/CharSequence;I)Lkotlin/text/MatchResult;
 	public final fun matchEntire (Ljava/lang/CharSequence;)Lkotlin/text/MatchResult;
 	public final fun matches (Ljava/lang/CharSequence;)Z
+	public final fun matchesAt (Ljava/lang/CharSequence;I)Z
 	public final fun replace (Ljava/lang/CharSequence;Ljava/lang/String;)Ljava/lang/String;
 	public final fun replace (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
 	public final fun replaceFirst (Ljava/lang/CharSequence;Ljava/lang/String;)Ljava/lang/String;

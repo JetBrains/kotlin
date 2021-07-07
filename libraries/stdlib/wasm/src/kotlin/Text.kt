@@ -20,6 +20,9 @@ actual class Regex {
     actual fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String = TODO("Wasm stdlib: Text")
     actual fun replaceFirst(input: CharSequence, replacement: String): String = TODO("Wasm stdlib: Text")
 
+    actual fun matchAt(input: CharSequence, index: Int): MatchResult? = TODO("Wasm stdlib: Text")
+    actual fun matchesAt(input: CharSequence, index: Int): Boolean = TODO("Wasm stdlib: Text")
+
     /**
      * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
      *
