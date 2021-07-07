@@ -107,7 +107,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
             return arg.startsWith(argument.value + "=")
         }
 
-        return argument.value == arg
+        return argument.value == arg || arg.startsWith(argument.value + "=")
     }
 
     val freeArgs = ArrayList<String>()
@@ -160,10 +160,10 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
         val (property, argument) = argumentField
         val value: Any = when {
             argumentField.property.returnType.classifier == Boolean::class -> true
-            argument.isAdvanced && arg.startsWith(argument.value + "=") -> {
+            arg.startsWith(argument.value + "=") -> {
                 arg.substring(argument.value.length + 1)
             }
-            argument.isAdvanced && arg.startsWith(argument.deprecatedName + "=") -> {
+            arg.startsWith(argument.deprecatedName + "=") -> {
                 arg.substring(argument.deprecatedName.length + 1)
             }
             i == args.size -> {

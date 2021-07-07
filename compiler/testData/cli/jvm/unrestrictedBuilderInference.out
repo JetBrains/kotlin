@@ -1,3 +1,4 @@
+warning: '-Xopt-in' is deprecated and will be removed in a future release, please use -opt-in instead
 compiler/testData/cli/jvm/unrestrictedBuilderInference.kt:3:9: warning: variable 'x' is never used
     val x = buildMap {
         ^
