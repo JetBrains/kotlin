@@ -30,7 +30,7 @@ class Durations {
         assertPrints(Duration.minutes(1230), "20h 30m")
         assertPrints(Duration.minutes(920), "15h 20m")
         assertPrints(Duration.seconds(1.546), "1.546s")
-        assertPrints(Duration.milliseconds(25.12), "25.120ms")
+        assertPrints(Duration.milliseconds(25.12), "25.12ms")
     }
 
     @Sample

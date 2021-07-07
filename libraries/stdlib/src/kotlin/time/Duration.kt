@@ -748,11 +748,11 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                             if (components++ > 0) append(' ')
                             when {
                                 seconds != 0 || hasDays || hasHours || hasMinutes ->
-                                    appendFractional(seconds, nanoseconds, "s")
+                                    appendFractional(seconds, nanoseconds, 9, "s", isoZeroes = false)
                                 nanoseconds >= 1_000_000 ->
-                                    appendFractional(nanoseconds / 1_000_000, nanoseconds % 1_000_000 * 1_000, "ms")
+                                    appendFractional(nanoseconds / 1_000_000, nanoseconds % 1_000_000, 6, "ms", isoZeroes = false)
                                 nanoseconds >= 1_000 ->
-                                    appendFractional(nanoseconds / 1_000, nanoseconds % 1_000 * 1_000_000, "us")
+                                    appendFractional(nanoseconds / 1_000, nanoseconds % 1_000, 3, "us", isoZeroes = false)
                                 else ->
                                     append(nanoseconds).append("ns")
                             }
@@ -764,15 +764,15 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         }
     }
 
-    private fun StringBuilder.appendFractional(whole: Int, nanoFractional: Int, unit: String) {
+    private fun StringBuilder.appendFractional(whole: Int, fractional: Int, fractionalSize: Int, unit: String, isoZeroes: Boolean) {
         append(whole)
-        if (nanoFractional != 0) {
+        if (fractional != 0) {
             append('.')
-            val nanoString = nanoFractional.toString().padStart(9, '0')
+            val fracString = fractional.toString().padStart(fractionalSize, '0')
+            val nonZeroDigits = fracString.indexOfLast { it != '0' } + 1
             when {
-                nanoFractional % 1_000_000 == 0 -> appendRange(nanoString, 0, 3)
-                nanoFractional % 1_000 == 0 -> appendRange(nanoString, 0, 6)
-                else -> append(nanoString)
+                !isoZeroes && nonZeroDigits < 3 -> appendRange(fracString, 0, nonZeroDigits)
+                else -> appendRange(fracString, 0, ((nonZeroDigits + 2) / 3) * 3)
             }
         }
         append(unit)
@@ -836,7 +836,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                 append(minutes).append('M')
             }
             if (hasSeconds || (!hasHours && !hasMinutes)) {
-                appendFractional(seconds, nanoseconds, "S")
+                appendFractional(seconds, nanoseconds, 9, "S", isoZeroes = true)
             }
         }
     }
