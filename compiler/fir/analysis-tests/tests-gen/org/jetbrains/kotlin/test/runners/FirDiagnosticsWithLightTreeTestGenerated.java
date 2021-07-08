@@ -5439,6 +5439,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
+                @TestMetadata("byDelegation.kt")
+                public void testByDelegation() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/byDelegation.kt");
+                }
+
+                @Test
                 @TestMetadata("constructorOverrides.kt")
                 public void testConstructorOverrides() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/constructorOverrides.kt");
@@ -5460,6 +5466,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 @TestMetadata("junk.kt")
                 public void testJunk() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/junk.kt");
+                }
+
+                @Test
+                @TestMetadata("overriddenGetterTypeChange.kt")
+                public void testOverriddenGetterTypeChange() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/overriddenGetterTypeChange.kt");
                 }
 
                 @Test

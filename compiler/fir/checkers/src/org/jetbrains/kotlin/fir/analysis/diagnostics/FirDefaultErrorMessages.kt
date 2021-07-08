@@ -263,6 +263,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_GETTER_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE
@@ -902,6 +903,12 @@ class FirDefaultErrorMessages {
                 "Type of ''{0}'' is not a subtype of the overridden property ''{1}''",
                 DECLARATION_NAME,
                 DECLARATION_NAME
+            )
+            map.put(
+                PROPERTY_GETTER_TYPE_MISMATCH_ON_OVERRIDE,
+                "This getter's return type (''0'') must be a subtype of the return type of the original property's getter (''1'')",
+                RENDER_TYPE,
+                RENDER_TYPE
             )
             map.put(
                 VAR_TYPE_MISMATCH_ON_OVERRIDE,

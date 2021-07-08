@@ -1954,6 +1954,15 @@ internal class PropertyTypeMismatchOnOverrideImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class PropertyGetterTypeMismatchOnOverrideImpl(
+    override val actual: KtType,
+    override val required: KtType,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.PropertyGetterTypeMismatchOnOverride(), KtAbstractFirDiagnostic<KtPropertyAccessor> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class VarTypeMismatchOnOverrideImpl(
     override val variable: KtSymbol,
     override val superVariable: KtSymbol,

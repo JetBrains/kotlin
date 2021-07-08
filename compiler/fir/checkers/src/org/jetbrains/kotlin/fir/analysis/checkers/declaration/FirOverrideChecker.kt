@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirOverrideChecker.getGetterWithGreaterVisibility
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -200,6 +201,49 @@ object FirOverrideChecker : FirClassChecker() {
         return null
     }
 
+    private fun FirCallableMemberDeclaration.checkPermissiveGetter(
+        overriddenSymbols: List<FirCallableSymbol<*>>,
+        typeCheckerContext: AbstractTypeCheckerContext,
+        context: CheckerContext,
+    ): Triple<FirPropertyAccessor, ConeKotlinType, ConeKotlinType>? {
+        val permissiveGetter = getGetterWithGreaterVisibility()
+            ?: return null
+
+        val permissiveGetterReturnType = permissiveGetter.returnTypeRef.coneType
+
+        // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
+        if (permissiveGetterReturnType is ConeKotlinErrorType) {
+            return null
+        }
+
+        val superPermissiveGetter = overriddenSymbols
+            .firstOrNull { it.fir is FirProperty }
+            ?.fir.safeAs<FirProperty>()
+            ?.getGetterWithGreaterVisibility()
+            ?: return null
+
+        val superPermissiveGetterReturnType = context.returnTypeCalculator.tryCalculateReturnType(superPermissiveGetter)
+            .coneType
+            .upperBoundIfFlexible()
+            .substituteAllTypeParameters(this, superPermissiveGetter, context)
+
+        if (superPermissiveGetterReturnType is ConeKotlinErrorType) {
+            return null
+        }
+
+        val isReturnTypeOkForOverride = AbstractTypeChecker.isSubtypeOf(
+            typeCheckerContext,
+            permissiveGetterReturnType,
+            superPermissiveGetterReturnType
+        )
+
+        if (!isReturnTypeOkForOverride) {
+            return Triple(permissiveGetter, permissiveGetterReturnType, superPermissiveGetterReturnType)
+        }
+
+        return null
+    }
+
     private fun checkMember(
         member: FirCallableMemberDeclaration,
         reporter: DiagnosticReporter,
@@ -248,20 +292,29 @@ object FirOverrideChecker : FirClassChecker() {
 
         member.checkVisibility(reporter, overriddenMemberSymbols, context)
 
-        val restriction = member.checkReturnType(
+        member.checkReturnType(
             overriddenSymbols = overriddenMemberSymbols,
             typeCheckerContext = typeCheckerContext,
             context = context,
-        ) ?: return
-        when (member) {
-            is FirSimpleFunction -> reporter.reportReturnTypeMismatchOnFunction(member, restriction, context)
-            is FirProperty -> {
-                if (member.isVar) {
-                    reporter.reportTypeMismatchOnVariable(member, restriction, context)
-                } else {
-                    reporter.reportTypeMismatchOnProperty(member, restriction, context)
+        )?.let { restriction ->
+            when (member) {
+                is FirSimpleFunction -> reporter.reportReturnTypeMismatchOnFunction(member, restriction, context)
+                is FirProperty -> {
+                    if (member.isVar) {
+                        reporter.reportTypeMismatchOnVariable(member, restriction, context)
+                    } else {
+                        reporter.reportTypeMismatchOnProperty(member, restriction, context)
+                    }
                 }
             }
+        }
+
+        member.checkPermissiveGetter(
+            overriddenSymbols = overriddenMemberSymbols,
+            typeCheckerContext = typeCheckerContext,
+            context = context,
+        )?.let { (getter, actualType, requiredType) ->
+            reporter.reportTypeMismatchOnPropertyGetter(getter, actualType, requiredType, context)
         }
     }
 
@@ -349,6 +402,15 @@ object FirOverrideChecker : FirClassChecker() {
         context: CheckerContext
     ) {
         reportOn(overriding.source, FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, overriding, overridden, context)
+    }
+
+    private fun DiagnosticReporter.reportTypeMismatchOnPropertyGetter(
+        getter: FirMemberDeclaration,
+        actual: ConeKotlinType,
+        required: ConeKotlinType,
+        context: CheckerContext
+    ) {
+        reportOn(getter.source, FirErrors.PROPERTY_GETTER_TYPE_MISMATCH_ON_OVERRIDE, actual, required, context)
     }
 
     private fun DiagnosticReporter.reportTypeMismatchOnVariable(

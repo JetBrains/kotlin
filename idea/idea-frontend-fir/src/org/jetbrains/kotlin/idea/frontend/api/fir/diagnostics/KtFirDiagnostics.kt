@@ -1218,6 +1218,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val superProperty: KtSymbol
     }
 
+    abstract class PropertyGetterTypeMismatchOnOverride : KtFirDiagnostic<KtPropertyAccessor>() {
+        override val diagnosticClass get() = PropertyGetterTypeMismatchOnOverride::class
+        abstract val actual: KtType
+        abstract val required: KtType
+    }
+
     abstract class VarTypeMismatchOnOverride : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = VarTypeMismatchOnOverride::class
         abstract val variable: KtSymbol

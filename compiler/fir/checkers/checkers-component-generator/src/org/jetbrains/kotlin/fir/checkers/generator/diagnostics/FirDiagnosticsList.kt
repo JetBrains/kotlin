@@ -618,6 +618,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirMemberDeclaration>("property")
             parameter<FirMemberDeclaration>("superProperty")
         }
+        val PROPERTY_GETTER_TYPE_MISMATCH_ON_OVERRIDE by error<KtPropertyAccessor>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
+            parameter<ConeKotlinType>("actual")
+            parameter<ConeKotlinType>("required")
+        }
         val VAR_TYPE_MISMATCH_ON_OVERRIDE by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
             parameter<FirMemberDeclaration>("variable")
             parameter<FirMemberDeclaration>("superVariable")
