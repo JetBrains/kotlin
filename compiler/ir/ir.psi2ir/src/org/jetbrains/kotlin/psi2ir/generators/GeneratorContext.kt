@@ -66,8 +66,6 @@ class GeneratorContext private constructor(
 
     val samTypeApproximator = SamTypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 
-    val irBuiltInsOverDescriptors: IrBuiltInsOverDescriptors get() = irBuiltIns as IrBuiltInsOverDescriptors
-
     fun createFileScopeContext(ktFile: KtFile): GeneratorContext {
         return GeneratorContext(
             configuration,

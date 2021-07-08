@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -71,7 +72,7 @@ class ArrayAccessAssignmentReceiver(
                 ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
         val hasResult = origin.isAssignmentOperatorWithResult()
-        val resultType = if (hasResult) kotlinType else callGenerator.context.irBuiltInsOverDescriptors.unit
+        val resultType = if (hasResult) kotlinType else (callGenerator.context.irBuiltIns as IrBuiltInsOverDescriptors).unit
         val irResultType = callGenerator.translateType(resultType)
 
         if (indexedGetDescriptor?.isDynamic() != false && indexedSetDescriptor?.isDynamic() != false) {

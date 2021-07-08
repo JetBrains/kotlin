@@ -62,7 +62,7 @@ internal fun Context.psiToIr(
             moduleDescriptor, symbolTable,
             generatorContext.irBuiltIns
     )
-    val symbols by lazy { KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper) }
+    val symbols = KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
 
     val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
         // Enable lazy IR generation for newly-created symbols inside BE

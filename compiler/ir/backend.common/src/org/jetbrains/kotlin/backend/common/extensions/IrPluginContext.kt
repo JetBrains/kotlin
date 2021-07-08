@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
+import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -33,6 +34,8 @@ interface IrPluginContext : IrGeneratorContext {
 
     @ObsoleteDescriptorBasedAPI
     val typeTranslator: TypeTranslator
+
+    val symbols: BuiltinSymbolsBase
 
     val platform: TargetPlatform?
 

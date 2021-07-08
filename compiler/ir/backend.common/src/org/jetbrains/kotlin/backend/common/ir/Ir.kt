@@ -44,11 +44,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
-// Some symbols below are used in kotlin-native, so they can't be private
-@Suppress("MemberVisibilityCanBePrivate", "PropertyName")
-abstract class Symbols<out T : CommonBackendContext>(
-    val context: T, val irBuiltIns: IrBuiltIns, private val symbolTable: ReferenceSymbolTable
-) {
+open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTable: ReferenceSymbolTable) {
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
         irBuiltIns.findClass(name, *packageNameSegments)
@@ -150,11 +146,11 @@ abstract class Symbols<out T : CommonBackendContext>(
     val doubleArrayType get() = doubleArray.owner.defaultType
     val booleanArrayType get() = booleanArray.owner.defaultType
 
-    val primitiveArrays get() = irBuiltIns.primitiveTypesToPrimitiveArrays
+    val primitiveTypesToPrimitiveArrays get() = irBuiltIns.primitiveTypesToPrimitiveArrays
     val primitiveArraysToPrimitiveTypes get() = irBuiltIns.primitiveArraysToPrimitiveTypes
-    val unsignedArrays get() = irBuiltIns.unsignedTypesToUnsignedArrays
+    val unsignedTypesToUnsignedArrays get() = irBuiltIns.unsignedTypesToUnsignedArrays
 
-    val arrays = primitiveArrays.values + unsignedArrays.values + array
+    val arrays get() = primitiveTypesToPrimitiveArrays.values + unsignedTypesToUnsignedArrays.values + array
 
     val collection get() = irBuiltIns.collectionClass
     val set get() = irBuiltIns.setClass
@@ -193,7 +189,14 @@ abstract class Symbols<out T : CommonBackendContext>(
 
     val extensionToString: IrSimpleFunctionSymbol get() = irBuiltIns.extensionToString
     val stringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.stringPlus
-    
+}
+
+// Some symbols below are used in kotlin-native, so they can't be private
+@Suppress("MemberVisibilityCanBePrivate", "PropertyName")
+abstract class Symbols<out T : CommonBackendContext>(
+    val context: T, irBuiltIns: IrBuiltIns, symbolTable: ReferenceSymbolTable
+) : BuiltinSymbolsBase(irBuiltIns, symbolTable) {
+
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
 

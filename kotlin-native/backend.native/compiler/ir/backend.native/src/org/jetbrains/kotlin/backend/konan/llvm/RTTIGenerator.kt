@@ -30,8 +30,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             context.irBuiltIns.byteClass, context.irBuiltIns.shortClass, context.irBuiltIns.intClass,
             context.irBuiltIns.longClass,
             context.irBuiltIns.floatClass,context.irBuiltIns.doubleClass) +
-            context.ir.symbols.primitiveArrays.values +
-            context.ir.symbols.unsignedArrays.values
+            context.ir.symbols.primitiveTypesToPrimitiveArrays.values +
+            context.ir.symbols.unsignedTypesToUnsignedArrays.values
 
     // TODO: extend logic here by taking into account final acyclic classes.
     private fun checkAcyclicFieldType(type: IrType): Boolean = acyclicCache.getOrPut(type) {

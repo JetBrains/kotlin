@@ -325,7 +325,7 @@ class IrBuiltInsOverDescriptors(
     )
 
     // TODO switch to IrType
-    val primitiveTypes = listOf(bool, builtIns.charType, builtIns.byteType, short, int, float, long, double)
+    val primitiveTypes = listOf(bool, char, byte, short, int, float, long, double)
     override val primitiveIrTypes = listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType)
     override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
     override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)

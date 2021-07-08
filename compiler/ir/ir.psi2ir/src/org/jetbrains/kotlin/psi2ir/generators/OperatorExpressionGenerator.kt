@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -209,7 +210,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         // Infer type for elvis manually. Take into account possibly nested elvises.
         val rightType = getResultTypeForElvis(binaryExpression.right!!).unwrap()
         val leftType = getResultTypeForElvis(binaryExpression.left!!).unwrap()
-        val leftNNType = intersectTypes(listOf(leftType, context.irBuiltInsOverDescriptors.any))
+        val leftNNType = intersectTypes(listOf(leftType, (context.irBuiltIns as IrBuiltInsOverDescriptors).any))
         return NewCommonSuperTypeCalculator.commonSuperType(listOf(rightType, leftNNType))
     }
 
@@ -436,7 +437,9 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         return memberScope.findSingleFunction(Name.identifier("to$targetTypeName"))
     }
 
-    private val primitiveTypeMapping: Map<SimpleType, IrType> = context.irBuiltInsOverDescriptors.run { primitiveTypes.zip(primitiveIrTypes).toMap() }
+    private val primitiveTypeMapping: Map<SimpleType, IrType> =
+        (context.irBuiltIns as IrBuiltInsOverDescriptors).run { primitiveTypes.zip(primitiveIrTypes).toMap() }
+
     private fun kotlinTypeToIrType(kotlinType: KotlinType?) = kotlinType?.let { primitiveTypeMapping[it] }
 
     private fun generateComparisonOperator(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {

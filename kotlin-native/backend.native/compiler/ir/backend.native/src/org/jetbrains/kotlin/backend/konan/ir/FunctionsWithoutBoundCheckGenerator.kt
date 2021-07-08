@@ -64,7 +64,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
 
 
     fun generate() {
-        val arraysClasses = symbols.primitiveArrays.values + symbols.array
+        val arraysClasses = symbols.primitiveTypesToPrimitiveArrays.values + symbols.array
         arraysClasses.forEach { classSymbol ->
             val setFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.SET }
             classSymbol.owner.addMember(generateFunction(setFunction, KonanNameConventions.setWithoutBoundCheck))

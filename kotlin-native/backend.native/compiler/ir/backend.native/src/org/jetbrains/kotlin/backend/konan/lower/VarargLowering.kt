@@ -258,7 +258,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     private val primitiveArrayHandles = PrimitiveType.values().associate { it to PrimitiveArrayHandle(it) }
 
     private val unsignedArrayHandles = UnsignedType.values().mapNotNull { unsignedType ->
-        symbols.unsignedArrays[unsignedType]?.let {
+        symbols.unsignedTypesToUnsignedArrays[unsignedType]?.let {
             val primitiveType = when (unsignedType) {
                 UnsignedType.UBYTE -> PrimitiveType.BYTE
                 UnsignedType.USHORT -> PrimitiveType.SHORT

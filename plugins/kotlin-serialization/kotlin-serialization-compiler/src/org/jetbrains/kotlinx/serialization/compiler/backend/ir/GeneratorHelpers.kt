@@ -701,11 +701,6 @@ interface IrBuilderExtension {
         typeParameters = newTypeParameters
     }
 
-    fun kClassTypeFor(projection: TypeProjection): SimpleType {
-        val kClass = (compilerContext.irBuiltIns as IrBuiltInsOverDescriptors).builtIns.kClass
-        return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(projection))
-    }
-
     fun createClassReference(classType: KotlinType, startOffset: Int, endOffset: Int): IrClassReference {
         val clazz = classType.toClassDescriptor!!
         val classSymbol = compilerContext.referenceClass(clazz.fqNameSafe) ?: error("Couldn't load class $clazz")
@@ -1005,10 +1000,13 @@ interface IrBuilderExtension {
                         kType.toClassDescriptor!!,
                         module
                     )
-                    val projectedOutCurrentKClass = kClassTypeFor(TypeProjectionImpl(Variance.OUT_VARIANCE, kType))
+                    val projectedOutCurrentKClass =
+                        compilerContext.irBuiltIns.kClassClass.typeWithArguments(
+                            listOf(makeTypeProjection(thisIrType, Variance.OUT_VARIANCE))
+                        )
                     add(
                         createArrayOfExpression(
-                            projectedOutCurrentKClass.toIrType(),
+                            projectedOutCurrentKClass,
                             subclasses.map { classReference(it) }
                         )
                     )

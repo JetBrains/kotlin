@@ -344,9 +344,6 @@ internal class KonanSymbols(
     val println = irBuiltIns.findFunctions(Name.identifier("println"), "kotlin", "io")
             .single { it.descriptor.valueParameters.singleOrNull()?.type == (irBuiltIns as IrBuiltInsOverDescriptors).builtIns.stringType }
 
-    val anyNToString = irBuiltIns.findFunctions(Name.identifier("toString"))
-            .single { it.descriptor.extensionReceiverParameter?.type == (irBuiltIns as IrBuiltInsOverDescriptors).builtIns.nullableAnyType }
-
     override val getContinuation = internalFunction("getContinuation")
 
     override val returnIfSuspended = internalFunction("returnIfSuspended")

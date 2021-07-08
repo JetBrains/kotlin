@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.builders.IrGenerator
 import org.jetbrains.kotlin.ir.builders.IrGeneratorWithScope
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -54,7 +55,7 @@ fun Generator.getExpressionTypeWithCoercionToUnit(key: KtExpression): KotlinType
     if (key.isUsedAsExpression(context.bindingContext))
         getTypeInferredByFrontend(key)
     else
-        context.irBuiltInsOverDescriptors.unit
+        (context.irBuiltIns as IrBuiltInsOverDescriptors).unit
 
 fun Generator.getExpressionTypeWithCoercionToUnitOrFail(key: KtExpression): KotlinType =
     getExpressionTypeWithCoercionToUnit(key) ?: throw RuntimeException("No type for expression: ${key.text}")
