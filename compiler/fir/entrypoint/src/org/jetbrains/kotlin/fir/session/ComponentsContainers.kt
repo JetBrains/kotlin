@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
+import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -76,6 +77,7 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null) {
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
     register(CheckersComponent::class, CheckersComponent())
     register(FirNameConflictsTrackerComponent::class, FirNameConflictsTracker())
+    register(FirModuleVisibilityChecker::class, FirModuleVisibilityChecker.Standard(this))
     if (lookupTracker != null) {
         val firFileToPath: (FirSourceElement) -> String = {
             val psiSource = (it as? FirPsiSourceElement) ?: TODO("Not implemented for non-FirPsiSourceElement")
@@ -94,7 +96,6 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null) {
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
-    register(FirModuleVisibilityChecker::class, FirJvmModuleVisibilityChecker(this))
     register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)

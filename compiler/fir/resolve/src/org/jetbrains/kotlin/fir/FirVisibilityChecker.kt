@@ -24,8 +24,16 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-interface FirModuleVisibilityChecker : FirSessionComponent {
-    fun <T> isInFriendModule(declaration: T): Boolean where T : FirMemberDeclaration, T : FirDeclaration
+abstract class FirModuleVisibilityChecker : FirSessionComponent {
+    abstract fun <T> isInFriendModule(declaration: T): Boolean where T : FirMemberDeclaration, T : FirDeclaration
+
+    class Standard(val session: FirSession) : FirModuleVisibilityChecker() {
+        override fun <T> isInFriendModule(declaration: T): Boolean where T : FirMemberDeclaration, T : FirDeclaration {
+            val useSiteModuleData = session.moduleData
+            val declarationModuleData = declaration.moduleData
+            return useSiteModuleData == declarationModuleData || declarationModuleData in useSiteModuleData.friendDependencies
+        }
+    }
 }
 
 abstract class FirVisibilityChecker : FirSessionComponent {
