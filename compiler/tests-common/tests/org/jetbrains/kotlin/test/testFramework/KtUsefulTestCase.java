@@ -11,8 +11,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
@@ -21,9 +19,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.util.*;
+import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.ReflectionUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.PeekableIterator;
 import com.intellij.util.containers.PeekableIteratorWrapper;
@@ -806,7 +806,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
         String expected = StringUtil.convertLineSeparators(trimBeforeComparing ? fileText.trim() : fileText);
         String actual = StringUtil.convertLineSeparators(trimBeforeComparing ? actualText.trim() : actualText);
-        if (!Comparing.equal(expected, actual)) {
+        if (!Objects.equals(expected, actual)) {
             throw new FileComparisonFailure(messageProducer == null ? null : messageProducer.get(), expected, actual, filePath);
         }
     }

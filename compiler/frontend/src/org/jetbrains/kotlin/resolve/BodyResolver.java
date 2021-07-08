@@ -20,7 +20,6 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.Queue;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -1076,14 +1075,13 @@ public class BodyResolver {
         if (deferredTypes.isEmpty()) {
             return;
         }
-        // +1 is a work around against new Queue(0).addLast(...) bug // stepan.koltsov@ 2011-11-21
-        Queue<DeferredType> queue = new Queue<>(deferredTypes.size() + 1);
-        trace.addHandler(DEFERRED_TYPE, (deferredTypeKeyDeferredTypeWritableSlice, key, value) -> queue.addLast(key.getData()));
+        Deque<DeferredType> queue = new ArrayDeque<>(deferredTypes.size() + 1);
+        trace.addHandler(DEFERRED_TYPE, (deferredTypeKeyDeferredTypeWritableSlice, key, value) -> queue.offerLast(key.getData()));
         for (Box<DeferredType> deferredType : deferredTypes) {
-            queue.addLast(deferredType.getData());
+            queue.offerLast(deferredType.getData());
         }
         while (!queue.isEmpty()) {
-            DeferredType deferredType = queue.pullFirst();
+            DeferredType deferredType = queue.pollFirst();
             if (!deferredType.isComputed()) {
                 try {
                     deferredType.getDelegate(); // to compute

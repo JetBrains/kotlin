@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
 import java.lang.reflect.Method
-import java.util.ArrayList
 
 val STUB_TO_STRING_PREFIX = "KotlinStub$"
 
 open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) :
     StubBase<T>(parent, elementType) {
+
+    override fun getStubType(): IStubElementType<out StubElement<*>, *> =
+        super.getStubType() as IStubElementType<out StubElement<*>, *>
 
     override fun toString(): String {
         val stubInterface = this::class.java.interfaces.single { it.name.contains("Stub") }

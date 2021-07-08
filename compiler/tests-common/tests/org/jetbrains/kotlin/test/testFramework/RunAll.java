@@ -20,6 +20,7 @@ import java.util.List;
 public class RunAll {
     private final List<? extends ThrowableRunnable<?>> myActions;
 
+    @SafeVarargs
     public RunAll(ThrowableRunnable<Throwable> ... actions) {
         this(Arrays.asList(actions));
     }
