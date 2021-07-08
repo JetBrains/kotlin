@@ -46,7 +46,7 @@ class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirSc
             symbolProvider.getTopLevelFunctionSymbols(fqName, name)
         }
         for (symbol in symbols) {
-            symbol.ensureResolvedForCalls(session)
+            symbol.ensureResolvedForCalls()
             processor(symbol)
         }
     }
@@ -56,7 +56,7 @@ class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirSc
             symbolProvider.getTopLevelPropertySymbols(fqName, name)
         }
         for (symbol in symbols) {
-            symbol.ensureResolvedForCalls(session)
+            symbol.ensureResolvedForCalls()
             processor(symbol)
         }
     }

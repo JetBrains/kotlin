@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
-fun FirBasedSymbol<*>.ensureResolvedForCalls(
-    @Suppress("UNUSED_PARAMETER") useSiteSession: FirSession,
-) {
+fun FirBasedSymbol<*>.ensureResolvedForCalls() {
     if (fir.resolvePhase >= FirResolvePhase.DECLARATIONS) return
 
 //    val requiredPhase = when (fir) {

@@ -106,7 +106,7 @@ abstract class FirAbstractImportingScope(
                 staticsScope.processFunctionsByName(importedName, processor)
             } else if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
                 for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, importedName)) {
-                    symbol.ensureResolvedForCalls(session)
+                    symbol.ensureResolvedForCalls()
                     processor(symbol)
                 }
             }
@@ -122,7 +122,7 @@ abstract class FirAbstractImportingScope(
                 staticsScope.processPropertiesByName(importedName, processor)
             } else if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
                 for (symbol in provider.getTopLevelPropertySymbols(import.packageFqName, importedName)) {
-                    symbol.ensureResolvedForCalls(session)
+                    symbol.ensureResolvedForCalls()
                     processor(symbol)
                 }
             }
