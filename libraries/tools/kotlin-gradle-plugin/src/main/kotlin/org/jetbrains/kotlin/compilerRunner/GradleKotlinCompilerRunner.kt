@@ -11,6 +11,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.jvm.tasks.Jar
+import org.gradle.workers.WorkQueue
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -82,14 +83,14 @@ internal open class GradleCompilerRunner(
         args: K2JVMCompilerArguments,
         environment: GradleCompilerEnvironment,
         jdkHome: File
-    ) {
+    ): WorkQueue? {
         args.freeArgs += sourcesToCompile.map { it.absolutePath }
         args.commonSources = commonSources.map { it.absolutePath }.toTypedArray()
         args.javaSourceRoots = javaSourceRoots.map { it.absolutePath }.toTypedArray()
         args.javaPackagePrefix = javaPackagePrefix
         if (args.jdkHome == null) args.jdkHome = jdkHome.absolutePath
         loggerProvider.kotlinInfo("Kotlin compilation 'jdkHome' argument: ${args.jdkHome}")
-        runCompilerAsync(KotlinCompilerClass.JVM, args, environment)
+        return runCompilerAsync(KotlinCompilerClass.JVM, args, environment)
     }
 
     /**
@@ -101,10 +102,10 @@ internal open class GradleCompilerRunner(
         kotlinCommonSources: List<File>,
         args: K2JSCompilerArguments,
         environment: GradleCompilerEnvironment
-    ) {
+    ): WorkQueue? {
         args.freeArgs += kotlinSources.map { it.absolutePath }
         args.commonSources = kotlinCommonSources.map { it.absolutePath }.toTypedArray()
-        runCompilerAsync(KotlinCompilerClass.JS, args, environment)
+        return runCompilerAsync(KotlinCompilerClass.JS, args, environment)
     }
 
     /**
@@ -115,16 +116,16 @@ internal open class GradleCompilerRunner(
         kotlinSources: List<File>,
         args: K2MetadataCompilerArguments,
         environment: GradleCompilerEnvironment
-    ) {
+    ): WorkQueue? {
         args.freeArgs += kotlinSources.map { it.absolutePath }
-        runCompilerAsync(KotlinCompilerClass.METADATA, args, environment)
+        return runCompilerAsync(KotlinCompilerClass.METADATA, args, environment)
     }
 
     private fun runCompilerAsync(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
         environment: GradleCompilerEnvironment
-    ) {
+    ): WorkQueue? {
         if (compilerArgs.version) {
             loggerProvider.lifecycle(
                 "Kotlin version " + loadCompilerVersion(environment.compilerClasspath) +
@@ -187,12 +188,13 @@ internal open class GradleCompilerRunner(
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors
         )
         TaskLoggers.put(pathProvider, loggerProvider)
-        runCompilerAsync(workArgs)
+        return runCompilerAsync(workArgs)
     }
 
-    protected open fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
+    protected open fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments): WorkQueue? {
         val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
         kotlinCompilerRunnable.run()
+        return null
     }
 
     companion object {

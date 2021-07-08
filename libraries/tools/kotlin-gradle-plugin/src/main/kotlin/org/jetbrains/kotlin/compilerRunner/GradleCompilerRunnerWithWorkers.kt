@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
@@ -21,13 +22,15 @@ internal class GradleCompilerRunnerWithWorkers(
     jdkToolsJar: File?,
     private val workerExecutor: WorkerExecutor
 ) : GradleCompilerRunner(taskProvider, jdkToolsJar) {
-    override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
+
+    override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments): WorkQueue {
         loggerProvider.kotlinDebug { "Starting Kotlin compiler work from task '${pathProvider}'" }
 
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(GradleKotlinCompilerWorkAction::class.java) {
             it.compilerWorkArguments.set(workArgs)
         }
+        return workQueue
     }
 
     internal abstract class GradleKotlinCompilerWorkAction
