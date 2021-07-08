@@ -492,13 +492,13 @@ class DurationTest {
         test(Duration.minutes(2) + Duration.milliseconds(500), "PT2M0.500S")
         test(Duration.milliseconds(90_500), "PT1M30.500S")
 
-        // negative
-        test(-Duration.days(1) + Duration.minutes(15), "-PT23H45M", "PT-23H-45M", "PT-24H15M")
+        // with sign
+        test(-Duration.days(1) + Duration.minutes(15), "-PT23H45M", "PT-23H-45M", "+PT-24H+15M")
         test(-Duration.days(1) - Duration.minutes(15), "-PT24H15M", "PT-24H-15M", "-PT25H-45M")
-        test(Duration.ZERO, "PT0S", "P1DT-24H", "PT-1H60M", "-PT1M-60S")
+        test(Duration.ZERO, "PT0S", "P1DT-24H", "+PT-1H+60M", "-PT1M-60S")
 
         // infinite
-        test(Duration.INFINITE, "PT9999999999999H", "PT10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S")
+        test(Duration.INFINITE, "PT9999999999999H", "PT+10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S")
         test(-Duration.INFINITE, "-PT9999999999999H", "-PT10000000000000H", "PT-1234567890123456789012S")
     }
 
@@ -600,9 +600,12 @@ class DurationTest {
             for (string in expected) {
                 testParsing(string, duration)
                 if (duration.isPositive() && duration.isFinite()) {
+                    testParsing("+($string)", duration)
                     testParsing("-($string)", -duration)
-                    if (' ' !in string)
+                    if (' ' !in string) {
+                        testParsing("+$string", duration)
                         testParsing("-$string", -duration)
+                    }
                 }
             }
         }
@@ -682,7 +685,9 @@ class DurationTest {
             "1234567890123456789012ns", "Inf", "-Infinity value",
             "1s ", " 1s",
             "1d 1m 1h", "1s 2s",
-            "-12m 15s", "-12m -15s", "(12m 30s)", "-()", "()", "-(12m 30s",
+            "-12m 15s", "-12m -15s", "-()", "-(12m 30s",
+            "+12m 15s", "+12m +15s", "+()", "+(12m 30s",
+            "()", "(12m 30s)",
             "12.5m 11.5s", ".2s", "0.1553.39m",
             "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
             " P1D", "PT1S ",
