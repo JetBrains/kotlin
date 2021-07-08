@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
-import org.jetbrains.kotlin.test.services.dependencyProvider
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -34,6 +32,9 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
     }
 
     private var boxMethodFound = false
+
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(ServiceRegistrationData(RuntimeClasspathProvider::class, {ts -> RuntimeClasspathProvider.Empty}))
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!boxMethodFound) {
@@ -195,6 +196,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         }
 
         computeClasspath(rootModule, true)
+        result.addAll(testServices.runtimeClasspathProvider.runtimeClassPaths())
         return result
     }
 
