@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -374,8 +375,8 @@ class DeclarationsConverter(
         val typeConstraints = mutableListOf<TypeConstraint>()
         var classBody: LighterASTNode? = null
         var superTypeList: LighterASTNode? = null
-
         var typeParameterList: LighterASTNode? = null
+
         classNode.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it, isInClass = true)
@@ -390,7 +391,6 @@ class DeclarationsConverter(
                 CLASS_BODY -> classBody = it
             }
         }
-        typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints) }
 
         if (classKind == ClassKind.CLASS) {
             classKind = when {
@@ -418,6 +418,10 @@ class DeclarationsConverter(
                 isExternal = modifiers.hasExternal()
             }
 
+            val classSymbol = FirRegularClassSymbol(context.currentClassId)
+
+            typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, classSymbol) }
+
             withCapturedTypeParameters(status.isInner, firTypeParameters) {
                 buildRegularClass {
                     source = classNode.toFirSourceElement()
@@ -427,7 +431,7 @@ class DeclarationsConverter(
                     this.status = status
                     this.classKind = classKind
                     scopeProvider = baseScopeProvider
-                    symbol = FirRegularClassSymbol(context.currentClassId)
+                    symbol = classSymbol
                     annotations += modifiers.annotations
                     typeParameters += firTypeParameters
 
@@ -565,7 +569,8 @@ class DeclarationsConverter(
                     scopeProvider = baseScopeProvider
                     symbol = FirAnonymousObjectSymbol()
                     context.applyToActualCapturedTypeParameters(false) {
-                    typeParameters += buildOuterClassTypeParameterRef { this.symbol = it } }
+                        typeParameters += buildOuterClassTypeParameterRef { this.symbol = it }
+                    }
                     val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
                     registerSelfType(delegatedSelfType)
 
@@ -958,18 +963,26 @@ class DeclarationsConverter(
         var modifiers = Modifier()
         var identifier: String? = null
         lateinit var firType: FirTypeRef
-        val firTypeParameters = mutableListOf<FirTypeParameter>()
+
         typeAlias.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 IDENTIFIER -> identifier = it.asText
-                TYPE_PARAMETER_LIST -> firTypeParameters += convertTypeParameters(it, emptyList())
                 TYPE_REFERENCE -> firType = convertType(it)
             }
         }
 
         val typeAliasName = identifier.nameAsSafeName()
         return withChildClassName(typeAliasName) {
+            val classSymbol = FirTypeAliasSymbol(context.currentClassId)
+
+            val firTypeParameters = mutableListOf<FirTypeParameter>()
+            typeAlias.forEachChildren {
+                if (it.tokenType == TYPE_PARAMETER_LIST) {
+                    firTypeParameters += convertTypeParameters(it, emptyList(), classSymbol)
+                }
+            }
+
             return@withChildClassName buildTypeAlias {
                 source = typeAlias.toFirSourceElement()
                 moduleData = baseModuleData
@@ -979,7 +992,7 @@ class DeclarationsConverter(
                     isExpect = modifiers.hasExpect()
                     isActual = modifiers.hasActual()
                 }
-                symbol = FirTypeAliasSymbol(context.currentClassId)
+                symbol = classSymbol
                 expandedTypeRef = firType
                 annotations += modifiers.annotations
                 typeParameters += firTypeParameters
@@ -1020,8 +1033,6 @@ class DeclarationsConverter(
             }
         }
 
-        typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints) }
-
         val propertyName = identifier.nameAsSafeName()
 
         val parentNode = property.getParent()
@@ -1042,9 +1053,12 @@ class DeclarationsConverter(
                 (it.getExpressionInParentheses() ?: it).toFirSourceElement()
             }
 
+            symbol = if (isLocal) FirPropertySymbol(propertyName) else FirPropertySymbol(callableIdForName(propertyName))
+
+            typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, symbol) }
+
             if (isLocal) {
                 this.isLocal = true
-                symbol = FirPropertySymbol(propertyName)
                 val delegateBuilder = delegateExpression?.let {
                     FirWrappedDelegateExpressionBuilder().apply {
                         source = delegateSource
@@ -1071,7 +1085,6 @@ class DeclarationsConverter(
             } else {
                 this.isLocal = false
                 receiverTypeRef = receiverType
-                symbol = FirPropertySymbol(callableIdForName(propertyName))
                 dispatchReceiverType = currentDispatchReceiverType()
                 withCapturedTypeParameters(true, firTypeParameters) {
                     typeParameters += firTypeParameters
@@ -1353,7 +1366,6 @@ class DeclarationsConverter(
     fun convertFunctionDeclaration(functionDeclaration: LighterASTNode, classWrapper: ClassWrapper? = null): FirStatement {
         var modifiers = Modifier()
         var identifier: String? = null
-        val firTypeParameters = mutableListOf<FirTypeParameter>()
         var valueParametersList: LighterASTNode? = null
         var isReturnType = false
         var receiverType: FirTypeRef? = null
@@ -1379,7 +1391,6 @@ class DeclarationsConverter(
                 else -> if (it.isExpression()) expression = it
             }
         }
-        typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints) }
 
         if (returnType == null) {
             returnType =
@@ -1391,19 +1402,22 @@ class DeclarationsConverter(
         val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
         val target: FirFunctionTarget
         val functionSource = functionDeclaration.toFirSourceElement()
+        val functionSymbol: FirFunctionSymbol<*>
         val functionBuilder = if (identifier == null && isLocal) {
             val labelName = functionDeclaration.getLabelName() ?: context.calleeNamesForLambda.lastOrNull()?.identifier
             target = FirFunctionTarget(labelName = labelName, isLambda = false)
+            functionSymbol = FirAnonymousFunctionSymbol()
             FirAnonymousFunctionBuilder().apply {
                 source = functionSource
                 receiverTypeRef = receiverType
-                symbol = FirAnonymousFunctionSymbol()
+                symbol = functionSymbol
                 isLambda = false
             }
         } else {
             val functionName = identifier.nameAsSafeName()
             val labelName = runIf(!functionName.isSpecial) { functionName.identifier }
             target = FirFunctionTarget(labelName, isLambda = false)
+            functionSymbol = FirNamedFunctionSymbol(callableIdForName(functionName))
             FirSimpleFunctionBuilder().apply {
                 source = functionSource
                 receiverTypeRef = receiverType
@@ -1423,10 +1437,13 @@ class DeclarationsConverter(
                     isSuspend = modifiers.hasSuspend()
                 }
 
-                symbol = FirNamedFunctionSymbol(callableIdForName(functionName))
+                symbol = functionSymbol
                 dispatchReceiverType = currentDispatchReceiverType()
             }
         }
+
+        val firTypeParameters = mutableListOf<FirTypeParameter>()
+        typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, functionSymbol) }
 
         val function = functionBuilder.apply {
             moduleData = baseModuleData
@@ -1627,10 +1644,14 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeParameterList
      */
-    private fun convertTypeParameters(typeParameterList: LighterASTNode, typeConstraints: List<TypeConstraint>): List<FirTypeParameter> {
+    private fun convertTypeParameters(
+        typeParameterList: LighterASTNode,
+        typeConstraints: List<TypeConstraint>,
+        containingDeclarationSymbol: FirBasedSymbol<*>
+    ): List<FirTypeParameter> {
         return typeParameterList.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
-                TYPE_PARAMETER -> container += convertTypeParameter(node, typeConstraints)
+                TYPE_PARAMETER -> container += convertTypeParameter(node, typeConstraints, containingDeclarationSymbol)
             }
         }
     }
@@ -1672,7 +1693,11 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeParameter
      */
-    private fun convertTypeParameter(typeParameter: LighterASTNode, typeConstraints: List<TypeConstraint>): FirTypeParameter {
+    private fun convertTypeParameter(
+        typeParameter: LighterASTNode,
+        typeConstraints: List<TypeConstraint>,
+        containingSymbol: FirBasedSymbol<*>
+    ): FirTypeParameter {
         var typeParameterModifiers = TypeParameterModifier()
         var identifier: String? = null
         var firType: FirTypeRef? = null
@@ -1690,6 +1715,7 @@ class DeclarationsConverter(
             origin = FirDeclarationOrigin.Source
             name = identifier.nameAsSafeName()
             symbol = FirTypeParameterSymbol()
+            containingDeclarationSymbol = containingSymbol
             variance = typeParameterModifiers.getVariance()
             isReified = typeParameterModifiers.hasReified()
             annotations += typeParameterModifiers.annotations

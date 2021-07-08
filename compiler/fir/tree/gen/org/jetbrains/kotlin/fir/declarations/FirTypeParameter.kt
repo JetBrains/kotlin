@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -28,6 +29,7 @@ abstract class FirTypeParameter : FirTypeParameterRef, FirAnnotatedDeclaration()
     abstract override val attributes: FirDeclarationAttributes
     abstract val name: Name
     abstract override val symbol: FirTypeParameterSymbol
+    abstract val containingDeclarationSymbol: FirBasedSymbol<*>?
     abstract val variance: Variance
     abstract val isReified: Boolean
     abstract val bounds: List<FirTypeRef>

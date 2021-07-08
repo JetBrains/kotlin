@@ -229,6 +229,7 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                                 origin = FirDeclarationOrigin.BuiltIns
                                 name = Name.identifier("P$it")
                                 symbol = FirTypeParameterSymbol()
+                                containingDeclarationSymbol = this@symbol
                                 variance = Variance.IN_VARIANCE
                                 isReified = false
                                 bounds += moduleData.session.builtinTypes.nullableAnyType
@@ -242,6 +243,7 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                             origin = FirDeclarationOrigin.BuiltIns
                             name = Name.identifier("R")
                             symbol = FirTypeParameterSymbol()
+                            containingDeclarationSymbol = this@symbol
                             variance = Variance.OUT_VARIANCE
                             isReified = false
                             bounds += moduleData.session.builtinTypes.nullableAnyType

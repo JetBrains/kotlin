@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -36,6 +37,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
     lateinit var symbol: FirTypeParameterSymbol
+    var containingDeclarationSymbol: FirBasedSymbol<*>? = null
     lateinit var variance: Variance
     var isReified: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val bounds: MutableList<FirTypeRef> = mutableListOf()
@@ -50,6 +52,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
             attributes,
             name,
             symbol,
+            containingDeclarationSymbol,
             variance,
             isReified,
             bounds,
