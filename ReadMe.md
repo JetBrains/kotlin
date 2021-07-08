@@ -35,7 +35,7 @@ Support for multiplatform programming is one of Kotlin’s key benefits. It redu
 
 ## Editing Kotlin
 
- * [Kotlin IntelliJ IDEA Plugin](https://kotlinlang.org/docs/tutorials/getting-started.html)
+ * [Kotlin IntelliJ IDEA Plugin](https://kotlinlang.org/docs/tutorials/getting-started.html) ([source code](https://github.com/JetBrains/intellij-community/tree/master/plugins/kotlin))
  * [Kotlin Eclipse Plugin](https://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
  * [Kotlin Sublime Text Package](https://github.com/vkostyukov/kotlin-sublime-package)
 
@@ -97,13 +97,10 @@ command line parameters on the first run:
 
 - `clean` - clean build results
 - `dist` - assembles the compiler distribution into `dist/kotlinc/` folder
-- `ideaPlugin` - assembles the Kotlin IDEA plugin distribution into `dist/artifacts/ideaPlugin/Kotlin/` folder
 - `install` - build and install all public artifacts into local maven repository
-- `runIde` - build IDEA plugin and run IDEA with it
 - `coreLibsTest` - build and run stdlib, reflect and kotlin-test tests
 - `gradlePluginTest` - build and run gradle plugin tests
 - `compilerTest` - build and run all compiler tests
-- `ideaPluginTest` - build and run all IDEA plugin tests
 
 To reproduce TeamCity build use `-Pteamcity=true` flag. Local builds don't run proguard and have jar compression disabled by default.
 
@@ -142,14 +139,6 @@ In the import dialog, select `use default gradle wrapper`.
 To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` and choose `Gradle Test Runner` in the Gradle runner settings after importing the project.
 
 At this time, you can use the latest released `1.3.x` version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use `Tools` -> `Kotlin` -> `Configure Kotlin Plugin Updates`.
-
-### Compiling and running
-
-From this root project there are Run/Debug Configurations for running `IDEA` or the `Generate Compiler Tests` for example; so if you want to try out the latest and greatest IDEA plugin
-
-* `VCS` -> `Git` -> `Pull`
-* Run the `IDEA` run configuration in the project
-* A child IntelliJ IDEA with the Kotlin plugin will then startup
 
 ### Dependency verification
 
