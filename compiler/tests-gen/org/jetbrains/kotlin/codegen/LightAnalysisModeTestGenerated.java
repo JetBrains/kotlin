@@ -29810,6 +29810,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/typeOf/inlineClasses.kt");
             }
 
+            @TestMetadata("intersectionType.kt")
+            public void testIntersectionType() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/intersectionType.kt");
+            }
+
             @TestMetadata("manyTypeArguments.kt")
             public void testManyTypeArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/manyTypeArguments.kt");

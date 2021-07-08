@@ -37486,6 +37486,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("intersectionType.kt")
+            public void testIntersectionType() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/intersectionType.kt");
+            }
+
+            @Test
             @TestMetadata("manyTypeArguments.kt")
             public void testManyTypeArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/manyTypeArguments.kt");
