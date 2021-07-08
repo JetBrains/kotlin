@@ -39,6 +39,7 @@ class TestConfigurationImpl(
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
 
     compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
+    runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
 
     override val metaInfoHandlerEnabled: Boolean,
 
@@ -51,6 +52,8 @@ class TestConfigurationImpl(
 
     init {
         testServices.register(KotlinTestInfo::class, testInfo)
+        val runtimeClassPathProviders = runtimeClasspathProviders.map { it.invoke(testServices) }
+        testServices.register(RuntimeClasspathProviderHolder::class, RuntimeClasspathProviderHolder(runtimeClassPathProviders))
         additionalServices.forEach { testServices.register(it) }
     }
 

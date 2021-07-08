@@ -46,6 +46,7 @@ class TestConfigurationBuilder {
     private val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
 
     private var compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
+    private var runtimeClasspathProviders: MutableList<Constructor<RuntimeClasspathProvider>> = mutableListOf()
 
     lateinit var testInfo: KotlinTestInfo
 
@@ -154,6 +155,10 @@ class TestConfigurationBuilder {
         compilerConfigurationProvider = provider
     }
 
+    fun useCustomRuntimeClasspathProvider(provider: Constructor<RuntimeClasspathProvider>) {
+        runtimeClasspathProviders += provider
+    }
+
     fun useMetaTestConfigurators(vararg configurators: Constructor<MetaTestConfigurator>) {
         metaTestConfigurators += configurators
     }
@@ -199,6 +204,7 @@ class TestConfigurationBuilder {
             metaTestConfigurators,
             afterAnalysisCheckers,
             compilerConfigurationProvider,
+            runtimeClasspathProviders,
             metaInfoHandlerEnabled,
             directives,
             defaultRegisteredDirectivesBuilder.build(),
