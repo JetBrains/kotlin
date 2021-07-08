@@ -61,7 +61,6 @@ class IrBuiltInsOverFir(
 
     private val internalIrPackage = createPackage(KOTLIN_INTERNAL_IR_FQN)
     private val kotlinIrPackage = createPackage(kotlinPackage)
-    private val kotlinCollectionsIrPackage = createPackage(kotlinCollectionsPackage)
 
     override val booleanNotSymbol: IrSimpleFunctionSymbol by lazy {
         boolean.ensureLazyContentsCreated()
@@ -93,7 +92,7 @@ class IrBuiltInsOverFir(
     override val nothingType: IrType get() = nothing.type
     override val nothingNType: IrType by lazy { nothingType.withHasQuestionMark(true) }
 
-    private val unit by createClass(kotlinIrPackage, IdSignatureValues.unit, build = { kind = ClassKind.OBJECT; modality = Modality.FINAL})
+    private val unit by createClass(kotlinIrPackage, IdSignatureValues.unit, build = { kind = ClassKind.OBJECT; modality = Modality.FINAL })
     override val unitClass: IrClassSymbol get() = unit.klass
     override val unitType: IrType get() = unit.type
 
@@ -104,7 +103,13 @@ class IrBuiltInsOverFir(
         createMemberFunction(OperatorNameConventions.AND, booleanType, "other" to booleanType) { isInfix = true }
         createMemberFunction(OperatorNameConventions.OR, booleanType, "other" to booleanType) { isInfix = true }
         createMemberFunction(OperatorNameConventions.XOR, booleanType, "other" to booleanType) { isInfix = true }
-        createMemberFunction(OperatorNameConventions.COMPARE_TO, intType, "other" to booleanType, modality = Modality.OPEN, isOperator = true)
+        createMemberFunction(
+            OperatorNameConventions.COMPARE_TO,
+            intType,
+            "other" to booleanType,
+            modality = Modality.OPEN,
+            isOperator = true
+        )
         finalizeClassDefinition()
     }
     override val booleanType: IrType get() = boolean.type
@@ -164,8 +169,20 @@ class IrBuiltInsOverFir(
         configureSuperTypes(charSequence)
         createProperty("length", intType, modality = Modality.OPEN)
         createMemberFunction(OperatorNameConventions.GET, charType, "index" to intType, modality = Modality.OPEN, isOperator = true)
-        createMemberFunction("subSequence", charSequenceClass.defaultType, "startIndex" to intType, "endIndex" to intType, modality = Modality.OPEN)
-        createMemberFunction(OperatorNameConventions.COMPARE_TO, intType, "other" to defaultType, modality = Modality.OPEN, isOperator = true)
+        createMemberFunction(
+            "subSequence",
+            charSequenceClass.defaultType,
+            "startIndex" to intType,
+            "endIndex" to intType,
+            modality = Modality.OPEN
+        )
+        createMemberFunction(
+            OperatorNameConventions.COMPARE_TO,
+            intType,
+            "other" to defaultType,
+            modality = Modality.OPEN,
+            isOperator = true
+        )
         createMemberFunction(OperatorNameConventions.PLUS, defaultType, "other" to anyNType, isOperator = true)
         finalizeClassDefinition()
     }
@@ -357,9 +374,11 @@ class IrBuiltInsOverFir(
                 }.symbol
 
             primitiveFloatingPointIrTypes.forEach { fpType ->
-                _ieee754equalsFunByOperandType.put(
-                    fpType.classifierOrFail,
-                    addBuiltinOperatorSymbol(BuiltInOperatorNames.IEEE754_EQUALS, booleanType, "arg0" to fpType.makeNullable(), "arg1" to fpType.makeNullable())
+                _ieee754equalsFunByOperandType[fpType.classifierOrFail] = addBuiltinOperatorSymbol(
+                    BuiltInOperatorNames.IEEE754_EQUALS,
+                    booleanType,
+                    "arg0" to fpType.makeNullable(),
+                    "arg1" to fpType.makeNullable()
                 )
             }
             eqeqeqSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.EQEQEQ, booleanType, "" to anyNType, "" to anyNType)
@@ -380,7 +399,7 @@ class IrBuiltInsOverFir(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, IrTypeParameterSymbolImpl(), Name.identifier("T0"), 0, true,
                     Variance.INVARIANT
                 ).apply {
-                    superTypes += anyType
+                    superTypes = listOf(anyType)
                 }
 
                 createFunction(
@@ -464,7 +483,7 @@ class IrBuiltInsOverFir(
 
         val kotlinKt = kotlinIrPackage.createClass(kotlinPackage.child(Name.identifier("KotlinKt")))
         KotlinPackageFuns(
-            arrayOf = kotlinKt.addPackageFun("arrayOf", arrayClass.defaultType) arrayOf@ {
+            arrayOf = kotlinKt.addPackageFun("arrayOf", arrayClass.defaultType) arrayOf@{
                 addTypeParameter("T", anyNType)
                 addValueParameter {
                     this.name = Name.identifier("elements")
@@ -831,7 +850,7 @@ class IrBuiltInsOverFir(
             isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride, containerSource,
         ).also { fn ->
             valueParameterTypes.forEachIndexed { index, (pName, irType) ->
-                fn.addValueParameter(Name.identifier(if (pName.isBlank()) "arg$index" else pName), irType, origin)
+                fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
             }
             fn.parent = this@createFunction
         }
@@ -889,11 +908,11 @@ class IrBuiltInsOverFir(
                     this.returnType = returnType
                     this.modality = modality
                     this.isOperator = false
-                }.also {
-                    it.addDispatchReceiver { type = this@createProperty.defaultType }
-                    it.parent = this
-                    it.correspondingPropertySymbol = property.symbol
-                    it.overriddenSymbols = property.overriddenSymbols.mapNotNull { it.owner.getter?.symbol }
+                }.also { getter ->
+                    getter.addDispatchReceiver { type = this@createProperty.defaultType }
+                    getter.parent = this
+                    getter.correspondingPropertySymbol = property.symbol
+                    getter.overriddenSymbols = property.overriddenSymbols.mapNotNull { it.owner.getter?.symbol }
                 }
             }
             if (withField || fieldInit != null) {
