@@ -1518,6 +1518,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualVisibility: Visibility
     }
 
+    abstract class PropertyWithDelegateAndPermissiveGetter : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = PropertyWithDelegateAndPermissiveGetter::class
+    }
+
     abstract class AccessorForDelegatedProperty : KtFirDiagnostic<KtPropertyAccessor>() {
         override val diagnosticClass get() = AccessorForDelegatedProperty::class
     }

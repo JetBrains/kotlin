@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirOverrideChecker.getGetterWithGreaterVisibility
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.getGetterWithGreaterVisibility
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -109,21 +109,6 @@ object FirOverrideChecker : FirClassChecker() {
     ): FirMemberDeclaration? {
         if (isVar) return null
         return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir?.safeAs()
-    }
-
-    private fun FirMemberDeclaration.getGetterWithGreaterVisibility(): FirPropertyAccessor? {
-        if (this !is FirProperty) {
-            return null
-        }
-
-        val getterVisibility = getter?.visibility
-        val difference = getterVisibility?.compareTo(visibility)
-
-        if (difference != null && difference > 0) {
-            return getter
-        }
-
-        return null
     }
 
     private fun FirCallableMemberDeclaration.checkVisibility(

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -447,3 +448,24 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
 fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
+
+/**
+ * If this is a property with a getter
+ * whose visibility is more permissive than
+ * the visibility of this, returns that getter.
+ * Returns null otherwise.
+ */
+fun FirDeclaration.getGetterWithGreaterVisibility(): FirPropertyAccessor? {
+    if (this !is FirProperty) {
+        return null
+    }
+
+    val getterVisibility = getter?.visibility
+    val difference = getterVisibility?.compareTo(visibility)
+
+    if (difference != null && difference > 0) {
+        return getter
+    }
+
+    return null
+}

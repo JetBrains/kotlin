@@ -4,13 +4,27 @@ FILE: byDelegation.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun getValue(): R|kotlin/Int| {
+        public final operator fun getValue(self: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
             ^getValue Int(42)
         }
 
-        public final fun setValue(value: R|kotlin/Int|): R|kotlin/Unit| {
+        public final operator fun setValue(self: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, value: R|kotlin/Int|): R|kotlin/Unit| {
             R|kotlin/io/println|(<strcat>(String(Setting the value ), R|<local>/value|))
         }
+
+    }
+    public final class NormalDelegatedProperty : R|kotlin/Any| {
+        public constructor(): R|NormalDelegatedProperty| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final var p6: R|kotlin/Int|by R|/Delegate.Delegate|()
+            protected get(): R|kotlin/Int| {
+                ^ this@R|/NormalDelegatedProperty|.D|/NormalDelegatedProperty.p6|.R|/Delegate.getValue|(this@R|/NormalDelegatedProperty|, ::R|/NormalDelegatedProperty.p6|)
+            }
+            protected set(<set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+                this@R|/NormalDelegatedProperty|.D|/NormalDelegatedProperty.p6|.R|/Delegate.setValue|(this@R|/NormalDelegatedProperty|, ::R|/NormalDelegatedProperty.p6|, R|<local>/p6|)
+            }
 
     }
     public open class A : R|kotlin/Any| {
@@ -21,31 +35,31 @@ FILE: byDelegation.kt
         protected open var p1: R|kotlin/Number|by R|/Delegate.Delegate|()
             public get(): R|kotlin/Number|
             protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.p1|.<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Delegate.setValue>#(this@R|/A|, ::R|/A.p1|, R|<local>/p1|)
+                this@R|/A|.D|/A.p1|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p1|, R|<local>/p1|)
             }
 
         protected open var p2: R|kotlin/Number|by R|/Delegate.Delegate|()
             public get(): R|kotlin/Number|
             protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.p2|.<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Delegate.setValue>#(this@R|/A|, ::R|/A.p2|, R|<local>/p2|)
+                this@R|/A|.D|/A.p2|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p2|, R|<local>/p2|)
             }
 
         protected open var p3: R|kotlin/Number|by R|/Delegate.Delegate|()
             public get(): R|kotlin/Number|
             protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.p3|.<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Delegate.setValue>#(this@R|/A|, ::R|/A.p3|, R|<local>/p3|)
+                this@R|/A|.D|/A.p3|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p3|, R|<local>/p3|)
             }
 
         protected open var p4: R|kotlin/Number|by R|/Delegate.Delegate|()
             public get(): R|kotlin/Number|
             protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.p4|.<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Delegate.setValue>#(this@R|/A|, ::R|/A.p4|, R|<local>/p4|)
+                this@R|/A|.D|/A.p4|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p4|, R|<local>/p4|)
             }
 
         protected open var p5: R|kotlin/Number|by R|/Delegate.Delegate|()
             public get(): R|kotlin/Number|
             protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.p5|.<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Delegate.setValue>#(this@R|/A|, ::R|/A.p5|, R|<local>/p5|)
+                this@R|/A|.D|/A.p5|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p5|, R|<local>/p5|)
             }
 
         protected open val p6: R|kotlin/Number|by R|/Delegate.Delegate|()

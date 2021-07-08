@@ -765,6 +765,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Visibility>("requiredVisibility")
             parameter<Visibility>("actualVisibility")
         }
+        val PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER by error<KtProperty>()
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
     }
 

@@ -431,6 +431,7 @@ object FirErrors {
     val REDUNDANT_GETTER_VISIBILITY_CHANGE by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val MORE_VISIBLE_GETTER_WITH_BODY by error0<KtPropertyAccessor>()
     val INCOMPLETE_PROPERTY_OVERRIDE by error2<KtDeclaration, Visibility, Visibility>()
+    val PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER by error0<KtProperty>()
     val ACCESSOR_FOR_DELEGATED_PROPERTY by error0<KtPropertyAccessor>()
 
     // Multi-platform projects

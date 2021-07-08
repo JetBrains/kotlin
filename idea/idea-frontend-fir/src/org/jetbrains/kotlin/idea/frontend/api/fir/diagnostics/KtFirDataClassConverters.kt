@@ -2153,6 +2153,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER) { firDiagnostic ->
+        PropertyWithDelegateAndPermissiveGetterImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY) { firDiagnostic ->
         AccessorForDelegatedPropertyImpl(
             firDiagnostic as FirPsiDiagnostic,

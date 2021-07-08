@@ -2455,6 +2455,13 @@ internal class IncompletePropertyOverrideImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class PropertyWithDelegateAndPermissiveGetterImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.PropertyWithDelegateAndPermissiveGetter(), KtAbstractFirDiagnostic<KtProperty> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class AccessorForDelegatedPropertyImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

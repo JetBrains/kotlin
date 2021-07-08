@@ -7,30 +7,39 @@ class Delegate {
     }
 }
 
+class NormalDelegatedProperty {
+    protected var p6 by Delegate()
+}
+
 open class A {
-    open protected var p1 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
-        public get(): Number
+    // when a property has both a delegate and a
+    // getter with a greater visibility, we get a
+    // no applicable candidates message, because
+    // the delegate's getter type differs from the
+    // property's getter return type
+    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p1 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+        public get(): Number<!>
 
-    open protected var p2 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
-        public get(): Number
+    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p2 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+        public get(): Number<!>
 
-    open protected var p3 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
-        public get(): Number
+    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p3 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+        public get(): Number<!>
 
-    open protected var p4 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
-        public get(): Number
+    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p4 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+        public get(): Number<!>
 
-    open protected var p5 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
-        public get(): Number
+    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p5 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+        public get(): Number<!>
 
-    open protected val p6 by Delegate()
-        public get(): Number
+    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected val p6 by Delegate()
+        public get(): Number<!>
 
-    open protected val p7 by Delegate()
-        public get(): Number
+    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected val p7 by Delegate()
+        public get(): Number<!>
 
-    open protected val p8 by Delegate()
-        public get(): Number
+    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected val p8 by Delegate()
+        public get(): Number<!>
 }
 
 class B : A() {
@@ -45,10 +54,7 @@ class B : A() {
 
     <!MUST_BE_INITIALIZED!>public override var p5<!> get() = super.p5
 
-    // without a delegate this resolves into
-    // and Int and the multiplication works
-    // but here we see UNRESOLVED_REFERENCE
-    public override val p6 get() = super.p6 * 2
+    public override val p6 get() = super.p6 <!UNRESOLVED_REFERENCE!>*<!> 2
 
     public override val p7 get() = 2
 
