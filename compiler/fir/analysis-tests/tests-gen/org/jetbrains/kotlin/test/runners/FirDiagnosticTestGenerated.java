@@ -5439,6 +5439,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("constructorOverrides.kt")
+                public void testConstructorOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/constructorOverrides.kt");
+                }
+
+                @Test
                 @TestMetadata("explicitType.kt")
                 public void testExplicitType() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/explicitType.kt");
@@ -5478,6 +5484,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 @TestMetadata("simpleGetters.kt")
                 public void testSimpleGetters() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/simpleGetters.kt");
+                }
+
+                @Test
+                @TestMetadata("superDelegation.kt")
+                public void testSuperDelegation() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/superDelegation.kt");
                 }
             }
         }

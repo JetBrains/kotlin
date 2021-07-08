@@ -2442,7 +2442,7 @@ internal class IncompletePropertyOverrideImpl(
     override val actualVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.IncompletePropertyOverride(), KtAbstractFirDiagnostic<KtProperty> {
+) : KtFirDiagnostic.IncompletePropertyOverride(), KtAbstractFirDiagnostic<KtDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 

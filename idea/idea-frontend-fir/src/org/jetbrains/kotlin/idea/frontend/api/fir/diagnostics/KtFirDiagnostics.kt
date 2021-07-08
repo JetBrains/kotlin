@@ -1506,7 +1506,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MoreVisibleGetterWithBody::class
     }
 
-    abstract class IncompletePropertyOverride : KtFirDiagnostic<KtProperty>() {
+    abstract class IncompletePropertyOverride : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = IncompletePropertyOverride::class
         abstract val requiredVisibility: Visibility
         abstract val actualVisibility: Visibility

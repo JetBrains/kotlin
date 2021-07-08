@@ -1,0 +1,94 @@
+FILE: constructorOverrides.kt
+    public open class Fun : R|kotlin/Any| {
+        public constructor(p1: R|kotlin/String| = String(something).<Unresolved name: public>#(<Unresolved name: get>#()), R|kotlin/Any|): R|Fun| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final val p1: R|kotlin/String| = R|<local>/p1|
+            protected get(): R|kotlin/String|
+
+    }
+    public open class C1 : R|kotlin/Any| {
+        public constructor(p1: R|kotlin/String| = String(something)): R|C1| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open val p1: R|kotlin/String| = R|<local>/p1|
+            protected get(): R|kotlin/String|
+
+        protected open val p2: R|kotlin/String| = String(something)
+            public get(): R|kotlin/Any|
+
+        protected open val p3: R|kotlin/String| = String(something)
+            public get(): R|kotlin/Any|
+
+        protected open val p4: R|kotlin/String| = String(something)
+            public get(): R|kotlin/Any|
+
+        protected open val p5: R|kotlin/String| = String(something)
+            public get(): R|kotlin/Any|
+
+        protected open val p6: R|kotlin/String| = String(something)
+            public get(): R|kotlin/Any|
+
+        protected open val p7: R|kotlin/String| = String(something)
+            public get(): R|kotlin/Any|
+
+        protected open val p8: R|kotlin/String| = String(something)
+            public get(): R|kotlin/Any|
+
+        protected open val p9: R|kotlin/String| = String(something)
+            public get(): R|kotlin/Any|
+
+    }
+    public final class C2 : R|C1| {
+        public constructor(p1: R|kotlin/String| = String(lol), p2: R|kotlin/String| = String(lol), p5: R|kotlin/String| = String(lol), p7: R|kotlin/String| = String(lol).<Unresolved name: public>#(<Unresolved name: get>#()), R|kotlin/Any|): R|C2| {
+            super<R|C1|>()
+        }
+
+        protected final override val p1: R|kotlin/String| = R|<local>/p1|
+            protected get(): R|kotlin/String|
+
+        protected final override val p2: R|kotlin/String| = R|<local>/p2|
+            protected get(): R|kotlin/String|
+
+        public final override val p5: R|kotlin/String| = R|<local>/p5|
+            public get(): R|kotlin/String|
+
+        protected final override val p7: R|kotlin/String| = R|<local>/p7|
+            protected get(): R|kotlin/String|
+
+        protected final override val p3: R|kotlin/String|
+            protected get(): R|kotlin/String| {
+                ^ String(lol)
+            }
+
+        protected final override val p4: R|kotlin/String| = String(lol)
+            protected get(): R|kotlin/String|
+
+        protected final override val p6: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(lol)
+            }
+
+        public final override val p8: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(lol)
+            }
+
+        protected final override val p9: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+
+    }
+    public final fun check(): R|kotlin/Unit| {
+        lval it: R|C2| = <Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /C2.C2>#(String(a), String(b), String(c), String(d))
+        R|kotlin/io/println|(R|<local>/it|.<HIDDEN: /C2.p1 is invisible>#.R|kotlin/String.length|)
+        R|kotlin/io/println|(R|<local>/it|.<HIDDEN: /C2.p2 is invisible>#.R|kotlin/String.length|)
+        R|kotlin/io/println|(R|<local>/it|.<HIDDEN: /C2.p3 is invisible>#.R|kotlin/String.length|)
+        R|kotlin/io/println|(R|<local>/it|.<HIDDEN: /C2.p4 is invisible>#.R|kotlin/String.length|)
+        R|kotlin/io/println|(R|<local>/it|.R|/C2.p5|.R|kotlin/String.length|)
+        R|kotlin/io/println|(R|<local>/it|.R|special/accessor|.R|kotlin/String.length|)
+        R|kotlin/io/println|(R|<local>/it|.<HIDDEN: /C2.p7 is invisible>#.R|kotlin/String.length|)
+        R|kotlin/io/println|(R|<local>/it|.R|/C2.p8|.R|kotlin/String.length|)
+        <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(R|<local>/it|.R|special/accessor|.<Unresolved name: length>#)
+    }

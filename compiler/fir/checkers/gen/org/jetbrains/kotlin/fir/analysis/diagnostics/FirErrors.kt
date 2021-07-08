@@ -429,7 +429,7 @@ object FirErrors {
     val REDUNDANT_GETTER_TYPE_CHANGE by warning2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
     val REDUNDANT_GETTER_VISIBILITY_CHANGE by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val MORE_VISIBLE_GETTER_WITH_BODY by error0<KtPropertyAccessor>()
-    val INCOMPLETE_PROPERTY_OVERRIDE by error2<KtProperty, Visibility, Visibility>()
+    val INCOMPLETE_PROPERTY_OVERRIDE by error2<KtDeclaration, Visibility, Visibility>()
     val ACCESSOR_FOR_DELEGATED_PROPERTY by error0<KtPropertyAccessor>()
 
     // Multi-platform projects
