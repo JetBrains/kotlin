@@ -15,12 +15,11 @@ fun check(expected: String, actual: KType) {
 }
 
 fun box(): String {
-    // String representation of platform types does not differ from non-nullable types in the stdlib implementation (without reflect).
-    check("java.lang.String", returnTypeOf { J.nullabilityFlexible() })
-    check("java.util.List<java.lang.String>", returnTypeOf { J.mutabilityFlexible() })
-    check("java.util.List<java.lang.String>", returnTypeOf { J.bothFlexible() })
+    check("java.lang.String!", returnTypeOf { J.nullabilityFlexible() })
+    check("java.util.List<java.lang.String!>", returnTypeOf { J.mutabilityFlexible() })
+    check("java.util.List<java.lang.String!>!", returnTypeOf { J.bothFlexible() })
 
-    // However, type flexibility affects equality! Platform type is neither nullable nor non-nullable.
+    // Type flexibility affects equality! Platform type is neither nullable nor non-nullable.
     val platform = returnTypeOf { J.nullabilityFlexible() }
     if (platform == returnTypeOf { J.nullable() }) return "Fail: platform type should not be equal to nullable type"
     if (platform == returnTypeOf { J.notNull() }) return "Fail: platform type should not be equal to non-nullable type"

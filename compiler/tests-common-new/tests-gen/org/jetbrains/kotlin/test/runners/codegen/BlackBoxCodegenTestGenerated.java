@@ -37480,6 +37480,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("primitiveJavaTypes.kt")
+            public void testPrimitiveJavaTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/primitiveJavaTypes.kt");
+            }
+
+            @Test
             @TestMetadata("rawTypes_after.kt")
             public void testRawTypes_after() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes_after.kt");
@@ -37562,6 +37568,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("nothing_before.kt")
                 public void testNothing_before() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_before.kt");
+                }
+
+                @Test
+                @TestMetadata("primitiveJavaTypes.kt")
+                public void testPrimitiveJavaTypes() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/primitiveJavaTypes.kt");
                 }
 
                 @Test

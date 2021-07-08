@@ -53,7 +53,22 @@ public class TypeReference /* @SinceKotlin("1.6") constructor */(
             else arguments.joinToString(", ", "<", ">") { it.asString() }
         val nullable = if (isMarkedNullable) "?" else ""
 
-        return klass + args + nullable
+        val result = klass + args + nullable
+
+        return when (val upper = platformTypeUpperBound) {
+            is TypeReference -> {
+                when (val renderedUpper = upper.asString(true)) {
+                    result -> {
+                        // Rendered upper bound can be the same as rendered lower bound in cases when the type is mutability-flexible,
+                        // but not nullability-flexible, since both MutableCollection and Collection are rendered as "java.util.Collection".
+                        result
+                    }
+                    "$result?" -> "$result!"
+                    else -> "($result..$renderedUpper)"
+                }
+            }
+            else -> result
+        }
     }
 
     private val Class<*>.arrayClassName

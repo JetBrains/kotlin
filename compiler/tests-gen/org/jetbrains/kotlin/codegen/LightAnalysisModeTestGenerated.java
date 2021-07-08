@@ -29840,6 +29840,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/typeOf/nothing_before.kt");
             }
 
+            @TestMetadata("primitiveJavaTypes.kt")
+            public void testPrimitiveJavaTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/primitiveJavaTypes.kt");
+            }
+
             @TestMetadata("rawTypes_after.kt")
             public void testRawTypes_after() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes_after.kt");
@@ -29918,6 +29923,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("nothing_before.kt")
                 public void testNothing_before() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_before.kt");
+                }
+
+                @TestMetadata("primitiveJavaTypes.kt")
+                public void testPrimitiveJavaTypes() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/primitiveJavaTypes.kt");
                 }
 
                 @TestMetadata("rawTypes_after.kt")

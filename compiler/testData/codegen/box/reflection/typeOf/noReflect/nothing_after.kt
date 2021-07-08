@@ -26,8 +26,7 @@ fun box(): String {
     check("test.C<kotlin.Nothing?>", typeOf<C<Nothing?>>())
     check("kotlin.Nothing?", nothingBound<Nothing?>())
 
-    // String representation of platform types does not differ from non-nullable types in the stdlib implementation (without reflect).
-    check("test.C<kotlin.Nothing>", returnTypeOf { C(J.platformType<Nothing>()) })
+    check("test.C<kotlin.Nothing!>", returnTypeOf { C(J.platformType<Nothing>()) })
 
     // Such type's classifier is still Void::class, until KT-15518 is fixed.
     // TODO: support a special KClass instance for Nothing (KT-15518).

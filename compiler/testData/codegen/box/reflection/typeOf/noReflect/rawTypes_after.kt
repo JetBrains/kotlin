@@ -18,10 +18,10 @@ fun check(expected: String, actual: KType) {
 class C<T, U : Number>
 
 fun box(): String {
-    check("test.C<java.lang.Object?, java.lang.Number>", returnTypeOf { J.raw() })
-    check("test.C<java.lang.Object?, java.lang.Number>", returnTypeOf { J.rawNotNull() })
-    check("java.util.List<java.lang.Object?>", returnTypeOf { J.rawList() })
-    check("java.util.Map<java.lang.Object?, java.lang.Object?>", returnTypeOf { J.rawNotNullMap() })
+    check("(test.C<java.lang.Object?, java.lang.Number>..test.C<*, *>?)", returnTypeOf { J.raw() })
+    check("(test.C<java.lang.Object?, java.lang.Number>..test.C<*, *>)", returnTypeOf { J.rawNotNull() })
+    check("(java.util.List<java.lang.Object?>..java.util.List<*>?)", returnTypeOf { J.rawList() })
+    check("(java.util.Map<java.lang.Object?, java.lang.Object?>..java.util.Map<*, *>)", returnTypeOf { J.rawNotNullMap() })
 
     return "OK"
 }
