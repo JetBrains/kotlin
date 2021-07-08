@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.context
 
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -18,11 +16,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.name.Name
 
-class PersistentCheckerContext private constructor(
+class MutableCheckerContext private constructor(
     override val implicitReceiverStack: PersistentImplicitReceiverStack,
-    override val containingDeclarations: PersistentList<FirDeclaration>,
-    override val qualifiedAccessOrAnnotationCalls: PersistentList<FirStatement>,
-    override val getClassCalls: PersistentList<FirGetClassCall>,
+    override val containingDeclarations: MutableList<FirDeclaration>,
+    override val qualifiedAccessOrAnnotationCalls: MutableList<FirStatement>,
+    override val getClassCalls: MutableList<FirGetClassCall>,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -32,9 +30,9 @@ class PersistentCheckerContext private constructor(
 ) : AbstractCheckerContext(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
-        persistentListOf(),
-        persistentListOf(),
-        persistentListOf(),
+        mutableListOf(),
+        mutableListOf(),
+        mutableListOf(),
         sessionHolder,
         returnTypeCalculator,
         persistentSetOf(),
@@ -43,8 +41,8 @@ class PersistentCheckerContext private constructor(
         allErrorsSuppressed = false
     )
 
-    override fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): PersistentCheckerContext {
-        return PersistentCheckerContext(
+    override fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): MutableCheckerContext {
+        return MutableCheckerContext(
             implicitReceiverStack.add(name, value),
             containingDeclarations,
             qualifiedAccessOrAnnotationCalls,
@@ -58,58 +56,31 @@ class PersistentCheckerContext private constructor(
         )
     }
 
-    override fun addDeclaration(declaration: FirDeclaration): PersistentCheckerContext {
-        return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations.add(declaration),
-            qualifiedAccessOrAnnotationCalls,
-            getClassCalls,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
-        )
+    override fun addDeclaration(declaration: FirDeclaration): MutableCheckerContext {
+        containingDeclarations.add(declaration)
+        return this
     }
 
     override fun dropDeclaration() {
+        containingDeclarations.removeAt(containingDeclarations.size - 1)
     }
 
-    override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): PersistentCheckerContext {
-        return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations,
-            this.qualifiedAccessOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall),
-            getClassCalls,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
-        )
+    override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): MutableCheckerContext {
+        qualifiedAccessOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall)
+        return this
     }
 
     override fun dropQualifiedAccessOrAnnotationCall() {
+        qualifiedAccessOrAnnotationCalls.removeAt(qualifiedAccessOrAnnotationCalls.size - 1)
     }
 
-    override fun addGetClassCall(getClassCall: FirGetClassCall): PersistentCheckerContext {
-        return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations,
-            qualifiedAccessOrAnnotationCalls,
-            getClassCalls.add(getClassCall),
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
-        )
+    override fun addGetClassCall(getClassCall: FirGetClassCall): MutableCheckerContext {
+        getClassCalls.add(getClassCall)
+        return this
     }
 
     override fun dropGetClassCall() {
+        getClassCalls.removeAt(getClassCalls.size - 1)
     }
 
     override fun addSuppressedDiagnostics(
@@ -117,9 +88,9 @@ class PersistentCheckerContext private constructor(
         allInfosSuppressed: Boolean,
         allWarningsSuppressed: Boolean,
         allErrorsSuppressed: Boolean
-    ): PersistentCheckerContext {
+    ): MutableCheckerContext {
         if (diagnosticNames.isEmpty()) return this
-        return PersistentCheckerContext(
+        return MutableCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
             qualifiedAccessOrAnnotationCalls,

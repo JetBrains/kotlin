@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollectorVisitor(
-    @set:PrivateForInline var context: PersistentCheckerContext,
+    @set:PrivateForInline var context: CheckerContext,
 ) : FirDefaultVisitor<Unit, Nothing?>() {
 
     protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
@@ -256,6 +256,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         try {
             return block()
         } finally {
+            existingContext.dropQualifiedAccessOrAnnotationCall()
             context = existingContext
         }
     }
@@ -268,6 +269,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         try {
             return block()
         } finally {
+            existingContext.dropGetClassCall()
             context = existingContext
         }
     }
@@ -280,6 +282,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         try {
             return block()
         } finally {
+            existingContext.dropDeclaration()
             context = existingContext
         }
     }

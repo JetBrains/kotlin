@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 abstract class BeforeElementDiagnosticCollectionHandler: FirSessionComponent {
     open fun beforeCollectingForElement(element: FirElement) {}
-    open fun beforeGoingNestedDeclaration(declaration: FirDeclaration, context: PersistentCheckerContext) {}
+    open fun beforeGoingNestedDeclaration(declaration: FirDeclaration, context: CheckerContext) {}
 }
 
 val FirSession.beforeElementDiagnosticCollectionHandler: BeforeElementDiagnosticCollectionHandler? by FirSession.nullableSessionComponentAccessor()

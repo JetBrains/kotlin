@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
@@ -42,7 +42,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
 
     private class Visitor(
         private val structureElementDeclaration: FirDeclaration,
-        context: PersistentCheckerContext,
+        context: CheckerContext,
         components: List<AbstractDiagnosticCollectorComponent>
     ) : FirIdeDiagnosticVisitor(context, components) {
         private var insideAlwaysVisitableDeclarations = 0

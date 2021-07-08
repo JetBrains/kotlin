@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.util
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -15,7 +14,7 @@ fun FirElement.checkChildrenWithCustomVisitor(
     parentContext: CheckerContext,
     visitorVoid: FirVisitor<Unit, CheckerContext>
 ) {
-    val collectingVisitor = object : AbstractDiagnosticCollectorVisitor(parentContext as PersistentCheckerContext) {
+    val collectingVisitor = object : AbstractDiagnosticCollectorVisitor(parentContext) {
         override fun checkElement(element: FirElement) {
             element.accept(visitorVoid, context)
         }

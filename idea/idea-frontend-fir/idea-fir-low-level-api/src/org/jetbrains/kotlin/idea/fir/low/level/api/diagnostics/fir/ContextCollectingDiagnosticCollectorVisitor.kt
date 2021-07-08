@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
@@ -24,8 +24,8 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
 ) : AbstractDiagnosticCollectorVisitor(
     PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(sessionHolder)
 ) {
-    private val contextCollector = object : ContextByDesignationCollector<PersistentCheckerContext>(designation) {
-        override fun getCurrentContext(): PersistentCheckerContext = context
+    private val contextCollector = object : ContextByDesignationCollector<CheckerContext>(designation) {
+        override fun getCurrentContext(): CheckerContext = context
 
         override fun goToNestedDeclaration(declaration: FirDeclaration) {
             declaration.accept(this@ContextCollectingDiagnosticCollectorVisitor, null)
@@ -43,7 +43,7 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     override fun checkElement(element: FirElement) {}
 
     companion object {
-        fun collect(sessionHolder: SessionHolder, designation: FirDeclarationDesignationWithFile): PersistentCheckerContext {
+        fun collect(sessionHolder: SessionHolder, designation: FirDeclarationDesignationWithFile): CheckerContext {
             val visitor = ContextCollectingDiagnosticCollectorVisitor(sessionHolder, designation)
             designation.firFile.accept(visitor, null)
             return visitor.contextCollector.getCollectedContext()
@@ -56,7 +56,7 @@ internal object PersistenceContextCollector {
         sessionHolder: SessionHolder,
         firFile: FirFile,
         declaration: FirDeclaration,
-    ): PersistentCheckerContext {
+    ): CheckerContext {
         val isLocal = when (declaration) {
             is FirClassLikeDeclaration -> declaration.symbol.classId.isLocal
             is FirCallableDeclaration -> declaration.symbol.callableId.isLocal

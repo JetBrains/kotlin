@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.name.Name
 
 abstract class CheckerContext {
     // Services
@@ -41,7 +43,21 @@ abstract class CheckerContext {
         allInfosSuppressed: Boolean,
         allWarningsSuppressed: Boolean,
         allErrorsSuppressed: Boolean
-    ): PersistentCheckerContext
+    ): CheckerContext
+
+    abstract fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): CheckerContext
+
+    abstract fun addDeclaration(declaration: FirDeclaration): CheckerContext
+
+    abstract fun dropDeclaration()
+
+    abstract fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): CheckerContext
+
+    abstract fun dropQualifiedAccessOrAnnotationCall()
+
+    abstract fun addGetClassCall(getClassCall: FirGetClassCall): CheckerContext
+
+    abstract fun dropGetClassCall()
 
     fun isDiagnosticSuppressed(diagnostic: FirDiagnostic): Boolean {
         val factory = diagnostic.factory

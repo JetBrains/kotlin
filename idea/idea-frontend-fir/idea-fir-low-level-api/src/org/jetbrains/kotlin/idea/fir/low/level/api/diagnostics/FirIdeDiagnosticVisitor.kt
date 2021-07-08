@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 
 internal open class FirIdeDiagnosticVisitor(
-    context: PersistentCheckerContext,
+    context: CheckerContext,
     components: List<AbstractDiagnosticCollectorComponent>,
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
     private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler

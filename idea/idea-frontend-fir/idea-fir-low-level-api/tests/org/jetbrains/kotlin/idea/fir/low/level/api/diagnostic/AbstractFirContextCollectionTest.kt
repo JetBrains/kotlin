@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic
 
-import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
+import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
@@ -68,7 +67,7 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         lateinit var elementsToCheckContext: List<FirDeclaration>
         lateinit var firFile: FirFile
 
-        override fun beforeGoingNestedDeclaration(declaration: FirDeclaration, context: PersistentCheckerContext) {
+        override fun beforeGoingNestedDeclaration(declaration: FirDeclaration, context: CheckerContext) {
             if (declaration is FirFile) {
                 return
             }
@@ -82,15 +81,15 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
             }
         }
 
-        private fun compareStructurally(expected: PersistentCheckerContext, actual: PersistentCheckerContext) {
+        private fun compareStructurally(expected: CheckerContext, actual: CheckerContext) {
             assertions.assertEquals(expected.implicitReceiverStack.asString(), actual.implicitReceiverStack.asString())
             assertions.assertEquals(expected.containingDeclarations.asString(), actual.containingDeclarations.asString())
         }
 
-        private fun PersistentImplicitReceiverStack.asString() =
+        private fun ImplicitReceiverStack.asString() =
             joinToString { it.boundSymbol.name() }
 
-        private fun PersistentList<FirDeclaration>.asString() =
+        private fun List<FirDeclaration>.asString() =
             joinToString(transform = FirDeclaration::name)
     }
 }

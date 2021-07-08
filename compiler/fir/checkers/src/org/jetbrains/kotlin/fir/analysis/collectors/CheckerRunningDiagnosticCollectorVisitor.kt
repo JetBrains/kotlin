@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 
 open class CheckerRunningDiagnosticCollectorVisitor(
-    context: PersistentCheckerContext,
+    context: CheckerContext,
     protected val components: List<AbstractDiagnosticCollectorComponent>
 ) : AbstractDiagnosticCollectorVisitor(context) {
 
