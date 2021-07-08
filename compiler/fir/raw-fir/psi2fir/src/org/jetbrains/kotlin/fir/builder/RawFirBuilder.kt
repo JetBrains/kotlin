@@ -866,7 +866,7 @@ open class RawFirBuilder(
                     isInner = classOrObject.hasModifier(INNER_KEYWORD)
                     isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
                     isData = classOrObject.hasModifier(DATA_KEYWORD)
-                    isInline = classOrObject.hasModifier(INLINE_KEYWORD)
+                    isInline = classOrObject.hasModifier(INLINE_KEYWORD) || classOrObject.hasModifier(VALUE_KEYWORD)
                     isFun = classOrObject.hasModifier(FUN_KEYWORD)
                     isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                 }

@@ -23,7 +23,7 @@ open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
                 setFlag(ModifierFlag.PROPERTY_CONST)
                 setFlag(ModifierFlag.PARAMETER_CONST)
             }
-            KtTokens.INLINE_KEYWORD -> {
+            KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD -> {
                 setFlag(if (isInClass) ModifierFlag.CLASS_INLINE else ModifierFlag.FUNCTION_INLINE)
             }
             else -> {
