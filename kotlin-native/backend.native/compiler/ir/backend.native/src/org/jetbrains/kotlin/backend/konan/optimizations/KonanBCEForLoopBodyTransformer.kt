@@ -37,7 +37,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
 
     private var analysisResult: BoundsCheckAnalysisResult = BoundsCheckAnalysisResult(false, null)
 
-    override fun transform(context: CommonBackendContext, irExpression: IrExpression, loopVariable: IrVariable,
+    override fun transform(context: CommonBackendContext, loopBody: IrExpression, loopVariable: IrVariable,
                            forLoopHeader: ForLoopHeader, loopComponents: Map<Int, IrVariable>) {
         this.context = context
         mainLoopVariable = loopVariable
@@ -45,7 +45,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         loopVariableComponents = loopComponents
         analysisResult = analyzeLoopHeader(loopHeader)
         if (analysisResult.boundsAreSafe && analysisResult.arrayInLoop != null)
-            irExpression.transformChildrenVoid(this)
+            loopBody.transformChildrenVoid(this)
     }
 
     private inline fun IrGetValue.compareConstValue(compare: (IrExpression) -> Boolean): Boolean {
@@ -55,7 +55,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         } else false
     }
 
-    private inline fun IrExpression.compareIntegerNumericConst(compare: (Long) -> Boolean): Boolean {
+    private fun IrExpression.compareIntegerNumericConst(compare: (Long) -> Boolean): Boolean {
         @Suppress("UNCHECKED_CAST")
         return when (this) {
             is IrConst<*> -> value is Number && compare((value as Number).toLong())
@@ -64,7 +64,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         }
     }
 
-    private inline fun IrExpression.compareFloatNumericConst(compare: (Double) -> Boolean): Boolean {
+    private fun IrExpression.compareFloatNumericConst(compare: (Double) -> Boolean): Boolean {
         @Suppress("UNCHECKED_CAST")
         return when (this) {
             is IrConst<*> -> value is Number && compare((value as Number).toDouble())
@@ -109,7 +109,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         }
     }
 
-    private inline fun checkIrCallCondition(expression: IrExpression, condition: (IrCall) -> BoundsCheckAnalysisResult): BoundsCheckAnalysisResult =
+    private fun checkIrCallCondition(expression: IrExpression, condition: (IrCall) -> BoundsCheckAnalysisResult): BoundsCheckAnalysisResult =
             when (expression) {
                 is IrCall -> condition(expression)
                 is IrGetValue -> checkIrGetValue(expression) { valueInitializer -> checkIrCallCondition(valueInitializer, condition) }

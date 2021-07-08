@@ -96,6 +96,16 @@ import kotlin.test.*
         }
     }
 
+    var a = array.size - 1
+    val b = ++a
+    val c = b
+
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (i in c downTo 0) {
+            array[i] = 6
+        }
+    }
+
     assertFailsWith<ArrayIndexOutOfBoundsException> {
         for (i in array.size + 1 downTo 0) {
             array[i] = 6
@@ -124,6 +134,14 @@ import kotlin.test.*
         for (i in 0..array.size - 1) {
             array[j] = 6
             j++
+        }
+    }
+
+    var length = array.size - 1
+    length = 2 * length
+    assertFailsWith<ArrayIndexOutOfBoundsException> {
+        for (i in 0..length) {
+            array[i] = 6
         }
     }
 
@@ -371,5 +389,80 @@ import kotlin.test.*
         for (i in (array.size downTo 0).reversed()) {
             array[i] = 6
         }
+    }
+}
+
+fun foo(a: Int, b : Int): Int = a + b * 2
+
+@Test fun bceCases() {
+    val array = Array(10) { 100 }
+    val array1 = Array(3) { 0 }
+    var length = array.size  - 1
+    var sum = 0
+
+    array.forEach {
+        sum += it
+    }
+
+    for (i in array.indices) {
+        array[i] = 6
+    }
+
+    for (i in 0 until array.size) {
+        array[i] = 7
+    }
+
+    for (i in array.size - 1 downTo 1) {
+        array[i] = 7
+    }
+
+    for (it in array) {
+        sum += it
+    }
+
+    for (i in 0..array.size - 1 step 2) {
+        array[i] = 7
+    }
+
+    for (i in 0 until array.size step 2) {
+        array[i] = 7
+    }
+
+    for (i in array.indices step 2) {
+        array[i] = 6
+    }
+
+    for (i in array.size - 1 downTo 1 step 2) {
+        array[i] = 7
+    }
+
+    for ((index, value) in array.withIndex()) {
+        array[index] = 8
+    }
+
+    for ((i, v) in (0..array.size - 1 step 2).withIndex()) {
+        array[v] = 8
+        array[i] = 6
+    }
+    for (i in array.reversed()) {
+        sum += i
+    }
+
+    for (i in (0..array.size-1).reversed()) {
+        array [i] = 10
+    }
+
+    for (i in 0 until array.size) {
+        array[i] = 7
+        for (j in 0 until array1.size) {
+            array1[j] = array[i]
+        }
+    }
+
+    val size = array.size - 1
+    val size1 = size
+
+    for (i in 0..size1) {
+        foo(array[i], array[i])
     }
 }

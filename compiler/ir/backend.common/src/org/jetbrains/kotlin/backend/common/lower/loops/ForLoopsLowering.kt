@@ -118,7 +118,7 @@ abstract class ForLoopBodyTransformer : IrElementTransformerVoid() {
 
     abstract fun transform(
         context: CommonBackendContext,
-        irExpression: IrExpression,
+        loopBody: IrExpression,
         loopVariable: IrVariable,
         forLoopHeader: ForLoopHeader,
         loopComponents: Map<Int, IrVariable>
