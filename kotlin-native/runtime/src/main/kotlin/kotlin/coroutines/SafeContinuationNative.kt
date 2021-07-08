@@ -6,6 +6,7 @@
 package kotlin.coroutines
 
 import kotlin.*
+import kotlin.native.concurrent.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons.*
 import kotlin.coroutines.intrinsics.*
 
@@ -22,26 +23,28 @@ internal actual constructor(
     public actual override val context: CoroutineContext
         get() = delegate.context
 
-    private var result: Any? = initialResult
+    private var resultRef = FreezableAtomicReference<Any?>(initialResult)
 
     public actual override fun resumeWith(result: Result<T>) {
-        val cur = this.result
-        when {
-            cur === UNDECIDED -> this.result = result.value
-            cur === COROUTINE_SUSPENDED -> {
-                this.result = RESUMED
-                delegate.resumeWith(result)
+        while (true) {
+            val cur = resultRef.value
+            when {
+                cur === UNDECIDED -> if (resultRef.compareAndSet(UNDECIDED, result.value)) return
+                cur === COROUTINE_SUSPENDED -> if (resultRef.compareAndSet(COROUTINE_SUSPENDED, RESUMED)) {
+                    delegate.resumeWith(result)
+                    return
+                }
+                else -> throw IllegalStateException("Already resumed")
             }
-            else -> throw IllegalStateException("Already resumed")
         }
     }
 
     @PublishedApi
     internal actual fun getOrThrow(): Any? {
-        val result = this.result
+        var result = resultRef.value
         if (result === UNDECIDED) {
-            this.result = COROUTINE_SUSPENDED
-            return COROUTINE_SUSPENDED
+            if (resultRef.compareAndSet(UNDECIDED, COROUTINE_SUSPENDED)) return COROUTINE_SUSPENDED
+            result = resultRef.value
         }
         return when {
             result === RESUMED -> COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
