@@ -103,6 +103,8 @@ inline fun <reified R : Number> Number.invalidNarrowing(): R {
 }
 
 fun loadKonanLibrary(name: String) {
+    if (System.getenv("KONAN_JNI") == null) TODO("no JNI")
+
     try {
         System.loadLibrary(name)
     } catch (e: UnsatisfiedLinkError) {

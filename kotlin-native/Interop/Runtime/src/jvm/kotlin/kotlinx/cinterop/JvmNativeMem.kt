@@ -40,6 +40,11 @@ internal val pointerSize: Int = dataModel.pointerSize.toInt()
 
 @PublishedApi
 internal object nativeMemUtils {
+
+	init {
+		if (System.getenv("KONAN_UNSAFE") == null) TODO("no unsafe")
+	}
+
     fun getByte(mem: NativePointed) = unsafe.getByte(mem.address)
     fun putByte(mem: NativePointed, value: Byte) = unsafe.putByte(mem.address, value)
 
