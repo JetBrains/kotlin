@@ -113,6 +113,7 @@ class JavaSymbolProvider(
         return FirTypeParameterBuilder().apply {
             moduleData = this@JavaSymbolProvider.baseModuleData
             origin = FirDeclarationOrigin.Java
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.name = this@toFirTypeParameter.name
             symbol = firSymbol
             variance = INVARIANT

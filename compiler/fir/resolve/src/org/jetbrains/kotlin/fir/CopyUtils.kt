@@ -122,6 +122,7 @@ fun FirTypeParameter.copy(
 ): FirTypeParameter {
     return buildTypeParameter {
         source = this@copy.source
+        resolvePhase = this@copy.resolvePhase
         moduleData = this@copy.moduleData
         name = this@copy.name
         symbol = this@copy.symbol

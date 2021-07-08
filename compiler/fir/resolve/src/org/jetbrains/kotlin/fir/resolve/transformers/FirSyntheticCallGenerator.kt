@@ -224,6 +224,7 @@ class FirSyntheticCallGenerator(
             buildTypeParameter {
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Library
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 name = Name.identifier("K")
                 symbol = typeParameterSymbol
                 variance = Variance.INVARIANT

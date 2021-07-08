@@ -136,6 +136,7 @@ class FirSamResolverImpl(
                 source = declaredTypeParameter.source
                 moduleData = firSession.moduleData
                 origin = FirDeclarationOrigin.SamConstructor
+                resolvePhase = FirResolvePhase.DECLARATIONS
                 name = declaredTypeParameter.name
                 this.symbol = FirTypeParameterSymbol()
                 variance = Variance.INVARIANT

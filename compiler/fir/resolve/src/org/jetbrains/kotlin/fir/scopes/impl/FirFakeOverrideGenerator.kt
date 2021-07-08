@@ -480,6 +480,7 @@ object FirFakeOverrideGenerator {
                 source = typeParameter.source
                 moduleData = typeParameter.moduleData
                 origin = FirDeclarationOrigin.SubstitutionOverride
+                resolvePhase = FirResolvePhase.DECLARATIONS
                 name = typeParameter.name
                 symbol = FirTypeParameterSymbol()
                 variance = typeParameter.variance
