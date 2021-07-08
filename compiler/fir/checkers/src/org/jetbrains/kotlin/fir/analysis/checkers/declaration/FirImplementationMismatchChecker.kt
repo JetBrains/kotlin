@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
@@ -102,8 +101,18 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         }
 
         val intersectionSymbols = when {
-            symbol.fir.delegatedWrapperData != null ->
-                classScope.getDirectOverriddenMembers(symbol) + symbol
+            //substitution override means simple materialization of single method, so nothing to check
+            symbol.fir.isSubstitutionOverride -> return
+            symbol.fir.delegatedWrapperData != null -> {
+                val allOverridden = classScope.getDirectOverriddenMembers(symbol)
+                //if there is intersection override - take its intersections - they will contain all substitutions
+                //otherwise we get base members with unsubstituted params too
+                val cleared = allOverridden.find { it is FirIntersectionCallableSymbol }?.let {
+                    (it as FirIntersectionCallableSymbol).intersections
+                } ?: allOverridden
+                //current symbol needs to be added, because basically it is the implementation
+                cleared + symbol
+            }
             symbol is FirIntersectionCallableSymbol && symbol.callableId.classId == containingClass.classId ->
                 symbol.intersections
             else -> return
