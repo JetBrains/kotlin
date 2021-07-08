@@ -229,7 +229,13 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             code = "df.fil"
             cursor = 6
             expect {
-                addCompletion("filter { ", "filter(Line_1_simplescript.AClass.() -> ...", "Line_1_simplescript.AClass", "method")
+                completions.check { actual ->
+                    assertEquals(
+                        SourceCodeCompletionVariant(
+                            "filter { ", "filter(Line_1_simplescript.AClass.() -> ...", "Line_1_simplescript.AClass", "method"
+                        ), actual.single { it.tail != "keyword" }
+                    )
+                }
             }
         }
     }
