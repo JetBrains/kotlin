@@ -4,7 +4,7 @@
 
 import kotlin.experimental.ExperimentalTypeInference
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <R> build(
     @BuilderInference block: TestInterface<R>.() -> Unit
 ): R = TODO()

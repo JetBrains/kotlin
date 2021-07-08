@@ -32,7 +32,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         val argument = expression.argument
         if (argument is FirResolvedQualifier) {
             val fqName = argument.classId?.asSingleFqName()
-            if (fqName in OptInNames.EXPERIMENTAL_FQ_NAMES || fqName in OptInNames.USE_EXPERIMENTAL_FQ_NAMES) {
+            if (fqName == OptInNames.REQUIRES_OPT_IN_FQ_NAME || fqName == OptInNames.OPT_IN_FQ_NAME) {
                 reporter.reportOn(argument.source, FirErrors.EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, context)
             }
         }

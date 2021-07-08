@@ -1,6 +1,6 @@
 package
 
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R> build(/*0*/ @kotlin.BuilderInference block: TestInterface<R>.() -> kotlin.Unit): R
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R> build(/*0*/ @kotlin.BuilderInference block: TestInterface<R>.() -> kotlin.Unit): R
 public fun </*0*/ U> id(/*0*/ x: U): U
 public fun test(): kotlin.Unit
 

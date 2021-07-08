@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: api.kt
 
 @<!EXPERIMENTAL_IS_NOT_ENABLED!>RequiresOptIn<!>

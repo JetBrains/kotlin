@@ -10,7 +10,7 @@ interface TestInterface<R> {
     fun get(): R
 }
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <R1> build(@BuilderInference block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 fun Any.test() {}

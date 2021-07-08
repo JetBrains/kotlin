@@ -1,4 +1,4 @@
-fun <T> foo(@BuilderInference block: MutableList<T>.() -> Unit): T = null!!
+fun <T> foo(@<!EXPERIMENTAL_API_USAGE_ERROR!>BuilderInference<!> block: MutableList<T>.() -> Unit): T = null!!
 
 fun takeString(s: String) {}
 

@@ -2,9 +2,9 @@
 
 fun main() {
     val list = listOf(A())
-    list.forEach(A::foo)
+    list.forEach(A::<!EXPERIMENTAL_API_USAGE_ERROR!>foo<!>)
     list.forEach {
-        it.foo()
+        it.<!EXPERIMENTAL_API_USAGE_ERROR!>foo<!>()
     }
 }
 

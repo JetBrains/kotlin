@@ -1,7 +1,7 @@
 package
 
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1> build(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R2> build2(/*0*/ @kotlin.BuilderInference block: TestInterface<R2>.() -> kotlin.Unit): R2
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1> build(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R2> build2(/*0*/ @kotlin.BuilderInference block: TestInterface<R2>.() -> kotlin.Unit): R2
 public fun </*0*/ U> id(/*0*/ x: U): U?
 public fun </*0*/ E> select1(/*0*/ x: E, /*1*/ y: Inv<E>): E?
 public fun </*0*/ E> select2(/*0*/ x: E, /*1*/ y: Inv<E?>): E

@@ -12,5 +12,6 @@ object CommonTypeCheckers : TypeCheckers() {
         FirTypeAnnotationChecker,
         FirSuspendModifierChecker,
         FirDeprecatedTypeChecker,
+        FirOptInUsageTypeRefChecker,
     )
 }

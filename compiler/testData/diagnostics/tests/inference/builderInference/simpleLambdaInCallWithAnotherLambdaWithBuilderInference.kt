@@ -3,7 +3,7 @@
 
 import kotlin.experimental.ExperimentalTypeInference
 
-@UseExperimental(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 fun <R> combined(
     check: () -> Unit,
     @BuilderInference block: TestInterface<R>.() -> Unit

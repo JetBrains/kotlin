@@ -57,6 +57,7 @@ class ValueParameter(
             initializer = buildQualifiedAccessExpression {
                 source = propertySource
                 calleeReference = buildPropertyFromParameterResolvedNamedReference {
+                    source = propertySource
                     this.name = name
                     resolvedSymbol = this@ValueParameter.firValueParameter.symbol
                     source = propertySource

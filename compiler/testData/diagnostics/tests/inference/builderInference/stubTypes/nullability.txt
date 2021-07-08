@@ -1,9 +1,9 @@
 package
 
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1> build(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1 : kotlin.Any> build2(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1 : R2, /*1*/ R2 : kotlin.Any> build3(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1 : R2, /*1*/ R2> build4(/*0*/ x: R2, /*1*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1> build(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1 : kotlin.Any> build2(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1 : R2, /*1*/ R2 : kotlin.Any> build3(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1 : R2, /*1*/ R2> build4(/*0*/ x: R2, /*1*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
 public fun test(/*0*/ a: kotlin.String?): kotlin.Unit
 
 public interface TestInterface</*0*/ R> {

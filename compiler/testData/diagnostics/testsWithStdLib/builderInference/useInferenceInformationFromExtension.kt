@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// ALLOW_KOTLIN_PACKAGE
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 

@@ -2,7 +2,7 @@ interface KtScope {
     fun getAllNames(): Set<String>
 }
 
-inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
+inline fun <E> buildSet(@<!EXPERIMENTAL_API_USAGE_ERROR!>BuilderInference<!> builderAction: MutableSet<E>.() -> Unit): Set<E> {
     return null!!
 }
 
