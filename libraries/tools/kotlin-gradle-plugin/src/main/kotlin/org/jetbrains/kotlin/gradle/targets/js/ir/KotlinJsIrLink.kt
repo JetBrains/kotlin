@@ -324,7 +324,7 @@ internal class CacheBuilder(
                 emptyList(),
                 compilerArgs,
                 environment
-            )
+            )?.await()
     }
 
     companion object {
