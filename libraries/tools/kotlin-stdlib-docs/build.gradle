@@ -1,0 +1,62 @@
+plugins {
+    id "de.undercouch.download" version "4.1.1"
+    id "base"
+}
+
+evaluationDependsOnChildren()
+
+
+configurations {
+    dokka
+}
+
+final String dokka_version = "0.10.2-SNAPSHOT"
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    dokka "org.jetbrains.dokka:dokka-fatjar:$dokka_version"
+}
+
+final File dokkaHome = new File(buildDir, "dokka-home")
+task setupDokka(type: Sync) {
+    from configurations.dokka
+    into dokkaHome
+}
+
+def pAnt() { return project('ant').extensions }
+def pKotlinBig() { return project('kotlin_big').extensions }
+def pKotlinNative() { return project('kotlin_native').extensions }
+
+task setupCallDokka() {
+    dependsOn setupDokka
+    dependsOn project('ant').tasks.getByName('extractAnt')
+    dependsOn project('kotlin_big').tasks.getByName('extractLibs')
+}
+
+task callDokka(type: Exec, dependsOn: setupCallDokka) {
+    workingDir = projectDir
+    // -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005
+    environment("ANT_OPTS", "-Xmx3G")
+    environment("JAVA_HOME", System.getProperty("java.home"))
+    doFirst {
+        def logFile = file("$buildDir/dokka.log")
+        standardOutput = new org.apache.tools.ant.util.TeeOutputStream(System.out, new FileOutputStream(logFile))
+    }
+}
+
+setupCallDokka.doLast {
+
+    callDokka.commandLine = [
+            pAnt().ant_exe.path,
+            "-f", file("build-docs.xml").path,
+            "v2",
+            "-Dgithub_revision=${pKotlinBig().github_revision}",
+            "-Dkotlin_root=${pKotlinBig().kotlin_root}",
+            "-Dkotlin_libs=${pKotlinBig().kotlin_libs}",
+            "-Dkotlin_native_root=${pKotlinNative().kotlin_native_root}",
+            "-Dkotlin_native_libs=${pKotlinNative().kotlin_native_libs}",
+    ]
+}

@@ -74,7 +74,7 @@ class IrLazyProperty(
 
     override var overriddenSymbols: List<IrPropertySymbol> by lazyVar(stubGenerator.lock) {
         descriptor.overriddenDescriptors.mapTo(ArrayList()) {
-            stubGenerator.generatePropertyStub(it).symbol
+            stubGenerator.generatePropertyStub(it.original).symbol
         }
     }
 

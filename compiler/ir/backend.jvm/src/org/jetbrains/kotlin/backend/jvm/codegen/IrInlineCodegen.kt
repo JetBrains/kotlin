@@ -259,7 +259,12 @@ class IrDefaultLambda(
                 // Non-suspend function references and lambdas: `(A) -> B` => `invoke(A): B`
                 // Suspend function references: `suspend (A) -> B` => `invoke(A, Continuation<B>): Any?`
                 // TODO: default suspend lambdas are currently uninlinable
-                it.mapTo(mutableListOf()) { argument -> (argument as IrTypeProjection).type }.apply {
+                it.mapTo(mutableListOf()) {
+                    when (it) {
+                        is IrTypeProjection -> it.type
+                        else -> context.irBuiltIns.anyNType
+                    }
+                }.apply {
                     if (irValueParameter.type.isSuspendFunction()) {
                         set(size - 1, context.ir.symbols.continuationClass.typeWith(get(size - 1)))
                         add(context.irBuiltIns.anyNType)

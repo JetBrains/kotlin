@@ -9404,6 +9404,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("isAsOperators.kt")
+            public void testIsAsOperators() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/isAsOperators.kt");
+            }
+
+            @Test
+            @TestMetadata("isAsOperatorsEnabled.kt")
+            public void testIsAsOperatorsEnabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/isAsOperatorsEnabled.kt");
+            }
+
+            @Test
             @TestMetadata("notApplicable.kt")
             public void testNotApplicable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/notApplicable.kt");
@@ -12405,6 +12417,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("kt46515.kt")
             public void testKt46515() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt46515.kt");
+            }
+
+            @Test
+            @TestMetadata("kt47316.kt")
+            public void testKt47316() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt47316.kt");
             }
 
             @Test
@@ -19282,6 +19300,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt47447.kt")
+            public void testKt47447() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/kt47447.kt");
+            }
+
+            @Test
             @TestMetadata("literalReceiverWithIntegerValueType.kt")
             public void testLiteralReceiverWithIntegerValueType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/literalReceiverWithIntegerValueType.kt");
@@ -21188,6 +21212,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("interClassesRecursion.kt")
                 public void testInterClassesRecursion() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/interClassesRecursion.kt");
+                }
+
+                @Test
+                @TestMetadata("intermediateRecursion.kt")
+                public void testIntermediateRecursion() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/intermediateRecursion.kt");
+                }
+
+                @Test
+                @TestMetadata("kt47459.kt")
+                public void testKt47459() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/kt47459.kt");
                 }
 
                 @Test

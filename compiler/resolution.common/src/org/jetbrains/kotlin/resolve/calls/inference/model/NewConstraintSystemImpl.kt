@@ -386,7 +386,7 @@ class NewConstraintSystemImpl(
         }
         val constraintErrors = constraintSystem.errors.filterIsInstance<NewConstraintError>()
         // Don't report warning if an error on the same call has already been reported
-        if (constraintErrors.isEmpty() || constraintErrors.all { it.isWarning }) {
+        if (constraintErrors.isEmpty()) {
             errorsByMissedConstraints.forEach {
                 constraintSystem.addError(it.transformToWarning())
             }
