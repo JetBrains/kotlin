@@ -324,8 +324,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
             ":prepare:ide-plugin-dependencies:high-level-api-for-ide",
             ":prepare:ide-plugin-dependencies:high-level-api-fir-for-ide",
-            ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-scripting-ide-common-for-ide"
+            ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide"
 }
 
 void kotlinIde(String imlPath) {
