@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
@@ -26,6 +27,9 @@ class ResultTypeResolver(
         fun isReified(variable: TypeVariableMarker): Boolean
     }
 
+    private val isTypeInferenceForSelfTypesSupported: Boolean
+        get() = languageVersionSettings.supportsFeature(LanguageFeature.TypeInferenceOnCallsWithSelfTypes)
+
     private fun Context.getDefaultTypeForSelfType(
         constraints: List<Constraint>,
         typeVariable: TypeVariableMarker
@@ -46,7 +50,9 @@ class ResultTypeResolver(
         constraints: List<Constraint>,
         typeVariable: TypeVariableMarker
     ): KotlinTypeMarker {
-        getDefaultTypeForSelfType(constraints, typeVariable)?.let { return it }
+        if (isTypeInferenceForSelfTypesSupported) {
+            getDefaultTypeForSelfType(constraints, typeVariable)?.let { return it }
+        }
 
         return if (direction == ResolveDirection.TO_SUBTYPE) nothingType() else nullableAnyType()
     }
