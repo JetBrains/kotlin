@@ -482,7 +482,9 @@ class ExpressionCodegen(
         expression.symbol.owner.valueParameters.forEachIndexed { i, irParameter ->
             val arg = expression.getValueArgument(i)
             val parameterType = callable.valueParameterTypes[i]
-            require(arg != null) { "Null argument in ExpressionCodegen for parameter ${irParameter.render()}" }
+            require(arg != null) {
+                "Null argument in ExpressionCodegen for parameter ${irParameter.render()}"
+            }
             callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
         }
 
