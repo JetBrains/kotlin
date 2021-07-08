@@ -16,13 +16,14 @@ repositories {
 
 dependencies {
     testCompileOnly(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", "jna", rootProject = rootProject)
+        includeJars("extensions", "idea_rt", "util", "asm-all", "jna", rootProject = rootProject)
     }
 
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
-    testRuntimeOnly(intellijPluginDep("java"))
 
+    testRuntimeOnly("xerces:xercesImpl:2.12.0")
     testRuntimeOnly(intellijDep())
+    testRuntimeOnly(intellijPluginDep("java"))
 
     testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))

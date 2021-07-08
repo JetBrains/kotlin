@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.util.io.delete
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -242,7 +241,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         val resultTime = manager.reportCumulativeTime()
         PerformanceCounter.resetAllCounters()
 
-        tmp.delete(recursively = true)
+        tmp.toFile().deleteRecursively()
         if (result == ExitCode.OK) {
             totalPassResult += resultTime
         }
