@@ -8,7 +8,7 @@ class Y<TItem>(val itemToString: (TItem) -> String){
 }
 
 fun <TItem> bar(context : Y<TItem>) : TItem{
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun foo(){
     val stringToString : (String) -> String = { it }

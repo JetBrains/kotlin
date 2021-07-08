@@ -9,7 +9,7 @@ fun foo() : Int {
         <!ELSE_MISPLACED_IN_WHEN!>else<!> -> { z = -1000 }
         return z -> 34
     }
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 //test unreachable code
 fun fff(): Int {

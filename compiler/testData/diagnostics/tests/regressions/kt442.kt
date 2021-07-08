@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-442 Type inference fails on with()
 
 fun <T> funny(f : () -> T) : T = f()

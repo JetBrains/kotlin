@@ -33,4 +33,4 @@ fun <T: Foo<<!UNRESOLVED_REFERENCE!>String.Bar<!>>> x() {}
 fun Foo<String>.Bar.ext() {}
 
 fun ex1(a: Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar<String>): Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar<String> {
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

@@ -24,4 +24,4 @@ abstract class Buggy {
 }
 
 //from library
-fun <T: Any> Iterable<T>.find(predicate: (T) -> Boolean) : T? {}
+fun <T: Any> Iterable<T>.find(predicate: (T) -> Boolean) : T? {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

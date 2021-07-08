@@ -2,7 +2,7 @@ fun <T> simpleRun(f: (T) -> Unit): Unit = f(<!RETURN_IN_FUNCTION_WITH_EXPRESSION
 
 fun <T, R> List<T>.simpleMap(f: (T) -> R): R {
 
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun <T> simpleWith(t: T, f: T.() -> Unit): Unit = t.f()
 

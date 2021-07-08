@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
@@ -1962,6 +1963,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ReturnInFunctionWithExpressionBody : KtFirDiagnostic<KtReturnExpression>() {
         override val diagnosticClass get() = ReturnInFunctionWithExpressionBody::class
+    }
+
+    abstract class NoReturnInFunctionWithBlockBody : KtFirDiagnostic<KtDeclarationWithBody>() {
+        override val diagnosticClass get() = NoReturnInFunctionWithBlockBody::class
     }
 
     abstract class UsageIsNotInlinable : KtFirDiagnostic<KtElement>() {

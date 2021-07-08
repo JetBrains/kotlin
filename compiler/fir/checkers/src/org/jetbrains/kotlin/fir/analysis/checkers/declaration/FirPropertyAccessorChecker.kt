@@ -56,6 +56,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
                     reporter.reportOn(getterReturnTypeSource, FirErrors.WRONG_GETTER_RETURN_TYPE, propertyType, getterReturnType, context)
                 }
             }
+//            FirFunctionReturnChecker.checkHasReturnIfBlock(getter, reporter, context)
         }
     }
 

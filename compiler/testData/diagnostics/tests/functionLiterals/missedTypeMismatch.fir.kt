@@ -18,13 +18,13 @@ fun main() {
     val a6: () -> Int = (fun() = 1)
     val a7: () -> Int = (fun(): String = "1") as () -> Int
     val a8: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun(): String = "1"<!>
-    val a9: () -> () -> () -> Int = fun(): () -> () -> String = fun(): () -> String = fun(): String = "1"
+    val a9: () -> () -> () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun(): () -> () -> String = fun(): () -> String = fun(): String = "1"<!>
 
     foo(<!ARGUMENT_TYPE_MISMATCH!>fun(): String = "1"<!>)
     foo(((<!ARGUMENT_TYPE_MISMATCH!>fun(): String = "1"<!>)))
 
     val a10: Int.(String) -> Int = fun (x: String) = 10
-    val a11: () -> () -> () -> Int = fun() = fun() = fun(): String = "1"
+    val a11: () -> () -> () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun() = fun() = fun(): String = "1"<!>
 
     val a12: Int = <!INITIALIZER_TYPE_MISMATCH!>fun(): String = "1"<!>
     val a13: Int = <!INITIALIZER_TYPE_MISMATCH!>fun() = fun(): String = "1"<!>
@@ -34,7 +34,7 @@ fun main() {
 
     val a17: () -> Unit = fun() {}
     val a18: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun() {}<!>
-    val a19: () -> () -> Int = fun() = fun() {}
+    val a19: () -> () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun() = fun() {}<!>
     val a20: () -> () -> () -> Unit = fun() = fun() = {}
     val a21: () -> () -> () -> Int = fun() = fun() = {}
 }

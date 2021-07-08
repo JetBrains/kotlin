@@ -562,10 +562,16 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         val initialType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-        val finalType =
+
+        val finalType = if (anonymousFunction.isLambda) {
             expectedType?.returnType(session) as? ConeClassLikeType
                 ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
                 ?: initialType?.let(finalSubstitutor::substituteOrSelf)
+        } else {
+            initialType?.let(finalSubstitutor::substituteOrSelf)
+                ?: expectedType?.returnType(session) as? ConeClassLikeType
+                ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
+        }
 
         if (finalType != null) {
             val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)

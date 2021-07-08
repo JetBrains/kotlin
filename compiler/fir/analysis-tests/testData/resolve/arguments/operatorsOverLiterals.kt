@@ -18,10 +18,10 @@ fun test_2(n: Int) {
     val y = n + 1
 }
 
-fun Int.bar(): Int {}
+fun Int.bar(): Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-fun Int.baz(): Int {}
-fun Byte.baz(): Byte {}
+fun Int.baz(): Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun Byte.baz(): Byte {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun test_3() {
     val x = 1.bar()

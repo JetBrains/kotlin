@@ -2,7 +2,7 @@
 package a
 //+JDK
 
-fun <T> getJavaClass() : java.lang.Class<T> { }
+fun <T> getJavaClass() : java.lang.Class<T> { <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 public class Throwables() {
     companion object {

@@ -32,7 +32,7 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
             }
         }
         runAfter(phaseConfig, phaserState, context, output)
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
     private fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, output: Data) {
 
@@ -40,5 +40,5 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
 
     private fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, source: Data): Data {
 
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }

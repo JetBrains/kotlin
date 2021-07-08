@@ -33,7 +33,7 @@ public interface Klass extends TypeParametersOwner {
 fun List<String>.single(): String = ""
 fun List<Int>.single(): Int = 2
 
-fun listOf(): List<String> {}
+fun listOf(): List<String> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 public open class LightMember<D> : Member<D>, Light() {
     override fun getName(): String = "Light"

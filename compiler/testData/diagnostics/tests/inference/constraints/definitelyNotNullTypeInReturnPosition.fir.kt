@@ -268,7 +268,7 @@ class Main<L>(x: L?, y: L) {
 }
 
 fun <T : Comparable<T>> nullsLast() = null as Foo<T?>
-fun <K> take(x: Foo<K>, comparator: Foo<K>): Foo<K> {}
+fun <K> take(x: Foo<K>, comparator: Foo<K>): Foo<K> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun <L> test() {
     take(null as Foo<String?>, nullsLast())
 }

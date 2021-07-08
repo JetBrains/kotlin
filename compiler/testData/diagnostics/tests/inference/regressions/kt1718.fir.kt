@@ -14,5 +14,5 @@ fun test() {
 }
 
 //from library
-fun <T> arrayList(vararg values: T) : ArrayList<T> {}
-operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {}
+fun <T> arrayList(vararg values: T) : ArrayList<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

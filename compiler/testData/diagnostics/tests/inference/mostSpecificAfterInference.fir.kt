@@ -6,8 +6,8 @@ package i
 import java.util.*
 import checkSubtype
 
-fun <T, R> Collection<T>.map1(f : (T) -> R) : List<R> {}
-fun <T, R> java.lang.Iterable<T>.map1(f : (T) -> R) : List<R> {}
+fun <T, R> Collection<T>.map1(f : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T, R> java.lang.Iterable<T>.map1(f : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun test(list: List<Int>) {
     val res = list.map1 { it }

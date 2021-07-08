@@ -31,12 +31,12 @@ fun unitShort() : Unit = Unit
 fun unitShortConv() : Unit = <!RETURN_TYPE_MISMATCH!>1<!>
 fun unitShortNull() : Unit = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
-fun intEmpty() : Int {}
+fun intEmpty() : Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun intShortInfer() = 1
 fun intShort() : Int = 1
 //fun intBlockInfer()  {1}
 fun intBlock() : Int {return 1}
-fun intBlock1() : Int {1}
+fun intBlock1() : Int {1<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun intString(): Int = <!RETURN_TYPE_MISMATCH!>"s"<!>
 fun intFunctionLiteral(): Int = <!RETURN_TYPE_MISMATCH!>{ 10 }<!>
@@ -48,7 +48,7 @@ fun blockReturnValueTypeMismatchUnit() : Int {return <!RETURN_TYPE_MISMATCH!>Uni
 
 fun blockAndAndMismatch() : Int {
     true && false
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockAndAndMismatch1() : Int {
     return <!RETURN_TYPE_MISMATCH!>true && false<!>
 }
@@ -58,7 +58,7 @@ fun blockAndAndMismatch2() : Int {
 
 fun blockAndAndMismatch3() : Int {
     true || false
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockAndAndMismatch4() : Int {
     return <!RETURN_TYPE_MISMATCH!>true || false<!>
 }
@@ -93,7 +93,7 @@ fun blockReturnValueTypeMatch7() : Int {
     if (1 > 2)
     1.0
     else 2.0
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch8() : Int {
     if (1 > 2)
     1.0
@@ -103,7 +103,7 @@ fun blockReturnValueTypeMatch8() : Int {
 fun blockReturnValueTypeMatch9() : Int {
     if (1 > 2)
     1.0
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch10() : Int {
     return <!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2)
     1
@@ -111,7 +111,7 @@ fun blockReturnValueTypeMatch10() : Int {
 fun blockReturnValueTypeMatch11() : Int {
     if (1 > 2)
     else 1.0
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch12() : Int {
     if (1 > 2)
         return 1
@@ -119,10 +119,10 @@ fun blockReturnValueTypeMatch12() : Int {
 }
 fun blockNoReturnIfValDeclaration(): Int {
     val x = 1
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockNoReturnIfEmptyIf(): Int {
     if (1 < 2) {} else {}
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockNoReturnIfUnitInOneBranch(): Int {
     if (1 < 2) {
         return 1
@@ -132,7 +132,7 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
             return 2
         }
     }
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun nonBlockReturnIfEmptyIf(): Int = <!RETURN_TYPE_MISMATCH!>if (1 < 2) {} else {}<!>
 fun nonBlockNoReturnIfUnitInOneBranch(): Int = <!RETURN_TYPE_MISMATCH!>if (1 < 2) {} else 2<!>
 

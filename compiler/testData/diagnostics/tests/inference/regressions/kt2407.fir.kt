@@ -12,8 +12,8 @@ fun test() {
 }
 
 //from library
-fun <T> arrayList(vararg values: T) : ArrayList<T> {}
+fun <T> arrayList(vararg values: T) : ArrayList<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> {}
+fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-fun <T> Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {}
+fun <T> Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

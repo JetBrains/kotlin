@@ -19,4 +19,4 @@ fun test(a: Any, s: MutableSet<String>) {
 }
 
 //from standard library
-fun <T> arrayListOf(vararg t: T): MutableList<T> {}
+fun <T> arrayListOf(vararg t: T): MutableList<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

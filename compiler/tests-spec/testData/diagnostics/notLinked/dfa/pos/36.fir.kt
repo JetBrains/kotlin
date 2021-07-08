@@ -78,7 +78,7 @@ fun case_5(x: Any?) {
 fun case_6(x: Any?) {
     var y = x ?: null!!
     while (false || y is Number) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.<!UNRESOLVED_REFERENCE!>toByte<!>()
     }
@@ -91,7 +91,7 @@ fun case_6(x: Any?) {
 fun case_7(x: Any?, z: Any) {
     var y = x ?: null!!
     while (false || y === z) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
     }
@@ -104,7 +104,7 @@ fun case_7(x: Any?, z: Any) {
 fun case_8(x: Any?, z: Any) {
     var y = x ?: null!!
     y == z || return
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
 }
@@ -129,7 +129,7 @@ fun case_10(x: Any?, z: Any, b: Boolean?) {
         null -> throw Exception()
     }
     z === y || if (b == true) return else if (b === false) null!! else throw Exception()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
 }

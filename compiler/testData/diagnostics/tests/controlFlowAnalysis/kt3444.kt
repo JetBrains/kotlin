@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun box() {
     fun local():Int {
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

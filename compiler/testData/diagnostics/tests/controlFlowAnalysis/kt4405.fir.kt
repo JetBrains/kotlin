@@ -10,19 +10,19 @@ val closure = {
     }
 
     fun h(): Int { // error: should be NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }
 
 class A {
     init {
         fun foo(): Int {
-        }
+        <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
         val closure = {
             val x = ""
 
             fun local(): Int {
-            }
+            <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
         }
 
         val y = ""

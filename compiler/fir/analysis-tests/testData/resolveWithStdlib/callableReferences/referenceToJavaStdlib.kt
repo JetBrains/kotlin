@@ -7,7 +7,7 @@ import java.nio.file.Files
 
 fun detectDirsWithTestsMapFileOnly(file: File): List<String> {
     Files.walk(file.toPath()).filter(Files::isRegularFile)
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 interface A
 fun foo(x: A, vararg strings: String) {}

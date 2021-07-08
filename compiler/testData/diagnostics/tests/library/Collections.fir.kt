@@ -107,4 +107,4 @@ fun <K, V> testMutableMap(m: MutableMap<K, V>) {
     val mutableSet1: MutableSet<MutableMap.MutableEntry<K, V>> = m.entries
 }
 
-fun <T> array(vararg t: T): Array<T> {}
+fun <T> array(vararg t: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

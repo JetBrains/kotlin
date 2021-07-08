@@ -36,7 +36,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirContractChecker,
             FirFunctionParameterChecker,
-            FirInlineDeclarationChecker
+            FirInlineDeclarationChecker,
+            FirFunctionReturnChecker,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>

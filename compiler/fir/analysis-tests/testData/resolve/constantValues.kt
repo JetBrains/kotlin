@@ -22,5 +22,5 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
                 val (classId, arrayDimensions) = value.value
             }
         }
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-3301 Inference with several supertypes fails
 
 package arrays

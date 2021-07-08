@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package kt402
 
 fun getTypeChecker() : (Any)->Boolean {
