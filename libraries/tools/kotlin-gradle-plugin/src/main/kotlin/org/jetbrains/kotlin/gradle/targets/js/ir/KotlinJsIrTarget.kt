@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -93,8 +94,8 @@ constructor(
             .get()
 
     private val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
-    val runTask: Task
-        get() = project.tasks.maybeCreate(runTaskName).also {
+    val runTask: TaskProvider<Task>
+        get() = project.locateOrRegisterTask(runTaskName) {
             it.description = "Run js on all configured platforms"
         }
 

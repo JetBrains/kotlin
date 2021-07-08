@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import org.jetbrains.kotlin.gradle.testing.testTaskName
@@ -132,8 +134,8 @@ constructor(
         get() = checkNotNull(project.locateTask(testTaskName))
 
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
-    val runTask
-        get() = project.tasks.maybeCreate(runTaskName).also {
+    val runTask: TaskProvider<Task>
+        get() = project.locateOrRegisterTask(runTaskName) {
             it.description = "Run js on all configured platforms"
         }
 

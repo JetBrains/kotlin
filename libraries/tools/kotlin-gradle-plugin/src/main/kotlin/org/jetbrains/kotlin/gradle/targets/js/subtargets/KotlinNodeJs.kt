@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
