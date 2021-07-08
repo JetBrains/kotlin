@@ -54,11 +54,11 @@ annotation class Marker {
     }
 }
 
-fun f6(m: Marker) {}
-fun f7(): List<Marker>? = null
-fun f8(): test.Marker? = null
+fun f6(m: <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>) {}
+fun f7(): List<<!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>>? = null
+fun f8(): <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>test.Marker?<!> = null
 
-typealias Marker0 = Marker
+typealias Marker0 = <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>
 
 fun f9(m: Marker0) {}
 
