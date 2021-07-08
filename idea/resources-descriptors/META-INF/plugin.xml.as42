@@ -18,6 +18,17 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <idea-version since-build="202.6397.94" until-build="202.*"/>
 
   <change-notes><![CDATA[
+    <h3>1.5.30-M1</h3>
+    <ul>
+      <li>Kotlin/Native: support for Apple silicon, improved Kotlin DSL for Cocoapods Gradle plugin, optimized access to object declarations with `const val`s only, and debugger improvements.</li>
+      <li>Kotlin Multiplatform: sharing custom `cinterop` libraries between platforms, new default publishing setup for Android artifacts, and XCFrameworks support.</li>
+      <li>Kotlin/JS: source maps generation and incremental compilation support for the IR compiler backend.</li>
+      <li>Swift/Objective-C interop: experimental interoperability with Swift 5.5 async/await, improved singleton mapping.</li>
+      <li>Passing by value for more C structs using C interop.</li>
+      <li>Compiler improvements: requiring opt-in on implicit usages of experimental APIs, changes in using opt-in requirement annotations with different targets.</li>
+    </ul>
+    Learn more in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.30-M1">changelog</a>.
+    <br><br>
     <h3>1.5.21</h3>
     A bug fix release for Kotlin 1.5.20. Learn more in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.21">changelog</a>.
     <br><br>
