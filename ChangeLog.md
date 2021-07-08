@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## 1.5.21
+
+### Compiler
+
+- [`KT-47320`](https://youtrack.jetbrains.com/issue/KT-47320) "StringConcatException: Mismatched number of concat arguments" String concatenation fails when template contains special character
+- [`KT-47445`](https://youtrack.jetbrains.com/issue/KT-47445) "definitely not null type parameters is only available since language version 1.6" error in cast expression
+- [`KT-47446`](https://youtrack.jetbrains.com/issue/KT-47446) Improve warning message INTEGER_OPERATOR_RESOLVE_WILL_CHANGE
+- [`KT-47447`](https://youtrack.jetbrains.com/issue/KT-47447) False positive INTEGER_OPERATOR_RESOLVE_WILL_CHANGE warning: "expression will be resolved to Int in future releases"
+- [`KT-47449`](https://youtrack.jetbrains.com/issue/KT-47449) JVM / IR: ClassCastException IrStarProjectionImpl  cannot be cast to IrTypeProjection
+- [`KT-47459`](https://youtrack.jetbrains.com/issue/KT-47459) "IndexOutOfBoundsException: Index 0 out of bounds for length 0" caused by MarkertManager dependency
+- [`KT-47480`](https://youtrack.jetbrains.com/issue/KT-47480) StackOverflowError: Recursion on erasion of raw type with interdependent type parameters
+
+### Tools. Compiler Plugins
+
+- [`KT-47161`](https://youtrack.jetbrains.com/issue/KT-47161) Serializable class can't be inherited from serializable class in other module with: e: org.jetbrains.kotlin.codegen.CompilationException: Back-end (JVM) Internal error: Couldn't transform method node: write$Self
+- [`KT-47455`](https://youtrack.jetbrains.com/issue/KT-47455) Kotlin lombok plugin NullPointerException
+- [`KT-47513`](https://youtrack.jetbrains.com/issue/KT-47513) Lombok compiler plugin failed with 'Recursion detected in a lazy value under LockBasedStorageManager@1c21db60 (TopDownAnalyzer for JVM)'
+
+### Tools. Gradle
+
+- [`KT-47444`](https://youtrack.jetbrains.com/issue/KT-47444) Gradle Plugin: Publishing project with "maven-publish" fails when dependency versions are omitted (NPE in MppDependencyRewritingUtilsKt.associateDependenciesWithActualModuleDependencies)
+
+### Tools. kapt
+
+- [`KT-47416`](https://youtrack.jetbrains.com/issue/KT-47416) Kapt Gradle DSL ignores javaCompilerOptions in 1.5.20
+
 ## 1.5.20
 
 ### Compiler
