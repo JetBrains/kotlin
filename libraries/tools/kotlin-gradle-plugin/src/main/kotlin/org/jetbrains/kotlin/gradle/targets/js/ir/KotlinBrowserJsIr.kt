@@ -140,9 +140,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
                     target.runTask.dependsOn(runTask)
-                    commonRunTask.configure {
-                        it.dependsOn(runTask)
-                    }
+                    commonRunTask.dependsOn(runTask)
                 }
             }
     }
