@@ -1074,7 +1074,8 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
     when (value[index]) {
         '+', '-' -> index++
     }
-    val isNegative = value.startsWith('-')
+    val hasSign = index > 0
+    val isNegative = hasSign && value.startsWith('-')
     when {
         length <= index ->
             throw IllegalArgumentException("No components")
@@ -1116,8 +1117,8 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
             // parse default string format
             var prevUnit: DurationUnit? = null
             var afterFirst = false
-            var allowSpaces = !isNegative
-            if (isNegative && value[index] == '(' && value.last() == ')') {
+            var allowSpaces = !hasSign
+            if (hasSign && value[index] == '(' && value.last() == ')') {
                 allowSpaces = true
                 if (++index == --length) throw IllegalArgumentException("No components")
             }
@@ -1158,7 +1159,8 @@ private fun parseOverLongIsoComponent(value: String): Long {
         // all chars are digits, but more than ceiling(log10(MAX_MILLIS / 1000)) of them
         return if (value[0] == '-') Long.MIN_VALUE else Long.MAX_VALUE
     }
-    return value.toLong()
+    // TODO: replace with just toLong after min JDK becomes 8
+    return if (value.startsWith("+")) value.drop(1).toLong() else value.toLong()
 }
 
 
