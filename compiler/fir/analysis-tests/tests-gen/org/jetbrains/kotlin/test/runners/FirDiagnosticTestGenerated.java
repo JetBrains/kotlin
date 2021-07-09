@@ -5481,6 +5481,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("normalOverride.kt")
+                public void testNormalOverride() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/normalOverride.kt");
+                }
+
+                @Test
                 @TestMetadata("overriddenGetterTypeChange.kt")
                 public void testOverriddenGetterTypeChange() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/overriddenGetterTypeChange.kt");

@@ -111,42 +111,133 @@ object FirOverrideChecker : FirClassChecker() {
         return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir?.safeAs()
     }
 
+    private inline fun Boolean.onTrue(callback: () -> Unit) {
+        if (this) {
+            callback()
+        }
+    }
+
+    /**
+     * Simplifies passing around visibility
+     * data.
+     */
+    private data class VisibilityInfo(
+        val fir: FirCallableMemberDeclaration,
+        /**
+         * There is no guarantee whether this visibility
+         * is the fir.visibility or a property getter's one.
+         */
+        val visibility: Visibility,
+    )
+
+    /**
+     * Prepares visibility information for
+     * further use.
+     */
+    private class VisibilityInfoProvider(val fir: FirCallableMemberDeclaration) {
+        val permissiveGetter = fir.getGetterWithGreaterVisibility()
+
+        val hasPermissiveGetter: Boolean
+            get() = permissiveGetter != null
+
+        val actualVisibility: Visibility
+            get() = permissiveGetter?.visibility ?: fir.visibility
+
+        val actualInfo: VisibilityInfo
+            get() = VisibilityInfo(fir, actualVisibility)
+
+        val formalInfo: VisibilityInfo
+            get() = VisibilityInfo(fir, fir.visibility)
+    }
+
+    /**
+     * Returns true if some diagnostic has been
+     * reported.
+     */
+    private fun VisibilityInfo.checkAccessPrivilegeOrOnWeaker(
+        other: VisibilityInfo,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+        onWeaker: () -> Unit
+    ): Boolean {
+        val compare = Visibilities.compare(visibility, other.visibility)
+
+        if (compare == null) {
+            reporter.reportCannotChangeAccessPrivilege(fir, other.fir, context)
+            return true
+        } else if (compare < 0) {
+            onWeaker()
+            return true
+        }
+
+        return false
+    }
+
+    /**
+     * Returns true if some diagnostic has been
+     * reported.
+     */
+    private fun VisibilityInfoProvider.compareWith(
+        other: VisibilityInfoProvider,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ): Boolean {
+        actualInfo.checkAccessPrivilegeOrOnWeaker(other.actualInfo, reporter, context) {
+            if (!hasPermissiveGetter && other.hasPermissiveGetter) {
+                reporter.reportIncompletePropertyOverride(other.actualVisibility, fir, context)
+            } else {
+                reporter.reportCannotWeakenAccessPrivilege(fir, other.fir, context)
+            }
+        }.onTrue {
+            return true
+        }
+
+        // This particular case means we are
+        // overriding a property with a more permissive
+        // getter with a new property with some new
+        // more permissive getter. Previous check resulted
+        // in comparing the visibilities of the getters
+        // and now we'll check the visibilities of the
+        // properties themselves to make sure that
+        // the overridden on has a greater visibility.
+
+        if (hasPermissiveGetter && other.hasPermissiveGetter) {
+            formalInfo.checkAccessPrivilegeOrOnWeaker(other.formalInfo, reporter, context) {
+                reporter.reportCannotWeakenAccessPrivilege(fir, other.fir, context)
+            }.onTrue {
+                return true
+            }
+        }
+
+        return false
+    }
+
     private fun FirCallableMemberDeclaration.checkVisibility(
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
-        val selfPermissiveGetter = getGetterWithGreaterVisibility()
-        val selfVisibility = selfPermissiveGetter?.visibility ?: visibility
+        val selfInfo = VisibilityInfoProvider(this)
 
         val visibilities = overriddenSymbols.mapNotNull {
             val fir = it.fir
 
-            if (fir !is FirMemberDeclaration) {
+            if (fir !is FirCallableMemberDeclaration) {
                 return@mapNotNull null
             }
 
-            val memberPermissiveGetter = fir.getGetterWithGreaterVisibility()
-            val memberVisibility = memberPermissiveGetter?.visibility ?: fir.visibility
-            val memberHasPermissiveGetter = memberPermissiveGetter != null
-
-            Triple(fir, memberVisibility, memberHasPermissiveGetter)
-        }.sortedBy { pair ->
+            VisibilityInfoProvider(fir)
+        }.sortedBy {
             // Regard `null` compare as Int.MIN so that we can report CANNOT_CHANGE_... first deterministically
-            Visibilities.compare(selfVisibility, pair.second) ?: Int.MIN_VALUE
+            Visibilities.compare(selfInfo.actualVisibility, it.actualVisibility) ?: Int.MIN_VALUE
         }
 
-        for ((overridden, overriddenVisibility, overriddenHasPermissiveGetter) in visibilities) {
-            val compare = Visibilities.compare(selfVisibility, overriddenVisibility)
-            if (compare == null) {
-                reporter.reportCannotChangeAccessPrivilege(this, overridden, context)
-                return
-            } else if (compare < 0) {
-                if (selfPermissiveGetter == null && overriddenHasPermissiveGetter) {
-                    reporter.reportIncompletePropertyOverride(overriddenVisibility, this, context)
-                } else {
-                    reporter.reportCannotWeakenAccessPrivilege(this, overridden, context)
-                }
+        for (overriddenInfo in visibilities) {
+            selfInfo.compareWith(
+                overriddenInfo,
+                reporter,
+                context
+            ).onTrue {
                 return
             }
         }
