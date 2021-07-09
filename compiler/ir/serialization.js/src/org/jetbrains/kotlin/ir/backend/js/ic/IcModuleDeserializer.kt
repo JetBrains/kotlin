@@ -164,6 +164,13 @@ class IcModuleDeserializer(
             moduleReversedFileIndex.putIfAbsent(it, icDeserializer) // TODO Why not simple put?
         }
 
+        icDeserializer.init()
+        icDeserializer.reversedSignatureIndex.keys.forEach {
+            if (it in icModuleReversedFileIndex) error("Duplicate signature $it in both ${icModuleReversedFileIndex[it]!!.originalFileDeserializer.file.path} and in ${file.path}")
+
+            icModuleReversedFileIndex[it] = icDeserializer
+        }
+
         if (strategy.theWholeWorld) {
             icDeserializer.allOriginalDeclarationSignatures().forEach { it.originalEnqueue(icDeserializer) }
         }
@@ -189,6 +196,7 @@ class IcModuleDeserializer(
 
     fun IdSignature.originalEnqueue(fileDeserializer: IcFileDeserializer) {
         if (fileDeserializer.enqueueForDeserialization(this)) {
+            linker.modulesWithReachableTopLevels.add(this@IcModuleDeserializer)
             originalFileQueue.addLast(fileDeserializer)
         }
     }
@@ -208,18 +216,6 @@ class IcModuleDeserializer(
     }
 
     override fun postProcess() {
-        icDeserializers.forEach { icDeserializer ->
-            if (!icDeserializer.visited.isEmpty()) {
-                val file = icDeserializer.originalFileDeserializer.file
-                icDeserializer.init()
-                icDeserializer.reversedSignatureIndex.keys.forEach {
-                    if (it in icModuleReversedFileIndex) error("Duplicate signature $it in both ${icModuleReversedFileIndex[it]!!.originalFileDeserializer.file.path} and in ${file.path}")
-
-                    icModuleReversedFileIndex[it] = icDeserializer
-                }
-            }
-        }
-
         while (signatureQueue.isNotEmpty()) {
             val icFileDeserializer = fileQueue.removeFirst()
             val signature = signatureQueue.removeFirst()
