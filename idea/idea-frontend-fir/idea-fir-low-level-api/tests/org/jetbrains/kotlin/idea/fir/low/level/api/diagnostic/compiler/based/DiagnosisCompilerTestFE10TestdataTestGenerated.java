@@ -14163,6 +14163,72 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 public void testTwoTypeConstructors() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/twoTypeConstructors.kt");
                 }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes")
+                @TestDataPath("$PROJECT_ROOT")
+                public class SelfTypes {
+                    @Test
+                    public void testAllFilesPresentInSelfTypes() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/disabledInferenceOnSelfTypes")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class DisabledInferenceOnSelfTypes {
+                        @Test
+                        public void testAllFilesPresentInDisabledInferenceOnSelfTypes() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/disabledInferenceOnSelfTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @Test
+                        @TestMetadata("basicInferenceForImplicitSelfType.kt")
+                        public void testBasicInferenceForImplicitSelfType() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/disabledInferenceOnSelfTypes/basicInferenceForImplicitSelfType.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("recursiveTypeWithTwoTypeParams.kt")
+                        public void testRecursiveTypeWithTwoTypeParams() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/disabledInferenceOnSelfTypes/recursiveTypeWithTwoTypeParams.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("writerAppenderExampleRecursive.kt")
+                        public void testWriterAppenderExampleRecursive() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/disabledInferenceOnSelfTypes/writerAppenderExampleRecursive.kt");
+                        }
+                    }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/enabledInferenceOnSelfTypes")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class EnabledInferenceOnSelfTypes {
+                        @Test
+                        public void testAllFilesPresentInEnabledInferenceOnSelfTypes() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/enabledInferenceOnSelfTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @Test
+                        @TestMetadata("basicInferenceForImplicitSelfType.kt")
+                        public void testBasicInferenceForImplicitSelfType() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/enabledInferenceOnSelfTypes/basicInferenceForImplicitSelfType.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("recursiveTypeWithTwoTypeParams.kt")
+                        public void testRecursiveTypeWithTwoTypeParams() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/enabledInferenceOnSelfTypes/recursiveTypeWithTwoTypeParams.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("writerAppenderExampleRecursive.kt")
+                        public void testWriterAppenderExampleRecursive() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/enabledInferenceOnSelfTypes/writerAppenderExampleRecursive.kt");
+                        }
+                    }
+                }
             }
 
             @Nested
