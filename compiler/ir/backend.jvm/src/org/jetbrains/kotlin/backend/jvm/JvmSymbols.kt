@@ -689,12 +689,23 @@ class JvmSymbols(
     val genericToArray: IrSimpleFunctionSymbol =
         collectionToArrayClass.functions.single { it.owner.name.asString() == "toArray" && it.owner.valueParameters.size == 2 }
 
+    val jvmName: IrClassSymbol = createClass(FqName("kotlin.jvm.JvmName"), ClassKind.ANNOTATION_CLASS) { klass ->
+        klass.addConstructor().apply {
+            addValueParameter("name", irBuiltIns.stringType)
+        }
+    }
+
     val kClassJava: IrPropertySymbol =
         irFactory.buildProperty {
             name = Name.identifier("java")
         }.apply {
-            parent = kotlinJvmPackage
+            parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt")).owner
             addGetter().apply {
+                annotations = listOf(
+                    IrConstructorCallImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
+                        putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, "getJavaClass"))
+                    }
+                )
                 addExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
                 returnType = javaLangClass.starProjectedType
             }
