@@ -465,4 +465,8 @@ fun foo(a: Int, b : Int): Int = a + b * 2
     for (i in 0..size1) {
         foo(array[i], array[i])
     }
+
+    for (i in 0..array.size - 2) {
+        array[i+1] = array[i]
+    }
 }

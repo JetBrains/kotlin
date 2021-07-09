@@ -240,35 +240,37 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
+        val newExpression = super.visitCall(expression)
+        require(newExpression is IrCall)
         if (expression.symbol.owner.name != OperatorNameConventions.SET && expression.symbol.owner.name != OperatorNameConventions.GET)
-            return super.visitCall(expression)
+            return newExpression
         if (expression.dispatchReceiver?.type?.isBasicArray() != true ||
                 (expression.dispatchReceiver as? IrGetValue)?.symbol != analysisResult.arrayInLoop)
-            return super.visitCall(expression)
+            return newExpression
         // Analyze arguments of set/get operator.
-        val index = expression.getValueArgument(0)!!
+        val index = newExpression.getValueArgument(0)!!
         return when (loopHeader) {
             is ProgressionLoopHeader -> with(loopHeader as ProgressionLoopHeader) {
-                replaceOperators(expression, index, listOf(mainLoopVariable, inductionVariable))
+                replaceOperators(newExpression, index, listOf(mainLoopVariable, inductionVariable))
             }
 
             is WithIndexLoopHeader -> with(loopHeader as WithIndexLoopHeader) {
                 when (nestedLoopHeader) {
                     is IndexedGetLoopHeader ->
-                        replaceOperators(expression, index, listOfNotNull(indexVariable, loopVariableComponents[1]))
+                        replaceOperators(newExpression, index, listOfNotNull(indexVariable, loopVariableComponents[1]))
                     is ProgressionLoopHeader ->
                         // Case of `for ((index, value) in (0..array.size - 1 step n).withIndex())`.
                         // Both `index` (progression size less than array size)
                         // and `value` (progression start and end element are inside bounds)
                         // are safe variables if use them in get/set operators.
-                        replaceOperators(expression, index,
+                        replaceOperators(newExpression, index,
                                 listOfNotNull(indexVariable, loopVariableComponents[1], loopVariableComponents[2])
                         )
-                    else -> expression
+                    else -> newExpression
                 }
             }
 
-            else -> expression
+            else -> newExpression
         }
     }
 }
