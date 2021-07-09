@@ -243,6 +243,14 @@ class JsIrBackendContext(
 
             override val functionAdapter: IrClassSymbol
                 get() = TODO("Not implemented")
+
+            override fun functionN(n: Int): IrClassSymbol {
+                return irFactory.stageController.withInitialIr { super.functionN(n) }
+            }
+
+            override fun suspendFunctionN(n: Int): IrClassSymbol {
+                return irFactory.stageController.withInitialIr { super.suspendFunctionN(n) }
+            }
         }
 
         override fun unfoldInlineClassType(irType: IrType): IrType? {

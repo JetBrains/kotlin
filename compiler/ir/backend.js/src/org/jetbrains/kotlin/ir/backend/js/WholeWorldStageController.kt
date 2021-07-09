@@ -44,10 +44,13 @@ class WholeWorldStageController : StageController() {
     override fun <T> withStage(stage: Int, fn: () -> T): T {
         val oldStage = currentStage
         currentStage = stage
+        val oldCurrentDeclaration = currentDeclaration
+        currentDeclaration = null
         return try {
             fn()
         } finally {
             currentStage = oldStage
+            currentDeclaration = oldCurrentDeclaration
         }
     }
 
