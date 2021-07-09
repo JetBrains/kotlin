@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
 import org.jetbrains.kotlin.resolve.checkers.Experimentality
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
 object FirOptInAnnotationClassChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
-        if (declaration.getAnnotationByFqName(OptInNames.REQUIRES_OPT_IN_FQ_NAME) == null) return
+        if (declaration.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID) == null) return
         if (declaration.getRetention() == AnnotationRetention.SOURCE) {
             val target = declaration.getRetentionAnnotation()
             reporter.reportOn(target?.source, FirErrors.EXPERIMENTAL_ANNOTATION_WITH_WRONG_RETENTION, context)

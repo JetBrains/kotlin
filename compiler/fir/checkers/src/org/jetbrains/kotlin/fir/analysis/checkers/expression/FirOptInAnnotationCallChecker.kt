@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
-        val fqName = lookupTag.classId.asSingleFqName()
-        val isMarker = fqName == OptInNames.REQUIRES_OPT_IN_FQ_NAME
-        val isOptIn = fqName == OptInNames.OPT_IN_FQ_NAME
+        val classId = lookupTag.classId
+        val isMarker = classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID
+        val isOptIn = classId == OptInNames.OPT_IN_CLASS_ID
         if (isMarker || isOptIn) {
             checkUsageOfKotlinExperimentalOrUseExperimental(expression.source, context, reporter)
             if (isOptIn) {

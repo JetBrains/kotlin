@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 private val RETENTION_PARAMETER_NAME = Name.identifier("value")
@@ -77,6 +79,12 @@ fun FirAnnotatedDeclaration.getRetentionAnnotation(): FirAnnotationCall? {
 
 fun FirAnnotatedDeclaration.getTargetAnnotation(): FirAnnotationCall? {
     return getAnnotationByFqName(StandardNames.FqNames.target)
+}
+
+fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId): FirAnnotationCall? {
+    return annotations.find {
+        (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId == classId
+    }
 }
 
 fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {

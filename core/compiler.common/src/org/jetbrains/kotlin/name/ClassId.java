@@ -127,6 +127,12 @@ public final class ClassId {
         return packageFqName.asString().replace('.', '/') + "/" + relativeClassName.asString();
     }
 
+    @NotNull
+    public String asFqNameString() {
+        if (packageFqName.isRoot()) return relativeClassName.asString();
+        return packageFqName.asString() + "." + relativeClassName.asString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -29,17 +28,23 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.checkers.Experimentality
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal object FirOptInUsageBaseChecker {
+object FirOptInUsageBaseChecker {
+    data class Experimentality(val annotationClassId: ClassId, val severity: Severity, val message: String?) {
+        enum class Severity { WARNING, ERROR }
+        companion object {
+            val DEFAULT_SEVERITY = Severity.ERROR
+        }
+    }
+
     fun FirRegularClassSymbol.loadExperimentalityForMarkerAnnotation(): Experimentality? {
         ensureResolved(FirResolvePhase.BODY_RESOLVE)
         @OptIn(SymbolInternals::class)
@@ -132,7 +137,7 @@ internal object FirOptInUsageBaseChecker {
             expandedTypeRef.coneType.addExperimentalities(context, result, visited)
         }
 
-        if (getAnnotationByFqName(OptInNames.WAS_EXPERIMENTAL_FQ_NAME) != null) {
+        if (getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) != null) {
             val accessibility = checkSinceKotlinVersionAccessibility(context)
             if (accessibility is FirSinceKotlinAccessibility.NotAccessibleButWasExperimental) {
                 accessibility.markerClasses.forEach {
@@ -178,14 +183,14 @@ internal object FirOptInUsageBaseChecker {
     }
 
     private fun FirRegularClass.loadExperimentalityForMarkerAnnotation(): Experimentality? {
-        val experimental = getAnnotationByFqName(OptInNames.REQUIRES_OPT_IN_FQ_NAME)
+        val experimental = getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID)
             ?: return null
 
         val levelArgument = experimental.findArgumentByName(LEVEL) as? FirQualifiedAccessExpression
         val levelName = (levelArgument?.calleeReference as? FirResolvedNamedReference)?.name?.asString()
         val level = OptInLevel.values().firstOrNull { it.name == levelName } ?: OptInLevel.DEFAULT
         val message = (experimental.findArgumentByName(MESSAGE) as? FirConstExpression<*>)?.value as? String
-        return Experimentality(symbol.classId.asSingleFqName(), level.severity, message)
+        return Experimentality(symbol.classId, level.severity, message)
     }
 
     fun reportNotAcceptedExperimentalities(
@@ -194,8 +199,8 @@ internal object FirOptInUsageBaseChecker {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        for ((annotationFqName, severity, message) in experimentalities) {
-            if (!isExperimentalityAcceptableInContext(annotationFqName, context)) {
+        for ((annotationClassId, severity, message) in experimentalities) {
+            if (!isExperimentalityAcceptableInContext(annotationClassId, context)) {
                 val diagnostic = when (severity) {
                     Experimentality.Severity.WARNING -> FirErrors.EXPERIMENTAL_API_USAGE
                     Experimentality.Severity.ERROR -> FirErrors.EXPERIMENTAL_API_USAGE_ERROR
@@ -204,43 +209,40 @@ internal object FirOptInUsageBaseChecker {
                     Experimentality.Severity.WARNING -> "This declaration is experimental and its usage should be marked"
                     Experimentality.Severity.ERROR -> "This declaration is experimental and its usage must be marked"
                 }
-                reporter.reportOn(element.source, diagnostic, annotationFqName, reportedMessage, context)
+                reporter.reportOn(element.source, diagnostic, annotationClassId.asSingleFqName(), reportedMessage, context)
             }
         }
     }
 
     private fun isExperimentalityAcceptableInContext(
-        annotationFqName: FqName,
+        annotationClassId: ClassId,
         context: CheckerContext
     ): Boolean {
         val languageVersionSettings = context.session.languageVersionSettings
-        val fqNameAsString = annotationFqName.asString()
+        val fqNameAsString = annotationClassId.asFqNameString()
         if (fqNameAsString in languageVersionSettings.getFlag(AnalysisFlags.useExperimental)) {
             return true
         }
         for (annotationContainer in context.annotationContainers) {
-            if (annotationContainer.isExperimentalityAcceptable(annotationFqName)) {
+            if (annotationContainer.isExperimentalityAcceptable(annotationClassId)) {
                 return true
             }
         }
         return false
     }
 
-    private fun FirAnnotationContainer.isExperimentalityAcceptable(annotationFqName: FqName): Boolean {
-        return getAnnotationByFqName(annotationFqName) != null || isAnnotatedWithUseExperimentalOf(annotationFqName)
+    private fun FirAnnotationContainer.isExperimentalityAcceptable(annotationClassId: ClassId): Boolean {
+        return getAnnotationByClassId(annotationClassId) != null || isAnnotatedWithUseExperimentalOf(annotationClassId)
     }
 
-    private fun FirAnnotationContainer.isAnnotatedWithUseExperimentalOf(annotationFqName: FqName): Boolean {
+    private fun FirAnnotationContainer.isAnnotatedWithUseExperimentalOf(annotationClassId: ClassId): Boolean {
         for (annotation in annotations) {
             val coneType = annotation.annotationTypeRef.coneType as? ConeClassLikeType
-            if (coneType?.lookupTag?.classId?.asSingleFqName() != OptInNames.OPT_IN_FQ_NAME) {
+            if (coneType?.lookupTag?.classId != OptInNames.OPT_IN_CLASS_ID) {
                 continue
             }
             val annotationClasses = annotation.findArgumentByName(OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS) ?: continue
-            if (annotationClasses.extractClassesFromArgument().any {
-                    it.classId.asSingleFqName() == annotationFqName
-                }
-            ) {
+            if (annotationClasses.extractClassesFromArgument().any { it.classId == annotationClassId }) {
                 return true
             }
         }

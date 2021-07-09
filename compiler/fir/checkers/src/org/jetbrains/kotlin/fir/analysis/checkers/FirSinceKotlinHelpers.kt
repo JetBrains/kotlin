@@ -98,7 +98,7 @@ private fun FirAnnotatedDeclaration.getOwnSinceKotlinVersion(session: FirSession
 }
 
 private fun FirAnnotatedDeclaration.loadWasExperimentalMarkerClasses(): List<FirRegularClassSymbol> {
-    val wasExperimental = getAnnotationByFqName(OptInNames.WAS_EXPERIMENTAL_FQ_NAME) ?: return emptyList()
+    val wasExperimental = getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) ?: return emptyList()
     val annotationClasses = wasExperimental.findArgumentByName(OptInNames.WAS_EXPERIMENTAL_ANNOTATION_CLASS) ?: return emptyList()
     return annotationClasses.extractClassesFromArgument()
 }
