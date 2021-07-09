@@ -107,7 +107,7 @@ class JsIrLinker(
     }
 
     fun loadIcIr(preprocess: (IrModuleFragment) -> Unit) {
-        deserializersForModules.values.forEach {
+        deserializersForModules.values.reversed().forEach {
             if (it.moduleDescriptor in loweredIcData) {
                 preprocess(it.moduleFragment)
             }
