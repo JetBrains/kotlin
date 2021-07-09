@@ -33,9 +33,6 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
 
     private var boxMethodFound = false
 
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(ServiceRegistrationData(RuntimeClasspathProvider::class, {ts -> RuntimeClasspathProvider.Empty}))
-
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!boxMethodFound) {
             assertions.fail { "Can't find box methods" }
