@@ -1,0 +1,5 @@
+KT element: KtEnumEntry
+FIR element: FirEnumEntryImpl
+
+FIR element rendered:
+public final static enum entry ENTRY: R|X|

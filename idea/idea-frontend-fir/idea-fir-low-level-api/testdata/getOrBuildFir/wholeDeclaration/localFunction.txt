@@ -1,0 +1,7 @@
+KT element: KtNamedFunction
+FIR element: FirSimpleFunctionImpl
+
+FIR element rendered:
+local final fun x(): R|kotlin/String| {
+    ^x String()
+}

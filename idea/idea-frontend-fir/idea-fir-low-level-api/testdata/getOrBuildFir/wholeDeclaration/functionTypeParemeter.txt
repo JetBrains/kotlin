@@ -1,0 +1,5 @@
+KT element: KtTypeParameter
+FIR element: FirTypeParameterImpl
+
+FIR element rendered:
+T

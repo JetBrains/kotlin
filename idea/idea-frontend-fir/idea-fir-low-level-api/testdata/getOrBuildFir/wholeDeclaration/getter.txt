@@ -1,0 +1,7 @@
+KT element: KtPropertyAccessor
+FIR element: FirPropertyAccessorImpl
+
+FIR element rendered:
+public get(): R|kotlin/String| {
+    ^ String()
+}

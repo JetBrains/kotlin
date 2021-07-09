@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentOfType
 import org.jetbrains.kotlin.psi.KtElement
@@ -55,7 +57,9 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
 
 class ExpressionMarkerProvider(testServices: TestServices) : TestService {
     private val selected = mutableMapOf<String, TextRange>()
-    @PrivateForInline val atCaret = mutableMapOf<String, Int>()
+
+    @PrivateForInline
+    val atCaret = mutableMapOf<String, Int>()
 
     fun addSelectedExpression(file: TestFile, range: TextRange) {
         selected[file.relativePath] = range
@@ -79,12 +83,16 @@ class ExpressionMarkerProvider(testServices: TestServices) : TestService {
     fun getSelectedElement(file: KtFile): KtElement {
         val range = selected[file.name]
             ?: error("No selected expression found in file")
-        val elements = file.elementsInRange(range)
+        val elements = file.elementsInRange(range).trimWhitespaces()
         if (elements.size != 1) {
-            error("Expected one element at rage but found ${elements.size} [${elements.joinToString { it.text }}]")
+            error("Expected one element at rage but found ${elements.size} [${elements.joinToString { it::class.simpleName + ": " + it.text }}]")
         }
         return elements.single() as KtElement
     }
+
+    private fun List<PsiElement>.trimWhitespaces(): List<PsiElement> =
+        dropWhile { it is PsiWhiteSpace }
+            .dropLastWhile { it is PsiWhiteSpace }
 }
 
 val TestServices.expressionMarkerProvider: ExpressionMarkerProvider by TestServices.testServiceAccessor()

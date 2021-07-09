@@ -1,0 +1,12 @@
+KT element: KtClass
+FIR element: FirRegularClassImpl
+
+FIR element rendered:
+public final class X : R|kotlin/Any| {
+    public constructor(): R|Y.X| {
+        super<R|kotlin/Any|>()
+    }
+
+    public final fun y(): R|kotlin/String|
+
+}

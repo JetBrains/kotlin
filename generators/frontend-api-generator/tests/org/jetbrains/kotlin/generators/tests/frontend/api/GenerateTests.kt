@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.idea.fir.frontend.api.scopes.AbstractMemberScopeByFq
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.symbols.AbstractSymbolByReferenceTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyBodiesCalculatorTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirOnAirResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractPartialRawFirBuilderTestCase
+import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractFirContextCollectionTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataSpecTest
@@ -114,6 +111,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractPartialRawFirBuilderTestCase> {
                 model("partialRawBuilder", testMethod = "doRawFirTest")
+            }
+
+            testClass<AbstractGetOrBuildFirTest> {
+                model("getOrBuildFir")
             }
         }
 
