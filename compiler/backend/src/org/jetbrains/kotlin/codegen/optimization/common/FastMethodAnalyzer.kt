@@ -306,6 +306,7 @@ class FastMethodAnalyzer<V : Value>(
             val begin = tcb.start.indexOf()
             val end = tcb.end.indexOf()
             for (j in begin until end) {
+                if (!insnsArray[j].isMeaningful) continue
                 var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[j]
                 if (insnHandlers == null) {
                     insnHandlers = SmartList()
