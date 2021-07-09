@@ -126,9 +126,10 @@ class InstructionLivenessAnalyzer(val method: MethodNode) {
             val begin = tcb.start.indexOf
             val end = tcb.end.indexOf
             for (j in begin until end) {
+                if (!instructions[j].isMeaningful) continue
                 var insnHandlers = handlers[j]
                 if (insnHandlers == null) {
-                    insnHandlers = ArrayList<TryCatchBlockNode>()
+                    insnHandlers = ArrayList()
                     handlers[j] = insnHandlers
                 }
                 insnHandlers.add(tcb)
