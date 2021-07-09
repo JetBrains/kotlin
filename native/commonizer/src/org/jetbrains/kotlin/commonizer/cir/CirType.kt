@@ -127,6 +127,22 @@ abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
             )
         )
 
+        fun CirClassType.copyInterned(
+            classifierId: CirEntityId = this.classifierId,
+            outerType: CirClassType? = this.outerType,
+            visibility: Visibility = this.visibility,
+            arguments: List<CirTypeProjection> = this.arguments,
+            isMarkedNullable: Boolean = this.isMarkedNullable
+        ): CirClassType {
+            return createInterned(
+                classId = classifierId,
+                outerType = outerType,
+                visibility = visibility,
+                arguments = arguments,
+                isMarkedNullable = isMarkedNullable
+            )
+        }
+
         private val interner = Interner<CirClassTypeInternedImpl>()
     }
 }
@@ -169,6 +185,20 @@ abstract class CirTypeAliasType : CirClassOrTypeAliasType() {
                 isMarkedNullable = isMarkedNullable
             )
         )
+
+        fun CirTypeAliasType.copyInterned(
+            classifierId: CirEntityId = this.classifierId,
+            underlyingType: CirClassOrTypeAliasType = this.underlyingType,
+            arguments: List<CirTypeProjection> = this.arguments,
+            isMarkedNullable: Boolean = this.isMarkedNullable
+        ): CirTypeAliasType {
+            return createInterned(
+                typeAliasId = classifierId,
+                underlyingType = underlyingType,
+                arguments = arguments,
+                isMarkedNullable = isMarkedNullable
+            )
+        }
 
         private val interner = Interner<CirTypeAliasTypeInternedImpl>()
     }

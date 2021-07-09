@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal data class TargetBuildingContext(
-    val storageManager: StorageManager, val classifiers: CirKnownClassifiers, val memberContext: CirMemberContext = CirMemberContext.empty,
+    val storageManager: StorageManager,
+    val classifiers: CirKnownClassifiers,
+    val memberContext: CirMemberContext = CirMemberContext.empty,
+    val typeSubstitutor: CirTypeSubstitutor,
     val targets: Int, val targetIndex: Int
 ) {
     fun withMemberContextOf(clazz: CirClass) = copy(memberContext = memberContext.withContextOf(clazz))
@@ -24,7 +27,17 @@ internal fun mergeCirTree(
     roots.targets.withIndex().forEach { (targetIndex, target) ->
         node.targetDeclarations[targetIndex] = CirRoot.create(target)
         node.buildModules(
-            TargetBuildingContext(storageManager, classifiers, CirMemberContext.empty, roots.size, targetIndex), roots[target].modules
+            TargetBuildingContext(
+                storageManager = storageManager,
+                classifiers = classifiers,
+                memberContext = CirMemberContext.empty,
+                typeSubstitutor = CirAliasTypeSubstitutor(
+                    commonDependencies = classifiers.commonDependencies,
+                    classifierIndices = roots.map(::CirClassifierIndex)
+                ),
+                targets = roots.size,
+                targetIndex = targetIndex
+            ), roots[target].modules
         )
     }
     return node
@@ -70,19 +83,21 @@ internal fun CirNodeWithMembers<*, *>.buildClass(
 internal fun CirNodeWithMembers<*, *>.buildFunction(
     context: TargetBuildingContext, function: CirFunction, parent: CirNode<*, *>? = null
 ) {
-    val functionNode = functions.getOrPut(FunctionApproximationKey.create(context.memberContext, function)) {
+    val newFunction = context.typeSubstitutor.substitute(context.targetIndex, function)
+    val functionNode = functions.getOrPut(FunctionApproximationKey.create(context.memberContext, newFunction)) {
         buildFunctionNode(context.storageManager, context.targets, context.classifiers, CirNodeRelationship.ParentNode(parent))
     }
-    functionNode.targetDeclarations[context.targetIndex] = function
+    functionNode.targetDeclarations[context.targetIndex] = newFunction
 }
 
 internal fun CirNodeWithMembers<*, *>.buildProperty(
     context: TargetBuildingContext, property: CirProperty, parent: CirNode<*, *>? = null
 ) {
-    val propertyNode = properties.getOrPut(PropertyApproximationKey.create(context.memberContext, property)) {
+    val newProperty = context.typeSubstitutor.substitute(context.targetIndex, property)
+    val propertyNode = properties.getOrPut(PropertyApproximationKey.create(context.memberContext, newProperty)) {
         buildPropertyNode(context.storageManager, context.targets, context.classifiers, CirNodeRelationship.ParentNode(parent))
     }
-    propertyNode.targetDeclarations[context.targetIndex] = property
+    propertyNode.targetDeclarations[context.targetIndex] = newProperty
 }
 
 internal fun CirClassNode.buildConstructor(
