@@ -52,7 +52,7 @@ class FirSignatureEnhancement(
     private val javaTypeParameterStack: JavaTypeParameterStack =
         if (owner is FirJavaClass) owner.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
 
-    private val jsr305State: JavaTypeEnhancementState = session.javaTypeEnhancementState ?: JavaTypeEnhancementState.DEFAULT
+    private val jsr305State: JavaTypeEnhancementState = session.javaTypeEnhancementState
 
     private val typeQualifierResolver = FirAnnotationTypeQualifierResolver(session, jsr305State)
 

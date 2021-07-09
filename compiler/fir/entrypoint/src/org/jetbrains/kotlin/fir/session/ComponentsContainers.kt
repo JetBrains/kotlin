@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaTypeEnhancementStateComponent
 import org.jetbrains.kotlin.fir.java.enhancement.FirJsr305StateContainer
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 
 // -------------------------- Required components --------------------------
 
@@ -94,6 +96,7 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirJsr305StateContainer::class, FirJsr305StateContainer.Default)
     register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
+    register(FirJavaTypeEnhancementStateComponent::class, FirJavaTypeEnhancementStateComponent(JavaTypeEnhancementState.DEFAULT))
 }
 
 @OptIn(SessionConfiguration::class)
