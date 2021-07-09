@@ -70,7 +70,8 @@ fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.a
 
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 
-inline fun <reified T : Any> Any?.safeAs(): T? = this as? T
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+inline fun <reified T : Any> Any?.safeAs(): @kotlin.internal.NoInfer T? = this as? T
 inline fun <reified T : Any> Any?.cast(): T = this as T
 inline fun <reified T : Any> Any?.assertedCast(message: () -> String): T = this as? T ?: throw AssertionError(message())
 
