@@ -497,21 +497,33 @@ class IrBuiltInsOverFir(
 
     override val arrayOf: IrSimpleFunctionSymbol get() = kotlinBuiltinFunctions.arrayOf
 
-    override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
-        findFunctions(kotlinPackage, Name.identifier("toUInt")).mapNotNull { fn ->
-            fn.owner.extensionReceiverParameter?.type?.classifierOrNull?.let { klass ->
-                klass to fn
+    private fun <T: Any> getFunctionsByKey(
+        name: Name,
+        vararg packageNameSegments: String,
+        makeKey: (IrSimpleFunctionSymbol) -> T?
+    ): Map<T, IrSimpleFunctionSymbol> {
+        val result = mutableMapOf<T, IrSimpleFunctionSymbol>()
+        for (fn in findFunctions(name, *packageNameSegments)) {
+            makeKey(fn)?.let { key ->
+                result[key] = fn
             }
-        }.toMap()
+        }
+        return result
     }
 
-    override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
-        findFunctions(kotlinPackage, Name.identifier("toULong")).mapNotNull { fn ->
-            fn.owner.extensionReceiverParameter?.type?.classifierOrNull?.let { klass ->
-                klass to fn
-            }
-        }.toMap()
-    }
+    override fun getNonBuiltInFunctionsByExtensionReceiver(
+        name: Name, vararg packageNameSegments: String
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
+        getFunctionsByKey(name, *packageNameSegments) { fn ->
+            fn.owner.extensionReceiverParameter?.type?.classifierOrNull
+        }
+
+    override fun getNonBuiltinFunctionsByReturnType(
+        name: Name, vararg packageNameSegments: String
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
+        getFunctionsByKey(name, *packageNameSegments) { fn ->
+            fn.owner.returnType.classOrNull
+        }
 
     private val functionNMap = mutableMapOf<Int, IrClass>()
     private val kFunctionNMap = mutableMapOf<Int, IrClass>()
@@ -577,12 +589,6 @@ class IrBuiltInsOverFir(
         return definingClass.functions.single { function ->
             function.name == name && function.valueParameters.isEmpty()
         }.symbol
-    }
-
-    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol?, IrSimpleFunctionSymbol> by lazy {
-        findFunctions(kotlinPackage.child(Name.identifier("internal")), Name.identifier("getProgressionLastElement")).mapNotNull { fn ->
-            fn.owner.returnType.classOrNull?.let { it to fn }
-        }.toMap()
     }
 
 // ---------------

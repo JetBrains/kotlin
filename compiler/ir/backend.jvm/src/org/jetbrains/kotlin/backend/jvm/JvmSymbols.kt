@@ -574,7 +574,7 @@ class JvmSymbols(
         }
     }
 
-    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol?, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         progressionUtilClasses.flatMap { klass ->
             klass.functions.filter {
                 it.owner.name.identifier == "getProgressionLastElement"

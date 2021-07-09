@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -146,8 +147,13 @@ abstract class IrBuiltIns {
     abstract val arrayOf: IrSimpleFunctionSymbol
     abstract val arrayOfNulls: IrSimpleFunctionSymbol
 
-    abstract val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-    abstract val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
+    abstract fun getNonBuiltInFunctionsByExtensionReceiver(
+        name: Name, vararg packageNameSegments: String
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
+
+    abstract fun getNonBuiltinFunctionsByReturnType(
+        name: Name, vararg packageNameSegments: String
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
     abstract fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
     abstract fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
@@ -168,8 +174,6 @@ abstract class IrBuiltIns {
 
     abstract fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol
     abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol
-
-    abstract val getProgressionLastElementByReturnType: Map<IrClassifierSymbol?, IrSimpleFunctionSymbol>
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
 
