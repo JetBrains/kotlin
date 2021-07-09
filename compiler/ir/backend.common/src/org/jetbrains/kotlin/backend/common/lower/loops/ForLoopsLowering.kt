@@ -138,7 +138,6 @@ private class RangeLoopTransformer(
     fun getScopeOwnerSymbol() = currentScope?.scope?.scopeOwnerSymbol ?: container.symbol
 
     override fun visitBlock(expression: IrBlock): IrExpression {
-        val returnExpression = super.visitBlock(expression) as IrBlock
         // LoopExpressionGenerator in psi2ir lowers `for (loopVar in <someIterable>) { // Loop body }` into an IrBlock with origin FOR_LOOP.
         // This block has 2 statements:
         //
@@ -155,21 +154,21 @@ private class RangeLoopTransformer(
         // `withIndex()` call, a progression such as `10 downTo 1`). However in some cases (e.g., for `withIndex()`), we also need to
         // examine the while loop to determine if we CAN optimize the loop.
         if (expression.origin != IrStatementOrigin.FOR_LOOP) {
-            return returnExpression  // Not a for-loop block.
+            return super.visitBlock(expression)  // Not a for-loop block.
         }
 
-        with(returnExpression.statements) {
-            assert(size == 2) { "Expected 2 statements in for-loop block, was:\n${returnExpression.dump()}" }
+        with(expression.statements) {
+            assert(size == 2) { "Expected 2 statements in for-loop block, was:\n${expression.dump()}" }
             val iteratorVariable = get(0) as IrVariable
             assert(iteratorVariable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) { "Expected FOR_LOOP_ITERATOR origin for iterator variable, was:\n${iteratorVariable.dump()}" }
             val loopHeader = headerProcessor.extractHeader(iteratorVariable)
-                ?: return returnExpression // The iterable in the header is not supported.
+                ?: return super.visitBlock(expression)  // The iterable in the header is not supported.
             val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
             val oldLoop = get(1) as IrWhileLoop
             assert(oldLoop.origin == IrStatementOrigin.FOR_LOOP_INNER_WHILE) { "Expected FOR_LOOP_INNER_WHILE origin for while loop, was:\n${oldLoop.dump()}" }
             val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
-                ?: return returnExpression  // Cannot lower the loop.
+                ?: return super.visitBlock(expression)  // Cannot lower the loop.
 
             // We can lower both the header and while loop.
             // Update mapping from old to new loop so we can later update references in break/continue.
@@ -179,7 +178,7 @@ private class RangeLoopTransformer(
             set(1, loopReplacementExpression)
         }
 
-        return returnExpression
+        return super.visitBlock(expression)
     }
 
     /**
