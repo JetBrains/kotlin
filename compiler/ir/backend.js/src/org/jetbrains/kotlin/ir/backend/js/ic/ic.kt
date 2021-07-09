@@ -133,6 +133,10 @@ fun icCompile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
+    legacyPropertyAccess: Boolean = false,
+    baseClassIntoMetadata: Boolean = false,
+    safeExternalBoolean: Boolean = false,
+    safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     useStdlibCache: Boolean,
     icCache: Map<String, SerializedIcData> = emptyMap()
 ): CompilerResult {
@@ -153,6 +157,10 @@ fun icCompile(
         es6mode,
         propertyLazyInitialization,
         irFactory,
+        baseClassIntoMetadata,
+        legacyPropertyAccess,
+        safeExternalBoolean,
+        safeExternalBooleanDiagnostic,
         useStdlibCache,
         useStdlibCache,
         icCache,
@@ -222,6 +230,10 @@ private fun prepareIr(
     es6mode: Boolean = false,
     propertyLazyInitialization: Boolean,
     irFactory: PersistentIrFactory,
+    legacyPropertyAccess: Boolean = false,
+    baseClassIntoMetadata: Boolean = false,
+    safeExternalBoolean: Boolean = false,
+    safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     useGlobalSignatures: Boolean,
     useStdlibCache: Boolean,
     icCache: Map<String, SerializedIcData>,
@@ -256,6 +268,10 @@ private fun prepareIr(
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,
+        legacyPropertyAccess = legacyPropertyAccess,
+        baseClassIntoMetadata = baseClassIntoMetadata,
+        safeExternalBoolean = safeExternalBoolean,
+        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
         mapping = deserializer.mapping,
     )
 
