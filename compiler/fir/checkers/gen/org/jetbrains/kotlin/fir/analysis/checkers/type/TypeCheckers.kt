@@ -19,5 +19,5 @@ abstract class TypeCheckers {
 
     open val typeRefCheckers: Set<FirTypeRefChecker> = emptySet()
 
-    @CheckersComponentInternal internal val allTypeRefCheckers: Set<FirTypeRefChecker> get() = typeRefCheckers
+    @CheckersComponentInternal internal val allTypeRefCheckers: Set<FirTypeRefChecker> by lazy { typeRefCheckers }
 }

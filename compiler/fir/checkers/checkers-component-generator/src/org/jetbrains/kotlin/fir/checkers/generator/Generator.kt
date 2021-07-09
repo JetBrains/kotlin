@@ -75,12 +75,12 @@ class Generator(
                 }
 
                 for ((kClass, alias) in configuration.aliases) {
-                    print("$CHECKERS_COMPONENT_INTERNAL_ANNOTATION internal val ${alias.allFieldName}: ${alias.setType} get() = ${alias.fieldName}")
+                    print("$CHECKERS_COMPONENT_INTERNAL_ANNOTATION internal val ${alias.allFieldName}: ${alias.setType} by lazy { ${alias.fieldName}")
                     for (parent in configuration.parentsMap.getValue(kClass)) {
                         val parentAlias = configuration.aliases.getValue(parent)
                         print(" + ${parentAlias.fieldName}")
                     }
-                    println()
+                    println(" }")
                 }
             }
             println("}")
