@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:descriptors.jvm"))
+    api(project(":core:compiler.common.jvm"))
     api(project(":compiler:frontend.common"))
     api(project(":compiler:fir:cones"))
 

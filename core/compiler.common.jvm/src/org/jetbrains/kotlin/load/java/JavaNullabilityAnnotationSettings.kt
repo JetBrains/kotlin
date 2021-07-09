@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.findValueForMostSpecificFqname
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
-import org.jetbrains.kotlin.storage.StorageManager
 
 val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
 val CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE = FqName("org.checkerframework.checker.nullness.compatqual")
