@@ -55,7 +55,7 @@ internal class FirElementBuilder {
         fileStructureCache: FileStructureCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         state: FirModuleResolveState,
-    ): FirElement = when (element) {
+    ): FirElement? = when (element) {
         is KtFile -> getOrBuildFirForKtFile(element, firFileBuilder, moduleFileCache, firLazyDeclarationResolver)
         else -> getOrBuildFirForNonKtFileElement(element, fileStructureCache, moduleFileCache, state)
     }
@@ -82,7 +82,7 @@ internal class FirElementBuilder {
         fileStructureCache: FileStructureCache,
         moduleFileCache: ModuleFileCache,
         state: FirModuleResolveState,
-    ): FirElement {
+    ): FirElement? {
         require(element !is KtFile)
         val firFile = element.containingKtFile
         val fileStructure = fileStructureCache.getFileStructure(firFile, moduleFileCache)

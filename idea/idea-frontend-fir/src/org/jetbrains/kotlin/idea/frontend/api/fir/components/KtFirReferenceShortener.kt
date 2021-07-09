@@ -11,6 +11,7 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.parentsOfType
 import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
@@ -74,7 +76,7 @@ internal class KtFirReferenceShortener(
         val declarationToVisit = file.findSmallestDeclarationContainingSelection(selection)
             ?: file.withDeclarationsResolvedToBodyResolve()
 
-        val firDeclaration = declarationToVisit.getOrBuildFir(firResolveState)
+        val firDeclaration = declarationToVisit.getOrBuildFirOfType<FirDeclaration>(firResolveState)
 
         val towerContext =
             LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveState, declarationToVisit)

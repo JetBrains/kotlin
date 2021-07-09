@@ -34,7 +34,7 @@ abstract class FirModuleResolveState {
      * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase, use
      * @see tryGetCachedFirFile to get [FirFile] in undefined phase
      */
-    internal abstract fun getOrBuildFirFor(element: KtElement): FirElement
+    internal abstract fun getOrBuildFirFor(element: KtElement): FirElement?
 
     /**
      * Get or build or get cached [FirFile] for requested file in undefined phase

@@ -61,7 +61,7 @@ internal class FirModuleResolveStateImpl(
     override fun getSessionFor(moduleInfo: ModuleInfo): FirSession =
         sessionProvider.getSession(moduleInfo)!!
 
-    override fun getOrBuildFirFor(element: KtElement): FirElement =
+    override fun getOrBuildFirFor(element: KtElement): FirElement? =
         elementBuilder.getOrBuildFirFor(
             element = element,
             firFileBuilder = firFileBuilder,

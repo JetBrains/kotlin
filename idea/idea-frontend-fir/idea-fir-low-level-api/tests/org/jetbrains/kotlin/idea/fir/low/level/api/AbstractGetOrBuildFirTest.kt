@@ -36,7 +36,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
         val actual = resolveWithClearCaches(ktFile) { state ->
             val fir = selectedElement.getOrBuildFir(state)
             """|KT element: ${selectedElement::class.simpleName}
-               |FIR element: ${fir::class.simpleName}
+               |FIR element: ${fir?.let { it::class.simpleName }}
                |
                |FIR element rendered:
                |${render(fir)}""".trimMargin()
@@ -55,7 +55,8 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
         ).single { it.textRange == selectedElement.textRange }
     }
 
-    private fun render(firElement: FirElement): String = when (firElement) {
+    private fun render(firElement: FirElement?): String = when (firElement) {
+        null -> "null"
         is FirImport -> "import ${firElement.importedFqName}"
         else -> firElement.render(renderingMode)
     }

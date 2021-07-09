@@ -208,11 +208,13 @@ fun <D : FirDeclaration> D.resolvedFirToType(
 /**
  * Get a [FirElement] which was created by [KtElement]
  * Returned [FirElement] is guaranteed to be resolved to [FirResolvePhase.BODY_RESOLVE] phase
- * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
+ * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase.
+ *
+ * The `null` value is returned iff FIR tree does not have corresponding element
  */
 fun KtElement.getOrBuildFir(
     resolveState: FirModuleResolveState,
-): FirElement = resolveState.getOrBuildFirFor(this)
+): FirElement? = resolveState.getOrBuildFirFor(this)
 
 /**
  * Get a [FirElement] which was created by [KtElement], but only if it is subtype of [E], `null` otherwise
