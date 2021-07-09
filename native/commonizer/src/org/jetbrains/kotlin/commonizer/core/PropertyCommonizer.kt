@@ -22,7 +22,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
         val constCommonizationState = constCommonizationState
         val constCompileTimeInitializer = (constCommonizationState as? ConstSameValue)?.compileTimeInitializer
 
-        return CirProperty.create(
+        return CirProperty(
             annotations = emptyList(),
             name = name,
             typeParameters = typeParameters.result,

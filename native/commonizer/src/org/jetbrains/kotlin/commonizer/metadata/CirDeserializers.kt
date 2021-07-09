@@ -97,7 +97,7 @@ object CirDeserializers {
             )
         } else CirConstantValue.NullValue
 
-        return CirProperty.create(
+        return CirProperty(
             annotations = annotations(source.flags, typeResolver, source::annotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
