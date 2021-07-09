@@ -12,8 +12,8 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 
 class ControlFlowGraph private constructor(private val insns: InsnList) {
-    private val edges: Array<MutableList<Int>> = Array(insns.size()) { arrayListOf<Int>() }
-    private val backwardEdges: Array<MutableList<Int>> = Array(insns.size()) { arrayListOf<Int>() }
+    private val edges: Array<MutableList<Int>> = Array(insns.size()) { ArrayList() }
+    private val backwardEdges: Array<MutableList<Int>> = Array(insns.size()) { ArrayList() }
 
     fun getSuccessorsIndices(insn: AbstractInsnNode): List<Int> = getSuccessorsIndices(insns.indexOf(insn))
     fun getSuccessorsIndices(index: Int): List<Int> = edges[index]
@@ -30,6 +30,7 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
                 graph.backwardEdges[to].add(from)
             }
 
+            // TODO custom analyzer, no need to analyze data flow
             object : MethodAnalyzer<BasicValue>("fake", node, OptimizationBasicInterpreter()) {
                 override fun visitControlFlowEdge(insn: Int, successor: Int): Boolean {
                     addEdge(insn, successor)

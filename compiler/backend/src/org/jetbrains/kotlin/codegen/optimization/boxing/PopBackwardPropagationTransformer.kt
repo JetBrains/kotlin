@@ -17,13 +17,16 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
+import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peekWords
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
+import org.jetbrains.org.objectweb.asm.tree.InsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
@@ -52,7 +55,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
         private val dontTouchInsnIndices = BitSet(insns.size)
 
         fun transform() {
-            val frames = Analyzer(HazardsTrackingInterpreter()).analyze("fake", methodNode)
+            val frames = FastMethodAnalyzer("fake", methodNode, HazardsTrackingInterpreter()).analyze()
             for ((i, insn) in insns.withIndex()) {
                 val frame = frames[i] ?: continue
                 when (insn.opcode) {

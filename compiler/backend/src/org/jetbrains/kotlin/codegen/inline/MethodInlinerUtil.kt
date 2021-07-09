@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
@@ -136,7 +137,7 @@ internal class Aload0Interpreter(private val node: MethodNode) : BasicInterprete
 internal fun AbstractInsnNode.isAload0() = opcode == Opcodes.ALOAD && (this as VarInsnNode).`var` == 0
 
 internal fun analyzeMethodNodeWithInterpreter(node: MethodNode, interpreter: BasicInterpreter): Array<out Frame<BasicValue>?> {
-    val analyzer = object : Analyzer<BasicValue>(interpreter) {
+    val analyzer = object : FastMethodAnalyzer<BasicValue>("fake", node, interpreter) {
         override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> {
 
             return object : Frame<BasicValue>(nLocals, nStack) {
@@ -151,7 +152,7 @@ internal fun analyzeMethodNodeWithInterpreter(node: MethodNode, interpreter: Bas
     }
 
     try {
-        return analyzer.analyze("fake", node)
+        return analyzer.analyze()
     } catch (e: AnalyzerException) {
         throw RuntimeException(e)
     }
