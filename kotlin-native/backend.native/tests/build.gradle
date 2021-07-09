@@ -4758,6 +4758,7 @@ dynamicTest("interop_memory_leaks") {
 }
 
 dynamicTest("interop_exceptions_throwThroughBridge") {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions + dynamic is unsupported for wasm.
     source = "interop/exceptions/throwThroughBridge.kt"
     cSource = "$projectDir/interop/exceptions/throwThroughBridge.cpp"
     clangTool = "clang++"
