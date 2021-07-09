@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi2ir.deparenthesize
  */
 @ThreadSafe
 internal class FirElementBuilder {
-    fun getPsiAsFirElementSource(element: KtElement): KtElement {
+    fun getPsiAsFirElementSource(element: KtElement): KtElement? {
         val deparenthesized = if (element is KtPropertyDelegate) element.deparenthesize() else element
         return when {
             deparenthesized is KtParenthesizedExpression -> deparenthesized.deparenthesize()
@@ -43,6 +43,10 @@ internal class FirElementBuilder {
                  Which will have a receiver as qualifier
                  */
                 deparenthesized.selectorExpression ?: error("Incomplete code:\n${element.getElementTextInContext()}")
+            }
+            deparenthesized is KtValueArgument -> {
+                // null will be return in case of invalid KtValueArgument
+                deparenthesized.getArgumentExpression()
             }
             else -> deparenthesized
         }
@@ -88,7 +92,7 @@ internal class FirElementBuilder {
         val fileStructure = fileStructureCache.getFileStructure(firFile, moduleFileCache)
 
         val mappings = fileStructure.getStructureElementFor(element).mappings
-        val psi = getPsiAsFirElementSource(element)
+        val psi = getPsiAsFirElementSource(element) ?: return null
         return mappings.getFirOfClosestParent(psi, state)
             ?: state.getOrBuildFirFile(firFile)
     }

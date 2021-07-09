@@ -25,6 +25,40 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
     }
 
     @Nested
+    @TestMetadata("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+        @Test
+        public void testAllFilesPresentInAnnotations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("annotationApplicationArgument.kt")
+        public void testAnnotationApplicationArgument() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/annotationApplicationArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationApplicationCallExpression.kt")
+        public void testAnnotationApplicationCallExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/annotationApplicationCallExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationApplicationVarargArgument.kt")
+        public void testAnnotationApplicationVarargArgument() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/annotationApplicationVarargArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationApplicationWithArguments.kt")
+        public void testAnnotationApplicationWithArguments() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/annotationApplicationWithArguments.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/inImport")
     @TestDataPath("$PROJECT_ROOT")
     public class InImport {

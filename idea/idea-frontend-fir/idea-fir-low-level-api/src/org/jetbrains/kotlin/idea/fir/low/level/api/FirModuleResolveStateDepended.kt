@@ -42,7 +42,7 @@ internal class FirModuleResolveStateDepended(
         originalState.getSessionFor(moduleInfo)
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
-        val psi = originalState.elementBuilder.getPsiAsFirElementSource(element)
+        val psi = originalState.elementBuilder.getPsiAsFirElementSource(element) ?: return null
 
         ktToFirMapping?.getFirOfClosestParent(psi, this)?.let { return it }
 

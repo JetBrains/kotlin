@@ -1,0 +1,5 @@
+KT element: KtConstructorCalleeExpression
+FIR element: FirAnnotationCallImpl
+
+FIR element rendered:
+@R|kotlin/Suppress|(vararg(String()))
