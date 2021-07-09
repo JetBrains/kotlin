@@ -33,8 +33,7 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         @get:Input val identifier: CInteropIdentifier,
         @get:Input val konanTarget: KonanTarget,
         @get:Internal val sourceSets: Provider<Set<KotlinSourceSet>>,
-        @get:Classpath val libraryFile: Provider<File>,
-        @get:Classpath val dependencies: FileCollection
+        @get:Classpath val libraryFile: Provider<File>
     ) {
         @Suppress("unused") // Used for UP-TO-DATE check
         @get:Input
@@ -98,8 +97,7 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
             konanHome = project.file(project.konanHome),
             outputTargets = parameters.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
-            dependencyLibraries = cinteropsForTarget.flatMap { it.dependencies.files }.map(::NonTargetedCommonizerDependency).toSet()
-                    + getNativeDistributionDependencies(parameters),
+            dependencyLibraries = getNativeDistributionDependencies(parameters),
             outputDirectory = outputDirectory(parameters),
             logLevel = project.commonizerLogLevel
         )
@@ -177,14 +175,7 @@ private fun CInteropProcess.toGist(): CInteropGist {
         konanTarget = konanTarget,
         // FIXME support cinterop with PM20
         sourceSets = project.provider { (settings.compilation as? KotlinCompilation<*>)?.kotlinSourceSetsIncludingDefault },
-        libraryFile = outputFileProvider,
-
-        /**
-         * See: KT-46109
-         * For now, c-interop commonization is invoked for all relevant files together.
-         * Using dependencies coming e.g. from a different Gradle project requires additional design.
-         */
-        dependencies = project.files()
+        libraryFile = outputFileProvider
     )
 }
 

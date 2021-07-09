@@ -282,15 +282,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 defineConfigurationsForCInterop(compilation, it, target, configurations)
             }
         }
-
-        if (createTestCompilation) {
-            val mainCompilation = target.compilations.getByName(MAIN_COMPILATION_NAME)
-            target.compilations.findByName(TEST_COMPILATION_NAME)?.apply {
-                cinterops.all {
-                    it.dependencyFiles += mainCompilation.output.allOutputs
-                }
-            }
-        }
     }
 
     protected fun configureBinaries(target: KotlinNativeTarget) {
