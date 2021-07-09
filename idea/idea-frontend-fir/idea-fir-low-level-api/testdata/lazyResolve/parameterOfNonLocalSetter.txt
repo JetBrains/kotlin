@@ -52,7 +52,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
             [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [TYPES] [ContainingClassKey=X] public? set([TYPES] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -67,7 +67,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
             [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [STATUS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [STATUS] [ContainingClassKey=X] public set([STATUS] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -82,7 +82,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
             [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [CONTRACTS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [CONTRACTS] [ContainingClassKey=X] public set([STATUS] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -97,7 +97,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=IMPLICIT_TYPES_BODY_RESOLVE] var x: R|kotlin/Int| = IntegerLiteral(2)
             [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [CONTRACTS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [CONTRACTS] [ContainingClassKey=X] public set([STATUS] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -172,7 +172,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
             [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [TYPES] [ContainingClassKey=X] public? set([TYPES] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -187,7 +187,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
             [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [TYPES] [ContainingClassKey=X] public? set([TYPES] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -217,7 +217,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public final [CONTRACTS] [ResolvePhaseWithForAllDeclarationsKey=CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
             [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [CONTRACTS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [CONTRACTS] [ContainingClassKey=X] public set([STATUS] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -232,7 +232,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public final [STATUS] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
             [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [STATUS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [STATUS] [ContainingClassKey=X] public set([STATUS] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -247,7 +247,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
             [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [TYPES] [ContainingClassKey=X] public? set([TYPES] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -262,7 +262,7 @@ FILE: parameterOfNonLocalSetter.kt
 
         public? final? [TYPES] [ResolvePhaseWithForAllDeclarationsKey=TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
             [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            [TYPES] [ContainingClassKey=X] public? set([TYPES] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 

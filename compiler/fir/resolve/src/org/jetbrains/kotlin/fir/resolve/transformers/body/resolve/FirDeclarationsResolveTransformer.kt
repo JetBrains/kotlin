@@ -89,6 +89,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             callableMember.valueParameters.forEach {
                 it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
                 it.transformVarargTypeToArrayType()
+                it.replaceResolvePhase(FirResolvePhase.STATUS)
             }
         }
     }

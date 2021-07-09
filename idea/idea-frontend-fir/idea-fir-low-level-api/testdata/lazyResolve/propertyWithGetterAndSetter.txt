@@ -123,7 +123,7 @@ FILE: propertyWithGetterAndSetter.kt
         [STATUS] public get(): R|kotlin/Int| {
             ^ field#
         }
-        [STATUS] public set([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+        [STATUS] public set([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
             field# = value#
         }
 
@@ -155,7 +155,7 @@ FILE: propertyWithGetterAndSetter.kt
         [STATUS] public get(): R|kotlin/Int| {
             ^ field#
         }
-        [STATUS] public set([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+        [STATUS] public set([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
             field# = value#
         }
 
@@ -171,7 +171,7 @@ FILE: propertyWithGetterAndSetter.kt
         [STATUS] public get(): R|kotlin/Int| {
             ^ field#
         }
-        [STATUS] public set([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+        [STATUS] public set([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
             field# = value#
         }
 
@@ -219,7 +219,7 @@ FILE: propertyWithGetterAndSetter.kt
         [STATUS] public get(): R|kotlin/Int| {
             ^ field#
         }
-        [STATUS] public set([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+        [STATUS] public set([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| {
             field# = value#
         }
 

@@ -464,6 +464,8 @@ abstract class AbstractFirStatusResolveTransformer(
         if (needReplacePhase(propertyAccessor)) {
             propertyAccessor.replaceResolvePhase(transformerPhase)
         }
+
+        propertyAccessor.transformValueParameters(this, null)
     }
 
     override fun transformConstructor(

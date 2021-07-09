@@ -372,7 +372,7 @@ FILE: delegates.kt
         [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([STATUS] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
     public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
@@ -468,7 +468,7 @@ FILE: delegates.kt
         [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([STATUS] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
     public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
@@ -516,7 +516,7 @@ FILE: delegates.kt
         [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([STATUS] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
     public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
@@ -660,7 +660,7 @@ FILE: delegates.kt
         [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([STATUS] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
     public final [BODY_RESOLVE] [ResolvePhaseWithForAllDeclarationsKey=STATUS] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
