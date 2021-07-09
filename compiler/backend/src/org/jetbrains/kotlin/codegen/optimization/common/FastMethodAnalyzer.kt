@@ -45,7 +45,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
 @Suppress("DuplicatedCode")
-class FastMethodAnalyzer<V : Value>(
+open class FastMethodAnalyzer<V : Value>(
     private val owner: String,
     val method: MethodNode,
     private val interpreter: Interpreter<V>
@@ -87,7 +87,7 @@ class FastMethodAnalyzer<V : Value>(
     private val queue = IntArray(nInsns)
     private var top = 0
 
-    private fun newFrame(nLocals: Int, nStack: Int): Frame<V> =
+    protected open fun newFrame(nLocals: Int, nStack: Int): Frame<V> =
         Frame(nLocals, nStack)
 
     fun analyze(): Array<Frame<V>?> {

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
+import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -130,11 +130,11 @@ internal fun performSpilledVariableFieldTypesAnalysis(
     thisName: String
 ): Array<out Frame<BasicValue>?> {
     val interpreter = IntLikeCoerceInterpreter()
-    MethodAnalyzer(thisName, methodNode, interpreter).analyze()
+    FastMethodAnalyzer(thisName, methodNode, interpreter).analyze()
     for ((insn, type) in interpreter.needsToBeCoerced) {
         methodNode.instructions.insert(insn, withInstructionAdapter { coerceInt(type, this) })
     }
-    return MethodAnalyzer(thisName, methodNode, OptimizationBasicInterpreter()).analyze()
+    return FastMethodAnalyzer(thisName, methodNode, OptimizationBasicInterpreter()).analyze()
 }
 
 private fun coerceInt(to: Type, v: InstructionAdapter) {
