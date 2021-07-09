@@ -1,0 +1,65 @@
+open class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private val number: Int
+    field = 4
+    get(): Int
+
+}
+
+class B : A {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  val number: Int
+    field = 10
+    get
+
+}
+
+class C : A {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  val number: Int
+    get(): Int {
+      return 10
+    }
+
+}
+
+class D : A {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  val number: Int
+    field = 10
+    get(): Int
+
+}
+
+class E : A {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  protected val number: Int
+    field = 10
+    get(): Int
+
+}

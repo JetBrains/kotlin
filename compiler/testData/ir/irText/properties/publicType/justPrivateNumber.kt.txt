@@ -1,0 +1,12 @@
+class Simple {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private val number: Int
+    field = 4
+    get(): Int
+
+}
