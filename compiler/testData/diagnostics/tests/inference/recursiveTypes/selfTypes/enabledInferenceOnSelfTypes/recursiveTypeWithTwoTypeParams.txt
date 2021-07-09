@@ -1,6 +1,7 @@
 package
 
 public fun test(/*0*/ b: BodySpec<kotlin.String, *>): kotlin.Unit
+public fun testJava(/*0*/ b: JavaBodySpec<kotlin.String, *>): kotlin.Unit
 
 public interface BodySpec</*0*/ B, /*1*/ S : BodySpec<B, S>> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -8,3 +9,11 @@ public interface BodySpec</*0*/ B, /*1*/ S : BodySpec<B, S>> {
     public abstract fun </*0*/ T : S> isEqualTo(/*0*/ expected: B): T
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public interface JavaBodySpec</*0*/ B : kotlin.Any!, /*1*/ S : JavaBodySpec<B!, S!>!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun </*0*/ T : S!> isEqualTo(/*0*/ expected: B!): T!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
