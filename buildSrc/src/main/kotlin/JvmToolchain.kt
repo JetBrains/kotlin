@@ -43,6 +43,9 @@ fun Project.shouldOverrideObsoleteJdk(
 fun Project.configureJvmToolchain(
     jdkVersion: JdkMajorVersion
 ) {
+    // Ensure java only modules also set default toolchain
+    configureJavaOnlyToolchain(jdkVersion)
+
     plugins.withId("org.jetbrains.kotlin.jvm") {
         val kotlinExtension = extensions.getByType<KotlinTopLevelExtension>()
 

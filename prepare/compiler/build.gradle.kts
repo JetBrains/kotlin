@@ -11,7 +11,6 @@ plugins {
     java
 }
 
-val JDK_18: String by rootProject.extra
 
 val fatJarContents by configurations.creating {
     isCanBeResolved = true
