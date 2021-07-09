@@ -84,6 +84,10 @@ fun compile(
             multiModule,
             relativeRequirePath,
             propertyLazyInitialization,
+            baseClassIntoMetadata,
+            legacyPropertyAccess,
+            safeExternalBoolean,
+            safeExternalBooleanDiagnostic,
             useStdlibCache,
             icCache,
         )
