@@ -201,29 +201,29 @@ object FirOverrideChecker : FirClassChecker() {
             return null
         }
 
-        val superPermissiveGetter = overriddenSymbols
-            .firstOrNull { it.fir is FirProperty }
-            ?.fir.safeAs<FirProperty>()
-            ?.getGetterWithGreaterVisibility()
-            ?: return null
-
-        val superPermissiveGetterReturnType = context.returnTypeCalculator.tryCalculateReturnType(superPermissiveGetter)
-            .coneType
-            .upperBoundIfFlexible()
-            .substituteAllTypeParameters(this, superPermissiveGetter, context)
-
-        if (superPermissiveGetterReturnType is ConeKotlinErrorType) {
-            return null
+        val superPermissiveGetters = overriddenSymbols.mapNotNull {
+            it.fir.safeAs<FirProperty>()?.getGetterWithGreaterVisibility()
         }
 
-        val isReturnTypeOkForOverride = AbstractTypeChecker.isSubtypeOf(
-            typeCheckerContext,
-            permissiveGetterReturnType,
-            superPermissiveGetterReturnType
-        )
+        for (getter in superPermissiveGetters) {
+            val superPermissiveGetterReturnType = context.returnTypeCalculator.tryCalculateReturnType(getter)
+                .coneType
+                .upperBoundIfFlexible()
+                .substituteAllTypeParameters(this, getter, context)
 
-        if (!isReturnTypeOkForOverride) {
-            return Triple(permissiveGetter, permissiveGetterReturnType, superPermissiveGetterReturnType)
+            if (superPermissiveGetterReturnType is ConeKotlinErrorType) {
+                continue
+            }
+
+            val isReturnTypeOkForOverride = AbstractTypeChecker.isSubtypeOf(
+                typeCheckerContext,
+                permissiveGetterReturnType,
+                superPermissiveGetterReturnType
+            )
+
+            if (!isReturnTypeOkForOverride) {
+                return Triple(permissiveGetter, permissiveGetterReturnType, superPermissiveGetterReturnType)
+            }
         }
 
         return null

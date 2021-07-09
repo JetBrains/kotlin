@@ -1,0 +1,27 @@
+FILE: moreIncompletenessChecks.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open val names: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            public get(): R|kotlin/Any|
+
+        protected open var tags: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            public get(): R|kotlin/Any|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        protected final override val names: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        protected final override var tags: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }

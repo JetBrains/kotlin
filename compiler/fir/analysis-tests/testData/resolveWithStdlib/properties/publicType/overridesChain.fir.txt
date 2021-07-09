@@ -1,0 +1,46 @@
+FILE: overridesChain.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            public get(): R|kotlin/Any|
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        protected open override val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+    }
+    public final class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+        protected final override val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            public get(): R|kotlin/collections/Collection<kotlin/String>|
+
+    }
+    public open class D : R|A| {
+        public constructor(): R|D| {
+            super<R|A|>()
+        }
+
+        protected open override val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+    }
+    public final class E : R|D| {
+        public constructor(): R|E| {
+            super<R|D|>()
+        }
+
+        protected final override val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            public get(): R|kotlin/collections/Collection<kotlin/String>|
+
+    }

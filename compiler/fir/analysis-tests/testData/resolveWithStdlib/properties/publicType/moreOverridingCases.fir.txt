@@ -1,0 +1,60 @@
+FILE: moreOverridingCases.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open val items: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
+            public get(): R|kotlin/Any|
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        private final override val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/Collection<kotlin/String>|
+
+    }
+    public final class C : R|A| {
+        public constructor(): R|C| {
+            super<R|A|>()
+        }
+
+        protected final override val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/Collection<kotlin/String>|
+
+    }
+    public abstract class Fooer : R|kotlin/Any| {
+        public constructor(): R|Fooer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val foo: R|kotlin/Number|
+            public get(): R|kotlin/Number|
+
+        public abstract var bar: R|kotlin/Number|
+            public get(): R|kotlin/Number|
+            public set(value: R|kotlin/Number|): R|kotlin/Unit|
+
+        public open val baz: R|kotlin/Number| = Double(3.14)
+            public get(): R|kotlin/Number|
+
+    }
+    public final class SimpleFooer : R|Fooer| {
+        public constructor(): R|SimpleFooer| {
+            super<R|Fooer|>()
+        }
+
+        protected final override val foo: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Number|
+
+        protected final override var bar: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected final override val baz: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Number|
+
+    }

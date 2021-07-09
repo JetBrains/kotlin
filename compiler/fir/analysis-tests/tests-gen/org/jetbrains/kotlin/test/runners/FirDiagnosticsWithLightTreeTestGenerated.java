@@ -5469,9 +5469,27 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
+                @TestMetadata("moreIncompletenessChecks.kt")
+                public void testMoreIncompletenessChecks() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/moreIncompletenessChecks.kt");
+                }
+
+                @Test
+                @TestMetadata("moreOverridingCases.kt")
+                public void testMoreOverridingCases() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/moreOverridingCases.kt");
+                }
+
+                @Test
                 @TestMetadata("overriddenGetterTypeChange.kt")
                 public void testOverriddenGetterTypeChange() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/overriddenGetterTypeChange.kt");
+                }
+
+                @Test
+                @TestMetadata("overridesChain.kt")
+                public void testOverridesChain() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/overridesChain.kt");
                 }
 
                 @Test
