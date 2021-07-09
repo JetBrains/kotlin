@@ -39,7 +39,7 @@ internal class KtFirExpressionTypeProvider(
             is FirExpression -> fir.typeRef.coneType.asKtType()
             is FirNamedReference -> fir.getReferencedElementType().asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
-            else -> error("Unexpected ${fir::class}")
+            else -> error("Unexpected ${fir?.let { it::class }}")
         }
     }
 

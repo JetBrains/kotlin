@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.InvalidFirElementTypeException
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -56,7 +57,7 @@ internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclaratio
     moduleFileCache: ModuleFileCache
 ): FirDeclaration {
     val fir = findFirDeclarationForAnyFirSourceDeclaration(firFileBuilder, firSymbolProvider, moduleFileCache)
-    if (fir !is F) throw InvalidFirElementTypeException(this, F::class, fir::class)
+    if (fir !is F) throwUnexpectedFirElementError(fir, this, F::class)
     return fir
 }
 

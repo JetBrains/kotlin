@@ -93,7 +93,7 @@ inline fun <reified F : FirDeclaration, R> KtDeclaration.withFirDeclarationOfTyp
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (F) -> R
 ): R = withFirDeclaration(resolveState, phase) { firDeclaration ->
-    if (firDeclaration !is F) throw InvalidFirElementTypeException(this, F::class, firDeclaration::class)
+    if (firDeclaration !is F) throwUnexpectedFirElementError(firDeclaration, this, F::class)
     action(firDeclaration)
 }
 
@@ -111,7 +111,7 @@ inline fun <reified F : FirDeclaration, R> KtLambdaExpression.withFirDeclaration
     action: (F) -> R
 ): R {
     val firDeclaration = resolveState.findSourceFirDeclaration(this)
-    if (firDeclaration !is F) throw InvalidFirElementTypeException(this, F::class, firDeclaration::class)
+    if (firDeclaration !is F) throwUnexpectedFirElementError(firDeclaration, this, F::class)
     return action(firDeclaration)
 }
 
@@ -233,7 +233,7 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
 ): E {
     val fir = this.getOrBuildFir(resolveState)
     if (fir is E) return fir
-    throw InvalidFirElementTypeException(this, E::class, fir::class)
+    throwUnexpectedFirElementError(fir, this, E::class)
 }
 
 /**
@@ -242,9 +242,3 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
  */
 fun KtFile.getOrBuildFirFile(resolveState: FirModuleResolveState): FirFile =
     resolveState.getOrBuildFirFile(this)
-
-class InvalidFirElementTypeException(
-    ktElement: KtElement,
-    expectedFirClass: KClass<out FirElement>,
-    actualFirClass: KClass<out FirElement>
-) : IllegalStateException("For $ktElement with text `${ktElement.text}` the $expectedFirClass expected, but $actualFirClass found")

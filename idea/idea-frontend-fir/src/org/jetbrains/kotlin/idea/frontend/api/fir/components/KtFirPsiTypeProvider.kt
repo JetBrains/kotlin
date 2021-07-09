@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.idea.frontend.api.components.KtPsiTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.getReferencedElementType
@@ -36,7 +37,7 @@ internal class KtFirPsiTypeProvider(
             is FirExpression -> fir.typeRef.coneType.asPsiType(mode, expression)
             is FirNamedReference -> fir.getReferencedElementType().asPsiType(mode, expression)
             is FirStatement -> PsiType.VOID
-            else -> error("Unexpected ${fir::class}")
+            else -> throwUnexpectedFirElementError(fir, expression)
         }
     }
 
@@ -47,7 +48,7 @@ internal class KtFirPsiTypeProvider(
         when (val fir = ktTypeReference.getOrBuildFir(firResolveState)) {
             // NB: [FirErrorTypeRef] is a subtype of [FirResolvedTypeRef], and the error type in it will be properly handled by [asPsiType].
             is FirResolvedTypeRef -> fir.coneType.asPsiType(mode, ktTypeReference)
-            else -> error("Unexpected ${fir::class}")
+            else -> throwUnexpectedFirElementError(fir, ktTypeReference)
         }
     }
 
@@ -61,7 +62,7 @@ internal class KtFirPsiTypeProvider(
                 fir.typeRef.coneType.getReceiverOfReflectionType()?.asPsiType(mode, receiver)
             is FirCallableReferenceAccess ->
                 fir.typeRef.coneType.getReceiverOfReflectionType()?.asPsiType(mode, receiver)
-            else -> error("Unexpected ${fir::class}")
+            else -> throwUnexpectedFirElementError(fir, ktDoubleColonExpression)
         }
     }
 

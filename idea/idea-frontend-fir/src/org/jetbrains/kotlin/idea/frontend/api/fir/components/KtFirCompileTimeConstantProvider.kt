@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.idea.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCompileTimeConstantProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
@@ -24,7 +25,7 @@ internal class KtFirCompileTimeConstantProvider(
     override fun evaluate(expression: KtExpression): KtSimpleConstantValue<*>? = withValidityAssertion {
         when (val fir = expression.getOrBuildFir(firResolveState)) {
             is FirExpression -> FirCompileTimeConstantEvaluator().evaluate(fir)?.convertConstantExpression()
-            else -> error("Unexpected ${fir::class}")
+            else -> throwUnexpectedFirElementError(fir, expression)
         }
     }
 }
