@@ -26,7 +26,7 @@ private val LEVEL_NAME = Name.identifier("level")
 
 private val JAVA_ORIGINS = setOf(FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement)
 
-fun <T : FirAnnotatedDeclaration> T.getDeprecation(callSite: FirElement?): Deprecation? {
+fun FirAnnotatedDeclaration.getDeprecation(callSite: FirElement?): Deprecation? {
     val deprecationInfos = mutableListOf<Deprecation>()
     when (this) {
         is FirProperty ->
@@ -75,7 +75,7 @@ fun List<FirAnnotationCall>.getDeprecationInfosFromAnnotations(currentVersion: A
     return DeprecationsPerUseSite.fromMap(deprecationByUseSite)
 }
 
-private fun <T : FirAnnotatedDeclaration> T.getDeprecationForCallSite(
+private fun FirAnnotatedDeclaration.getDeprecationForCallSite(
     vararg sites: AnnotationUseSiteTarget
 ): Deprecation? {
     val deprecations = when (this) {

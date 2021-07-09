@@ -36,13 +36,13 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         reportDeprecationIfNeeded(expression.source, referencedFir, expression, context, reporter)
     }
 
-    internal fun <T> reportDeprecationIfNeeded(
+    internal fun reportDeprecationIfNeeded(
         source: FirSourceElement?,
-        referencedFir: T,
+        referencedFir: FirAnnotatedDeclaration,
         callSite: FirElement?,
         context: CheckerContext,
         reporter: DiagnosticReporter
-    ) where T : FirAnnotatedDeclaration {
+    ) {
         val deprecation = getWorstDeprecation(callSite, referencedFir, context) ?: return
         val diagnostic = when (deprecation.level) {
             DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.DEPRECATION_ERROR
@@ -51,9 +51,9 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         reporter.reportOn(source, diagnostic, referencedFir.symbol, deprecation.message ?: "", context)
     }
 
-    private fun <T : FirAnnotatedDeclaration> getWorstDeprecation(
+    private fun getWorstDeprecation(
         callSite: FirElement?,
-        fir: T,
+        fir: FirAnnotatedDeclaration,
         context: CheckerContext
     ): Deprecation? {
         val deprecationInfos = listOfNotNull(
