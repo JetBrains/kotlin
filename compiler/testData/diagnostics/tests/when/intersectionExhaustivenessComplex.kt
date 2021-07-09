@@ -11,7 +11,7 @@ sealed class B {
 }
 
 fun foo(a: A) {
-    if (a !is B) return
+    if (<!USELESS_IS_CHECK!>a !is B<!>) return
 
     <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>a<!>) {
         is A.A1 -> ""

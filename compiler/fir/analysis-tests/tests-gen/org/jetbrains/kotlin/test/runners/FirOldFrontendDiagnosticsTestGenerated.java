@@ -3610,6 +3610,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("isAlwaysFalse.kt")
+            public void testIsAlwaysFalse() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/cast/isAlwaysFalse.kt");
+            }
+
+            @Test
             @TestMetadata("IsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric.kt")
             public void testIsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowForDerivedWithOneSubstitutedAndOneSameGeneric.kt");

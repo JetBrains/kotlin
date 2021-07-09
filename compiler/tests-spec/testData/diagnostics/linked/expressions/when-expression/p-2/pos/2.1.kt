@@ -77,7 +77,7 @@ fun case_5(value_1: Boolean) {
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Any) {
     when {
-        value_1 is Nothing -> {}
+        <!USELESS_IS_CHECK!>value_1 is Nothing<!> -> {}
         value_1 is Int -> {}
         value_1 is Boolean -> {}
         value_1 is String -> {}

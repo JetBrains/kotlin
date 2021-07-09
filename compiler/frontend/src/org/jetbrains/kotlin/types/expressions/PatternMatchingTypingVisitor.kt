@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.containsError
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import java.util.*
 
 class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
@@ -640,9 +641,9 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             assert(element is KtNullableType) { "element must be instance of " + KtNullableType::class.java.name }
             context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(element as KtNullableType))
         }
-        checkTypeCompatibility(context, targetType, subjectType, typeReferenceAfterIs)
+        val typesAreCompatible = checkTypeCompatibility(context, targetType, subjectType, typeReferenceAfterIs)
 
-        detectRedundantIs(context, subjectType, targetType, isCheck, negated, subjectDataFlowValue)
+        detectRedundantIs(context, subjectType, targetType, isCheck, negated, subjectDataFlowValue, typesAreCompatible)
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProperCheckAnnotationsTargetInTypeUsePositions)) {
             components.annotationChecker.check(typeReferenceAfterIs, context.trace)
@@ -662,12 +663,24 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         targetType: KotlinType,
         isCheck: KtElement,
         negated: Boolean,
-        subjectDataFlowValue: DataFlowValue
+        subjectDataFlowValue: DataFlowValue,
+        typesAreCompatible: Boolean
     ) {
         if (subjectType.containsError() || targetType.containsError()) return
 
         val possibleTypes =
             DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue, context.languageVersionSettings)
+
+        if (typesAreCompatible && !targetType.isError) {
+            val nonTrivialTypes = possibleTypes.filterNot { it.isAnyOrNullableAny() }
+                .takeIf { it.isNotEmpty() }
+                ?: possibleTypes
+
+            if (nonTrivialTypes.none { CastDiagnosticsUtil.isCastPossible(it, targetType, components.platformToKotlinClassMapper) }) {
+                context.trace.report(USELESS_IS_CHECK.on(isCheck, negated))
+            }
+        }
+
         if (CastDiagnosticsUtil.isRefinementUseless(possibleTypes, targetType, false)) {
             context.trace.report(Errors.USELESS_IS_CHECK.on(isCheck, !negated))
         }
@@ -683,11 +696,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         type: KotlinType,
         subjectType: KotlinType,
         reportErrorOn: KtElement
-    ) {
+    ): Boolean {
         // TODO : Take smart casts into account?
         if (TypeIntersector.isIntersectionEmpty(type, subjectType)) {
             context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType))
-            return
+            return false
         }
 
         checkEnumsForCompatibility(context, reportErrorOn, subjectType, type)
@@ -696,5 +709,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (KotlinBuiltIns.isNullableNothing(type) && !TypeUtils.isNullableType(subjectType)) {
             context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn))
         }
+        return true
     }
 }

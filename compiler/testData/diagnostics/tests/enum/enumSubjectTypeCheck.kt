@@ -30,7 +30,7 @@ fun useEn(x: En) = x
 fun useEn2(x: En2) = x
 
 fun bar(x: Any) {
-    if (x is En && x is En2) {
+    if (x is En && <!USELESS_IS_CHECK!>x is En2<!>) {
         when (<!DEBUG_INFO_SMARTCAST!>x<!>) {
             En.A -> useEn(<!DEBUG_INFO_SMARTCAST!>x<!>)
             En2.D -> useEn2(<!DEBUG_INFO_SMARTCAST!>x<!>)

@@ -18,8 +18,8 @@ fun Boolean?.case_1(): Boolean {
 
 // TESTCASE NUMBER: 2
 fun <T : <!FINAL_UPPER_BOUND!>Boolean<!>>T?.case_2(): Boolean {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(true) implies (this@case_2 != null && this@case_2 !is Nothing && <!DEBUG_INFO_SMARTCAST!>this@case_2<!>) }
-    return this != null && this !is Nothing && <!DEBUG_INFO_SMARTCAST!>this<!>
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(true) implies (this@case_2 != null && <!USELESS_IS_CHECK!>this@case_2 !is Nothing<!> && <!DEBUG_INFO_SMARTCAST!>this@case_2<!>) }
+    return this != null && <!USELESS_IS_CHECK!>this !is Nothing<!> && <!DEBUG_INFO_SMARTCAST!>this<!>
 }
 
 // TESTCASE NUMBER: 3
