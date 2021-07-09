@@ -281,7 +281,7 @@ class KotlinResolutionCallbacksImpl(
 
     private fun findCommonParent(callElement: KtExpression, receiver: ReceiverKotlinCallArgument?): KtExpression {
         if (receiver == null) return callElement
-        return PsiTreeUtil.findCommonParent(callElement, receiver.psiExpression)?.safeAs() ?: callElement
+        return PsiTreeUtil.findCommonParent(callElement, receiver.psiExpression) as? KtExpression? ?: callElement
     }
 
     override fun getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedAtom: ResolvedCallAtom): UnwrappedType? {

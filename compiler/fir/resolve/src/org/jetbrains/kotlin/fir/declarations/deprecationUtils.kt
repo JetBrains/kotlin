@@ -88,7 +88,7 @@ private fun <T : FirAnnotatedDeclaration> T.getDeprecationForCallSite(
 
 private fun FirAnnotationCall.getStringArgument(name: Name): String? =
     findArgumentByName(name)?.let { expression ->
-        expression.safeAs<FirConstExpression<*>>()?.value.safeAs()
+        expression.safeAs<FirConstExpression<*>>()?.value as? String
     }
 
 private fun FirAnnotationCall.getVersionFromArgument(name: Name): ApiVersion? =

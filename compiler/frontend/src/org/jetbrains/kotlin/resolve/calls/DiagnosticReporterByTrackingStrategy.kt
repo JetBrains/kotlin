@@ -435,7 +435,9 @@ class DiagnosticReporterByTrackingStrategy(
                 error as CapturedTypeFromSubtyping
                 val position = error.position
                 val argumentPosition: ArgumentConstraintPositionImpl? =
-                    position.safeAs() ?: position.safeAs<IncorporationConstraintPosition>()?.from.safeAs()
+                    position.safeAs<ArgumentConstraintPositionImpl>()
+                        ?: position.safeAs<IncorporationConstraintPosition>()
+                            ?.from.safeAs<ArgumentConstraintPositionImpl>()
 
                 argumentPosition?.let {
                     val expression = it.argument.psiExpression ?: return

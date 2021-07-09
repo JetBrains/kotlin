@@ -94,5 +94,5 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
     private fun FirConstructor.getDelegated(): FirConstructor? = delegatedConstructor
         ?.calleeReference.safeAs<FirResolvedNamedReference>()
         ?.resolvedSymbol
-        ?.fir.safeAs()
+        ?.fir as? FirConstructor?
 }

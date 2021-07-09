@@ -108,7 +108,7 @@ object FirOverrideChecker : FirClassChecker() {
         overriddenSymbols: List<FirCallableSymbol<*>>,
     ): FirMemberDeclaration? {
         if (isVar) return null
-        return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir?.safeAs()
+        return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir as? FirMemberDeclaration?
     }
 
     private fun FirCallableMemberDeclaration.checkVisibility(
@@ -178,7 +178,7 @@ object FirOverrideChecker : FirClassChecker() {
                     AbstractTypeChecker.isSubtypeOf(typeCheckerContext, overridingReturnType, overriddenReturnType)
 
             if (!isReturnTypeOkForOverride) {
-                return overriddenDeclaration.safeAs()
+                return overriddenDeclaration as? FirMemberDeclaration
             }
         }
 

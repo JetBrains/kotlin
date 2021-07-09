@@ -684,8 +684,8 @@ fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
 
 fun KtExpression.topParenthesizedParentOrMe(): KtExpression {
     var result: KtExpression = this
-    while (KtPsiUtil.deparenthesizeOnce(result.parent.safeAs()) == result) {
-        result = result.parent.safeAs() ?: break
+    while (KtPsiUtil.deparenthesizeOnce(result.parent as? KtExpression) == result) {
+        result = result.parent as? KtExpression ?: break
     }
     return result
 }

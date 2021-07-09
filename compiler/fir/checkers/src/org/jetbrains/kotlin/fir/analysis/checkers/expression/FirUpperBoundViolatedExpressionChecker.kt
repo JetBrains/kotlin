@@ -29,7 +29,7 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
         val calleReference = expression.calleeReference
         var calleeFir: FirTypeParameterRefsOwner? = null
         if (calleReference is FirResolvedNamedReference) {
-            calleeFir = calleReference.safeAs<FirResolvedNamedReference>()?.resolvedSymbol?.fir.safeAs()
+            calleeFir = calleReference.safeAs<FirResolvedNamedReference>()?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner
         } else if (calleReference is FirErrorNamedReference) {
             val diagnostic = calleReference.diagnostic
             if (diagnostic is ConeInapplicableCandidateError &&
@@ -37,7 +37,7 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
             ) {
                 return
             }
-            calleeFir = calleReference.candidateSymbol?.fir.safeAs()
+            calleeFir = calleReference.candidateSymbol?.fir as? FirTypeParameterRefsOwner
         }
 
         var typeArguments: List<Any>? = null
