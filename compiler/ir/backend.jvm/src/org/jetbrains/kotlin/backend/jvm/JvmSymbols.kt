@@ -15,7 +15,11 @@ import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CREATE_METHOD_NAME
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -23,6 +27,8 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -151,9 +157,6 @@ class JvmSymbols(
     override val throwNullPointerException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwNullPointerException" }
 
-    override val throwNoWhenBranchMatchedException: IrSimpleFunctionSymbol
-        get() = error("Unused in JVM IR")
-
     override val throwTypeCastException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwTypeCastException" }
 
@@ -175,7 +178,7 @@ class JvmSymbols(
     override val stringBuilder: IrClassSymbol = createClass(FqName("java.lang.StringBuilder")) { klass ->
         klass.addConstructor()
         klass.addFunction("toString", irBuiltIns.stringType).apply {
-            overriddenSymbols += any.functionByName("toString")
+            overriddenSymbols = overriddenSymbols + any.functionByName("toString")
         }
 
         val appendTypes = with(irBuiltIns) { listOf(anyNType, stringType, booleanType, charType, intType, longType, floatType, doubleType) }
@@ -189,29 +192,26 @@ class JvmSymbols(
     override val defaultConstructorMarker: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.DefaultConstructorMarker"))
 
-    override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
-        get() = error("Unused in JVM IR")
-
     override val coroutineImpl: IrClassSymbol
-        get() = TODO("not implemented")
+        get() = error("not implemented")
 
     override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
-        get() = TODO("not implemented")
+        get() = error("not implemented")
 
     override val getContinuation: IrSimpleFunctionSymbol
-        get() = TODO("not implemented")
+        get() = error("not implemented")
 
     override val coroutineContextGetter: IrSimpleFunctionSymbol
-        get() = TODO("not implemented")
+        get() = error("not implemented")
 
     override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
-        get() = TODO("not implemented")
+        get() = error("not implemented")
 
     override val coroutineGetContext: IrSimpleFunctionSymbol
-        get() = TODO("not implemented")
+        get() = error("not implemented")
 
     override val returnIfSuspended: IrSimpleFunctionSymbol
-        get() = TODO("not implemented")
+        get() = error("not implemented")
 
     private val kDeclarationContainer: IrClassSymbol =
         createClass(StandardNames.FqNames.kDeclarationContainer.toSafe(), ClassKind.INTERFACE, Modality.ABSTRACT)
@@ -776,51 +776,37 @@ class JvmSymbols(
             throw AssertionError("Array type expected: ${arrayType.render()}")
     }
 
-    private val javaLangInteger: IrClassSymbol = createClass(FqName("java.lang.Integer")) { klass ->
-        klass.addFunction("compareUnsigned", irBuiltIns.intType, isStatic = true).apply {
-            addValueParameter("x", irBuiltIns.intType)
-            addValueParameter("y", irBuiltIns.intType)
-        }
-        klass.addFunction("divideUnsigned", irBuiltIns.intType, isStatic = true).apply {
-            addValueParameter("dividend", irBuiltIns.intType)
-            addValueParameter("divisor", irBuiltIns.intType)
-        }
-        klass.addFunction("remainderUnsigned", irBuiltIns.intType, isStatic = true).apply {
-            addValueParameter("dividend", irBuiltIns.intType)
-            addValueParameter("divisor", irBuiltIns.intType)
-        }
-        klass.addFunction("toUnsignedString", irBuiltIns.stringType, isStatic = true).apply {
-            addValueParameter("i", irBuiltIns.intType)
-        }
-    }
+    private val javaLangInteger: IrClassSymbol = createJavaPrimitiveClass(FqName("java.lang.Integer"), irBuiltIns.intType)
 
     val compareUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("compareUnsigned")
     val divideUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("divideUnsigned")
     val remainderUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("remainderUnsigned")
     val toUnsignedStringInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("toUnsignedString")
 
-    private val javaLangLong: IrClassSymbol = createClass(FqName("java.lang.Long")) { klass ->
-        klass.addFunction("compareUnsigned", irBuiltIns.intType, isStatic = true).apply {
-            addValueParameter("x", irBuiltIns.longType)
-            addValueParameter("y", irBuiltIns.longType)
-        }
-        klass.addFunction("divideUnsigned", irBuiltIns.longType, isStatic = true).apply {
-            addValueParameter("dividend", irBuiltIns.longType)
-            addValueParameter("divisor", irBuiltIns.longType)
-        }
-        klass.addFunction("remainderUnsigned", irBuiltIns.longType, isStatic = true).apply {
-            addValueParameter("dividend", irBuiltIns.longType)
-            addValueParameter("divisor", irBuiltIns.longType)
-        }
-        klass.addFunction("toUnsignedString", irBuiltIns.stringType, isStatic = true).apply {
-            addValueParameter("i", irBuiltIns.longType)
-        }
-    }
+    private val javaLangLong: IrClassSymbol = createJavaPrimitiveClass(FqName("java.lang.Long"), irBuiltIns.longType)
 
     val compareUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("compareUnsigned")
     val divideUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("divideUnsigned")
     val remainderUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("remainderUnsigned")
     val toUnsignedStringLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("toUnsignedString")
+
+    private fun createJavaPrimitiveClass(fqName: FqName, type: IrType): IrClassSymbol = createClass(fqName) { klass ->
+        klass.addFunction("compareUnsigned", irBuiltIns.intType, isStatic = true).apply {
+            addValueParameter("x", type)
+            addValueParameter("y", type)
+        }
+        klass.addFunction("divideUnsigned", type, isStatic = true).apply {
+            addValueParameter("dividend", type)
+            addValueParameter("divisor", type)
+        }
+        klass.addFunction("remainderUnsigned", type, isStatic = true).apply {
+            addValueParameter("dividend", type)
+            addValueParameter("divisor", type)
+        }
+        klass.addFunction("toUnsignedString", irBuiltIns.stringType, isStatic = true).apply {
+            addValueParameter("i", type)
+        }
+    }
 
     val signatureStringIntrinsic: IrSimpleFunctionSymbol =
         irFactory.buildFun {

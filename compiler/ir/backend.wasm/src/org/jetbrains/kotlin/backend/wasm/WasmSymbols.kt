@@ -35,7 +35,6 @@ class WasmSymbols(
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
-    override val throwNoWhenBranchMatchedException = throwISE
     override val throwTypeCastException = getInternalFunction("THROW_CCE")
     override val throwUninitializedPropertyAccessException =
         getInternalFunction("throwUninitializedPropertyAccessException")
@@ -44,8 +43,6 @@ class WasmSymbols(
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol
         get() = TODO()
     override val stringBuilder
-        get() = TODO()
-    override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
         get() = TODO()
     override val coroutineImpl
         get() = TODO()
