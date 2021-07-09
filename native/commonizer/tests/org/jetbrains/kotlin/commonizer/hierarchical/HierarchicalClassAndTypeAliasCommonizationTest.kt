@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
-import org.junit.Test
 
 class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
@@ -570,68 +569,6 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 expect class Proxy
                 typealias X = Proxy
                 expect val x: X
-            """.trimIndent()
-        )
-    }
-
-    @Suppress("unused")
-    fun `ignored KT-47433 - test boxed function using TA and expanded type`() {
-        val result = commonize {
-            outputTarget("(a, b)")
-
-            simpleSingleSourceTarget(
-                "a", """
-                    class Box<T>
-                    class A
-                    typealias X = A
-                    fun x(x: Box<X>)
-                """.trimIndent()
-            )
-
-            simpleSingleSourceTarget(
-                "b", """
-                    class Box<T>
-                    class B
-                    typealias X = B
-                    fun x(x: Box<B>)
-                """.trimIndent()
-            )
-        }
-
-        result.assertCommonized(
-            "(a, b)", """
-                expect class Box<T> expect constructor()
-                expect class X expect constructor()
-                expect fun x(x: Box<X>)
-            """.trimIndent()
-        )
-    }
-
-    @Suppress("unused")
-    fun `ignored KT-47433 - test parameters with non-commonized TA expanding to a commonized type`() {
-        val result = commonize {
-            outputTarget("(a, b)")
-
-            simpleSingleSourceTarget(
-                "a", """
-                    class X 
-                    fun useX(x: X) = Unit
-                """.trimIndent()
-            )
-
-            simpleSingleSourceTarget(
-                "b", """
-                    class X
-                    typealias B = X
-                    fun useX(x: B) = Unit
-                """.trimIndent()
-            )
-        }
-
-        result.assertCommonized(
-            "(a, b)", """
-                expect class X expect constructor()
-                expect fun useX(x: X)
             """.trimIndent()
         )
     }
