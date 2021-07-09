@@ -18,7 +18,7 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClasses(diagnosticList: HLDiagnosticList) {
-        inBracketsWithIndent("sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI>") {
+        inBracketsWithIndent("sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI>") {
             for (diagnostic in diagnosticList.diagnostics) {
                 printDiagnosticClass(diagnostic)
                 println()
