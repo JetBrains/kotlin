@@ -302,6 +302,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("kt47279.kt")
+    public void testKt47279() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/kt47279.kt");
+    }
+
+    @Test
     @TestMetadata("kt5016.kt")
     public void testKt5016() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/kt5016.kt");

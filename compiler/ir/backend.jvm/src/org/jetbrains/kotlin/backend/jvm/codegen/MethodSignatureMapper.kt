@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
@@ -195,6 +194,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
     private fun hasVoidReturnType(function: IrFunction): Boolean =
         function is IrConstructor || (function.returnType.isUnit() && !function.isGetter)
+                || function.returnType.isNothing() && function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
