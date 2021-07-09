@@ -168,6 +168,7 @@ class RegexTest {
             assertEquals("3c", m.value)
             assertEquals(3, m.groups.size)
             assertEquals(listOf("3c", "3", "c"), m.groups.map { it!!.value })
+            assertNull(m.next())
         }
     }
 
@@ -177,6 +178,17 @@ class RegexTest {
 
         assertEquals("aaaab", regex.find(input)!!.value)
         assertEquals("aaaabbbb", regex.matchEntire(input)!!.value)
+    }
+
+    @Test fun matchEntireNext() {
+        val regex = ".*".toRegex()
+        val input = "abc"
+        val match = regex.matchEntire(input)!!
+        assertEquals(input, match.value)
+        val next = assertNotNull(match.next())
+        assertEquals("", next.value)
+        assertEquals(input.length until input.length, next.range)
+        assertNull(next.next())
     }
 
     @Test fun matchAt() {
@@ -195,6 +207,11 @@ class RegexTest {
             assertEquals(index..index + 1, match.range)
             assertEquals(input.substring(match.range), match.value)
         }
+
+        matches.zipWithNext { (_, m1), (_, m2) ->
+            assertEquals(m2.range, assertNotNull(m1.next()).range)
+        }
+        assertNull(matches.last().second.next())
 
         for (index in listOf(-1, input.length + 1)) {
             assertFailsWith<IndexOutOfBoundsException> { regex.matchAt(input, index) }
