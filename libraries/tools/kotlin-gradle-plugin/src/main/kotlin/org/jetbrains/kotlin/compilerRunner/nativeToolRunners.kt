@@ -77,8 +77,21 @@ internal abstract class KotlinNativeToolRunner(
     }
 
     final override val classpath by lazy {
-        project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar") }.toSet()
+        project.files(
+            project.kotlinNativeCompilerJar,
+            "${project.konanHome}/konan/lib/trove4j.jar"
+        ).files
     }
+
+    private val Project.kotlinNativeCompilerJar: String
+        get() = if (isNativeEmbedded)
+            "$konanHome/konan/lib/kotlin-native-compiler-embeddable.jar"
+        else
+            "$konanHome/konan/lib/kotlin-native.jar"
+
+    //TODO: find better place (see org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin.isNativeEmbedded)
+    private val Project.isNativeEmbedded: Boolean
+        get() = findProperty("kotlin.native.shaded")?.toString()?.toBoolean() == true
 
     final override fun checkClasspath() =
         check(classpath.isNotEmpty()) {

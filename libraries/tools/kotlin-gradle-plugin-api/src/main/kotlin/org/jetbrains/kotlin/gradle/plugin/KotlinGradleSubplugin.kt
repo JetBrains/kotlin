@@ -124,6 +124,7 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
     fun getCompilerPluginId(): String
     fun getPluginArtifact(): SubpluginArtifact
     fun getPluginArtifactForNative(): SubpluginArtifact? = null
+    fun getPluginArtifactForNative(project: Project): SubpluginArtifact? = getPluginArtifactForNative()
 }
 
 open class SubpluginArtifact(val groupId: String, val artifactId: String, val version: String? = null)

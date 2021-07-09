@@ -50,6 +50,12 @@ class SerializationGradleSubplugin :
     override fun getPluginArtifactForNative(): SubpluginArtifact? =
         SubpluginArtifact(SERIALIZATION_GROUP_NAME, SERIALIZATION_ARTIFACT_UNSHADED_NAME)
 
+    override fun getPluginArtifactForNative(project: Project): SubpluginArtifact? =
+        if (project.isNativeEmbedded)
+            getPluginArtifact()
+        else getPluginArtifactForNative()
+
+
     override fun getCompilerPluginId() = "org.jetbrains.kotlinx.serialization"
 
     //region Stub implementation for legacy API, KT-39809
@@ -63,4 +69,9 @@ class SerializationGradleSubplugin :
                 "Please use an older version of kotlin-serialization or upgrade the Kotlin Gradle plugin version to make them match."
     )
     //endregion
+
+    // TODO: find better place (see org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner.isNativeEmbedded)
+    private val Project.isNativeEmbedded: Boolean
+        get() = findProperty("kotlin.native.shaded")?.toString()?.toBoolean() == true
+
 }

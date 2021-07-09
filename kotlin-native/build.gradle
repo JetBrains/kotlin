@@ -246,6 +246,7 @@ task shadowJar(type: ShadowJar) {
 task distCompiler(type: Copy) {
     dependsOn ":kotlin-native:dependencies:update"
     dependsOn ':kotlin-native:shadowJar'
+    dependsOn ":kotlin-native-compiler-embeddable:kotlin-native-compiler-embeddable"
 
     destinationDir distDir
 
@@ -255,6 +256,10 @@ task distCompiler(type: Copy) {
 
     from(project(':kotlin-native:backend.native').file('build/external_jars/trove4j.jar')) {
         into('konan/lib')
+    }
+
+    from(project(":kotlin-native-compiler-embeddable").file("build/libs")) {
+        into("konan/lib")
     }
 
     from(project(':kotlin-native:Interop').file('Indexer/build/nativelibs')) {

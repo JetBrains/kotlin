@@ -72,7 +72,7 @@ class SubpluginEnvironment(
 
 
             if (kotlinCompilation is AbstractKotlinNativeCompilation) {
-                subplugin.getPluginArtifactForNative()?.let { artifact ->
+                subplugin.getPluginArtifactForNative(project)?.let { artifact ->
                     project.addMavenDependency(kotlinCompilation.pluginConfigurationName, artifact)
                 }
             } else {

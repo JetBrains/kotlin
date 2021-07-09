@@ -27,8 +27,8 @@ object KonanHomeProvider {
             val jarPath = PathUtil.getResourcePathForClass(this::class.java)
 
             // Check that the path obtained really points to the distribution.
-            val expectedRelativeJarPath = Paths.get("konan/lib/kotlin-native.jar")
-            check(jarPath.toPath().endsWith(expectedRelativeJarPath)) {
+            check(jarPath.toPath().endsWith(Paths.get("konan/lib/kotlin-native.jar")) ||
+                    jarPath.toPath().endsWith(Paths.get("konan/lib/kotlin-native-compiler-embeddable.jar"))) {
                 val classesPath = if (jarPath.extension == "jar") jarPath else jarPath.parentFile
                 """
                     Cannot determine a compiler distribution directory.
