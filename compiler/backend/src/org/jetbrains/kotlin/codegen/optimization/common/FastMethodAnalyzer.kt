@@ -44,6 +44,9 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
+/**
+ * @see FlexibleMethodAnalyzer
+ */
 @Suppress("DuplicatedCode")
 open class FastMethodAnalyzer<V : Value>(
     private val owner: String,
