@@ -130,7 +130,7 @@ fun URI.maybeRedirect(): URI {
 fun RepositoryHandler.redirect() = configureEach {
     when (this) {
         is MavenArtifactRepository -> url = url.maybeRedirect()
-        is IvyArtifactRepository -> if (url != null) {
+        is IvyArtifactRepository -> @Suppress("SENSELESS_COMPARISON") if (url != null) {
             url = url.maybeRedirect()
         }
     }
@@ -200,7 +200,7 @@ val checkRepositories: TaskProvider<Task> = tasks.register("checkRepositories") 
         }
 
         project.repositories.filterIsInstance<IvyArtifactRepository>().forEach {
-            if (it.url == null) {
+            @Suppress("SENSELESS_COMPARISON") if (it.url == null) {
                 logInvalidIvyRepo(testName)
             }
         }
