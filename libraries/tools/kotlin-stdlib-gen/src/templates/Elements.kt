@@ -303,9 +303,7 @@ object Elements : TemplateGroupBase() {
         }
 
         specialFor(CharSequences) {
-            on(Platform.Common) {
-                sample("samples.text.Strings.elementAt")
-            }
+            sample("samples.text.Strings.elementAt")
         }
 
         specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {

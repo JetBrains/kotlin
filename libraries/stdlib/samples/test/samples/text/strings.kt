@@ -96,10 +96,10 @@ class Strings {
         val string = "kotlin"
         assertPrints(string.elementAt(0), "k")
         assertPrints(string.elementAt(5), "n")
-        assertFailsWith<StringIndexOutOfBoundsException> { string.elementAt(6) }
+        assertFailsWith<IndexOutOfBoundsException> { string.elementAt(6) }
 
         val empty = ""
-        assertFailsWith<StringIndexOutOfBoundsException> { empty.elementAt(0) }
+        assertFailsWith<IndexOutOfBoundsException> { empty.elementAt(0) }
     }
 
     @Sample
