@@ -31,7 +31,7 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
             }
 
             // TODO custom analyzer, no need to analyze data flow
-            object : MethodAnalyzer<BasicValue>("fake", node, OptimizationBasicInterpreter()) {
+            object : FlexibleMethodAnalyzer<BasicValue>("fake", node, OptimizationBasicInterpreter()) {
                 override fun visitControlFlowEdge(insn: Int, successor: Int): Boolean {
                     addEdge(insn, successor)
                     return true

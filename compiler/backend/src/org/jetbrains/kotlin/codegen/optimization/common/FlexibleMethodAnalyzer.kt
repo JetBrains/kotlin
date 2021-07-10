@@ -58,40 +58,35 @@ import java.util.*
 
 /**
  * This class is a modified version of `org.objectweb.asm.tree.analysis.Analyzer`
+ *
+ * @see FastMethodAnalyzer
+ *
  * @author Eric Bruneton
  * @author Dmitry Petrov
  */
-open class MethodAnalyzer<V : Value>(
+@Suppress("DuplicatedCode")
+open class FlexibleMethodAnalyzer<V : Value>(
     private val owner: String,
     val method: MethodNode,
     protected val interpreter: Interpreter<V>
 ) {
-    val instructions: InsnList = method.instructions
-    private val nInsns: Int = instructions.size()
+    protected val insnsArray: Array<AbstractInsnNode> = method.instructions.toArray()
+    private val nInsns = insnsArray.size
 
     val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
     private val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
-    private val queued: BooleanArray = BooleanArray(nInsns)
-    private val queue: IntArray = IntArray(nInsns)
-    private var top: Int = 0
+    private val queued = BooleanArray(nInsns)
+    private val queue = IntArray(nInsns)
+    private var top = 0
 
-    protected open fun init(owner: String, m: MethodNode) {}
+    private val singlePredBlock = IntArray(nInsns)
 
     protected open fun newFrame(nLocals: Int, nStack: Int): Frame<V> = Frame(nLocals, nStack)
-
-    protected open fun newFrame(src: Frame<out V>): Frame<V> {
-        val frame = newFrame(src.locals, src.maxStackSize)
-        frame.init(src)
-        return frame
-    }
 
     protected open fun visitControlFlowEdge(insn: Int, successor: Int): Boolean = true
 
     protected open fun visitControlFlowExceptionEdge(insn: Int, successor: Int): Boolean = true
-
-    protected open fun visitControlFlowExceptionEdge(insn: Int, tcb: TryCatchBlockNode): Boolean =
-        visitControlFlowExceptionEdge(insn, instructions.indexOf(tcb.handler))
 
     fun analyze(): Array<Frame<V>?> {
         if (nInsns == 0) return frames
@@ -99,6 +94,8 @@ open class MethodAnalyzer<V : Value>(
         checkAssertions()
 
         computeExceptionHandlersForEachInsn(method)
+
+        initSinglePredBlocks()
 
         val current = newFrame(method.maxLocals, method.maxStack)
         val handler = newFrame(method.maxLocals, method.maxStack)
@@ -135,12 +132,12 @@ open class MethodAnalyzer<V : Value>(
 
                 handlers[insn]?.forEach { tcb ->
                     val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
-                    val jump = instructions.indexOf(tcb.handler)
-                    if (visitControlFlowExceptionEdge(insn, tcb)) {
+                    val jump = tcb.handler.indexOf()
+                    if (visitControlFlowExceptionEdge(insn, tcb.handler.indexOf())) {
                         handler.init(f)
                         handler.clearStack()
                         handler.push(interpreter.newValue(exnType))
-                        mergeControlFlowEdge(jump, handler)
+                        mergeControlFlowEdge(insn, jump, handler)
                     }
                 }
 
@@ -155,11 +152,92 @@ open class MethodAnalyzer<V : Value>(
         return frames
     }
 
+    private fun initSinglePredBlocks() {
+        markSinglePredBlockEntries()
+        markSinglePredBlockBodies()
+    }
+
+    private fun markSinglePredBlockEntries() {
+        // Method entry point is SPB entry point.
+        var blockId = 0
+        singlePredBlock[0] = ++blockId
+
+        // Every jump target is SPB entry point.
+        for (insn in insnsArray) {
+            when (insn) {
+                is JumpInsnNode -> {
+                    val labelIndex = insn.label.indexOf()
+                    if (singlePredBlock[labelIndex] == 0) {
+                        singlePredBlock[labelIndex] = ++blockId
+                    }
+                }
+                is LookupSwitchInsnNode -> {
+                    insn.dflt?.let { dfltLabel ->
+                        val dfltIndex = dfltLabel.indexOf()
+                        if (singlePredBlock[dfltIndex] == 0) {
+                            singlePredBlock[dfltIndex] = ++blockId
+                        }
+                    }
+                    for (label in insn.labels) {
+                        val labelIndex = label.indexOf()
+                        if (singlePredBlock[labelIndex] == 0) {
+                            singlePredBlock[labelIndex] = ++blockId
+                        }
+                    }
+                }
+                is TableSwitchInsnNode -> {
+                    insn.dflt?.let { dfltLabel ->
+                        val dfltIndex = dfltLabel.indexOf()
+                        if (singlePredBlock[dfltIndex] == 0) {
+                            singlePredBlock[dfltIndex] = ++blockId
+                        }
+                    }
+                    for (label in insn.labels) {
+                        val labelIndex = label.indexOf()
+                        if (singlePredBlock[labelIndex] == 0) {
+                            singlePredBlock[labelIndex] = ++blockId
+                        }
+                    }
+                }
+            }
+        }
+
+        // Every try-catch block handler entry point is SPB entry point
+        for (tcb in method.tryCatchBlocks) {
+            val handlerIndex = tcb.handler.indexOf()
+            if (singlePredBlock[handlerIndex] == 0) {
+                singlePredBlock[handlerIndex] = ++blockId
+            }
+        }
+    }
+
+    private fun markSinglePredBlockBodies() {
+        var current = 0
+        for ((i, insn) in insnsArray.withIndex()) {
+            if (singlePredBlock[i] == 0) {
+                singlePredBlock[i] = current
+            } else {
+                // Entered a new SPB.
+                current = singlePredBlock[i]
+            }
+
+            // GOTO, ATHROW, *RETURN instructions terminate current SPB.
+            when (insn.opcode) {
+                Opcodes.GOTO,
+                Opcodes.ATHROW,
+                in Opcodes.IRETURN..Opcodes.RETURN ->
+                    current = 0
+            }
+        }
+    }
+
+    private fun AbstractInsnNode.indexOf() = method.instructions.indexOf(this)
+
     fun getFrame(insn: AbstractInsnNode): Frame<V>? =
-        frames[instructions.indexOf(insn)]
+        frames[insn.indexOf()]
 
     private fun checkAssertions() {
-        if (instructions.toArray().any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
+        if (insnsArray.any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
             throw AssertionError("Subroutines are deprecated since Java 6")
     }
 
@@ -168,7 +246,7 @@ open class MethodAnalyzer<V : Value>(
     }
 
     private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>, insn: Int) {
-        var jump = instructions.indexOf(insnNode.dflt)
+        var jump = insnNode.dflt.indexOf()
         processControlFlowEdge(current, insn, jump)
         // In most cases order of visiting switch labels should not matter
         // The only one is a tableswitch being added in the beginning of coroutine method, these switch' labels may lead
@@ -176,16 +254,16 @@ open class MethodAnalyzer<V : Value>(
         // So we just fix the order of labels being traversed: the first one should be one at the method beginning
         // Using 'reversed' is because nodes are processed in LIFO order
         for (label in insnNode.labels.reversed()) {
-            jump = instructions.indexOf(label)
+            jump = label.indexOf()
             processControlFlowEdge(current, insn, jump)
         }
     }
 
     private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>, insn: Int) {
-        var jump = instructions.indexOf(insnNode.dflt)
+        var jump = insnNode.dflt.indexOf()
         processControlFlowEdge(current, insn, jump)
         for (label in insnNode.labels) {
-            jump = instructions.indexOf(label)
+            jump = label.indexOf()
             processControlFlowEdge(current, insn, jump)
         }
     }
@@ -194,7 +272,7 @@ open class MethodAnalyzer<V : Value>(
         if (insnOpcode != Opcodes.GOTO && insnOpcode != Opcodes.JSR) {
             processControlFlowEdge(current, insn, insn + 1)
         }
-        val jump = instructions.indexOf(insnNode.label)
+        val jump = insnNode.label.indexOf()
         processControlFlowEdge(current, insn, jump)
     }
 
@@ -204,7 +282,7 @@ open class MethodAnalyzer<V : Value>(
 
     private fun processControlFlowEdge(current: Frame<V>, insn: Int, jump: Int) {
         if (visitControlFlowEdge(insn, jump)) {
-            mergeControlFlowEdge(jump, current)
+            mergeControlFlowEdge(insn, jump, current)
         }
     }
 
@@ -225,16 +303,16 @@ open class MethodAnalyzer<V : Value>(
         while (local < m.maxLocals) {
             current.setLocal(local++, interpreter.newValue(null))
         }
-        mergeControlFlowEdge(0, current)
-
-        init(owner, m)
+        mergeControlFlowEdge(0, 0, current)
     }
 
     private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
         for (tcb in m.tryCatchBlocks) {
-            val begin = instructions.indexOf(tcb.start)
-            val end = instructions.indexOf(tcb.end)
+            val begin = tcb.start.indexOf()
+            val end = tcb.end.indexOf()
             for (j in begin until end) {
+                val insn = insnsArray[j]
+                if (!insn.isMeaningful) continue
                 var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[j]
                 if (insnHandlers == null) {
                     insnHandlers = ArrayList<TryCatchBlockNode>()
@@ -245,18 +323,24 @@ open class MethodAnalyzer<V : Value>(
         }
     }
 
-    private fun mergeControlFlowEdge(insn: Int, frame: Frame<V>) {
-        val oldFrame = frames[insn]
-        val changes =
-            if (oldFrame != null)
-                oldFrame.merge(frame, interpreter)
-            else {
-                frames[insn] = newFrame(frame)
+    private fun mergeControlFlowEdge(src: Int, dest: Int, frame: Frame<V>) {
+        val oldFrame = frames[dest]
+        val changes = when {
+            oldFrame == null -> {
+                frames[dest] = newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
                 true
             }
-        if (changes && !queued[insn]) {
-            queued[insn] = true
-            queue[top++] = insn
+            dest == src + 1 && singlePredBlock[src] == singlePredBlock[dest] -> {
+                // Forward jump within a single predecessor block, no need to merge.
+                oldFrame.init(frame)
+                true
+            }
+            else ->
+                oldFrame.merge(frame, interpreter)
+        }
+        if (changes && !queued[dest]) {
+            queued[dest] = true
+            queue[top++] = dest
         }
     }
 
