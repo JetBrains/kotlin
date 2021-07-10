@@ -98,8 +98,8 @@ class Strings {
         assertPrints(string.elementAt(5), "n")
         assertFailsWith<StringIndexOutOfBoundsException> { string.elementAt(6) }
 
-        val emptyString = ""
-        assertFailsWith<StringIndexOutOfBoundsException> { emptyString.elementAt(0) }
+        val empty = ""
+        assertFailsWith<StringIndexOutOfBoundsException> { empty.elementAt(0) }
     }
 
     @Sample
