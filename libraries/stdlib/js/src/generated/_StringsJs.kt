@@ -15,7 +15,7 @@ import kotlin.js.*
 /**
  * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
  * 
- * @sample samples.collections.Collections.Elements.elementAt
+ * @sample samples.text.Strings.elementAt
  */
 public actual fun CharSequence.elementAt(index: Int): Char {
     return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, length: $length}") }
