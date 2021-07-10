@@ -20,7 +20,7 @@ import kotlin.random.*
 /**
  * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
  * 
- * @sample samples.collections.Collections.Elements.elementAt
+ * @sample samples.text.Strings.elementAt
  */
 public expect fun CharSequence.elementAt(index: Int): Char
 
