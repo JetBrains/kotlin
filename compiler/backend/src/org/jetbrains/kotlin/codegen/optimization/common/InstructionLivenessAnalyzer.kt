@@ -124,7 +124,7 @@ class InstructionLivenessAnalyzer(val method: MethodNode) {
         var jump = insnNode.dflt.indexOf
         visitControlFlowEdge(jump)
         for (label in insnNode.labels) {
-            jump = instructions.indexOf(label)
+            jump = label.indexOf
             visitControlFlowEdge(jump)
         }
     }
