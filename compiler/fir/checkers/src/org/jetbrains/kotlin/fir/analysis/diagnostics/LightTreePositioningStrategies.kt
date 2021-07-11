@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentListElementType
 
 object LightTreePositioningStrategies {
     val DEFAULT = object : LightTreePositioningStrategy() {
@@ -778,6 +780,17 @@ object LightTreePositioningStrategies {
         ): List<TextRange> {
             val nodeToMark = tree.collectDescendantsOfType(node, KtNodeTypes.REFERENCE_EXPRESSION).lastOrNull() ?: node
             return markElement(nodeToMark, startOffset, endOffset, tree, node)
+        }
+    }
+
+    val SPREAD_OPERATOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return super.mark(node, startOffset, startOffset + 1, tree)
         }
     }
 }

@@ -29,9 +29,9 @@ fun baz(s: String) {}
 fun getArr(): Array<String>? = null
 
 fun f() {
-    A().foo(1, *args)
-    bar(2, *<!ARGUMENT_TYPE_MISMATCH!>args<!>)
-    baz(<!NON_VARARG_SPREAD!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
+    A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>args)
+    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
+    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
 }
 
 fun g(args: Array<String>?) {
@@ -48,18 +48,18 @@ class B {
 
 fun h(b: B) {
     if (b.args != null) {
-        A().foo(1, *b.args)
+        A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>b.args)
     }
 }
 
 fun k() {
-    A().foo(1, *getArr())
-    bar(2, *<!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
-    baz(<!NON_VARARG_SPREAD!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
+    A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>getArr())
+    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
+    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
 }
 
 fun invokeTest(goodArgs: Array<String>) {
     J.staticFun(*goodArgs)
-    J.staticFun(*args)
-    J.staticFun(*args <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
+    J.staticFun(<!SPREAD_OF_NULLABLE!>*<!>args)
+    J.staticFun(<!SPREAD_OF_NULLABLE!>*<!>args <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 }

@@ -75,6 +75,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     ASSIGNMENT_LHS,
     IMPORT_LAST_NAME,
     DATA_MODIFIER,
+    SPREAD_OPERATOR,
 
     ;
 

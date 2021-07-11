@@ -409,6 +409,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error<KtElement> {
             parameter<String>("name")
         }
+
+        val SPREAD_OF_NULLABLE by error<PsiElement>(PositioningStrategy.SPREAD_OPERATOR)
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
@@ -570,7 +572,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NOTHING_TO_OVERRIDE by error<KtModifierListOwner>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirMemberDeclaration>("declaration")
         }
-        
+
         val CANNOT_OVERRIDE_INVISIBLE_MEMBER by error<KtNamedDeclaration>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableDeclaration>("overridingMember")
             parameter<FirCallableDeclaration>("baseMember")
