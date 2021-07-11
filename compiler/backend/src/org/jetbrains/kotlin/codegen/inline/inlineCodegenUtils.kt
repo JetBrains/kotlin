@@ -347,8 +347,42 @@ internal val AbstractInsnNode?.insnText: String
         return sw.toString().trim()
     }
 
+fun AbstractInsnNode?.insnText(insnList: InsnList): String {
+    if (this == null) return "<null>"
+
+    fun AbstractInsnNode.indexOf() =
+        insnList.indexOf(this)
+
+    fun LabelNode.labelText() =
+        "L#${this.indexOf()}"
+
+    return when (this) {
+        is LabelNode ->
+            labelText()
+        is JumpInsnNode ->
+            "$insnOpcodeText ${label.labelText()}"
+        is LookupSwitchInsnNode ->
+            "$insnOpcodeText " +
+                    this.keys.zip(this.labels).joinToString(prefix = "[", postfix = "]") { (key, label) -> "$key:${label.labelText()}" }
+        is TableSwitchInsnNode ->
+            "$insnOpcodeText " +
+                    (min..max).zip(this.labels).joinToString(prefix = "[", postfix = "]") { (key, label) -> "$key:${label.labelText()}" }
+        else ->
+            insnText
+    }
+}
+
 internal val AbstractInsnNode?.insnOpcodeText: String
-    get() = if (this == null) "null" else Printer.OPCODES[opcode]
+    get() = when (this) {
+        null -> "null"
+        is LabelNode -> "LABEL"
+        is LineNumberNode -> "LINENUMBER"
+        is FrameNode -> "FRAME"
+        else -> Printer.OPCODES[opcode]
+    }
+
+internal fun TryCatchBlockNode.text(insns: InsnList): String =
+    "[${insns.indexOf(start)} .. ${insns.indexOf(end)} -> ${insns.indexOf(handler)}]"
 
 internal fun loadClassBytesByInternalName(state: GenerationState, internalName: String): ByteArray {
     //try to find just compiled classes then in dependencies

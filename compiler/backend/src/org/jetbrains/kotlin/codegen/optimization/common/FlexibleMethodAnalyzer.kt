@@ -54,7 +54,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
-import java.util.*
 
 /**
  * This class is a modified version of `org.objectweb.asm.tree.analysis.Analyzer`
@@ -93,7 +92,7 @@ open class FlexibleMethodAnalyzer<V : Value>(
 
         checkAssertions()
 
-        computeExceptionHandlersForEachInsn(method)
+        computeExceptionHandlersForEachInsn()
 
         initSinglePredBlocks()
 
@@ -306,8 +305,8 @@ open class FlexibleMethodAnalyzer<V : Value>(
         mergeControlFlowEdge(0, 0, current)
     }
 
-    private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
-        for (tcb in m.tryCatchBlocks) {
+    private fun computeExceptionHandlersForEachInsn() {
+        for (tcb in method.tryCatchBlocks) {
             val begin = tcb.start.indexOf()
             val end = tcb.end.indexOf()
             for (j in begin until end) {
