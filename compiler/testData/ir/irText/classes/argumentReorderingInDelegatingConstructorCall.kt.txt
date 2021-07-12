@@ -17,9 +17,7 @@ open class Base {
 
 class Test1 : Base {
   constructor(xx: Int, yy: Int) /* primary */ {
-    { // BLOCK
-      super/*Base*/(x = xx, y = yy)
-    }
+    super/*Base*/(x = xx, y = yy)
     /* <init>() */
 
   }
@@ -28,17 +26,13 @@ class Test1 : Base {
 
 class Test2 : Base {
   constructor(xx: Int, yy: Int) {
-    { // BLOCK
-      super/*Base*/(x = xx, y = yy)
-    }
+    super/*Base*/(x = xx, y = yy)
     /* <init>() */
 
   }
 
   constructor(xxx: Int, yyy: Int, a: Any) {
-    { // BLOCK
-      this/*Test2*/(xx = xxx, yy = yyy)
-    }
+    this/*Test2*/(xx = xxx, yy = yyy)
   }
 
 }
