@@ -12,6 +12,11 @@ public fun KtCallTarget.getSuccessCallSymbolOrNull(): KtFunctionLikeSymbol? = wh
     is KtErrorCallTarget -> null
 }
 
+public fun KtCallTarget.getSingleCandidateSymbolOrNull(): KtFunctionLikeSymbol? = when (this) {
+    is KtSuccessCallTarget -> symbol
+    is KtErrorCallTarget -> candidates.singleOrNull()
+}
+
 public inline fun <reified S : KtFunctionLikeSymbol> KtCall.isSuccessCallOf(predicate: (S) -> Boolean): Boolean {
     if (this !is KtFunctionCall) return false
     val symbol = targetFunction.getSuccessCallSymbolOrNull() ?: return false

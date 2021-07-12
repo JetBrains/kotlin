@@ -14,6 +14,13 @@ import org.jetbrains.kotlin.name.FqName
 public abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKind {
     public abstract val valueParameters: List<KtValueParameterSymbol>
 
+    /**
+     * Kotlin functions always have stable parameter names that can be reliably used when calling them with named arguments.
+     * Functions loaded from platform definitions (e.g. Java binaries or JS) may have unstable parameter names that vary from
+     * one platform installation to another. These names can not be used reliably for calls with named arguments.
+     */
+    public abstract val hasStableParameterNames: Boolean
+
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionLikeSymbol>
 }
 
