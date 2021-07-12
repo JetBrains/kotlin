@@ -82,7 +82,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return ((data as? ResolutionMode.WithStatus)?.status ?: declarationStatus)
     }
 
-    private fun prepareSignatureForBodyResolve(callableMember: FirCallableMemberDeclaration) {
+    private fun prepareSignatureForBodyResolve(callableMember: FirCallableDeclaration) {
         callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
         callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
         if (callableMember is FirFunction) {

@@ -29,7 +29,7 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
 
         private val FirMemberDeclaration.name: Name
             get() = when (this) {
-                is FirCallableMemberDeclaration ->
+                is FirCallableDeclaration ->
                     this.symbol.callableId.callableName
                 is FirClass ->
                     this.classId.shortClassName
@@ -55,8 +55,8 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
     }
 
     override fun compare(a: FirMemberDeclaration, b: FirMemberDeclaration): Int {
-        if (a is FirCallableMemberDeclaration && b is FirCallableMemberDeclaration) {
-            return FirCallableMemberDeclarationComparator.compare(a, b)
+        if (a is FirCallableDeclaration && b is FirCallableDeclaration) {
+            return FirCallableDeclarationComparator.compare(a, b)
         }
 
         val typeAndNameDiff = TypeAndNameComparator.compare(a, b)

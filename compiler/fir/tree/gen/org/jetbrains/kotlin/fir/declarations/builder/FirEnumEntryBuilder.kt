@@ -41,9 +41,9 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
-    var deprecation: DeprecationsPerUseSite? = null
     val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     lateinit var status: FirDeclarationStatus
+    var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeKotlinType? = null
     lateinit var name: Name
@@ -59,9 +59,9 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             returnTypeRef,
-            deprecation,
             typeParameters,
             status,
+            deprecation,
             containerSource,
             dispatchReceiverType,
             name,

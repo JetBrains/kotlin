@@ -498,7 +498,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun computeTypeArgumentTypes(
         candidate: Candidate,
     ): List<ConeKotlinType> {
-        val declaration = candidate.symbol.fir as? FirCallableMemberDeclaration ?: return emptyList()
+        val declaration = candidate.symbol.fir as? FirCallableDeclaration ?: return emptyList()
 
         return declaration.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }
             .map { candidate.substitutor.substituteOrSelf(it) }

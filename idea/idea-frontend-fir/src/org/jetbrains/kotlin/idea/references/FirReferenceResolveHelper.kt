@@ -73,7 +73,7 @@ internal object FirReferenceResolveHelper {
         val classLikeDeclaration = ConeClassLikeLookupTagImpl(this).toSymbol(session)?.fir
         if (classLikeDeclaration is FirRegularClass) {
             if (calleeReference is FirResolvedNamedReference) {
-                val callee = calleeReference.resolvedSymbol.fir as? FirCallableMemberDeclaration
+                val callee = calleeReference.resolvedSymbol.fir as? FirCallableDeclaration
                 // TODO: check callee owner directly?
                 if (callee !is FirConstructor && callee?.isStatic != true) {
                     classLikeDeclaration.companionObject?.let { return it.buildSymbol(symbolBuilder) }
@@ -98,9 +98,9 @@ internal object FirReferenceResolveHelper {
                             syntheticProperty.setter!!.delegate
                         }
                     }
-                    else -> symbol.fir as? FirDeclaration
+                    else -> symbol.fir
                 }
-                listOfNotNull(fir?.buildSymbol(symbolBuilder))
+                listOfNotNull(fir.buildSymbol(symbolBuilder))
             }
             is FirResolvedCallableReference -> {
                 listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
@@ -112,7 +112,7 @@ internal object FirReferenceResolveHelper {
                 listOfNotNull((superTypeRef as? FirResolvedTypeRef)?.toTargetSymbol(session, symbolBuilder))
             }
             is FirErrorNamedReference -> {
-                getCandidateSymbols().mapNotNull { it.fir.buildSymbol(symbolBuilder) }
+                getCandidateSymbols().map { it.fir.buildSymbol(symbolBuilder) }
             }
             else -> emptyList()
         }
@@ -300,7 +300,7 @@ internal object FirReferenceResolveHelper {
         fir: FirErrorNamedReference,
         symbolBuilder: KtSymbolByFirBuilder
     ): List<KtSymbol> =
-        getFirSymbolsByErrorNamedReference(fir).mapNotNull { it.fir.buildSymbol(symbolBuilder) }
+        getFirSymbolsByErrorNamedReference(fir).map { it.fir.buildSymbol(symbolBuilder) }
 
 
     fun getFirSymbolsByErrorNamedReference(

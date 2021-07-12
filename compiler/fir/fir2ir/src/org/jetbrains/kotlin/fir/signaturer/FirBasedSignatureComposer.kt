@@ -62,7 +62,7 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
     override fun composeSignature(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag?): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
-        if (declaration is FirCallableMemberDeclaration) {
+        if (declaration is FirCallableDeclaration) {
             if (declaration.visibility == Visibilities.Local) return null
             if (declaration.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
@@ -87,7 +87,7 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
                     classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
                 )
             }
-            is FirCallableMemberDeclaration -> {
+            is FirCallableDeclaration -> {
                 if (declaration.visibility == Visibilities.Private) return null
                 val containingClassId = containingClass?.classId
 

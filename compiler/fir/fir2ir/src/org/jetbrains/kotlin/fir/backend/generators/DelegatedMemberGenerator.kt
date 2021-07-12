@@ -201,7 +201,7 @@ internal class DelegatedMemberGenerator(
 
 }
 
-private fun <S : FirCallableSymbol<D>, D : FirCallableMemberDeclaration> S.unwrapDelegateTarget(
+private fun <S : FirCallableSymbol<D>, D : FirCallableDeclaration> S.unwrapDelegateTarget(
     subClassLookupTag: ConeClassLikeLookupTag,
     firField: FirField,
 ): D? {

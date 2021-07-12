@@ -37,10 +37,10 @@ internal class FirConstructorImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
-    override var receiverTypeRef: FirTypeRef?,
-    override var deprecation: DeprecationsPerUseSite?,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
+    override var receiverTypeRef: FirTypeRef?,
+    override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val valueParameters: MutableList<FirValueParameter>,
@@ -58,9 +58,9 @@ internal class FirConstructorImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
+        receiverTypeRef?.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
@@ -70,9 +70,9 @@ internal class FirConstructorImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
         transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
+        transformReceiverTypeRef(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformAnnotations(transformer, data)
@@ -86,11 +86,6 @@ internal class FirConstructorImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
-        return this
-    }
-
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
         typeParameters.transformInplace(transformer, data)
         return this
@@ -98,6 +93,11 @@ internal class FirConstructorImpl(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
+        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
         return this
     }
 

@@ -16,15 +16,12 @@ import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 fun FirCallableSymbol<*>.dispatchReceiverTypeOrNull(): ConeKotlinType? =
-    (fir as? FirCallableMemberDeclaration)?.dispatchReceiverType
+    fir.dispatchReceiverType
 
 fun FirCallableSymbol<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? =
-    (fir as? FirCallableMemberDeclaration)?.dispatchReceiverClassOrNull()
+    fir.dispatchReceiverClassOrNull()
 
-fun FirCallableDeclaration.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? =
-    (this as? FirCallableMemberDeclaration)?.dispatchReceiverClassOrNull()
-
-fun FirCallableMemberDeclaration.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? {
+fun FirCallableDeclaration.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? {
     if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride) return symbol.baseForIntersectionOverride!!.fir.dispatchReceiverClassOrNull()
 
     return (dispatchReceiverType as? ConeClassLikeType)?.lookupTag
@@ -35,9 +32,6 @@ fun FirCallableDeclaration.containingClass(): ConeClassLikeLookupTag? {
     return (containingClassAttr ?: dispatchReceiverClassOrNull())
 }
 
-fun FirCallableMemberDeclaration.containingClass(): ConeClassLikeLookupTag? {
-    return (containingClassAttr ?: dispatchReceiverClassOrNull())
-}
 fun FirRegularClass.containingClassForLocal(): ConeClassLikeLookupTag? =
     if (isLocal) containingClassForLocalAttr else null
 

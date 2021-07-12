@@ -29,10 +29,10 @@ abstract class FirField : FirVariable() {
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
-    abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val name: Name
@@ -63,11 +63,11 @@ abstract class FirField : FirVariable() {
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField
 
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField
-
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirField
+
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField
 

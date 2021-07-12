@@ -47,9 +47,9 @@ internal class FirErrorPropertyImpl(
     override val symbol: FirErrorPropertySymbol,
 ) : FirErrorProperty() {
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
-    override val receiverTypeRef: FirTypeRef? get() = null
     override val typeParameters: List<FirTypeParameterRef> get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null
     override val isVar: Boolean get() = false
@@ -79,16 +79,16 @@ internal class FirErrorPropertyImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        return this
-    }
-
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
         return this
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
         return this
     }
 

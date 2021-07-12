@@ -135,7 +135,7 @@ inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
  * or null if no proper declaration has been found.
  */
 fun FirDeclaration.getContainingClass(context: CheckerContext): FirClassLikeDeclaration? =
-    this.safeAs<FirCallableMemberDeclaration>()?.containingClass()?.toSymbol(context.session)?.fir
+    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(context.session)?.fir
 
 fun FirClassLikeSymbol<*>.outerClass(context: CheckerContext): FirClassLikeSymbol<*>? {
     if (this !is FirClassSymbol<*>) return null
@@ -417,7 +417,7 @@ private fun isSubtypeOfForFunctionalTypeReturningUnit(
     return false
 }
 
-fun FirCallableMemberDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
+fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
     val classPackage = parentClass.symbol.classId.packageFqName
     if (visibility == Visibilities.Private ||
         !visibility.visibleFromPackage(classPackage, symbol.callableId.packageName)
@@ -434,7 +434,7 @@ fun FirCallableMemberDeclaration.isVisibleInClass(parentClass: FirClass): Boolea
  *
  * @param parentClass the contextual class for this query.
  */
-fun FirCallableMemberDeclaration.getImplementationStatus(sessionHolder: SessionHolder, parentClass: FirClass): ImplementationStatus {
+fun FirCallableDeclaration.getImplementationStatus(sessionHolder: SessionHolder, parentClass: FirClass): ImplementationStatus {
     val containingClass = getContainingClass(sessionHolder)
     val symbol = this.symbol
 
@@ -449,13 +449,13 @@ fun FirCallableMemberDeclaration.getImplementationStatus(sessionHolder: SessionH
         // In Java 8, non-abstract intersection overrides having abstract symbol from base class
         // still should be implemented in current class (even when they have default interface implementation)
         if (symbol.intersections.any {
-                val fir = (it.fir as FirCallableMemberDeclaration).unwrapFakeOverrides()
+                val fir = it.fir.unwrapFakeOverrides()
                 fir.isAbstract && (fir.getContainingClass(sessionHolder) as? FirRegularClass)?.classKind == ClassKind.CLASS
             }
         ) {
             // Exception from the rule above: interface implementation via delegation
             if (symbol.intersections.none {
-                    val fir = (it.fir as FirCallableMemberDeclaration)
+                    val fir = it.fir
                     fir.origin == FirDeclarationOrigin.Delegated && !fir.isAbstract
                 }
             ) {
@@ -487,7 +487,7 @@ private fun FirIntersectionCallableSymbol.subjectToManyNotImplemented(sessionHol
     var nonAbstractCountInInterface = 0
     var abstractCountInInterface = 0
     for (intersectionSymbol in intersections) {
-        val intersection = intersectionSymbol.fir as FirCallableMemberDeclaration
+        val intersection = intersectionSymbol.fir
         val containingClass = intersection.getContainingClass(sessionHolder) as? FirRegularClass
         val hasInterfaceContainer = containingClass?.classKind == ClassKind.INTERFACE
         if (intersection.modality != Modality.ABSTRACT) {
@@ -515,7 +515,7 @@ private val FirSimpleFunction.matchesDataClassSyntheticMemberSignatures: Boolean
             (this.name == OperatorNameConventions.TO_STRING && matchesToStringSignature)
 
 private fun FirDeclaration.getContainingClass(sessionHolder: SessionHolder): FirClassLikeDeclaration? =
-    this.safeAs<FirCallableMemberDeclaration>()?.containingClass()?.toSymbol(sessionHolder.session)?.fir
+    this.safeAs<FirCallableDeclaration>()?.containingClass()?.toSymbol(sessionHolder.session)?.fir
 
 // NB: we intentionally do not check return types
 private val FirSimpleFunction.matchesEqualsSignature: Boolean

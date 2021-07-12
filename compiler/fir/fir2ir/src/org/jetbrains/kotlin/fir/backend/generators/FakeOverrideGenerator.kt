@@ -54,7 +54,7 @@ class FakeOverrideGenerator(
         return conversionScope.withProperty(this, firProperty = null, f)
     }
 
-    private fun FirCallableMemberDeclaration.allowsToHaveFakeOverrideIn(klass: FirClass): Boolean {
+    private fun FirCallableDeclaration.allowsToHaveFakeOverrideIn(klass: FirClass): Boolean {
         if (!allowsToHaveFakeOverride) return false
         if (this.visibility != JavaDescriptorVisibilities.PACKAGE_VISIBILITY) return true
         return this.symbol.callableId.packageName == klass.symbol.classId.packageFqName
@@ -179,7 +179,7 @@ class FakeOverrideGenerator(
     private fun FirCallableSymbol<*>.shouldHaveComputedBaseSymbolsForClass(classLookupTag: ConeClassLikeLookupTag): Boolean =
         fir.origin.fromSupertypes && dispatchReceiverClassOrNull() == classLookupTag
 
-    private inline fun <reified D : FirCallableMemberDeclaration, reified S : FirCallableSymbol<D>, reified I : IrDeclaration> createFakeOverriddenIfNeeded(
+    private inline fun <reified D : FirCallableDeclaration, reified S : FirCallableSymbol<D>, reified I : IrDeclaration> createFakeOverriddenIfNeeded(
         klass: FirClass,
         irClass: IrClass,
         isLocal: Boolean,

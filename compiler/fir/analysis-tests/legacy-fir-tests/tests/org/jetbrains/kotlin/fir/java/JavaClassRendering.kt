@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -42,7 +42,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
             if (declaration in renderedDeclarations) continue
 
             val scopeToUse =
-                if (declaration is FirCallableMemberDeclaration && declaration.status.isStatic)
+                if (declaration is FirCallableDeclaration && declaration.status.isStatic)
                     staticScope
                 else
                     memberScope

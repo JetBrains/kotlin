@@ -139,7 +139,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             data.state.callableContainerMap[symbol] = data.file
         }
 
-        private inline fun <reified D : FirCallableMemberDeclaration, S : FirCallableSymbol<D>> registerCallable(
+        private inline fun <reified D : FirCallableDeclaration, S : FirCallableSymbol<D>> registerCallable(
             symbol: S,
             data: FirRecorderData,
             map: MutableMap<CallableId, List<S>>

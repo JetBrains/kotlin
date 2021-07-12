@@ -38,9 +38,9 @@ internal class FirSimpleFunctionImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
+    override var status: FirDeclarationStatus,
     override var receiverTypeRef: FirTypeRef?,
     override var deprecation: DeprecationsPerUseSite?,
-    override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val valueParameters: MutableList<FirValueParameter>,
@@ -59,8 +59,8 @@ internal class FirSimpleFunctionImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
         status.accept(visitor, data)
+        receiverTypeRef?.accept(visitor, data)
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
@@ -71,8 +71,8 @@ internal class FirSimpleFunctionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
         transformStatus(transformer, data)
+        transformReceiverTypeRef(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
@@ -87,13 +87,13 @@ internal class FirSimpleFunctionImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        status = status.transform(transformer, data)
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
         return this
     }
 

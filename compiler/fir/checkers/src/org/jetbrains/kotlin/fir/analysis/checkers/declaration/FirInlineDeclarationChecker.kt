@@ -175,7 +175,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         ) {
             val source = qualifiedAccess.source ?: return
             if (targetSymbol == null) return
-            val targetFir = targetSymbol.fir as? FirCallableMemberDeclaration
+            val targetFir = targetSymbol.fir as? FirCallableDeclaration
 
             if (targetSymbol.fir in inlinableParameters) {
                 if (!qualifiedAccess.partOfCall(context)) {
@@ -199,7 +199,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
 
         private fun checkVisibilityAndAccess(
             accessExpression: FirQualifiedAccess,
-            calledDeclaration: FirCallableMemberDeclaration?,
+            calledDeclaration: FirCallableDeclaration?,
             source: FirSourceElement,
             context: CheckerContext
         ) {
@@ -248,7 +248,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         }
 
         private fun checkPrivateClassMemberAccess(
-            calledDeclaration: FirCallableMemberDeclaration,
+            calledDeclaration: FirCallableDeclaration,
             source: FirSourceElement,
             context: CheckerContext
         ) {
@@ -266,7 +266,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         }
 
         private fun checkSuperCalls(
-            calledDeclaration: FirCallableMemberDeclaration,
+            calledDeclaration: FirCallableDeclaration,
             callExpression: FirQualifiedAccess,
             context: CheckerContext
         ) {
@@ -305,7 +305,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             }
         }
 
-        private fun FirCallableMemberDeclaration.isInsidePrivateClass(): Boolean {
+        private fun FirCallableDeclaration.isInsidePrivateClass(): Boolean {
             val containingClass = this.containingClass()?.toSymbol(session)?.fir ?: return false
 
             val containingClassVisibility = when (containingClass) {

@@ -25,13 +25,13 @@ abstract class AbstractFirOverrideScope(
         return overrideChecker.isOverriddenFunction(overrideCandidate, baseDeclaration)
     }
 
-    private fun isOverriddenProperty(overrideCandidate: FirCallableMemberDeclaration, baseDeclaration: FirProperty): Boolean {
+    private fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {
         return overrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
     }
 
     protected fun similarFunctionsOrBothProperties(
-        overrideCandidate: FirCallableMemberDeclaration,
-        baseDeclaration: FirCallableMemberDeclaration
+        overrideCandidate: FirCallableDeclaration,
+        baseDeclaration: FirCallableDeclaration
     ): Boolean {
         return when (overrideCandidate) {
             is FirSimpleFunction -> when (baseDeclaration) {
@@ -50,9 +50,9 @@ abstract class AbstractFirOverrideScope(
     protected open fun FirCallableSymbol<*>.getOverridden(overrideCandidates: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {
         if (overrideByBase.containsKey(this)) return overrideByBase[this]
 
-        val baseDeclaration = (this as FirBasedSymbol<*>).fir as FirCallableMemberDeclaration
+        val baseDeclaration = (this as FirBasedSymbol<*>).fir as FirCallableDeclaration
         val override = overrideCandidates.firstOrNull {
-            val overrideCandidate = (it as FirBasedSymbol<*>).fir as FirCallableMemberDeclaration
+            val overrideCandidate = (it as FirBasedSymbol<*>).fir as FirCallableDeclaration
             baseDeclaration.modality != Modality.FINAL && similarFunctionsOrBothProperties(overrideCandidate, baseDeclaration)
         } // TODO: two or more overrides for one fun?
         overrideByBase[this] = override

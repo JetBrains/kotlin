@@ -36,9 +36,9 @@ internal class FirEnumEntryImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
-    override var deprecation: DeprecationsPerUseSite?,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
+    override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val name: Name,
@@ -79,10 +79,6 @@ internal class FirEnumEntryImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        return this
-    }
-
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         typeParameters.transformInplace(transformer, data)
         return this
@@ -90,6 +86,10 @@ internal class FirEnumEntryImpl(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         return this
     }
 

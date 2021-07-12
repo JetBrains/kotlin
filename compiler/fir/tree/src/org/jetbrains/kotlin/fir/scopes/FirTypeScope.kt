@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -146,7 +146,7 @@ inline fun FirTypeScope.processDirectlyOverriddenProperties(
 fun FirTypeScope.getDirectOverriddenMembers(
     member: FirCallableSymbol<*>,
     unwrapIntersectionAndSubstitutionOverride: Boolean = false,
-): List<FirCallableSymbol<out FirCallableMemberDeclaration>> =
+): List<FirCallableSymbol<out FirCallableDeclaration>> =
     when (member) {
         is FirNamedFunctionSymbol -> getDirectOverriddenFunctions(member, unwrapIntersectionAndSubstitutionOverride)
         is FirPropertySymbol -> getDirectOverriddenProperties(member, unwrapIntersectionAndSubstitutionOverride)

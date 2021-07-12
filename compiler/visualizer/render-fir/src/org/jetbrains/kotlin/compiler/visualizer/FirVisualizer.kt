@@ -469,7 +469,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         private fun renderImplicitReceiver(symbol: FirBasedSymbol<*>, psi: PsiElement?) {
-            val receiverType = (symbol.fir as? FirCallableMemberDeclaration)?.dispatchReceiverType ?: return
+            val receiverType = (symbol.fir as? FirCallableDeclaration)?.dispatchReceiverType ?: return
             val implicitReceiverIndex = implicitReceivers.indexOf(receiverType)
             if (implicitReceiverIndex != -1) addAnnotation("this@$implicitReceiverIndex", psi)
         }

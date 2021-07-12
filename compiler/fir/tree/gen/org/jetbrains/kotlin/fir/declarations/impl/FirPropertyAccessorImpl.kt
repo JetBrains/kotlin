@@ -39,8 +39,8 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
-    override var deprecation: DeprecationsPerUseSite?,
     override var status: FirDeclarationStatus,
+    override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val valueParameters: MutableList<FirValueParameter>,
@@ -87,12 +87,12 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        status = status.transform(transformer, data)
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         return this
     }
 

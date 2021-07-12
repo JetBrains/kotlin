@@ -822,7 +822,7 @@ class CallAndReferenceGenerator(
                 if (ownerFunction?.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
                         ((qualifiedAccess.calleeReference as FirResolvedNamedReference)
-                            .resolvedSymbol.fir as? FirCallableMemberDeclaration)?.receiverTypeRef?.let { receiverType ->
+                            .resolvedSymbol.fir as? FirCallableDeclaration)?.receiverTypeRef?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
                                 it.cast(
                                     qualifiedAccess.extensionReceiver,

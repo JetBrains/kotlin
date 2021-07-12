@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class FirSignatureEnhancement(
     private val owner: FirRegularClass,
     private val session: FirSession,
-    private val overridden: FirSimpleFunction.() -> List<FirCallableMemberDeclaration>
+    private val overridden: FirSimpleFunction.() -> List<FirCallableDeclaration>
 ) {
     /*
      * FirSignatureEnhancement may be created with library session which doesn't have single module data,
@@ -306,7 +306,7 @@ class FirSignatureEnhancement(
 
     private fun enhanceReceiverType(
         ownerFunction: FirJavaMethod,
-        overriddenMembers: List<FirCallableMemberDeclaration>,
+        overriddenMembers: List<FirCallableDeclaration>,
         memberContext: FirJavaEnhancementContext
     ): FirResolvedTypeRef {
         val signatureParts = ownerFunction.partsForValueParameter(
@@ -322,7 +322,7 @@ class FirSignatureEnhancement(
 
     private fun enhanceValueParameterType(
         ownerFunction: FirFunction,
-        overriddenMembers: List<FirCallableMemberDeclaration>,
+        overriddenMembers: List<FirCallableDeclaration>,
         hasReceiver: Boolean,
         memberContext: FirJavaEnhancementContext,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
@@ -348,8 +348,8 @@ class FirSignatureEnhancement(
     }
 
     private fun enhanceReturnType(
-        owner: FirCallableMemberDeclaration,
-        overriddenMembers: List<FirCallableMemberDeclaration>,
+        owner: FirCallableDeclaration,
+        overriddenMembers: List<FirCallableDeclaration>,
         memberContext: FirJavaEnhancementContext,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
     ): FirResolvedTypeRef {
@@ -370,21 +370,21 @@ class FirSignatureEnhancement(
     }
 
     private sealed class TypeInSignature {
-        abstract fun getTypeRef(member: FirCallableMemberDeclaration): FirTypeRef
+        abstract fun getTypeRef(member: FirCallableDeclaration): FirTypeRef
 
         object Return : TypeInSignature() {
-            override fun getTypeRef(member: FirCallableMemberDeclaration): FirTypeRef = member.returnTypeRef
+            override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef = member.returnTypeRef
         }
 
         object Receiver : TypeInSignature() {
-            override fun getTypeRef(member: FirCallableMemberDeclaration): FirTypeRef {
+            override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
                 if (member is FirJavaMethod) return member.valueParameters[0].returnTypeRef
                 return member.receiverTypeRef!!
             }
         }
 
         class ValueParameter(val hasReceiver: Boolean, val index: Int) : TypeInSignature() {
-            override fun getTypeRef(member: FirCallableMemberDeclaration): FirTypeRef {
+            override fun getTypeRef(member: FirCallableDeclaration): FirTypeRef {
                 if (hasReceiver && member is FirJavaMethod) {
                     return member.valueParameters[index + 1].returnTypeRef
                 }
@@ -395,12 +395,12 @@ class FirSignatureEnhancement(
 
     private fun FirFunction.partsForValueParameter(
         typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-        overriddenMembers: List<FirCallableMemberDeclaration>,
+        overriddenMembers: List<FirCallableDeclaration>,
         // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)
         parameterContainer: FirAnnotationContainer?,
         methodContext: FirJavaEnhancementContext,
         typeInSignature: TypeInSignature
-    ): EnhancementSignatureParts = (this as FirCallableMemberDeclaration).parts(
+    ): EnhancementSignatureParts = (this as FirCallableDeclaration).parts(
         typeQualifierResolver,
         overriddenMembers,
         parameterContainer, false,
@@ -411,9 +411,9 @@ class FirSignatureEnhancement(
         typeInSignature
     )
 
-    private fun FirCallableMemberDeclaration.parts(
+    private fun FirCallableDeclaration.parts(
         typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-        overriddenMembers: List<FirCallableMemberDeclaration>,
+        overriddenMembers: List<FirCallableDeclaration>,
         typeContainer: FirAnnotationContainer?,
         isCovariant: Boolean,
         containerContext: FirJavaEnhancementContext,

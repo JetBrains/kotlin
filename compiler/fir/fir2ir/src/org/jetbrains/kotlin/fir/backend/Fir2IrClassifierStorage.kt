@@ -156,7 +156,7 @@ class Fir2IrClassifierStorage(
 
     private fun FirRegularClass.enumClassModality(): Modality {
         return when {
-            declarations.any { it is FirCallableMemberDeclaration && it.modality == Modality.ABSTRACT } -> {
+            declarations.any { it is FirCallableDeclaration && it.modality == Modality.ABSTRACT } -> {
                 Modality.ABSTRACT
             }
             declarations.any { it is FirEnumEntry && it.initializer != null } -> {

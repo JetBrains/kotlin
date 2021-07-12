@@ -138,7 +138,7 @@ class FirDelegatedPropertyInferenceSession(
             ?: when (val container = components.container) {
                 is FirRegularClass -> container.defaultType()
                 is FirAnonymousObject -> container.defaultType()
-                is FirCallableMemberDeclaration -> container.dispatchReceiverType
+                is FirCallableDeclaration -> container.dispatchReceiverType
                 else -> null
             } ?: components.session.builtinTypes.nullableNothingType.type
         val valueParameterForThis = (symbol as? FirFunctionSymbol<*>)?.fir?.valueParameters?.firstOrNull() ?: return

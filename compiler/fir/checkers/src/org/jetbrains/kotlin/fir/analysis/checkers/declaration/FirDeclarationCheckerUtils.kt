@@ -207,7 +207,7 @@ internal val FirDeclaration.isLocalMember: Boolean
         else -> false
     }
 
-internal val FirCallableMemberDeclaration.isExtensionMember: Boolean
+internal val FirCallableDeclaration.isExtensionMember: Boolean
     get() {
         return receiverTypeRef != null && dispatchReceiverType != null
     }

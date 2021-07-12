@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableMemberDeclarationComparator
+import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.CONTINUATION_INTERFACE_CLASS_ID
@@ -143,7 +143,7 @@ class FirElementSerializer private constructor(
         val callableMembers =
             extension.customClassMembersProducer?.getCallableMembers(klass)
                 ?: klass.declarations()
-                    .sortedWith(FirCallableMemberDeclarationComparator)
+                    .sortedWith(FirCallableDeclarationComparator)
 
         for (declaration in callableMembers) {
             if (declaration !is FirEnumEntry && declaration.isStatic) continue // ??? Miss values() & valueOf()
@@ -216,13 +216,13 @@ class FirElementSerializer private constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun FirClass.declarations(): List<FirCallableMemberDeclaration> = buildList {
+    private fun FirClass.declarations(): List<FirCallableDeclaration> = buildList {
         val memberScope =
             defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
                 ?: error("Null scope for $this")
 
         fun addDeclarationIfNeeded(symbol: FirCallableSymbol<*>) {
-            val declaration = symbol.fir as? FirCallableMemberDeclaration ?: return
+            val declaration = symbol.fir
             if (declaration.isSubstitutionOrIntersectionOverride) return
 
             // non-intersection or substitution fake override
@@ -235,7 +235,7 @@ class FirElementSerializer private constructor(
         memberScope.processAllProperties(::addDeclarationIfNeeded)
 
         for (declaration in declarations) {
-            if (declaration is FirCallableMemberDeclaration && declaration.isStatic) {
+            if (declaration is FirCallableDeclaration && declaration.isStatic) {
                 add(declaration)
             }
         }
@@ -817,7 +817,7 @@ class FirElementSerializer private constructor(
 
     private fun FirCallableDeclaration.isSuspendOrHasSuspendTypesInSignature(): Boolean {
         // TODO (types in signature)
-        return this is FirCallableMemberDeclaration && this.isSuspend
+        return this.isSuspend
     }
 
     private fun writeVersionRequirementForInlineClasses(

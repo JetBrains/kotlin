@@ -13,16 +13,16 @@ import org.jetbrains.kotlin.utils.keysToMap
 
 class LocalClassesNavigationInfo(
     val parentForClass: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
-    private val parentClassForFunction: Map<FirCallableMemberDeclaration, FirClassLikeDeclaration>,
+    private val parentClassForFunction: Map<FirCallableDeclaration, FirClassLikeDeclaration>,
     val allMembers: List<FirDeclaration>
 ) {
-    val designationMap: Map<FirCallableMemberDeclaration, List<FirClassLikeDeclaration>> by lazy {
+    val designationMap: Map<FirCallableDeclaration, List<FirClassLikeDeclaration>> by lazy {
         parentClassForFunction.keys.keysToMap {
             pathForCallable(it)
         }
     }
 
-    private fun pathForCallable(callableMemberDeclaration: FirCallableMemberDeclaration): List<FirClassLikeDeclaration> {
+    private fun pathForCallable(callableMemberDeclaration: FirCallableDeclaration): List<FirClassLikeDeclaration> {
         val result = mutableListOf<FirClassLikeDeclaration>()
         var current = parentClassForFunction[callableMemberDeclaration]
 
@@ -43,7 +43,7 @@ fun FirClassLikeDeclaration.collectLocalClassesNavigationInfo(): LocalClassesNav
     }
 
 private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
-    val resultingMap: MutableMap<FirCallableMemberDeclaration, FirClassLikeDeclaration> = mutableMapOf()
+    val resultingMap: MutableMap<FirCallableDeclaration, FirClassLikeDeclaration> = mutableMapOf()
     val parentForClass: MutableMap<FirClassLikeDeclaration, FirClassLikeDeclaration?> = mutableMapOf()
     val allMembers: MutableList<FirDeclaration> = mutableListOf()
     private val currentPath: MutableList<FirClassLikeDeclaration> = mutableListOf()
@@ -68,24 +68,21 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
-        visitCallableMemberDeclaration(simpleFunction, null)
+        visitCallableDeclaration(simpleFunction, null)
     }
 
     override fun visitProperty(property: FirProperty, data: Any?) {
-        visitCallableMemberDeclaration(property, null)
+        visitCallableDeclaration(property, null)
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: Any?) {
-        visitCallableMemberDeclaration(constructor, null)
+        visitCallableDeclaration(constructor, null)
     }
 
-    override fun visitCallableMemberDeclaration(
-        callableMemberDeclaration: FirCallableMemberDeclaration,
-        data: Any?
-    ) {
-        allMembers += callableMemberDeclaration
-        if (callableMemberDeclaration.returnTypeRef !is FirImplicitTypeRef) return
-        resultingMap[callableMemberDeclaration] = currentPath.last()
+    override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: Any?) {
+        allMembers += callableDeclaration
+        if (callableDeclaration.returnTypeRef !is FirImplicitTypeRef) return
+        resultingMap[callableDeclaration] = currentPath.last()
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Any?) {

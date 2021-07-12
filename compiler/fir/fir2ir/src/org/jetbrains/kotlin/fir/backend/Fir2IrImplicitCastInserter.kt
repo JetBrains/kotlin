@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
@@ -292,7 +291,7 @@ class Fir2IrImplicitCastInserter(
     ): IrExpression {
         val referencedDeclaration =
             ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol<*>)?.unwrapCallRepresentative()
-                ?.fir as? FirCallableMemberDeclaration
+                ?.fir
 
         val dispatchReceiverType =
             referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType

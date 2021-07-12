@@ -186,7 +186,7 @@ object FirFakeOverrideGenerator {
                 }
                 val symbol = baseFunction.symbol
                 val (copiedReceiverType, possibleReturnType) = substituteReceiverAndReturnType(
-                    baseFunction as FirCallableMemberDeclaration, newReceiverType, newReturnType, substitutor
+                    baseFunction as FirCallableDeclaration, newReceiverType, newReturnType, substitutor
                 )
                 val (copiedReturnType, newFakeOverrideSubstitution) = when (possibleReturnType) {
                     is Maybe.Value -> possibleReturnType.value to null
@@ -348,7 +348,7 @@ object FirFakeOverrideGenerator {
     }
 
     private fun substituteReceiverAndReturnType(
-        baseCallable: FirCallableMemberDeclaration,
+        baseCallable: FirCallableDeclaration,
         newReceiverType: ConeKotlinType?,
         newReturnType: ConeKotlinType?,
         substitutor: ConeSubstitutor

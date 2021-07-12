@@ -58,7 +58,7 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
     val containingClass = when (declaration) {
         is FirCallableDeclaration -> {
             if (declaration.symbol.callableId.isLocal) return null
-            if ((declaration as? FirCallableMemberDeclaration)?.status?.visibility == Visibilities.Local) return null
+            if ((declaration as? FirCallableDeclaration)?.status?.visibility == Visibilities.Local) return null
             when (declaration) {
                 is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor -> {
                     val klass = declaration.containingClass() ?: return emptyList()

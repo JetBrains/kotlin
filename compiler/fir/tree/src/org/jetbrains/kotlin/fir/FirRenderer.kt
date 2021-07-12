@@ -217,11 +217,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
         callableDeclaration.annotations.renderAnnotations()
-        if (callableDeclaration is FirMemberDeclaration) {
-            visitMemberDeclaration(callableDeclaration)
-        } else {
-            visitTypedDeclaration(callableDeclaration)
-        }
+        visitMemberDeclaration(callableDeclaration)
         val receiverType = callableDeclaration.receiverTypeRef
         print(" ")
         if (receiverType != null) {
@@ -275,7 +271,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     private fun FirMemberDeclaration.modalityAsString(): String {
         return modality?.name?.toLowerCaseAsciiOnly() ?: run {
-            if (this is FirCallableMemberDeclaration && this.isOverride) {
+            if (this is FirCallableDeclaration && this.isOverride) {
                 "open?"
             } else {
                 "final?"
@@ -1088,7 +1084,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
         print("R|")
         val symbol = resolvedNamedReference.resolvedSymbol
-        val isSubstitutionOverride = (symbol.fir as? FirCallableMemberDeclaration)?.isSubstitutionOverride == true
+        val isSubstitutionOverride = (symbol.fir as? FirCallableDeclaration)?.isSubstitutionOverride == true
 
         if (isSubstitutionOverride) {
             print("SubstitutionOverride<")

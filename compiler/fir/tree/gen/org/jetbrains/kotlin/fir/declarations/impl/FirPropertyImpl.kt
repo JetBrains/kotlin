@@ -39,9 +39,9 @@ internal class FirPropertyImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
+    override var status: FirDeclarationStatus,
     override var receiverTypeRef: FirTypeRef?,
     override var deprecation: DeprecationsPerUseSite?,
-    override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val name: Name,
@@ -69,8 +69,8 @@ internal class FirPropertyImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
         status.accept(visitor, data)
+        receiverTypeRef?.accept(visitor, data)
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
@@ -82,8 +82,8 @@ internal class FirPropertyImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
         transformStatus(transformer, data)
+        transformReceiverTypeRef(transformer, data)
         transformInitializer(transformer, data)
         transformDelegate(transformer, data)
         transformGetter(transformer, data)
@@ -98,13 +98,13 @@ internal class FirPropertyImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        status = status.transform(transformer, data)
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
         return this
     }
 

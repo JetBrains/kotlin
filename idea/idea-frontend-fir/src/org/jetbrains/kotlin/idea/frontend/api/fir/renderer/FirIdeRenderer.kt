@@ -115,7 +115,7 @@ internal class FirIdeRenderer private constructor(
             return if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
         }
         val containingFirClass = containingDeclaration as? FirRegularClass ?: return Modality.FINAL
-        if (this !is FirCallableMemberDeclaration) return Modality.FINAL
+        if (this !is FirCallableDeclaration) return Modality.FINAL
         if (isOverride) {
             if (containingFirClass.modality != Modality.FINAL) return Modality.OPEN
         }
@@ -126,7 +126,7 @@ internal class FirIdeRenderer private constructor(
     }
 
     private fun StringBuilder.renderModalityForCallable(
-        callable: FirCallableMemberDeclaration,
+        callable: FirCallableDeclaration,
         containingDeclaration: FirDeclaration?
     ) {
         val modality = callable.modality ?: return
@@ -137,7 +137,7 @@ internal class FirIdeRenderer private constructor(
         }
     }
 
-    private fun StringBuilder.renderOverride(callableMember: FirCallableMemberDeclaration) {
+    private fun StringBuilder.renderOverride(callableMember: FirCallableDeclaration) {
         if (RendererModifier.OVERRIDE !in options.modifiers) return
         renderModifier(callableMember.isOverride || options.forceRenderingOverrideModifier, "override")
     }

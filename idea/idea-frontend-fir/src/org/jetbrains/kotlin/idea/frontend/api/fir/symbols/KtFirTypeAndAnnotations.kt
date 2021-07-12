@@ -97,7 +97,7 @@ internal fun FirRefWithValidityCheck<FirCallableDeclaration>.receiverTypeAndAnno
     }
 }
 
-internal fun FirRefWithValidityCheck<FirCallableMemberDeclaration>.dispatchReceiverTypeAndAnnotations(builder: KtSymbolByFirBuilder) =
+internal fun FirRefWithValidityCheck<FirCallableDeclaration>.dispatchReceiverTypeAndAnnotations(builder: KtSymbolByFirBuilder) =
     withFir { fir ->
         fir.dispatchReceiverType?.let {
             builder.typeBuilder.buildKtType(it)

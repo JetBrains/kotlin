@@ -21,13 +21,12 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -204,18 +203,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(typedDeclaration, data)
     }
 
-    open fun transformCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): FirCallableDeclaration {
-        return transformElement(callableDeclaration, data)
-    }
-
-    open fun transformTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): FirTypeParameterRef {
-        return transformElement(typeParameterRef, data)
-    }
-
-    open fun transformTypeParameter(typeParameter: FirTypeParameter, data: D): FirTypeParameterRef {
-        return transformElement(typeParameter, data)
-    }
-
     open fun transformTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): FirTypeParameterRefsOwner {
         return transformElement(typeParameterRefsOwner, data)
     }
@@ -228,8 +215,16 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(memberDeclaration, data)
     }
 
-    open fun transformCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration, data: D): FirCallableMemberDeclaration {
-        return transformElement(callableMemberDeclaration, data)
+    open fun transformCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): FirCallableDeclaration {
+        return transformElement(callableDeclaration, data)
+    }
+
+    open fun transformTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): FirTypeParameterRef {
+        return transformElement(typeParameterRef, data)
+    }
+
+    open fun transformTypeParameter(typeParameter: FirTypeParameter, data: D): FirTypeParameterRef {
+        return transformElement(typeParameter, data)
     }
 
     open fun transformVariable(variable: FirVariable, data: D): FirStatement {
@@ -720,18 +715,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformTypedDeclaration(typedDeclaration, data)
     }
 
-    final override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): FirCallableDeclaration {
-        return transformCallableDeclaration(callableDeclaration, data)
-    }
-
-    final override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): FirTypeParameterRef {
-        return transformTypeParameterRef(typeParameterRef, data)
-    }
-
-    final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): FirTypeParameterRef {
-        return transformTypeParameter(typeParameter, data)
-    }
-
     final override fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): FirTypeParameterRefsOwner {
         return transformTypeParameterRefsOwner(typeParameterRefsOwner, data)
     }
@@ -744,8 +727,16 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformMemberDeclaration(memberDeclaration, data)
     }
 
-    final override fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration, data: D): FirCallableMemberDeclaration {
-        return transformCallableMemberDeclaration(callableMemberDeclaration, data)
+    final override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): FirCallableDeclaration {
+        return transformCallableDeclaration(callableDeclaration, data)
+    }
+
+    final override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): FirTypeParameterRef {
+        return transformTypeParameterRef(typeParameterRef, data)
+    }
+
+    final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): FirTypeParameterRef {
+        return transformTypeParameter(typeParameter, data)
     }
 
     final override fun visitVariable(variable: FirVariable, data: D): FirStatement {

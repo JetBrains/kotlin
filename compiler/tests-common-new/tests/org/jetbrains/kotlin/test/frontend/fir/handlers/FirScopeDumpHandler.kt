@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -111,7 +111,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         }
     }
 
-    private fun SmartPrinter.printInfo(declaration: FirCallableMemberDeclaration, counter: SymbolCounter) {
+    private fun SmartPrinter.printInfo(declaration: FirCallableDeclaration, counter: SymbolCounter) {
         print("[${declaration.origin}]: ")
         print(declaration.render(FirRenderer.RenderMode.NoBodies).trim())
         print(" from ${declaration.dispatchReceiverType?.render()}")

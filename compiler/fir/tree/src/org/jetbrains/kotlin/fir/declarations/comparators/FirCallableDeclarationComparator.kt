@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.declarations.comparators
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
 
-object FirCallableMemberDeclarationComparator : Comparator<FirCallableMemberDeclaration> {
-    override fun compare(a: FirCallableMemberDeclaration, b: FirCallableMemberDeclaration): Int {
+object FirCallableDeclarationComparator : Comparator<FirCallableDeclaration> {
+    override fun compare(a: FirCallableDeclaration, b: FirCallableDeclaration): Int {
         val typeAndNameDiff = FirMemberDeclarationComparator.TypeAndNameComparator.compare(a, b)
         if (typeAndNameDiff != 0) {
             return typeAndNameDiff

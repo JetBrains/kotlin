@@ -82,7 +82,7 @@ class FirStatusResolver(
         return resolveStatus(function, function.status, containingClass, null, isLocal) l@{
             if (containingClass == null) return@l emptyList()
             @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
-            buildList<FirCallableMemberDeclaration> {
+            buildList<FirCallableDeclaration> {
                 val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
                 val symbol = function.symbol
                 scope.processFunctionsByName(function.name) {}
@@ -237,7 +237,7 @@ class FirStatusResolver(
     ): Modality {
         return when (declaration) {
             is FirRegularClass -> if (declaration.classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
-            is FirCallableMemberDeclaration -> {
+            is FirCallableDeclaration -> {
                 when {
                     containingClass == null -> Modality.FINAL
                     containingClass.classKind == ClassKind.INTERFACE -> {

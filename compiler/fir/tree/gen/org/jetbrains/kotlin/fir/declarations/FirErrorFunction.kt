@@ -32,9 +32,9 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override val attributes: FirDeclarationAttributes
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val returnTypeRef: FirTypeRef
+    abstract override val status: FirDeclarationStatus
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val deprecation: DeprecationsPerUseSite?
-    abstract override val status: FirDeclarationStatus
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
@@ -68,9 +68,9 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
-
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunction
+
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction
 

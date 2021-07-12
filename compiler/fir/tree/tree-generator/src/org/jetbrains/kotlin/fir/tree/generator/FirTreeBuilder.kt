@@ -30,15 +30,14 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val annotatedDeclaration = sealedElement("AnnotatedDeclaration", Declaration, declaration, annotationContainer)
     val anonymousInitializer = element("AnonymousInitializer", Declaration, declaration, controlFlowGraphOwner)
     val typedDeclaration = sealedElement("TypedDeclaration", Declaration, annotatedDeclaration)
-    val callableDeclaration = sealedElement("CallableDeclaration", Declaration, typedDeclaration)
-    val typeParameterRef = element("TypeParameterRef", Declaration)
-    val typeParameter = element("TypeParameter", Declaration, typeParameterRef, annotatedDeclaration)
     val typeParameterRefsOwner = sealedElement("TypeParameterRefsOwner", Declaration)
     val typeParametersOwner = sealedElement("TypeParametersOwner", Declaration, typeParameterRefsOwner)
     val memberDeclaration = sealedElement("MemberDeclaration", Declaration, typeParameterRefsOwner)
-    val callableMemberDeclaration = sealedElement("CallableMemberDeclaration", Declaration, callableDeclaration, memberDeclaration)
+    val callableDeclaration = sealedElement("CallableDeclaration", Declaration, typedDeclaration, memberDeclaration)
+    val typeParameterRef = element("TypeParameterRef", Declaration)
+    val typeParameter = element("TypeParameter", Declaration, typeParameterRef, annotatedDeclaration)
 
-    val variable = sealedElement("Variable", Declaration, callableMemberDeclaration, statement)
+    val variable = sealedElement("Variable", Declaration, callableDeclaration, statement)
     val valueParameter = element("ValueParameter", Declaration, variable, controlFlowGraphOwner)
     val property = element("Property", Declaration, variable, typeParametersOwner, controlFlowGraphOwner)
     val field = element("Field", Declaration, variable)
@@ -49,7 +48,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val regularClass = element("RegularClass", Declaration, klass, memberDeclaration, controlFlowGraphOwner)
     val typeAlias = element("TypeAlias", Declaration, classLikeDeclaration, memberDeclaration, typeParametersOwner)
 
-    val function = sealedElement("Function", Declaration, callableMemberDeclaration, targetElement, controlFlowGraphOwner, statement)
+    val function = sealedElement("Function", Declaration, callableDeclaration, targetElement, controlFlowGraphOwner, statement)
 
     val contractDescriptionOwner = sealedElement("ContractDescriptionOwner", Declaration)
     val simpleFunction = element("SimpleFunction", Declaration, function, contractDescriptionOwner, typeParametersOwner)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 
@@ -16,7 +16,7 @@ interface FirOverrideChecker {
     ): Boolean
 
     fun isOverriddenProperty(
-        overrideCandidate: FirCallableMemberDeclaration, // NB: in Java it can be a function which overrides accessor
+        overrideCandidate: FirCallableDeclaration, // NB: in Java it can be a function which overrides accessor
         baseDeclaration: FirProperty
     ): Boolean
 }

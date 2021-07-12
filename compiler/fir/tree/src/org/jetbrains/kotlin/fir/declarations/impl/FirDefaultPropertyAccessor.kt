@@ -39,11 +39,11 @@ abstract class FirDefaultPropertyAccessor(
     origin,
     FirDeclarationAttributes(),
     propertyTypeRef,
-    deprecation = null,
     status = if (effectiveVisibility == null)
         FirDeclarationStatusImpl(visibility, Modality.FINAL)
     else
         FirResolvedDeclarationStatusImpl(visibility, Modality.FINAL, effectiveVisibility),
+    deprecation = null,
     containerSource = null,
     dispatchReceiverType = null,
     valueParameters,

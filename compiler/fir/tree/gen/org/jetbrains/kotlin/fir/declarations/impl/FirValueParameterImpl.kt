@@ -49,9 +49,9 @@ internal class FirValueParameterImpl(
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
-    override val receiverTypeRef: FirTypeRef? get() = null
     override val typeParameters: List<FirTypeParameterRef> get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null
     override val isVar: Boolean get() = false
@@ -84,16 +84,16 @@ internal class FirValueParameterImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
-        return this
-    }
-
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         return this
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         status = status.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         return this
     }
 

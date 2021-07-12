@@ -37,7 +37,7 @@ var <T> T.danglingTypeConstraints: List<DanglingTypeConstraint>?
 
 val FirMemberDeclaration.containerSource: SourceElement?
     get() = when (this) {
-        is FirCallableMemberDeclaration -> containerSource
+        is FirCallableDeclaration -> containerSource
         is FirRegularClass -> sourceElement
         is FirTypeAlias -> sourceElement
     }

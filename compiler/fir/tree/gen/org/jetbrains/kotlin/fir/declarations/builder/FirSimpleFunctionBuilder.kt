@@ -46,9 +46,9 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
+    override lateinit var status: FirDeclarationStatus
     open var receiverTypeRef: FirTypeRef? = null
     override var deprecation: DeprecationsPerUseSite? = null
-    override lateinit var status: FirDeclarationStatus
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeKotlinType? = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
@@ -67,9 +67,9 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
             origin,
             attributes,
             returnTypeRef,
+            status,
             receiverTypeRef,
             deprecation,
-            status,
             containerSource,
             dispatchReceiverType,
             valueParameters,
@@ -104,9 +104,9 @@ inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleF
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.status = original.status
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.deprecation = original.deprecation
-    copyBuilder.status = original.status
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.valueParameters.addAll(original.valueParameters)

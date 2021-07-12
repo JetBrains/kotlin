@@ -63,7 +63,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             }
 
             val declarationReceiverType: ConeKotlinType? =
-                (fir as? FirCallableMemberDeclaration)?.receiverTypeRef?.coneType
+                fir.receiverTypeRef?.coneType
                     ?.let(candidate.substitutor::substituteOrSelf)
 
             if (resultingReceiverType != null && declarationReceiverType != null) {

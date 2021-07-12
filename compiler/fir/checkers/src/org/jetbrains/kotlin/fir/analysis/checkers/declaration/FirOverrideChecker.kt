@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -46,12 +45,12 @@ object FirOverrideChecker : FirClassChecker() {
 
         for (it in declaration.declarations) {
             if (it is FirSimpleFunction || it is FirProperty) {
-                checkMember(it as FirCallableMemberDeclaration, declaration, reporter, typeCheckerContext, firTypeScope, context)
+                checkMember(it as FirCallableDeclaration, declaration, reporter, typeCheckerContext, firTypeScope, context)
             }
         }
     }
 
-    private fun FirTypeScope.retrieveDirectOverriddenOf(member: FirCallableMemberDeclaration): List<FirCallableSymbol<*>> {
+    private fun FirTypeScope.retrieveDirectOverriddenOf(member: FirCallableDeclaration): List<FirCallableSymbol<*>> {
         return when (member) {
             is FirSimpleFunction -> {
                 processFunctionsByName(member.name) {}
@@ -66,7 +65,7 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     private fun ConeKotlinType.substituteAllTypeParameters(
-        overrideDeclaration: FirCallableMemberDeclaration,
+        overrideDeclaration: FirCallableDeclaration,
         baseDeclaration: FirCallableDeclaration,
         context: CheckerContext
     ): ConeKotlinType {
@@ -94,7 +93,6 @@ object FirOverrideChecker : FirClassChecker() {
         overriddenSymbols: List<FirCallableSymbol<*>>,
     ): FirCallableDeclaration? {
         for (overridden in overriddenSymbols) {
-            if (overridden.fir !is FirMemberDeclaration) continue
             val modality = (overridden.fir as FirMemberDeclaration).status.modality
             val isEffectivelyFinal = modality == null || modality == Modality.FINAL
             if (isEffectivelyFinal) {
@@ -111,14 +109,13 @@ object FirOverrideChecker : FirClassChecker() {
         return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir as? FirMemberDeclaration?
     }
 
-    private fun FirCallableMemberDeclaration.checkVisibility(
+    private fun FirCallableDeclaration.checkVisibility(
         containingClass: FirClass,
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
-        val visibilities = overriddenSymbols.mapNotNull {
-            if (it.fir !is FirMemberDeclaration) return@mapNotNull null
+        val visibilities = overriddenSymbols.map {
             it to (it.fir as FirMemberDeclaration).visibility
         }.sortedBy { pair ->
             // Regard `null` compare as Int.MIN so that we can report CANNOT_CHANGE_... first deterministically
@@ -140,7 +137,7 @@ object FirOverrideChecker : FirClassChecker() {
         val containingDeclarations = context.containingDeclarations + containingClass
         val visibilityChecker = context.session.visibilityChecker
         val hasVisibleBase = overriddenSymbols.any {
-            val fir = it.fir as? FirCallableMemberDeclaration ?: return@any true
+            val fir = it.fir as? FirCallableDeclaration ?: return@any true
             visibilityChecker.isVisible(fir, context.session, file, containingDeclarations, null)
         }
         if (!hasVisibleBase) {
@@ -152,7 +149,7 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     // See [OverrideResolver#isReturnTypeOkForOverride]
-    private fun FirCallableMemberDeclaration.checkReturnType(
+    private fun FirCallableDeclaration.checkReturnType(
         overriddenSymbols: List<FirCallableSymbol<*>>,
         typeCheckerContext: AbstractTypeCheckerContext,
         context: CheckerContext,
@@ -186,12 +183,12 @@ object FirOverrideChecker : FirClassChecker() {
     }
 
     private fun checkMember(
-        member: FirCallableMemberDeclaration,
+        member: FirCallableDeclaration,
         containingClass: FirClass,
         reporter: DiagnosticReporter,
         typeCheckerContext: AbstractTypeCheckerContext,
         firTypeScope: FirTypeScope,
-        context: CheckerContext
+        context: CheckerContext,
     ) {
         val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
 
@@ -203,29 +200,15 @@ object FirOverrideChecker : FirClassChecker() {
             }
             val kind = member.source?.kind
             // Only report if the current member has real source or it's a member property declared inside the primary constructor.
-
-            if (kind is FirFakeSourceElementKind.DataClassGeneratedMembers) {
-                overriddenMemberSymbols.find { (it.fir as? FirCallableMemberDeclaration)?.isFinal == true }?.let { base ->
-                    reporter.reportOn(
-                        containingClass.source,
-                        FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
-                        member,
-                        base.fir,
-                        context
-                    )
-                }
-                return
-            }
-
             if (kind !is FirRealSourceElementKind && kind !is FirFakeSourceElementKind.PropertyFromParameter) return
 
             val overridden = overriddenMemberSymbols.first().originalOrSelf()
-            val overriddenClass = overridden.containingClass()?.toFirRegularClass(context.session) ?: return
+            val originalContainigClass = overridden.containingClass()?.toFirRegularClass(context.session) ?: return
             reporter.reportOn(
                 member.source,
                 FirErrors.VIRTUAL_MEMBER_HIDDEN,
                 member,
-                overriddenClass,
+                originalContainigClass,
                 context
             )
             return
@@ -265,8 +248,10 @@ object FirOverrideChecker : FirClassChecker() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER") // TODO: delete me after implementing body
     private fun DiagnosticReporter.reportNothingToOverride(declaration: FirMemberDeclaration, context: CheckerContext) {
-        reportOn(declaration.source, FirErrors.NOTHING_TO_OVERRIDE, declaration, context)
+        // TODO: not ready yet, e.g., Collections
+        // reportOn(declaration.source, FirErrors.NOTHING_TO_OVERRIDE, declaration, context)
     }
 
     private fun DiagnosticReporter.reportOverridingFinalMember(

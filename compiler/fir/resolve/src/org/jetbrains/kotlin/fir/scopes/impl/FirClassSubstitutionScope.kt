@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -211,7 +211,7 @@ class FirClassSubstitutionScope(
         val fakeOverrideSubstitution: FakeOverrideSubstitution?
     )
 
-    private fun createSubstitutedData(member: FirCallableMemberDeclaration): SubstitutedData {
+    private fun createSubstitutedData(member: FirCallableDeclaration): SubstitutedData {
         val (newTypeParameters, substitutor) = FirFakeOverrideGenerator.createNewTypeParametersAndSubstitutor(
             session,
             member as FirTypeParameterRefsOwner,

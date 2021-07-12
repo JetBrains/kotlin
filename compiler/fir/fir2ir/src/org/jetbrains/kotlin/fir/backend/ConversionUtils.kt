@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -281,7 +279,7 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCall
         // interface B { fun foo() }
         // interface C : A, B // for C.foo we've got an IR fake override
         // for {A & B} we don't have such an IR declaration, so we're unwrapping it
-        if (fir is FirCallableMemberDeclaration && fir.dispatchReceiverType is ConeIntersectionType) {
+        if (fir.dispatchReceiverType is ConeIntersectionType) {
             return fir.baseForIntersectionOverride!!.symbol.unwrapCallRepresentative(this)
         }
 

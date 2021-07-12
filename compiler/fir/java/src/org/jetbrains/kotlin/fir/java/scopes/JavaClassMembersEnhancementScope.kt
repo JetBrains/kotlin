@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
@@ -64,14 +64,14 @@ class JavaClassMembersEnhancementScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    private fun FirCallableMemberDeclaration.overriddenMembers(name: Name): List<FirCallableMemberDeclaration> {
+    private fun FirCallableDeclaration.overriddenMembers(name: Name): List<FirCallableDeclaration> {
         val backMap = overrideBindCache.getOrPut(name) {
             useSiteMemberScope
                 .overrideByBase
                 .toList()
                 .groupBy({ (_, key) -> key }, { (value) -> value })
         }
-        return backMap[this.symbol]?.map { it.fir as FirCallableMemberDeclaration } ?: emptyList()
+        return backMap[this.symbol]?.map { it.fir } ?: emptyList()
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {

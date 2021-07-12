@@ -105,8 +105,8 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
     }
 
     override fun buildTypeParametersSubstitutorIfCompatible(
-        overrideCandidate: FirCallableMemberDeclaration,
-        baseDeclaration: FirCallableMemberDeclaration
+        overrideCandidate: FirCallableDeclaration,
+        baseDeclaration: FirCallableDeclaration
     ): ConeSubstitutor? {
         val substitutor = buildSubstitutorForOverridesCheck(overrideCandidate, baseDeclaration, session) ?: return null
         if (
@@ -143,7 +143,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
     }
 
     override fun isOverriddenProperty(
-        overrideCandidate: FirCallableMemberDeclaration,
+        overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirProperty
     ): Boolean {
         if (Visibilities.isPrivate(baseDeclaration.visibility)) return false

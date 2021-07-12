@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -59,7 +58,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()
 
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
-            val fir = symbol.fir as? FirCallableMemberDeclaration ?: return
+            val fir = symbol.fir
 
             val delegatedWrapperData = fir.delegatedWrapperData
             if (delegatedWrapperData != null) {

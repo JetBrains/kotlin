@@ -402,7 +402,6 @@ class FirTypeIntersectionScope private constructor(
     ): Boolean {
         val aFir = a.fir
         val bFir = b.fir
-        if (aFir !is FirCallableMemberDeclaration || bFir !is FirCallableMemberDeclaration) return false
 
         val substitutor = buildSubstitutorForOverridesCheck(aFir, bFir, session) ?: return false
         // NB: these lines throw CCE in modularized tests when changed to just .coneType (FirImplicitTypeRef)
@@ -439,8 +438,8 @@ class FirTypeIntersectionScope private constructor(
             }
 
             val result = Visibilities.compare(
-                (member.member.fir as FirCallableMemberDeclaration).status.visibility,
-                (candidate.member.fir as FirCallableMemberDeclaration).status.visibility
+                member.member.fir.status.visibility,
+                candidate.member.fir.status.visibility
             )
             if (result != null && result < 0) {
                 member = candidate
@@ -457,7 +456,7 @@ class FirTypeIntersectionScope private constructor(
 
         val iterator = members.iterator()
 
-        val overrideCandidate = overrider.member.fir as FirCallableMemberDeclaration
+        val overrideCandidate = overrider.member.fir
         while (iterator.hasNext()) {
             val next = iterator.next()
             if (next == overrider) {
@@ -465,7 +464,7 @@ class FirTypeIntersectionScope private constructor(
                 continue
             }
 
-            if (similarFunctionsOrBothProperties(overrideCandidate, next.member.fir as FirCallableMemberDeclaration)) {
+            if (similarFunctionsOrBothProperties(overrideCandidate, next.member.fir)) {
                 result.add(next)
                 iterator.remove()
             }
