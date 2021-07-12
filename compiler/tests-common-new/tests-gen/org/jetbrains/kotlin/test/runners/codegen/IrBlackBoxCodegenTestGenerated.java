@@ -8101,6 +8101,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("tcbInEliminatedCondition.kt")
+        public void testTcbInEliminatedCondition() throws Exception {
+            runTest("compiler/testData/codegen/box/controlStructures/tcbInEliminatedCondition.kt");
+        }
+
+        @Test
         @TestMetadata("tryCatchExpression.kt")
         public void testTryCatchExpression() throws Exception {
             runTest("compiler/testData/codegen/box/controlStructures/tryCatchExpression.kt");
