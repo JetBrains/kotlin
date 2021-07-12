@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -169,6 +170,8 @@ abstract class IrBuiltIns {
     abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol
 
     abstract val getProgressionLastElementByReturnType: Map<IrClassifierSymbol?, IrSimpleFunctionSymbol>
+
+    abstract val operatorsPackageFragment: IrExternalPackageFragment
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")

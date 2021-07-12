@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.*
@@ -314,7 +313,7 @@ abstract class KotlinIrLinker(
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer =
-        if (isBuiltInModule(moduleDescriptor)) IrModuleDeserializerWithBuiltIns(builtIns as IrBuiltInsOverDescriptors, moduleDeserializer)
+        if (isBuiltInModule(moduleDescriptor)) IrModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer)
         else moduleDeserializer
 
     fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary?, moduleName: String): IrModuleFragment {

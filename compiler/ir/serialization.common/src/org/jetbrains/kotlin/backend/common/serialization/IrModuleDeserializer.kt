@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
@@ -98,7 +96,7 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor, val 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrModuleDeserializerWithBuiltIns(
-    private val builtIns: IrBuiltInsOverDescriptors,
+    private val builtIns: IrBuiltIns,
     private val delegate: IrModuleDeserializer
 ) : IrModuleDeserializer(delegate.moduleDescriptor, delegate.libraryAbiVersion) {
 
@@ -136,16 +134,16 @@ class IrModuleDeserializerWithBuiltIns(
         delegate.deserializeReachableDeclarations()
     }
 
-    private fun computeFunctionDescriptor(className: String): FunctionClassDescriptor {
+    private fun computeFunctionClass(className: String): IrClass {
         val isK = className[0] == 'K'
         val isSuspend = (if (isK) className[1] else className[0]) == 'S'
         val arity = className.run { substring(indexOfFirst { it.isDigit() }).toInt(10) }
-        return builtIns.builtIns.run {
+        return builtIns.run {
             when {
-                isK && isSuspend -> kSuspendFunctionClassDescriptor(arity)
-                isK -> kFunctionClassDescriptor(arity)
-                isSuspend -> suspendFunctionClassDescriptor(arity)
-                else -> functionClassDescriptor(arity)
+                isK && isSuspend -> kSuspendFunctionN(arity)
+                isK -> kFunctionN(arity)
+                isSuspend -> suspendFunctionN(arity)
+                else -> functionN(arity)
             }
         }
     }
@@ -156,23 +154,7 @@ class IrModuleDeserializerWithBuiltIns(
         val fqnParts = publicSig.nameSegments
         val className = fqnParts.firstOrNull() ?: error("Expected class name for $idSig")
 
-        val functionDescriptor = computeFunctionDescriptor(className)
-        val topLevelSignature = IdSignature.CommonSignature(publicSig.packageFqName, className, null, publicSig.mask)
-
-        val functionClass = when (functionDescriptor.functionKind) {
-            FunctionClassKind.KSuspendFunction -> builtIns.kSuspendFunctionN(functionDescriptor.arity) { callback ->
-                declareClassFromLinker(functionDescriptor, topLevelSignature) { callback(it) }
-            }
-            FunctionClassKind.KFunction -> builtIns.kFunctionN(functionDescriptor.arity) { callback ->
-                declareClassFromLinker(functionDescriptor, topLevelSignature) { callback(it) }
-            }
-            FunctionClassKind.SuspendFunction -> builtIns.suspendFunctionN(functionDescriptor.arity) { callback ->
-                declareClassFromLinker(functionDescriptor, topLevelSignature) { callback(it) }
-            }
-            FunctionClassKind.Function -> builtIns.functionN(functionDescriptor.arity) { callback ->
-                declareClassFromLinker(functionDescriptor, topLevelSignature) { callback(it) }
-            }
-        }
+        val functionClass = computeFunctionClass(className)
 
         return when (fqnParts.size) {
             1 -> functionClass.symbol.also { assert(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) }

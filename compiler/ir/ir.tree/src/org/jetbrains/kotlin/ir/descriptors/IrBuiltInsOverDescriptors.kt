@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -74,7 +75,7 @@ class IrBuiltInsOverDescriptors(
     private val builtInsModule = builtIns.builtInsModule
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
-    val packageFragment =
+    override val operatorsPackageFragment: IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(symbolTable.referenceExternalPackageFragment(packageFragmentDescriptor), KOTLIN_INTERNAL_IR_FQN)
 
     private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
@@ -98,8 +99,8 @@ class IrBuiltInsOverDescriptors(
                 returnType, isInline = false, isExternal = false, isTailrec = false, isSuspend = false,
                 isOperator = false, isInfix = false, isExpect = false, isFakeOverride = false
             )
-            operator.parent = packageFragment
-            packageFragment.declarations += operator
+            operator.parent = operatorsPackageFragment
+            operatorsPackageFragment.declarations += operator
 
             operator.valueParameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
@@ -185,8 +186,8 @@ class IrBuiltInsOverDescriptors(
                 isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false, isInfix = false,
                 isExpect = false, isFakeOverride = false
             )
-            operator.parent = packageFragment
-            packageFragment.declarations += operator
+            operator.parent = operatorsPackageFragment
+            operatorsPackageFragment.declarations += operator
 
             val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
             val valueParameter = irFactory.createValueParameter(
