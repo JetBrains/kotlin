@@ -925,7 +925,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val fields = context.getLayoutBuilder(declaration).fields
         return Array(fields.size) { index ->
             val initializer = fields[index].irField!!.initializer!!.expression as IrConst<*>
-            constValue(evaluateConst(initializer))
+            evaluateConst(initializer)
         }
     }
 
@@ -979,7 +979,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrSetValue            -> return evaluateSetValue               (value)
             is IrGetField            -> return evaluateGetField               (value)
             is IrSetField            -> return evaluateSetField               (value)
-            is IrConst<*>            -> return evaluateConst                  (value)
+            is IrConst<*>            -> return evaluateConst                  (value).llvm
             is IrReturn              -> return evaluateReturn                 (value)
             is IrWhen                -> return evaluateWhen                   (value)
             is IrThrow               -> return evaluateThrow                  (value)
@@ -1684,7 +1684,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         } else {
             assert(value.receiver == null)
             if (value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
-                evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>)
+                evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>).llvm
             } else {
                 if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive) {
                     functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
@@ -1784,26 +1784,26 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     private fun evaluateStringConst(value: IrConst<String>) =
-            context.llvm.staticData.kotlinStringLiteral(value.value).llvm
+            context.llvm.staticData.kotlinStringLiteral(value.value)
 
-    private fun evaluateConst(value: IrConst<*>): LLVMValueRef {
+    private fun evaluateConst(value: IrConst<*>): ConstValue {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
         /* This suppression against IrConst<String> */
         @Suppress("UNCHECKED_CAST")
         when (value.kind) {
-            IrConstKind.Null    -> return codegen.kNullObjHeaderPtr
+            IrConstKind.Null    -> return constPointer(codegen.kNullObjHeaderPtr)
             IrConstKind.Boolean -> when (value.value) {
-                true  -> return kTrue
-                false -> return kFalse
+                true  -> return Int1(true)
+                false -> return Int1(false)
             }
-            IrConstKind.Char   -> return Char16(value.value as Char).llvm
-            IrConstKind.Byte   -> return Int8(value.value as Byte).llvm
-            IrConstKind.Short  -> return Int16(value.value as Short).llvm
-            IrConstKind.Int    -> return Int32(value.value as Int).llvm
-            IrConstKind.Long   -> return Int64(value.value as Long).llvm
+            IrConstKind.Char   -> return Char16(value.value as Char)
+            IrConstKind.Byte   -> return Int8(value.value as Byte)
+            IrConstKind.Short  -> return Int16(value.value as Short)
+            IrConstKind.Int    -> return Int32(value.value as Int)
+            IrConstKind.Long   -> return Int64(value.value as Long)
             IrConstKind.String -> return evaluateStringConst(value as IrConst<String>)
-            IrConstKind.Float  -> return Float32(value.value as Float).llvm
-            IrConstKind.Double -> return Float64(value.value as Double).llvm
+            IrConstKind.Float  -> return Float32(value.value as Float)
+            IrConstKind.Double -> return Float64(value.value as Double)
         }
         TODO(ir2string(value))
     }
