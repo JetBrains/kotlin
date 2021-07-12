@@ -136,6 +136,7 @@ object FirSessionFactory {
             sessionProvider.registerSession(moduleData, this@session)
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents()
+            registerCommonJavaComponents()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker)
             registerJavaSpecificResolveComponents()
@@ -199,6 +200,7 @@ object FirSessionFactory {
 
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
+            registerCommonJavaComponents()
 
             val javaSymbolProvider = JavaSymbolProvider(this, moduleDataProvider.allModuleData.last(), project, scope)
 

@@ -60,6 +60,10 @@ fun FirSession.registerCliCompilerOnlyComponents() {
     register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
 }
 
+@OptIn(SessionConfiguration::class)
+fun FirSession.registerCommonJavaComponents() {
+    register(FirJavaTypeEnhancementStateComponent::class, FirJavaTypeEnhancementStateComponent(JavaTypeEnhancementState.DEFAULT))
+}
 
 // -------------------------- Resolve components --------------------------
 
@@ -96,7 +100,6 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirJsr305StateContainer::class, FirJsr305StateContainer.Default)
     register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
-    register(FirJavaTypeEnhancementStateComponent::class, FirJavaTypeEnhancementStateComponent(JavaTypeEnhancementState.DEFAULT))
 }
 
 @OptIn(SessionConfiguration::class)
