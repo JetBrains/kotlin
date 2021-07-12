@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -26,8 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirCallableReferenceAccess) return
-        // [FirGetClassCallChecker] will check [FirGetClassCall].
-        if (expression is FirGetClassCall) return
 
         checkReferenceIsToAllowedMember(expression, context, reporter)
     }

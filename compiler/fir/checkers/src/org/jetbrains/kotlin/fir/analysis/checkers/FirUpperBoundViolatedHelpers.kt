@@ -33,11 +33,7 @@ fun checkUpperBoundViolated(
     isTypeAlias: Boolean = false,
     isIgnoreTypeParameters: Boolean = false
 ) {
-    val type = when (typeRef) {
-        is ConeKotlinType -> typeRef
-        is FirResolvedTypeRef -> typeRef.type
-        else -> return
-    }
+    val type = typeRef?.coneTypeSafe<ConeKotlinType>() ?: return
 
     val typeArgumentsCount = typeArguments?.size ?: type.typeArguments.size
     if (typeArgumentsCount == 0) {

@@ -264,7 +264,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             )
         } else {
             val illegalDeclarationString = when {
-                subjectVariable is KtDestructuringDeclaration -> "destructuring declaration"
                 subjectVariable.isVar -> "var"
                 subjectVariable.initializer == null -> "variable without initializer"
                 subjectVariable.hasDelegateExpression() -> "delegated property"

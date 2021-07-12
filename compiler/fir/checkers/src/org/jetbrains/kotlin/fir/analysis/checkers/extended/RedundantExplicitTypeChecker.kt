@@ -13,9 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -33,7 +32,7 @@ object RedundantExplicitTypeChecker : FirPropertyChecker() {
 
         val type = declaration.returnTypeRef.coneType
 
-        if (typeReference is FirTypeAlias) return
+        if (type.toSymbol(context.session) is FirTypeAliasSymbol) return
         if (typeReference.annotations.isNotEmpty()) return
 
         when (initializer) {
@@ -64,9 +63,6 @@ object RedundantExplicitTypeChecker : FirPropertyChecker() {
                     }
                     else -> return
                 }
-            }
-            is FirNamedReference -> {
-                if (!type.hasSameNameWithoutModifiers(initializer.name)) return
             }
             is FirFunctionCall -> {
                 if (!type.hasSameNameWithoutModifiers(initializer.calleeReference.name)) return

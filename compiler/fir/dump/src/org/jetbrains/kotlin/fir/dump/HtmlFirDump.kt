@@ -1517,7 +1517,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirAnonymousFunctionExpression -> generate(expression.anonymousFunction, isStatement = false)
                 is FirUnitExpression -> generate(expression)
                 is FirStringConcatenationCall -> generate(expression)
-                is FirAnonymousFunction -> generate(expression, isStatement = false)
                 is FirThrowExpression -> generate(expression)
                 is FirWhenSubjectExpression -> generate(expression)
                 is FirElseIfTrueCondition -> generate(expression)
@@ -1557,7 +1556,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     generate(expression.expression)
                 }
                 is FirTypeOperatorCall -> generate(expression)
-                is FirAssignmentOperatorStatement -> generateBinary(expression.leftArgument, expression.rightArgument, expression.operation)
                 is FirEqualityOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)

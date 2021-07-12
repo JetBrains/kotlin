@@ -113,7 +113,6 @@ class FirCallCompletionResultsWriterTransformer(
                 diagnostic =
                     when (declaration) {
                         is FirTypeParameter -> ConeTypeParameterInQualifiedAccess(declaration.symbol)
-                        is FirResolvedReifiedParameterReference -> ConeTypeParameterInQualifiedAccess(declaration.symbol)
                         else -> ConeSimpleDiagnostic("Callee reference to candidate without return type: ${declaration.render()}")
                     }
             }

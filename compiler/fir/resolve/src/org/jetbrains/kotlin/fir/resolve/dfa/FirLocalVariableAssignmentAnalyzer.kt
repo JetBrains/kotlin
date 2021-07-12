@@ -302,7 +302,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 with(functionCall) {
                     setOfNotNull(explicitReceiver, dispatchReceiver, extensionReceiver).forEach { it.accept(visitor, data) }
                     // Delay processing of lambda args because lambda body are evaluated after all arguments have been evaluated.
-                    val (postponedFunctionArgs, normalArgs) = argumentList.arguments.partition { it is FirAnonymousFunction }
+                    val (postponedFunctionArgs, normalArgs) = argumentList.arguments.partition { it is FirAnonymousFunctionExpression }
                     normalArgs.forEach { it.accept(visitor, data) }
                     postponedFunctionArgs.forEach { it.accept(visitor, data) }
                     calleeReference.accept(visitor, data)

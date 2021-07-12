@@ -181,7 +181,6 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Any?): FirTypeRef {
-        if (implicitTypeRef is FirImplicitBuiltinTypeRef) return transformTypeRef(implicitTypeRef, data)
         return implicitTypeRef
     }
 

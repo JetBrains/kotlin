@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isFun
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 object FirFunInterfaceConstructorReferenceChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression !is FirCallableReferenceAccess || expression is FirGetClassCall) return
+        if (expression !is FirCallableReferenceAccess) return
 
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
         val referredSymbol = reference.resolvedSymbol
