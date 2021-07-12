@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionClassReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -313,7 +313,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                                 c.getTypeResolver().resolveType(getScopeForClassHeaderResolution(), typeReference, c.getTrace(), true);
                         return new ReceiverParameterDescriptorImpl(
                                 this,
-                                new ExtensionClassReceiver(this, kotlinType, null),
+                                new ContextClassReceiver(this, kotlinType, null),
                                 Annotations.Companion.getEMPTY()
                         );
             }).collect(Collectors.toList());

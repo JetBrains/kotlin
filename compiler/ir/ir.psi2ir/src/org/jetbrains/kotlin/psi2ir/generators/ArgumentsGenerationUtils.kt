@@ -93,7 +93,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                             context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter)
                         )
                 }
-                is ExtensionClassReceiver -> {
+                is ContextClassReceiver -> {
                     val receiverClassDescriptor = receiver.classDescriptor
                     val thisAsReceiverParameter = receiverClassDescriptor.thisAsReceiverParameter
                     val thisReceiver = IrGetValueImpl(
@@ -226,7 +226,7 @@ fun StatementGenerator.generateCallReceiver(
             dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, dispatchReceiver)
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
             contextReceiverValues = if (ktDefaultElement is KtConstructorDelegationCall) contextReceivers.mapNotNull {
-                generateReceiverOrNull(ktDefaultElement, it as ExtensionClassReceiver)
+                generateReceiverOrNull(ktDefaultElement, it as ContextClassReceiver)
             }
             else contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
         }
