@@ -480,11 +480,16 @@ class MingwLinker(targetProperties: MingwConfigurables)
         if (HostManager.hostIsMingw) {
             lldCompatibilityChecker?.let { checkLldCompatibiity ->
                 // -### flag allows to avoid actual linkage process.
+                val konanCxaDemangleSymbol = when (target) {
+                    KonanTarget.MINGW_X64 -> "Konan_cxa_demangle"
+                    KonanTarget.MINGW_X86 -> "_Konan_cxa_demangle"
+                    else -> error("Unexpected target: $target")
+                }
                 val lldCommand = Command(linker).constructLinkerArguments(
                         // Add -fuse-ld to the end of the list to override previous appearances.
                         additionalArguments = listOf("-fuse-ld=$absoluteLldLocation", "-Wl,-###"),
                         // LLD doesn't support defsym.
-                        skipDefaultArguments = listOf("-Wl,--defsym,__cxa_demangle=Konan_cxa_demangle")
+                        skipDefaultArguments = listOf("-Wl,--defsym,__cxa_demangle=$konanCxaDemangleSymbol")
                 )
                 checkLldCompatibiity(lldCommand)
             }
