@@ -27,6 +27,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private var irGenerationStart: Long = 0
 
     private var targetDescription: String? = null
+    private var sourceFiles: List<KtFile>? = null
     protected var files: Int? = null
     protected var lines: Int? = null
 
@@ -54,6 +55,7 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         if (!isEnabled) return
         recordInitializationTime()
 
+        this.sourceFiles = sourceFiles
         this.files = sourceFiles.size
         this.lines = countLinesOfCode(sourceFiles)
         this.targetDescription = targetDescription
@@ -165,7 +167,16 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
             it is CompilerInitializationMeasurement || it is CodeAnalysisMeasurement || it is CodeGenerationMeasurement || it is PerformanceCounterMeasurement
         }
 
-        return "Compiler perf stats:\n" + relevantMeasurements.joinToString(separator = "\n") { "  ${it.render()}" }
+        return buildString {
+            append("Compiler perf stats:\n")
+            relevantMeasurements.joinTo(this, separator = "\n") { it.render() }
+            if (sourceFiles != null) {
+                append("\n[files: ${sourceFiles!!.size}]\n")
+                sourceFiles?.joinTo(this, separator = "\n") { it.virtualFilePath }
+                append("\n[end files]")
+                sourceFiles = null
+            }
+        }
     }
 }
 
