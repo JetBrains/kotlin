@@ -3,11 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.commonizer.mergedtree
+package org.jetbrains.kotlin.commonizer.transformer
 
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.cir.CirClassType.Companion.copyInterned
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType.Companion.copyInterned
+import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
+import org.jetbrains.kotlin.commonizer.mergedtree.CirTypeSubstitutor
+import org.jetbrains.kotlin.commonizer.tree.CirTreeTypeAlias
 
 internal class CirAliasTypeSubstitutor(
     private val commonDependencies: CirProvidedClassifiers,
@@ -33,7 +37,6 @@ internal class CirAliasTypeSubstitutor(
     }
 
     private fun substituteClassOrTypeAliasType(targetIndex: Int, type: CirClassOrTypeAliasType): CirClassOrTypeAliasType {
-
         /*
         Classifier id is available in all platforms or is provided by common dependencies.
         The classifier itself does not require substitution, but type arguments potentially do!
@@ -45,7 +48,6 @@ internal class CirAliasTypeSubstitutor(
                 is CirClassType -> type.copyInterned(arguments = newArguments)
             } else type
         }
-
 
         /**
          * Yet, we do not have any evidence that it is worth trying to substitute types with arguments when the type itself is
@@ -70,28 +72,34 @@ internal class CirAliasTypeSubstitutor(
     private fun substituteClassType(targetIndex: Int, type: CirClassType): CirClassOrTypeAliasType {
         if (type.arguments.isNotEmpty()) return type
         if (type.outerType != null) return type
+        if (isCommon(type.classifierId)) return type
         val classifierIndex = classifierIndices[targetIndex]
 
-        var typeAliases = classifierIndex.findTypeAliasesWithUnderlyingType(type.classifierId)
+        val typeAliases = classifierIndex.findTypeAliasesWithUnderlyingType(type.classifierId)
+        val commonTypeAlias = findSuitableCommonTypeAlias(classifierIndex, typeAliases) ?: return type
 
-        while (typeAliases.isNotEmpty()) {
-            val commonTypeAlias = typeAliases.firstOrNull { (id, typeAlias) -> typeAlias.typeParameters.isEmpty() && isCommon(id) }
+        return CirTypeAliasType.createInterned(
+            typeAliasId = commonTypeAlias.id,
+            underlyingType = commonTypeAlias.typeAlias.underlyingType,
+            arguments = emptyList(),
+            isMarkedNullable = type.isMarkedNullable
+        )
+    }
 
-            if (commonTypeAlias != null) {
-                return CirTypeAliasType.createInterned(
-                    typeAliasId = commonTypeAlias.id,
-                    underlyingType = commonTypeAlias.typeAlias.underlyingType,
-                    arguments = emptyList(),
-                    isMarkedNullable = type.isMarkedNullable
-                )
-            }
+    private tailrec fun findSuitableCommonTypeAlias(
+        index: CirClassifierIndex,
+        typeAliases: List<CirTreeTypeAlias>
+    ): CirTreeTypeAlias? {
+        if (typeAliases.isEmpty()) return null
 
-            typeAliases = typeAliases.flatMap { (id, _) ->
-                classifierIndex.findTypeAliasesWithUnderlyingType(id)
-            }
+        val commonTypeAlias = typeAliases.firstOrNull { (id, typeAlias) -> typeAlias.typeParameters.isEmpty() && isCommon(id) }
+        if (commonTypeAlias != null) {
+            return commonTypeAlias
         }
 
-        return type
+        return findSuitableCommonTypeAlias(
+            index, typeAliases.flatMap { (id, _) -> index.findTypeAliasesWithUnderlyingType(id) }
+        )
     }
 
     private fun isCommon(id: CirEntityId): Boolean =

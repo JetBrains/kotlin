@@ -31,7 +31,9 @@ class CommonizedGroup<T : Any>(
 
         elements[index] = value
     }
-}
 
-interface I<T>
+    internal fun setAllowingOverride(index: Int, value: T?) {
+        elements[index] = value
+    }
+}
 

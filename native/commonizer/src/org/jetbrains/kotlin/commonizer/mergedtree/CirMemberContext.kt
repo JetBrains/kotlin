@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 
 import org.jetbrains.kotlin.commonizer.cir.CirClass
 
-internal class CirMemberContext private constructor(val classes: List<CirClass>) {
+class CirMemberContext private constructor(internal val classes: List<CirClass>) {
 
     companion object {
         val empty = CirMemberContext(emptyList())
