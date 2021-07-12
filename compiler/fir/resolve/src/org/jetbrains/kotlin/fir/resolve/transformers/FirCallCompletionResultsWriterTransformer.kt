@@ -196,7 +196,7 @@ class FirCallCompletionResultsWriterTransformer(
                 } else {
                     subCandidate.handleVarargs()
                     subCandidate.argumentMapping?.let {
-                        val newArgumentList = buildResolvedArgumentList(it)
+                        val newArgumentList = buildResolvedArgumentList(it, source = functionCall.argumentList.source)
                         val symbol = subCandidate.symbol
                         val functionIsInline =
                             (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
@@ -273,7 +273,7 @@ class FirCallCompletionResultsWriterTransformer(
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                annotationCall.replaceArgumentList(buildResolvedArgumentList(it))
+                annotationCall.replaceArgumentList(buildResolvedArgumentList(it, annotationCall.argumentList.source))
             }
         }
         return annotationCall
@@ -452,7 +452,7 @@ class FirCallCompletionResultsWriterTransformer(
         } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
-                delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it))
+                delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it, delegatedConstructorCall.argumentList.source))
             }
         }
         return delegatedConstructorCall.transformCalleeReference(

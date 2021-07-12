@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 class FirResolvedArgumentList internal constructor(
-    mapping: LinkedHashMap<FirExpression, FirValueParameter>
+    mapping: LinkedHashMap<FirExpression, FirValueParameter>,
+    override val source: FirSourceElement?
 ) : FirAbstractArgumentList() {
 
     var mapping: LinkedHashMap<FirExpression, FirValueParameter> = mapping

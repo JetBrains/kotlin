@@ -610,6 +610,7 @@ open class RawFirBuilder(
 
         private fun KtCallElement.extractArgumentsTo(container: FirCallBuilder) {
             val argumentList = buildArgumentList {
+                source = valueArgumentList?.toFirSourceElement()
                 for (argument in valueArguments) {
                     val argumentExpression = argument.toFirExpression()
                     arguments += when (argument) {

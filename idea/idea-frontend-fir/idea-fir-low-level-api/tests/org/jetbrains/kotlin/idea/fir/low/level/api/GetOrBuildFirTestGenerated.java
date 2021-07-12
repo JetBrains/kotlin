@@ -40,6 +40,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("annotationApplicationArgumentList.kt")
+        public void testAnnotationApplicationArgumentList() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/annotationApplicationArgumentList.kt");
+        }
+
+        @Test
         @TestMetadata("annotationApplicationCallExpression.kt")
         public void testAnnotationApplicationCallExpression() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/annotationApplicationCallExpression.kt");
@@ -55,6 +61,28 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("annotationApplicationWithArguments.kt")
         public void testAnnotationApplicationWithArguments() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/annotationApplicationWithArguments.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Calls {
+        @Test
+        public void testAllFilesPresentInCalls() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("functionCallArgumentList.kt")
+        public void testFunctionCallArgumentList() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/functionCallArgumentList.kt");
+        }
+
+        @Test
+        @TestMetadata("invokeCallArgumentList.kt")
+        public void testInvokeCallArgumentList() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/invokeCallArgumentList.kt");
         }
     }
 

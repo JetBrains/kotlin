@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirAbstractArgumentList : FirArgumentList() {
-    override val source: FirSourceElement?
-        get() = null
-
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
         return this
     }

@@ -24,8 +24,11 @@ fun buildBinaryArgumentList(left: FirExpression, right: FirExpression): FirArgum
 fun buildArraySetArgumentList(rValue: FirExpression, indexes: List<FirExpression>): FirArgumentList =
     FirArraySetArgumentList(rValue, indexes)
 
-fun buildResolvedArgumentList(mapping: LinkedHashMap<FirExpression, FirValueParameter>): FirResolvedArgumentList =
-    FirResolvedArgumentList(mapping)
+fun buildResolvedArgumentList(
+    mapping: LinkedHashMap<FirExpression, FirValueParameter>,
+    source: FirSourceElement? = null
+): FirResolvedArgumentList =
+    FirResolvedArgumentList(mapping, source)
 
 fun buildPartiallyResolvedArgumentList(
     original: FirArgumentList,
@@ -40,4 +43,7 @@ fun buildPartiallyResolvedArgumentList(
 object FirEmptyArgumentList : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = emptyList()
+
+    override val source: FirSourceElement?
+        get() = null
 }
