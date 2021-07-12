@@ -35,3 +35,29 @@ open class AssociativeCommonizerAdapter<T : Any>(
         return _result != null
     }
 }
+
+fun <T> AssociativeCommonizer<T?>.asNullableCommonizer(): Commonizer<T?, T?> = NullableAssociativeCommonizerAdapter(this)
+
+open class NullableAssociativeCommonizerAdapter<T>(
+    private val commonizer: AssociativeCommonizer<T?>
+) : Commonizer<T?, T?> {
+
+    private var isInitialized = false
+    private var _result: T? = null
+
+    override val result: T?
+        get() = _result
+
+    override fun commonizeWith(next: T?): Boolean {
+        val currentResult = _result
+
+        if (!isInitialized) {
+            _result = next
+            isInitialized = true
+            return true
+        }
+
+        _result = commonizer.commonize(currentResult, next)
+        return true
+    }
+}
