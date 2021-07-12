@@ -2449,7 +2449,7 @@ public operator fun <T> Sequence<T>.minus(elements: Array<out T>): Sequence<T> {
     if (elements.isEmpty()) return this
     return object: Sequence<T> {
         override fun iterator(): Iterator<T> {
-            val other = elements.toHashSet()
+            val other = elements.convertToSetForSetOperation()
             return this@minus.filterNot { it in other }.iterator()
         }
     }
@@ -2492,7 +2492,7 @@ public operator fun <T> Sequence<T>.minus(elements: Iterable<T>): Sequence<T> {
 public operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequence<T> {
     return object: Sequence<T> {
         override fun iterator(): Iterator<T> {
-            val other = elements.toHashSet()
+            val other = elements.convertToSetForSetOperation()
             if (other.isEmpty())
                 return this@minus.iterator()
             else

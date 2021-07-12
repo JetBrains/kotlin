@@ -135,3 +135,5 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
     }
     return count
 }
+
+internal actual fun brittleContainsOptimizationEnabled(): Boolean = false

@@ -109,3 +109,5 @@ internal actual inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
 internal actual inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     return TODO("Wasm stdlib: Collections")
 }
+
+internal actual fun brittleContainsOptimizationEnabled(): Boolean = false
