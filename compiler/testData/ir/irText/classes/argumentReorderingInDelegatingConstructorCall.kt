@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Base(val x: Int, val y: Int)
 
 class Test1(xx: Int, yy: Int) : Base(y = yy, x = xx)
