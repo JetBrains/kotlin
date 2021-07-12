@@ -71,7 +71,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
             val valueParameters = parameters.mapIndexed { index, (name, type) -> functionDescriptor.makeValueParameter(name, type, index) }
 
             functionDescriptor.initialize(
-                    null, classDescriptor.thisAsReceiverParameter, emptyList(), valueParameters,
+                    null, classDescriptor.thisAsReceiverParameter, emptyList(), emptyList(), valueParameters,
                     returnType, modality, DescriptorVisibilities.PUBLIC)
 
             return functionDescriptor

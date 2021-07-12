@@ -82,7 +82,7 @@ class DebugLabelPropertyDescriptorProvider(val codeFragment: KtCodeFragment, val
         containingDeclaration: PackageFragmentDescriptor
     ): PropertyDescriptor {
         val propertyDescriptor = DebugLabelPropertyDescriptor(containingDeclaration, labelName)
-        propertyDescriptor.setType(type, emptyList(), null, null)
+        propertyDescriptor.setType(type, emptyList(), null, null, emptyList())
 
         val getterDescriptor = PropertyGetterDescriptorImpl(
             propertyDescriptor,

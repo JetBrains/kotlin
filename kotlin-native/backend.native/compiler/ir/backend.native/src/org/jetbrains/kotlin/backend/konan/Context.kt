@@ -86,7 +86,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                     DescriptorVisibilities.PRIVATE, false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED,
                     SourceElement.NO_SOURCE, false, false, false, false, false, false
             ).apply {
-                this.setType(outerClass.descriptor.defaultType, emptyList(), receiver, null)
+                this.setType(outerClass.descriptor.defaultType, emptyList(), receiver, null, emptyList())
                 initialize(null, null)
             }
 

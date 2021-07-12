@@ -516,6 +516,7 @@ class LazyJavaClassMemberScope(
             getDispatchReceiverParameter(),
             emptyList(),
             emptyList(),
+            emptyList(),
             returnType,
             // Those functions are generated as open in bytecode
             // Actually, it should not be important because the class is final anyway, but leaving them open is convenient for consistency
@@ -598,7 +599,7 @@ class LazyJavaClassMemberScope(
         propertyDescriptor.initialize(getter, null)
 
         val returnType = givenType ?: computeMethodReturnType(method, c.childForMethod(propertyDescriptor, method))
-        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null)
+        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null, listOf())
         getter.initialize(returnType)
 
         return propertyDescriptor
@@ -624,7 +625,7 @@ class LazyJavaClassMemberScope(
 
         val propertyDescriptor = JavaForKotlinOverridePropertyDescriptor(ownerDescriptor, getterMethod, setterMethod, overriddenProperty)
 
-        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null)
+        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null, listOf())
 
         val getter = DescriptorFactory.createGetter(
             propertyDescriptor, getterMethod.annotations, /* isDefault = */false,

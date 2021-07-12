@@ -36,5 +36,5 @@ interface AssignmentReceiver {
 }
 
 interface CallReceiver {
-    fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression
+    fun call(withDispatchAndExtensionAndContextReceivers: (IntermediateValue?, IntermediateValue?, List<IntermediateValue>) -> IrExpression): IrExpression
 }

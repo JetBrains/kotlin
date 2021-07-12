@@ -21,6 +21,7 @@ public enum JvmMethodParameterKind {
     THIS,
     OUTER,
     RECEIVER,
+    CONTEXT_RECEIVER,
     CAPTURED_LOCAL_VARIABLE,
     ENUM_NAME_OR_ORDINAL,
     SUPER_CALL_PARAM,

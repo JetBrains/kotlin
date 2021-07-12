@@ -35,14 +35,25 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker;
 public class ExtensionReceiver extends AbstractReceiverValue implements ImplicitReceiver {
 
     private final CallableDescriptor descriptor;
+    private final boolean isContextReceiver;
 
     public ExtensionReceiver(
             @NotNull CallableDescriptor callableDescriptor,
             @NotNull KotlinType receiverType,
             @Nullable ReceiverValue original
     ) {
+        this(callableDescriptor, receiverType, original, false);
+    }
+
+    public ExtensionReceiver(
+            @NotNull CallableDescriptor callableDescriptor,
+            @NotNull KotlinType receiverType,
+            @Nullable ReceiverValue original,
+            boolean isContextReceiver
+    ) {
         super(receiverType, original);
         this.descriptor = callableDescriptor;
+        this.isContextReceiver = isContextReceiver;
     }
 
     @NotNull
@@ -60,5 +71,9 @@ public class ExtensionReceiver extends AbstractReceiverValue implements Implicit
     @Override
     public String toString() {
         return getType() + ": Ext {" + descriptor + "}";
+    }
+
+    public boolean isContextReceiver() {
+        return isContextReceiver;
     }
 }

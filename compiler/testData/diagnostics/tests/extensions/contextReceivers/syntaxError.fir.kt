@@ -1,0 +1,3 @@
+context(
+<!SYNTAX!><!>fun foo() {
+}

@@ -40,7 +40,7 @@ class IrConstructorCallImpl(
             val constructorDescriptor = constructorSymbol.descriptor
             val classTypeParametersCount = constructorDescriptor.constructedClass.original.declaredTypeParameters.size
             val totalTypeParametersCount = constructorDescriptor.typeParameters.size
-            val valueParametersCount = constructorDescriptor.valueParameters.size
+            val valueParametersCount = constructorDescriptor.valueParameters.size + constructorDescriptor.contextReceiverParameters.size
             return IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,

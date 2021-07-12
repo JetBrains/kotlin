@@ -88,6 +88,7 @@ abstract class AbstractCoroutineCodegen(
                 null,
                 classDescriptor.thisAsReceiverParameter,
                 emptyList(),
+                emptyList(),
                 parameters.withIndex().map { (index, nameAndType) ->
                     createValueParameterForDoResume(Name.identifier(nameAndType.first), nameAndType.second, index)
                 },
@@ -212,6 +213,7 @@ class CoroutineCodegenForLambda private constructor(
         it.initialize(
             funDescriptor.extensionReceiverParameter?.copy(it),
             funDescriptor.dispatchReceiverParameter,
+            funDescriptor.contextReceiverParameters.map { p -> p.copy(it) },
             funDescriptor.typeParameters,
             funDescriptor.valueParameters,
             funDescriptor.module.getContinuationOfTypeOrAny(

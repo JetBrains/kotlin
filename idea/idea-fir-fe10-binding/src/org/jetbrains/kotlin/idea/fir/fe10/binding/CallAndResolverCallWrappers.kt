@@ -202,6 +202,7 @@ internal class FirWrapperResolvedCall(val firSimpleWrapperCall: FirSimpleWrapper
 
     override fun getDataFlowInfoForArguments(): DataFlowInfoForArguments = context.noImplementation()
     override fun getSmartCastDispatchReceiverType(): KotlinType? = context.noImplementation()
+    override fun getContextReceivers(): MutableList<ReceiverValue> = context.noImplementation()
 }
 
 class CallAndResolverCallWrappers(bindingContext: KtSymbolBasedBindingContext) {

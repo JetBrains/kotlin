@@ -19,6 +19,8 @@ abstract class IrFunctionAccessExpression(
     final override val valueArgumentsCount: Int
         get() = argumentsByParameterIndex.size
 
+    var contextReceiversCount: Int = 0
+
     override fun getValueArgument(index: Int): IrExpression? {
         if (index >= valueArgumentsCount) {
             throwNoSuchArgumentSlotException("value", index, valueArgumentsCount)

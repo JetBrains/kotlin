@@ -66,6 +66,7 @@ object DataClassDescriptorResolver {
         functionDescriptor.initialize(
             null,
             classDescriptor.thisAsReceiverParameter,
+            emptyList<ReceiverParameterDescriptor>(),
             emptyList<TypeParameterDescriptor>(),
             emptyList<ValueParameterDescriptor>(),
             property.type,
@@ -110,6 +111,7 @@ object DataClassDescriptorResolver {
         functionDescriptor.initialize(
             null,
             classDescriptor.thisAsReceiverParameter,
+            emptyList<ReceiverParameterDescriptor>(),
             emptyList<TypeParameterDescriptor>(),
             parameterDescriptors,
             classDescriptor.defaultType,

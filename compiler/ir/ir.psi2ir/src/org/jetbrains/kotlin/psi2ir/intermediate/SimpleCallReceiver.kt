@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 class SimpleCallReceiver(
     private val dispatchReceiverValue: IntermediateValue?,
-    private val extensionReceiverValue: IntermediateValue?
+    private val extensionReceiverValue: IntermediateValue?,
+    private val contextReceiverValues: List<IntermediateValue>
 ) : CallReceiver {
 
-    override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
-        return withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
+    override fun call(withDispatchAndExtensionAndContextReceivers: (IntermediateValue?, IntermediateValue?, List<IntermediateValue>) -> IrExpression): IrExpression {
+        return withDispatchAndExtensionAndContextReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
     }
 }

@@ -146,7 +146,7 @@ public class DescriptorFactory {
         SimpleFunctionDescriptorImpl values =
                 SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), ENUM_VALUES,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
-        return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+        return values.initialize(null, null, Collections.<ReceiverParameterDescriptor>emptyList(), Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType()),
                                  Modality.FINAL, DescriptorVisibilities.PUBLIC);
@@ -165,7 +165,7 @@ public class DescriptorFactory {
                 null,
                 enumClass.getSource()
         );
-        return valueOf.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+        return valueOf.initialize(null, null, Collections.<ReceiverParameterDescriptor>emptyList(), Collections.<TypeParameterDescriptor>emptyList(),
                                   Collections.singletonList(parameterDescriptor), enumClass.getDefaultType(),
                                   Modality.FINAL, DescriptorVisibilities.PUBLIC);
     }
@@ -189,8 +189,18 @@ public class DescriptorFactory {
             @Nullable KotlinType receiverParameterType,
             @NotNull Annotations annotations
     ) {
+        return createExtensionReceiverParameterForCallable(owner, receiverParameterType, annotations, false);
+    }
+
+    @Nullable
+    public static ReceiverParameterDescriptor createExtensionReceiverParameterForCallable(
+            @NotNull CallableDescriptor owner,
+            @Nullable KotlinType receiverParameterType,
+            @NotNull Annotations annotations,
+            boolean isContextReceiver
+    ) {
         return receiverParameterType == null
                ? null
-               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null), annotations);
+               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null, isContextReceiver), annotations);
     }
 }

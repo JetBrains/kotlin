@@ -33,7 +33,7 @@ class SafeExtensionInvokeCallReceiver(
     val extensionInvokeReceiver: IntermediateValue
 ) : CallReceiver {
 
-    override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
+    override fun call(withDispatchAndExtensionAndContextReceivers: (IntermediateValue?, IntermediateValue?, List<IntermediateValue>) -> IrExpression): IrExpression {
         // extensionInvokeReceiver is actually a first argument:
         //      receiver?.extFun(p1, ..., pN)
         //      =>
@@ -49,7 +49,7 @@ class SafeExtensionInvokeCallReceiver(
             "Safe extension 'invoke' call should have null as its 1st value argument, got: ${callBuilder.irValueArgumentsByIndex[0]}"
         }
         callBuilder.irValueArgumentsByIndex[0] = safeReceiverValue.load()
-        val irResult = withDispatchAndExtensionReceivers(functionReceiver, null)
+        val irResult = withDispatchAndExtensionAndContextReceivers(functionReceiver, null, emptyList())
 
         val resultType = irResult.type.makeNullable()
 

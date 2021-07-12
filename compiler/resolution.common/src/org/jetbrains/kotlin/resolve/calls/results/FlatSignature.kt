@@ -17,6 +17,7 @@ class FlatSignature<out T> constructor(
     val typeParameters: Collection<TypeParameterMarker>,
     val valueParameterTypes: List<KotlinTypeMarker?>,
     val hasExtensionReceiver: Boolean,
+    val contextReceiverCount: Int,
     val hasVarargs: Boolean,
     val numDefaults: Int,
     val isExpect: Boolean,
@@ -46,7 +47,8 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
     specificityComparator: TypeSpecificityComparator
 ): Boolean {
     if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return false
-    if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false
+    if (specific.contextReceiverCount != general.contextReceiverCount) return false
+    if (specific.valueParameterTypes.size != general.valueParameterTypes.size && specific.contextReceiverCount == general.contextReceiverCount) return false
 
     val typeParameters = general.typeParameters
     val typeSubstitutor = registerTypeVariables(typeParameters)

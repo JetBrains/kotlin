@@ -46,7 +46,8 @@ fun generateParameterNames(
                 isEnumName = !isEnumName
                 if (!isEnumName) "\$enum\$name" else "\$enum\$ordinal"
             }
-            JvmMethodParameterKind.RECEIVER -> {
+            JvmMethodParameterKind.RECEIVER,
+            JvmMethodParameterKind.CONTEXT_RECEIVER -> {
                 DescriptorAsmUtil.getNameForReceiverParameter(functionDescriptor, state.bindingContext, state.languageVersionSettings)
             }
             JvmMethodParameterKind.OUTER -> AsmUtil.CAPTURED_THIS_FIELD
@@ -67,7 +68,7 @@ fun generateParameterNames(
         // declared implicitly in source code (§8.8.1, §8.8.9, §8.9.3, §15.9.5.1).
         val access = when (kind) {
             JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL -> Opcodes.ACC_SYNTHETIC
-            JvmMethodParameterKind.RECEIVER -> Opcodes.ACC_MANDATED
+            JvmMethodParameterKind.RECEIVER, JvmMethodParameterKind.CONTEXT_RECEIVER -> Opcodes.ACC_MANDATED
             JvmMethodParameterKind.OUTER -> Opcodes.ACC_MANDATED
             JvmMethodParameterKind.VALUE -> 0
 

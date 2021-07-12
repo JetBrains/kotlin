@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor {
@@ -154,6 +155,12 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceivers() {
+        return Collections.emptyList();
     }
 
     @NotNull

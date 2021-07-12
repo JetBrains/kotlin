@@ -37,6 +37,8 @@ interface ImplicitScopeTower {
 
     fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo?
 
+    fun getContextReceivers(scope: LexicalScope): List<ReceiverValueWithSmartCastInfo>
+
     val dynamicScope: MemberScope
 
     val syntheticScopes: SyntheticScopes
@@ -86,7 +88,7 @@ interface ScopeTowerLevel {
 class CandidateWithBoundDispatchReceiver(
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
     val descriptor: CallableDescriptor,
-    val diagnostics: List<ResolutionDiagnostic>
+    val diagnostics: MutableList<ResolutionDiagnostic>
 )
 
 @JvmName("getResultApplicabilityForConstraintErrors")
@@ -101,6 +103,12 @@ abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicabili
     KotlinCallDiagnostic(candidateApplicability) {
     override fun report(reporter: DiagnosticReporter) {
         // do nothing
+    }
+}
+
+class ContextReceiverAmbiguity : ResolutionDiagnostic(RESOLVED_WITH_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
     }
 }
 

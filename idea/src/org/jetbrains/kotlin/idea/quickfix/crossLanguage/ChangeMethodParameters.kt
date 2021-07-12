@@ -188,6 +188,7 @@ internal class ChangeMethodParameters(
             initialize(
                 functionDescriptor.extensionReceiverParameter?.copy(this),
                 functionDescriptor.dispatchReceiverParameter,
+                functionDescriptor.contextReceiverParameters.map { p -> p.copy(this) },
                 functionDescriptor.typeParameters,
                 paramsToAdd.mapIndexed { index, parameter ->
                     ValueParameterDescriptorImpl(

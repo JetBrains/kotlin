@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.calls.components.*
@@ -168,7 +169,7 @@ class SimpleCandidateFactory(
             candidate.addDiagnostic(HiddenDescriptor)
         }
 
-        if (extensionArgumentReceiver != null) {
+        if (extensionArgumentReceiver != null && descriptor !is ClassConstructorDescriptor) {
             val parameterIsDynamic = descriptor.extensionReceiverParameter!!.value.type.isDynamic()
             val argumentIsDynamic = extensionArgumentReceiver.receiver.receiverValue.type.isDynamic()
 
@@ -211,7 +212,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CollectionTypeVariableUsagesInfo,
         CheckExplicitReceiverKindConsistency,
         CheckReceivers,
-        PostponedVariablesInitializerResolutionPart
+        PostponedVariablesInitializerResolutionPart,
+        CheckContextReceiversResolutionPart
     ),
     FUNCTION(
         CheckVisibility,
@@ -230,7 +232,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         EagerResolveOfCallableReferences,
         CompatibilityOfTypeVariableAsIntersectionTypePart,
         CompatibilityOfPartiallyApplicableSamConversion,
-        PostponedVariablesInitializerResolutionPart
+        PostponedVariablesInitializerResolutionPart,
+        CheckContextReceiversResolutionPart
     ),
     INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),
     UNSUPPORTED();

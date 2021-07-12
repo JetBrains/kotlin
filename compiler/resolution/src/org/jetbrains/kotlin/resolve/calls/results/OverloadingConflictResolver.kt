@@ -293,6 +293,9 @@ open class OverloadingConflictResolver<C : Any>(
         if (!call1.isExpect && call2.isExpect) return true
         if (call1.isExpect && !call2.isExpect) return false
 
+        if (call1.contextReceiverCount > call2.contextReceiverCount) return true
+        if (call1.contextReceiverCount < call2.contextReceiverCount) return false
+
         return createEmptyConstraintSystem().isSignatureNotLessSpecific(
             call1,
             call2,

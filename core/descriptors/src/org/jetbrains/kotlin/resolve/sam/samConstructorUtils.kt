@@ -99,6 +99,7 @@ private fun initializeSamConstructorDescriptor(
     samConstructor.initialize(
         null,
         null,
+        emptyList(),
         typeParameters.descriptors, listOf(parameter),
         returnType,
         Modality.FINAL,

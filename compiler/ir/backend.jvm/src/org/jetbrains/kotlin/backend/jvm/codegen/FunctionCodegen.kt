@@ -255,10 +255,15 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         receiver?.let {
             frameMap.enter(it, context.typeMapper.mapTypeAsDeclaration(it.type))
         }
+        val contextReceivers = valueParameters.subList(0, contextReceiverParametersCount)
+        for (contextReceiver in contextReceivers) {
+            frameMap.enter(contextReceiver, context.typeMapper.mapType(contextReceiver.type))
+        }
         extensionReceiverParameter?.let {
             frameMap.enter(it, context.typeMapper.mapType(it))
         }
-        for (parameter in valueParameters) {
+        val regularParameters = valueParameters.subList(contextReceiverParametersCount, valueParameters.size)
+        for (parameter in regularParameters) {
             frameMap.enter(parameter, context.typeMapper.mapType(parameter.type))
         }
         return frameMap
@@ -336,7 +341,7 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jv
             else -> iterator.next()
         }
         val name = when (parameterSignature.kind) {
-            JvmMethodParameterKind.RECEIVER -> getNameForReceiverParameter(irFunction, state)
+            JvmMethodParameterKind.RECEIVER, JvmMethodParameterKind.CONTEXT_RECEIVER -> getNameForReceiverParameter(irFunction, state)
             else -> irParameter.name.asString()
         }
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared

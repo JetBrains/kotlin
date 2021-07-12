@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.ErrorLexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 class ClassResolutionScopesSupport(
     private val classDescriptor: ClassDescriptor,
@@ -35,7 +33,7 @@ class ClassResolutionScopesSupport(
     private val getOuterScope: () -> LexicalScope
 ) {
     private fun scopeWithGenerics(parent: LexicalScope): LexicalScopeImpl {
-        return LexicalScopeImpl(parent, classDescriptor, false, null, LexicalScopeKind.CLASS_HEADER) {
+        return LexicalScopeImpl(parent, classDescriptor, false, null, emptyList(), LexicalScopeKind.CLASS_HEADER) {
             classDescriptor.declaredTypeParameters.forEach { addClassifierDescriptor(it) }
         }
     }
@@ -70,6 +68,7 @@ class ClassResolutionScopesSupport(
             classDescriptor,
             true,
             classDescriptor.thisAsReceiverParameter,
+            classDescriptor.contextReceivers,
             LexicalScopeKind.CLASS_MEMBER_SCOPE
         )
     }
@@ -97,6 +96,7 @@ class ClassResolutionScopesSupport(
             parentForNewScope, ownerDescriptor,
             isOwnerDescriptorAccessibleByLabel = false,
             implicitReceiver = companionObjectDescriptor?.thisAsReceiverParameter,
+            contextReceiversGroup = emptyList(),
             kind = LexicalScopeKind.CLASS_INHERITANCE,
             classDescriptor.staticScope,
             classDescriptor.unsubstitutedInnerClassesScope,
@@ -147,6 +147,7 @@ fun scopeForInitializerResolution(
         parentDescriptor,
         false,
         null,
+        emptyList(),
         LexicalScopeKind.CLASS_INITIALIZER
     ) {
         if (primaryConstructorParameters.isNotEmpty()) {

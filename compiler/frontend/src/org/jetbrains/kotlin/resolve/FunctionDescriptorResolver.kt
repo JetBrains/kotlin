@@ -196,6 +196,10 @@ class FunctionDescriptorResolver(
                 if (function is KtFunctionLiteral) expectedFunctionType.getReceiverType() else null
             }
 
+        val contextReceivers = function.contextReceivers
+        val contextReceiverTypes = contextReceivers.mapNotNull { it.typeReference() }.map {
+            typeResolver.resolveType(headerScope, it, trace, true)
+        }
 
         val valueParameterDescriptors =
             createValueParameterDescriptors(function, functionDescriptor, headerScope, trace, expectedFunctionType, inferenceSession)
@@ -221,16 +225,35 @@ class FunctionDescriptorResolver(
             }
         }
 
+        val receiverToLabelMap = linkedMapOf<ReceiverParameterDescriptor, String>()
         val extensionReceiver = receiverType?.let {
             val splitter = AnnotationSplitter(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
             DescriptorFactory.createExtensionReceiverParameterForCallable(
-                functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
+                functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER), false
             )
+        }?.apply {
+            val extensionReceiverName = receiverTypeRef?.nameForReceiverLabel()
+            if (extensionReceiverName != null) {
+                receiverToLabelMap[this] = extensionReceiverName
+            }
         }
 
+        val contextReceiverDescriptors = contextReceiverTypes.mapNotNull { type ->
+            val splitter = AnnotationSplitter(storageManager, type.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            DescriptorFactory.createExtensionReceiverParameterForCallable(
+                functionDescriptor, type, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER), true
+            )
+        }
+        contextReceiverDescriptors.reversed().zip(contextReceivers.lastIndex downTo 0).forEach { (contextReceiverDescriptor, i) ->
+            contextReceivers[i].name()?.let {
+                receiverToLabelMap[contextReceiverDescriptor] = it
+            }
+        }
+        trace.record(BindingContext.DESCRIPTOR_TO_NAMED_RECEIVERS, functionDescriptor, receiverToLabelMap)
         functionDescriptor.initialize(
             extensionReceiver,
             getDispatchReceiverParameterIfNeeded(container),
+            contextReceiverDescriptors,
             typeParameterDescriptors,
             valueParameterDescriptors,
             returnType,

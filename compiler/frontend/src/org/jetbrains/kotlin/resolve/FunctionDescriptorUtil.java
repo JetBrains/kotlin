@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import com.google.common.collect.Lists;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionDescriptorUtil {
@@ -67,7 +69,7 @@ public class FunctionDescriptorUtil {
     ) {
         return new LexicalScopeImpl(
                 outerScope, descriptor, true, descriptor.getExtensionReceiverParameter(),
-                LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
+                descriptor.getContextReceiverParameters(), LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
                 handler -> {
                     for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
                         handler.addClassifierDescriptor(typeParameter);

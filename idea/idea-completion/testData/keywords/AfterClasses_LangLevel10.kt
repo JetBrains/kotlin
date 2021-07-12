@@ -44,4 +44,5 @@ class B {
 // EXIST:  annotation class
 // EXIST:  annotation class AfterClasses_LangLevel10
 // EXIST:  const val
+// EXIST:  context
 // NOTHING_ELSE

@@ -204,6 +204,10 @@ class KtSymbolBasedClassDescriptor(override val ktSymbol: KtNamedClassOrObjectSy
     override fun getThisAsReceiverParameter(): ReceiverParameterDescriptor =
         ReceiverParameterDescriptorImpl(this, ImplicitClassReceiver(this), Annotations.EMPTY)
 
+    override fun getContextReceivers(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
     override fun getOriginal(): ClassDescriptor = this
 
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = context.withAnalysisSession {
@@ -317,6 +321,10 @@ class KtSymbolBasedFunctionDescriptor(override val ktSymbol: KtFunctionSymbol, c
     override fun isActual(): Boolean = context.incorrectImplementation { false }
 
     override fun getVisibility(): DescriptorVisibility = ktSymbol.visibility.toDescriptorVisibility()
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
     override fun getModality(): Modality = ktSymbol.modality
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> = getTypeParameters(ktSymbol)
@@ -373,6 +381,10 @@ class KtSymbolBasedConstructorDescriptor(
     override fun isActual(): Boolean = implementationPostponed()
 
     override fun getVisibility(): DescriptorVisibility = ktSymbol.visibility.toDescriptorVisibility()
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
     override fun getModality(): Modality = Modality.FINAL
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> = getTypeParameters(ktSymbol)
@@ -410,6 +422,10 @@ class KtSymbolBasedAnonymousFunctionDescriptor(
     override fun isActual(): Boolean = false
 
     override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.LOCAL
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
     override fun getModality(): Modality = Modality.FINAL
     override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
 
@@ -504,6 +520,9 @@ class KtSymbolBasedValueParameterDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 
     override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.LOCAL
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
 
     override fun getType(): KotlinType = ktSymbol.annotatedType.toKotlinType(context)
     override fun getContainingDeclaration(): CallableDescriptor = containingDeclaration
@@ -553,6 +572,9 @@ class KtSymbolBasedPropertyDescriptor(
     override fun getOriginal(): PropertyDescriptor = context.incorrectImplementation { this }
 
     override fun getVisibility(): DescriptorVisibility = ktSymbol.visibility.toDescriptorVisibility()
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = getExtensionReceiverParameter(ktSymbol)
 
@@ -691,6 +713,10 @@ class KtSymbolBasedPropertyGetterDescriptor(
     ): PropertyAccessorDescriptor = noImplementation()
 
     override fun getOriginal(): PropertyGetterDescriptor = context.incorrectImplementation { this }
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
     override fun getOverriddenDescriptors(): Collection<PropertyGetterDescriptor> = implementationPostponed()
 }
 
@@ -714,6 +740,10 @@ class KtSymbolBasedPropertySetterDescriptor(
     ): PropertyAccessorDescriptor = noImplementation()
 
     override fun getOriginal(): PropertySetterDescriptor = context.incorrectImplementation { this }
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
     override fun getOverriddenDescriptors(): Collection<PropertySetterDescriptor> = implementationPostponed()
 }
 

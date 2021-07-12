@@ -46,4 +46,5 @@ public class Test {
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual
+// EXIST:  context
 // NOTHING_ELSE

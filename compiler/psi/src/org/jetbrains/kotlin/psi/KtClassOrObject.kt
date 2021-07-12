@@ -25,6 +25,7 @@ import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -185,6 +186,39 @@ abstract class KtClassOrObject :
         }
         parts.reverse()
         return parts.joinToString(separator = ".")
+    }
+
+    fun getContextReceiverList(): KtContextReceiverList? {
+        val stub = stub
+        if (stub != null) {
+            return getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST)
+        }
+        var node = node.firstChildNode
+        while (node != null) {
+            val tt = node.elementType
+            if (tt === KtNodeTypes.CONTEXT_RECEIVER_LIST) {
+                return node.psi as KtContextReceiverList
+            }
+            node = node.treeNext
+        }
+        return null
+    }
+
+    override fun getContextReceivers(): List<KtContextReceiver> {
+        val stub = stub
+        if (stub != null) {
+            return getStubOrPsiChildrenAsList(KtStubElementTypes.CONTEXT_RECEIVER)
+        }
+        var node = node.firstChildNode
+        while (node != null) {
+            val tt = node.elementType
+            if (tt === KtNodeTypes.CONTEXT_RECEIVER_LIST) {
+                val contextReceiver = node.psi as KtContextReceiverList
+                return contextReceiver.contextReceivers()
+            }
+            node = node.treeNext
+        }
+        return emptyList()
     }
 }
 

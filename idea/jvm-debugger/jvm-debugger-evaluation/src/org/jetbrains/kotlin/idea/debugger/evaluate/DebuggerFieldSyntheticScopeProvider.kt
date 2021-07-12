@@ -186,7 +186,7 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
             Annotations.EMPTY
         )
 
-        propertyDescriptor.setType(type, emptyList(), null, extensionReceiverParameter)
+        propertyDescriptor.setType(type, emptyList(), null, extensionReceiverParameter, emptyList())
 
         val getter = PropertyGetterDescriptorImpl(
             propertyDescriptor, Annotations.EMPTY, Modality.FINAL,

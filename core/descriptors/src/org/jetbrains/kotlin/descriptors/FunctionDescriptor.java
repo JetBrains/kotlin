@@ -109,6 +109,9 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setReturnType(@NotNull KotlinType type);
 
         @NotNull
+        CopyBuilder<D> setContextReceiverParameters(@NotNull List<ReceiverParameterDescriptor> contextReceiverParameters);
+
+        @NotNull
         CopyBuilder<D> setExtensionReceiverParameter(@Nullable ReceiverParameterDescriptor extensionReceiverParameter);
 
         @NotNull

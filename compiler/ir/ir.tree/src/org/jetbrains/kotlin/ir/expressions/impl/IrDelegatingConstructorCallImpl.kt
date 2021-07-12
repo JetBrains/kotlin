@@ -48,7 +48,7 @@ class IrDelegatingConstructorCallImpl(
             type: IrType,
             symbol: IrConstructorSymbol,
             typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
-            valueArgumentsCount: Int = symbol.descriptor.valueParameters.size
+            valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size
         ) = IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount)
 
         fun fromSymbolOwner(

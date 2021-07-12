@@ -39,6 +39,7 @@ class AccessorForFunctionDescriptor(
                 null
             else
                 calleeDescriptor.dispatchReceiverParameter,
+            calleeDescriptor.contextReceiverParameters.map { p -> p.copy(this) },
             copyTypeParameters(calleeDescriptor),
             copyValueParameters(calleeDescriptor),
             calleeDescriptor.returnType,

@@ -315,6 +315,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             around(RANGE).spaceIf(kotlinCustomSettings.SPACE_AROUND_RANGE)
 
             after(MODIFIER_LIST).spaces(1)
+            between(CONTEXT_KEYWORD, LPAR).none()
+            after(CONTEXT_RECEIVER_LIST).lineBreakInCode()
 
             beforeInside(IDENTIFIER, CLASS).spaces(1)
             beforeInside(IDENTIFIER, OBJECT_DECLARATION).spaces(1)

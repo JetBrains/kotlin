@@ -472,6 +472,16 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(callee.dispatchReceiverParameter!!, receiver, type, this, data)
         }
 
+        fun handleValueParameter(i: Int, irParameter: IrValueParameter) {
+            val arg = expression.getValueArgument(i)
+            val parameterType = callable.valueParameterTypes[i]
+            require(arg != null) { "Null argument in ExpressionCodegen for parameter ${irParameter.render()}" }
+            callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
+        }
+
+        val contextReceivers = callee.valueParameters.subList(0, callee.contextReceiverParametersCount)
+        contextReceivers.forEachIndexed(::handleValueParameter)
+
         expression.extensionReceiver?.let { receiver ->
             val type = callable.signature.valueParameters.singleOrNull { it.kind == JvmMethodParameterKind.RECEIVER }?.asmType
                 ?: error("No single extension receiver parameter: ${callable.signature.valueParameters}")
@@ -479,12 +489,8 @@ class ExpressionCodegen(
         }
 
         callGenerator.beforeValueParametersStart()
-        expression.symbol.owner.valueParameters.forEachIndexed { i, irParameter ->
-            val arg = expression.getValueArgument(i)
-            val parameterType = callable.valueParameterTypes[i]
-            require(arg != null) { "Null argument in ExpressionCodegen for parameter ${irParameter.render()}" }
-            callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
-        }
+        callee.valueParameters.subList(callee.contextReceiverParametersCount, callee.valueParameters.size)
+            .forEachIndexed(::handleValueParameter)
 
         expression.markLineNumber(true)
 

@@ -75,6 +75,12 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
         return null;
     }
 
+    @NotNull
+    @Override
+    public List<KtContextReceiver> getContextReceivers() {
+        return Collections.emptyList();
+    }
+
     @Nullable
     @Override
     public KtTypeParameterList getTypeParameterList() {

@@ -81,6 +81,7 @@ class DeserializedSimpleFunctionDescriptor(
         return super.initialize(
             extensionReceiverParameter,
             dispatchReceiverParameter,
+            emptyList(), // TODO: Pass context receivers here
             typeParameters,
             unsubstitutedValueParameters,
             unsubstitutedReturnType,

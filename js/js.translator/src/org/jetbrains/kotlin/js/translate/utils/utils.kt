@@ -233,6 +233,7 @@ private fun resolveAccessorCall(
         override fun getResultingDescriptor() = suspendPropertyDescriptor
         override fun getExtensionReceiver() = null
         override fun getDispatchReceiver() = null
+        override fun getContextReceivers(): List<ReceiverValue> = emptyList()
         override fun getExplicitReceiverKind() = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
         override fun getValueArguments(): MutableMap<ValueParameterDescriptor, ResolvedValueArgument> = mutableMapOf()
         override fun getValueArgumentsByIndex(): MutableList<ResolvedValueArgument> = mutableListOf()

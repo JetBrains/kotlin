@@ -32,6 +32,9 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtTypeParamet
     @Nullable
     KtTypeReference getReceiverTypeReference();
 
+    @NotNull
+    List<KtContextReceiver> getContextReceivers();
+
     @Nullable
     KtTypeReference getTypeReference();
 

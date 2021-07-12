@@ -633,6 +633,9 @@ class DeclarationsChecker(
             }
         }
         addAccessibleTypeParametersFromType(descriptor.extensionReceiverParameter?.type)
+        for (contextReceiverParameter in descriptor.contextReceiverParameters) {
+            addAccessibleTypeParametersFromType(contextReceiverParameter.type)
+        }
 
         val typeParametersInaccessibleFromReceiver = allTypeParameters - allAccessibleTypeParameters
         for (typeParameter in typeParametersInaccessibleFromReceiver) {
@@ -707,6 +710,7 @@ class DeclarationsChecker(
                 isExpect -> trace.report(EXPECTED_PROPERTY_INITIALIZER.on(initializer))
                 !backingFieldRequired -> trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
                 property.receiverTypeReference != null -> trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
+                property.contextReceivers.isNotEmpty() -> trace.report(CONTEXT_RECEIVERS_WITH_BACKING_FIELD.on(initializer))
             }
         } else if (delegate != null) {
             if (inInterface) {

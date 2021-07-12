@@ -410,6 +410,9 @@ class PSICallResolver(
             }
         }
 
+        override fun getContextReceivers(scope: LexicalScope): List<ReceiverValueWithSmartCastInfo> =
+            scope.contextReceiversGroup.map { cache.getOrPut(it) { context.transformToReceiverWithSmartCastInfo(it.value) } }
+
         override fun interceptFunctionCandidates(
             resolutionScope: ResolutionScope,
             name: Name,

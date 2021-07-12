@@ -217,7 +217,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
             return descriptor.apply {
                 initialize(
-                    function.extensionReceiverParameter?.copy(this), function.dispatchReceiverParameter,
+                    function.extensionReceiverParameter?.copy(this), function.dispatchReceiverParameter, function.contextReceiverParameters.map { p -> p.copy(this) },
                     function.typeParameters, parameters, function.returnType, function.modality, function.visibility
                 )
                 isOperator = function.isOperator

@@ -47,7 +47,7 @@ class SerialInfoCodegenImpl(val codegen: ImplementationBodyCodegen, val thisClas
             codegen.v.newField(OtherOrigin(codegen.myClass.psiOrParent), Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC,
                                propFieldName, propType.descriptor, null, null)
             val f = SimpleFunctionDescriptorImpl.create(thisClass, Annotations.EMPTY, prop.name, CallableMemberDescriptor.Kind.SYNTHESIZED, thisClass.source)
-            f.initialize(null, thisClass.thisAsReceiverParameter, emptyList(), emptyList(), prop.type, Modality.FINAL, DescriptorVisibilities.PUBLIC)
+            f.initialize(null, thisClass.thisAsReceiverParameter, emptyList(), emptyList(), emptyList(), prop.type, Modality.FINAL, DescriptorVisibilities.PUBLIC)
             codegen.generateMethod(f, { _, _ ->
                 load(0, thisAsmType)
                 getfield(thisAsmType.internalName, propFieldName, propType.descriptor)

@@ -27,6 +27,7 @@ fun <T> FlatSignature.Companion.createFromReflectionType(
     // Plus, currently, receiver for reflection type is taking from *candidate*, see buildReflectionType, this candidate can
     // have transient receiver which is not the same in its signature
     val receiver = descriptor.extensionReceiverParameter?.type
+    val contextReceiversTypes = descriptor.contextReceiverParameters.mapNotNull { it.type }
     val parameters = reflectionType.getValueParameterTypesFromCallableReflectionType(
         receiver != null && !hasBoundExtensionReceiver
     ).map { it.type }
@@ -34,8 +35,9 @@ fun <T> FlatSignature.Companion.createFromReflectionType(
     return FlatSignature(
         origin,
         descriptor.typeParameters,
-        listOfNotNull(receiver) + parameters,
+        contextReceiversTypes + listOfNotNull(receiver) + parameters,
         hasExtensionReceiver = receiver != null,
+        contextReceiverCount = contextReceiversTypes.size,
         hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
         numDefaults = numDefaults,
         isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
@@ -50,13 +52,14 @@ fun <T> FlatSignature.Companion.create(
     parameterTypes: List<KotlinType?>
 ): FlatSignature<T> {
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type
+    val contextReceiverTypes = descriptor.contextReceiverParameters.mapNotNull { it.type }
 
     return FlatSignature(
         origin,
         descriptor.typeParameters,
-        valueParameterTypes =
-        listOfNotNull(extensionReceiverType) + parameterTypes,
+        valueParameterTypes = contextReceiverTypes + listOfNotNull(extensionReceiverType) + parameterTypes,
         hasExtensionReceiver = extensionReceiverType != null,
+        contextReceiverCount = contextReceiverTypes.size,
         hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
         numDefaults = numDefaults,
         isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
@@ -75,6 +78,7 @@ fun <D : CallableDescriptor> FlatSignature.Companion.createForPossiblyShadowedEx
         descriptor.typeParameters,
         valueParameterTypes = descriptor.valueParameters.map { it.argumentValueType },
         hasExtensionReceiver = false,
+        contextReceiverCount = 0,
         hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
         numDefaults = descriptor.valueParameters.count { it.hasDefaultValue() },
         isExpect = descriptor is MemberDescriptor && descriptor.isExpect,

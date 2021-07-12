@@ -33,7 +33,7 @@ class SimpleSyntheticPropertyDescriptor(
     private val _backingField = FieldDescriptorImpl(Annotations.EMPTY, this)
 
     init {
-        super.setType(type, emptyList(), owner.thisAsReceiverParameter, null)
+        super.setType(type, emptyList(), owner.thisAsReceiverParameter, null, emptyList())
         super.initialize(null, null, _backingField, null)
     }
 }

@@ -133,6 +133,8 @@ abstract class IrBasedCallableDescriptor<T : IrDeclaration>(owner: T) : Callable
 
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> = emptyList()
+
     override fun getTypeParameters(): List<TypeParameterDescriptor> {
         TODO("not implemented")
     }
@@ -606,6 +608,10 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.toIrBasedDescriptor() as ReceiverParameterDescriptor
 
+    override fun getContextReceivers(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
     override fun getUnsubstitutedPrimaryConstructor() =
         owner.declarations.filterIsInstance<IrConstructor>().singleOrNull { it.isPrimary }?.toIrBasedDescriptor()
 
@@ -731,6 +737,10 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
     override fun isValue() = false
 
     override fun getThisAsReceiverParameter() = (owner.parent as IrClass).toIrBasedDescriptor().thisAsReceiverParameter
+
+    override fun getContextReceivers(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
 
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? {
         TODO("not implemented")
@@ -858,6 +868,10 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
 
     override fun getExtensionReceiverParameter() =
         owner.getter?.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
+
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
 
     override fun isExternal() = owner.isExternal
 
@@ -1040,6 +1054,10 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? =
         owner.correspondingPropertySymbol?.owner?.toIrBasedDescriptor()?.extensionReceiverParameter
+
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
 
     override fun isExternal() = owner.isExternal
 

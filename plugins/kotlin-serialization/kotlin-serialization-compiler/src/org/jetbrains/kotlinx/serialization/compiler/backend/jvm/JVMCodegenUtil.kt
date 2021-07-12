@@ -625,6 +625,7 @@ internal fun createSingletonLambda(
         lambdaCodegen.descriptor.thisAsReceiverParameter,
         emptyList(),
         emptyList(),
+        emptyList(),
         resultSimpleType,
         Modality.FINAL,
         DescriptorVisibilities.PUBLIC
@@ -645,6 +646,7 @@ internal fun createSingletonLambda(
     bridgeInvokeFunction.initialize(
         null,
         lambdaCodegen.descriptor.thisAsReceiverParameter,
+        emptyList(),
         emptyList(),
         emptyList(),
         lambdaCodegen.descriptor.builtIns.anyType,

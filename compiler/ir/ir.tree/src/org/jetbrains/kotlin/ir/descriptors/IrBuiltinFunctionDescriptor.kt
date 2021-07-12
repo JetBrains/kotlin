@@ -35,6 +35,7 @@ abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: Declaratio
     IrBuiltinOperatorDescriptor {
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> = emptyList()
     override fun getOriginal(): SimpleFunctionDescriptor = this
     override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor = throw UnsupportedOperationException()
     override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> = emptyList()

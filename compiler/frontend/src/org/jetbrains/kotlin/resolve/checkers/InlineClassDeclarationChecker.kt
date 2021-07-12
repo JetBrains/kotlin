@@ -58,6 +58,12 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
 
+        if (declaration.contextReceivers.isNotEmpty()) {
+            val contextReceiverList = declaration.getContextReceiverList()
+            requireNotNull(contextReceiverList) { "Declaration cannot have context receivers with no context receiver list" }
+            trace.report(Errors.INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS.on(contextReceiverList))
+        }
+
         val modalityModifier = declaration.modalityModifier()
         if (modalityModifier != null && descriptor.modality != Modality.FINAL) {
             trace.report(Errors.INLINE_CLASS_NOT_FINAL.on(modalityModifier))

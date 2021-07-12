@@ -55,6 +55,10 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     @Nullable
     ReceiverValue getDispatchReceiver();
 
+    /** If the target was an extension function or property with additional receivers, this is the value for its additional receiver parameters */
+    @NotNull
+    List<ReceiverValue> getContextReceivers();
+
     /** Determines whether receiver argument or this object is substituted for explicit receiver */
     @NotNull
     ExplicitReceiverKind getExplicitReceiverKind();

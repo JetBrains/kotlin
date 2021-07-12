@@ -115,7 +115,7 @@ class FunctionInvokeDescriptor private constructor(
             result.initialize(
                     null,
                     functionClass.thisAsReceiverParameter,
-                    listOf(),
+                    listOf(), listOf(),
                     typeParameters.takeWhile { it.variance == Variance.IN_VARIANCE }
                             .withIndex()
                             .map { createValueParameter(result, it.index, it.value) },

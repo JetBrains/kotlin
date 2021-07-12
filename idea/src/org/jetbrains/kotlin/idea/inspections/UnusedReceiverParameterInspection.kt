@@ -166,7 +166,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 fun isUsageOfDescriptor(descriptor: DeclarationDescriptor, resolvedCall: ResolvedCall<*>, bindingContext: BindingContext): Boolean {
     // As receiver of call
     if (resolvedCall.dispatchReceiver.getThisReceiverOwner(bindingContext) == descriptor ||
-        resolvedCall.extensionReceiver.getThisReceiverOwner(bindingContext) == descriptor
+        resolvedCall.extensionReceiver.getThisReceiverOwner(bindingContext) == descriptor ||
+        resolvedCall.contextReceivers.any { it.getThisReceiverOwner(bindingContext) == descriptor }
     ) {
         return true
     }

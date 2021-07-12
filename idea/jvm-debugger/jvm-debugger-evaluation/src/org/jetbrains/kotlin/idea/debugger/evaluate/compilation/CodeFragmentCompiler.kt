@@ -227,7 +227,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
 
         methodDescriptor.initialize(
             null, classDescriptor.thisAsReceiverParameter, emptyList(),
-            parameters, returnType, Modality.FINAL, DescriptorVisibilities.PUBLIC
+            emptyList(), parameters, returnType, Modality.FINAL, DescriptorVisibilities.PUBLIC
         )
 
         val memberScope = EvaluatorMemberScopeForMethod(methodDescriptor)

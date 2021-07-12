@@ -192,6 +192,7 @@ class MutableResolvedCallAtom(
     override val dispatchReceiverArgument: SimpleKotlinCallArgument?,
     override val extensionReceiverArgument: SimpleKotlinCallArgument?
 ) : ResolvedCallAtom() {
+    override var contextReceiversArguments: List<SimpleKotlinCallArgument> = listOf()
     override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     override lateinit var freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
