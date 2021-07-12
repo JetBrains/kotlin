@@ -2995,7 +2995,7 @@ public operator fun <T> Iterable<T>.minus(element: T): List<T> {
  */
 public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
     if (elements.isEmpty()) return this.toList()
-    val other = elements.toHashSet()
+    val other = elements.convertToSetForSetOperation()
     return this.filterNot { it in other }
 }
 
@@ -3019,7 +3019,7 @@ public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
  * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  */
 public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
-    val other = elements.toHashSet()
+    val other = elements.convertToSetForSetOperation()
     if (other.isEmpty())
         return this.toList()
     return this.filterNot { it in other }

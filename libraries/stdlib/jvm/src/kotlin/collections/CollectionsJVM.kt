@@ -123,3 +123,5 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
     return count
 }
 
+
+internal actual fun brittleContainsOptimizationEnabled(): Boolean = System.getProperty("kotlin.collections.removing.legacymode").toBoolean()

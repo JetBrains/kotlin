@@ -152,7 +152,7 @@ public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>): Boolean
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] sequence.
  */
 public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>): Boolean {
-    val set = elements.toHashSet()
+    val set = elements.convertToSetForSetOperation()
     return set.isNotEmpty() && removeAll(set)
 }
 
@@ -160,7 +160,7 @@ public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>): Boolean
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] array.
  */
 public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>): Boolean {
-    return elements.isNotEmpty() && removeAll(elements.toHashSet())
+    return elements.isNotEmpty() && removeAll(elements.convertToSetForSetOperation())
 }
 
 /**
@@ -175,7 +175,7 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>): Boolean
  */
 public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolean {
     if (elements.isNotEmpty())
-        return retainAll(elements.toHashSet())
+        return retainAll(elements.convertToSetForSetOperation())
     else
         return retainNothing()
 }
@@ -184,7 +184,7 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolea
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] sequence.
  */
 public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>): Boolean {
-    val set = elements.toHashSet()
+    val set = elements.convertToSetForSetOperation()
     if (set.isNotEmpty())
         return retainAll(set)
     else

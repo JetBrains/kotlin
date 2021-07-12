@@ -455,7 +455,7 @@ object Generators : TemplateGroupBase() {
         body {
             """
             if (elements.isEmpty()) return this.toList()
-            val other = elements.toHashSet()
+            val other = elements.convertToSetForSetOperation()
             return this.filterNot { it in other }
             """
         }
@@ -491,7 +491,7 @@ object Generators : TemplateGroupBase() {
                 if (elements.isEmpty()) return this
                 return object: Sequence<T> {
                     override fun iterator(): Iterator<T> {
-                        val other = elements.toHashSet()
+                        val other = elements.convertToSetForSetOperation()
                         return this@minus.filterNot { it in other }.iterator()
                     }
                 }
@@ -513,7 +513,7 @@ object Generators : TemplateGroupBase() {
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
             """
-            val other = elements.toHashSet()
+            val other = elements.convertToSetForSetOperation()
             if (other.isEmpty())
                 return this.toList()
 
@@ -552,7 +552,7 @@ object Generators : TemplateGroupBase() {
                 """
                 return object: Sequence<T> {
                     override fun iterator(): Iterator<T> {
-                        val other = elements.toHashSet()
+                        val other = elements.convertToSetForSetOperation()
                         if (other.isEmpty())
                             return this@minus.iterator()
                         else
