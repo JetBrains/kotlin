@@ -6,12 +6,15 @@ import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.flavours.gfm.GFMElementTypes
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
+import org.jetbrains.dokka.base.translators.parseWithNormalisedSpaces
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.DocTag.Companion.contentTypeParam
 import java.lang.NullPointerException
 
 object DocTagsFromIElementFactory {
-    fun getInstance(type: IElementType, children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap(), body: String? = null, dri: DRI? = null) =
+
+    @Suppress("IMPLICIT_CAST_TO_ANY")
+    fun getInstance(type: IElementType, children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap(), body: String? = null, dri: DRI? = null, keepFormatting: Boolean = false) =
         when(type) {
             MarkdownElementTypes.SHORT_REFERENCE_LINK,
             MarkdownElementTypes.FULL_REFERENCE_LINK,
@@ -33,7 +36,11 @@ object DocTagsFromIElementFactory {
             MarkdownElementTypes.ORDERED_LIST           -> Ol(children, params)
             MarkdownElementTypes.UNORDERED_LIST         -> Ul(children, params)
             MarkdownElementTypes.PARAGRAPH              -> P(children, params)
-            MarkdownTokenTypes.TEXT                     -> Text(body ?: throw NullPointerException("Text body should be at least empty string passed to DocNodes factory!"), children, params )
+            MarkdownTokenTypes.TEXT -> if (keepFormatting) Text(
+                body.orEmpty(),
+                children,
+                params
+            ) else body?.parseWithNormalisedSpaces(renderWhiteCharactersAsSpaces = false).orEmpty()
             MarkdownTokenTypes.HORIZONTAL_RULE          -> HorizontalRule
             MarkdownTokenTypes.HARD_LINE_BREAK          -> Br
             GFMElementTypes.STRIKETHROUGH               -> Strikethrough(children, params)
@@ -46,5 +53,10 @@ object DocTagsFromIElementFactory {
             MarkdownTokenTypes.HTML_TAG,
             MarkdownTokenTypes.HTML_BLOCK_CONTENT       -> Text(body.orEmpty(), params = params + contentTypeParam("html"))
             else                                        -> CustomDocTag(children, params, type.name)
+        }.let {
+            when (it) {
+                is List<*> -> it as List<DocTag>
+                else -> listOf(it as DocTag)
+            }
         }
 }
