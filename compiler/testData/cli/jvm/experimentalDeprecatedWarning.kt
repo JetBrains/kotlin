@@ -1,14 +1,9 @@
 package org.test
 
-@Deprecated("Warning1", level = DeprecationLevel.WARNING)
+@Deprecated("Warning", level = DeprecationLevel.WARNING)
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
-annotation class Warning1
-
-@Deprecated("Warning2", level = DeprecationLevel.WARNING)
-@RequiresOptIn
-@Retention(AnnotationRetention.BINARY)
-annotation class Warning2
+annotation class Warning
 
 @RequiresOptIn
 annotation class OneMore

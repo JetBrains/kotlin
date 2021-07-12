@@ -63,7 +63,6 @@ class LanguageVersionSettingsBuilder {
         }
 
         val analysisFlags = listOfNotNull(
-            analysisFlag(AnalysisFlags.experimental, directives[LanguageSettingsDirectives.EXPERIMENTAL].takeIf { it.isNotEmpty() }),
             analysisFlag(AnalysisFlags.useExperimental, directives[LanguageSettingsDirectives.USE_EXPERIMENTAL].takeIf { it.isNotEmpty() }),
             analysisFlag(AnalysisFlags.ignoreDataFlowInAssert, trueOrNull(LanguageSettingsDirectives.IGNORE_DATA_FLOW_IN_ASSERT in directives)),
             analysisFlag(AnalysisFlags.constraintSystemForOverloadResolution, directives.singleOrZeroValue(LanguageSettingsDirectives.CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION)),

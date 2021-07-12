@@ -272,8 +272,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             languageVersionSettings: LanguageVersionSettings,
             bindingContext: BindingContext
         ): Boolean =
-            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.experimental) ||
-                    annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.useExperimental) ||
+            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.useExperimental) ||
                     anyParentMatches { element ->
                         element.isDeclarationAnnotatedWith(annotationFqName, bindingContext) ||
                                 element.isElementAnnotatedWithUseExperimentalOf(annotationFqName, bindingContext)
@@ -348,13 +347,10 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 return true
             }
 
-            val validExperimental = languageVersionSettings.getFlag(AnalysisFlags.experimental).filter(::checkAnnotation)
-            val validUseExperimental = languageVersionSettings.getFlag(AnalysisFlags.useExperimental).filter { fqName ->
-                fqName == REQUIRES_OPT_IN_FQ_NAME.asString() || fqName == OLD_EXPERIMENTAL_FQ_NAME.asString() || checkAnnotation(fqName)
-            }
-
-            for (fqName in validExperimental.intersect(validUseExperimental)) {
-                reportError("'-Xopt-in=$fqName' has no effect because '-Xexperimental=$fqName' is used")
+            languageVersionSettings.getFlag(AnalysisFlags.useExperimental).forEach { fqName ->
+                if (fqName != REQUIRES_OPT_IN_FQ_NAME.asString() && fqName != OLD_EXPERIMENTAL_FQ_NAME.asString()) {
+                    checkAnnotation(fqName)
+                }
             }
         }
     }

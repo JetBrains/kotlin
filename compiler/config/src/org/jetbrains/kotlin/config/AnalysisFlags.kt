@@ -19,9 +19,6 @@ object AnalysisFlags {
     val expectActualLinker by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val experimental by AnalysisFlag.Delegates.ListOfStrings
-
-    @JvmStatic
     val useExperimental by AnalysisFlag.Delegates.ListOfStrings
 
     @JvmStatic

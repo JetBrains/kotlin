@@ -96,15 +96,4 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
     fun testJvmPackageNameMultifileClass() {
         doTest("/moduleProtoBuf/jvmPackageNameMultifileClass")
     }
-
-    fun testExperimental() {
-        doTest(
-            "/moduleProtoBuf/experimental", extraOptions = listOf(
-                "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xexperimental=org.foo.A",
-                "-Xexperimental=org.foo.B.C",
-                "-Xopt-in=org.foo.D"
-            )
-        )
-    }
 }

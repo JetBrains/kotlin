@@ -1,17 +1,9 @@
 package org.test
 
-@Deprecated("Error1", level = DeprecationLevel.ERROR)
+@Deprecated("Error", level = DeprecationLevel.ERROR)
 @RequiresOptIn
-annotation class Error1
+annotation class Error
 
-@Deprecated("Error2", level = DeprecationLevel.ERROR)
+@Deprecated("Hidden", level = DeprecationLevel.HIDDEN)
 @RequiresOptIn
-annotation class Error2
-
-@Deprecated("Hidden1", level = DeprecationLevel.HIDDEN)
-@RequiresOptIn
-annotation class Hidden1
-
-@Deprecated("Hidden2", level = DeprecationLevel.HIDDEN)
-@RequiresOptIn
-annotation class Hidden2
+annotation class Hidden

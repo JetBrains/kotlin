@@ -3,6 +3,5 @@ $TESTDATA_DIR$/experimentalDeprecatedWarning.kt
 $TEMP_DIR$
 -Xopt-in=kotlin.RequiresOptIn
 -opt-in=kotlin.RequiresOptIn
--opt-in=org.test.Warning1
--Xexperimental=org.test.Warning2
+-opt-in=org.test.Warning
 -Xuse-experimental=org.test.OneMore

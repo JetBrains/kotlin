@@ -168,13 +168,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var readDeserializedContracts: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xexperimental",
-        valueDescription = "<fq.name>",
-        description = "Enable and propagate usages of experimental API for marker annotation with the given fully qualified name"
-    )
-    var experimental: Array<String>? by FreezableVar(null)
-
-    @Argument(
         value = "-Xuse-experimental",
         valueDescription = "<fq.name>",
         description = "Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name"
@@ -387,11 +380,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
-            val experimentalFqNames = experimental?.toList().orEmpty()
-            if (experimentalFqNames.isNotEmpty()) {
-                put(AnalysisFlags.experimental, experimentalFqNames)
-                collector.report(WARNING, "'-Xexperimental' is deprecated and will be removed in a future release")
-            }
             val useExperimentalFqNames = useExperimental?.toList().orEmpty()
             if (useExperimentalFqNames.isNotEmpty()) {
                 collector.report(

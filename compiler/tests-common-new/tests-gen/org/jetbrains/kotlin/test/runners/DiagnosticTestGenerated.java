@@ -34640,12 +34640,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("experimentalOnWholeModule.kt")
-            public void testExperimentalOnWholeModule() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalOnWholeModule.kt");
-            }
-
-            @Test
             @TestMetadata("fullFqNameUsage.kt")
             public void testFullFqNameUsage() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/fullFqNameUsage.kt");

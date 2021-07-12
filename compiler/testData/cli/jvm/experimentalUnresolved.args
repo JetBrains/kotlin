@@ -4,6 +4,5 @@ $TEMP_DIR$
 -opt-in
 org.test.Unresolved1
 -opt-in
-org.test.Unresolved3
--Xexperimental=org.test.Unresolved2
+org.test.Unresolved2
 

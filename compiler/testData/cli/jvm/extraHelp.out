@@ -160,7 +160,6 @@ where advanced options include:
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
   -Xeffect-system            Enable experimental language feature: effect system
   -Xexpect-actual-linker     Enable experimental expect/actual linker
-  -Xexperimental=<fq.name>   Enable and propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.
                              Use 'warning' level to issue warnings instead of errors.

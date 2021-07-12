@@ -250,20 +250,6 @@ object KotlinJavascriptSerializationUtil {
             header.flags = 1
         }
 
-        val experimentalAnnotationFqNames = languageVersionSettings.getFlag(AnalysisFlags.experimental)
-        if (experimentalAnnotationFqNames.isNotEmpty()) {
-            val stringTable = StringTableImpl()
-            for (fqName in experimentalAnnotationFqNames) {
-                val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED) ?: continue
-                header.addAnnotation(ProtoBuf.Annotation.newBuilder().apply {
-                    id = stringTable.getFqNameIndex(descriptor)
-                })
-            }
-            val (strings, qualifiedNames) = stringTable.buildProto()
-            header.strings = strings
-            header.qualifiedNames = qualifiedNames
-        }
-
         // TODO: write JS code binary version
 
         return header.build()

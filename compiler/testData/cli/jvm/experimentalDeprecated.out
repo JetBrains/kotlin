@@ -1,5 +1,3 @@
-error: opt-in requirement marker org.test.Error1 is deprecated. Error1
-error: opt-in requirement marker org.test.Hidden1 is deprecated. Hidden1
-error: opt-in requirement marker org.test.Error2 is deprecated. Error2
-error: opt-in requirement marker org.test.Hidden2 is deprecated. Hidden2
+error: opt-in requirement marker org.test.Error is deprecated. Error
+error: opt-in requirement marker org.test.Hidden is deprecated. Hidden
 COMPILATION_ERROR

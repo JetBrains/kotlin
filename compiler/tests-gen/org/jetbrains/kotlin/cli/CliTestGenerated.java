@@ -221,11 +221,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/emptySources.args");
         }
 
-        @TestMetadata("experimentalAndUseExperimentalWithSameAnnotation.args")
-        public void testExperimentalAndUseExperimentalWithSameAnnotation() throws Exception {
-            runTest("compiler/testData/cli/jvm/experimentalAndUseExperimentalWithSameAnnotation.args");
-        }
-
         @TestMetadata("experimentalDeprecated.args")
         public void testExperimentalDeprecated() throws Exception {
             runTest("compiler/testData/cli/jvm/experimentalDeprecated.args");
