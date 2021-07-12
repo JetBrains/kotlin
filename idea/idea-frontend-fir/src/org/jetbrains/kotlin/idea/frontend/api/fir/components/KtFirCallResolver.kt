@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class KtFirCallResolver(
@@ -127,7 +130,34 @@ internal class KtFirCallResolver(
                 )*/
             else -> error("Unexpected call reference ${calleeReference::class.simpleName}")
         } ?: return null
-        return KtFunctionCall(target)
+
+        val ktArgumentMapping = LinkedHashMap<KtValueArgument, KtValueParameterSymbol>()
+        argumentMapping?.let {
+            fun FirExpression.findKtValueArgument(): KtValueArgument? {
+                // For spread and named arguments, the source is the KtValueArgument.
+                // For other arguments, the source is the KtExpression itself and its parent should be the KtValueArgument.
+                val psi = when (this) {
+                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression -> realPsi
+                    else -> realPsi?.parent
+                }
+                return psi as? KtValueArgument
+            }
+
+            for ((firExpression, firValueParameter) in it.entries) {
+                val parameterSymbol = firValueParameter.buildSymbol(firSymbolBuilder) as KtValueParameterSymbol
+                if (firExpression is FirVarargArgumentsExpression) {
+                    for (varargArgument in firExpression.arguments) {
+                        val valueArgument = varargArgument.findKtValueArgument() ?: continue
+                        ktArgumentMapping[valueArgument] = parameterSymbol
+                    }
+                } else {
+                    val valueArgument = firExpression.findKtValueArgument() ?: continue
+                    ktArgumentMapping[valueArgument] = parameterSymbol
+                }
+            }
+        }
+
+        return KtFunctionCall(ktArgumentMapping, target)
     }
 
     private fun FirErrorNamedReference.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
