@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.commonizer.tree
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Companion.ParentNode
+import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal data class TargetBuildingContext(
     val storageManager: StorageManager,
     val classifiers: CirKnownClassifiers,
     val memberContext: CirMemberContext = CirMemberContext.empty,
-    val typeSubstitutor: CirTypeSubstitutor,
     val targets: Int, val targetIndex: Int
 ) {
     fun withMemberContextOf(clazz: CirClass) = copy(memberContext = memberContext.withContextOf(clazz))
@@ -31,10 +32,6 @@ internal fun mergeCirTree(
                 storageManager = storageManager,
                 classifiers = classifiers,
                 memberContext = CirMemberContext.empty,
-                typeSubstitutor = CirAliasTypeSubstitutor(
-                    commonDependencies = classifiers.commonDependencies,
-                    classifierIndices = roots.map(::CirClassifierIndex)
-                ),
                 targets = roots.size,
                 targetIndex = targetIndex
             ), roots[target].modules
@@ -70,7 +67,7 @@ internal fun CirNodeWithMembers<*, *>.buildClass(
     context: TargetBuildingContext, treeClass: CirTreeClass, parent: CirNode<*, *>? = null
 ) {
     val classNode = classes.getOrPut(treeClass.clazz.name) {
-        buildClassNode(context.storageManager, context.targets, context.classifiers, CirNodeRelationship.ParentNode(parent), treeClass.id)
+        buildClassNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent), treeClass.id)
     }
     classNode.targetDeclarations[context.targetIndex] = treeClass.clazz
     val contextWithClass = context.withMemberContextOf(treeClass.clazz)
@@ -83,28 +80,26 @@ internal fun CirNodeWithMembers<*, *>.buildClass(
 internal fun CirNodeWithMembers<*, *>.buildFunction(
     context: TargetBuildingContext, function: CirFunction, parent: CirNode<*, *>? = null
 ) {
-    val newFunction = context.typeSubstitutor.substitute(context.targetIndex, function)
-    val functionNode = functions.getOrPut(FunctionApproximationKey.create(context.memberContext, newFunction)) {
-        buildFunctionNode(context.storageManager, context.targets, context.classifiers, CirNodeRelationship.ParentNode(parent))
+    val functionNode = functions.getOrPut(FunctionApproximationKey.create(context.memberContext, function)) {
+        buildFunctionNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
-    functionNode.targetDeclarations[context.targetIndex] = newFunction
+    functionNode.targetDeclarations[context.targetIndex] = function
 }
 
 internal fun CirNodeWithMembers<*, *>.buildProperty(
     context: TargetBuildingContext, property: CirProperty, parent: CirNode<*, *>? = null
 ) {
-    val newProperty = context.typeSubstitutor.substitute(context.targetIndex, property)
-    val propertyNode = properties.getOrPut(PropertyApproximationKey.create(context.memberContext, newProperty)) {
-        buildPropertyNode(context.storageManager, context.targets, context.classifiers, CirNodeRelationship.ParentNode(parent))
+    val propertyNode = properties.getOrPut(PropertyApproximationKey.create(context.memberContext, property)) {
+        buildPropertyNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
-    propertyNode.targetDeclarations[context.targetIndex] = newProperty
+    propertyNode.targetDeclarations[context.targetIndex] = property
 }
 
 internal fun CirClassNode.buildConstructor(
     context: TargetBuildingContext, constructor: CirClassConstructor, parent: CirNode<*, *>
 ) {
     val constructorNode = constructors.getOrPut(ConstructorApproximationKey.create(context.memberContext, constructor)) {
-        buildClassConstructorNode(context.storageManager, context.targets, context.classifiers, CirNodeRelationship.ParentNode(parent))
+        buildClassConstructorNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
     }
     constructorNode.targetDeclarations[context.targetIndex] = constructor
 }

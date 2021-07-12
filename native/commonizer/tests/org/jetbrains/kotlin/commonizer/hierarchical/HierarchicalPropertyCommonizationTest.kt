@@ -182,9 +182,40 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized(
             "(a, b)", """
                 expect class AB expect constructor()
-                expect typealias TA_AB = AB
+                typealias TA_AB = AB
                 // https://youtrack.jetbrains.com/issue/KT-47100
-                expect val x: TA_AB
+                expect val x: AB
+        """.trimIndent()
+        )
+    }
+
+    fun `test single typeAliased property and double typeAliased property - with reversed order`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    class AB
+                    typealias TA_AB = AB
+                    typealias TA_B = TA_AB
+                    val x: TA_B = TA_B()
+            """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class AB
+                    typealias TA_AB = AB
+                    val x: TA_AB = TA_AB()
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class AB expect constructor()
+                typealias TA_AB = AB
+                // https://youtrack.jetbrains.com/issue/KT-47100
+                expect val x: AB
         """.trimIndent()
         )
     }

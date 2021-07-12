@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.commonizer.assertCommonized
 
 class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
-    fun `test boxed function using TA and expanded type`() {
+    fun `test function with boxed parameter`() {
         val result = commonize {
             outputTarget("(a, b)")
 
@@ -43,7 +43,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
     }
 
 
-    fun `test boxed function using TA and expanded type - with box from dependencies`() {
+    fun `test function with boxed parameter - with box from dependencies`() {
         val result = commonize {
             outputTarget("(a, b)")
 
@@ -76,7 +76,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
         )
     }
 
-    fun `test parameters with non-commonized TA expanding to a commonized type`() {
+    fun `test function parameter with suitable typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
 
@@ -100,6 +100,38 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
             "(a, b)", """
                 expect class X expect constructor()
                 expect fun useX(x: X)
+            """.trimIndent()
+        )
+    }
+
+    fun `test boxed property return type`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class Box<T>
+                    class A
+                    typealias X = A
+                    val x: Box<X>
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    class Box<T>
+                    class B
+                    typealias X = B
+                    val x: Box<B>
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class Box<T> expect constructor()
+                expect class X expect constructor()
+                expect val x: Box<X>
             """.trimIndent()
         )
     }
