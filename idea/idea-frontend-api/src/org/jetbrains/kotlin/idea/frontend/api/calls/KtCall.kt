@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.frontend.api.calls
 
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.psi.KtValueArgument
 
 /**
  * Represents direct or indirect (via invoke) function call from Kotlin code
@@ -58,7 +60,10 @@ public class KtVariableWithInvokeFunctionCall(
  *
  * x.toString() // function call
  */
-public data class KtFunctionCall(override val targetFunction: KtCallTarget) : KtDeclaredFunctionCall()
+public data class KtFunctionCall(
+    public val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
+    override val targetFunction: KtCallTarget
+) : KtDeclaredFunctionCall()
 
 /**
  * Represents function(s) in which call was resolved,
