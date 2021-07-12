@@ -836,6 +836,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/unknownExtraFlags.args");
         }
 
+        @TestMetadata("unrestrictedBuilderInference.args")
+        public void testUnrestrictedBuilderInference() throws Exception {
+            runTest("compiler/testData/cli/jvm/unrestrictedBuilderInference.args");
+        }
+
         @TestMetadata("useDeclarationThatWasExperimentalWithoutExplicitImport.args")
         public void testUseDeclarationThatWasExperimentalWithoutExplicitImport() throws Exception {
             runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutExplicitImport.args");
