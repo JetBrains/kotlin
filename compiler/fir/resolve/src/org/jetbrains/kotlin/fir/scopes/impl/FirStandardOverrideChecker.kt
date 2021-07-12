@@ -108,6 +108,8 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirCallableDeclaration
     ): ConeSubstitutor? {
+        overrideCandidate.ensureResolved(FirResolvePhase.TYPES)
+        baseDeclaration.ensureResolved(FirResolvePhase.TYPES)
         val substitutor = buildSubstitutorForOverridesCheck(overrideCandidate, baseDeclaration, session) ?: return null
         if (
             overrideCandidate.typeParameters.isNotEmpty() &&
@@ -134,7 +136,6 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
 
         overrideCandidate.ensureResolved(FirResolvePhase.TYPES)
         baseDeclaration.ensureResolved(FirResolvePhase.TYPES)
-
         if (!isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, substitutor)) return false
 
         return overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).all { (memberParam, selfParam) ->
@@ -150,6 +151,8 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
 
         if (overrideCandidate !is FirProperty) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
+        overrideCandidate.ensureResolved(FirResolvePhase.TYPES)
+        baseDeclaration.ensureResolved(FirResolvePhase.TYPES)
         return isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, substitutor)
     }
 }

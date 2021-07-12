@@ -71,7 +71,7 @@ class KtFirOverrideInfoProvider(
 
     override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol? {
         require(symbol is KtFirSymbol<*>)
-        return symbol.firRef.withFir { firDeclaration ->
+        return symbol.firRef.withFir(FirResolvePhase.STATUS) { firDeclaration ->
             if (firDeclaration !is FirCallableDeclaration) return@withFir null
             with(analysisSession) {
                 getOriginalOverriddenSymbol(firDeclaration)?.containingClass()?.classId?.getCorrespondingToplevelClassOrObjectSymbol()
@@ -81,7 +81,7 @@ class KtFirOverrideInfoProvider(
 
     override fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol? {
         require(symbol is KtFirSymbol<*>)
-        return symbol.firRef.withFir { firDeclaration ->
+        return symbol.firRef.withFir(FirResolvePhase.STATUS) { firDeclaration ->
             if (firDeclaration !is FirCallableDeclaration) return@withFir null
             with(analysisSession) {
                 getOriginalOverriddenSymbol(firDeclaration)
