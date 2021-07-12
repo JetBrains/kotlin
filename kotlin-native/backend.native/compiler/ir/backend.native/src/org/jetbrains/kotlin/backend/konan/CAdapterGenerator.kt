@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
@@ -535,7 +536,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     internal fun paramsToUniqueNames(params: List<ParameterDescriptor>): Map<ParameterDescriptor, String> {
         paramNamesRecorded.clear()
         return params.associate {
-            val name = translateName(it.name.asString()) 
+            val name = translateName(it.name)
             val count = paramNamesRecorded.getOrDefault(name, 0)
             paramNamesRecorded[name] = count + 1
             if (count == 0) {
@@ -639,7 +640,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, ignored: Void?): Boolean {
         val fqName = descriptor.fqName
         val packageScope = packageScopes.getOrPut(fqName) {
-            val name = if (fqName.isRoot) "root" else translateName(fqName.shortName().asString())
+            val name = if (fqName.isRoot) "root" else translateName(fqName.shortName())
             val scope = ExportedElementScope(ScopeKind.PACKAGE, name)
             scopes.last().scopes += scope
             scope
@@ -1073,11 +1074,13 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         return type.isUnit() || type.isNothing()
     }
 
-    fun translateName(name: String): String {
+    fun translateName(name: Name): String {
+        val nameString = name.asString()
         return when {
-            simpleNameMapping.contains(name) -> simpleNameMapping[name]!!
-            cKeywords.contains(name) -> "${name}_"
-            else -> name
+            simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
+            cKeywords.contains(nameString) -> "${nameString}_"
+            name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
+            else -> nameString
         }
     }
 
