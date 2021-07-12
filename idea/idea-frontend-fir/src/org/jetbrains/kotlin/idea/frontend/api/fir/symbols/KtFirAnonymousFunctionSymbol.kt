@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -40,6 +41,8 @@ internal class KtFirAnonymousFunctionSymbol(
             builder.variableLikeBuilder.buildValueParameterSymbol(valueParameter)
         }
     }
+
+    override val hasStableParameterNames: Boolean = firRef.withFir { it.getHasStableParameterNames(it.moduleData.session) }
 
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
     override val receiverType: KtTypeAndAnnotations? by cached {
