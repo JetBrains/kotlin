@@ -102,6 +102,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("importList.kt")
+        public void testImportList() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/inImport/importList.kt");
+        }
+
+        @Test
         @TestMetadata("middleImportNamePart.kt")
         public void testMiddleImportNamePart() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/inImport/middleImportNamePart.kt");

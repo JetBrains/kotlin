@@ -52,6 +52,11 @@ internal class FirElementBuilder {
         }
     }
 
+    fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
+        is KtImportList -> false
+        else -> true
+    }
+
     fun getOrBuildFirFor(
         element: KtElement,
         firFileBuilder: FirFileBuilder,
@@ -88,6 +93,11 @@ internal class FirElementBuilder {
         state: FirModuleResolveState,
     ): FirElement? {
         require(element !is KtFile)
+
+        if (!doKtElementHasCorrespondingFirElement(element)) {
+            return null
+        }
+
         val firFile = element.containingKtFile
         val fileStructure = fileStructureCache.getFileStructure(firFile, moduleFileCache)
 
