@@ -1,0 +1,10 @@
+@kotlin.Metadata
+public final class DelegatedPropertiesNullabilityAnnotationsKt {
+    // source: 'delegatedPropertiesNullabilityAnnotations.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final static @org.jetbrains.annotations.Nullable field d$delegate: java.util.Map
+    private final static @org.jetbrains.annotations.NotNull field map: java.util.Map
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.Nullable method getD(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getMap(): java.util.Map
+}

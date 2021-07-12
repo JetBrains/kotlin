@@ -329,6 +329,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @Test
+        @TestMetadata("delegatedPropertiesNullabilityAnnotations.kt")
+        public void testDelegatedPropertiesNullabilityAnnotations() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/delegatedPropertiesNullabilityAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("deprecatedJvmOverloads.kt")
         public void testDeprecatedJvmOverloads() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/deprecatedJvmOverloads.kt");

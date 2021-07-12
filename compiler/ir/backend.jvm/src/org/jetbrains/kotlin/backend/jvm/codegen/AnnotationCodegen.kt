@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
@@ -162,9 +163,19 @@ abstract class AnnotationCodegen(
         // A flexible type whose lower bound in not-null and upper bound is nullable, should not be annotated
         if (type.isWithFlexibleNullability()) return
 
-        val annotationClass = if (type.isNullable()) Nullable::class.java else NotNull::class.java
+        val annotationClass = when {
+            declaration.origin == IrDeclarationOrigin.PROPERTY_DELEGATE && declaration.typeOfMetadataDescMarkedNullable() -> Nullable::class.java
+            type.isNullable() -> Nullable::class.java
+            else -> NotNull::class.java
+        }
 
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass)
+    }
+
+    private fun IrDeclaration.typeOfMetadataDescMarkedNullable(): Boolean {
+        val markedNullable =
+            (((this as? IrField)?.metadata as? DescriptorMetadataSource.Property)?.descriptor as? VariableDescriptorImpl)?.type?.isMarkedNullable
+        return (markedNullable == true)
     }
 
     private fun isMovedReceiverParameterOfStaticInlineClassReplacement(parameter: IrValueParameter, parent: IrDeclaration): Boolean =
