@@ -22,6 +22,7 @@
 #include <type_traits>
 
 #include "KAssert.h"
+#include "KString.h"
 #include "StackTrace.hpp"
 #include "Memory.h"
 #include "Natives.h"
@@ -40,8 +41,37 @@ KInt Kotlin_Any_hashCode(KConstRef thiz) {
   return reinterpret_cast<uintptr_t>(thiz);
 }
 
+NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
+    KStdVector<void*> stackTrace;
+    {
+        // Don't use `kotlin::CallWithThreadState` to avoid messing up callstack.
+        kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+        // Skip this function and primary `Throwable` constructor.
+        stackTrace = kotlin::GetCurrentStackTrace(2);
+    }
+
+    ObjHolder resultHolder;
+    ObjHeader* result = AllocArrayInstance(theNativePtrArrayTypeInfo, stackTrace.size(), resultHolder.slot());
+    for (size_t index = 0; index < stackTrace.size(); ++index) {
+        Kotlin_NativePtrArray_set(result, index, stackTrace[index]);
+    }
+    RETURN_OBJ(result);
+}
+
 OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace) {
-    RETURN_RESULT_OF(kotlin::GetStackTraceStrings, stackTrace);
+    const KNativePtr* array = PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), 0);
+    size_t size = stackTrace->array()->count_;
+    auto stackTraceStrings = kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(kotlin::GetStackTraceStrings, array, size);
+    ObjHolder resultHolder;
+    ObjHeader* strings = AllocArrayInstance(theArrayTypeInfo, stackTraceStrings.size(), resultHolder.slot());
+
+    for (size_t index = 0; index < stackTraceStrings.size(); ++index) {
+        ObjHolder holder;
+        CreateStringFromCString(stackTraceStrings[index].c_str(), holder.slot());
+        UpdateHeapRef(ArrayAddressOfElementAt(strings->array(), index), holder.obj());
+    }
+
+    RETURN_OBJ(strings);
 }
 
 // TODO: consider handling it with compiler magic instead.

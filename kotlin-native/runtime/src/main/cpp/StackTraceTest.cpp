@@ -5,6 +5,8 @@
 
 #include "StackTrace.hpp"
 
+#include <signal.h>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -16,21 +18,63 @@ using namespace kotlin;
 
 namespace {
 
-NO_INLINE void AbortWithStackTrace() {
+NO_INLINE KStdVector<void*> GetStackTrace1(int skipFrames) {
+    return GetCurrentStackTrace(skipFrames);
+}
+
+NO_INLINE KStdVector<void*> GetStackTrace2(int skipFrames) {
+    return GetStackTrace1(skipFrames);
+}
+
+NO_INLINE void AbortWithStackTrace(int) {
     PrintStackTraceStderr();
     konan::abort();
 }
 
 } // namespace
 
+TEST(StackTraceTest, StackTrace) {
+    // TODO: Consider incorporating extra skipping to `GetCurrentStackTrace` on windows.
+#if KONAN_WINDOWS
+    constexpr int kSkip = 1;
+#else
+    constexpr int kSkip = 0;
+#endif
+    auto stackTrace = GetStackTrace2(kSkip);
+    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data(), stackTrace.size());
+    ASSERT_GT(symbolicStackTrace.size(), 0ul);
+    EXPECT_THAT(symbolicStackTrace[0], testing::HasSubstr("GetStackTrace1"));
+}
+
+TEST(StackTraceTest, StackTraceWithSkip) {
+    // TODO: Consider incorporating extra skipping to `GetCurrentStackTrace` on windows.
+#if KONAN_WINDOWS
+    constexpr int kSkip = 2;
+#else
+    constexpr int kSkip = 1;
+#endif
+    auto stackTrace = GetStackTrace2(kSkip);
+    auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data(), stackTrace.size());
+    ASSERT_GT(symbolicStackTrace.size(), 0ul);
+    EXPECT_THAT(symbolicStackTrace[0], testing::HasSubstr("GetStackTrace2"));
+}
+
 TEST(StackTraceDeathTest, PrintStackTrace) {
     EXPECT_DEATH(
-            { kotlin::RunInNewThread(AbortWithStackTrace); },
-#if KONAN_WINDOWS
-            // TODO: Fix Windows to match other platforms.
-            testing::AllOf(testing::HasSubstr("AbortWithStackTrace"), testing::HasSubstr("PrintStackTraceStderr"))
-#else
-            testing::AllOf(testing::HasSubstr("AbortWithStackTrace"), testing::Not(testing::HasSubstr("PrintStackTraceStderr")))
-#endif
-            );
+            { AbortWithStackTrace(0); },
+            testing::AllOf(
+                    testing::HasSubstr("AbortWithStackTrace"), testing::HasSubstr("StackTraceDeathTest_PrintStackTrace_Test"),
+                    testing::Not(testing::HasSubstr("PrintStackTraceStderr"))));
+}
+
+TEST(StackTraceDeathTest, PrintStackTraceInSignalHandler) {
+    EXPECT_DEATH(
+            {
+                signal(SIGINT, &AbortWithStackTrace);
+                raise(SIGINT);
+            },
+            testing::AllOf(
+                    testing::HasSubstr("AbortWithStackTrace"),
+                    testing::HasSubstr("StackTraceDeathTest_PrintStackTraceInSignalHandler_Test"),
+                    testing::Not(testing::HasSubstr("PrintStackTraceStderr"))));
 }

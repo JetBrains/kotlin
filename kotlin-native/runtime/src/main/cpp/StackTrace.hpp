@@ -8,7 +8,13 @@
 
 namespace kotlin {
 
-OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace);
+// TODO: Instead of KStd* provide allocator-customizable versions, to allow stack memory allocation.
+// TODO: Model API as in upcoming https://en.cppreference.com/w/cpp/utility/basic_stacktrace
+
+KStdVector<void*> GetCurrentStackTrace(int extraSkipFrames) noexcept;
+
+// TODO: This is asking for a span.
+KStdVector<KStdString> GetStackTraceStrings(void* const* stackTrace, size_t stackTraceSize) noexcept;
 
 // It's not always safe to extract SourceInfo during unhandled exception termination.
 void DisallowSourceInfo();
@@ -16,6 +22,3 @@ void DisallowSourceInfo();
 void PrintStackTraceStderr();
 
 } // namespace kotlin
-
-// Returns current stacktrace as Array<String>.
-extern "C" OBJ_GETTER0(Kotlin_getCurrentStackTrace);
