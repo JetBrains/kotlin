@@ -102,7 +102,8 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noe
     size_t counterOverhead = gc_.GetThreshold() == 0 ? safePointsCounter_ : safePointsCounter_ % gc_.GetThreshold();
     if (threadData_.suspensionData().suspendIfRequested()) {
         safePointsCounter_ = 0;
-    } else if (counterOverhead + weight >= gc_.GetThreshold()) {
+    } else if (counterOverhead + weight >= gc_.GetThreshold() && konan::getTimeMicros() - timeOfLastGcUs_ >= gc_.GetCooldownThresholdUs()) {
+        timeOfLastGcUs_ = konan::getTimeMicros();
         safePointsCounter_ = 0;
         PerformFullGC();
     }
@@ -114,6 +115,7 @@ gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep() noexcept {
         // TODO: Make it even more aggressive and run on a subset of backend.native tests.
         threshold_ = 1000;
         allocationThresholdBytes_ = 10000;
+        cooldownThresholdUs_ = 0;
     }
 }
 
