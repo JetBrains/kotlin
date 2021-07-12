@@ -24,6 +24,9 @@ internal object ClassIdCalculator {
                 is KtClassLikeDeclaration -> {
                     containingClasses += element
                 }
+                is KtObjectLiteralExpression -> {
+                    return null
+                }
                 is KtFile -> {
                     ktFile = element
                     break
