@@ -1,5 +1,9 @@
 # kotlinx-metadata-jvm
 
+## Next
+
+- Add `JvmPropertyExtensionVisitor.visitSyntheticMethodForDelegate` for optimized delegated properties (KT-39055).
+
 ## 0.3.0
 
 - Update to Kotlin 1.5 with metadata version 1.5.
