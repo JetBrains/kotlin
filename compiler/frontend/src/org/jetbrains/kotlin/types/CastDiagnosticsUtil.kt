@@ -43,6 +43,10 @@ object CastDiagnosticsUtil {
         rhsType: KotlinType,
         platformToKotlinClassMapper: PlatformToKotlinClassMapper
     ): Boolean {
+        val typeConstructor = lhsType.constructor
+        if (typeConstructor is IntersectionTypeConstructor) {
+            return typeConstructor.supertypes.any { isCastPossible(it, rhsType, platformToKotlinClassMapper) }
+        }
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
         if (KotlinBuiltIns.isNothing(lhsType)) return true
