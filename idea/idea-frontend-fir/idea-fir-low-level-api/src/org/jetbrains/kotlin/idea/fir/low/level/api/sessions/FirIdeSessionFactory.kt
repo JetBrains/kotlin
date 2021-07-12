@@ -89,6 +89,7 @@ internal object FirIdeSessionFactory {
 
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
+            registerCommonJavaComponents()
             registerResolveComponents()
 
             val provider = FirIdeProvider(
@@ -185,6 +186,7 @@ internal object FirIdeSessionFactory {
             registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
+            registerCommonJavaComponents()
             registerJavaSpecificResolveComponents()
 
             val javaSymbolProvider = JavaSymbolProvider(this, mainModuleData, project, searchScope)
