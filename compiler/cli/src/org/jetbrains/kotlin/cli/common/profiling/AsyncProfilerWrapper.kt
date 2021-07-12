@@ -17,7 +17,14 @@ interface AsyncProfilerReflected {
 }
 
 object AsyncProfilerHelper {
+    private var instance: AsyncProfilerReflected? = null
+
     fun getInstance(libPath: String?): AsyncProfilerReflected {
+        // JVM doesn't support loading a native library multiple times even in different class loaders, so we don't attempt to load
+        // async-profiler again after the first use, which allows to profile the same compiler process multiple times,
+        // for example in the compiler daemon scenario.
+        instance?.let { return it }
+
         val profilerClass = loadAsyncProfilerClass(libPath)
         val getInstanceHandle =
             MethodHandles.lookup().findStatic(profilerClass, "getInstance", MethodType.methodType(profilerClass, String::class.java))
@@ -49,7 +56,7 @@ object AsyncProfilerHelper {
             override val version: String
                 get() = boundGetVersion.invokeWithArguments() as String
 
-        }
+        }.also { this.instance = it }
     }
 
     private fun loadAsyncProfilerClass(libPath: String?): Class<*> {
