@@ -119,7 +119,7 @@ internal class FirModuleResolveStateImpl(
         val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(nonLocalFirForNamedDeclaration) { firDeclaration ->
             when (val realPsi = firDeclaration.realPsi) {
                 is KtObjectLiteralExpression -> realPsi.objectDeclaration == ktDeclaration
-                is KtFunctionLiteral -> realPsi.parent == ktDeclaration
+                is KtLambdaExpression -> realPsi.functionLiteral == ktDeclaration
                 else -> realPsi == ktDeclaration
             }
         }
