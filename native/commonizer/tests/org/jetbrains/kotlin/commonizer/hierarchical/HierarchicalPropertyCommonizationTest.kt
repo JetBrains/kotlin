@@ -219,4 +219,29 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         """.trimIndent()
         )
     }
+
+    fun `test property with and without setter`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    val x: Int = 42
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    var x: Int = 42
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect var x: Int
+                    private set
+            """.trimIndent()
+        )
+    }
 }
