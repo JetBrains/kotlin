@@ -365,6 +365,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var extendedCompilerChecks: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xunrestricted-builder-inference",
+        description = "Eliminate builder inference restrictions like allowance of returning type variables of a builder inference call"
+    )
+    var unrestrictedBuilderInference: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -392,6 +398,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             if (multiPlatform) {
                 put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
+            }
+
+            if (unrestrictedBuilderInference) {
+                put(LanguageFeature.UnrestrictedBuilderInference, LanguageFeature.State.ENABLED)
             }
 
             if (newInference) {
