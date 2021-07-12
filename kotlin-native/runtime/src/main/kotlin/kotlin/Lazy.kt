@@ -5,9 +5,10 @@
 
 package kotlin
 
-import kotlin.native.concurrent.FreezeAwareLazyImpl
+import kotlin.native.concurrent.*
 import kotlin.native.internal.FixmeConcurrency
 import kotlin.reflect.KProperty
+import kotlin.native.isExperimentalMM
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -18,7 +19,13 @@ import kotlin.reflect.KProperty
  * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
-public actual fun <T> lazy(initializer: () -> T): Lazy<T> = FreezeAwareLazyImpl(initializer)
+@OptIn(kotlin.ExperimentalStdlibApi::class)
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
+        if (isExperimentalMM())
+            SynchronizedLazyImpl(initializer)
+        else
+            FreezeAwareLazyImpl(initializer)
+
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -31,10 +38,11 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> = FreezeAwareLazyImpl(
  * Also this behavior can be changed in the future.
  */
 @FixmeConcurrency
+@OptIn(kotlin.ExperimentalStdlibApi::class)
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
-            LazyThreadSafetyMode.SYNCHRONIZED -> throw UnsupportedOperationException()
-            LazyThreadSafetyMode.PUBLICATION -> FreezeAwareLazyImpl(initializer)
+            LazyThreadSafetyMode.SYNCHRONIZED -> if (isExperimentalMM()) SynchronizedLazyImpl(initializer) else throw UnsupportedOperationException()
+            LazyThreadSafetyMode.PUBLICATION -> if (isExperimentalMM()) SafePublicationLazyImpl(initializer) else FreezeAwareLazyImpl(initializer)
             LazyThreadSafetyMode.NONE -> UnsafeLazyImpl(initializer)
         }
 
