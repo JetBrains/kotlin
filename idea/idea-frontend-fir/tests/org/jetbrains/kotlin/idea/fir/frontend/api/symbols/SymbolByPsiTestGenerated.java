@@ -97,6 +97,12 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("implicitReturnInLambda.kt")
+    public void testImplicitReturnInLambda() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/implicitReturnInLambda.kt");
+    }
+
+    @Test
     @TestMetadata("localDeclarations.kt")
     public void testLocalDeclarations() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/localDeclarations.kt");
