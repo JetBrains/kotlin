@@ -804,6 +804,24 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
 }
 
 internal object CheckContextReceiversResolutionPart : ResolutionPart() {
+    override fun ResolutionCandidate.process(workIndex: Int) {
+        val parentLexicalScopes = scopeTower.lexicalScope.parentsWithSelf.filterIsInstance<LexicalScope>()
+        val implicitReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
+        for (scope in parentLexicalScopes) {
+            scopeTower.getImplicitReceiver(scope)?.let { implicitReceiversGroups.add(listOf(it)) }
+            val contextReceiversGroup = scopeTower.getContextReceivers(scope)
+            if (contextReceiversGroup.isNotEmpty()) {
+                implicitReceiversGroups.add(contextReceiversGroup)
+            }
+        }
+        val contextReceiversArguments = mutableListOf<SimpleKotlinCallArgument>()
+        for (candidateContextReceiverParameter in candidateDescriptor.contextReceiverParameters) {
+            val contextReceiverArgument = findContextReceiver(implicitReceiversGroups, candidateContextReceiverParameter) ?: return
+            contextReceiversArguments.add(contextReceiverArgument)
+        }
+        resolvedCall.contextReceiversArguments = contextReceiversArguments
+    }
+
     private data class ApplicableArgumentWithConstraint(
         val argument: SimpleKotlinCallArgument,
         val argumentType: UnwrappedType,
@@ -843,22 +861,5 @@ internal object CheckContextReceiversResolutionPart : ResolutionPart() {
         }
         diagnosticsFromResolutionParts.add(NoContextReceiver(candidateContextReceiverParameter))
         return null
-    }
-
-    override fun ResolutionCandidate.process(workIndex: Int) {
-        val parentLexicalScopes = scopeTower.lexicalScope.parentsWithSelf.filterIsInstance<LexicalScope>()
-        val implicitReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
-        for (scope in parentLexicalScopes) {
-            scopeTower.getImplicitReceiver(scope)?.let { implicitReceiversGroups.add(listOf(it)) }
-            val contextReceiversGroup = scopeTower.getContextReceivers(scope)
-            if (contextReceiversGroup.isNotEmpty()) {
-                implicitReceiversGroups.add(contextReceiversGroup)
-            }
-        }
-        val contextReceiversArguments = mutableListOf<SimpleKotlinCallArgument>()
-        for (candidateContextReceiverParameter in candidateDescriptor.contextReceiverParameters) {
-            contextReceiversArguments.add(findContextReceiver(implicitReceiversGroups, candidateContextReceiverParameter) ?: return)
-        }
-        resolvedCall.contextReceiversArguments = contextReceiversArguments
     }
 }

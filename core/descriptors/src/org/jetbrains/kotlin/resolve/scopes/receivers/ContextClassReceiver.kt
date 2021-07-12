@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
-class ExtensionClassReceiver(
+class ContextClassReceiver(
     val classDescriptor: ClassDescriptor,
     receiverType: KotlinType,
     original: ReceiverValue?
@@ -17,7 +17,7 @@ class ExtensionClassReceiver(
     override val declarationDescriptor: DeclarationDescriptor
         get() = classDescriptor
 
-    override fun replaceType(newType: KotlinType): ReceiverValue = ExtensionClassReceiver(classDescriptor, newType, original)
+    override fun replaceType(newType: KotlinType): ReceiverValue = ContextClassReceiver(classDescriptor, newType, original)
 
-    override fun toString(): String = "$type: Ext { $classDescriptor }"
+    override fun toString(): String = "$type: Ctx { $classDescriptor }"
 }

@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.util.slicedMap.RewritePolicy.DO_NOTHING;
@@ -263,7 +262,7 @@ public interface BindingContext {
                     .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS)
                     .build();
 
-    WritableSlice<DeclarationDescriptor, LinkedHashMap<ReceiverParameterDescriptor, String>> DESCRIPTOR_TO_NAMED_RECEIVERS = Slices.createSimpleSlice();
+    WritableSlice<DeclarationDescriptor, Map<ReceiverParameterDescriptor, String>> DESCRIPTOR_TO_NAMED_RECEIVERS = Slices.createSimpleSlice();
     WritableSlice<KtReferenceExpression, PsiElement> LABEL_TARGET = Slices.createSimpleSlice();
     WritableSlice<KtReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET = Slices.createSimpleSlice();
     WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.createSimpleSlice();

@@ -618,7 +618,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * contextReceiverList
-     *   : "context" "(" (label? typeReference{","})+ ")"
+     *   : "context" "(" (contextReceiver{","})+ ")"
      */
     public void parseContextReceiverList() {
         assert _at(CONTEXT_KEYWORD);
