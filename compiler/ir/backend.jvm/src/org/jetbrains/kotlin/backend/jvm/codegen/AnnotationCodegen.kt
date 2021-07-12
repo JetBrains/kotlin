@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -377,10 +378,14 @@ abstract class AnnotationCodegen(
             }
             irClass.getAnnotation(FqName(java.lang.annotation.Retention::class.java.name))?.let { retentionAnnotation ->
                 val value = retentionAnnotation.getValueArgument(0)
-                if (value is IrEnumEntry) {
-                    val enumClassFqName = value.parentAsClass.fqNameWhenAvailable
-                    if (RetentionPolicy::class.java.name == enumClassFqName?.asString()) {
-                        return RetentionPolicy.valueOf(value.name.asString())
+                if (value is IrDeclarationReference) {
+                    val symbol = value.symbol
+                    if (symbol is IrEnumEntrySymbol) {
+                        val entry = symbol.owner
+                        val enumClassFqName = entry.parentAsClass.fqNameWhenAvailable
+                        if (RetentionPolicy::class.java.name == enumClassFqName?.asString()) {
+                            return RetentionPolicy.valueOf(entry.name.asString())
+                        }
                     }
                 }
             }
