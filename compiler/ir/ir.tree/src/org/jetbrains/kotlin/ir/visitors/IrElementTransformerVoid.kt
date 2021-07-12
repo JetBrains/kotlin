@@ -137,6 +137,22 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun <T> visitConst(expression: IrConst<T>) = visitExpression(expression)
     final override fun <T> visitConst(expression: IrConst<T>, data: Nothing?) = visitConst(expression)
 
+    open fun visitConstantValue(expression: IrConstantValue) : IrConstantValue {
+        expression.transformChildren(this, null)
+        return expression
+    }
+
+    final override fun visitConstantValue(expression: IrConstantValue, data: Nothing?) = visitConstantValue(expression)
+
+    open fun visitConstantObject(expression: IrConstantObject) = visitConstantValue(expression)
+    final override fun visitConstantObject(expression: IrConstantObject, data: Nothing?) = visitConstantObject(expression)
+
+    open fun visitConstantPrimitive(expression: IrConstantPrimitive) = visitConstantValue(expression)
+    final override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: Nothing?) = visitConstantPrimitive(expression)
+
+    open fun visitConstantArray(expression: IrConstantArray) = visitConstantValue(expression)
+    final override fun visitConstantArray(expression: IrConstantArray, data: Nothing?) = visitConstantArray(expression)
+
     open fun visitVararg(expression: IrVararg) = visitExpression(expression)
     final override fun visitVararg(expression: IrVararg, data: Nothing?) = visitVararg(expression)
 

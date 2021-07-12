@@ -107,6 +107,18 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun <T> visitConst(expression: IrConst<T>) = visitExpression(expression)
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?) = visitConst(expression)
 
+    fun visitConstantValue(expression: IrConstantValue) = visitExpression(expression)
+    override fun visitConstantValue(expression: IrConstantValue, data: Nothing?) = visitConstantValue(expression)
+
+    fun visitConstantObject(expression: IrConstantObject) = visitConstantValue(expression)
+    override fun visitConstantObject(expression: IrConstantObject, data: Nothing?) = visitConstantObject(expression)
+
+    fun visitConstantPrimitive(expression: IrConstantPrimitive) = visitConstantValue(expression)
+    override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: Nothing?) = visitConstantPrimitive(expression)
+
+    fun visitConstantArray(expression: IrConstantArray) = visitConstantValue(expression)
+    override fun visitConstantArray(expression: IrConstantArray, data: Nothing?) = visitConstantArray(expression)
+
     fun visitVararg(expression: IrVararg) = visitExpression(expression)
     override fun visitVararg(expression: IrVararg, data: Nothing?) = visitVararg(expression)
 

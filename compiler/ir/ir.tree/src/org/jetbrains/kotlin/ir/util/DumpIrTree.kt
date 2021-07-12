@@ -344,6 +344,22 @@ class DumpIrTreeVisitor(
         }
     }
 
+    override fun visitConstantArray(expression: IrConstantArray, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            for ((i, value) in expression.elements.withIndex()) {
+                value.accept(this, i.toString())
+            }
+        }
+    }
+
+    override fun visitConstantObject(expression: IrConstantObject, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            for ((index, argument) in expression.valueArguments.withIndex()) {
+                argument.accept(this, expression.constructor.owner.valueParameters[index].name.toString())
+            }
+        }
+    }
+
     private inline fun IrElement.dumpLabeledElementWith(label: String, body: () -> Unit) {
         printer.println(accept(elementRenderer, null).withLabel(label))
         indented(body)
