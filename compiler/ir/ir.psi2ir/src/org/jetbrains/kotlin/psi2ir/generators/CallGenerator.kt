@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
@@ -383,48 +384,41 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         call: CallBuilder,
         irResultType: IrType
     ): IrExpression {
-        val resolvedCall = call.original
-
-        val valueArgumentsInEvaluationOrder = resolvedCall.valueArguments.values
-        val valueParameters = resolvedCall.resultingDescriptor.valueParameters
-
         val irBlock = IrBlockImpl(startOffset, endOffset, irResultType, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL)
 
-        val valueArgumentsToValueParameters = HashMap<ResolvedValueArgument, ValueParameterDescriptor>()
-        for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
-            val valueParameter = valueParameters[index]
-            valueArgumentsToValueParameters[valueArgument] = valueParameter
-        }
-
-        val irArgumentValues = HashMap<ValueParameterDescriptor, IntermediateValue>()
-
-        for (valueArgument in valueArgumentsInEvaluationOrder) {
-            val valueParameter = valueArgumentsToValueParameters[valueArgument]!!
-            val irArgument = call.getValueArgument(valueParameter) ?: continue
-            val irArgumentValue = if (irArgument.hasNoSideEffects())
-                generateExpressionValue(irArgument.type) { irArgument }    // Computing a lambda has no side effects, can generate in place
+        fun IrExpression.freeze(nameHint: String) =
+            if (isUnchanging())
+                this
             else
-                scope.createTemporaryVariableInBlock(context, irArgument, irBlock, valueParameter.name.asString())
-            irArgumentValues[valueParameter] = irArgumentValue
-        }
+                scope.createTemporaryVariableInBlock(context, this, irBlock, nameHint).load()
 
-        resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, _ ->
-            val valueParameter = valueParameters[index]
-            irCall.putValueArgument(index, irArgumentValues[valueParameter]?.load())
-        }
+        irCall.dispatchReceiver = irCall.dispatchReceiver?.freeze("\$this")
+        irCall.extensionReceiver = irCall.extensionReceiver?.freeze("\$receiver")
 
+        val resolvedCall = call.original
+        val valueParameters = resolvedCall.resultingDescriptor.valueParameters
+        val valueArgumentsToIndex = HashMap<ResolvedValueArgument, Int>()
+        for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
+            valueArgumentsToIndex[valueArgument] = index
+        }
+        for (valueArgument in resolvedCall.valueArguments.values) {
+            val index = valueArgumentsToIndex[valueArgument]!!
+            val irArgument = call.getValueArgument(valueParameters[index]) ?: continue
+            irCall.putValueArgument(index, irArgument.freeze(valueParameters[index].name.asString()))
+        }
         irBlock.statements.add(irCall)
-
         return irBlock
     }
 }
 
-fun IrExpression.hasNoSideEffects() =
+fun IrExpression.isUnchanging() =
     this is IrFunctionExpression ||
             (this is IrCallableReference<*> && dispatchReceiver == null && extensionReceiver == null) ||
             this is IrClassReference ||
             this is IrConst<*> ||
-            this is IrGetValue
+            (this is IrGetValue && !symbol.owner.let { it is IrVariable && it.isVar })
+
+fun IrExpression.hasNoSideEffects() = isUnchanging() || this is IrGetValue
 
 fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: IrStatementOrigin? = null) =
     generateCall(ktElement.startOffsetSkippingComments, ktElement.endOffset, call, origin)

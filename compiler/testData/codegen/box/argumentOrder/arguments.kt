@@ -1,13 +1,18 @@
-
-fun test(a: String, b: String): String {
-    return a + b;
+class C(val x: String) {
+    fun test(a: String, b: String): String =
+        x + a + b
 }
 
+fun String.test(a: String, b: String): String =
+    this + a + b
+
 fun box(): String {
-    var res = "";
-    val call = test(b = {res += "K"; "K"}(), a = {res+="O"; "O"}())
+    var res = ""
+    var call = {res += "1"; "x"}().test(b = {res += "2"; "b"}(), a = {res += "3"; "a"}())
+    if (res != "123" || call != "xab") return "fail1: $res != 123 or $call != xab"
 
-    if (res != "KO" || call != "OK") return "fail: $res != KO or $call != OK"
-
+    res = ""
+    call = {res += "1"; C("x")}().test(b = {res += "2"; "b"}(), a = {res += "3"; "a"}())
+    if (res != "123" || call != "xab") return "fail2: $res != 123 or $call != xab"
     return "OK"
 }
