@@ -27,7 +27,7 @@ fun toJsClass(kType: KType) = (kType.classifier as KClass<*>)?.js
 
 @ExperimentalStdlibApi
 fun box(): String {
-    return test(toJsClass(typeOf<B>())).test()
+    return test(toJsClass(typeOf<B>())!!).test()
 }
 
 // FILE: test.js

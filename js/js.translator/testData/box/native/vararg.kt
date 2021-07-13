@@ -126,7 +126,7 @@ fun box(): String {
         return "failed when test calling order when using spread operator with some args"
 
     val baz: Bar? = Bar(1)
-    if (!(baz!!)?.test(0, 1, 1))
+    if (!(baz!!)?.test(0, 1, 1)!!)
         return "failed when combined SureCall and SafeCall, maybe we lost cached expression"
 
     val a = arrayOf(1, 2)
