@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.tryCollectDesignationWithFile
@@ -87,6 +90,8 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         is FirDeclarationOrigin.IntersectionOverride -> {
             when (this) {
                 is FirFile -> true
+                is FirSyntheticProperty -> false
+                is FirSyntheticPropertyAccessor -> false
                 is FirSimpleFunction,
                 is FirProperty,
                 is FirPropertyAccessor,
@@ -141,8 +146,11 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
 
         resolveFileAnnotationsWithoutLock(firFile, moduleFileCache, firFile.annotations, scopeSession, collector)
 
-        if (firFile.declarations.isEmpty()) return
-        val designations = firFile.declarations.map {
+        val validForResolveDeclarations = firFile.declarations
+            .filter { it.isValidForResolve() && it.resolvePhase < toPhase }
+
+        if (validForResolveDeclarations.isEmpty()) return
+        val designations = validForResolveDeclarations.map {
             FirDeclarationDesignationWithFile(path = emptyList(), declaration = it, firFile = firFile)
         }
 
