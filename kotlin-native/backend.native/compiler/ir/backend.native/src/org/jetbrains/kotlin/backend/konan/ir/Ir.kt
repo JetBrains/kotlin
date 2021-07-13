@@ -483,8 +483,6 @@ internal class KonanSymbols(
     val listOf = irBuiltIns.findFunctions(Name.identifier("listOf"), "kotlin", "collections")
             .single { it.descriptor.valueParameters.size == 1 && it.descriptor.valueParameters[0].isVararg }
 
-    val listOfInternal = internalFunction("listOfInternal")
-
     val threadLocal = symbolTable.referenceClass(
             context.builtIns.builtInsModule.findClassAcrossModuleDependencies(
                     ClassId.topLevel(KonanFqNames.threadLocal))!!)

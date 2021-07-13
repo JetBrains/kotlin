@@ -63,7 +63,6 @@ internal enum class IntrinsicType {
     // Other
     GET_CLASS_TYPE_INFO,
     CREATE_UNINITIALIZED_INSTANCE,
-    LIST_OF_INTERNAL,
     IDENTITY,
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
@@ -253,7 +252,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_NATIVE_PTR_TO_LONG -> emitNativePtrToLong(callSite, args)
                 IntrinsicType.INTEROP_NATIVE_PTR_PLUS_LONG -> emitNativePtrPlusLong(args)
                 IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR -> emitGetNativeNullPtr()
-                IntrinsicType.LIST_OF_INTERNAL -> emitListOfInternal(callSite, args)
                 IntrinsicType.IDENTITY -> emitIdentity(args)
                 IntrinsicType.GET_CONTINUATION -> emitGetContinuation()
                 IntrinsicType.INTEROP_MEMORY_COPY -> emitMemoryCopy(callSite, args)
@@ -309,21 +307,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitIsExperimentalMM(): LLVMValueRef =
             Int1(context.memoryModel == MemoryModel.EXPERIMENTAL).llvm
-
-    private fun FunctionGenerationContext.emitListOfInternal(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        val varargExpression = callSite.getValueArgument(0) as IrVararg
-        val vararg = args.single()
-
-        val length = varargExpression.elements.size
-        // TODO: store length in `vararg` itself when more abstract types will be used for values.
-
-        val array = constPointer(vararg)
-        // Note: dirty hack here: `vararg` has type `Array<out E>`, but `createConstArrayList` expects `Array<E>`;
-        // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
-        // so let's ignore this mismatch currently for simplicity.
-
-        return context.llvm.staticData.createConstArrayList(array, length).llvm
-    }
 
     private fun FunctionGenerationContext.emitGetNativeNullPtr(): LLVMValueRef =
             kNullInt8Ptr

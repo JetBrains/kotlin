@@ -290,7 +290,6 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                             enumUsagePhase,
                             interopPhase,
                             varargPhase,
-                            compileTimeEvaluatePhase,
                             kotlinNothingValueExceptionPhase,
                             coroutinesPhase,
                             typeOperatorPhase,
@@ -510,7 +509,6 @@ internal fun PhaseConfig.disableUnless(phase: AnyNamedPhase, condition: Boolean)
 
 internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
     with(config.configuration) {
-        disable(compileTimeEvaluatePhase)
         disable(localEscapeAnalysisPhase)
 
         // Don't serialize anything to a final executable.
