@@ -1,0 +1,6 @@
+package
+
+public fun foo1(/*0*/ f: suspend () -> kotlin.String): kotlin.Unit
+public fun foo2(/*0*/ f: suspend (kotlin.Int) -> kotlin.String): kotlin.Unit
+public fun foo3(/*0*/ f: suspend () -> kotlin.Unit): kotlin.Unit
+public fun test(/*0*/ f0: suspend () -> kotlin.String, /*1*/ f1: () -> kotlin.String, /*2*/ f2: (kotlin.Int) -> kotlin.String, /*3*/ f3: () -> kotlin.Unit): kotlin.Unit

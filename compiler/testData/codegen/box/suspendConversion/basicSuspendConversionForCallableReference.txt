@@ -1,0 +1,8 @@
+package
+
+public fun bar1(): kotlin.Unit
+public fun bar2(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun bar2(/*0*/ s: kotlin.String): kotlin.Unit
+public fun foo1(/*0*/ f: suspend () -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> foo2(/*0*/ e: T, /*1*/ f: suspend (T) -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit

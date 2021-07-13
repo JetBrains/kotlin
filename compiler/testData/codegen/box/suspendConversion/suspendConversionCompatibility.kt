@@ -1,0 +1,57 @@
+// !LANGUAGE: +SuspendConversion
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// WITH_RUNTIME
+
+object Test1 {
+    fun foo(f: () -> Unit) {}
+
+    object Scope {
+        fun foo(f: suspend () -> Unit) {}
+
+        fun test(g: () -> Unit) {
+            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!>foo(g)<!>
+        }
+    }
+}
+
+object Test2 {
+    inline fun <reified T> foo(crossinline f: suspend () -> T): T = 1 as T
+    fun <T> foo2(f: suspend () -> T): T = 1 as T
+    suspend fun bar(): Int = 0
+
+    object Scope {
+        fun bar(): String = ""
+
+        fun test() {
+            val result = foo(::bar)
+            val result2 = foo2(::bar)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result2<!>
+        }
+    }
+}
+
+object Test3 {
+    inline fun <reified T> foo(crossinline f: suspend () -> T): T = "" as T
+    fun <T> foo2(f: suspend () -> T): T = "" as T
+
+    suspend fun bar(x: Int = 42): Int = 0
+
+    object Scope {
+        fun bar(x: Int = 42): String = ""
+
+        fun test() {
+            val result = foo(::bar)
+            val result2 = foo2(::bar)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result2<!>
+        }
+    }
+}
+
+fun box(): String {
+    Test1.Scope.test {}
+    Test2.Scope.test()
+    Test3.Scope.test()
+    return "OK"
+}
