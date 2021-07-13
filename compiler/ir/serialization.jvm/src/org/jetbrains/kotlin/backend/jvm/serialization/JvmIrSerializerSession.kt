@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.protobuf.ByteString
 
 class JvmIrSerializerSession(
     messageLogger: IrMessageLogger,
-    declarationTable: DeclarationTable,
+    private val declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     externallyVisibleOnly: Boolean = true,
     skipExpects: Boolean = false,
@@ -31,10 +31,12 @@ class JvmIrSerializerSession(
     fun serializeJvmIrFile(irFile: IrFile): JvmIr.JvmIrFile {
         val proto = JvmIr.JvmIrFile.newBuilder()
 
-        irFile.declarations.filter { it !is IrClass }.forEach { declaration ->
-            proto.addDeclaration(serializeDeclaration(declaration))
+        declarationTable.inFile(irFile) {
+            irFile.declarations.filter { it !is IrClass }.forEach { declaration ->
+                proto.addDeclaration(serializeDeclaration(declaration))
+            }
+            proto.addAllAnnotation(serializeAnnotations(irFile.annotations))
         }
-        proto.addAllAnnotation(serializeAnnotations(irFile.annotations))
 
         proto.auxTables = serializeAuxTables()
 
@@ -43,7 +45,9 @@ class JvmIrSerializerSession(
 
     fun serializeTopLevelClass(irClass: IrClass): JvmIr.JvmIrClass {
         val proto = JvmIr.JvmIrClass.newBuilder()
-        proto.irClass = serializeIrClass(irClass)
+        declarationTable.inFile(irClass.parent as IrFile) {
+            proto.irClass = serializeIrClass(irClass)
+        }
         proto.auxTables = serializeAuxTables()
         return proto.build()
     }
