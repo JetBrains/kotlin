@@ -119,7 +119,9 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         protected set
 
     internal fun updateDeadStatus() {
-        isDead = incomingEdges.size == previousNodes.size && incomingEdges.values.all { it.kind == EdgeKind.DeadForward }
+        isDead = incomingEdges.size == previousNodes.size && incomingEdges.values.all {
+            it.kind == EdgeKind.DeadForward || !it.kind.usedInCfa
+        }
     }
 
     abstract fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R

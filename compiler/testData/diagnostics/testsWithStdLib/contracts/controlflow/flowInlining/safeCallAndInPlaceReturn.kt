@@ -10,6 +10,13 @@ inline fun <T> Any?.myRun(block: () -> T): T {
     return block()
 }
 
+inline fun <T> directRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+
 fun bad(): String {
     val x: String? = null
 
@@ -20,4 +27,16 @@ fun ok(): String {
     val x: String? = null
 
     x?.run { return "non-null" } ?: return "null"
+}
+
+fun ok2(): String {
+    directRun {
+        return "nonNull"
+    }
+}
+
+fun ok3(arg: Any?): String {
+    arg?.myRun {
+        return "nonNull"
+    } ?: error("null")
 }

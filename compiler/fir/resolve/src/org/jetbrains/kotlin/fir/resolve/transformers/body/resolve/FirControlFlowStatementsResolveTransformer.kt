@@ -224,6 +224,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                 withExpectedType(expectedType, mayBeCoercionToUnitApplied = true)
             else
                 withExpectedType(expectedType?.withNullability(ConeNullability.NULLABLE, session.typeContext))
+        dataFlowAnalyzer.enterElvis(elvisExpression)
         elvisExpression.transformLhs(transformer, resolutionModeForLhs)
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
 
