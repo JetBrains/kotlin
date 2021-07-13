@@ -1,4 +1,4 @@
-// !API_VERSION: LATEST
+// !API_VERSION: LATEST_STABLE
 
 fun test(s: String?): Int {
     s!!
