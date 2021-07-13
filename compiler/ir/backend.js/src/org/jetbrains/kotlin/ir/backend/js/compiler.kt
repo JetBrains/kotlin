@@ -160,7 +160,7 @@ fun lowerPreservingIcData(module: IrModuleFragment, context: JsIrBackendContext,
                 lowering.declarationTransformer(context).lower(module)
             is BodyLowering ->
                 lowering.bodyLowering(context).lower(module)
-            // else -> TODO what about other lowerings?
+            is ModuleLowering -> { /*TODO what about other lowerings? */ }
         }
     }
 

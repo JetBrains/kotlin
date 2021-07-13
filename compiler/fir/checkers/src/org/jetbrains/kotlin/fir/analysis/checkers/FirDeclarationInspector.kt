@@ -58,6 +58,7 @@ interface FirDeclarationPresenter {
             is ConeKotlinType -> {
                 appendRepresentation(it)
             }
+            is ConeKotlinTypeConflictingProjection -> {}
         }
     }
 

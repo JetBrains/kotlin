@@ -87,6 +87,7 @@ class ResolvedAtomCompleter(
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
             is ResolvedSubCallArgument -> completeSubCallArgument(resolvedAtom)
             is ResolvedExpressionAtom -> completeExpression(resolvedAtom)
+            else -> {}
         }
     }
 

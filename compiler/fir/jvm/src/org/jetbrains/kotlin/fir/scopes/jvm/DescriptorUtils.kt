@@ -118,6 +118,7 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
         is ConeFlexibleType -> {
             appendConeType(coneType.lowerBound)
         }
+        else -> {}
     }
 }
 

@@ -130,11 +130,9 @@ data class SpecTest(
 
 private fun runSpecTest(specTest: SpecTest, testDir: File, wastFile: File, wabtOptions: List<String>) {
     for (command in specTest.commands) {
-        when (command) {
-            is SpecTest.Command.Module -> {
-                val wasmFile = File(testDir, command.filename)
-                testWasmFile(wasmFile, testDir.name)
-            }
+        if (command is SpecTest.Command.Module) {
+            val wasmFile = File(testDir, command.filename)
+            testWasmFile(wasmFile, testDir.name)
         }
     }
 }

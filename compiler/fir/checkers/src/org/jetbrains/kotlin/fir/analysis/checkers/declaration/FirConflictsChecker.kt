@@ -197,6 +197,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                             }
                     }
                 }
+                else -> {}
             }
             if (declarationName != null) {
                 session.lookupTracker?.recordLookup(

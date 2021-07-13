@@ -118,7 +118,7 @@ class ChangesCollector {
                     storage[packageProtoKey?.let { FqName(it) } ?: fqName] = newData
                 }
             }
-        } else {
+        } else if (oldData != null) {
             when (oldData) {
                 is ClassProtoData -> {
                     removed.add(oldData.nameResolver.getClassId(oldData.proto.fqName).asSingleFqName())

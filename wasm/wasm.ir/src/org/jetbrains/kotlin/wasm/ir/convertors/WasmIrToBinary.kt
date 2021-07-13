@@ -27,6 +27,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
                     when (it) {
                         is WasmStructDeclaration -> appendStructTypeDeclaration(it)
                         is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
+                        is WasmFunctionType -> {}
                     }
                 }
             }

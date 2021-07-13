@@ -48,6 +48,7 @@ object FirReturnAllowedChecker : FirReturnExpressionChecker() {
                 }
                 is FirProperty -> if (!containingDeclaration.isLocal) return false
                 is FirValueParameter -> return true
+                else -> {}
             }
         }
         return true

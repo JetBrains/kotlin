@@ -27,7 +27,7 @@ fun generate(): String {
     val sb = StringBuilder()
     val p = Printer(sb)
     p.println(File("license/COPYRIGHT_HEADER.txt").readText())
-    p.println("@file:Suppress(\"DEPRECATION\", \"DEPRECATION_ERROR\", \"NON_EXHAUSTIVE_WHEN\")")
+    p.println("@file:Suppress(\"DEPRECATION\", \"DEPRECATION_ERROR\")")
 
     p.println()
     p.println("package org.jetbrains.kotlin.resolve.constants.evaluate")
@@ -99,6 +99,7 @@ fun generate(): String {
         p.popIndent()
         p.println("}")
     }
+    p.println("else -> {}")
     p.popIndent()
     p.println("}")
     p.println("return null")
@@ -123,9 +124,11 @@ fun generate(): String {
             p.popIndent()
             p.println("}")
         }
+        p.println("else -> {}")
         p.popIndent()
         p.println("}")
     }
+    p.println("else -> {}")
     p.popIndent()
     p.println("}")
     p.println("return null")
@@ -154,9 +157,11 @@ fun generate(): String {
             p.popIndent()
             p.println("}")
         }
+        p.println("else -> {}")
         p.popIndent()
         p.println("}")
     }
+    p.println("else -> {}")
     p.popIndent()
     p.println("}")
     p.println("return null")

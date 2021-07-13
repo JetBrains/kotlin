@@ -39,6 +39,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
             }
             is FirTypeAlias ->
                 checkTypeRef(declaration.expandedTypeRef, context, reporter)
+            else -> {}
         }
     }
 

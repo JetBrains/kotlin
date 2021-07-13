@@ -194,7 +194,7 @@ fun getExpectedTypePredicate(
                     }
                 }
 
-                is MagicInstruction -> @Suppress("NON_EXHAUSTIVE_WHEN") when (it.kind) {
+                is MagicInstruction -> when (it.kind) {
                     AND, OR ->
                         addSubtypesOf(builtIns.booleanType)
 
@@ -219,6 +219,7 @@ fun getExpectedTypePredicate(
                         val typePredicate = getTypePredicateForUnresolvedCallArgument(it.element, it.inputValues.indexOf(value))
                         typePredicates.add(typePredicate)
                     }
+                    else -> {}
                 }
             }
         }

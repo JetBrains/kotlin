@@ -41,6 +41,7 @@ data class ArgumentMapping(
                 is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
                     argumentToParameterMapping[it] = valueParameter
                 }
+                ResolvedCallArgument.DefaultArgument -> {}
             }
         }
         return argumentToParameterMapping

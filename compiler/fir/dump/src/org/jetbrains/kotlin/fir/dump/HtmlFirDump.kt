@@ -857,6 +857,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             }
             is ConeIntersectionType -> resolved { generate(type) }
             is ConeIntegerLiteralType -> inlineUnsupported(type)
+            is ConeLookupTagBasedType,
+            is ConeStubType -> {}
         }
         generateTypeArguments(type)
         if (type.isMarkedNullable) {
