@@ -94,7 +94,7 @@ object FloatingPointParser {
      * Common method for parsing floating point number, unified for Double and Float.
      * Returns the closest Float or Double value to the real number in the string.
      *
-     * @param string the String that will be parsed to a Float or a Double
+     * @param string that will be parsed to a Float or a Double
      * @param negativeInf will be returned if the value is infinitesimal
      * @param positiveInf will be returned if the value is infinitely large
      * @param nan will be returned if the value is NaN
@@ -104,13 +104,13 @@ object FloatingPointParser {
      * @param minExp minimum exponent size that can be processed, in case the input string has bigger number
      *  will return Minus Infinity
      * @param parserImpl - native method that implements parsing and processing of a float/double value
-     * @param hexParserImpl - parser of
+     * @param hexParserImpl - a method for parsing of the number in hex format
      * @return the Float or Double number closest to the real number
      * @exception NumberFormatException if the String doesn't represent a number of type T (Double or Float)
      */
-    private inline fun <T : Number> parse(string: String, negativeInf: T, positiveInf: T, nan: T, zero: T,
-                                          maxExp: Int, minExp: Int, parserImpl: (String, Int) -> T,
-                                          hexParserImpl: (String) -> T): T {
+    private inline fun <reified T : Number> parse(string: String, negativeInf: T, positiveInf: T, nan: T, zero: T,
+                                                  maxExp: Int, minExp: Int, parserImpl: (String, Int) -> T,
+                                                  hexParserImpl: (String) -> T): T {
         // Trim useless whitespaces.
         val s = string.trim { it <= ' ' }
         val length = s.length
@@ -154,7 +154,7 @@ object FloatingPointParser {
      * Unfortunately in this case we need to make uncheck cast to generic type T to have a proper return type.
      */
     @Suppress("UNCHECKED_CAST")
-    private fun <T> unaryMinus(value: T): T {
+    private inline fun <reified T> unaryMinus(value: T): T {
         return when (value) {
             is Float -> -value as T
             is Double -> -value as T

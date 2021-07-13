@@ -38,16 +38,18 @@ fun checkDouble() {
     assertEquals(0.052, "+5.2e-2d".toDouble())
     assertEquals(52340000000.0, "+5.234e+10d".toDouble())
     assertEquals(5.234E123, "+5.234e+123d".toDouble())
-    assertEquals(5.234E123, "+5.234e+123d".toDouble())
+    assertEquals(5.234E123, "+5.234e+123f".toDouble())
+    assertEquals(5.234E123, "+5.234e+123".toDouble())
     assertEquals(5.5, "5.5f".toDouble())
 
     assertEquals(1.0 / 0.0, "+Infinity".toDouble())
     assertEquals(1.0 / 0.0, "Infinity".toDouble())
     assertEquals(-1.0 / 0.0, "-Infinity".toDouble())
+    assertTrue("Infinity".toDouble().isInfinite(), "Infinity is expected for parsing Infinity")
 
-    assertEquals(-(0.0 / 0.0), "+NaN".toDouble())
-    assertEquals(-(0.0 / 0.0), "NaN".toDouble())
-    assertEquals(-(0.0 / 0.0), "-NaN".toDouble())
+    assertTrue("+NaN".toDouble().isNaN(), "NaN is expected for parsing +NaN")
+    assertTrue("NaN".toDouble().isNaN(), "NaN is expected for parsing NaN")
+    assertTrue("-NaN".toDouble().isNaN(), "NaN is expected for parsing -NaN")
 
     assertFailsWith<NumberFormatException> {
         "+-5.0".toDouble()
@@ -90,15 +92,16 @@ fun checkFloat() {
     assertEquals(0.052f, "+5.2e-2f".toFloat())
     assertEquals(52340000000f, "+5.234e+10f".toFloat())
     assertEquals(1.0F / 0.0F, "+5.234e+123f".toFloat())
-    assertEquals(1.0F / 0.0F, "+5.234e+123f".toFloat())
+
 
     assertEquals(1.0F / 0.0F, "+Infinity".toFloat())
     assertEquals(1.0F / 0.0F, "Infinity".toFloat())
     assertEquals(-1.0F / 0.0F, "-Infinity".toFloat())
+    assertTrue("Infinity".toFloat().isInfinite(), "Infinity is expected for parsing Infinity")
 
-    assertEquals(-(0.0F / 0.0F), "+NaN".toFloat())
-    assertEquals(-(0.0F / 0.0F), "NaN".toFloat())
-    assertEquals(-(0.0F / 0.0F), "-NaN".toFloat())
+    assertTrue("+NaN".toFloat().isNaN(), "NaN is expected for parsing +NaN")
+    assertTrue("NaN".toFloat().isNaN(), "NaN is expected for parsing NaN")
+    assertTrue("-NaN".toFloat().isNaN(), "NaN is expected for parsing -NaN")
 
     assertFailsWith<NumberFormatException> {
         "+-5.0f".toFloat()
