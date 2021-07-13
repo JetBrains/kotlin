@@ -34,6 +34,7 @@ fun main(args: Array<String>) {
         alias<FirTryExpression>("TryExpressionChecker")
         alias<FirWhenExpression>("WhenExpressionChecker")
         alias<FirLoop>("LoopExpressionChecker")
+        alias<FirLoopJump>("LoopJumpChecker")
         alias<FirBinaryLogicExpression>("LogicExpressionChecker")
         alias<FirReturnExpression>("ReturnExpressionChecker")
         alias<FirBlock>("BlockChecker")

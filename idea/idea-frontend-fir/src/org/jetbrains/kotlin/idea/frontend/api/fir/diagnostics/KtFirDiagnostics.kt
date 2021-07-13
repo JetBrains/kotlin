@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtExpressionWithLabel
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtImportDirective
@@ -120,6 +121,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class NotALoopLabel : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = NotALoopLabel::class
+    }
+
+    abstract class BreakOrContinueJumpsAcrossFunctionBoundary : KtFirDiagnostic<KtExpressionWithLabel>() {
+        override val diagnosticClass get() = BreakOrContinueJumpsAcrossFunctionBoundary::class
     }
 
     abstract class VariableExpected : KtFirDiagnostic<PsiElement>() {

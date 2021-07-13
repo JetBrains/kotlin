@@ -218,7 +218,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     }
 
     private val CheckerContext.containingProperty: FirProperty?
-        get() = (containingDeclarations.asReversed().firstOrNull { it is FirProperty } as? FirProperty)
+        get() = (containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty)
 
     private fun FirFunction.getParameterType(symbol: FirBasedSymbol<*>, context: CheckerContext): ConeKotlinType? {
         val typeRef = if (this.symbol == symbol) {

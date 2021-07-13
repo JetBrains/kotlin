@@ -117,6 +117,14 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allReturnExpressionCheckers.check(returnExpression, data, reporter)
     }
 
+    override fun visitBreakExpression(breakExpression: FirBreakExpression, data: CheckerContext) {
+        checkers.allLoopJumpCheckers.check(breakExpression, data, reporter)
+    }
+
+    override fun visitContinueExpression(continueExpression: FirContinueExpression, data: CheckerContext) {
+        checkers.allLoopJumpCheckers.check(continueExpression, data, reporter)
+    }
+
     override fun visitBlock(block: FirBlock, data: CheckerContext) {
         checkers.allBlockCheckers.check(block, data, reporter)
     }

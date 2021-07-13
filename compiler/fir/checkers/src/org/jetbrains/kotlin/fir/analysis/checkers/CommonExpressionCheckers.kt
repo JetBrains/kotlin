@@ -20,7 +20,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirReservedUnderscoreExpressionChecker,
             FirExpressionAnnotationChecker,
-            FirDeprecationChecker,
+            FirDeprecationChecker
         )
 
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
@@ -74,6 +74,11 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val loopExpressionCheckers: Set<FirLoopExpressionChecker>
         get() = setOf(
             FirLoopConditionChecker,
+        )
+
+    override val loopJumpCheckers: Set<FirLoopJumpChecker>
+        get() = setOf(
+            FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker
         )
 
     override val logicExpressionCheckers: Set<FirLogicExpressionChecker>

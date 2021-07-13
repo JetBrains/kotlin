@@ -1,7 +1,7 @@
 fun test() {
     while (true) {
         fun local1() {
-            break
+            <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
         }
     }
 }
@@ -9,7 +9,7 @@ fun test() {
 fun test2() {
     while (true) {
         {
-            continue
+            <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
         }
     }
 }
@@ -18,11 +18,11 @@ fun test3() {
     while (true) {
         class LocalClass {
             init {
-                continue
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
             }
 
             fun foo() {
-                break
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
             }
         }
     }
@@ -32,7 +32,7 @@ fun test4() {
     while (true) {
         object: Any() {
             init {
-                break
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
             }
         }
     }
@@ -42,10 +42,10 @@ fun test5() {
     while (true) {
         class LocalClass(val x: Int) {
             constructor() : this(42) {
-                break
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
             }
             constructor(y: Double) : this(y.toInt()) {
-                continue
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
             }
         }
     }
@@ -55,10 +55,10 @@ fun test6() {
     while (true) {
         class LocalClass(val x: Int) {
             init {
-                break
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
             }
             init {
-                continue
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
             }
         }
     }
@@ -68,10 +68,10 @@ fun test7() {
     while (true) {
         class LocalClass {
             val x: Int = if (true) {
-                break
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
             }
             else {
-                continue
+                <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
             }
         }
     }
@@ -80,7 +80,7 @@ fun test7() {
 fun test8() {
     while (true) {
         class LocalClass(val x: Int) {
-            constructor() : this(if (true) { 42 } else { break })
+            constructor() : this(if (true) { 42 } else { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
         }
     }
 }

@@ -29,6 +29,8 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _whenExpressionCheckers
     override val loopExpressionCheckers: Set<FirLoopExpressionChecker>
         get() = _loopExpressionCheckers
+    override val loopJumpCheckers: Set<FirLoopJumpChecker>
+        get() = _loopJumpCheckers
     override val logicExpressionCheckers: Set<FirLogicExpressionChecker>
         get() = _logicExpressionCheckers
     override val returnExpressionCheckers: Set<FirReturnExpressionChecker>
@@ -76,6 +78,7 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _tryExpressionCheckers: MutableSet<FirTryExpressionChecker> = mutableSetOf()
     private val _whenExpressionCheckers: MutableSet<FirWhenExpressionChecker> = mutableSetOf()
     private val _loopExpressionCheckers: MutableSet<FirLoopExpressionChecker> = mutableSetOf()
+    private val _loopJumpCheckers: MutableSet<FirLoopJumpChecker> = mutableSetOf()
     private val _logicExpressionCheckers: MutableSet<FirLogicExpressionChecker> = mutableSetOf()
     private val _returnExpressionCheckers: MutableSet<FirReturnExpressionChecker> = mutableSetOf()
     private val _blockCheckers: MutableSet<FirBlockChecker> = mutableSetOf()
@@ -106,6 +109,7 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         _tryExpressionCheckers += checkers.tryExpressionCheckers
         _whenExpressionCheckers += checkers.whenExpressionCheckers
         _loopExpressionCheckers += checkers.loopExpressionCheckers
+        _loopJumpCheckers += checkers.loopJumpCheckers
         _logicExpressionCheckers += checkers.logicExpressionCheckers
         _returnExpressionCheckers += checkers.returnExpressionCheckers
         _blockCheckers += checkers.blockCheckers
