@@ -57,6 +57,12 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtDeclaration.getSymbol(): KtSymbol =
         analysisSession.symbolProvider.getSymbol(this)
 
+    /**
+     * Creates [KtValueParameterSymbol] by [KtParameter]
+     *
+     * If [KtParameter.isFunctionTypeParameter] is `true`, i.e., if the given [KtParameter] is used as a function type parameter,
+     * it is not possible to create [KtValueParameterSymbol], hence an error will be raised.
+     */
     public fun KtParameter.getParameterSymbol(): KtValueParameterSymbol =
         analysisSession.symbolProvider.getParameterSymbol(this)
 

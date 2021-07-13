@@ -35,6 +35,9 @@ internal class KtFirSymbolProvider(
     private val firSymbolProvider by weakRef(firSymbolProvider)
 
     override fun getParameterSymbol(psi: KtParameter): KtValueParameterSymbol = withValidityAssertion {
+        if (psi.isFunctionTypeParameter) {
+            error("Creating KtValueParameterSymbol for function type parameter is not possible. Please see the KDoc of getParameterSymbol")
+        }
         psi.withFirDeclarationOfType<FirValueParameter, KtValueParameterSymbol>(resolveState) {
             firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(it)
         }
