@@ -13,10 +13,10 @@ expect sealed class SealedWithPlatformActuals : SealedWithSharedActual
 package foo
 
 actual sealed class SealedWithSharedActual
-class SimpleShared : SealedWithPlatformActuals()
+class SimpleShared : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedWithPlatformActuals<!>()
 
 // MODULE: main()()(intermediate)
 // TARGET_PLATFORM: JVM
 package foo
 
-actual sealed class SealedWithPlatformActuals <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>actual constructor()<!>: SealedWithSharedActual()
+actual sealed class SealedWithPlatformActuals <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>actual constructor()<!>: <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedWithSharedActual<!>()
