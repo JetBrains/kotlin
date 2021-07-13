@@ -2,7 +2,7 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION", "DEPRECATION_ERROR", "NON_EXHAUSTIVE_WHEN")
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
@@ -106,6 +106,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "length" -> return (value as String).length
             "toString" -> return (value as String).toString()
         }
+        else -> {}
     }
     return null
 }
@@ -122,6 +123,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             ANY -> when (name) {
                 "equals" -> return (left as Boolean).equals(right)
             }
+            else -> {}
         }
         BYTE -> when (rightType) {
             BYTE -> when (name) {
@@ -183,6 +185,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             ANY -> when (name) {
                 "equals" -> return (left as Byte).equals(right)
             }
+            else -> {}
         }
         CHAR -> when (rightType) {
             CHAR -> when (name) {
@@ -196,6 +199,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "minus" -> return (left as Char).minus(right as Int)
                 "plus" -> return (left as Char).plus(right as Int)
             }
+            else -> {}
         }
         DOUBLE -> when (rightType) {
             BYTE -> when (name) {
@@ -251,6 +255,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             ANY -> when (name) {
                 "equals" -> return (left as Double).equals(right)
             }
+            else -> {}
         }
         FLOAT -> when (rightType) {
             BYTE -> when (name) {
@@ -306,6 +311,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             ANY -> when (name) {
                 "equals" -> return (left as Float).equals(right)
             }
+            else -> {}
         }
         INT -> when (rightType) {
             INT -> when (name) {
@@ -373,6 +379,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             ANY -> when (name) {
                 "equals" -> return (left as Int).equals(right)
             }
+            else -> {}
         }
         LONG -> when (rightType) {
             LONG -> when (name) {
@@ -440,6 +447,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             ANY -> when (name) {
                 "equals" -> return (left as Long).equals(right)
             }
+            else -> {}
         }
         SHORT -> when (rightType) {
             BYTE -> when (name) {
@@ -501,6 +509,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             ANY -> when (name) {
                 "equals" -> return (left as Short).equals(right)
             }
+            else -> {}
         }
         STRING -> when (rightType) {
             STRING -> when (name) {
@@ -513,7 +522,9 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             INT -> when (name) {
                 "get" -> return (left as String).get(right as Int)
             }
+            else -> {}
         }
+        else -> {}
     }
     return null
 }
@@ -551,6 +562,7 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
+            else -> {}
         }
         INT -> when (rightType) {
             INT -> when (name) {
@@ -584,6 +596,7 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
+            else -> {}
         }
         LONG -> when (rightType) {
             LONG -> when (name) {
@@ -617,6 +630,7 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
+            else -> {}
         }
         SHORT -> when (rightType) {
             BYTE -> when (name) {
@@ -647,7 +661,9 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
+            else -> {}
         }
+        else -> {}
     }
     return null
 }

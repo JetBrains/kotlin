@@ -202,6 +202,7 @@ private fun ClassifierDescriptor.enhanceMutability(
                 return mapper.convertReadOnlyToMutable(this).enhancedMutability()
             }
         }
+        null -> {}
     }
 
     return this.noChange()

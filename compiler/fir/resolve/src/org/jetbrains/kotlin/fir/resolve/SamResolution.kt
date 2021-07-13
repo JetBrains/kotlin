@@ -263,6 +263,7 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
                 is FirSimpleFunction -> if (declaration.modality == Modality.ABSTRACT) {
                     samCandidateNames.add(declaration.name)
                 }
+                else -> {}
             }
         }
     }

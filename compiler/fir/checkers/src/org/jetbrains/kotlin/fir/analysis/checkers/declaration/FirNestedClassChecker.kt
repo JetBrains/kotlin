@@ -33,6 +33,7 @@ object FirNestedClassChecker : FirRegularClassChecker() {
                     reporter.reportOn(declaration.source, NESTED_CLASS_NOT_ALLOWED, declaration.description, context)
                 }
             }
+            else -> {}
         }
     }
 

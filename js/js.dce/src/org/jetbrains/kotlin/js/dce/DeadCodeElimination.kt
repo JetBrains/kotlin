@@ -97,6 +97,7 @@ class DeadCodeElimination(
                         val remapper = SourceMapLocationRemapper(sourceMap)
                         statements.forEach { remapper.remap(it) }
                     }
+                    null -> {}
                 }
                 block.statements += statements
                 file.moduleName?.let { dce.moduleMapping[block] = it }

@@ -65,12 +65,14 @@ class InlinerCycleReporter(
         }
 
         try {
+
             when (functionVisitingState[definition.function]) {
                 VisitedState.IN_PROCESS -> {
                     reportInlineCycle(call, definition.function)
                     return
                 }
                 VisitedState.PROCESSED -> return
+                null -> {}
             }
 
             functionVisitingState[function] = VisitedState.IN_PROCESS

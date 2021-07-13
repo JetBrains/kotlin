@@ -32,16 +32,14 @@ class FirClassDeclaredMemberScope(
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
         loop@ for (declaration in klass.declarations) {
-            when (declaration) {
-                is FirCallableMemberDeclaration<*> -> {
-                    val name = when (declaration) {
-                        is FirConstructor -> CONSTRUCTOR_NAME
-                        is FirVariable<*> -> if (declaration.isSynthetic) continue@loop else declaration.name
-                        is FirSimpleFunction -> declaration.name
-                        else -> continue@loop
-                    }
-                    result.getOrPut(name) { mutableListOf() } += declaration.symbol
+            if (declaration is FirCallableMemberDeclaration<*>) {
+                val name = when (declaration) {
+                    is FirConstructor -> CONSTRUCTOR_NAME
+                    is FirVariable<*> -> if (declaration.isSynthetic) continue@loop else declaration.name
+                    is FirSimpleFunction -> declaration.name
+                    else -> continue@loop
                 }
+                result.getOrPut(name) { mutableListOf() } += declaration.symbol
             }
         }
         result

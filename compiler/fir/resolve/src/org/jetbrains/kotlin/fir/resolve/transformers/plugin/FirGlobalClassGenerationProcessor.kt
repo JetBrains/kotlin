@@ -56,6 +56,7 @@ class FirGlobalClassGenerationProcessor(
             when (owner) {
                 is FirRegularClass -> owner.addDeclaration(klass)
                 is FirFile -> owner.addDeclaration(klass)
+                else -> {}
             }
             session.generatedClassIndex.registerClass(klass, owner)
             session.predicateBasedProvider.registerGeneratedDeclaration(klass, owner)

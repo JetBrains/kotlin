@@ -157,6 +157,7 @@ class Fir2IrDeclarationStorage(
                         constructorCache[declaration] = irConstructor
                     }
                 }
+                else -> {}
             }
         }
     }

@@ -303,6 +303,7 @@ object JvmRuntimeVersionsConsistencyChecker {
                 }
                 FileKind.OldRuntime -> jars.add(KotlinLibraryFile(jarFile, ApiVersion.KOTLIN_1_0.version))
                 FileKind.LibraryWithBundledRuntime -> otherLibrariesWithBundledRuntime.add(jarFile)
+                FileKind.Irrelevant -> {}
             }
         }
 

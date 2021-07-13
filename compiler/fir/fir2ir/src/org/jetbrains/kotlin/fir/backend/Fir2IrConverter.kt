@@ -75,6 +75,7 @@ class Fir2IrConverter(
             when (it) {
                 is FirRegularClass -> processClassAndNestedClassHeaders(it)
                 is FirTypeAlias -> classifierStorage.registerTypeAlias(it, declarationStorage.getIrFile(file))
+                else -> {}
             }
         }
     }
@@ -106,6 +107,7 @@ class Fir2IrConverter(
                 when (declaration) {
                     is FirSimpleFunction -> processedCallableNames += declaration.name
                     is FirProperty -> processedCallableNames += declaration.name
+                    else -> {}
                 }
                 processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
             }

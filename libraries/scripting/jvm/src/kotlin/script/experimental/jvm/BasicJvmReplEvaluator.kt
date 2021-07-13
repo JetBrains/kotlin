@@ -55,6 +55,7 @@ class BasicJvmReplEvaluator(val scriptEvaluator: ScriptEvaluator = BasicJvmScrip
                 when (retVal) {
                     is ResultValue.Error -> history.add(retVal.scriptClass, null)
                     is ResultValue.Value, is ResultValue.Unit -> history.add(retVal.scriptClass, retVal.scriptInstance)
+                    is ResultValue.NotEvaluated -> {}
                 }
                 KJvmEvaluatedSnippet(snippetVal, currentConfiguration, retVal)
             }

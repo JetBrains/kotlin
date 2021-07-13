@@ -289,11 +289,9 @@ abstract class AbstractFirStatusResolveTransformer(
         }
         return when (declaration) {
             is FirCallableDeclaration<*> -> {
-                when (declaration) {
-                    is FirFunction<*> -> {
-                        for (valueParameter in declaration.valueParameters) {
-                            transformValueParameter(valueParameter, data)
-                        }
+                if (declaration is FirFunction<*>) {
+                    for (valueParameter in declaration.valueParameters) {
+                        transformValueParameter(valueParameter, data)
                     }
                 }
                 declaration
@@ -392,6 +390,7 @@ abstract class AbstractFirStatusResolveTransformer(
         when (superClass) {
             is FirRegularClass -> forceResolveStatusesOfClass(superClass)
             is FirTypeAlias -> forceResolveStatusOfCorrespondingClass(superClass.expandedTypeRef)
+            else -> {}
         }
     }
 

@@ -282,6 +282,7 @@ open class IrFileSerializer(
             is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature()
             is IdSignature.GlobalFileLocalSignature -> proto.privateSig = serializePrivateSignature(idSignature)
             is IdSignature.GlobalScopeLocalDeclaration -> proto.externalScopedLocalSig = serializeScopeLocalSignature(idSignature)
+            is IdSignature.SpecialFakeOverrideSignature -> {}
         }
         return proto.build()
     }

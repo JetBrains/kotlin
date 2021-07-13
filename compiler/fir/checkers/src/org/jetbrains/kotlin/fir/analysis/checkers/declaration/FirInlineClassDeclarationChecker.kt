@@ -128,6 +128,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                         }
                     }
                 }
+                else -> {}
             }
         }
 
