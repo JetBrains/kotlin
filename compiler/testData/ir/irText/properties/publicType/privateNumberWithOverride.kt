@@ -13,11 +13,22 @@ class C : A() {
 }
 
 class D : A() {
+    // the compiler thinks this is a
+    // public override, so REDUNDANT_GETTER_TYPE_CHANGE
+    // will be reported here
     override val number = 10
         public get(): Number
+
+    public val count = 1
+        private set
 }
 
 class E : A() {
     protected override val number = 10
+        public get(): Number
+}
+
+class F : A() {
+    private override val number = 20
         public get(): Number
 }

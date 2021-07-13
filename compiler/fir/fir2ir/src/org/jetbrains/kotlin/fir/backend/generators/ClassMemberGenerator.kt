@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getGetterWithGreaterVisibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -167,7 +168,7 @@ internal class ClassMemberGenerator(
         }
         irProperty.getter?.setPropertyAccessorContent(
             property, property.getter, irProperty, propertyType,
-            property.getter is FirDefaultPropertyGetter,
+            property.getter is FirDefaultPropertyGetter /*|| property.getter?.body == null*/,
             isGetter = true,
             containingClass = containingClass
         )
@@ -234,7 +235,8 @@ internal class ClassMemberGenerator(
         conversionScope.withFunction(this) {
             applyParentFromStackTo(this)
             convertFunctionContent(this, propertyAccessor, containingClass = null)
-            if (isDefault) {
+            val permissiveGetter = property.getGetterWithGreaterVisibility()
+            if (isDefault || permissiveGetter != null) {
                 conversionScope.withParent(this) {
                     declarationStorage.enterScope(this)
                     val backingField = correspondingProperty.backingField
@@ -250,9 +252,10 @@ internal class ClassMemberGenerator(
                                         value = IrGetValueImpl(startOffset, endOffset, propertyType, valueParameters.first().symbol)
                                     }
                                 } else {
+                                    val theRealType = permissiveGetter?.receiverTypeRef?.toIrType() ?: propertyType
                                     IrReturnImpl(
                                         startOffset, endOffset, irBuiltIns.nothingType, symbol,
-                                        IrGetFieldImpl(startOffset, endOffset, fieldSymbol, propertyType).setReceiver(declaration)
+                                        IrGetFieldImpl(startOffset, endOffset, fieldSymbol, theRealType).setReceiver(declaration)
                                     )
                                 }
                             )

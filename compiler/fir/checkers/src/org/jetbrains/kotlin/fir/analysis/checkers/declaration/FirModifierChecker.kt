@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.resolve.hasGetterWithGreaterVisibility
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 
@@ -81,6 +82,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         recordIncompatiblePairs(CONST_KEYWORD, OPEN_KEYWORD)
         recordIncompatiblePairs(CONST_KEYWORD, OVERRIDE_KEYWORD)
 
+        // TODO: add more accurate diagnostics
         recordIncompatiblePairs(PRIVATE_KEYWORD, OVERRIDE_KEYWORD)
         recordPairsCompatibleForClasses(PRIVATE_KEYWORD, OPEN_KEYWORD)
         recordPairsCompatibleForClasses(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
@@ -141,6 +143,11 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
+        // TODO: don't forget to re-enable diagnostics back
+        if (owner.hasGetterWithGreaterVisibility()) {
+            return
+        }
+
         // general strategy: report no more than one error and any number of warnings
         // therefore, a track of nodes with already reported errors should be kept
         val reportedNodes = hashSetOf<FirModifier<*>>()

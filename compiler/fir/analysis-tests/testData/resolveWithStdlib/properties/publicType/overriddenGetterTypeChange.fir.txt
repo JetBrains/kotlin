@@ -20,6 +20,10 @@ FILE: overriddenGetterTypeChange.kt
             public get(): R|kotlin/Number|
             private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
+        private final var p5: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
     }
     public final class B : R|A| {
         public constructor(): R|B| {
@@ -41,5 +45,9 @@ FILE: overriddenGetterTypeChange.kt
         protected final override var p4: R|kotlin/Int| = Int(10)
             public get(): R|kotlin/Number|
             protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final override var p5: R|kotlin/Int| = Int(20)
+            public get(): R|kotlin/Number|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     }

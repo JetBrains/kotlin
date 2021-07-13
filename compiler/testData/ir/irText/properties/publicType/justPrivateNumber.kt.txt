@@ -7,6 +7,9 @@ class Simple {
 
   private val number: Int
     field = 4
-    get(): Int
+    get(): Number {
+      return <this>.#number
+    }
 
 }
+

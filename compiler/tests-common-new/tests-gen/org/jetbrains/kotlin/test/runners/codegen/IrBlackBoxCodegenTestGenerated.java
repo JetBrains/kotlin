@@ -29599,6 +29599,22 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/properties/publicType")
+        @TestDataPath("$PROJECT_ROOT")
+        public class PublicType {
+            @Test
+            public void testAllFilesPresentInPublicType() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/publicType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("samplePublicPropertyType.kt")
+            public void testSamplePublicPropertyType() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/publicType/samplePublicPropertyType.kt");
+            }
+        }
     }
 
     @Nested

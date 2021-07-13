@@ -4,7 +4,7 @@ open class A {
 }
 
 class B : A() {
-    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>override<!> val items = mutableListOf<String>()
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>private<!> override val items = mutableListOf<String>()
         public get(): Collection<String>
 }
 

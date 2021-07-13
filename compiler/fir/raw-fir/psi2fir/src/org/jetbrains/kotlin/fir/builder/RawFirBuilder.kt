@@ -349,6 +349,7 @@ open class RawFirBuilder(
         private fun KtPropertyAccessor?.toFirPropertyAccessor(
             property: KtProperty,
             propertyTypeRef: FirTypeRef,
+            propertySymbol: FirPropertySymbol,
             isGetter: Boolean,
         ): FirPropertyAccessor? {
             val accessorVisibility =
@@ -406,6 +407,7 @@ open class RawFirBuilder(
                         contractDescription?.let {
                             this.contractDescription = it
                         }
+                        containingDeclarationSymbol = propertySymbol
                     }.also {
                         it.initContainingClassAttr()
                         bindFunctionTarget(accessorTarget, it)
@@ -423,6 +425,7 @@ open class RawFirBuilder(
                             FirDeclarationOrigin.Source,
                             propertyTypeRef,
                             accessorVisibility,
+                            propertySymbol,
                             isGetter
                         )
                         .also {
@@ -500,14 +503,16 @@ open class RawFirBuilder(
                     baseModuleData,
                     FirDeclarationOrigin.Source,
                     type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
-                    visibility
+                    visibility,
+                    symbol,
                 )
                 setter = if (isMutable) FirDefaultPropertySetter(
                     defaultAccessorSource,
                     baseModuleData,
                     FirDeclarationOrigin.Source,
                     type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
-                    visibility
+                    visibility,
+                    symbol,
                 ) else null
                 extractAnnotationsTo(this)
 
@@ -1389,8 +1394,18 @@ open class RawFirBuilder(
                             }
                         } else null
 
-                        getter = this@toFirProperty.getter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = true)
-                        setter = this@toFirProperty.setter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = false)
+                        getter = this@toFirProperty.getter.toFirPropertyAccessor(
+                            this@toFirProperty,
+                            propertyType,
+                            propertySymbol = symbol,
+                            isGetter = true
+                        )
+                        setter = this@toFirProperty.setter.toFirPropertyAccessor(
+                            this@toFirProperty,
+                            propertyType,
+                            propertySymbol = symbol,
+                            isGetter = false
+                        )
 
                         status = FirDeclarationStatusImpl(visibility, modality).apply {
                             isExpect = hasExpectModifier() || containingClassOrObject?.hasExpectModifier() == true

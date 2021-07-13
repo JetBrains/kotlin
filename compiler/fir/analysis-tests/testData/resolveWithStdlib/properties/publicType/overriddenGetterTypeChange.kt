@@ -11,6 +11,10 @@ open class A {
     // TODO: must be open private
     private var p4 = 10
         public get(): Number
+
+    // TODO: must be open private
+    private var p5 = 10
+        public get(): Number
 }
 
 class B : A() {
@@ -26,4 +30,7 @@ class B : A() {
 
     protected override var p4 = 10
         public get(): Number
+
+    override var p5 = 20
+        public get(): <!REDUNDANT_GETTER_TYPE_CHANGE!>Number<!>
 }

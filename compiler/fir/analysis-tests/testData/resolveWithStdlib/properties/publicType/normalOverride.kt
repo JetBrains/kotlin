@@ -5,10 +5,10 @@ open class A {
 }
 
 open class B : A() {
-    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>override<!> val number = 20
+    private override val number = 20
         public get(): Number
 
-    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>override<!> var <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>count<!> = 20
+    private override var <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>count<!> = 20
         public get(): Number
 
     protected override val score = 40
@@ -16,6 +16,6 @@ open class B : A() {
 }
 
 class C : B() {
-    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>override<!> val score = 50
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>private<!> override val score = 50
         public get(): Number
 }

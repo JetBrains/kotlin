@@ -469,3 +469,12 @@ fun FirDeclaration.getGetterWithGreaterVisibility(): FirPropertyAccessor? {
 
     return null
 }
+
+/**
+ * Returns true if this is a property with a getter
+ * whose visibility is more permissive than
+ * the visibility of this. Returns false otherwise.
+ */
+fun FirDeclaration.hasGetterWithGreaterVisibility(): Boolean {
+    return getGetterWithGreaterVisibility() != null
+}

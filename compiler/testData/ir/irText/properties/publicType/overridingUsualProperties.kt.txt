@@ -5,11 +5,9 @@ open class A {
 
   }
 
-  private val number: Int
-    field = 4
-    get(): Number {
-      return <this>.#number
-    }
+  protected open val number: Number
+    field = 3
+    protected open get
 
 }
 
@@ -20,9 +18,9 @@ class B : A {
 
   }
 
-  val number: Int
+  override val number: Int
     field = 10
-    get
+    override get
 
 }
 
@@ -33,8 +31,8 @@ class C : A {
 
   }
 
-  val number: Int
-    get(): Int {
+  override val number: Int
+    override get(): Int {
       return 10
     }
 
@@ -47,12 +45,11 @@ class D : A {
 
   }
 
-  val number: Int
+  protected override val number: Int
     field = 10
-    get(): Int
-  val count: Int
-    field = 1
-    get
+    override get(): Number {
+      return <this>.#number
+    }
 
 }
 
@@ -63,26 +60,10 @@ class E : A {
 
   }
 
-  protected val number: Int
+  private override val number: Int
     field = 10
-    get(): Number {
+    override get(): Number {
       return <this>.#number
     }
 
 }
-
-class F : A {
-  constructor() /* primary */ {
-    super/*A*/()
-    /* <init>() */
-
-  }
-
-  private val number: Int
-    field = 20
-    get(): Number {
-      return <this>.#number
-    }
-
-}
-

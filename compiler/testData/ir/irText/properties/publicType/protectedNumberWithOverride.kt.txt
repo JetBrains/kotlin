@@ -7,7 +7,9 @@ open class A {
 
   protected open val number: Int
     field = 4
-    open get(): Int
+    open get(): Number {
+      return <this>.#number
+    }
 
 }
 
@@ -47,6 +49,9 @@ class D : A {
 
   protected override val number: Int
     field = 10
-    override get(): Int
+    override get(): Number {
+      return <this>.#number
+    }
 
 }
+

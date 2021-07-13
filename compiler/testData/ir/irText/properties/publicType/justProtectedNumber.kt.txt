@@ -7,6 +7,9 @@ open class Simple {
 
   protected open val number: Int
     field = 4
-    open get(): Int
+    open get(): Number {
+      return <this>.#number
+    }
 
 }
+

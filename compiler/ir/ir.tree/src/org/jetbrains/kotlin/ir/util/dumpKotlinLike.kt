@@ -617,9 +617,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 returnType.printTypeWithNoIndent()
             }
             printWhereClauseIfNeededWithNoIndent()
-            p.printWithNoIndent(" ")
 
-            body?.accept(this@KotlinLikeDumper, null)
+            body?.let {
+                p.printWithNoIndent(" ")
+                it.accept(this@KotlinLikeDumper, null)
+            }
         } else {
             p.printlnWithNoIndent()
         }
@@ -724,9 +726,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         p.printWithNoIndent(declaration.name.asString())
 
-        declaration.getter?.returnType?.let {
+        val backingField = declaration.backingField
+
+        if (backingField != null && !declaration.isDelegated) {
             p.printWithNoIndent(": ")
-            it.printTypeWithNoIndent()
+            backingField.type.printTypeWithNoIndent()
+        } else {
+            declaration.getter?.returnType?.let {
+                p.printWithNoIndent(": ")
+                it.printTypeWithNoIndent()
+            }
         }
 
         /* TODO better rendering for

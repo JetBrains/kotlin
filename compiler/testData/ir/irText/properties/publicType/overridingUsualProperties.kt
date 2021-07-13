@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class A {
     open protected val number: Number = 3
 }

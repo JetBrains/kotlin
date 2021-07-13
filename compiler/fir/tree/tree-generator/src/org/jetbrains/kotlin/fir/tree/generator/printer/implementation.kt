@@ -102,23 +102,25 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             }
 
 
-            element.allFields.filter { it.type.contains("Symbol") && it !is FieldList }
-                .takeIf {
-                    it.isNotEmpty() && !isInterface && !isAbstract &&
-                            !element.type.contains("Reference")
-                            && !element.type.contains("ResolvedQualifier")
-                            && !element.type.endsWith("Ref")
-                }
-                ?.let { symbolFields ->
-                    println("init {")
-                    for (symbolField in symbolFields) {
-                        withIndent {
-                            println("${symbolField.name}${symbolField.call()}bind(this)")
-                        }
+            // same as:
+            // https://github.com/JetBrains/kotlin/commit/775f76d6ee19c2f66a5210862550c1c2b7faf126#diff-1f18c97cddb3a05f5585604ce00ad316e352ef807ee8f44eacd894f9e4480ac5L105
+            element.allFields.filter {
+                it.name != "containingDeclarationSymbol" && it.type.contains("Symbol") && it !is FieldList
+            }.takeIf {
+                it.isNotEmpty() && !isInterface && !isAbstract &&
+                        !element.type.contains("Reference")
+                        && !element.type.contains("ResolvedQualifier")
+                        && !element.type.endsWith("Ref")
+            }?.let { symbolFields ->
+                println("init {")
+                for (symbolField in symbolFields) {
+                    withIndent {
+                        println("${symbolField.name}${symbolField.call()}bind(this)")
                     }
-                    println("}")
-                    println()
                 }
+                println("}")
+                println()
+            }
 
             fun Field.acceptString(): String = "${name}${call()}accept(visitor, data)"
             if (!isInterface && !isAbstract) {
