@@ -11,6 +11,16 @@ fun foo() {
         else
             a - c
     }
+
+    bar {
+        if (it > 5) return
+        val b = 1
+        it + b
+    }
+}
+
+private inline fun bar(lmbd: (Int) -> Int) {
+    lmbd(1)
 }
 
 // RESULT
@@ -99,6 +109,25 @@ KtFirLocalVariableSymbol:
   receiverType: null
   symbolKind: LOCAL
 
+KtFirLocalVariableSymbol:
+  annotatedType: [] kotlin/Int
+  callableIdIfNonLocal: null
+  isExtension: false
+  isVal: true
+  name: b
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+
+KtFirAnonymousFunctionSymbol:
+  annotatedType: [] kotlin/Int
+  callableIdIfNonLocal: null
+  isExtension: false
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+  valueParameters: [KtFirValueParameterSymbol(it)]
+
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
@@ -121,4 +150,40 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
- */
+
+KtFirValueParameterSymbol:
+  annotatedType: [] kotlin/Function1<kotlin/Int, kotlin/Int>
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: lmbd
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+
+KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: /bar
+  dispatchType: null
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: true
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: bar
+  origin: SOURCE
+  receiverType: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [KtFirValueParameterSymbol(lmbd)]
+  visibility: Private
+*/
