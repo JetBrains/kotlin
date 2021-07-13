@@ -1,6 +1,6 @@
 fun test1() {
     if (true) {
-        <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (true) {
+        when (true) {
             true -> println()
         }
     } else {
@@ -11,7 +11,7 @@ fun test1() {
 fun test2() {
     val mlist = arrayListOf("")
     if (true) {
-        <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (true) {
+        when (true) {
             true -> println()
         }
     } else {

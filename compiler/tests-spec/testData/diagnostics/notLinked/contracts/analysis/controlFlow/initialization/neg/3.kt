@@ -15,7 +15,7 @@
 fun case_1(value_1: EnumClass?) {
     val value_2: Int
 
-    <!NON_EXHAUSTIVE_WHEN!>when<!> (value_1) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_1) {
         EnumClass.NORTH -> funWithExactlyOnceCallsInPlace { value_2 = 1 }
         EnumClass.SOUTH -> funWithExactlyOnceCallsInPlace { value_2 = 2 }
         EnumClass.EAST -> funWithExactlyOnceCallsInPlace { value_2 = 4 }

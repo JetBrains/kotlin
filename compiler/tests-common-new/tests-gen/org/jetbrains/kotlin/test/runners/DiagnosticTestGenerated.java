@@ -31778,6 +31778,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("nonExhaustiveWhenStatement_1_6.kt")
+            public void testNonExhaustiveWhenStatement_1_6() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/nonExhaustiveWhenStatement_1_6.kt");
+            }
+
+            @Test
+            @TestMetadata("nonExhaustiveWhenStatement_1_7.kt")
+            public void testNonExhaustiveWhenStatement_1_7() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/nonExhaustiveWhenStatement_1_7.kt");
+            }
+
+            @Test
             @TestMetadata("NonExhaustiveWithNullabilityCheck.kt")
             public void testNonExhaustiveWithNullabilityCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/NonExhaustiveWithNullabilityCheck.kt");
