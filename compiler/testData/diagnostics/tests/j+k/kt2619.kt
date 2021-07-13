@@ -1,7 +1,7 @@
 //FILE: foo.kt
 fun main() {
     val c: Type
-    <!NON_EXHAUSTIVE_WHEN!>when<!> (<!UNINITIALIZED_VARIABLE!>c<!>)  {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (<!UNINITIALIZED_VARIABLE!>c<!>)  {
 
     }
 }

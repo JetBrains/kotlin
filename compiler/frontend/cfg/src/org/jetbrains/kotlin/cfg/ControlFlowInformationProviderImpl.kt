@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ControlFlowInformationProviderImpl private constructor(
@@ -1024,25 +1025,31 @@ class ControlFlowInformationProviderImpl private constructor(
                         }
                         continue
                     }
-                    if (!usedAsExpression) {
-                        val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(subjectType)
-                        if (enumClassDescriptor != null) {
-                            val enumMissingCases = WhenChecker.getEnumMissingCases(element, context, enumClassDescriptor)
-                            if (enumMissingCases.isNotEmpty()) {
-                                trace.report(NON_EXHAUSTIVE_WHEN.on(element, enumMissingCases))
-                            }
+                    if (!usedAsExpression && missingCases.isNotEmpty()) {
+                        val kind = when {
+                            WhenChecker.getClassDescriptorOfTypeIfSealed(subjectType) != null -> AlgebraicTypeKind.Sealed
+                            WhenChecker.getClassDescriptorOfTypeIfEnum(subjectType) != null -> AlgebraicTypeKind.Enum
+                            subjectType?.isBooleanOrNullableBoolean() == true -> AlgebraicTypeKind.Boolean
+                            else -> null
                         }
-                        val sealedClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfSealed(subjectType)
-                        if (sealedClassDescriptor != null) {
-                            val sealedMissingCases = WhenChecker.getSealedMissingCases(element, context, sealedClassDescriptor)
-                            if (sealedMissingCases.isNotEmpty()) {
-                                trace.report(NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.on(element, sealedMissingCases))
+
+                        if (kind != null) {
+                            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveWhenOnAlgebraicTypes)) {
+                                trace.report(NO_ELSE_IN_WHEN.on(element, missingCases))
+                            } else {
+                                trace.report(NON_EXHAUSTIVE_WHEN_STATEMENT.on(element, kind.displayName, missingCases))
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private enum class AlgebraicTypeKind(val displayName: String) {
+        Sealed("sealed class/interface"),
+        Enum("enum"),
+        Boolean("Boolean")
     }
 
     private fun checkConstructorConsistency() {

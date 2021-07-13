@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -17,8 +16,7 @@ enum class X { A, B, C, D }
 
 fun foo(arg: X?): String {
     var res = "XXX"
-    // Should we report something here? Probably not, null is not an enum entry
-    when (arg) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (arg) {
         X.A -> res = "A"
         X.B -> res = "B"
         X.C -> res = "C"

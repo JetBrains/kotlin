@@ -215,6 +215,10 @@ enum class LanguageFeature(
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_6),
     TypeInferenceOnCallsWithSelfTypes(KOTLIN_1_6),
 
+    // 1.7
+
+    ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_7, kind = BUG_FIX),
+
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
 

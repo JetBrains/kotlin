@@ -27,7 +27,7 @@ fun case_2(value_1: Number, value_2: Int) {
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Boolean, value_2: Boolean, value_3: Long) {
-    when (value_1) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_1) {
         value_2, !value_2, getBoolean() && value_2, getChar() != 'a' -> {}
         getList() === getAny(), value_3 <= 11 -> {}
     }
