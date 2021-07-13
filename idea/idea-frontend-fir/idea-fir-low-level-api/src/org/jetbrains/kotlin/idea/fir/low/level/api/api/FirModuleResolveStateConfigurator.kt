@@ -39,5 +39,5 @@ abstract class FirModuleResolveStateConfigurator {
 val Project.stateConfigurator: FirModuleResolveStateConfigurator
     get() = ServiceManager.getService(this, FirModuleResolveStateConfigurator::class.java)
 
-internal fun KtElement.getModuleInfo(): ModuleInfo =
+fun KtElement.getModuleInfo(): ModuleInfo =
     project.stateConfigurator.getModuleInfoFor(this)

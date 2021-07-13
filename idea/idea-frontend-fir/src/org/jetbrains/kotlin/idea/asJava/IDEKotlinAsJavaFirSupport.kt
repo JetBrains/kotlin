@@ -10,12 +10,15 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
+import org.jetbrains.kotlin.analyzer.LibraryModuleSourceInfoBase
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.createDeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.createPackageProvider
 import org.jetbrains.kotlin.name.ClassId
@@ -66,6 +69,12 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> =
         fqName.toClassIdSequence().flatMap {
             project.createDeclarationProvider(searchScope).getClassesByClassId(it)
+        }.filter {
+            //TODO Do not return LC came from LibrarySources
+            when (it.getModuleInfo()) {
+                is LibraryModuleSourceInfoBase -> it.containingKtFile.isCompiled
+                else -> true
+            }
         }.toSet()
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean =
