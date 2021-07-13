@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
-    public abstract fun resolveCall(call: KtCallExpression): KtCall?
+    public abstract fun resolveCall(call: KtCallElement): KtCall?
     public abstract fun resolveCall(call: KtBinaryExpression): KtCall?
     public abstract fun resolveCall(call: KtUnaryExpression): KtCall?
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
-    public fun KtCallExpression.resolveCall(): KtCall? =
+    public fun KtCallElement.resolveCall(): KtCall? =
         analysisSession.callResolver.resolveCall(this)
 
     public fun KtBinaryExpression.resolveCall(): KtCall? =
