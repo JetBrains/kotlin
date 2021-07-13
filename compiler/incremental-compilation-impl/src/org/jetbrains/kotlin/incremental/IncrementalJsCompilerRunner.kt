@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.isIrBackendEnabled
@@ -94,8 +94,13 @@ class IncrementalJsCompilerRunner(
         return IncrementalJsCachesManager(cacheDirectory, projectDir, reporter, serializerProtocol)
     }
 
-    override fun destinationDir(args: K2JSCompilerArguments): File =
-        File(args.outputFile).parentFile
+    override fun destinationDir(args: K2JSCompilerArguments): File {
+        val outputFile = File(args.outputFile!!)
+        return if (args.isIrBackendEnabled())
+            outputFile
+        else
+            outputFile.parentFile
+    }
 
     override fun calculateSourcesToCompileImpl(
         caches: IncrementalJsCachesManager,
