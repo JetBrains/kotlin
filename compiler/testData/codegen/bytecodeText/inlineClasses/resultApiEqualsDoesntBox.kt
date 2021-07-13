@@ -1,4 +1,4 @@
-// !API_VERSION: LATEST
+// !API_VERSION: LATEST_STABLE
 // WITH_RUNTIME
 // FILE: test.kt
 fun test() {

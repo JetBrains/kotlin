@@ -1,8 +1,8 @@
-// !API_VERSION: LATEST
+// !API_VERSION: LATEST_STABLE
 
 fun test(s: String) = s?.length
 
 // 0 IFNULL
 // 0 IFNONNULL
 // 0 intValue
-// 1 valueOf
+// 0 valueOf
