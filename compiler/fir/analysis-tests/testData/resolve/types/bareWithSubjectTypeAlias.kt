@@ -8,7 +8,7 @@ typealias TA = A<CharSequence>
 fun bar(): TA = TODO()
 
 fun foo() {
-    when (val a = bar()) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (val a = bar()) {
         is A.B -> a.x.length
     }
 }

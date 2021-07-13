@@ -1855,6 +1855,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val missingWhenCases: List<WhenMissingCase>
     }
 
+    abstract class NonExhaustiveWhenStatement : KtFirDiagnostic<KtWhenExpression>() {
+        override val diagnosticClass get() = NonExhaustiveWhenStatement::class
+        abstract val type: String
+        abstract val missingWhenCases: List<WhenMissingCase>
+    }
+
     abstract class InvalidIfAsExpression : KtFirDiagnostic<KtIfExpression>() {
         override val diagnosticClass get() = InvalidIfAsExpression::class
     }

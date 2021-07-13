@@ -137,7 +137,7 @@ fun case_7() {
         var b = a
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
-        when (true) {
+        <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (true) {
             true -> b = a
         }
 

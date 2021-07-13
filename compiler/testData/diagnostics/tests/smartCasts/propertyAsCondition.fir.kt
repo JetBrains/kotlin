@@ -7,7 +7,7 @@ fun foo(my: My) {
     if (my.x != null) {
         // my.x should be smart-cast
         if (my.x) doIt()
-        when (my.x) {
+        <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (my.x) {
             true -> doIt()
         }
         when {
@@ -20,7 +20,7 @@ fun bar(x: Boolean?) {
     if (x != null) {
         // x should be smart-cast
         if (x) doIt()
-        when (x) {
+        <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
             true -> doIt()
         }
         when {

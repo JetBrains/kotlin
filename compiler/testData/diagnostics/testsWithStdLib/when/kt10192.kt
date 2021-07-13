@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test1() {
     if (true) {
         <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (true) {

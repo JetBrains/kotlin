@@ -44,7 +44,7 @@ fun test_2(base: Base?) {
 }
 
 fun test_3(base: Base) {
-    when (base) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (base) {
         is A -> 1
     }
 }

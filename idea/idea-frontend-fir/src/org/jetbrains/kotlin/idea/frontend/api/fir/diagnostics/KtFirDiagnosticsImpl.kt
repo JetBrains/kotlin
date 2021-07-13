@@ -2990,6 +2990,15 @@ internal class NoElseInWhenImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class NonExhaustiveWhenStatementImpl(
+    override val type: String,
+    override val missingWhenCases: List<WhenMissingCase>,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NonExhaustiveWhenStatement(), KtAbstractFirDiagnostic<KtWhenExpression> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class InvalidIfAsExpressionImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

@@ -27,7 +27,7 @@ fun test_2(enum: SomeEnum?) {
 }
 
 fun test_3(enum: SomeEnum) {
-    when (enum) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (enum) {
         SomeEnum.A -> 1
     }
 }

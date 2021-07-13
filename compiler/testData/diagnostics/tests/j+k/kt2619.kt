@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //FILE: foo.kt
 fun main() {
     val c: Type

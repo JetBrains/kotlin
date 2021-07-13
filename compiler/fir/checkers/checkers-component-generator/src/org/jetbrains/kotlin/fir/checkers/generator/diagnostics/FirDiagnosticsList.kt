@@ -976,6 +976,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NO_ELSE_IN_WHEN by error<KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<List<WhenMissingCase>>("missingWhenCases")
         }
+        val NON_EXHAUSTIVE_WHEN_STATEMENT by warning<KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
+            parameter<String>("type")
+            parameter<List<WhenMissingCase>>("missingWhenCases")
+        }
         val INVALID_IF_AS_EXPRESSION by error<KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
         val ELSE_MISPLACED_IN_WHEN by error<KtWhenEntry>(PositioningStrategy.ELSE_ENTRY)
         val ILLEGAL_DECLARATION_IN_WHEN_SUBJECT by error<KtElement> {
