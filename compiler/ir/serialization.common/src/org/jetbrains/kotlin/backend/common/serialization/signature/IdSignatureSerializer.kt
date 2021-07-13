@@ -190,6 +190,10 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
                 hashId = declaration.hashId()
             }
         }
+
+        override fun visitField(declaration: IrField) {
+            collectFqNames(declaration)
+        }
     }
 }
 
