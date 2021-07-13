@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir
 
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCache
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
@@ -20,6 +21,6 @@ internal object PersistentCheckerContextFactory {
             ImplicitBodyResolveComputationSession(),
             ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
         )
-        return PersistentCheckerContext(sessionHolder, returnTypeCalculator)
+        return PersistentCheckerContext(sessionHolder, returnTypeCalculator, PropertyInitializationInfoCache.create())
     }
 }

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 object DiagnosticComponentsFactory {
     fun createAllDiagnosticComponents(session: FirSession, reporter: DiagnosticReporter): List<AbstractDiagnosticCollectorComponent> {
         return listOf(
+            // NB: the component for declaration checkers should precede the CFA component.
+            // See comments in [PropertyInitializationInfoCache] for more details.
             DeclarationCheckersDiagnosticComponent(session, reporter),
             ExpressionCheckersDiagnosticComponent(session, reporter),
             TypeCheckersDiagnosticComponent(session, reporter),
@@ -18,5 +20,4 @@ object DiagnosticComponentsFactory {
             ControlFlowAnalysisDiagnosticComponent(session, reporter),
         )
     }
-
 }

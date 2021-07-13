@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCache
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.BaseDiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.DiagnosticReporterWithSuppress
-import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.SimpleDiagnosticReporter
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 
 class SimpleDiagnosticsCollector(
@@ -26,7 +22,8 @@ class SimpleDiagnosticsCollector(
         return CheckerRunningDiagnosticCollectorVisitor(
             PersistentCheckerContext(
                 this,
-                ReturnTypeCalculatorForFullBodyResolve()
+                ReturnTypeCalculatorForFullBodyResolve(),
+                PropertyInitializationInfoCache.create()
             ),
             components
         )

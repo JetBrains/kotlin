@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.context
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCache
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -20,6 +21,7 @@ abstract class CheckerContext {
     // Services
     abstract val sessionHolder: SessionHolder
     abstract val returnTypeCalculator: ReturnTypeCalculator
+    abstract val propertyInitializationInfoCache: PropertyInitializationInfoCache
 
     // Context
     abstract val implicitReceiverStack: ImplicitReceiverStack
