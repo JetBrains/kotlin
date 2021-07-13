@@ -43,6 +43,7 @@ class DescriptorByIdSignatureFinder(
         when (signature) {
             is IdSignature.AccessorSignature -> findDescriptorForAccessorSignature(signature)
             is IdSignature.CommonSignature -> findDescriptorForPublicSignature(signature)
+            is IdSignature.CompositeSignature -> findDescriptorBySignature(signature.nearestPublicSig())
             else -> error("only PublicSignature or AccessorSignature should reach this point, got $signature")
         }
 
