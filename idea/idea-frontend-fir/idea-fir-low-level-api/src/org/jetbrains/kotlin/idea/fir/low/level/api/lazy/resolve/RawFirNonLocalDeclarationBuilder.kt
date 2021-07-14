@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
+import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
+import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -24,7 +25,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val declarationToBuild: KtDeclaration,
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null
-) : RawFirBuilder(session, baseScopeProvider, RawFirBuilderMode.NORMAL) {
+) : RawFirBuilder(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = BodyBuildingMode.NORMAL) {
 
     companion object {
         fun buildWithReplacement(

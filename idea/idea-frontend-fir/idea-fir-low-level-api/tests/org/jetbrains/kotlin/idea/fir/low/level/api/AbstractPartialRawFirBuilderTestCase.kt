@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -106,7 +107,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
         }
 
         val session = FirSessionFactory.createEmptySession()
-        val firBuilder = RawFirBuilder(session, scopeProvider)
+        val firBuilder = RawFirBuilder(session, scopeProvider, PsiHandlingMode.IDE)
         val original = firBuilder.buildFirFile(file)
 
         val designationBuilder = DesignationBuilder(elementToBuild)

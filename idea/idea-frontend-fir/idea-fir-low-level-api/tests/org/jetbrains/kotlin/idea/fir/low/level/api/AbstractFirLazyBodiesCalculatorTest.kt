@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 import junit.framework.TestCase
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
+import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
+import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.AbstractLowLevelApiSingleFileTest
@@ -22,9 +23,21 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
             val session = resolveState.rootModuleSession
             val provider = session.firIdeProvider.kotlinScopeProvider
 
-            val laziedFirFile = RawFirBuilder(session, provider, RawFirBuilderMode.LAZY_BODIES).buildFirFile(ktFile)
+            val laziedFirFile = RawFirBuilder(
+                session,
+                provider,
+                psiMode = PsiHandlingMode.IDE,
+                bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
+            ).buildFirFile(ktFile)
+
             FirLazyBodiesCalculator.calculateLazyBodies(laziedFirFile)
-            val fullFirFile = RawFirBuilder(session, provider, RawFirBuilderMode.NORMAL).buildFirFile(ktFile)
+
+            val fullFirFile = RawFirBuilder(
+                session,
+                provider,
+                psiMode = PsiHandlingMode.IDE,
+                bodyBuildingMode = BodyBuildingMode.NORMAL
+            ).buildFirFile(ktFile)
 
             val laziedFirFileDump = StringBuilder().also { FirRenderer(it).visitFile(laziedFirFile) }.toString()
             val fullFirFileDump = StringBuilder().also { FirRenderer(it).visitFile(fullFirFile) }.toString()

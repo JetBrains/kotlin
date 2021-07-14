@@ -63,7 +63,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 val ktFile = createKtFile(file.toRelativeString(root))
                 val firFile: FirFile
                 time += measureNanoTime {
-                    firFile = ktFile.toFirFile(RawFirBuilderMode.stubs(stubMode))
+                    firFile = ktFile.toFirFile(BodyBuildingMode.stubs(stubMode))
                 }
                 totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile) }.length
                 counter++

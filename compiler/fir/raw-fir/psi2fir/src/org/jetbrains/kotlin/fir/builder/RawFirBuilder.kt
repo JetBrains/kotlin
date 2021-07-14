@@ -48,23 +48,30 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 open class RawFirBuilder(
-    session: FirSession, val baseScopeProvider: FirScopeProvider, builderMode: RawFirBuilderMode = RawFirBuilderMode.NORMAL
+    session: FirSession,
+    val baseScopeProvider: FirScopeProvider,
+    private val psiMode: PsiHandlingMode,
+    bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
 
-    private val stubMode get() = mode == RawFirBuilderMode.STUBS
+    @Deprecated("Please replace with primary constructor call")
+    constructor(session: FirSession, baseScopeProvider: FirScopeProvider, mode: BodyBuildingMode = BodyBuildingMode.NORMAL) :
+            this(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = mode)
+
+    private val stubMode get() = mode == BodyBuildingMode.STUBS
 
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
 
-    var mode: RawFirBuilderMode = builderMode
+    var mode: BodyBuildingMode = bodyBuildingMode
         private set
 
     private inline fun <T> disabledLazyMode(body: () -> T): T {
-        if (mode != RawFirBuilderMode.LAZY_BODIES) return body()
+        if (mode != BodyBuildingMode.LAZY_BODIES) return body()
         return try {
-            mode = RawFirBuilderMode.NORMAL
+            mode = BodyBuildingMode.NORMAL
             body()
         } finally {
-            mode = RawFirBuilderMode.LAZY_BODIES
+            mode = BodyBuildingMode.LAZY_BODIES
         }
     }
 
@@ -289,7 +296,7 @@ open class RawFirBuilder(
             when {
                 !hasBody() ->
                     null to null
-                mode == RawFirBuilderMode.LAZY_BODIES -> {
+                mode == BodyBuildingMode.LAZY_BODIES -> {
                     val block = buildLazyBlock {
                         source = bodyExpression?.toFirSourceElement()
                             ?: error("hasBody() == true but body is null")
@@ -734,7 +741,7 @@ open class RawFirBuilder(
         }
 
         override fun visitKtFile(file: KtFile, data: Unit): FirElement {
-            context.packageFqName = file.packageFqName
+            context.packageFqName = if (psiMode == PsiHandlingMode.COMPILER) file.packageFqNameByTree else file.packageFqName
             return buildFile {
                 source = file.toFirSourceElement()
                 moduleData = baseModuleData
@@ -1317,10 +1324,10 @@ open class RawFirBuilder(
             val isVar = isVar
             val propertyInitializer = when {
                 !hasInitializer() -> null
-                mode == RawFirBuilderMode.LAZY_BODIES -> buildLazyExpression {
+                mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
                     source = initializer?.toFirSourceElement()
                 }
-                mode == RawFirBuilderMode.STUBS -> buildExpressionStub()
+                mode == BodyBuildingMode.STUBS -> buildExpressionStub()
                 else -> initializer.toFirExpression("Should have initializer")
 
             }
@@ -1373,9 +1380,9 @@ open class RawFirBuilder(
                                 source =
                                     if (stubMode) null else delegateExpression?.toFirSourceElement(FirFakeSourceElementKind.WrappedDelegate)
                                 expression = when (mode) {
-                                    RawFirBuilderMode.NORMAL -> delegateExpression.toFirExpression("Should have delegate")
-                                    RawFirBuilderMode.STUBS -> buildExpressionStub()
-                                    RawFirBuilderMode.LAZY_BODIES -> buildLazyExpression {
+                                    BodyBuildingMode.NORMAL -> delegateExpression.toFirExpression("Should have delegate")
+                                    BodyBuildingMode.STUBS -> buildExpressionStub()
+                                    BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
                                         source = delegateExpression!!.toFirSourceElement()
                                     }
                                 }
@@ -2284,7 +2291,7 @@ open class RawFirBuilder(
     }
 }
 
-enum class RawFirBuilderMode {
+enum class BodyBuildingMode {
     /**
      * Build every expression and every body
      */
@@ -2302,10 +2309,25 @@ enum class RawFirBuilderMode {
     LAZY_BODIES;
 
     companion object {
-        fun lazyBodies(lazyBodies: Boolean): RawFirBuilderMode =
+        fun lazyBodies(lazyBodies: Boolean): BodyBuildingMode =
             if (lazyBodies) LAZY_BODIES else NORMAL
 
-        fun stubs(stubs: Boolean): RawFirBuilderMode =
+        fun stubs(stubs: Boolean): BodyBuildingMode =
             if (stubs) STUBS else NORMAL
     }
+}
+
+@Deprecated("Please replace with BodyBuildingMode")
+typealias RawFirBuilderMode = BodyBuildingMode
+
+enum class PsiHandlingMode {
+    /**
+     * Do not build any stubs while handling PSI
+     */
+    COMPILER,
+
+    /**
+     * Build stubs if possible while handling PSI
+     */
+    IDE;
 }

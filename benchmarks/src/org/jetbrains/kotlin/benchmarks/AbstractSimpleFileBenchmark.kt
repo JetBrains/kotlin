@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.createSessionForTests
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
@@ -154,7 +155,7 @@ abstract class AbstractSimpleFileBenchmark {
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
         val session = createSessionForTests(env, scope)
         val firProvider = session.firProvider as FirProviderImpl
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, PsiHandlingMode.COMPILER)
 
         val totalTransformer = FirTotalResolveProcessor(session)
         val firFile = builder.buildFirFile(file).also(firProvider::recordFile)

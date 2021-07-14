@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.fir.analysis.FirCheckersResolveProcessor
+import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
@@ -158,7 +159,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             }
             bench.buildFiles(lightTree2Fir, allSourceFiles)
         } else {
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
+            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, PsiHandlingMode.COMPILER)
             bench.buildFiles(builder, ktFiles)
         }
 

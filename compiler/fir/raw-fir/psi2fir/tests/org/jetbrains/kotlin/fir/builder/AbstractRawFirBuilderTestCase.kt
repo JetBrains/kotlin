@@ -62,7 +62,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
     protected open fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
-        val firFile = file.toFirFile(RawFirBuilderMode.NORMAL)
+        val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
         val firFileDump = StringBuilder().also { FirRenderer(it, mode = FirRenderer.RenderMode.WithDeclarationAttributes).visitFile(firFile) }.toString()
         val expectedPath = filePath.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
@@ -75,9 +75,14 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         }
     }
 
-    protected fun KtFile.toFirFile(mode: RawFirBuilderMode = RawFirBuilderMode.NORMAL): FirFile {
+    protected fun KtFile.toFirFile(bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {
         val session = FirSessionFactory.createEmptySession()
-        return RawFirBuilder(session, StubFirScopeProvider, mode).buildFirFile(this)
+        return RawFirBuilder(
+            session,
+            StubFirScopeProvider,
+            psiMode = PsiHandlingMode.COMPILER,
+            bodyBuildingMode = bodyBuildingMode
+        ).buildFirFile(this)
     }
 
     private fun FirElement.traverseChildren(result: MutableSet<FirElement> = hashSetOf()): MutableSet<FirElement> {

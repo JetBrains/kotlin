@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
+import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
+import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
@@ -31,7 +32,12 @@ internal class FirFileBuilder(
         cache: ModuleFileCache,
         preferLazyBodies: Boolean
     ): FirFile = cache.fileCached(ktFile) {
-        RawFirBuilder(cache.session, scopeProvider, RawFirBuilderMode.lazyBodies(preferLazyBodies)).buildFirFile(ktFile)
+        RawFirBuilder(
+            cache.session,
+            scopeProvider,
+            psiMode = PsiHandlingMode.IDE,
+            bodyBuildingMode = BodyBuildingMode.lazyBodies(preferLazyBodies)
+        ).buildFirFile(ktFile)
     }
 }
 

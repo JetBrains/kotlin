@@ -9,7 +9,8 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
+import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
+import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -135,7 +136,8 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         return RawFirBuilder(
             createEmptySession(),
             DummyScopeProvider,
-            RawFirBuilderMode.STUBS
+            psiMode = PsiHandlingMode.IDE,
+            bodyBuildingMode = BodyBuildingMode.STUBS
         ).buildTypeReference(this)
     }
 

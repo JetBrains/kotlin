@@ -13,7 +13,7 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
+import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
@@ -73,7 +73,7 @@ class SimpleTestCase : AbstractRawFirBuilderTestCase() {
         println(StringBuilder().also { FirRenderer(it).visitFile(firFromLightTreeFile) }.toString())
 
         val psiFile = createPsiFile("foo", code) as KtFile
-        val firFromPsiFile = psiFile.toFirFile(RawFirBuilderMode.STUBS)
+        val firFromPsiFile = psiFile.toFirFile(BodyBuildingMode.STUBS)
         println("Fir from PSI")
         println(StringBuilder().also { FirRenderer(it).visitFile(firFromPsiFile) }.toString())
 
