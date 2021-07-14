@@ -61,6 +61,9 @@ class TestFile(
     val name: String = relativePath.split("/").last()
 }
 
+val TestFile.nameWithoutExtension: String
+    get() = name.substringBeforeLast(".")
+
 enum class DependencyRelation {
     RegularDependency,
     FriendDependency,

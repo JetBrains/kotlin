@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConf
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
 fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonConfigurationForCodegenTest(
     targetFrontend: FrontendKind<*>,
@@ -45,6 +46,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonCon
         ::AdditionalDiagnosticsSourceFilesProvider,
         ::CoroutineHelpersSourceFilesProvider,
         ::CodegenHelpersSourceFilesProvider,
+        ::MainFunctionForBlackBoxTestsSourceProvider,
     )
 
     useFrontendFacades(frontendFacade)
