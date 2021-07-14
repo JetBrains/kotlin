@@ -159,8 +159,8 @@ internal class MethodNodeExaminer(
      * @return indices of safely reachable returns for each instruction in the method node
      */
     private fun findSafelyReachableReturns(): Array<Set<Int>?> {
-        val insns = methodNode.instructions
-        val reachableReturnsIndices = Array(insns.size()) init@{ index ->
+        val insns = methodNode.instructions.toArray()
+        val reachableReturnsIndices = Array(insns.size) init@{ index ->
             val insn = insns[index]
 
             if (insn.opcode == Opcodes.ARETURN && !insn.isAreturnAfterSafeUnitInstance()) {
@@ -182,7 +182,7 @@ internal class MethodNodeExaminer(
         var changed: Boolean
         do {
             changed = false
-            for (index in 0 until insns.size()) {
+            for (index in insns.indices.reversed()) {
                 if (insns[index].opcode == Opcodes.ARETURN) continue
 
                 @Suppress("RemoveExplicitTypeArguments")
