@@ -90,7 +90,7 @@ interface Worker<out T>
 interface RenderContext<StateT, in OutputT : Any>
 
 val emptyOrNull: List<Nothing>? = null
-val x = emptyOrNull?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>get<!>(0)
+val x = emptyOrNull?.get(0)
 
 val errorCompletion = { e: Throwable -> throw Exception() }
 

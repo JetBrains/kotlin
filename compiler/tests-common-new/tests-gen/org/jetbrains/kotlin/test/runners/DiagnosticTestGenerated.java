@@ -14235,6 +14235,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("reportImplicitNothingOnlyForOwnTypeParameters.kt")
+                public void testReportImplicitNothingOnlyForOwnTypeParameters() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/reportImplicitNothingOnlyForOwnTypeParameters.kt");
+                }
+
+                @Test
                 @TestMetadata("specialCallWithMaterializeAndExpectedType.kt")
                 public void testSpecialCallWithMaterializeAndExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/specialCallWithMaterializeAndExpectedType.kt");
