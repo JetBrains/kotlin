@@ -26,7 +26,7 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
     put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, arguments.expectActualLinker)
     putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, arguments.dumpArgumentsDir)
-    putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, System.getenv("KOTLIN_DUMP_MODEL").takeUnless { it.isEmpty() })
+    putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, System.getenv("KOTLIN_DUMP_MODEL").takeUnless { it.isNullOrEmpty() })
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
 
