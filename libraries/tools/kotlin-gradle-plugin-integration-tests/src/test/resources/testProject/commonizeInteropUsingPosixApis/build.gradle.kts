@@ -22,7 +22,7 @@ kotlin {
     targetBMain.dependsOn(nativeMain)
 
     sourceSets.all {
-        languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+        languageSettings.optInAnnotation("kotlin.RequiresOptIn")
     }
 
     targetA.compilations.getByName("main").cinterops.create("withPosix") {
