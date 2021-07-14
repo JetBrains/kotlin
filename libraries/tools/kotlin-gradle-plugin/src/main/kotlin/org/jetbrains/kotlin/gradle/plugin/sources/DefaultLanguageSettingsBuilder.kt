@@ -138,7 +138,7 @@ internal fun applyLanguageSettingsToKotlinOptions(
         }
     
         languageSettingsBuilder.optInAnnotationsInUse.forEach { annotationName ->
-            add("-Xopt-in=$annotationName")
+            add("-opt-in=$annotationName")
         }
 
         if (languageSettingsBuilder is DefaultLanguageSettingsBuilder) {

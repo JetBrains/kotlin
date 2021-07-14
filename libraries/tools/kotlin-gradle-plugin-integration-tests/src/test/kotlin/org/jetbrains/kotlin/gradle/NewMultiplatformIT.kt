@@ -748,8 +748,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTasksExecuted(":$it")
                 assertContains(
                     "-XXLanguage:+InlineClasses",
-                    "-progressive", "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-                    "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+                    "-progressive", "-opt-in=kotlin.ExperimentalUnsignedTypes",
+                    "-opt-in=kotlin.contracts.ExperimentalContracts",
                     "-Xno-inline"
                 )
             }
