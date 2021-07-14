@@ -109,6 +109,17 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
     }
 
     @Nested
+    @TestMetadata("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Expressions {
+        @Test
+        @TestMetadata("objectLiteralExpression.kt")
+        public void testObjectLiteralExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/objectLiteralExpression.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/inImport")
     @TestDataPath("$PROJECT_ROOT")
     public class InImport {

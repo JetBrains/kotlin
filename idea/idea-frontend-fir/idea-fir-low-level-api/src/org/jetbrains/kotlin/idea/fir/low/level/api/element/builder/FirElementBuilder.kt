@@ -48,6 +48,7 @@ internal class FirElementBuilder {
                 // null will be return in case of invalid KtValueArgument
                 deparenthesized.getArgumentExpression()
             }
+            deparenthesized is KtObjectLiteralExpression -> deparenthesized.objectDeclaration
             else -> deparenthesized
         }
     }
