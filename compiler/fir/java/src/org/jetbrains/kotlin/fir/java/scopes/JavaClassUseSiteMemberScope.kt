@@ -53,9 +53,11 @@ class JavaClassUseSiteMemberScope(
     
     private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
-    override fun getCallableNames(): Set<Name> {
-        return declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
+    private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
     }
+
+    override fun getCallableNames(): Set<Name> = callableNamesCached
 
     override fun getClassifierNames(): Set<Name> {
         return declaredMemberScope.getContainingClassifierNamesIfPresent() + superTypesScope.getClassifierNames()

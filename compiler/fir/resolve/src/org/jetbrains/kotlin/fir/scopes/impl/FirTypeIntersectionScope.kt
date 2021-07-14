@@ -42,6 +42,10 @@ class FirTypeIntersectionScope private constructor(
 
     private val intersectionOverrides: MutableMap<FirCallableSymbol<*>, MemberWithBaseScope<out FirCallableSymbol<*>>> = mutableMapOf()
 
+    private val callableNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
+    }
+
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
             super.processFunctionsByName(name, processor)
@@ -540,9 +544,7 @@ class FirTypeIntersectionScope private constructor(
         return ProcessorAction.NEXT
     }
 
-    override fun getCallableNames(): Set<Name> {
-        return scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
-    }
+    override fun getCallableNames(): Set<Name> = callableNamesCached
 
     override fun getClassifierNames(): Set<Name> {
         return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
