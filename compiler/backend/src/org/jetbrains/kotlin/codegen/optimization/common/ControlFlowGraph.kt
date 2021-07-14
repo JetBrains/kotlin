@@ -11,8 +11,8 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 
 class ControlFlowGraph private constructor(private val insns: InsnList) {
-    private val successors: Array<MutableList<Int>> = Array(insns.size()) { ArrayList() }
-    private val predecessors: Array<MutableList<Int>> = Array(insns.size()) { ArrayList() }
+    private val successors: Array<MutableList<Int>> = Array(insns.size()) { ArrayList(2) }
+    private val predecessors: Array<MutableList<Int>> = Array(insns.size()) { ArrayList(2) }
 
     fun getSuccessorsIndices(insn: AbstractInsnNode): List<Int> = getSuccessorsIndices(insns.indexOf(insn))
     fun getSuccessorsIndices(index: Int): List<Int> = successors[index]
