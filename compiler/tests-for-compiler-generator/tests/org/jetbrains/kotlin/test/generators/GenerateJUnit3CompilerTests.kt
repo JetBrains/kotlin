@@ -92,7 +92,13 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                     "codegen/box",
                     targetBackend = TargetBackend.JVM,
                     skipIgnored = true,
-                    excludeDirs = listOf("ranges/stepped", "compileKotlinAgainstKotlin")
+                    excludeDirs = listOf(
+                        "ranges/stepped",
+                        "compileKotlinAgainstKotlin",
+                        "testsWithJava9",
+                        "testsWithJava15",
+                        "testsWithJava17"
+                    )
                 )
             }
 
@@ -110,14 +116,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractJdk15IrBlackBoxCodegenTest> {
                 model("codegen/java15/box", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractJdk9BlackBoxCodegenTest> {
-                model("codegen/java9/box")
-            }
-
-            testClass<AbstractJdk9IrBlackBoxCodegenTest> {
-                model("codegen/java9/box", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractScriptCodegenTest> {

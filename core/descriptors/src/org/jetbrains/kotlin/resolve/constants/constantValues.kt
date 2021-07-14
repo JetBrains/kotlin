@@ -128,6 +128,10 @@ class EnumValue(val enumClassId: ClassId, val enumEntryName: Name) : ConstantVal
 }
 
 abstract class ErrorValue : ConstantValue<Unit>(Unit) {
+    init {
+        Unit
+    }
+
     @Deprecated("Should not be called, for this is not a real value, but a indication of an error")
     override val value: Unit
         get() = throw UnsupportedOperationException()

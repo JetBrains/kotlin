@@ -41680,6 +41680,88 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/testsWithJava9")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithJava9 {
+        @Test
+        public void testAllFilesPresentInTestsWithJava9() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/testsWithJava9"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("concatDynamic.kt")
+        public void testConcatDynamic() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamic.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamic200.kt")
+        public void testConcatDynamic200() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamic200.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamic200Long.kt")
+        public void testConcatDynamic200Long() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamic200Long.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamic201.kt")
+        public void testConcatDynamic201() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamic201.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicIndy200.kt")
+        public void testConcatDynamicIndy200() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamicIndy200.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicIndy200Long.kt")
+        public void testConcatDynamicIndy200Long() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamicIndy200Long.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicIndy201.kt")
+        public void testConcatDynamicIndy201() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamicIndy201.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicInlineClasses.kt")
+        public void testConcatDynamicInlineClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamicInlineClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicSpecialSymbols.kt")
+        public void testConcatDynamicSpecialSymbols() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamicSpecialSymbols.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicWithInline.kt")
+        public void testConcatDynamicWithInline() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/concatDynamicWithInline.kt");
+        }
+
+        @Test
+        @TestMetadata("kt36984.kt")
+        public void testKt36984() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/kt36984.kt");
+        }
+
+        @Test
+        @TestMetadata("varHandle.kt")
+        public void testVarHandle() throws Exception {
+            runTest("compiler/testData/codegen/box/testsWithJava9/varHandle.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/throws")
     @TestDataPath("$PROJECT_ROOT")
     public class Throws {
