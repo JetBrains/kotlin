@@ -41680,6 +41680,86 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/testsWithJava15")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithJava15 {
+        @Test
+        public void testAllFilesPresentInTestsWithJava15() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/testsWithJava15"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/testsWithJava15/records")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Records {
+            @Test
+            public void testAllFilesPresentInRecords() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/testsWithJava15/records"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("bytecodeShapeForJava.kt")
+            public void testBytecodeShapeForJava() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/bytecodeShapeForJava.kt");
+            }
+
+            @Test
+            @TestMetadata("collectionSizeOverrides.kt")
+            public void testCollectionSizeOverrides() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/collectionSizeOverrides.kt");
+            }
+
+            @Test
+            @TestMetadata("dataJvmRecord.kt")
+            public void testDataJvmRecord() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/dataJvmRecord.kt");
+            }
+
+            @Test
+            @TestMetadata("jvmRecordBinary.kt")
+            public void testJvmRecordBinary() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/jvmRecordBinary.kt");
+            }
+
+            @Test
+            @TestMetadata("propertiesOverrides.kt")
+            public void testPropertiesOverrides() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/propertiesOverrides.kt");
+            }
+
+            @Test
+            @TestMetadata("propertiesOverridesAllCompatibilityJvmDefault.kt")
+            public void testPropertiesOverridesAllCompatibilityJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/propertiesOverridesAllCompatibilityJvmDefault.kt");
+            }
+
+            @Test
+            @TestMetadata("propertiesOverridesEnableJvmDefault.kt")
+            public void testPropertiesOverridesEnableJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/propertiesOverridesEnableJvmDefault.kt");
+            }
+
+            @Test
+            @TestMetadata("recordDifferentPropertyOverride.kt")
+            public void testRecordDifferentPropertyOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/recordDifferentPropertyOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("recordDifferentSyntheticProperty.kt")
+            public void testRecordDifferentSyntheticProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/recordDifferentSyntheticProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("recordPropertyAccess.kt")
+            public void testRecordPropertyAccess() throws Exception {
+                runTest("compiler/testData/codegen/box/testsWithJava15/records/recordPropertyAccess.kt");
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/testsWithJava9")
     @TestDataPath("$PROJECT_ROOT")
     public class TestsWithJava9 {

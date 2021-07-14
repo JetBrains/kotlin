@@ -2,16 +2,16 @@
 // !LANGUAGE: +JvmRecordSupport
 // JVM_TARGET: 15
 // ENABLE_JVM_PREVIEW
+
+// MODULE: lib
 // FILE: A.kt
 @JvmRecord
 data class MyRecord(val foo: String, val bar: String)
 
+// MODULE: main(lib)
 // FILE: B.kt
 
-fun main() {
+fun box(): String {
     val myRecord = MyRecord("O", "K")
-    val s = myRecord.foo + myRecord.bar
-    if (s != "OK") {
-        throw AssertionError("fail: $s")
-    }
+    return myRecord.foo + myRecord.bar
 }

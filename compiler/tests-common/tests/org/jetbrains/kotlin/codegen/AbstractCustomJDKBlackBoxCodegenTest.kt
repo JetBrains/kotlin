@@ -16,61 +16,6 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 @OptIn(ObsoleteTestInfrastructure::class)
-abstract class AbstractCustomJDKBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
-    @Throws(Exception::class)
-    override fun doTest(filePath: String) {
-        val file = File(filePath)
-        val expectedText =
-            KtTestUtil.doLoadFile(file) +
-                    "\n" +
-                    """
-                        fun main() {
-                            val res = box()
-                            if (res != "OK") throw AssertionError(res)
-                        }
-                    """.trimIndent()
-        val testFiles = createTestFilesFromFile(file, expectedText)
-        doMultiFileTest(file, testFiles)
-    }
-
-    override fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
-        return ConfigurationKind.NO_KOTLIN_REFLECT
-    }
-
-    override fun runJavacTask(files: MutableCollection<File>, options: List<String>) {
-        assert(KotlinTestUtils.compileJavaFilesExternally(files, options, getJdkHome())) {
-            "Javac failed: $options on $files"
-        }
-    }
-
-    override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
-        return getTestJdkKind()
-    }
-
-    abstract fun getTestJdkKind(): TestJdkKind
-    abstract fun getJdkHome(): File
-
-    open fun getAdditionalJvmArgs(): List<String> = emptyList()
-
-    abstract override fun getPrefix(): String
-
-    override fun blackBox(reportProblems: Boolean, unexpectedBehaviour: Boolean) {
-        val tmpdir = KotlinTestUtils.tmpDirForTest(this)
-        val fileFactory = generateClassesInFile()
-        fileFactory.writeAll(tmpdir, null)
-
-        runJvmInstance(
-            getJdkHome(), getAdditionalJvmArgs(),
-            classPath = listOfNotNull(
-                tmpdir, ForTestCompileRuntime.runtimeJarForTests(),
-                javaClassesOutputDirectory
-            ),
-            classNameToRun = getFacadeFqName(myFiles.psiFile)!!
-        )
-    }
-}
-
-@OptIn(ObsoleteTestInfrastructure::class)
 internal fun runJvmInstance(
     jdkHome: File,
     additionalArgs: List<String>,

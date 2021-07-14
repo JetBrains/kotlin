@@ -110,14 +110,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM)
             }
 
-            testClass<AbstractJdk15BlackBoxCodegenTest> {
-                model("codegen/java15/box")
-            }
-
-            testClass<AbstractJdk15IrBlackBoxCodegenTest> {
-                model("codegen/java15/box", targetBackend = TargetBackend.JVM_IR)
-            }
-
             testClass<AbstractScriptCodegenTest> {
                 model("codegen/script", extension = "kts")
             }
@@ -251,14 +243,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                     testMethod = "doTestWithoutAPT",
                     targetBackend = TargetBackend.JVM
                 )
-            }
-
-            testClass<AbstractCompileKotlinAgainstKotlinJdk15Test> {
-                model("compileKotlinAgainstKotlinJdk15")
-            }
-
-            testClass<AbstractIrCompileKotlinAgainstKotlinJdk15Test> {
-                model("compileKotlinAgainstKotlinJdk15", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractModuleXmlParserTest> {

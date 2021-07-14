@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.test.backend.handlers.BytecodeListingHandler
 import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.USE_JAVAC_BASED_ON_JVM_TARGET
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
@@ -53,12 +56,22 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
         }
 
         forTestsMatching("compiler/testData/codegen/box/testsWithJava9/*") {
-            defaultDirectives {
-                JDK_KIND with TestJdkKind.FULL_JDK_9
-                +WITH_STDLIB
-            }
+            configureModernJavaTest(TestJdkKind.FULL_JDK_9)
+        }
+
+        forTestsMatching("compiler/testData/codegen/box/testsWithJava15/*") {
+            configureModernJavaTest(TestJdkKind.FULL_JDK_15)
         }
 
         enableMetaInfoHandler()
+    }
+
+    private fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind) {
+        defaultDirectives {
+            JDK_KIND with jdkKind
+            +WITH_STDLIB
+            +USE_JAVAC_BASED_ON_JVM_TARGET
+            +IGNORE_DEXING
+        }
     }
 }

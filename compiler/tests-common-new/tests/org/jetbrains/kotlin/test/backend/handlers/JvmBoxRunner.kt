@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.clientserver.TestProxy
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -199,14 +200,15 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
             "${mainFile.nameWithoutExtension}Kt"
         ).joinToString(".")
 
-        val command = arrayOf(
+        val command = listOfNotNull(
             javaExe.absolutePath,
             "-ea",
+            runIf(ENABLE_JVM_PREVIEW in module.directives) { "--enable-preview" },
             "-classpath",
             classPath.joinToString(File.pathSeparator, transform = { File(it.toURI()).absolutePath }),
             mainFqName,
         )
-        val process = ProcessBuilder(*command).inheritIO().start()
+        val process = ProcessBuilder(command).inheritIO().start()
         process.waitFor(1, TimeUnit.MINUTES)
         process.outputStream.flush()
         return when (process.exitValue()) {
