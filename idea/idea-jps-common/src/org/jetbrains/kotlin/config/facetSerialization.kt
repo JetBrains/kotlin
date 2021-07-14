@@ -12,6 +12,9 @@ import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.DataConversionException
 import org.jdom.Element
 import org.jdom.Text
+import org.jetbrains.kotlin.arguments.COMPILER_ARGUMENTS_ELEMENT_NAME
+import org.jetbrains.kotlin.arguments.CompilerArgumentsDeserializerV5
+import org.jetbrains.kotlin.arguments.CompilerArgumentsSerializerV5
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.platform.*
@@ -25,7 +28,7 @@ import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
 
-fun Element.getOption(name: String) = getChildren("option").firstOrNull { it.getAttribute("name").value == name }
+fun Element.getOption(name: String) = getChildren("option").firstOrNull { name == it?.getAttribute("name")?.value }
 
 private fun Element.getOptionValue(name: String) = getOption(name)?.getAttribute("value")?.value
 
@@ -124,7 +127,10 @@ fun Element.getFacetPlatformByConfigurationElement(): TargetPlatform {
     }.orDefault() // finally, fallback to the default platform
 }
 
-private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
+private fun readV2AndLaterConfig(
+    element: Element,
+    argumentReader: (Element, CommonToolArguments) -> Unit = { el, arg -> XmlSerializer.deserializeInto(arg, el) }
+): KotlinFacetSettings {
     return KotlinFacetSettings().apply {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
         val targetPlatform = element.getFacetPlatformByConfigurationElement()
@@ -164,12 +170,12 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)
         }
-        element.getChild("compilerArguments")?.let {
+        element.getChild(COMPILER_ARGUMENTS_ELEMENT_NAME)?.let {
             compilerArguments = targetPlatform.createArguments {
                 freeArgs = mutableListOf()
                 internalArguments = mutableListOf()
             }
-            XmlSerializer.deserializeInto(compilerArguments!!, it)
+            argumentReader(it, compilerArguments!!)
             compilerArguments!!.detectVersionAutoAdvance()
         }
         productionOutputPath = element.getChild("productionOutputPath")?.let {
@@ -193,16 +199,12 @@ private fun readElementsList(element: Element, rootElementName: String, elementN
     return null
 }
 
-private fun readV3Config(element: Element): KotlinFacetSettings {
-    return readV2AndLaterConfig(element)
-}
-
 private fun readV2Config(element: Element): KotlinFacetSettings {
     return readV2AndLaterConfig(element)
 }
 
 private fun readLatestConfig(element: Element): KotlinFacetSettings {
-    return readV2AndLaterConfig(element)
+    return readV2AndLaterConfig(element) { el, bean -> CompilerArgumentsDeserializerV5(bean).deserializeFrom(el) }
 }
 
 fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
@@ -213,8 +215,7 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
     } ?: KotlinFacetSettings.DEFAULT_VERSION
     return when (version) {
         1 -> readV1Config(element)
-        2 -> readV2Config(element)
-        3 -> readV3Config(element)
+        2, 3, 4 -> readV2Config(element)
         KotlinFacetSettings.CURRENT_VERSION -> readLatestConfig(element)
         else -> return KotlinFacetSettings() // Reset facet configuration if versions don't match
     }.apply { this.version = version }
@@ -278,7 +279,7 @@ private val Class<*>.normalOrdering
 // Replacing fields with delegated properties leads to unexpected reordering of entries in facet configuration XML
 // It happens due to XmlSerializer using different orderings for field- and method-based accessors
 // This code restores the original ordering
-private fun Element.restoreNormalOrdering(bean: Any) {
+internal fun Element.restoreNormalOrdering(bean: Any) {
     val normalOrdering = bean.javaClass.normalOrdering
     val elementsToReorder = this.getContent<Element> { it is Element && it.getAttribute("name")?.value in normalOrdering }
     elementsToReorder.sortedBy { normalOrdering[it.getAttribute("name")?.value!!] }
@@ -293,7 +294,7 @@ private fun buildChildElement(element: Element, tag: String, bean: Any, filter: 
     }
 }
 
-private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
+private fun KotlinFacetSettings.writeConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
     // TODO: Introduce new version of facet serialization. See https://youtrack.jetbrains.com/issue/KT-38235
@@ -362,9 +363,20 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
         it.convertPathsToSystemIndependent()
         buildChildElement(element, "compilerSettings", it, filter)
     }
+}
+
+private fun KotlinFacetSettings.writeV2toV4Config(element: Element) = writeConfig(element).apply {
     compilerArguments?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
-        val compilerArgumentsXml = buildChildElement(element, "compilerArguments", it, filter)
+        val compilerArgumentsXml = buildChildElement(element, "compilerArguments", it, SkipDefaultsSerializationFilter())
+        compilerArgumentsXml.dropVersionsIfNecessary(it)
+    }
+}
+
+private fun KotlinFacetSettings.writeLatestConfig(element: Element) = writeConfig(element).apply {
+    compilerArguments?.let { copyBean(it) }?.let {
+        it.convertPathsToSystemIndependent()
+        val compilerArgumentsXml = CompilerArgumentsSerializerV5(it).serializeTo(element)
         compilerArgumentsXml.dropVersionsIfNecessary(it)
     }
 }
@@ -400,14 +412,17 @@ fun Element.dropVersionsIfNecessary(settings: CommonCompilerArguments) {
     }
 }
 
-fun KotlinFacetSettings.serializeFacetSettings(element: Element) {
-    val versionToWrite = when (version) {
-        2, 3 -> version
-        else -> KotlinFacetSettings.CURRENT_VERSION
+fun KotlinFacetSettings.serializeFacetSettings(element: Element) = when (version) {
+    2, 3, 4 -> {
+        element.setAttribute("version", version.toString())
+        writeV2toV4Config(element)
     }
-    element.setAttribute("version", versionToWrite.toString())
-    writeLatestConfig(element)
+    else -> {
+        element.setAttribute("version", KotlinFacetSettings.CURRENT_VERSION.toString())
+        writeLatestConfig(element)
+    }
 }
+
 
 private fun TargetPlatform.serializeComponentPlatforms(): String {
     val componentPlatforms = componentPlatforms
