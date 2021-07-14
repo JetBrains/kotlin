@@ -87,6 +87,28 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
     }
 
     @Nested
+    @TestMetadata("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/declarations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Declarations {
+        @Test
+        public void testAllFilesPresentInDeclarations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("propertyDelegate.kt")
+        public void testPropertyDelegate() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/declarations/propertyDelegate.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyDelegateExpression.kt")
+        public void testPropertyDelegateExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/declarations/propertyDelegateExpression.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/inImport")
     @TestDataPath("$PROJECT_ROOT")
     public class InImport {

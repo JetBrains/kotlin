@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -46,6 +48,9 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
         )
         assertions = JUnit5Assertions
         useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+
+        useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
+        useDirectives(JvmEnvironmentConfigurationDirectives)
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService(::ExpressionMarkerProvider)
