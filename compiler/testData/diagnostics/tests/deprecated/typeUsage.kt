@@ -24,8 +24,8 @@ class Properties {
     var y : <!DEPRECATION!>Obsolete<!> = <!DEPRECATION!>Obsolete<!>()
 
     var n : <!DEPRECATION!>Obsolete<!>
-        get() = <!DEPRECATION!>Obsolete<!>()
-        set(value) {}
+    get() = <!DEPRECATION!>Obsolete<!>()
+    set(value) {}
 }
 
 fun param(param: <!DEPRECATION!>Obsolete<!>) { param.use() }

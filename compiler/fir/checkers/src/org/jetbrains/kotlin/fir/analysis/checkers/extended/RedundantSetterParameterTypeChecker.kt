@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -21,7 +22,7 @@ object RedundantSetterParameterTypeChecker : FirPropertyChecker() {
         val propertyTypeSource = declaration.returnTypeRef.source
         val setterParameterTypeSource = valueParameter.returnTypeRef.source ?: return
 
-        if (setterParameterTypeSource != propertyTypeSource) {
+        if (setterParameterTypeSource.kind !is FirFakeSourceElementKind && setterParameterTypeSource != propertyTypeSource) {
             reporter.reportOn(setterParameterTypeSource, REDUNDANT_SETTER_PARAMETER_TYPE, context)
         }
     }

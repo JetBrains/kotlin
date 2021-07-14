@@ -368,6 +368,7 @@ open class RawFirBuilder(
                     isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
                             this@toFirPropertyAccessor?.hasModifier(EXTERNAL_KEYWORD) == true
                 }
+            val propertyTypeRefToUse = propertyTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
             return when {
                 this != null && hasBody() -> {
                     // Property has a non-default getter or setter.
@@ -379,7 +380,7 @@ open class RawFirBuilder(
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = if (isGetter) {
-                            returnTypeReference?.convertSafe() ?: propertyTypeRef
+                            returnTypeReference?.convertSafe() ?: propertyTypeRefToUse
                         } else {
                             returnTypeReference.toFirOrUnitType()
                         }
@@ -387,13 +388,13 @@ open class RawFirBuilder(
                         this.status = status
                         extractAnnotationsTo(this)
                         this@RawFirBuilder.context.firFunctionTargets += accessorTarget
-                        extractValueParametersTo(this, propertyTypeRef)
+                        extractValueParametersTo(this, propertyTypeRefToUse)
                         if (!isGetter && valueParameters.isEmpty()) {
                             valueParameters += buildDefaultSetterValueParameter {
                                 this.source = source.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
                                 moduleData = baseModuleData
                                 origin = FirDeclarationOrigin.Source
-                                returnTypeRef = propertyTypeRef
+                                returnTypeRef = propertyTypeRefToUse
                                 symbol = FirValueParameterSymbol(NAME_FOR_DEFAULT_VALUE_PARAMETER)
                             }
                         }
@@ -420,7 +421,7 @@ open class RawFirBuilder(
                             propertySource,
                             baseModuleData,
                             FirDeclarationOrigin.Source,
-                            propertyTypeRef,
+                            propertyTypeRefToUse,
                             accessorVisibility,
                             isGetter
                         )

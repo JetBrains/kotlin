@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
@@ -17,11 +18,11 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 object FirDeprecatedTypeChecker : FirTypeRefChecker() {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.findClosest<FirPropertyAccessor>() != null) return
-
+        val source = typeRef.source ?: return
+        if (source.kind is FirFakeSourceElementKind) return
         val resolved = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return
         val symbol = resolved.lookupTag.toSymbol(context.session) ?: return
 
-        FirDeprecationChecker.reportDeprecationIfNeeded(typeRef.source, symbol, null, context, reporter)
+        FirDeprecationChecker.reportDeprecationIfNeeded(source, symbol, null, context, reporter)
     }
 }
