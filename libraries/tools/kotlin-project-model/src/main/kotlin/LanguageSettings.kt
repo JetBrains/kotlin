@@ -10,5 +10,8 @@ interface LanguageSettings {
     val apiVersion: String?
     val progressiveMode: Boolean
     val enabledLanguageFeatures: Set<String>
+
+    @Deprecated("Unsupported and will be removed in next major releases", replaceWith = ReplaceWith("optInAnnotationsInUse"))
     val experimentalAnnotationsInUse: Set<String>
+    val optInAnnotationsInUse: Set<String>
 }

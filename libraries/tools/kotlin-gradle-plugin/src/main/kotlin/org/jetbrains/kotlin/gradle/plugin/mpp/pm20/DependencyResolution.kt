@@ -117,11 +117,12 @@ class GradleModuleDependencyResolver(
 // TODO think about multi-variant stub modules for non-Kotlin modules which got more than one chosen variant
 internal fun buildSyntheticPlainModule(
     resolvedComponentResult: ResolvedComponentResult,
-    singleVariantName: String
+    singleVariantName: String,
+    project: Project
 ): ExternalPlainKotlinModule {
     val moduleDependency = resolvedComponentResult.toModuleDependency()
     return ExternalPlainKotlinModule(BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
-        BasicKotlinModuleVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder()).apply {
+        BasicKotlinModuleVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder(project)).apply {
             fragments.add(this)
             this.declaredModuleDependencies.addAll(
                 resolvedComponentResult.dependencies

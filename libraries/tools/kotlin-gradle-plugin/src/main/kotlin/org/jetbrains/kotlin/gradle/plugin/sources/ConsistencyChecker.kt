@@ -48,16 +48,16 @@ internal class FragmentConsistencyChecks<T>(
         consistencyConditionHint = unstableFeaturesHint
     )
 
-    private val experimentalAnnotationsInUseHint = "The dependent $unitName must use all experimental annotations that its dependency uses."
+    private val optInAnnotationsInUseHint = "The dependent $unitName must use all opt-in annotations that its dependency uses."
 
-    val experimentalAnnotationsCheck = ConsistencyCheck<T, Set<String>>(
-        name = "set of experimental annotations in use",
-        getValue = { unit -> unit.languageSettings().experimentalAnnotationsInUse },
+    val optInAnnotationsCheck = ConsistencyCheck<T, Set<String>>(
+        name = "set of opt-in annotations in use",
+        getValue = { unit -> unit.languageSettings().optInAnnotationsInUse },
         leftExtendsRightConsistently = { left, right -> left.containsAll(right) },
-        consistencyConditionHint = experimentalAnnotationsInUseHint
+        consistencyConditionHint = optInAnnotationsInUseHint
     )
 
-    val allChecks = listOf(languageVersionCheck, unstableFeaturesCheck, experimentalAnnotationsCheck)
+    val allChecks = listOf(languageVersionCheck, unstableFeaturesCheck, optInAnnotationsCheck)
 }
 
 internal class FragmentConsistencyChecker<T>(

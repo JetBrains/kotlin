@@ -48,7 +48,11 @@ class GradleKotlinDependencyGraphResolver(
 
         fun getKotlinModuleFromComponentResult(component: ResolvedComponentResult): KotlinModule =
             moduleResolver.resolveDependency(requestingModule, component.toModuleDependency())
-                ?: buildSyntheticPlainModule(component, component.variants.singleOrNull()?.displayName ?: "default")
+                ?: buildSyntheticPlainModule(
+                    component,
+                    component.variants.singleOrNull()?.displayName ?: "default",
+                    requestingModule.project
+                )
 
         fun nodeFromModule(componentResult: ResolvedComponentResult, kotlinModule: KotlinModule): GradleDependencyGraphNode {
             val id = kotlinModule.moduleIdentifier
