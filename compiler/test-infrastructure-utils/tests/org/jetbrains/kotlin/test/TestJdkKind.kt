@@ -13,21 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.test
 
-package org.jetbrains.kotlin.test;
-
-public enum TestJdkKind {
+enum class TestJdkKind {
     MOCK_JDK,
+
     // Differs from common mock JDK only by one additional 'nonExistingMethod' in Collection and constructor from Double in Throwable
     // It's needed to test the way we load additional built-ins members that neither in black nor white lists
     // Also, now it contains new methods in java.lang.String introduced in JDK 11
     MODIFIED_MOCK_JDK,
+
     // JDK found at $JDK_16
     FULL_JDK_6,
-    // JDK found at $JDK_19
+
+    // JDK found at $JDK_9
     FULL_JDK_9,
+
     // JDK found at $JDK_15
     FULL_JDK_15,
+
+    // JDK found at $JDK_15
+    FULL_JDK_17,
+
     // JDK found at java.home
     FULL_JDK,
     ANDROID_API,
