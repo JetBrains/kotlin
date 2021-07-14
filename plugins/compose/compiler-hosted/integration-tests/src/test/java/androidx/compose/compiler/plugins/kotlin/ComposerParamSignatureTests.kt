@@ -1530,6 +1530,19 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    fun testComposableMap(): Unit = codegen(
+        """
+            class Repro {
+                private val composables = linkedMapOf<String, @Composable () -> Unit>()
+
+                fun doSomething() {
+                    composables[""]
+                }
+            }
+        """
+    )
+
+    @Test
     fun testComposableColorFunInterfaceExample(): Unit = checkApi(
         """
             import androidx.compose.material.Text
