@@ -9,31 +9,44 @@ package foo
 class WithNative {
     companion object {
         @JvmStatic external fun bar(l: Long, s: String): Double
+
+        @JvmStatic val prop: String external get
     }
 }
 
 object ObjWithNative {
     @JvmStatic external fun bar(l: Long, s: String): Double
+
+    @JvmStatic val prop: String external get
+}
+
+fun check(vararg allowed: String, block: () -> Unit) {
+    try {
+        block()
+        throw AssertionError("UnsatisfiedLinkError expected")
+    } catch (e: java.lang.UnsatisfiedLinkError) {
+        if (allowed.none { it == e.message }) {
+            throw AssertionError("fail: ${e.message}")
+        }
+    }
 }
 
 fun box(): String {
-    var d = 0.0
-    try {
-        d = WithNative.bar(1, "")
-        return "Link error expected"
-    }
-    catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.message != "foo.WithNative.bar(JLjava/lang/String;)D" &&
-            e.message != "'double foo.WithNative.bar(long, java.lang.String)'") return "Fail 1: " + e.message
-    }
-
-    try {
-        d = ObjWithNative.bar(1, "")
-        return "Link error expected on object"
-    }
-    catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.message != "foo.ObjWithNative.bar(JLjava/lang/String;)D" &&
-            e.message != "'double foo.ObjWithNative.bar(long, java.lang.String)'") return "Fail 2: " + e.message
-    }
+    check(
+        "foo.WithNative.bar(JLjava/lang/String;)D",
+        "'double foo.WithNative.bar(long, java.lang.String)'"
+    ) { WithNative.bar(1, "") }
+    check(
+        "foo.ObjWithNative.bar(JLjava/lang/String;)D",
+        "'double foo.ObjWithNative.bar(long, java.lang.String)'"
+    ) { ObjWithNative.bar(1, "") }
+    check(
+        "foo.WithNative.getProp()Ljava/lang/String;",
+        "'java.lang.String foo.WithNative.getProp()'"
+    ) { WithNative.prop }
+    check(
+        "foo.ObjWithNative.getProp()Ljava/lang/String;",
+        "'java.lang.String foo.ObjWithNative.getProp()'"
+    ) { ObjWithNative.prop }
     return "OK"
 }
