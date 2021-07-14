@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -40,7 +40,7 @@ abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner,
     abstract override val body: FirBlock?
     abstract override val contractDescription: FirContractDescription
     abstract override val symbol: FirPropertyAccessorSymbol
-    abstract val containingDeclarationSymbol: FirBasedSymbol<*>?
+    abstract val containingDeclarationSymbol: FirPropertySymbol?
     abstract val isGetter: Boolean
     abstract val isSetter: Boolean
     abstract override val annotations: List<FirAnnotationCall>

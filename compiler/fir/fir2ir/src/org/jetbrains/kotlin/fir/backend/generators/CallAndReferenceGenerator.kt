@@ -233,12 +233,6 @@ class CallAndReferenceGenerator(
                 conversionScope
             )
 
-            val symbolResolvedFromPropertyAccessor = qualifiedAccess.calleeReference
-                .safeAs<FirResolvedNamedReference>()
-                ?.resolvedSymbol
-                ?.safeAs<FirCallableSymbol<*>>()
-                ?.unwrapCallRepresentative() is FirPropertyAccessorSymbol
-
             return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
                 val dispatchReceiver = qualifiedAccess.dispatchReceiver
                 if (qualifiedAccess.calleeReference is FirSuperReference) {
@@ -270,18 +264,14 @@ class CallAndReferenceGenerator(
                         val getter = symbol.owner.getter
                         val backingField = symbol.owner.backingField
                         // In case of accessing a property
-                        // with a more visible getter we can
-                        // either resolve into this getter (if accessing
-                        // the property from outside of its "natural"
-                        // visibility) or the property itself otherwise.
-                        // If we access the property within its natural
-                        // visibility in this case, we should ignore the getter
-                        // and resolve directly into the backing field.
-                        val hasPermissiveGetter = symbol.owner.metadata?.safeAs<FirMetadataSource>()
-                            ?.fir?.hasGetterWithGreaterVisibility() == true
-                        val shouldIgnoreGetter = hasPermissiveGetter && !symbolResolvedFromPropertyAccessor
+                        // with a more visible getter we still resolve
+                        // into the getter, but now we simply swap
+                        // to type with a more concrete one. This ensures
+                        // the proper instance is returned upon property
+                        // overrides, and fir diagnostics guarantee us
+                        // the types are compatible
                         when {
-                            getter != null && !shouldIgnoreGetter -> IrCallImpl(
+                            getter != null -> IrCallImpl(
                                 startOffset, endOffset, type, getter.symbol,
                                 typeArgumentsCount = getter.typeParameters.size,
                                 valueArgumentsCount = 0,

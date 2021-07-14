@@ -317,7 +317,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         propertyAccessor.configure {
             +symbol("FirPropertyAccessorSymbol")
-            +field("containingDeclarationSymbol", firBasedSymbolType, "*", nullable = true)
+            +field("containingDeclarationSymbol", firPropertySymbolType, nullable = true)
             +booleanField("isGetter")
             +booleanField("isSetter")
             +annotations

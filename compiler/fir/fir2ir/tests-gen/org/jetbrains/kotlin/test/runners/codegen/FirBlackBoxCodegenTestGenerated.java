@@ -29616,6 +29616,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("propertyWithoutOverrides.kt")
+            public void testPropertyWithoutOverrides() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/publicType/propertyWithoutOverrides.kt");
+            }
+
+            @Test
             @TestMetadata("samplePublicPropertyType.kt")
             public void testSamplePublicPropertyType() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/publicType/samplePublicPropertyType.kt");

@@ -12458,6 +12458,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/properties/publicType/propertyOverrides.kt");
             }
 
+            @TestMetadata("propertyWithoutOverrides.kt")
+            public void testPropertyWithoutOverrides() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/publicType/propertyWithoutOverrides.kt");
+            }
+
             @TestMetadata("samplePublicPropertyType.kt")
             public void testSamplePublicPropertyType() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/publicType/samplePublicPropertyType.kt");

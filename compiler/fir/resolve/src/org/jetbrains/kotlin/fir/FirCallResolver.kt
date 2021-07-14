@@ -565,11 +565,9 @@ class FirCallResolver(
         val source = reference.source
 
         fun chooseMostSpecific(candidates: Collection<Candidate>): Set<Candidate> {
-            // TODO: do we have a guarantee that the most specific one (latest override) will come first?
-            candidates.firstOrNull()?.let {
-                return setOf(it)
-            }
-            return emptySet()
+            // the most specific getter is guaranteed to
+            // come first
+            return setOfNotNull(candidates.firstOrNull())
         }
 
         val bestCandidates = chooseMostSpecific(candidates)

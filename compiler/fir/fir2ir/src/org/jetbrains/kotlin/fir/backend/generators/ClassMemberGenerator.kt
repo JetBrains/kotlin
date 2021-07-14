@@ -168,7 +168,7 @@ internal class ClassMemberGenerator(
         }
         irProperty.getter?.setPropertyAccessorContent(
             property, property.getter, irProperty, propertyType,
-            property.getter is FirDefaultPropertyGetter /*|| property.getter?.body == null*/,
+            property.getter is FirDefaultPropertyGetter,
             isGetter = true,
             containingClass = containingClass
         )
