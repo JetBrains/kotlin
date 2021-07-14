@@ -18,7 +18,8 @@ open class SimpleTestMethodModel(
     private val filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
     protected val targetBackend: TargetBackend,
-    private val skipIgnored: Boolean
+    private val skipIgnored: Boolean,
+    override val tags: List<String>
 ) : MethodModel {
     object Kind : MethodModel.Kind()
 

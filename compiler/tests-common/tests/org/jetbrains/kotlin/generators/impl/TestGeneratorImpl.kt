@@ -176,6 +176,9 @@ private class TestGeneratorImplInstance(
 
                 override val imports: Set<Class<*>>
                     get() = super.imports
+
+                override val tags: List<String>
+                    get() = emptyList()
             }
         }
 

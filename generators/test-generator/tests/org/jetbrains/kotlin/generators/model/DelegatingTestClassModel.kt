@@ -25,4 +25,7 @@ open class DelegatingTestClassModel(private val delegate: TestClassModel) : Test
 
     override val annotations: Collection<AnnotationModel>
         get() = delegate.annotations
+
+    override val tags: List<String>
+        get() = delegate.tags
 }

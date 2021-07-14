@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.IOException
@@ -61,6 +62,12 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         for (annotationModel in testClassModel.annotations) {
             annotationModel.generate(this)
             println()
+        }
+    }
+
+    private fun Printer.generateTags(testEntityModel: TestEntityModel) {
+        for (tag in testEntityModel.tags) {
+            println("@Tag(\"$tag\")")
         }
     }
 
@@ -134,6 +141,9 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             p.println("import ${TestMetadata::class.java.canonicalName};")
             p.println("import ${Nested::class.java.canonicalName};")
             p.println("import ${Test::class.java.canonicalName};")
+            if (testClassModels.any { it.containsTags() }) {
+                p.println("import ${Tag::class.java.canonicalName};")
+            }
             p.println()
             p.println("import java.io.File;")
             p.println("import java.util.regex.Pattern;")
@@ -173,6 +183,9 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
 
                     override val imports: Set<Class<*>>
                         get() = super.imports
+
+                    override val tags: List<String>
+                        get() = emptyList()
                 }
             }
 
@@ -182,6 +195,7 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
 
         private fun generateTestClass(p: Printer, testClassModel: TestClassModel, isNested: Boolean) {
             p.generateNestedAnnotation(isNested)
+            p.generateTags(testClassModel)
             p.generateMetadata(testClassModel)
             p.generateTestDataPath(testClassModel)
             p.generateParameterAnnotations(testClassModel)
@@ -229,6 +243,7 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             val generator = methodGenerators.getValue(methodModel.kind)
 
             p.generateTestAnnotation()
+            p.generateTags(methodModel)
             p.generateMetadata(methodModel)
             generator.hackyGenerateSignature(methodModel, p)
             p.printWithNoIndent(" {")
@@ -251,5 +266,14 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             @Suppress("UNCHECKED_CAST")
             generateSignature(method as T, p)
         }
+    }
+
+    private fun TestEntityModel.containsTags(): Boolean {
+        if (this.tags.isNotEmpty()) return true
+        if (this is TestClassModel) {
+            if (innerTestClasses.any { it.containsTags() }) return true
+            if (methods.any { it.containsTags() }) return true
+        }
+        return false
     }
 }

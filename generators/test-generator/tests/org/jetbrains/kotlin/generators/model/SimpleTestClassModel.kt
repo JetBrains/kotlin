@@ -6,6 +6,8 @@ package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIdentifier
+import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
+import org.jetbrains.kotlin.generators.util.extractTagsFromTestFile
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -28,6 +30,7 @@ class SimpleTestClassModel(
     private val additionalRunnerArguments: List<String>,
     private val deep: Int?,
     override val annotations: Collection<AnnotationModel>,
+    override val tags: List<String>
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -60,6 +63,7 @@ class SimpleTestClassModel(
                         additionalRunnerArguments,
                         if (deep != null) deep - 1 else null,
                         annotations,
+                        extractTagsFromDirectory(file)
                     )
                 )
             }
@@ -85,7 +89,13 @@ class SimpleTestClassModel(
         if (!rootFile.isDirectory) {
             return@lazy listOf(
                 SimpleTestMethodModel(
-                    rootFile, rootFile, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
+                    rootFile,
+                    rootFile,
+                    filenamePattern,
+                    checkFilenameStartsLowerCase,
+                    targetBackend,
+                    skipIgnored,
+                    extractTagsFromTestFile(rootFile)
                 )
             )
         }
@@ -103,7 +113,7 @@ class SimpleTestClassModel(
                     result.add(
                         SimpleTestMethodModel(
                             rootFile, file, filenamePattern,
-                            checkFilenameStartsLowerCase, targetBackend, skipIgnored
+                            checkFilenameStartsLowerCase, targetBackend, skipIgnored, extractTagsFromTestFile(file)
                         )
                     )
                 }
@@ -143,6 +153,9 @@ class SimpleTestClassModel(
         override fun shouldBeGenerated(): Boolean {
             return true
         }
+
+        override val tags: List<String>
+            get() = emptyList()
     }
 
     companion object {

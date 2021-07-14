@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators
 
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.*
@@ -116,13 +117,15 @@ class TestGroup(
 
                     SingleClassTestModel(
                         rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations
+                        realTargetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations,
+                        extractTagsFromDirectory(rootFile)
                     )
                 } else {
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations
+                        realTargetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
+                        extractTagsFromDirectory(rootFile)
                     )
                 }
             )
