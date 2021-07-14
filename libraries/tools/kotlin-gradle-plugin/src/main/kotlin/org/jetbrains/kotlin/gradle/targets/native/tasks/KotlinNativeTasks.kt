@@ -423,8 +423,12 @@ constructor(
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings.enabledLanguageFeatures
 
+    @Deprecated("Unsupported and will be removed in next major releases", replaceWith = ReplaceWith("optInAnnotationsInUse"))
     val experimentalAnnotationsInUse: Set<String>
-        @Input get() = languageSettings.experimentalAnnotationsInUse
+        @Internal get() = languageSettings.experimentalAnnotationsInUse
+
+    val optInAnnotationsInUse: Set<String>
+        @Input get() = languageSettings.optInAnnotationsInUse
     // endregion.
 
     // region Kotlin options.
@@ -457,7 +461,7 @@ constructor(
         enabledLanguageFeatures.forEach { featureName ->
             add("-XXLanguage:+$featureName")
         }
-        experimentalAnnotationsInUse.forEach { annotationName ->
+        optInAnnotationsInUse.forEach { annotationName ->
             add("-Xopt-in=$annotationName")
         }
     }
@@ -622,7 +626,7 @@ constructor(
             it.enabledLanguageFeatures.forEach { featureName ->
                 add("-XXLanguage:+$featureName")
             }
-            it.experimentalAnnotationsInUse.forEach { annotationName ->
+            it.optInAnnotationsInUse.forEach { annotationName ->
                 add("-Xopt-in=$annotationName")
             }
         }
