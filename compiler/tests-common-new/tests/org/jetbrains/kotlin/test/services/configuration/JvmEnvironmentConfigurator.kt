@@ -172,6 +172,9 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             TestJdkKind.FULL_JDK_15 -> {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk15Home())
             }
+            TestJdkKind.FULL_JDK_17 -> {
+                configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk17Home())
+            }
             TestJdkKind.FULL_JDK -> {
                 if (SystemInfo.IS_AT_LEAST_JAVA9) {
                     configuration.put(JVMConfigurationKeys.JDK_HOME, File(System.getProperty("java.home")))

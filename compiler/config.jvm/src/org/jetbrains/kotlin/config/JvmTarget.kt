@@ -33,6 +33,7 @@ enum class JvmTarget(
     JVM_14("14", Opcodes.V12 + 2),
     JVM_15("15", Opcodes.V12 + 3),
     JVM_16("16", Opcodes.V12 + 4),
+    JVM_17("17", Opcodes.V12 + 5),
     ;
 
     companion object {

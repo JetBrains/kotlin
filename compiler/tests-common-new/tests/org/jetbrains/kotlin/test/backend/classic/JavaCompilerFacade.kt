@@ -84,6 +84,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
             JvmTarget.JVM_9 -> KtTestUtil.getJdk9Home()
             JvmTarget.JVM_11 -> KtTestUtil.getJdk11Home()
             JvmTarget.JVM_15 -> KtTestUtil.getJdk15Home()
+            JvmTarget.JVM_17 -> KtTestUtil.getJdk17Home()
             else -> null
         } ?: error("JDK for $jvmTarget is not found")
 

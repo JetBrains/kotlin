@@ -109,6 +109,47 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
 
     @Nested
     @Tag("<modernJava>")
+    @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithJava17 {
+        @Test
+        public void testAllFilesPresentInTestsWithJava17() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("compiledJavaSealedClass.kt")
+        public void testCompiledJavaSealedClass() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/compiledJavaSealedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("compiledJavaSealedInterface.kt")
+        public void testCompiledJavaSealedInterface() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/compiledJavaSealedInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("javaSealedClass.kt")
+        public void testJavaSealedClass() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/javaSealedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("javaSealedInterface.kt")
+        public void testJavaSealedInterface() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/javaSealedInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("sealedJavaClassViaJavaReflection.kt")
+        public void testSealedJavaClassViaJavaReflection() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealedJavaClassViaJavaReflection.kt");
+        }
+    }
+
+    @Nested
+    @Tag("<modernJava>")
     @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava9")
     @TestDataPath("$PROJECT_ROOT")
     public class TestsWithJava9 {

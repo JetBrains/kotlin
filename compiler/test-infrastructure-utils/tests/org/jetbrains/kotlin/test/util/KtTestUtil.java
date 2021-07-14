@@ -116,7 +116,10 @@ public class KtTestUtil {
 
     @NotNull
     private static File getJdkHome(@NotNull String prop, @Nullable String otherProp, @NotNull String propToReport) {
-        String jdk = System.getenv(prop);
+        String jdk = System.getProperty(prop);
+        if (jdk == null) {
+            jdk = System.getenv(prop);
+        }
         if (jdk == null) {
             if (otherProp != null) {
                 return getJdkHome(otherProp, null, prop);
@@ -150,6 +153,11 @@ public class KtTestUtil {
     @NotNull
     public static File getJdk15Home() {
         return getJdkHome("JDK_15", "JDK_15_0");
+    }
+
+    @NotNull
+    public static File getJdk17Home() {
+        return getJdkHome("JDK_17_0", "JDK_17");
     }
 
     @NotNull
