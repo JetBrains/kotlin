@@ -483,6 +483,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
+        val TYPE_PARAMETER_AS_REIFIED_ARRAY by error<PsiElement> {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+        }
+
+        val TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING by warning<PsiElement> {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+        }
+
         val FINAL_UPPER_BOUND by warning<KtTypeReference> {
             parameter<ConeKotlinType>("type")
         }

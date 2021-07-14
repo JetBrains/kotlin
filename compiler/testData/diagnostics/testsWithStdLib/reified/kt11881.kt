@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Inv<T>
 
 inline operator fun <reified T> Inv<T>.invoke() {}

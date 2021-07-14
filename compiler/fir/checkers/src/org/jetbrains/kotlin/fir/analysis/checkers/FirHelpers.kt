@@ -601,23 +601,19 @@ fun extractArgumentTypeRefAndSource(typeRef: FirTypeRef?, index: Int): FirTypeRe
     if (typeRef is FirResolvedTypeRef) {
         val delegatedTypeRef = typeRef.delegatedTypeRef
         if (delegatedTypeRef is FirUserTypeRef) {
-            var currentTypeArguments: List<FirTypeProjection>? = null
             var currentIndex = index
             val qualifier = delegatedTypeRef.qualifier
 
             for (i in qualifier.size - 1 downTo 0) {
                 val typeArguments = qualifier[i].typeArgumentList.typeArguments
                 if (currentIndex < typeArguments.size) {
-                    currentTypeArguments = typeArguments
-                    break
+                    val typeArgument = typeArguments.elementAtOrNull(currentIndex)
+                    return if (typeArgument is FirTypeProjection)
+                        FirTypeRefSource((typeArgument as? FirTypeProjectionWithVariance)?.typeRef, typeArgument.source)
+                    else null
                 } else {
                     currentIndex -= typeArguments.size
                 }
-            }
-
-            val typeArgument = currentTypeArguments?.elementAtOrNull(currentIndex)
-            if (typeArgument is FirTypeProjection) {
-                return FirTypeRefSource((typeArgument as? FirTypeProjectionWithVariance)?.typeRef, typeArgument.source)
             }
         } else if (delegatedTypeRef is FirFunctionTypeRef) {
             val valueParameters = delegatedTypeRef.valueParameters

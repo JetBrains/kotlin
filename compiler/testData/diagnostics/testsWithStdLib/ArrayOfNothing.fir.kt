@@ -50,6 +50,6 @@ fun test6() = foo<Nothing>()
 
 class B<T>(val array: Array<T>)
 
-fun <T> bar() = B<Array<T>>(arrayOf())
+fun <T> bar() = B<Array<T>>(<!TYPE_PARAMETER_AS_REIFIED_ARRAY!>arrayOf<!>())
 
 fun test7() = bar<Nothing>()

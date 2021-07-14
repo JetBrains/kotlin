@@ -365,6 +365,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_I
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_REIFIED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER
@@ -782,6 +784,16 @@ class FirDefaultErrorMessages {
             )
 
             map.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead", SYMBOL)
+            map.put(
+                TYPE_PARAMETER_AS_REIFIED_ARRAY,
+                "Cannot use ''{0}'' as reified type parameter, since the array type parameter is not reified.",
+                SYMBOL
+            )
+            map.put(
+                TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING,
+                "Cannot use ''{0}'' as reified type parameter, since the array type parameter is not reified.",
+                SYMBOL
+            )
             map.put(
                 FINAL_UPPER_BOUND,
                 "''{0}'' is a final type, and thus a value of the type parameter is predetermined",

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 fun <T> fail1(): Array<T> = <!TYPE_PARAMETER_AS_REIFIED!>Array<!>(1) { null!! }
 fun <T> ok1(block: () -> Array<T>): Array<T> = block()

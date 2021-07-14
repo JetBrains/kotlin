@@ -11,11 +11,11 @@ fun <T> id(p: T): T = p
 fun <A> main() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>f<!>()
 
-    val a: A = f()
-    f<A>()
+    val a: A = <!TYPE_PARAMETER_AS_REIFIED!>f<!>()
+    f<<!TYPE_PARAMETER_AS_REIFIED!>A<!>>()
 
     val b: Int = f()
     f<Int>()
 
-    val с: A = id(f())
+    val с: A = id(<!TYPE_PARAMETER_AS_REIFIED!>f<!>())
 }

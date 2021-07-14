@@ -41,6 +41,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allFunctionCallCheckers.check(functionCall, data, reporter)
     }
 
+    override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: CheckerContext) {
+        checkers.allFunctionCallCheckers.check(implicitInvokeCall, data, reporter)
+    }
+
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: CheckerContext) {
         checkers.allCallableReferenceAccessCheckers.check(callableReferenceAccess, data, reporter)
     }

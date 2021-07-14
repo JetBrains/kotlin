@@ -1643,6 +1643,22 @@ internal class TypeParameterAsReifiedImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class TypeParameterAsReifiedArrayImpl(
+    override val typeParameter: KtTypeParameterSymbol,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.TypeParameterAsReifiedArray(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class TypeParameterAsReifiedArrayWarningImpl(
+    override val typeParameter: KtTypeParameterSymbol,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.TypeParameterAsReifiedArrayWarning(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class FinalUpperBoundImpl(
     override val type: KtType,
     firDiagnostic: FirPsiDiagnostic,

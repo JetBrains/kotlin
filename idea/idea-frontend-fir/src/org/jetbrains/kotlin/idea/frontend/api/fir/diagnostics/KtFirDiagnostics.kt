@@ -1024,6 +1024,16 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeParameter: KtTypeParameterSymbol
     }
 
+    abstract class TypeParameterAsReifiedArray : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeParameterAsReifiedArray::class
+        abstract val typeParameter: KtTypeParameterSymbol
+    }
+
+    abstract class TypeParameterAsReifiedArrayWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeParameterAsReifiedArrayWarning::class
+        abstract val typeParameter: KtTypeParameterSymbol
+    }
+
     abstract class FinalUpperBound : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = FinalUpperBound::class
         abstract val type: KtType
