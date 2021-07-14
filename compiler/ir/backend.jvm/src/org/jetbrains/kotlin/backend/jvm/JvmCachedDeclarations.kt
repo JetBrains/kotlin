@@ -149,18 +149,18 @@ class JvmCachedDeclarations(
             if (jvmStaticFunction.isExternal) {
                 // We move external functions to the enclosing class and potentially add accessors there.
                 // The JVM backend also adds accessors in the companion object, but these are superfluous.
-                // TODO: this should really do the same as `makeProxy`, but without a body; otherwise, external
-                //   functions in interface companions won't work (KT-43696).
                 val staticExternal = context.irFactory.buildFun {
                     updateFrom(jvmStaticFunction)
                     name = jvmStaticFunction.name
                     returnType = jvmStaticFunction.returnType
                 }.apply {
                     parent = companion.parent
-                    copyTypeParametersFrom(jvmStaticFunction)
+                    copyAttributes(jvmStaticFunction)
                     copyAnnotationsFrom(jvmStaticFunction)
-                    extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
-                    valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
+                    copyCorrespondingPropertyFrom(jvmStaticFunction)
+                    copyParameterDeclarationsFrom(jvmStaticFunction)
+                    dispatchReceiverParameter = null
+                    metadata = jvmStaticFunction.metadata
                 }
                 staticExternal to companion.makeProxy(staticExternal, isStatic = false)
             } else {
