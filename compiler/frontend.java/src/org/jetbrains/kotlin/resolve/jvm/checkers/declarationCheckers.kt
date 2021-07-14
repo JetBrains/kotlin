@@ -90,7 +90,7 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
                 supportJvmStaticInInterface &&
                 descriptor is DeclarationDescriptorWithVisibility
             ) {
-                checkVisibility(descriptor, diagnosticHolder, declaration)
+                checkForInterface(descriptor, diagnosticHolder, declaration)
                 if (isLessJVM18) {
                     diagnosticHolder.report(ErrorsJvm.JVM_STATIC_IN_INTERFACE_1_6.on(declaration))
                 }
@@ -116,15 +116,18 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
         }
     }
 
-    private fun checkVisibility(
+    private fun checkForInterface(
         descriptor: DeclarationDescriptorWithVisibility,
         diagnosticHolder: DiagnosticSink,
         declaration: KtDeclaration
     ) {
         if (descriptor.visibility != DescriptorVisibilities.PUBLIC) {
             diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_NON_PUBLIC_MEMBER.on(declaration))
+        } else if (descriptor is MemberDescriptor && descriptor.isExternal) {
+            diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE.on(declaration))
         } else if (descriptor is PropertyDescriptor) {
-            descriptor.setter?.let { checkVisibility(it, diagnosticHolder, declaration) }
+            descriptor.getter?.let { checkForInterface(it, diagnosticHolder, declaration) }
+            descriptor.setter?.let { checkForInterface(it, diagnosticHolder, declaration) }
         }
     }
 }
