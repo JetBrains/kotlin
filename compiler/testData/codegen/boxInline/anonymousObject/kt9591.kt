@@ -13,7 +13,7 @@ inline fun inlineFun(p: () -> Unit) {
 
 import test.*
 
-public fun box(): String {
+fun box(): String {
     var z = "fail"
     inlineFun {
         val obj = object  {

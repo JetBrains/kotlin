@@ -3,7 +3,7 @@ class Derived: Base
 class Another: Base
 operator fun Base.inc(): Derived { return Derived() }
 
-public fun box() : String {
+fun box() : String {
     var i : Base
     i = Another()
     val j = i++

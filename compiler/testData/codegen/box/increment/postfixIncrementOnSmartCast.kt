@@ -1,4 +1,4 @@
-public fun box() : String {
+fun box() : String {
     var i : Int?
     i = 10
     // Postfix increment on a smart cast should work

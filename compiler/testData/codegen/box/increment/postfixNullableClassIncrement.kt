@@ -2,7 +2,7 @@ class MyClass
 
 operator fun MyClass?.inc(): MyClass? = null
 
-public fun box() : String {
+fun box() : String {
     var i : MyClass? 
     i = MyClass()
     val j = i++
