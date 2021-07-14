@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnceWrtDiagnosticFactoryList
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.psiExpression
 import org.jetbrains.kotlin.resolve.calls.tower.psiKotlinCall
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -51,7 +54,7 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
     ): Boolean {
         val resultingDescriptor = resolvedCall.resultingDescriptor
         val expectedType = context.resolutionContext.expectedType
-        val inferredReturnType = resultingDescriptor.returnType
+        val inferredReturnType = resultingDescriptor.returnType ?: return false
         val isBuiltinFunctionalType =
             resolvedCall.resultingDescriptor.dispatchReceiverParameter?.value?.type?.isBuiltinFunctionalType == true
 
@@ -61,12 +64,13 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
         val lambdasFromArgumentsReturnTypes =
             resolvedCall.candidateDescriptor.valueParameters.filter { it.type.isFunctionOrSuspendFunctionType }
                 .map { it.returnType?.arguments?.last()?.type }.toSet()
-        val unsubstitutedReturnType = resultingDescriptor.original.returnType
-        val hasImplicitNothing = inferredReturnType?.isNothingOrNullableNothing() == true &&
-                unsubstitutedReturnType?.isTypeParameter() == true &&
-                (TypeUtils.noExpectedType(expectedType) || !expectedType.isNothing())
+        val unsubstitutedReturnType = resultingDescriptor.original.returnType ?: return false
+        val hasImplicitNothing = inferredReturnType.isNothingOrNullableNothing()
+                && unsubstitutedReturnType.isTypeParameter()
+                && (isOwnTypeParameter(unsubstitutedReturnType, resultingDescriptor.original) || isDelegationContext(context))
+                && (TypeUtils.noExpectedType(expectedType) || !expectedType.isNothing())
 
-        if (inferredReturnType?.isNullableNothing() == true && unsubstitutedReturnType?.isMarkedNullable == false) {
+        if (inferredReturnType.isNullableNothing() && !unsubstitutedReturnType.isMarkedNullable) {
             return false
         }
 
@@ -80,6 +84,14 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
 
         return false
     }
+
+    private fun isOwnTypeParameter(type: KotlinType, declaration: CallableDescriptor): Boolean {
+        val typeParameter = type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
+        return typeParameter.containingDeclaration == declaration
+    }
+
+    private fun isDelegationContext(context: CallCheckerContext) =
+        context.resolutionContext.scope.kind == LexicalScopeKind.PROPERTY_DELEGATE_METHOD
 
     private fun ResolvedAtom.getResolvedCallAtom(bindingContext: BindingContext): ResolvedCallAtom? {
         if (this is SingleCallResolutionResult) return resultCallAtom
