@@ -143,7 +143,7 @@ object GenerationUtils {
         return generationState
     }
 
-    private fun messageCollectorLogger(collector: MessageCollector) = object : Logger {
+    fun messageCollectorLogger(collector: MessageCollector) = object : Logger {
         override fun warning(message: String) = collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
         override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
         override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
