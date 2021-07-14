@@ -563,13 +563,24 @@ class FirCallResolver(
         functionCallExpected: Boolean = false
     ): FirNamedReference {
         val source = reference.source
+
+        fun chooseMostSpecific(candidates: Collection<Candidate>): Set<Candidate> {
+            // TODO: do we have a guarantee that the most specific one (latest override) will come first?
+            candidates.firstOrNull()?.let {
+                return setOf(it)
+            }
+            return emptySet()
+        }
+
+        val bestCandidates = chooseMostSpecific(candidates)
+
         return when {
             functionCallExpected -> {
                 fun isValueParametersNotEmpty(candidate: Candidate): Boolean {
                     return (candidate.symbol.fir as? FirFunction)?.valueParameters?.size?.let { it > 0 } ?: false
                 }
 
-                val candidate = candidates.singleOrNull()
+                val candidate = bestCandidates.singleOrNull()
                 if (candidate != null) {
                     createErrorReferenceWithExistingCandidate(
                         candidate,
@@ -581,26 +592,26 @@ class FirCallResolver(
                 } else {
                     buildErrorReference(
                         callInfo,
-                        ConeFunctionCallExpectedError(name, candidates.any { isValueParametersNotEmpty(it) }),
+                        ConeFunctionCallExpectedError(name, bestCandidates.any { isValueParametersNotEmpty(it) }),
                         source
                     )
                 }
             }
 
-            candidates.isEmpty() -> buildErrorReference(
+            bestCandidates.isEmpty() -> buildErrorReference(
                 callInfo,
                 ConeUnresolvedNameError(name),
                 source
             )
 
-            candidates.size > 1 -> buildErrorReference(
+            bestCandidates.size > 1 -> buildErrorReference(
                 callInfo,
                 ConeAmbiguityError(name, applicability, candidates),
                 source
             )
 
             !applicability.isSuccess -> {
-                val candidate = candidates.single()
+                val candidate = bestCandidates.single()
                 val diagnostic = when (applicability) {
                     CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate.symbol)
                     else -> ConeInapplicableCandidateError(applicability, candidate)
@@ -615,7 +626,7 @@ class FirCallResolver(
             }
 
             else -> {
-                val candidate = candidates.single()
+                val candidate = bestCandidates.single()
                 val coneSymbol = candidate.symbol
                 if (coneSymbol is FirBackingFieldSymbol) {
                     coneSymbol.fir.isReferredViaField = true

@@ -29568,6 +29568,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("propertyOverrides.kt")
+            public void testPropertyOverrides() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/publicType/propertyOverrides.kt");
+            }
+
+            @Test
             @TestMetadata("samplePublicPropertyType.kt")
             public void testSamplePublicPropertyType() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/publicType/samplePublicPropertyType.kt");

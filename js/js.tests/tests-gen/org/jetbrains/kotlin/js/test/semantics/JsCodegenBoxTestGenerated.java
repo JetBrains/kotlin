@@ -19347,6 +19347,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/publicType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
+            @TestMetadata("propertyOverrides.kt")
+            public void testPropertyOverrides() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/publicType/propertyOverrides.kt");
+            }
+
             @TestMetadata("samplePublicPropertyType.kt")
             public void testSamplePublicPropertyType() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/publicType/samplePublicPropertyType.kt");
