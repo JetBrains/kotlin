@@ -32,6 +32,7 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, arguments.useFirExperimentalCheckers)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
     putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, arguments.dumpArgumentsDir)
+    putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, System.getenv("KOTLIN_DUMP_MODEL").takeUnless { it.isEmpty() })
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
