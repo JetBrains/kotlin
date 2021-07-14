@@ -1,0 +1,19 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+kotlin {
+    sourceSets {
+        main {
+            languageSettings {
+                useExperimentalAnnotation("kotlin.RequiresOptIn")
+                useExperimentalAnnotation("FooAnnotation")
+            }
+        }
+    }
+}
