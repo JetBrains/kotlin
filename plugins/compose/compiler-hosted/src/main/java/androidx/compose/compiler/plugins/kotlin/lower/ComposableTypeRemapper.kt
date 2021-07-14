@@ -62,12 +62,12 @@ import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
@@ -462,8 +462,5 @@ class ComposerTypeRemapper(
         )
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrConstructorCall.isComposableAnnotation() =
-    @Suppress("DEPRECATION")
-    this.symbol.descriptor.returnType.constructor.declarationDescriptor?.fqNameSafe ==
-        ComposeFqNames.Composable
+    this.symbol.owner.parent.fqNameForIrSerialization == ComposeFqNames.Composable
