@@ -1,4 +1,3 @@
-// JVM_TARGET: 9
 
 fun test(a: String, b: String?): String {
     return a + "\u0001" + 2.toChar() + 3.toChar() + 4L + b + 5.0 + 6F + '7' + b + "\u0002" + 1.toChar()

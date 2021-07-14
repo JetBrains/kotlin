@@ -1,4 +1,3 @@
-// JVM_TARGET: 15
 // ENABLE_JVM_PREVIEW
 // FILE: MyRec.java
 public record MyRec(String name) implements KI {

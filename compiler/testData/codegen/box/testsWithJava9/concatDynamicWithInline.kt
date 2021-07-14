@@ -1,5 +1,4 @@
 // STRING_CONCAT: indy-with-constants
-// JVM_TARGET: 9
 inline fun test(crossinline s: (String) -> String): String {
     var result = "1" + s("2") + "3" + 4 + {
         "5" + s("6") + "7"

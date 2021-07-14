@@ -1,6 +1,5 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
-// JVM_TARGET: 15
 // ENABLE_JVM_PREVIEW
 // !JVM_DEFAULT_MODE: enable
 

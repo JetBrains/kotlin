@@ -1,5 +1,4 @@
 // STRING_CONCAT: indy-with-constants
-// JVM_TARGET: 9
 inline class Str(val s: String)
 inline class NStr(val s: String?)
 

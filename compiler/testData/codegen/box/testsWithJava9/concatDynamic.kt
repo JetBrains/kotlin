@@ -1,5 +1,4 @@
 // STRING_CONCAT: indy-with-constants
-// JVM_TARGET: 9
 fun box(): String {
     val p = 3147483648u
     val a = "_"

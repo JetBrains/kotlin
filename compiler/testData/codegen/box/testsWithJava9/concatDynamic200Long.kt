@@ -1,5 +1,4 @@
 // STRING_CONCAT: indy-with-constants
-// JVM_TARGET: 9
 fun test(z: Long): String {
     val result = "" + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
             z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
