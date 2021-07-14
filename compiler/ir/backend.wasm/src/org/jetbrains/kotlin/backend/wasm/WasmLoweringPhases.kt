@@ -365,6 +365,12 @@ private val builtInsLoweringPhase = makeWasmModulePhase(
     description = "Lower IR builtins"
 )
 
+private val objectInstanceEqualsLowering = makeWasmModulePhase(
+    ::ObjectInstanceEqualsLowering,
+    name = "ObjectInstanceEquals",
+    description = "Optimize equals calls for object instances"
+)
+
 private val objectDeclarationLoweringPhase = makeWasmModulePhase(
     ::ObjectDeclarationLowering,
     name = "ObjectDeclarationLowering",
@@ -481,6 +487,7 @@ val wasmPhases = NamedCompilerPhase(
 
             eraseVirtualDispatchReceiverParametersTypes then
             bridgesConstructionPhase then
+            objectInstanceEqualsLowering then
             objectDeclarationLoweringPhase then
             fieldInitializersLoweringPhase then
             genericReturnTypeLowering then

@@ -697,6 +697,12 @@ private val staticMembersLoweringPhase = makeDeclarationTransformerPhase(
     description = "Move static member declarations to top-level"
 )
 
+private val objectInstanceEqualsLowering = makeBodyLoweringPhase(
+    ::ObjectInstanceEqualsLowering,
+    name = "ObjectInstanceEquals",
+    description = "Optimize equals calls for object instances"
+)
+
 private val objectDeclarationLoweringPhase = makeDeclarationTransformerPhase(
     ::ObjectDeclarationLowering,
     name = "ObjectDeclarationLowering",
@@ -812,6 +818,7 @@ private val loweringList = listOf<Lowering>(
     inlineClassUsageLoweringPhase,
     autoboxingTransformerPhase,
     blockDecomposerLoweringPhase,
+    objectInstanceEqualsLowering,
     objectDeclarationLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,

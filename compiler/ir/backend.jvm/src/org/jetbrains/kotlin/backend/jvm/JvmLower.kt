@@ -282,6 +282,12 @@ private val notifyCodegenStartPhase = makeCustomPhase<JvmBackendContext, IrModul
     description = "Notify time measuring subsystem that code generation is being started",
 )
 
+private val objectInstanceEqualsLowering = makeIrFilePhase(
+    ::ObjectInstanceEqualsLowering,
+    name = "ObjectInstanceEquals",
+    description = "Optimize equals calls for object instances"
+)
+
 private fun codegenPhase(generateMultifileFacade: Boolean): NamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
     val suffix = if (generateMultifileFacade) "MultifileFacades" else "Regular"
     val descriptionSuffix = if (generateMultifileFacade) ", multifile facades" else ", regular files"
@@ -353,6 +359,7 @@ private val jvmFilePhases = listOf(
     makePatchParentsPhase(1),
 
     enumWhenPhase,
+    objectInstanceEqualsLowering,
     singletonReferencesPhase,
 
     singleAbstractMethodPhase,

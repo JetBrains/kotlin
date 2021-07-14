@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -49,7 +50,8 @@ class IrBuiltIns(
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
     val packageFragment = symbolTable.declareExternalPackageFragmentIfNotExists(packageFragmentDescriptor)
 
-    private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
+    fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
+
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     private fun defineOperator(name: String, returnType: IrType, valueParameterTypes: List<IrType>): IrSimpleFunctionSymbol {

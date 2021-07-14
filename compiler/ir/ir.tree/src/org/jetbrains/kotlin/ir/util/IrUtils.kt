@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -607,3 +608,10 @@ internal fun <T> IrConst<T>.shallowCopy() = IrConstImpl(
     kind,
     value
 )
+
+private val EQUALS_IDENTIFIER = Name.identifier("equals")
+
+fun IrFunction.isEqualsInheritedFromAny() = name == EQUALS_IDENTIFIER &&
+        dispatchReceiverParameter != null &&
+        valueParameters.size == 1 &&
+        valueParameters[0].type.isNullableAny()

@@ -58,12 +58,6 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext?): Boolean {
     return (isEffectivelyExternal() || getJsName() != null || isExported(context)) && namedOrMissingGetter
 }
 
-fun IrFunction.isEqualsInheritedFromAny() =
-    name == Name.identifier("equals") &&
-            dispatchReceiverParameter != null &&
-            valueParameters.size == 1 &&
-            valueParameters[0].type.isNullableAny()
-
 fun IrDeclaration.hasStaticDispatch() = when (this) {
     is IrSimpleFunction -> dispatchReceiverParameter == null
     is IrProperty -> isTopLevelDeclaration

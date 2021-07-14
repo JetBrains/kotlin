@@ -13,10 +13,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
-import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
-import org.jetbrains.kotlin.name.Name
 
 internal class Common private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex, StateWithClosure {
     override val upValues: MutableList<Variable> = mutableListOf()
@@ -48,10 +47,8 @@ internal class Common private constructor(override val irClass: IrClass, overrid
     fun getEqualsFunction(): IrSimpleFunction {
         val equalsFun = irClass.declarations
             .filterIsInstance<IrSimpleFunction>()
-            .single {
-                it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null
-                        && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
-            }
+            .single { it.isEqualsInheritedFromAny() }
+
         return getOverridden(equalsFun)
     }
 
