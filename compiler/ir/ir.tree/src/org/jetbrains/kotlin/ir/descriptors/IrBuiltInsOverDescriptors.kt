@@ -516,18 +516,6 @@ class IrBuiltInsOverDescriptors(
                 KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
     }
 
-    override fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-        functionFactory.functionN(arity, declarator)
-
-    override fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-        functionFactory.kFunctionN(arity, declarator)
-
-    override fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-        functionFactory.suspendFunctionN(arity, declarator)
-
-    override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-        functionFactory.kSuspendFunctionN(arity, declarator)
-
     override fun functionN(arity: Int): IrClass = functionFactory.functionN(arity)
     override fun kFunctionN(arity: Int): IrClass = functionFactory.kFunctionN(arity)
     override fun suspendFunctionN(arity: Int): IrClass = functionFactory.suspendFunctionN(arity)

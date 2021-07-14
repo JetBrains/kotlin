@@ -135,7 +135,6 @@ abstract class IrBuiltIns {
     abstract val checkNotNullSymbol: IrSimpleFunctionSymbol
     abstract val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol
     abstract val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol
-    abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
     abstract val enumClass: IrClassSymbol
 
     abstract val intPlusSymbol: IrSimpleFunctionSymbol
@@ -147,19 +146,6 @@ abstract class IrBuiltIns {
     abstract val arrayOf: IrSimpleFunctionSymbol
     abstract val arrayOfNulls: IrSimpleFunctionSymbol
 
-    abstract fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    abstract fun getNonBuiltinFunctionsByReturnType(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    abstract fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-
     abstract fun functionN(arity: Int): IrClass
     abstract fun kFunctionN(arity: Int): IrClass
     abstract fun suspendFunctionN(arity: Int): IrClass
@@ -170,7 +156,18 @@ abstract class IrBuiltIns {
     abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
     abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
     abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
+
+    abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
+
     abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
+
+    abstract fun getNonBuiltInFunctionsByExtensionReceiver(
+        name: Name, vararg packageNameSegments: String
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
+
+    abstract fun getNonBuiltinFunctionsByReturnType(
+        name: Name, vararg packageNameSegments: String
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
     abstract fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol
     abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol

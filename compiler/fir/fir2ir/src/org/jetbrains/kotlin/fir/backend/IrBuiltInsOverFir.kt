@@ -530,16 +530,6 @@ class IrBuiltInsOverFir(
     private val suspendFunctionNMap = mutableMapOf<Int, IrClass>()
     private val kSuspendFunctionNMap = mutableMapOf<Int, IrClass>()
 
-    override fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass = functionN(arity)
-
-    override fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass = kFunctionN(arity)
-
-    override fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-        suspendFunctionN(arity)
-
-    override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-        kSuspendFunctionN(arity)
-
     override fun functionN(arity: Int): IrClass = functionNMap.getOrPut(arity) {
         referenceClassByClassId(StandardNames.getFunctionClassId(arity))!!.owner
     }
