@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.profile
@@ -75,6 +76,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         try {
             val konanConfig = KonanConfig(project, configuration)
+            ensureModuleName(konanConfig, environment)
             runTopLevelPhases(konanConfig, environment)
         } catch (e: KonanCompilationException) {
             return ExitCode.COMPILATION_ERROR
@@ -99,6 +101,18 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     fun Array<String>?.toNonNullList(): List<String> {
         return this?.asList<String>() ?: listOf<String>()
+    }
+
+    private fun ensureModuleName(config: KonanConfig, environment: KotlinCoreEnvironment) {
+        if (environment.getSourceFiles().isEmpty()) {
+            val libraries = config.resolvedLibraries.getFullList()
+            val moduleName = config.moduleId
+            if (libraries.any { it.uniqueName == moduleName }) {
+                val kexeModuleName = "${moduleName}_kexe"
+                config.configuration.put(KonanConfigKeys.MODULE_NAME, kexeModuleName)
+                assert(libraries.none { it.uniqueName == kexeModuleName })
+            }
+        }
     }
 
     // It is executed before doExecute().
