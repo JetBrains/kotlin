@@ -20,6 +20,8 @@ interface B {
 
         }
 
+        @JvmStatic external fun a5()
+
         @JvmStatic
         var foo = 1
 
@@ -52,6 +54,10 @@ interface B {
         public var foo9 = 1
         @JvmStatic private set
 
+        @JvmStatic
+        val foo10: Int external get
+
+        val foo11: Int @JvmStatic external get
     }
 
 }

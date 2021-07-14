@@ -19,6 +19,8 @@ interface B {
 
         }
 
+        <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external fun a5()<!>
+
         @JvmStatic
         var foo = 1
 
@@ -51,6 +53,10 @@ interface B {
         public var foo9 = 1
         <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic private set<!>
 
+        <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic
+        val foo10: Int<!> external get
+
+        val foo11: Int <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external get<!>
     }
 
 }
