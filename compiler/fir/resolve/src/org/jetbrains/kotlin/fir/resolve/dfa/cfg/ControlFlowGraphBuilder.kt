@@ -1038,7 +1038,12 @@ class ControlFlowGraphBuilder {
         checkNotNullCall: FirCheckNotNullCall,
         callCompleted: Boolean
     ): Pair<CheckNotNullCallNode, UnionFunctionCallArgumentsNode?> {
-        val node = createCheckNotNullCallNode(checkNotNullCall).also { addNewSimpleNode(it) }
+        val node = createCheckNotNullCallNode(checkNotNullCall)
+        if (checkNotNullCall.resultType.isNothing) {
+            addNodeThatReturnsNothing(node)
+        } else {
+            addNewSimpleNode(node)
+        }
         val unionNode = processUnionOfArguments(node, callCompleted).second
         return node to unionNode
     }
