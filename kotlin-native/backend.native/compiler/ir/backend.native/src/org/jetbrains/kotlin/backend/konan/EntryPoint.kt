@@ -79,10 +79,12 @@ internal fun makeEntryPoint(context: Context): IrFunction {
             }
             catches += irCatch(context.irBuiltIns.throwableType).apply {
                 result = irBlock {
-                    +irCall(context.ir.symbols.onUnhandledException).apply {
+                    +irCall(context.ir.symbols.processUnhandledException).apply {
                         putValueArgument(0, irGet(catchParameter))
                     }
-                    +irReturn(irInt(1))
+                    +irCall(context.ir.symbols.terminateWithUnhandledException).apply {
+                        putValueArgument(0, irGet(catchParameter))
+                    }
                 }
             }
         }

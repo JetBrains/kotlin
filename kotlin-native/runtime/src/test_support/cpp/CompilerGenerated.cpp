@@ -51,6 +51,8 @@ struct KBox {
 
 testing::StrictMock<testing::MockFunction<KInt()>>* createCleanerWorkerMock = nullptr;
 testing::StrictMock<testing::MockFunction<void(KInt, bool)>>* shutdownCleanerWorkerMock = nullptr;
+testing::StrictMock<testing::MockFunction<void(KRef)>>* reportUnhandledExceptionMock = nullptr;
+testing::StrictMock<testing::MockFunction<void(KRef)>>* Kotlin_runUnhandledExceptionHookMock = nullptr;
 
 } // namespace
 
@@ -190,15 +192,19 @@ void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker) {
 }
 
 void ReportUnhandledException(KRef throwable) {
-    konan::consolePrintf("Uncaught Kotlin exception.");
+    if (!reportUnhandledExceptionMock) throw std::runtime_error("Not implemented for tests");
+
+    return reportUnhandledExceptionMock->Call(throwable);
 }
 
 RUNTIME_NORETURN OBJ_GETTER(DescribeObjectForDebugging, KConstNativePtr typeInfo, KConstNativePtr address) {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void OnUnhandledException(KRef throwable) {
-    throw std::runtime_error("Not implemented for tests");
+void Kotlin_runUnhandledExceptionHook(KRef throwable) {
+    if (!Kotlin_runUnhandledExceptionHookMock) throw std::runtime_error("Not implemented for tests");
+
+    return Kotlin_runUnhandledExceptionHookMock->Call(throwable);
 }
 
 void Kotlin_WorkerBoundReference_freezeHook(KRef thiz) {
@@ -284,4 +290,12 @@ ScopedStrictMockFunction<KInt()> ScopedCreateCleanerWorkerMock() {
 
 ScopedStrictMockFunction<void(KInt, bool)> ScopedShutdownCleanerWorkerMock() {
     return ScopedStrictMockFunction<void(KInt, bool)>(&shutdownCleanerWorkerMock);
+}
+
+ScopedStrictMockFunction<void(KRef)> ScopedReportUnhandledExceptionMock() {
+    return ScopedStrictMockFunction<void(KRef)>(&reportUnhandledExceptionMock);
+}
+
+ScopedStrictMockFunction<void(KRef)> ScopedKotlin_runUnhandledExceptionHookMock() {
+    return ScopedStrictMockFunction<void(KRef)>(&Kotlin_runUnhandledExceptionHookMock);
 }

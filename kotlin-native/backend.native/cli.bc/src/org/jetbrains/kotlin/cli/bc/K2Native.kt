@@ -329,6 +329,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     }
                 })
                 put(PROPERTY_LAZY_INITIALIZATION, arguments.propertyLazyInitialization)
+                put(WORKER_EXCEPTION_HANDLING, when (arguments.workerExceptionHandling) {
+                    null -> if (memoryModel == MemoryModel.EXPERIMENTAL) WorkerExceptionHandling.USE_HOOK else WorkerExceptionHandling.LEGACY
+                    "legacy" -> WorkerExceptionHandling.LEGACY
+                    "use-hook" -> WorkerExceptionHandling.USE_HOOK
+                    else -> {
+                        configuration.report(ERROR, "Unsupported worker exception handling mode ${arguments.workerExceptionHandling}")
+                        WorkerExceptionHandling.LEGACY
+                    }
+                })
             }
         }
     }

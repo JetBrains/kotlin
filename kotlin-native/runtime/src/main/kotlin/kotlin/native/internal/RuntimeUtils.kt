@@ -123,9 +123,6 @@ internal fun ReportUnhandledException(throwable: Throwable) {
     throwable.printStackTrace()
 }
 
-@GCUnsafeCall("TerminateWithUnhandledException")
-internal external fun TerminateWithUnhandledException(throwable: Throwable)
-
 // Using object to make sure that `hook` is initialized when it's needed instead of
 // in a normal global initialization flow. This is important if some global happens
 // to throw an exception during it's initialization before this hook would've been initialized.
@@ -138,10 +135,11 @@ internal object UnhandledExceptionHookHolder {
         }
 }
 
+// TODO: Can be removed only when native-mt coroutines stop using it.
 @PublishedApi
 @ExportForCppRuntime
 internal fun OnUnhandledException(throwable: Throwable) {
-    val handler = UnhandledExceptionHookHolder.hook.swap(null)
+    val handler = UnhandledExceptionHookHolder.hook.value
     if (handler == null) {
         ReportUnhandledException(throwable);
         return
@@ -151,6 +149,12 @@ internal fun OnUnhandledException(throwable: Throwable) {
     } catch (t: Throwable) {
         ReportUnhandledException(t)
     }
+}
+
+@ExportForCppRuntime("Kotlin_runUnhandledExceptionHook")
+internal fun runUnhandledExceptionHook(throwable: Throwable) {
+    val handler = UnhandledExceptionHookHolder.hook.value ?: throw throwable
+    handler(throwable)
 }
 
 @ExportForCppRuntime

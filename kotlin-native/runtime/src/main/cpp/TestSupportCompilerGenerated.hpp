@@ -60,3 +60,5 @@ private:
 
 ScopedStrictMockFunction<KInt()> ScopedCreateCleanerWorkerMock();
 ScopedStrictMockFunction<void(KInt, bool)> ScopedShutdownCleanerWorkerMock();
+ScopedStrictMockFunction<void(KRef)> ScopedReportUnhandledExceptionMock();
+ScopedStrictMockFunction<void(KRef)> ScopedKotlin_runUnhandledExceptionHookMock();

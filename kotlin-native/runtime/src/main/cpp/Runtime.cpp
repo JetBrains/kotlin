@@ -106,7 +106,7 @@ RuntimeState* initRuntime() {
           // Switch thread state because worker and globals inits require the runnable state.
           // This call may block if GC requested suspending threads.
           stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-          result->worker = WorkerInit(result->memoryState, true);
+          result->worker = WorkerInit(result->memoryState);
           firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
           if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
               konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
@@ -130,7 +130,7 @@ RuntimeState* initRuntime() {
           // Switch thread state because worker and globals inits require the runnable state.
           // This call may block if GC requested suspending threads.
           stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-          result->worker = WorkerInit(result->memoryState, true);
+          result->worker = WorkerInit(result->memoryState);
   }
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);

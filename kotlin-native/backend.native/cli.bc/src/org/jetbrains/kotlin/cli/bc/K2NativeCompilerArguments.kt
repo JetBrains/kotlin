@@ -320,6 +320,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xruntime-asserts-mode", valueDescription = "<mode>", description = "Enable asserts in runtime. Possible values: 'ignore', 'log', 'panic'")
     var runtimeAssertsMode: String? = "ignore"
 
+    // TODO: Remove when legacy MM is gone.
+    @Argument(
+            value = "-Xworker-exception-handling",
+            valueDescription = "<mode>",
+            description = "Unhandled exception processing in Worker.executeAfter. Possible values: 'legacy', 'use-hook'. The default value is 'legacy', for -memory-model experimental the default value is 'use-hook'"
+    )
+    var workerExceptionHandling: String? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector, languageVersion).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>

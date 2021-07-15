@@ -32,6 +32,12 @@ enum class RuntimeAssertsMode : int32_t {
     kPanic = 2,
 };
 
+// Must match WorkerExceptionHandling in WorkerExceptionHandling.kt
+enum class WorkerExceptionHandling : int32_t {
+    kLegacy = 0,
+    kUseHook = 1,
+};
+
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
 
 bool gcAggressive() noexcept;
@@ -43,6 +49,8 @@ ALWAYS_INLINE inline bool shouldContainDebugInfo() noexcept {
 ALWAYS_INLINE inline RuntimeAssertsMode runtimeAssertsMode() noexcept {
     return static_cast<RuntimeAssertsMode>(Kotlin_runtimeAssertsMode);
 }
+
+WorkerExceptionHandling workerExceptionHandling() noexcept;
 
 } // namespace compiler
 } // namespace kotlin

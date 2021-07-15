@@ -1008,6 +1008,98 @@ task worker_exception_messages(type: KonanLocalTest) {
     source = "runtime/workers/worker_exception_messages.kt"
 }
 
+standaloneTest("worker_exceptions") {
+    flags = ["-tr", "-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        !it.contains("testExecuteAfterStartQuiet error") && it.contains("testExecuteStart error") && !it.contains("testExecuteStartQuiet error")
+    }
+    source = "runtime/workers/worker_exceptions.kt"
+}
+
+standaloneTest("worker_exceptions_legacy") {
+    flags = ["-tr", "-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("testExecuteAfterStartLegacy error") && it.contains("testExecuteStartLegacy error")
+    }
+    source = "runtime/workers/worker_exceptions_legacy.kt"
+}
+
+standaloneTest("worker_exceptions_terminate") {
+    flags = ["-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = {
+        it.contains("some error") && !it.contains("Will not happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_legacy") {
+    flags = ["-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("some error") && it.contains("Will not happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_hook") {
+    flags = ["-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_hook.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_hook_legacy") {
+    flags = ["-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        !it.contains("hook called") && it.contains("some error") && it.contains("Will happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_hook.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_current") {
+    flags = ["-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = {
+        it.contains("some error") && !it.contains("Will not happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_current.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_current_legacy") {
+    flags = ["-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("some error") && it.contains("Will not happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_current.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_hook_current") {
+    flags = ["-Xworker-exception-handling=use-hook"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        it.contains("hook called") && !it.contains("some error") && it.contains("Will happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_hook_current.kt"
+}
+
+standaloneTest("worker_exceptions_terminate_hook_current_legacy") {
+    flags = ["-Xworker-exception-handling=legacy"]
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    outputChecker = {
+        !it.contains("hook called") && it.contains("some error") && it.contains("Will happen")
+    }
+    source = "runtime/workers/worker_exceptions_terminate_hook_current.kt"
+}
+
 standaloneTest("worker_threadlocal_no_leak") {
     disabled = (project.testTarget == 'wasm32') // Needs pthreads.
     source = "runtime/workers/worker_threadlocal_no_leak.kt"
@@ -2548,9 +2640,66 @@ standaloneTest("kt-37572") {
 
 standaloneTest("custom_hook") {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
-    goldValue = "value 42: Error\n"
-    expectedExitStatus = 1
+    outputChecker = {
+        it.contains("value 42: Error") && it.contains("Uncaught Kotlin exception: kotlin.Error: an error")
+    }
+    expectedExitStatusChecker = { it != 0 }
     source = "runtime/exceptions/custom_hook.kt"
+}
+
+standaloneTest("custom_hook_memory_leak") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook 42") && it.contains("Uncaught Kotlin exception: kotlin.Error: an error")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_memory_leak.kt"
+}
+
+standaloneTest("custom_hook_get") {
+    source = "runtime/exceptions/custom_hook_get.kt"
+}
+
+standaloneTest("custom_hook_no_reset") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: some error")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_no_reset.kt"
+}
+
+standaloneTest("custom_hook_throws") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: another error") && !it.contains("some error")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_throws.kt"
+}
+
+standaloneTest("custom_hook_unhandled_exception") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    goldValue = ""
+    source = "runtime/exceptions/custom_hook_unhandled_exception.kt"
+}
+
+standaloneTest("custom_hook_terminate") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook called")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_terminate.kt"
+}
+
+standaloneTest("custom_hook_terminate_unhandled_exception") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: some error") && !it.contains("Not going to happen")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/custom_hook_terminate_unhandled_exception.kt"
 }
 
 standaloneTest("exception_in_global_init") {
@@ -2568,6 +2717,21 @@ task rethrow_exception(type: KonanLocalTest) {
 task throw_from_catch(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
     source = "runtime/exceptions/throw_from_catch.kt"
+}
+
+standaloneTest("terminate") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/terminate.kt"
+}
+
+standaloneTest("unhandled_exception") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    outputChecker = {
+        it.contains("Uncaught Kotlin exception: kotlin.Error: some error")
+    }
+    expectedExitStatusChecker = { it != 0 }
+    source = "runtime/exceptions/unhandled_exception.kt"
 }
 
 standaloneTest("runtime_math_exceptions") {
@@ -2789,7 +2953,7 @@ task runtime_basic_standard(type: KonanLocalTest) {
 }
 
 standaloneTest("runtime_basic_assert_failed") {
-    expectedExitStatus = 1
+    expectedExitStatusChecker = { it != 0 }
     source = "runtime/basic/assert_failed.kt"
 }
 

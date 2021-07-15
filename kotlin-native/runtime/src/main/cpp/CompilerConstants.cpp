@@ -12,6 +12,7 @@ using namespace kotlin;
 // These are defined by overrideRuntimeGlobals in IrToBitcode.kt
 RUNTIME_WEAK int32_t Kotlin_destroyRuntimeMode = 1;
 RUNTIME_WEAK int32_t Kotiln_gcAggressive = 0;
+RUNTIME_WEAK int32_t Kotlin_workerExceptionHandling = 0;
 
 ALWAYS_INLINE compiler::DestroyRuntimeMode compiler::destroyRuntimeMode() noexcept {
     return static_cast<compiler::DestroyRuntimeMode>(Kotlin_destroyRuntimeMode);
@@ -19,4 +20,8 @@ ALWAYS_INLINE compiler::DestroyRuntimeMode compiler::destroyRuntimeMode() noexce
 
 ALWAYS_INLINE bool compiler::gcAggressive() noexcept {
     return Kotiln_gcAggressive != 0;
+}
+
+ALWAYS_INLINE compiler::WorkerExceptionHandling compiler::workerExceptionHandling() noexcept {
+    return static_cast<compiler::WorkerExceptionHandling>(Kotlin_workerExceptionHandling);
 }
