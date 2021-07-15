@@ -164,8 +164,8 @@ private fun StringBuilder.appendTypeParameterTypeApproximationSignature(
             appendTypeApproximationSignature(context, upperBound)
             if (index != typeParameter.upperBounds.lastIndex) append(", ")
         }
+        append("]")
     }
-    append("]")
     if (type.isMarkedNullable) append("?")
 }
 
