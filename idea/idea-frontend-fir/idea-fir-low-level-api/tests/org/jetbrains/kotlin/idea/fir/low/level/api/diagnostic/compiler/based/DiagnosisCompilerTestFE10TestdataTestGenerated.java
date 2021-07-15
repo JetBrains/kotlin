@@ -1762,6 +1762,272 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/parameters")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Parameters {
+                @Test
+                public void testAllFilesPresentInParameters() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("byte.kt")
+                public void testByte() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/parameters/byte.kt");
+                }
+
+                @Test
+                @TestMetadata("char.kt")
+                public void testChar() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/parameters/char.kt");
+                }
+
+                @Test
+                @TestMetadata("double.kt")
+                public void testDouble() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/parameters/double.kt");
+                }
+
+                @Test
+                @TestMetadata("float.kt")
+                public void testFloat() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/parameters/float.kt");
+                }
+
+                @Test
+                @TestMetadata("int.kt")
+                public void testInt() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/parameters/int.kt");
+                }
+
+                @Test
+                @TestMetadata("long.kt")
+                public void testLong() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/parameters/long.kt");
+                }
+
+                @Test
+                @TestMetadata("short.kt")
+                public void testShort() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/parameters/short.kt");
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/annotations/parameters/expressions")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Expressions {
+                    @Test
+                    public void testAllFilesPresentInExpressions() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/parameters/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("andAnd.kt")
+                    public void testAndAnd() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/andAnd.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("boolean.kt")
+                    public void testBoolean() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/boolean.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("char.kt")
+                    public void testChar() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/char.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("compositeCallBinary.kt")
+                    public void testCompositeCallBinary() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/compositeCallBinary.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("divide.kt")
+                    public void testDivide() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/divide.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("double.kt")
+                    public void testDouble() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/double.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("eqeq.kt")
+                    public void testEqeq() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/eqeq.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("escapedString.kt")
+                    public void testEscapedString() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/escapedString.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("float.kt")
+                    public void testFloat() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/float.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("gt.kt")
+                    public void testGt() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/gt.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("gteq.kt")
+                    public void testGteq() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/gteq.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("intrincics.kt")
+                    public void testIntrincics() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/intrincics.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("labeled.kt")
+                    public void testLabeled() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/labeled.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("long.kt")
+                    public void testLong() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/long.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("lt.kt")
+                    public void testLt() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/lt.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("lteq.kt")
+                    public void testLteq() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/lteq.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("maxValue.kt")
+                    public void testMaxValue() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/maxValue.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("maxValueByte.kt")
+                    public void testMaxValueByte() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/maxValueByte.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("maxValueInt.kt")
+                    public void testMaxValueInt() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/maxValueInt.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("miltiply.kt")
+                    public void testMiltiply() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/miltiply.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("minus.kt")
+                    public void testMinus() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/minus.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mod.kt")
+                    public void testMod() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/mod.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("multilineString.kt")
+                    public void testMultilineString() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/multilineString.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("not.kt")
+                    public void testNot() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/not.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("noteq.kt")
+                    public void testNoteq() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/noteq.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("orOr.kt")
+                    public void testOrOr() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/orOr.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("paranthesized.kt")
+                    public void testParanthesized() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/paranthesized.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("plus.kt")
+                    public void testPlus() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/plus.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("simpleCallBinary.kt")
+                    public void testSimpleCallBinary() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/simpleCallBinary.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("stringPlusInt.kt")
+                    public void testStringPlusInt() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/stringPlusInt.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("stringTemplate.kt")
+                    public void testStringTemplate() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/stringTemplate.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("strings.kt")
+                    public void testStrings() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/strings.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("unaryMinus.kt")
+                    public void testUnaryMinus() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/unaryMinus.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("unaryPlus.kt")
+                    public void testUnaryPlus() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/unaryPlus.kt");
+                    }
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/annotations/rendering")
             @TestDataPath("$PROJECT_ROOT")
             public class Rendering {

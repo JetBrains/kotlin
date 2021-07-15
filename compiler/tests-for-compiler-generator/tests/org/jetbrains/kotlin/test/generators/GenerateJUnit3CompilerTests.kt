@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
 import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.resolve.AbstractResolveTest
-import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationParameterTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
 import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractCompileTimeConstantEvaluatorTest
@@ -303,10 +302,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("cfgWithStdLib", testMethod = "doTestWithStdLib")
                 model("cfg-variables")
                 model("cfgVariablesWithStdLib", testMethod = "doTestWithStdLib")
-            }
-
-            testClass<AbstractAnnotationParameterTest> {
-                model("resolveAnnotations/parameters")
             }
 
             testClass<AbstractCompileTimeConstantEvaluatorTest> {
