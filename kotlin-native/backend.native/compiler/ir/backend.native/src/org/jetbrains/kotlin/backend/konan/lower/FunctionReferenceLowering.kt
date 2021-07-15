@@ -146,38 +146,33 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
             fun transformFunctionReference(expression: IrFunctionReference, samSuperType: IrType? = null): IrExpression {
                 val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: irFile
-                val loweredFunctionReference = FunctionReferenceBuilder(irFile, parent, expression, samSuperType).build()
-                generatedClasses.add(loweredFunctionReference.functionReferenceClass)
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
                         expression.startOffset, expression.endOffset)
-                return irBuilder.irCall(loweredFunctionReference.functionReferenceConstructor.symbol).apply {
-                    expression.getArguments().forEachIndexed { index, argument ->
-                        putValueArgument(index, argument.second)
-                    }
-                }
+                val (clazz, newExpression) = FunctionReferenceBuilder(irFile, parent, expression, context, irBuilder, samSuperType).build()
+                generatedClasses.add(clazz)
+                return newExpression
             }
         }, data = null)
 
         irFile.declarations += generatedClasses
     }
 
-    private class BuiltFunctionReference(val functionReferenceClass: IrClass,
-                                         val functionReferenceConstructor: IrConstructor)
-
     private val VOLATILE_LAMBDA_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "VolatileLambda"))
 
-    private val symbols = context.ir.symbols
-    private val irBuiltIns = context.irBuiltIns
 
-    private val getContinuationSymbol = symbols.getContinuation
-    private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
-
-    private inner class FunctionReferenceBuilder(
+    class FunctionReferenceBuilder(
             val irFile: IrFile,
             val parent: IrDeclarationParent,
             val functionReference: IrFunctionReference,
-            val samSuperType: IrType?
+            val context: Context,
+            val irBuilder: IrBuilderWithScope,
+            val samSuperType: IrType? = null,
     ) {
+        data class BuiltFunctionReference(val functionReferenceClass: IrClass, val functionReferenceExpression: IrExpression)
+        private val irBuiltIns = context.irBuiltIns
+        private val symbols = context.ir.symbols
+        private val getContinuationSymbol = symbols.getContinuation
+        private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
         private val referencedFunction = functionReference.symbol.owner
@@ -243,7 +238,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
         private val kSuspendFunctionImplSymbol = symbols.kSuspendFunctionImpl
         private val kSuspendFunctionImplConstructorSymbol = kSuspendFunctionImplSymbol.constructors.single()
 
-        fun build(): BuiltFunctionReference {
+        private fun buildClass(): IrClass {
             val superClass = when {
                 isKSuspendFunction -> kSuspendFunctionImplSymbol.typeWith(referencedFunction.returnType)
                 isLambda -> irBuiltIns.anyType
@@ -296,11 +291,11 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
             functionReferenceClass.addFakeOverrides(context.typeSystem)
 
-            return BuiltFunctionReference(functionReferenceClass, buildConstructor())
+            return functionReferenceClass
         }
 
-        private fun buildConstructor(): IrConstructor =
-            IrConstructorImpl(
+        private fun buildConstructor(): IrConstructor {
+            return IrConstructorImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                     IrConstructorSymbolImpl(),
@@ -348,6 +343,23 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     }
                 }
             }
+        }
+
+        fun build(): BuiltFunctionReference {
+            val clazz = buildClass()
+            val constructor = buildConstructor()
+            val arguments = functionReference.getArguments()
+            val expression = if (arguments.isEmpty()) {
+                irBuilder.irConstantObject(clazz, emptyMap())
+            } else {
+                irBuilder.irCall(constructor).apply {
+                    arguments.forEachIndexed { index, argument ->
+                        putValueArgument(index, argument.second)
+                    }
+                }
+            }
+            return BuiltFunctionReference(clazz, expression)
+        }
 
         private fun getFlags() =
                 (if (referencedFunction.isSuspend) 1 else 0) + getAdaptedCallableReferenceFlags() shl 1
@@ -385,8 +397,8 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             return false
         }
 
-        private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction =
-            IrFunctionImpl(
+        private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction {
+            return IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                     IrSimpleFunctionSymbolImpl(),
@@ -452,5 +464,6 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     )
                 }
             }
+        }
     }
 }

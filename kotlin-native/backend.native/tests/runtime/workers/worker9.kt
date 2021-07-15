@@ -49,14 +49,16 @@ fun withLock(op: () -> Unit) {
         }
     } else {
         assertFailsWith<IllegalStateException> {
+            val message = "shall not happen"
             worker.executeAfter {
-                println("shall not happen")
+                println(message)
             }
         }
     }
     assertFailsWith<IllegalArgumentException> {
+        val message = "shall not happen"
         worker.executeAfter(-1, {
-            println("shall not happen")
+            println(message)
         }.freeze())
     }
 
