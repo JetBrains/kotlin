@@ -118,15 +118,117 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("asExpression.kt")
+        public void testAsExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/asExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("binaryExpression.kt")
+        public void testBinaryExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/binaryExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("blockExpression.kt")
+        public void testBlockExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/blockExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("boolLiteral.kt")
+        public void testBoolLiteral() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/boolLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("classAccessExpression.kt")
+        public void testClassAccessExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/classAccessExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("ifExpression.kt")
+        public void testIfExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/ifExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("intLiteral.kt")
+        public void testIntLiteral() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/intLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("isExpression.kt")
+        public void testIsExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/isExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaExpression.kt")
+        public void testLambdaExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/lambdaExpression.kt");
+        }
+
+        @Test
         @TestMetadata("objectLiteralExpression.kt")
         public void testObjectLiteralExpression() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/objectLiteralExpression.kt");
         }
 
         @Test
+        @TestMetadata("parenthesizedExpression.kt")
+        public void testParenthesizedExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/parenthesizedExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyReferenceExpression.kt")
+        public void testPropertyReferenceExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/propertyReferenceExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("stringLiteral.kt")
+        public void testStringLiteral() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/stringLiteral.kt");
+        }
+
+        @Test
         @TestMetadata("stringTemplateExpressionEntry.kt")
         public void testStringTemplateExpressionEntry() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/stringTemplateExpressionEntry.kt");
+        }
+
+        @Test
+        @TestMetadata("throwExpression.kt")
+        public void testThrowExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/throwExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("tryExpression.kt")
+        public void testTryExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/tryExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("unraryExpression.kt")
+        public void testUnraryExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/unraryExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("whenExpression.kt")
+        public void testWhenExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/whenExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("wholeStringTemplate.kt")
+        public void testWholeStringTemplate() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/wholeStringTemplate.kt");
         }
     }
 

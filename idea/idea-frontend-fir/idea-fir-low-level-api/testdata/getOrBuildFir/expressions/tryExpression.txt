@@ -1,0 +1,11 @@
+KT element: KtTryExpression
+FIR element: FirTryExpressionImpl
+
+FIR element rendered:
+try {
+    Int(1)
+}
+catch (e: R|kotlin/Throwable|) {
+}
+finally {
+}

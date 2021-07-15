@@ -1,0 +1,12 @@
+KT element: KtWhenExpression
+FIR element: FirWhenExpressionImpl
+
+FIR element rendered:
+when (R|<local>/x|) {
+    ($subj$ is R|kotlin/String|) ->  {
+        String(1)
+    }
+    else ->  {
+        String(2)
+    }
+}

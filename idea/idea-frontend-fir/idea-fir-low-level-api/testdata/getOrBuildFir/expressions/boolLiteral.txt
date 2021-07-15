@@ -1,0 +1,5 @@
+KT element: KtConstantExpression
+FIR element: FirConstExpressionImpl
+
+FIR element rendered:
+Boolean(true)

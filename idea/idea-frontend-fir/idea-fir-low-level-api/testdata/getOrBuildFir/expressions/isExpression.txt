@@ -1,0 +1,5 @@
+KT element: KtIsExpression
+FIR element: FirTypeOperatorCallImpl
+
+FIR element rendered:
+(R|<local>/x| is R|kotlin/String|)
