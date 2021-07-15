@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
 import org.jetbrains.kotlin.commonizer.utils.InlineSourceBuilder
-import org.junit.Test
 
 class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
-    @Test
     fun `test ObjCMethod annotation`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -78,7 +76,6 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
         )
     }
 
-    @Test
     fun `test only ObjCCallable annotation`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -112,7 +109,6 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
         )
     }
 
-    @Test
     fun `test multiple objC annotations`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -173,6 +169,55 @@ class HierarchicalCInteropCallableAnnotationCommonizationTest : AbstractInlineSo
             "(a, b, c, d)", """
                 import kotlin.commonizer.*
                 @ObjCCallable
+                expect fun x()
+            """.trimIndent()
+        )
+    }
+
+    fun `test single platform not marked as objc`() {
+        val result = commonize {
+            registerDependency("a", "b", "c", "d", "(a, b)", "(c, d)") { objCAnnotations() }
+            outputTarget("(a, b)", "(c, d)")
+
+            simpleSingleSourceTarget(
+                "a", """
+                    import kotlinx.cinterop.*
+                    
+                    @ObjCMethod(0)
+                    fun x()
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                    fun x()
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "c", """
+                    import kotlin.commonizer.*
+                    
+                    @ObjCCallable
+                    fun x()
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "d", """
+                    fun x()
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect fun x()
+            """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(c, d)", """
                 expect fun x()
             """.trimIndent()
         )
