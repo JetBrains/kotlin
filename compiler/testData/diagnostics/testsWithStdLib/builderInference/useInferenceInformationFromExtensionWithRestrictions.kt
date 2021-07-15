@@ -23,7 +23,7 @@ val normal = generate {
     yield(42)
 }
 
-val extension = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val extension = <!COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE!>generate<!> {
     extensionYield("foo")
 }
 

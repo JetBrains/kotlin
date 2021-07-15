@@ -118,7 +118,8 @@ class CapturedTypeFromSubtyping(
 
 open class NotEnoughInformationForTypeParameter<T>(
     val typeVariable: TypeVariableMarker,
-    val resolvedAtom: T
+    val resolvedAtom: T,
+    val couldBeResolvedWithUnrestrictedBuilderInference: Boolean
 ) : ConstraintSystemError(INAPPLICABLE)
 
 class ConstrainingTypeIsError(
