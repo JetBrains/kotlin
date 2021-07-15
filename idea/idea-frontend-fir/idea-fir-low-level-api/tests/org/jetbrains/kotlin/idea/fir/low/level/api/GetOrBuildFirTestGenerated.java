@@ -62,6 +62,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         public void testAnnotationApplicationWithArguments() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/annotationApplicationWithArguments.kt");
         }
+
+        @Test
+        @TestMetadata("fileAnnotation.kt")
+        public void testFileAnnotation() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/annotations/fileAnnotation.kt");
+        }
     }
 
     @Nested
@@ -71,6 +77,18 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @Test
         public void testAllFilesPresentInCalls() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("constructorDelegationSuperCall.kt")
+        public void testConstructorDelegationSuperCall() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/constructorDelegationSuperCall.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorDelegationThisCall.kt")
+        public void testConstructorDelegationThisCall() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/constructorDelegationThisCall.kt");
         }
 
         @Test
@@ -118,6 +136,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("arrayAccessExpression.kt")
+        public void testArrayAccessExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/arrayAccessExpression.kt");
+        }
+
+        @Test
         @TestMetadata("asExpression.kt")
         public void testAsExpression() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/asExpression.kt");
@@ -127,6 +151,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("binaryExpression.kt")
         public void testBinaryExpression() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/binaryExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("binaryExpressionOperator.kt")
+        public void testBinaryExpressionOperator() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/binaryExpressionOperator.kt");
         }
 
         @Test
@@ -145,6 +175,13 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("classAccessExpression.kt")
         public void testClassAccessExpression() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/classAccessExpression.kt");
+        }
+
+
+        @Test
+        @TestMetadata("forExpressionRange.kt")
+        public void testForExpressionRange() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/forExpressionRange.kt");
         }
 
         @Test
@@ -220,9 +257,21 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("unraryExpressionOperator.kt")
+        public void testUnraryExpressionOperator() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/unraryExpressionOperator.kt");
+        }
+
+        @Test
         @TestMetadata("whenExpression.kt")
         public void testWhenExpression() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/whenExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("whileExpression.kt")
+        public void testWhileExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/whileExpression.kt");
         }
 
         @Test

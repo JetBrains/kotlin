@@ -1,0 +1,5 @@
+KT element: KtSuperTypeCallEntry
+FIR element: FirDelegatedConstructorCallImpl
+
+FIR element rendered:
+super<R|B|>(Int(1))

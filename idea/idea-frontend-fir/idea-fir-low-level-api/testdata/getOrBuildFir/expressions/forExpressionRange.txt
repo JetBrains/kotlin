@@ -1,0 +1,5 @@
+KT element: KtBinaryExpression
+FIR element: FirFunctionCallImpl
+
+FIR element rendered:
+Int(0).R|kotlin/Int.rangeTo|(Int(1))
