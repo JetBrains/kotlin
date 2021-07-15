@@ -1,7 +1,1 @@
-fun test() {
-    while (true) {
-        when {
-            true -> break
-        }
-    }
-}
+sealead interface Test

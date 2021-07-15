@@ -386,21 +386,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
     }
 
-    fun testRequireKotlinInNestedClassesAgainst13() {
-        val library = compileLibrary(
-            "library",
-            additionalOptions = listOf("-language-version", "1.3"),
-            checkKotlinOutput = { actual ->
-                assertEquals(
-                    normalizeOutput(
-                        "warning: language version 1.3 is deprecated and its support will be removed in a future version of Kotlin\n" to ExitCode.OK
-                    ), actual
-                )
-            }
-        )
-        compileKotlin("source.kt", tmpdir, listOf(library))
-    }
-
     fun testRequireKotlinInNestedClassesAgainst14Js() {
         val library = compileJsLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
         compileKotlin(
@@ -549,12 +534,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", "11"))
 
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8"))
-
-        compileKotlin(
-            "warningsOnly_1_3.kt", tmpdir, listOf(library),
-            additionalOptions = listOf("-language-version", "1.3"),
-            expectedFileName = "warningsOnly_1_3.txt"
-        )
     }
 
     fun testInlineFunctionsWithMatchingJvmSignatures() {
@@ -725,22 +704,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
-    fun testInlineClassesManglingAgainstLV13() {
-        val library = compileLibrary(
-            "library",
-            additionalOptions = listOf("-language-version", "1.3", "-Xinline-classes"),
-            checkKotlinOutput = {}
-        )
-        compileKotlin(
-            "source.kt",
-            tmpdir,
-            listOf(library),
-            additionalOptions = listOf("-XXLanguage:-MangleClassMembersReturningInlineClasses", "-Xinline-classes")
-        )
-        // Difference in mangling becomes apparent only on load time as NSME, so, to check the mangling we need to load the classfile
-        loadClassFile("SourceKt", tmpdir, library)
-    }
-
     fun testAnonymousObjectTypeMetadata() {
         val library = compileCommonLibrary(
             libraryName = "library",
@@ -770,7 +733,14 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     fun testActualTypealiasToCompiledInlineClass() {
         val library14 = compileLibrary(
             "library14",
-            additionalOptions = listOf("-language-version", "1.4")
+            additionalOptions = listOf("-language-version", "1.4"),
+            checkKotlinOutput = { result ->
+                KotlinTestUtils.assertEqualsToFile(
+                    "Expected output check failed",
+                    File(testDataDirectory, "output14.txt"),
+                    result
+                )
+            }
         )
         val library15 = compileLibrary(
             "library15",
