@@ -136,9 +136,9 @@ private fun processUselessDeclarations(
                     // Remove annotations for `findAssociatedObject` feature, which reference objects eliminated by the DCE.
                     // Otherwise `JsClassGenerator.generateAssociatedKeyProperties` will try to reference the object factory (which is removed).
                     // That will result in an error from the Namer. It cannot generate a name for an absent declaration.
-                    if (declaration.annotations.any { !it.shouldKeepAnnotation() }) {
-                        declaration.annotations = declaration.annotations.filter { it.shouldKeepAnnotation() }
-                    }
+//                    if (declaration.annotations.any { !it.shouldKeepAnnotation() }) {
+//                        declaration.annotations = declaration.annotations.filter { it.shouldKeepAnnotation() }
+//                    }
                 }
 
                 // TODO bring back the primary constructor fix
@@ -479,11 +479,11 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
         // Handle objects, constructed via `findAssociatedObject` annotation
         referencedJsClassesFromExpressions += constructedClasses.filterDescendantsOf(referencedJsClassesFromExpressions) // Grow the set of possible results of instance::class expression
         for (klass in classesWithObjectAssociations) {
-            if (klass !in referencedJsClasses && klass !in referencedJsClassesFromExpressions) continue
+//            if (klass !in referencedJsClasses && klass !in referencedJsClassesFromExpressions) continue
 
             for (annotation in klass.annotations) {
                 val annotationClass = annotation.symbol.owner.constructedClass
-                if (annotationClass !in referencedJsClasses) continue
+//                if (annotationClass !in referencedJsClasses) continue
 
                 annotation.associatedObject()?.let { obj ->
                     context.mapping.objectToGetInstanceFunction[obj]?.enqueue(klass, "associated object factory")
