@@ -27,7 +27,7 @@ More information can be found in the overviews of
 [Kotlin/Native](https://kotlinlang.org/docs/native-overview.html)
 and [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
 
-On macOS Kotlin/Native requires Xcode 11 or newer.
+On macOS Kotlin/Native requires Xcode 12.5 or newer.
 
 ## Building from source
 
@@ -35,7 +35,7 @@ Prerequisites:
 *   configure Kotlin build as [specified in main readme](../ReadMe.md#build-environment-requirements)
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
-*   on macOS install Xcode 12 or newer
+*   on macOS install Xcode 12.5 or newer
 *   on Fedora 26+ ```yum install ncurses-compat-libs``` may be needed
 *   on recent Ubuntu ```apt install libncurses5``` is needed
 
