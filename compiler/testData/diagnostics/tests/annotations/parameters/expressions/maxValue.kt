@@ -10,12 +10,12 @@ annotation class Ann(
 )
 
 @Ann(
-    p1 = java.lang.Byte.MAX_VALUE + 1,
-    p2 = java.lang.Short.MAX_VALUE + 1,
-    p3 = java.lang.Integer.MAX_VALUE + 1,
-    p4 = java.lang.Integer.MAX_VALUE + 1,
+    p1 = <!TYPE_MISMATCH!>java.lang.Byte.MAX_VALUE + 1<!>,
+    p2 = <!TYPE_MISMATCH!>java.lang.Short.MAX_VALUE + 1<!>,
+    p3 = <!INTEGER_OVERFLOW!>java.lang.Integer.MAX_VALUE + 1<!>,
+    p4 = <!INTEGER_OVERFLOW!>java.lang.Integer.MAX_VALUE + 1<!>,
     p5 = java.lang.Integer.MAX_VALUE + 1.toLong(),
-    p6 = java.lang.Long.MAX_VALUE + 1
+    p6 = <!INTEGER_OVERFLOW!>java.lang.Long.MAX_VALUE + 1<!>
 ) class MyClass
 
 // EXPECTED: @Ann(p1 = 128, p2 = 32768, p3 = -2147483648, p4 = -2147483648, p5 = 2147483648.toLong(), p6 = -9223372036854775808.toLong())

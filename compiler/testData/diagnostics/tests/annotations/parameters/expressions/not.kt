@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package test
 
 annotation class Ann(
@@ -6,6 +7,6 @@ annotation class Ann(
         val b3: Boolean
 )
 
-@Ann(!true, !false) class MyClass
+@Ann(!true, !false<!NO_VALUE_FOR_PARAMETER!>)<!> class MyClass
 
 // EXPECTED: @Ann(b1 = false, b2 = true)
