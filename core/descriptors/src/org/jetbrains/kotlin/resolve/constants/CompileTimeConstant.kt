@@ -72,6 +72,7 @@ class TypedCompileTimeConstant<out T>(
         module: ModuleDescriptor,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<T> {
+
     override val isError: Boolean
         get() = constantValue is ErrorValue
 
