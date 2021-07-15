@@ -13,8 +13,8 @@ object Foo {
 fun test() {
     takeLong(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>)
     takeLong((<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>))
-    Foo.longProperty = 1 + 1
-    Foo.longProperty = (1 + 1)
+    Foo.longProperty = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>
+    Foo.longProperty = (<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>)
     Foo infixOperator <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>
     Foo infixOperator (<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 + 1<!>)
 }
