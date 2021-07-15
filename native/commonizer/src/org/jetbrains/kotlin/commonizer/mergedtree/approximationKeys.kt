@@ -113,7 +113,9 @@ private fun <T> valueParameterTypes(context: CirMemberContext, callable: T): Arr
 private val typeSignatureInterner = Interner<CirTypeSignature>()
 
 internal fun buildApproximationSignature(context: SignatureBuildingContext, type: CirType): CirTypeSignature {
-    return typeSignatureInterner.intern(StringBuilder().apply { appendTypeApproximationSignature(context, type) }.toString())
+    val stringBuilder = StringBuilder()
+    stringBuilder.appendTypeApproximationSignature(context, type)
+    return typeSignatureInterner.intern(stringBuilder.toString())
 }
 
 internal fun StringBuilder.appendTypeApproximationSignature(context: SignatureBuildingContext, type: CirType) {
