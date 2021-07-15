@@ -12,6 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
 import org.jetbrains.kotlin.analyzer.LibraryModuleSourceInfoBase
+import org.jetbrains.kotlin.analyzer.NonSourceModuleInfoBase
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -73,6 +74,7 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
             //TODO Do not return LC came from LibrarySources
             when (it.getModuleInfo()) {
                 is LibraryModuleSourceInfoBase -> it.containingKtFile.isCompiled
+                is NonSourceModuleInfoBase -> false
                 else -> true
             }
         }.toSet()

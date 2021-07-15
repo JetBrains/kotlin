@@ -118,6 +118,7 @@ interface TrackableModuleInfo : ModuleInfo {
 }
 
 interface LibraryModuleSourceInfoBase : ModuleInfo
+interface NonSourceModuleInfoBase : ModuleInfo
 
 interface LibraryModuleInfo : ModuleInfo {
     override val platform: TargetPlatform
