@@ -200,6 +200,8 @@ class IrBuiltInsOverFir(
 
     private val iterable by loadClass(StandardNames.FqNames.iterable)
     override val iterableClass: IrClassSymbol get() = iterable.klass
+    private val iterator by loadClass(StandardNames.FqNames.iterator)
+    override val iteratorClass: IrClassSymbol get() = iterator.klass
     private val listIterator by loadClass(StandardNames.FqNames.listIterator)
     override val listIteratorClass: IrClassSymbol get() = listIterator.klass
     private val mutableCollection by loadClass(StandardNames.FqNames.mutableCollection)
@@ -612,7 +614,7 @@ class IrBuiltInsOverFir(
 
     private fun createClass(
         parent: IrDeclarationParent,
-        signature: IdSignature.PublicSignature,
+        signature: IdSignature.CommonSignature,
         build: IrClassBuilder.() -> Unit = {},
         lazyContents: (IrClass.() -> Unit) = { finalizeClassDefinition() }
     ) = BuiltInsClass(
@@ -681,7 +683,7 @@ class IrBuiltInsOverFir(
         builderBlock: IrClassBuilder.() -> Unit = {},
         block: IrClass.() -> Unit = {}
     ): IrClassSymbol {
-        val signature = IdSignature.PublicSignature(fqName.parent().asString(), fqName.shortName().asString(), null, 0)
+        val signature = IdSignature.CommonSignature(fqName.parent().asString(), fqName.shortName().asString(), null, 0)
 
         return this.createClass(
             signature, *supertypes,
@@ -690,7 +692,7 @@ class IrBuiltInsOverFir(
     }
 
     private fun IrDeclarationParent.createClass(
-        signature: IdSignature.PublicSignature,
+        signature: IdSignature.CommonSignature,
         vararg supertypes: IrType,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.OPEN,
@@ -729,7 +731,7 @@ class IrBuiltInsOverFir(
     ): IrConstructorSymbol {
         val name = Name.special("<init>")
         val signature =
-            IdSignature.PublicSignature(this.packageFqName!!.asString(), classId!!.relativeClassName.child(name).asString(), null, 0)
+            IdSignature.CommonSignature(this.packageFqName!!.asString(), classId!!.relativeClassName.child(name).asString(), null, 0)
         val ctor = irFactory.createConstructor(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrConstructorPublicSymbolImpl(signature), name, visibility, defaultType,
             isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
@@ -756,7 +758,7 @@ class IrBuiltInsOverFir(
         isOperator: Boolean = false,
         build: IrFunctionBuilder.() -> Unit = {}
     ) = parent.createFunction(
-        IdSignature.PublicSignature(
+        IdSignature.CommonSignature(
             this.packageFqName!!.asString(),
             classId!!.relativeClassName.child(Name.identifier(name)).asString(),
             null,
@@ -805,7 +807,7 @@ class IrBuiltInsOverFir(
     }
 
     private fun IrClass.finalizeClassDefinition() {
-        addFakeOverrides(this@IrBuiltInsOverFir)
+        addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltInsOverFir))
     }
 
     private fun IrDeclarationParent.createFunction(
@@ -844,7 +846,7 @@ class IrBuiltInsOverFir(
         modality: Modality = Modality.FINAL,
         isOperator: Boolean = false
     ) = createFunction(
-        IdSignature.PublicSignature(packageFqName.asString(), name, null, 0),
+        IdSignature.CommonSignature(packageFqName.asString(), name, null, 0),
         name, returnType, valueParameterTypes, origin, modality, isOperator
     )
 
@@ -955,7 +957,7 @@ class IrBuiltInsOverFir(
     }
 
     private fun IrPackageFragment.createNumberClass(
-        signature: IdSignature.PublicSignature,
+        signature: IdSignature.CommonSignature,
         lazyContents: (IrClass.() -> Unit)? = null
     ) =
         createClass(this, signature) {
@@ -980,7 +982,7 @@ class IrBuiltInsOverFir(
     ) =
         createClass(
             parent,
-            IdSignature.PublicSignature(parent.kotlinFqName.asString(), primitiveType.arrayTypeName.asString(), null, 0),
+            IdSignature.CommonSignature(parent.kotlinFqName.asString(), primitiveType.arrayTypeName.asString(), null, 0),
             build = { modality = Modality.FINAL }
         ) {
             configureSuperTypes()
