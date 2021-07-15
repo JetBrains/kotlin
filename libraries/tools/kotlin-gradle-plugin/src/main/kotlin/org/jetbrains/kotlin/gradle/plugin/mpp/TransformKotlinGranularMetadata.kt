@@ -35,6 +35,7 @@ open class TransformKotlinGranularMetadata
     }
 
     @Suppress("unused") // Gradle input
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val allSourceSetsMetadataConfiguration: FileCollection by lazy {

@@ -52,7 +52,6 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         get() = getCommonizationParameters().map { outputDirectory(it) }.toSet()
 
     @Suppress("unused") // Used for UP-TO-DATE check
-    @get:InputFiles
     @get:Classpath
     val commonizedNativeDistributionDependencies: Set<File>
         get() = getCommonizationParameters().flatMap { parameters -> parameters.targets }

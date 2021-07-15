@@ -108,12 +108,14 @@ open class FatFrameworkTask : DefaultTask() {
         get() = fatFramework.dSYM
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:SkipWhenEmpty
     protected val inputFrameworkFiles: Iterable<FileTree>
         get() = frameworks.map { project.fileTree(it.outputFile) }
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     protected val inputDsymFiles: Iterable<FileTree>
         get() = frameworks.mapNotNull { framework ->

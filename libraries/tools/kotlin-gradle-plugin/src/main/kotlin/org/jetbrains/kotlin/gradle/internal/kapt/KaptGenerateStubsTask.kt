@@ -81,7 +81,6 @@ abstract class KaptGenerateStubsTask : KotlinCompile(KotlinJvmOptionsImpl()) {
     abstract val kaptClasspath: ConfigurableFileCollection
 
     @get:Classpath
-    @get:InputFiles
     @Suppress("unused")
     internal abstract val kotlinTaskPluginClasspath: ConfigurableFileCollection
 

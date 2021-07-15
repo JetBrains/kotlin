@@ -335,7 +335,11 @@ open class CocoapodsExtension(private val project: Project) {
                 }
             }
 
-            data class Path(@get:InputDirectory val dir: File) : PodLocation() {
+            data class Path(
+                @get:InputDirectory
+                @get:IgnoreEmptyDirectories
+                val dir: File
+            ) : PodLocation() {
                 override fun getLocalPath(project: Project, podName: String): String {
                     return dir.absolutePath
                 }

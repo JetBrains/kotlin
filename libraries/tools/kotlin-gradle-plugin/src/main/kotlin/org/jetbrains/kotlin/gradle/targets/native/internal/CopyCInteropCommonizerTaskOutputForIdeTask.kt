@@ -15,6 +15,7 @@ internal open class CopyCommonizeCInteropForIdeTask : AbstractCInteropCommonizer
     private val commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
         get() = project.commonizeCInteropTask ?: throw IllegalStateException("Missing commonizeCInteropTask")
 
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     val cInteropCommonizerTaskOutputDirectories: Provider<Set<File>> =

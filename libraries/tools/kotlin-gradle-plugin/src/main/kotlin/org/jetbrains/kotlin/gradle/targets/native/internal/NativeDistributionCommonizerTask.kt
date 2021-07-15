@@ -33,6 +33,7 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
         get() = project.getAllCommonizerTargets()
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputDirectory
     @Suppress("unused") // Only for up-to-date checker. The directory with the original common libs.
     val originalCommonLibrariesDirectory = konanHome
@@ -40,6 +41,7 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
         .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputDirectory
     @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
     val originalPlatformLibrariesDirectory = konanHome

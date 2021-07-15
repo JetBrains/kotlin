@@ -94,7 +94,6 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
         project.objects.fileCollection()
 
     @get:Classpath
-    @get:InputFiles
     internal val computedCompilerClasspath: FileCollection = project.objects.fileCollection().from({
         when {
             useFallbackCompilerSearch -> findKotlinCompilerClasspath(project)
@@ -242,7 +241,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     protected val multiModuleICSettings: MultiModuleICSettings
         get() = MultiModuleICSettings(buildHistoryFile.get().asFile, useModuleDetection.get())
 
-    @get:InputFiles
     @get:Classpath
     open val pluginClasspath: ConfigurableFileCollection = objects.fileCollection()
 
@@ -271,6 +269,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     internal val sourceSetName: Property<String> = objects.property(String::class.java)
 
     @get:InputFiles
+    @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val commonSourceSet: ConfigurableFileCollection = objects.fileCollection()
 
@@ -799,6 +798,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions.get())
 
     @get:InputFiles
+    @get:IgnoreEmptyDirectories
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val friendDependencies: FileCollection = objectFactory
@@ -813,6 +813,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     @Suppress("unused")
     @get:InputFiles
+    @get:IgnoreEmptyDirectories
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val sourceMapBaseDirs: FileCollection?
@@ -927,7 +928,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
 }
 
 data class KotlinCompilerPluginData(
-    @get:InputFiles
     @get:Classpath
     val classpath: FileCollection,
 
@@ -945,6 +945,7 @@ data class KotlinCompilerPluginData(
         val inputs: Map<String, String>,
 
         @get:InputFiles
+        @get:IgnoreEmptyDirectories
         @get:PathSensitive(PathSensitivity.RELATIVE)
         val inputFiles: Set<File>,
 

@@ -168,6 +168,7 @@ abstract class XCFrameworkTask : DefaultTask() {
     val frameworks: List<Framework>
         get() = allFrameworks.filter { it.buildType == buildType }
 
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:SkipWhenEmpty

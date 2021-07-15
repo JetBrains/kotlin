@@ -8,12 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import groovy.lang.Closure
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.*
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -76,12 +71,14 @@ constructor(
 
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     val runtimeClasspath: FileCollection by lazy {
         compilation.runtimeDependencyFiles
     }
 
     @Suppress("unused")
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     internal val compilationOutputs: FileCollection by lazy {

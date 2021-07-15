@@ -382,10 +382,12 @@ internal class KotlinCompilationNpmResolver(
         val internalDependencies: Collection<String>,
 
         @get:PathSensitive(PathSensitivity.ABSOLUTE)
+        @get:IgnoreEmptyDirectories
         @get:InputFiles
         val internalCompositeDependencies: Collection<File>,
 
         @get:PathSensitive(PathSensitivity.ABSOLUTE)
+        @get:IgnoreEmptyDirectories
         @get:InputFiles
         val externalGradleDependencies: Collection<File>,
 

@@ -92,6 +92,7 @@ constructor(
 
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     val runtimeClasspath: FileCollection by lazy {
         compilation.compileDependencyFiles
@@ -151,6 +152,7 @@ constructor(
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:Optional
+    @get:IgnoreEmptyDirectories
     @get:InputDirectory
     open val configDirectory: File?
         get() = projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
