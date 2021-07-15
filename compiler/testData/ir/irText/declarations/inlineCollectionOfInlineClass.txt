@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
               receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.<get-ms>' type=<root>.InlineMutableSet origin=null
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int [val]
+        public abstract size: kotlin.Int [fake_override,val]
       FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:

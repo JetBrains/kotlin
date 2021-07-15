@@ -198,7 +198,7 @@ FILE fqName:<root> fileName:/MultiList.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeList modality:OPEN visibility:public superTypes:[<root>.MyList<T of <root>.SomeList>; java.util.ArrayList<<root>.Some<T of <root>.SomeList>>]'
     PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
-        protected/*protected and package*/ final modCount: kotlin.Int [var]
+        protected/*protected and package*/ final modCount: kotlin.Int [fake_override,var]
     FUN FAKE_OVERRIDE name:removeRange visibility:protected/*protected and package*/ modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, p0:kotlin.Int, p1:kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:
         protected/*protected and package*/ open fun removeRange (p0: kotlin.Int, p1: kotlin.Int): kotlin.Unit declared in java.util.ArrayList

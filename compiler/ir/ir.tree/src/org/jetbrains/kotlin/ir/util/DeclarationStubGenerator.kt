@@ -147,7 +147,8 @@ abstract class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
                 descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
-                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
+                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE)
+                        || descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                 stubGenerator = this, typeTranslator,
             )
         }
@@ -159,7 +160,9 @@ abstract class DeclarationStubGenerator(
             return referenced.owner
         }
 
-        return symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor), descriptor.original, descriptor.type.toIrType()) {
+        return symbolTable.declareField(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor), descriptor.original, descriptor.type.toIrType()
+        ) {
             IrLazyField(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor),
                 it, descriptor,

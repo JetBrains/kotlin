@@ -124,8 +124,8 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.retainAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
     PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
       overridden:
-        public abstract size: kotlin.Int [val]
-        public abstract size: kotlin.Int [val]
+        public abstract size: kotlin.Int [fake_override,val]
+        public abstract size: kotlin.Int [fake_override,val]
       FUN DELEGATED_MEMBER name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
         overridden:
