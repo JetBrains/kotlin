@@ -4090,6 +4090,22 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/boxInline/signatureMangling")
+    @TestDataPath("$PROJECT_ROOT")
+    public class SignatureMangling {
+        @Test
+        public void testAllFilesPresentInSignatureMangling() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("flexibleType.kt")
+        public void testFlexibleType() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/signatureMangling/flexibleType.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/simple")
     @TestDataPath("$PROJECT_ROOT")
     public class Simple {

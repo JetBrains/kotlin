@@ -4078,6 +4078,16 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/boxInline/signatureMangling")
+    @TestDataPath("$PROJECT_ROOT")
+    public class SignatureMangling {
+        @Test
+        public void testAllFilesPresentInSignatureMangling() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/simple")
     @TestDataPath("$PROJECT_ROOT")
     public class Simple {

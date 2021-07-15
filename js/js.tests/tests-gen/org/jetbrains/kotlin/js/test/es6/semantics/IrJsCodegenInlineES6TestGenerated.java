@@ -3226,6 +3226,19 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/signatureMangling")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SignatureMangling extends AbstractIrJsCodegenInlineES6Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSignatureMangling() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/simple")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
