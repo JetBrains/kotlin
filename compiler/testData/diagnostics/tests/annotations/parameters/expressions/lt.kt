@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 package test
 
 annotation class Ann(

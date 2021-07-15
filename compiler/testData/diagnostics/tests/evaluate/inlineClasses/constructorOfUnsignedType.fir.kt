@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses -ApproximateIntegerLiteralTypesInReceiverPosition
 // SKIP_JAVAC
 // ALLOW_KOTLIN_PACKAGE
 

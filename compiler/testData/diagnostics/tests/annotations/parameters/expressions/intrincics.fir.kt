@@ -1,3 +1,4 @@
+// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 package test
 
 annotation class Ann(<!MISSING_VAL_ON_ANNOTATION_PARAMETER!>p1: Int<!>,
