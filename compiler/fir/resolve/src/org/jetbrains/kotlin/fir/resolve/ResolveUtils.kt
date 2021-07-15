@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -49,7 +48,7 @@ import org.jetbrains.kotlin.types.SmartcastStability
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
 
-fun FirFunction.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
+fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
         is FirSimpleFunction -> receiverTypeRef
         is FirAnonymousFunction -> receiverTypeRef
@@ -65,11 +64,13 @@ fun FirFunction.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResol
     }
     val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneType
 
-    val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend)
+    return createFunctionalType(parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend)
+}
 
+fun FirFunction.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
     return buildResolvedTypeRef {
         source = this@constructFunctionalTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
-        type = functionalType
+        type = constructFunctionalType(isSuspend)
     }
 }
 

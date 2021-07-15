@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.resolve.constructFunctionalType
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
@@ -24,10 +27,7 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDoubleColonExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 
 internal class KtFirPsiTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -72,6 +72,14 @@ internal class KtFirPsiTypeProvider(
     ): PsiType = withValidityAssertion {
         val firDeclaration = ktDeclaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveState)
         firDeclaration.returnTypeRef.coneType.asPsiType(mode, ktDeclaration)
+    }
+
+    override fun getPsiTypeForKtFunction(
+        ktFunction: KtFunction,
+        mode: TypeMappingMode
+    ): PsiType = withValidityAssertion {
+        val firFunction = ktFunction.getOrBuildFirOfType<FirFunction>(firResolveState)
+        firFunction.constructFunctionalType(firFunction.isSuspend).asPsiType(mode, ktFunction)
     }
 
     override fun getPsiTypeForKtTypeReference(
