@@ -7,7 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 
 class KotlinAndroidTargetPreset(
@@ -22,7 +22,7 @@ class KotlinAndroidTargetPreset(
             preset = this@KotlinAndroidTargetPreset
         }
 
-        KotlinAndroidPlugin.applyToTarget(result)
+        project.dynamicallyApplyWhenAndroidPluginIsApplied({ result })
         return result
     }
 

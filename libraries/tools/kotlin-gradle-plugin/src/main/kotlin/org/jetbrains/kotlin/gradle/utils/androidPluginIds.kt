@@ -6,6 +6,14 @@
 package org.jetbrains.kotlin.gradle.utils
 
 internal val androidPluginIds = listOf(
-    "android", "com.android.application", "android-library", "com.android.library",
-    "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp"
+    "com.android.application",
+    "com.android.library",
+    "com.android.dynamic-feature",
+    "com.android.asset-pack",
+    "com.android.asset-pack-bundle",
+    "com.android.lint",
+    "com.android.test",
+    // Deprecated android plugins
+    "com.android.instantapp",
+    "com.android.feature"
 )
