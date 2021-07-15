@@ -3466,6 +3466,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("kt47741.kt")
+            public void testKt47741() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/kt47741.kt");
+            }
+
+            @Test
             @TestMetadata("nestedConstructorFromClass.kt")
             public void testNestedConstructorFromClass() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/nestedConstructorFromClass.kt");

@@ -33,8 +33,8 @@ object IteratorNext : IntrinsicMethod() {
         // If the array element type is unboxed primitive, do not unbox. Otherwise AsmUtil.unbox throws exception
         val type = if (AsmUtil.isBoxedPrimitiveType(signature.returnType)) AsmUtil.unboxType(signature.returnType) else signature.returnType
         val newSignature = signature.newReturnType(type)
-        return IrIntrinsicFunction.create(expression, newSignature, context, AsmTypes.OBJECT_TYPE) {
-            val primitiveClassName = getKotlinPrimitiveClassName(type)
+        val primitiveClassName = getKotlinPrimitiveClassName(type)
+        return IrIntrinsicFunction.create(expression, newSignature, context, getPrimitiveIteratorType(primitiveClassName)) {
             it.invokevirtual(
                 getPrimitiveIteratorType(primitiveClassName).internalName,
                 "next${primitiveClassName.asString()}",
