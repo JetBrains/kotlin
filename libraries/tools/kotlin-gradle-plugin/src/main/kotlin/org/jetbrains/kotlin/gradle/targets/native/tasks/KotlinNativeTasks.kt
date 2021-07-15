@@ -147,6 +147,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Kotl
     }
 
     // Inputs and outputs
+    @IgnoreEmptyDirectories
     @InputFiles
     @SkipWhenEmpty
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -511,6 +512,7 @@ constructor(
     @Internal // Taken into account by getSources().
     val intermediateLibrary: Provider<File> = project.provider { compilation.compileKotlinTask.outputFile.get() }
 
+    @IgnoreEmptyDirectories
     @InputFiles
     @SkipWhenEmpty
     override fun getSource(): FileTree =
@@ -953,6 +955,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
     val linkerOpts: List<String>
         @Input get() = settings.linkerOpts
 
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val headers: FileCollection
@@ -964,6 +967,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
     val headerFilterDirs: Set<File>
         @Input get() = settings.includeDirs.headerFilterDirs.files
 
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val libraries: FileCollection

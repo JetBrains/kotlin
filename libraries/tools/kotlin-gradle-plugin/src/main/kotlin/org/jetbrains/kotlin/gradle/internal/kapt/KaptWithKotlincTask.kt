@@ -50,7 +50,6 @@ abstract class KaptWithKotlincTask @Inject constructor(
     internal val pluginOptions = CompilerPluginOptions()
 
     @get:Classpath
-    @get:InputFiles
     abstract val pluginClasspath: ConfigurableFileCollection
 
     @get:Internal

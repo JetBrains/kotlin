@@ -49,7 +49,6 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         }
     }
 
-    @get:InputFiles
     @get:Classpath
     @Suppress("unused")
     abstract val kaptJars: ConfigurableFileCollection

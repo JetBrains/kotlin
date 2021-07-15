@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
 
@@ -35,12 +30,14 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     val packageJsonFiles: Collection<File> by lazy {
         resolutionManager.packageJsonFiles
     }
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     val preparedFiles: Collection<File> by lazy {
         nodeJs.packageManager.preparedFiles(nodeJs)

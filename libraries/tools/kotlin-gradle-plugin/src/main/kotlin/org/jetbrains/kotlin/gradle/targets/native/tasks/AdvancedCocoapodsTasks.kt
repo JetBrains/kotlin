@@ -490,6 +490,7 @@ open class PodBuildTask : DefaultTask() {
     internal lateinit var pod: Provider<CocoapodsDependency>
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     internal val srcDir: FileTree
         get() = project.fileTree(

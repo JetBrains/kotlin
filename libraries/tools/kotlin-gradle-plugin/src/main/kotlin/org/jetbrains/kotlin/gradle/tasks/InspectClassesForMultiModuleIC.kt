@@ -31,6 +31,7 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target.defaultArtifactClassesListFile.get()
     }
 
+    @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     internal val sourceSetOutputClassesDir by lazy {
@@ -52,6 +53,7 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
 
     @Suppress("MemberVisibilityCanBePrivate")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     internal val classFiles: FileCollection
         get() {

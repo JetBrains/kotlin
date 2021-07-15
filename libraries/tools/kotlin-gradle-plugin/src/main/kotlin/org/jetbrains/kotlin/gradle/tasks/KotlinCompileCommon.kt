@@ -112,6 +112,7 @@ abstract class KotlinCompileCommon @Inject constructor(
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     internal val refinesMetadataPaths: ConfigurableFileCollection = objects.fileCollection()
 

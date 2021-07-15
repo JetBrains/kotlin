@@ -30,6 +30,7 @@ open class RootPackageJsonTask : DefaultTask() {
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:IgnoreEmptyDirectories
     @get:InputFiles
     val packageJsonFiles: Collection<File> by lazy {
         resolutionManager.packageJsonFiles

@@ -84,7 +84,6 @@ abstract class KaptGenerateStubsTask : KotlinCompile(KotlinJvmOptionsImpl()) {
     fun getIfKaptClasspathIsPresent() = !kaptClasspath.isEmpty
 
     @get:Classpath
-    @get:InputFiles
     @Suppress("unused")
     internal abstract val kotlinTaskPluginClasspath: ConfigurableFileCollection
 
