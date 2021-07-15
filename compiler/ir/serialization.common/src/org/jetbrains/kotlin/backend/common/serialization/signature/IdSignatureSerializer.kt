@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -283,8 +282,8 @@ open class IdSignatureSerializer(
         }
     }
 
-    protected open fun IrDeclaration.createFileLocalSignature(parentSignature: IdSignature, localIndex: Long): IdSignature {
-        return IdSignature.FileLocalSignature(parentSignature, localIndex)
+    protected open fun IrDeclaration.createFileLocalSignature(parentSignature: IdSignature, localIndex: Long, description: String? = null): IdSignature {
+        return IdSignature.FileLocalSignature(parentSignature, localIndex, description)
     }
 
     protected open fun IrDeclaration.createScopeLocalSignature(scopeIndex: Int, description: String): IdSignature {

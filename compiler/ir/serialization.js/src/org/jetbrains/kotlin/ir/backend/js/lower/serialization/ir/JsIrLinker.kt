@@ -37,10 +37,14 @@ class JsIrLinker(
     private val useGlobalSignatures: Boolean = false,
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns),
-                                                           signatureSerializerFactory = { publicSignatureBuilder, table ->
-        if (useGlobalSignatures) IdSignatureSerializerWithForIC(publicSignatureBuilder, table) else IdSignatureSerializer(publicSignatureBuilder, table)
-    })
+    override val fakeOverrideBuilder = FakeOverrideBuilder(
+        this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns), signatureSerializerFactory = { publicSignatureBuilder, table ->
+            if (useGlobalSignatures) IdSignatureSerializerWithForIC(publicSignatureBuilder, table) else IdSignatureSerializer(
+                publicSignatureBuilder,
+                table
+            )
+        }
+    )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
@@ -48,7 +52,7 @@ class JsIrLinker(
     private val IrLibrary.libContainsErrorCode: Boolean
         get() = this is KotlinLibrary && this.containsErrorCode
 
-    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
+    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
         require(klib != null) { "Expecting kotlin library" }
         loweredIcData[moduleDescriptor]?.let { loweredIcData ->
             return IcModuleDeserializer(
@@ -63,14 +67,12 @@ class JsIrLinker(
                 useGlobalSignatures = useGlobalSignatures
             )
         }
-        return klib?.let { lib ->
-            JsModuleDeserializer(moduleDescriptor, lib, strategy, lib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, lib.libContainsErrorCode)
-        } ?: error("Expecting kotlin library")
+        return JsModuleDeserializer(moduleDescriptor, klib, strategy, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, klib.libContainsErrorCode)
     }
 
     val mapping: JsMapping by lazy { JsMapping(symbolTable.irFactory) }
 
-    private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy, allowErrorCode: Boolean) :
+    private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
         BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategy, libraryAbiVersion, allowErrorCode, useGlobalSignatures)
 
     override fun maybeWrapWithBuiltInAndInit(
@@ -103,7 +105,7 @@ class JsIrLinker(
 
 
     fun moduleDeserializer(moduleDescriptor: ModuleDescriptor): IrModuleDeserializer {
-        return deserializersForModules[moduleDescriptor] ?: error("Deserializer for $moduleDescriptor not found")
+        return deserializersForModules[moduleDescriptor.name.asString()] ?: error("Deserializer for $moduleDescriptor not found")
     }
 
     fun loadIcIr(preprocess: (IrModuleFragment) -> Unit) {

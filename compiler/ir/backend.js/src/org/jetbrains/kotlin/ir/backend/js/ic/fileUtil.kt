@@ -10,10 +10,6 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.toByteArray
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.impl.javaFile
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import java.io.PrintWriter
@@ -31,18 +27,18 @@ fun buildCache(
     mainModule: MainModule.Klib,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     exportedDeclarations: Set<FqName> = emptySet(),
     forceClean: Boolean = false,
     icCache: IcCacheInfo = IcCacheInfo.EMPTY,
 ) {
-    val dependencyHashes = allDependencies.getFullList(TopologicalLibraryOrder).mapNotNull {
-        val path = it.libraryFile.absolutePath
+    val dependencyHashes = dependencies.mapNotNull {
+        val path = File(it).canonicalPath
         icCache.md5[path]
     } + compilerVersion
 
-    val md5 = mainModule.lib.libraryFile.javaFile().md5(dependencyHashes)
+    val md5 = File(mainModule.libPath).md5(dependencyHashes)
 
     if (!forceClean) {
         val oldCacheInfo = CacheInfo.load(cachePath)
@@ -53,11 +49,11 @@ fun buildCache(
     icDir.deleteRecursively()
     icDir.mkdirs()
 
-    val icData = prepareSingleLibraryIcCache(project, analyzer, configuration, mainModule.lib, allDependencies, friendDependencies, exportedDeclarations, icCache.data)
+    val icData = prepareSingleLibraryIcCache(project, analyzer, configuration, mainModule.libPath, dependencies, friendDependencies, exportedDeclarations, icCache.data)
 
     icData.writeTo(File(cachePath))
 
-    CacheInfo(cachePath, mainModule.lib.libraryFile.absolutePath, md5).save()
+    CacheInfo(cachePath, mainModule.libPath, md5).save()
 }
 
 private fun File.md5(additional: Iterable<ULong> = emptyList()): ULong {
@@ -94,11 +90,12 @@ private fun File.md5(additional: Iterable<ULong> = emptyList()): ULong {
 }
 
 fun checkCaches(
-    allDependencies: KotlinLibraryResolveResult,
+    dependencies: Collection<String>,
     cachePaths: List<String>,
     skipLib: String? = null,
 ): IcCacheInfo {
-    val allLibs = allDependencies.getFullList().map { it.libraryFile.absolutePath }.toSet() - skipLib
+    val skipLibPath = File(skipLib).canonicalPath
+    val allLibs = dependencies.map { File(it).canonicalPath }.toSet() - skipLibPath
 
     val caches = cachePaths.map { CacheInfo.load(it) ?: error("Cannot load IC cache from ${it}") }
 

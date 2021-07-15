@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.toArray
 import java.io.File
-import java.nio.charset.Charset
 
 class SerializedIcData(
     val files: Collection<SerializedIcDataForFile>,
@@ -85,7 +84,8 @@ fun File.readIcData(): SerializedIcData {
             signatures = File(fileDir, "file.signatures").readBytes(),
             strings = File(fileDir, "file.strings").readBytes(),
             bodies = File(fileDir, "file.bodies").readBytes(),
-            declarations = File(fileDir, "file.declarations").readBytes()
+            declarations = File(fileDir, "file.declarations").readBytes(),
+            debugInfo = null
         )
 
         val carriers = SerializedCarriers(

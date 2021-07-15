@@ -188,7 +188,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             messageCollector.report(INFO, "Building cache:")
             messageCollector.report(INFO, "to: ${outputFilePath}")
             messageCollector.report(INFO, arguments.cacheDirectories ?: "")
-            messageCollector.report(INFO, resolvedLibraries.getFullList().map { it.libraryName }.toString())
+            messageCollector.report(INFO, libraries.toString())
 
             val includes = arguments.includes!!
 
@@ -197,9 +197,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 if (sourcesFiles.isNotEmpty()) {
                     messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
                 }
-                val allLibraries = resolvedLibraries.getFullList()
-                val mainLib = allLibraries.find { it.libraryFile.absolutePath == File(includes).absolutePath }!!
-                MainModule.Klib(mainLib)
+//                val allLibraries = resolvedLibraries.getFullList()
+//                val mainLib = allLibraries.find { it.libraryFile.absolutePath == File(includes).absolutePath }!!
+                MainModule.Klib(includes)
             }
 
             val start = System.currentTimeMillis()
@@ -209,9 +209,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 mainModule = mainModule,
                 analyzer = AnalyzerWithCompilerReport(config.configuration),
                 configuration = config.configuration,
-                allDependencies = resolvedLibraries,
-                friendDependencies = friendDependencies,
-                icCache = checkCaches(resolvedLibraries, icCaches, skipLib = mainModule.lib.libraryFile.absolutePath)
+                dependencies = libraries,
+                friendDependencies = friendLibraries,
+                icCache = checkCaches(libraries, icCaches, skipLib = mainModule.libPath)
             )
 
             messageCollector.report(INFO, "IC cache building duration: ${System.currentTimeMillis() - start}ms")
@@ -316,7 +316,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 ),
                 lowerPerModule = icCaches.isNotEmpty(),
                 useStdlibCache = icCaches.isNotEmpty(),
-                icCache = if (icCaches.isNotEmpty()) checkCaches(resolvedLibraries, icCaches, skipLib = (mainModule as MainModule.Klib).lib.libraryFile.absolutePath).data else emptyMap(),
+                icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).data else emptyMap(),
             )
 
             messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")

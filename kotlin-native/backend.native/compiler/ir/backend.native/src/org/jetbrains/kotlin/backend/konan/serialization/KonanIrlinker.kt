@@ -90,7 +90,7 @@ internal class KonanIrLinker(
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
     override val fakeOverrideBuilder: FakeOverrideBuilder =
-        FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns), KonanFakeOverrideClassFilter)
+        FakeOverrideBuilder(this, symbolTable, KonanManglerIr, IrTypeSystemContextImpl(builtIns))
 
     override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
         if (moduleDescriptor === forwardModuleDescriptor) {

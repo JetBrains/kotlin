@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
@@ -26,11 +22,11 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignatu
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature as ProtoScopeLocalIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as ProtoFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature as ProtoLoweredIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature as ProtoScopeLocalIdSignature
 
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,

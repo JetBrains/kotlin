@@ -171,9 +171,7 @@ sealed class IdSignature {
 
         override fun isPackageSignature(): Boolean = true
 
-        override fun topLevelSignature(): IdSignature {
-            error("Should not reach here ($this)")
-        }
+        override fun topLevelSignature(): IdSignature = this
 
         override fun nearestPublicSig(): IdSignature {
             error("Should not reach here ($this)")

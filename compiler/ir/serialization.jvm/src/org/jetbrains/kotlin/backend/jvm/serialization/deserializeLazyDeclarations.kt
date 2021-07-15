@@ -11,15 +11,19 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideDeclarationTabl
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
@@ -246,7 +250,7 @@ private fun buildFakeOverridesForLocalClasses(
 
 class PrePopulatedDeclarationTable(
     sig2symbol: Map<IdSignature, IrSymbol>
-) : FakeOverrideDeclarationTable(JvmIrMangler) {
+) : FakeOverrideDeclarationTable(JvmIrMangler, ::IdSignatureSerializer) {
     private val symbol2Sig = sig2symbol.entries.associate { (x, y) -> y to x }
 
     override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? {
