@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
@@ -32,15 +33,36 @@ internal class KtFirPsiTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtPsiTypeProvider(), KtFirAnalysisSessionComponent {
+
+    override fun commonSuperType(
+        expressions: Collection<KtExpression>,
+        context: KtExpression,
+        mode: TypeMappingMode
+    ): PsiType? = withValidityAssertion {
+        val unitType = analysisSession.rootModuleSession.builtinTypes.unitType.type
+        analysisSession.rootModuleSession.typeContext
+            .commonSuperTypeOrNull(expressions.map { e -> e.getConeType(unitType) { it } })
+            ?.asPsiType(mode, context)
+    }
+
     override fun getPsiTypeForKtExpression(
         expression: KtExpression,
         mode: TypeMappingMode,
     ): PsiType = withValidityAssertion {
-        when (val fir = expression.getOrBuildFir(firResolveState)) {
-            is FirExpression -> fir.typeRef.coneType.asPsiType(mode, expression)
-            is FirNamedReference -> fir.getReferencedElementType().asPsiType(mode, expression)
-            is FirStatement -> PsiType.VOID
-            else -> throwUnexpectedFirElementError(fir, expression)
+        expression.getConeType(PsiType.VOID) {
+            it.asPsiType(mode, expression)
+        }
+    }
+
+    private inline fun <T> KtExpression.getConeType(
+        defaultType: T,
+        coneTypeConverter: (ConeKotlinType) -> T,
+    ): T = withValidityAssertion {
+        when (val fir = this.getOrBuildFir(firResolveState)) {
+            is FirExpression -> coneTypeConverter(fir.typeRef.coneType)
+            is FirNamedReference -> coneTypeConverter(fir.getReferencedElementType())
+            is FirStatement -> defaultType
+            else -> throwUnexpectedFirElementError(fir, this)
         }
     }
 

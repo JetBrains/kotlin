@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.components.KtExpressionTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.getReferencedElementType
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.unwrap
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassErrorType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -41,15 +42,6 @@ internal class KtFirExpressionTypeProvider(
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
             else -> error("Unexpected ${fir?.let { it::class }}")
         }
-    }
-
-    private fun KtExpression.unwrap(): KtExpression {
-        return when (this) {
-            is KtLabeledExpression -> baseExpression?.unwrap()
-            is KtAnnotatedExpression -> baseExpression?.unwrap()
-            is KtObjectLiteralExpression -> objectDeclaration
-            else -> null
-        } ?: this
     }
 
     override fun getExpectedType(expression: PsiElement): KtType? {

@@ -23,6 +23,19 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantVa
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtUnsupportedConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
+import org.jetbrains.kotlin.psi.KtAnnotatedExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtLabeledExpression
+import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
+
+internal fun KtExpression.unwrap(): KtExpression {
+    return when (this) {
+        is KtLabeledExpression -> baseExpression?.unwrap()
+        is KtAnnotatedExpression -> baseExpression?.unwrap()
+        is KtObjectLiteralExpression -> objectDeclaration
+        else -> null
+    } ?: this
+}
 
 internal fun FirNamedReference.getReferencedElementType(): ConeKotlinType {
     val symbols = when (this) {

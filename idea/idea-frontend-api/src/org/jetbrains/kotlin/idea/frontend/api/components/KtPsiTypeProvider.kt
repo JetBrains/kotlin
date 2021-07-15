@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
 
 public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
+    public abstract fun commonSuperType(expressions: Collection<KtExpression>, context: KtExpression, mode: TypeMappingMode): PsiType?
     public abstract fun getPsiTypeForKtExpression(expression: KtExpression, mode: TypeMappingMode): PsiType
     public abstract fun getPsiTypeForKtDeclaration(ktDeclaration: KtDeclaration, mode: TypeMappingMode): PsiType
     public abstract fun getPsiTypeForKtTypeReference(ktTypeReference: KtTypeReference, mode: TypeMappingMode): PsiType
@@ -23,6 +24,13 @@ public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
 }
 
 public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
+    public fun commonSuperType(
+        expressions: Collection<KtExpression>,
+        context: KtExpression,
+        mode: TypeMappingMode = TypeMappingMode.DEFAULT
+    ): PsiType? =
+        analysisSession.psiTypeProvider.commonSuperType(expressions, context, mode)
+
     public fun KtExpression.getPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType =
         analysisSession.psiTypeProvider.getPsiTypeForKtExpression(this, mode)
 
