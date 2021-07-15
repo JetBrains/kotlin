@@ -320,6 +320,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_RETURN_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_VISIBILITY_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_BOUND
@@ -793,6 +794,11 @@ class FirDefaultErrorMessages {
                 TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING,
                 "Cannot use ''{0}'' as reified type parameter, since the array type parameter is not reified.",
                 SYMBOL
+            )
+            map.put(
+                REIFIED_TYPE_FORBIDDEN_SUBSTITUTION,
+                "Cannot use ''{0}'' as reified type parameter",
+                RENDER_TYPE
             )
             map.put(
                 FINAL_UPPER_BOUND,

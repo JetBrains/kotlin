@@ -1659,6 +1659,14 @@ internal class TypeParameterAsReifiedArrayWarningImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class ReifiedTypeForbiddenSubstitutionImpl(
+    override val type: KtType,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ReifiedTypeForbiddenSubstitution(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class FinalUpperBoundImpl(
     override val type: KtType,
     firDiagnostic: FirPsiDiagnostic,

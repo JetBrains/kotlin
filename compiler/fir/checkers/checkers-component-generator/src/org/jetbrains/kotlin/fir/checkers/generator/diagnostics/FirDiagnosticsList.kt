@@ -491,6 +491,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
+        val REIFIED_TYPE_FORBIDDEN_SUBSTITUTION by error<PsiElement> {
+            parameter<ConeKotlinType>("type")
+        }
+
         val FINAL_UPPER_BOUND by warning<KtTypeReference> {
             parameter<ConeKotlinType>("type")
         }

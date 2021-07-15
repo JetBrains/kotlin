@@ -22,7 +22,7 @@ fun test2() {
 }
 
 fun test3() {
-    takeReifiedUnbound(null)
+    <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>takeReifiedUnbound<!>(null)
 }
 
 fun test4(): Bound = takeReifiedUnbound(null)
@@ -35,7 +35,7 @@ fun test5(): Bound? = select(
 fun test6() {
     select(
         null,
-        materializeReified()
+        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReified<!>()
     )
 }
 
@@ -48,6 +48,6 @@ fun test7(): Bound? =
 fun test8() {
     select(
         null,
-        materializeReifiedUnbound()
+        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReifiedUnbound<!>()
     )
 }

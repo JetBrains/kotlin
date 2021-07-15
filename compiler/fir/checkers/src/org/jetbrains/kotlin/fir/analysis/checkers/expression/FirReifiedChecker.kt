@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirTypeParameterAsReifiedChecker : FirQualifiedAccessExpressionChecker() {
+object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleReference = expression.calleeReference
         val typeArguments = expression.typeArguments
@@ -33,13 +33,13 @@ object FirTypeParameterAsReifiedChecker : FirQualifiedAccessExpressionChecker() 
             val typeArgument = typeArgumentProjection.toConeTypeProjection().type
             val typeParameter = typeParameters[index]
 
-            if (source != null && (typeParameter.isTypeParameterOfKotlinArray())) {
+            if (source != null && typeParameter.isReifiedTypeParameterOrFromKotlinArray()) {
                 checkArgumentAndReport(typeArgument, source, false, context, reporter)
             }
         }
     }
 
-    private fun FirTypeParameterSymbol.isTypeParameterOfKotlinArray(): Boolean {
+    private fun FirTypeParameterSymbol.isReifiedTypeParameterOrFromKotlinArray(): Boolean {
         val containingDeclaration = containingDeclarationSymbol
         return isReified ||
                 containingDeclaration is FirRegularClassSymbol && containingDeclaration.classId == StandardClassIds.Array
@@ -69,10 +69,17 @@ object FirTypeParameterAsReifiedChecker : FirQualifiedAccessExpressionChecker() 
                 FirErrors.TYPE_PARAMETER_AS_REIFIED
             }
             symbol = typeArgument.toSymbol(context.session) as FirTypeParameterSymbol
+        } else if (typeArgument != null && typeArgument.cannotBeReified()) {
+            reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument, context)
+            return
         }
 
         if (factory != null && !symbol.isReified) {
             reporter.reportOn(source, factory, symbol, context)
         }
+    }
+
+    private fun ConeKotlinType.cannotBeReified(): Boolean {
+        return this.isNothing || this.isNullableNothing || this is ConeCapturedType
     }
 }

@@ -11,5 +11,5 @@ fun test1() {
     val f2: Foo<in Nothing> = foo1 { it checkType { _<Nothing>() } }
 
     val f3: Foo<out Int> = foo2 { it checkType { _<Int>() } }
-    val f4: Foo<in Nothing> = foo2 { it checkType { _<Nothing>() } }
+    val f4: Foo<in Nothing> = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo2<!> { it checkType { _<Nothing>() } }
 }
