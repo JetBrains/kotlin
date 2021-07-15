@@ -1,23 +1,8 @@
-warning: language version 1.3 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:1:13: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
-fun test(s: ArrayDeque<Int>): ArrayDeque<Int>? {
-            ^
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:1:31: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
-fun test(s: ArrayDeque<Int>): ArrayDeque<Int>? {
-                              ^
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:2:5: error: unresolved reference: ArrayDeque
-    ArrayDeque<Int>(42)
-    ^
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:4:12: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
-    val x: ArrayDeque<Int>? = null
-           ^
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:5:12: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
-    return x ?: s
-           ^
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:5:14: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
-    return x ?: s
-             ^
-compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:5:17: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
-    return x ?: s
-                ^
+warning: language version 1.4 is deprecated and its support will be removed in a future version of Kotlin
+compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:2:8: error: unresolved reference: lowercase
+    "".lowercase()
+       ^
+compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:3:7: error: unresolved reference: digitToChar
+    1.digitToChar()
+      ^
 COMPILATION_ERROR

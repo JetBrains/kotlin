@@ -1,8 +1,0 @@
-warning: language version 1.3 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/jvm/standaloneSamConversionsAreEnabledWithNewInference.kt:9:25: error: type mismatch: inferred type is () -> Unit but Runnable was expected
-    ForceSam.compare(r, {})
-                        ^
-compiler/testData/cli/jvm/standaloneSamConversionsAreEnabledWithNewInference.kt:10:22: error: type mismatch: inferred type is () -> Unit but Runnable was expected
-    ForceSam.compare({}, r)
-                     ^
-COMPILATION_ERROR

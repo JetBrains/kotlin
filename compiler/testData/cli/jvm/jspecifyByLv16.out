@@ -1,4 +1,3 @@
-warning: language version 1.6 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/jvm/jspecifyUsage.kt:2:11: error: null can not be a value of a non-null type String
     a.foo(null)
           ^

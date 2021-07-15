@@ -421,16 +421,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/invalidMetadataVersion.args");
         }
 
-        @TestMetadata("irApiVersionUnsupported.args")
-        public void testIrApiVersionUnsupported() throws Exception {
-            runTest("compiler/testData/cli/jvm/irApiVersionUnsupported.args");
-        }
-
-        @TestMetadata("irLanguageVersionUnsupported.args")
-        public void testIrLanguageVersionUnsupported() throws Exception {
-            runTest("compiler/testData/cli/jvm/irLanguageVersionUnsupported.args");
-        }
-
         @TestMetadata("irSupported.args")
         public void testIrSupported() throws Exception {
             runTest("compiler/testData/cli/jvm/irSupported.args");
@@ -791,11 +781,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/standaloneSamConversionsAreEnabledWithNewInferenceInternalFlag.args");
         }
 
-        @TestMetadata("standaloneSamConversionsBaseline_1_3.args")
-        public void testStandaloneSamConversionsBaseline_1_3() throws Exception {
-            runTest("compiler/testData/cli/jvm/standaloneSamConversionsBaseline_1_3.args");
-        }
-
         @TestMetadata("suppressAllWarningsJvm.args")
         public void testSuppressAllWarningsJvm() throws Exception {
             runTest("compiler/testData/cli/jvm/suppressAllWarningsJvm.args");
@@ -859,6 +844,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("useDeclarationThatWasExperimentalWithoutMarker.args")
         public void testUseDeclarationThatWasExperimentalWithoutMarker() throws Exception {
             runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.args");
+        }
+
+        @TestMetadata("useDeclarationThatWasExperimentalWithoutMarker2.args")
+        public void testUseDeclarationThatWasExperimentalWithoutMarker2() throws Exception {
+            runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker2.args");
         }
 
         @TestMetadata("useMixedNamedArgumentsFlag.args")
@@ -972,16 +962,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("inlineCycle.args")
         public void testInlineCycle() throws Exception {
             runTest("compiler/testData/cli/js/inlineCycle.args");
-        }
-
-        @TestMetadata("irApiVersionUnsupported.args")
-        public void testIrApiVersionUnsupported() throws Exception {
-            runTest("compiler/testData/cli/js/irApiVersionUnsupported.args");
-        }
-
-        @TestMetadata("irLanguageVersionUnsupported.args")
-        public void testIrLanguageVersionUnsupported() throws Exception {
-            runTest("compiler/testData/cli/js/irLanguageVersionUnsupported.args");
         }
 
         @TestMetadata("jsExtraHelp.args")

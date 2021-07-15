@@ -1,1 +1,5 @@
-OK
+warning: language version 1.4 is deprecated and its support will be removed in a future version of Kotlin
+compiler/testData/cli/jvm/languageVersion.kt:3:1: error: the feature "sealed interfaces" is only available since language version 1.5
+sealed interface Polygon
+^
+COMPILATION_ERROR
