@@ -493,7 +493,13 @@ class DiagnosticReporterByTrackingStrategy(
                         expression.statements.lastOrNull() ?: expression
                     } else expression
 
-                    trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(unwrappedExpression, typeVariableName))
+                    val diagnostic = if (error.couldBeResolvedWithUnrestrictedBuilderInference) {
+                        COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE
+                    } else {
+                        NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER
+                    }
+
+                    trace.reportDiagnosticOnce(diagnostic.on(unwrappedExpression, typeVariableName))
                 }
             }
 

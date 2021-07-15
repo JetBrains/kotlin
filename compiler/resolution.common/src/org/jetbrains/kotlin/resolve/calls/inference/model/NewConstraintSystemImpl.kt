@@ -38,6 +38,8 @@ class NewConstraintSystemImpl(
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
 
+    private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
+
     private enum class State {
         BUILDING,
         TRANSACTION,
@@ -117,6 +119,13 @@ class NewConstraintSystemImpl(
     override fun markPostponedVariable(variable: TypeVariableMarker) {
         storage.postponedTypeVariables += variable
     }
+
+    override fun markCouldBeResolvedWithUnrestrictedBuilderInference() {
+        couldBeResolvedWithUnrestrictedBuilderInference = true
+    }
+
+    override fun couldBeResolvedWithUnrestrictedBuilderInference() =
+        couldBeResolvedWithUnrestrictedBuilderInference
 
     override fun unmarkPostponedVariable(variable: TypeVariableMarker) {
         storage.postponedTypeVariables -= variable

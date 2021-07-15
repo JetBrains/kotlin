@@ -54,5 +54,6 @@ class DelegatedPropertyConstraintPositionImpl(topLevelCall: KotlinCall) : Delega
 
 class NotEnoughInformationForTypeParameterImpl(
     typeVariable: TypeVariableMarker,
-    resolvedAtom: ResolvedAtom
-) : NotEnoughInformationForTypeParameter<ResolvedAtom>(typeVariable, resolvedAtom)
+    resolvedAtom: ResolvedAtom,
+    couldBeResolvedWithUnrestrictedBuilderInference: Boolean
+) : NotEnoughInformationForTypeParameter<ResolvedAtom>(typeVariable, resolvedAtom, couldBeResolvedWithUnrestrictedBuilderInference)

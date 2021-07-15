@@ -15,6 +15,7 @@ interface ConstraintSystemOperation {
     val hasContradiction: Boolean
     fun registerVariable(variable: TypeVariableMarker)
     fun markPostponedVariable(variable: TypeVariableMarker)
+    fun markCouldBeResolvedWithUnrestrictedBuilderInference()
     fun unmarkPostponedVariable(variable: TypeVariableMarker)
     fun removePostponedVariables()
 

@@ -316,7 +316,9 @@ class KotlinConstraintSystemCompleter(
         val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
 
         if (resolvedAtom != null) {
-            c.addError(NotEnoughInformationForTypeParameterImpl(typeVariable, resolvedAtom))
+            c.addError(
+                NotEnoughInformationForTypeParameterImpl(typeVariable, resolvedAtom, c.couldBeResolvedWithUnrestrictedBuilderInference())
+            )
         }
 
         val resultErrorType = when {

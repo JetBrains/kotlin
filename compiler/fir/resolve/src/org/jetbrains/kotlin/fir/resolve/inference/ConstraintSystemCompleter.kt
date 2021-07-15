@@ -241,7 +241,9 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
             findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
 
         if (resolvedAtom != null) {
-            c.addError(NotEnoughInformationForTypeParameter(typeVariable, resolvedAtom))
+            c.addError(
+                NotEnoughInformationForTypeParameter(typeVariable, resolvedAtom, c.couldBeResolvedWithUnrestrictedBuilderInference())
+            )
         }
 
         val resultErrorType = when (typeVariable) {

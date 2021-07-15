@@ -26,7 +26,7 @@ inline fun <R> select(crossinline builder: SelectBuilder<R>.() -> Unit) = Unit a
 
 fun test() {
     val x: Flow<String> = flow {
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>produce<!> {
+        <!COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE!>produce<!> {
             select<Unit> {
                 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>onSend<!>("") {
 
