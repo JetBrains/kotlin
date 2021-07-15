@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -33,15 +35,16 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
                 valueParameter.type
             }.unwrap().lowerIfFlexible()
             for (argument in arguments.arguments) {
-                val expression = argument.getArgumentExpression() ?: continue
+                val expression = KtPsiUtil.deparenthesize(argument.getArgumentExpression()) ?: continue
                 val compileTimeValue =
                     bindingContext[BindingContext.COMPILE_TIME_VALUE, expression] as? IntegerValueTypeConstant? ?: continue
                 val callForArgument = expression.getResolvedCall(bindingContext) ?: continue
                 if (!callForArgument.isIntOperator()) continue
-                val callElement = callForArgument.call.callElement
-                if (callElement is KtConstantExpression) continue
-                if (callElement is KtUnaryExpression) {
-                    val token = callElement.operationToken
+                val callElement = callForArgument.call.callElement as? KtExpression ?: continue
+                val deparenthesizedElement = KtPsiUtil.deparenthesize(callElement)!!
+                if (deparenthesizedElement is KtConstantExpression) continue
+                if (deparenthesizedElement is KtUnaryExpression) {
+                    val token = deparenthesizedElement.operationToken
                     if (token == KtTokens.PLUS || token == KtTokens.MINUS) continue
                 }
 
