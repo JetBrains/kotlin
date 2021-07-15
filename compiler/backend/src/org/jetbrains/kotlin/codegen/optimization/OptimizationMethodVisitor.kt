@@ -72,14 +72,21 @@ class OptimizationMethodVisitor(
     }
 
     companion object {
-        private val MEMORY_LIMIT_BY_METHOD_MB = 50
+        private const val MEMORY_LIMIT_BY_METHOD_MB = 50
+        private const val TRY_CATCH_BLOCKS_LIMIT = 512
 
         fun canBeOptimized(node: MethodNode): Boolean {
+            if (node.tryCatchBlocks.size > TRY_CATCH_BLOCKS_LIMIT)
+                return false
+
             val totalFramesSizeMb = node.instructions.size() * (node.maxLocals + node.maxStack) / (1024 * 1024)
             return totalFramesSizeMb < MEMORY_LIMIT_BY_METHOD_MB
         }
 
         fun canBeOptimizedUsingSourceInterpreter(node: MethodNode): Boolean {
+            if (node.tryCatchBlocks.size > TRY_CATCH_BLOCKS_LIMIT)
+                return false
+
             val frameSize = node.maxLocals + node.maxStack
             val methodSize = node.instructions.size().toLong()
             val totalFramesSizeMb = methodSize * methodSize * frameSize / (1024 * 1024)
