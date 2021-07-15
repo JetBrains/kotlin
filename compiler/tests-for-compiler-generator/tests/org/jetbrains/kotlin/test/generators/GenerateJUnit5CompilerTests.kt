@@ -74,6 +74,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/box")
             }
 
+            testClass<AbstractBlackBoxCodegenTest>("BlackBoxModernJdkCodegenTestGenerated") {
+                model("codegen/boxModernJdk")
+            }
+
+            testClass<AbstractIrBlackBoxCodegenTest>("IrBlackBoxModernJdkCodegenTestGenerated") {
+                model("codegen/boxModernJdk")
+            }
+
             testClass<AbstractJvmIrAgainstOldBoxTest> {
                 model("codegen/box/compileKotlinAgainstKotlin")
             }
