@@ -123,14 +123,60 @@ class ReflectJavaClass(
         get() = false
 
     override val isSealed: Boolean
-        get() = false
+        get() = Java16SealedRecordLoader.loadIsSealed(klass) ?: false
 
     override val permittedTypes: Collection<JavaClassifierType>
-        get() = emptyList()
+        get() = Java16SealedRecordLoader.loadGetPermittedSubclasses(klass)
+            ?.map(::ReflectJavaClassifierType)
+            ?: emptyList()
 
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 
     override fun hashCode() = klass.hashCode()
 
     override fun toString() = this::class.java.name + ": " + klass
+}
+
+private object Java16SealedRecordLoader {
+    class Cache(
+        val isSealed: Method?,
+        val getPermittedSubclasses: Method?,
+    )
+
+    private var _cache: Cache? = null
+
+    private fun buildCache(): Cache {
+        val clazz = Class::class.java
+
+        return try {
+            Cache(
+                clazz.getMethod("isSealed"),
+                clazz.getMethod("getPermittedSubclasses"),
+            )
+        } catch (e: NoSuchMethodException) {
+            Cache(null, null)
+        }
+    }
+
+    private fun initCache(): Cache {
+        var cache = this._cache
+        if (cache == null) {
+            cache = buildCache()
+            this._cache = cache
+        }
+        return cache
+    }
+
+    fun loadIsSealed(clazz: Class<*>): Boolean? {
+        val cache = initCache()
+        val isSealed = cache.isSealed ?: return null
+        return isSealed.invoke(clazz) as Boolean
+    }
+
+    fun loadGetPermittedSubclasses(clazz: Class<*>): Array<Class<*>>? {
+        val cache = initCache()
+        val getPermittedSubclasses = cache.getPermittedSubclasses ?: return null
+        @Suppress("UNCHECKED_CAST")
+        return getPermittedSubclasses.invoke(clazz) as Array<Class<*>>
+    }
 }
