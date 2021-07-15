@@ -113,9 +113,20 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
     @TestDataPath("$PROJECT_ROOT")
     public class Expressions {
         @Test
+        public void testAllFilesPresentInExpressions() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
         @TestMetadata("objectLiteralExpression.kt")
         public void testObjectLiteralExpression() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/objectLiteralExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("stringTemplateExpressionEntry.kt")
+        public void testStringTemplateExpressionEntry() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/stringTemplateExpressionEntry.kt");
         }
     }
 

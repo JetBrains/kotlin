@@ -1,0 +1,5 @@
+KT element: KtBlockStringTemplateEntry
+FIR element: FirFunctionCallImpl
+
+FIR element rendered:
+Int(1).R|kotlin/Int.plus|(Int(2))
