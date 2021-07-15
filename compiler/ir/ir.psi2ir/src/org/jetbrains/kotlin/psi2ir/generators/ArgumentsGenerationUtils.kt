@@ -230,7 +230,7 @@ private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
 private fun StatementGenerator.generateVarargExpressionUsing(
     varargArgument: VarargValueArgument,
     valueParameter: ValueParameterDescriptor,
-    @Suppress("UNUSED_PARAMETER") resolvedCall: ResolvedCall<*>, // TODO resolvedCall is required for suspend conversions, see KT-38604
+    resolvedCall: ResolvedCall<*>,
     generateArgumentExpression: (KtExpression) -> IrExpression?
 ): IrExpression? {
     if (varargArgument.arguments.isEmpty()) {
@@ -249,16 +249,21 @@ private fun StatementGenerator.generateVarargExpressionUsing(
 
     val irVararg = IrVarargImpl(varargStartOffset, varargEndOffset, valueParameter.type.toIrType(), varargElementType.toIrType())
 
-    for (argument in varargArgument.arguments) {
-        val ktArgumentExpression = argument.getArgumentExpression()
-            ?: throw AssertionError("No argument expression for vararg element ${argument.asElement().text}")
-        val irArgumentExpression = generateArgumentExpression(ktArgumentExpression)
-            ?: throw AssertionError("'generateArgumentExpression' should return non-null for vararg element ${ktArgumentExpression.text}")
+    for (varargElementArgument in varargArgument.arguments) {
+        val ktArgumentExpression = varargElementArgument.getArgumentExpression()
+            ?: throw AssertionError("No argument expression for vararg element ${varargElementArgument.asElement().text}")
+        val irArgumentExpression =
+            generateArgumentExpression(ktArgumentExpression)
+                ?.let { irArg ->
+                    applySuspendConversionForValueArgumentIfRequired(irArg, varargElementArgument, valueParameter, resolvedCall)
+                }
+                ?: throw AssertionError("no expression for vararg element ${ktArgumentExpression.text}")
+
         val irVarargElement =
-            if (argument.getSpreadElement() != null ||
+            if (varargElementArgument.getSpreadElement() != null ||
                 context.languageVersionSettings
                     .supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions) &&
-                argument.isNamed()
+                varargElementArgument.isNamed()
             )
                 IrSpreadElementImpl(
                     ktArgumentExpression.startOffsetSkippingComments, ktArgumentExpression.endOffset,
@@ -323,17 +328,24 @@ private fun StatementGenerator.applySuspendConversionForValueArgumentIfRequired(
 
     val valueParameterType = if (valueParameter.isVararg) valueParameter.varargElementType!! else valueParameter.type
 
-    val irSuspendFunType = valueParameterType.toIrType()
-    return IrBlockImpl(expression.startOffset, expression.endOffset, irSuspendFunType, IrStatementOrigin.SUSPEND_CONVERSION).apply {
-        val irAdapterFunction = createFunctionForSuspendConversion(startOffset, endOffset, suspendConversionType, valueParameterType)
-        // TODO add a bound receiver property to IrFunctionExpressionImpl?
-        val irAdapterRef = IrFunctionReferenceImpl(
-            startOffset, endOffset, irSuspendFunType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
-            irAdapterFunction.valueParameters.size, null, IrStatementOrigin.SUSPEND_CONVERSION
-        )
-        statements.add(irAdapterFunction)
-        statements.add(irAdapterRef.apply { extensionReceiver = expression })
-    }
+    val suspendFunType: KotlinType =
+        if (context.extensions.samConversion.isSamType(valueParameterType))
+            valueParameterType.getSubstitutedFunctionTypeForSamType()
+        else
+            valueParameterType
+
+    val irAdapterRefType = suspendFunType.toIrType()
+    return IrBlockImpl(expression.startOffset, expression.endOffset, irAdapterRefType, IrStatementOrigin.SUSPEND_CONVERSION)
+        .apply {
+            val irAdapterFunction = createFunctionForSuspendConversion(startOffset, endOffset, suspendConversionType, suspendFunType)
+            // TODO add a bound receiver property to IrFunctionExpressionImpl?
+            val irAdapterRef = IrFunctionReferenceImpl(
+                startOffset, endOffset, irAdapterRefType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
+                irAdapterFunction.valueParameters.size, null, IrStatementOrigin.SUSPEND_CONVERSION
+            )
+            statements.add(irAdapterFunction)
+            statements.add(irAdapterRef.apply { extensionReceiver = expression })
+        }
 }
 
 private fun StatementGenerator.createFunctionForSuspendConversion(
@@ -343,8 +355,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
     suspendFunType: KotlinType
 ): IrSimpleFunction {
     val irFunReturnType = funType.arguments.last().type.toIrType()
-    val suspendFunReturnType = suspendFunType.arguments.last().type
-    val irSuspendFunReturnType = suspendFunReturnType.toIrType()
+    val irSuspendFunReturnType = suspendFunType.arguments.last().type.toIrType()
 
     val irAdapterFun = context.irFactory.createFunction(
         startOffset, endOffset,
@@ -395,7 +406,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         for (irAdapterParameter in irAdapterFun.valueParameters) {
             irAdapteeCall.putValueArgument(irAdapterParameter.index, irGet(irAdapterParameter))
         }
-        if (suspendFunReturnType.isUnit()) {
+        if (suspendFunType.arguments.last().type.isUnit()) {
             +irAdapteeCall
         } else {
             +IrReturnImpl(
@@ -592,14 +603,28 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
 
         val irSamType = substitutedSamType.toIrType()
 
-        fun samConvertScalarExpression(irArgument: IrExpression) =
+        fun IrExpression.isFunctionReferenceAdapter() =
+            this is IrBlock && (origin == IrStatementOrigin.SUSPEND_CONVERSION || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
+
+        fun IrExpression.applySamConversion() =
             IrTypeOperatorCallImpl(
-                irArgument.startOffset, irArgument.endOffset,
+                startOffset, endOffset,
                 irSamType,
-                IrTypeOperator.SAM_CONVERSION,
-                irSamType,
-                castArgumentToFunctionalInterfaceForSamType(irArgument, substitutedSamType)
+                IrTypeOperator.SAM_CONVERSION, irSamType,
+                castArgumentToFunctionalInterfaceForSamType(this, substitutedSamType)
             )
+
+        fun samConvertScalarExpression(irArgument: IrExpression) =
+            if (irArgument.isFunctionReferenceAdapter()) {
+                // Apply SAM_CONVERSION directly to the adapter reference
+                val irBlock = irArgument as IrBlock
+                irBlock.type = irSamType
+                val irAdapterRef = irBlock.statements.last() as IrFunctionReference
+                irBlock.statements[irBlock.statements.lastIndex] = irAdapterRef.applySamConversion()
+                irBlock
+            } else {
+                irArgument.applySamConversion()
+            }
 
         call.irValueArgumentsByIndex[i] =
             if (originalArgument !is IrVararg) {

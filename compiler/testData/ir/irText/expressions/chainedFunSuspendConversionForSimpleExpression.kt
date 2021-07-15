@@ -1,6 +1,5 @@
 // !LANGUAGE: +SuspendConversion
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
+// SKIP_KT_DUMP
 
 fun interface SuspendRunnable {
     suspend fun invoke()
@@ -8,12 +7,11 @@ fun interface SuspendRunnable {
 
 fun foo(s: SuspendRunnable) {}
 
-fun test(f: () -> Unit) {
-    foo { }
-    foo(f)
-}
+fun bar(): () -> Unit = {}
 
-fun box(): String {
-    test({ "" })
-    return "OK"
+fun test(f: () -> Unit) {
+    foo(f)
+    foo(bar())
+    var t = f
+    foo(t)
 }

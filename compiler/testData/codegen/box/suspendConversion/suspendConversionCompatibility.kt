@@ -1,6 +1,8 @@
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // WITH_RUNTIME
+// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND_FIR: JVM_IR
 
 object Test1 {
     fun foo(f: () -> Unit) {}
@@ -9,7 +11,7 @@ object Test1 {
         fun foo(f: suspend () -> Unit) {}
 
         fun test(g: () -> Unit) {
-            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!>foo(g)<!>
+            foo(g)
         }
     }
 }
@@ -25,8 +27,6 @@ object Test2 {
         fun test() {
             val result = foo(::bar)
             val result2 = foo2(::bar)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result2<!>
         }
     }
 }
@@ -43,8 +43,6 @@ object Test3 {
         fun test() {
             val result = foo(::bar)
             val result2 = foo2(::bar)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result2<!>
         }
     }
 }

@@ -37,7 +37,7 @@ fun testSamConversionOnAdapted() {
       foo1() /*~> Unit */
     }
 
-    ::foo1
-  } /*-> KRunnable */)
+    ::foo1 /*-> KRunnable */
+  })
 }
 

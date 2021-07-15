@@ -1059,6 +1059,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("chainedFunSuspendConversionForSimpleExpression.kt")
+        public void testChainedFunSuspendConversionForSimpleExpression() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/chainedFunSuspendConversionForSimpleExpression.kt");
+        }
+
+        @Test
         @TestMetadata("classReference.kt")
         public void testClassReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/classReference.kt");
@@ -1647,9 +1653,21 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("suspendConversionInVararg.kt")
+        public void testSuspendConversionInVararg() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/suspendConversionInVararg.kt");
+        }
+
+        @Test
         @TestMetadata("suspendConversionOnArbitraryExpression.kt")
         public void testSuspendConversionOnArbitraryExpression() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/suspendConversionOnArbitraryExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendConversionWithFunInterfaces.kt")
+        public void testSuspendConversionWithFunInterfaces() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/suspendConversionWithFunInterfaces.kt");
         }
 
         @Test

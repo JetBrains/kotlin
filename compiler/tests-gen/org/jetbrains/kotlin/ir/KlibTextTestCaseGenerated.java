@@ -868,6 +868,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/chainOfSafeCalls.kt");
         }
 
+        @TestMetadata("chainedFunSuspendConversionForSimpleExpression.kt")
+        public void testChainedFunSuspendConversionForSimpleExpression() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/chainedFunSuspendConversionForSimpleExpression.kt");
+        }
+
         @TestMetadata("complexAugmentedAssignment.kt")
         public void testComplexAugmentedAssignment() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/complexAugmentedAssignment.kt");
@@ -1258,9 +1263,19 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/stringTemplates.kt");
         }
 
+        @TestMetadata("suspendConversionInVararg.kt")
+        public void testSuspendConversionInVararg() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/suspendConversionInVararg.kt");
+        }
+
         @TestMetadata("suspendConversionOnArbitraryExpression.kt")
         public void testSuspendConversionOnArbitraryExpression() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/suspendConversionOnArbitraryExpression.kt");
+        }
+
+        @TestMetadata("suspendConversionWithFunInterfaces.kt")
+        public void testSuspendConversionWithFunInterfaces() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/suspendConversionWithFunInterfaces.kt");
         }
 
         @TestMetadata("temporaryInEnumEntryInitializer.kt")

@@ -1,13 +1,17 @@
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: WASM
 
-fun foo(x: () -> Int) {}
-fun foo(x: suspend () -> Int) {}
+var foo1 = false
+var foo2 = false
+
+fun foo(x: () -> Int) { foo1 = true }
+fun foo(x: suspend () -> Int) { foo2 = true}
 
 fun usualCall(): Int = 42
 suspend fun suspendCall(): Int = 42
 
-// candidate without suspend conversions is more specific
 fun test2(f: () -> Int, g: suspend () -> Int) {
     foo(f)
     foo(g)
@@ -15,5 +19,8 @@ fun test2(f: () -> Int, g: suspend () -> Int) {
 
 fun box(): String {
     test2({ 1 }, { 2 })
-    return "OK"
+    return if (foo1 && foo2)
+        "OK"
+    else
+        "foo1: $foo1; foo2: $foo2"
 }

@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// IGNORE_BACKEND: WASM
 
 fun unitCoercion(f: suspend () -> Unit) {}
 fun foo(): Int = 0

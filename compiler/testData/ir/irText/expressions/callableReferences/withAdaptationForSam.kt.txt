@@ -16,7 +16,7 @@ fun test() {
       withVararg(xs = [p0]) /*~> Unit */
     }
 
-    ::withVararg
-  } /*-> IFoo */)
+    ::withVararg /*-> IFoo */
+  })
 }
 

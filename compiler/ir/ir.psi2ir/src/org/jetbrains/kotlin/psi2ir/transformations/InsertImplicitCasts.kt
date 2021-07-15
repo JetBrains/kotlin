@@ -286,9 +286,10 @@ internal class InsertImplicitCasts(
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression =
         when (expression.operator) {
-            IrTypeOperator.SAM_CONVERSION -> expression.transformPostfix {
-                argument = argument.cast(typeOperand.originalKotlinType!!.getSubstitutedFunctionTypeForSamType())
-            }
+            IrTypeOperator.SAM_CONVERSION ->
+                expression.transformPostfix {
+                    argument = argument.cast(typeOperand.originalKotlinType!!.getSubstitutedFunctionTypeForSamType())
+                }
 
             IrTypeOperator.IMPLICIT_CAST -> {
                 // This branch is required for handling specific ambiguous cases in implicit cast insertion,
