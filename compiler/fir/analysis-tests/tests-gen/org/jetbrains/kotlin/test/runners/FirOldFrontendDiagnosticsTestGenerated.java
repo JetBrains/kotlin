@@ -19878,6 +19878,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt47729.kt")
+            public void testKt47729() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/kt47729.kt");
+            }
+
+            @Test
             @TestMetadata("kt47729_parenthesis.kt")
             public void testKt47729_parenthesis() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/kt47729_parenthesis.kt");
