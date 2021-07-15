@@ -46,7 +46,6 @@ class IntrinsicType {
         const val OBJC_GET_SELECTOR             = "OBJC_GET_SELECTOR"
 
         // Other
-        const val GET_CLASS_TYPE_INFO           = "GET_CLASS_TYPE_INFO"
         const val INTEROP_READ_BITS             = "INTEROP_READ_BITS"
         const val INTEROP_WRITE_BITS            = "INTEROP_WRITE_BITS"
         const val CREATE_UNINITIALIZED_INSTANCE = "CREATE_UNINITIALIZED_INSTANCE"

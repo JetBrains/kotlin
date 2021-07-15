@@ -442,7 +442,6 @@ internal class KonanSymbols(
         return symbolTable.referenceEnumEntry(descriptor)
     }
 
-    val getClassTypeInfo = internalFunction("getClassTypeInfo")
     val getObjectTypeInfo = internalFunction("getObjectTypeInfo")
     val kClassImpl = internalClass("KClassImpl")
     val kClassImplConstructor by lazy { kClassImpl.constructors.single { it.descriptor.isPrimary } }
@@ -453,6 +452,7 @@ internal class KonanSymbols(
     val kTypeImpl = internalClass("KTypeImpl")
     val kTypeImplIntrinsicConstructor by lazy { kTypeImpl.constructors.single { it.descriptor.valueParameters.isEmpty() } }
     val kTypeImplForTypeParametersWithRecursiveBounds = internalClass("KTypeImplForTypeParametersWithRecursiveBounds")
+    val kTypeProjectionList = internalClass("KTypeProjectionList")
 
     val kTypeProjection = symbolTable.referenceClass(context.reflectionTypes.kTypeProjection)
 
@@ -483,6 +483,8 @@ internal class KonanSymbols(
 
     val listOf = irBuiltIns.findFunctions(Name.identifier("listOf"), "kotlin", "collections")
             .single { it.descriptor.valueParameters.size == 1 && it.descriptor.valueParameters[0].isVararg }
+
+    val arrayAsList = internalClass("ArrayAsList")
 
     val threadLocal = symbolTable.referenceClass(
             context.builtIns.builtInsModule.findClassAcrossModuleDependencies(

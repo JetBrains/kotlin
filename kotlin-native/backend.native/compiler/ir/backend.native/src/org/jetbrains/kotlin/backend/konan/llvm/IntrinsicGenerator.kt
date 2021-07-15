@@ -61,7 +61,6 @@ internal enum class IntrinsicType {
     OBJC_INIT_BY,
     OBJC_GET_SELECTOR,
     // Other
-    GET_CLASS_TYPE_INFO,
     CREATE_UNINITIALIZED_INSTANCE,
     IDENTITY,
     IMMUTABLE_BLOB,
@@ -242,7 +241,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.OBJC_GET_MESSENGER_STRET -> emitObjCGetMessenger(args, isStret = true)
                 IntrinsicType.OBJC_GET_OBJC_CLASS -> emitGetObjCClass(callSite)
                 IntrinsicType.OBJC_CREATE_SUPER_STRUCT -> emitObjCCreateSuperStruct(args)
-                IntrinsicType.GET_CLASS_TYPE_INFO -> emitGetClassTypeInfo(callSite)
                 IntrinsicType.INTEROP_READ_BITS -> emitReadBits(args)
                 IntrinsicType.INTEROP_WRITE_BITS -> emitWriteBits(args)
                 IntrinsicType.INTEROP_READ_PRIMITIVE -> emitReadPrimitive(callSite, args)
@@ -430,19 +428,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         println("memcpy at ${callSite}")
         args.map { println(llvm2string(it)) }
         TODO("Implement me")
-    }
-
-    private fun FunctionGenerationContext.emitGetClassTypeInfo(callSite: IrCall): LLVMValueRef {
-        val typeArgument = callSite.getTypeArgument(0)!!
-        val typeArgumentClass = typeArgument.getClass()
-        return if (typeArgumentClass == null) {
-            // Should not happen anymore, but it is safer to handle this case.
-            unreachable()
-            kNullInt8Ptr
-        } else {
-            val typeInfo = codegen.typeInfoValue(typeArgumentClass)
-            LLVMConstBitCast(typeInfo, kInt8Ptr)!!
-        }
     }
 
     private fun FunctionGenerationContext.emitObjCCreateSuperStruct(args: List<LLVMValueRef>): LLVMValueRef {
