@@ -88,6 +88,8 @@ class DelegatedPropertyInferenceSession(
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
+    override fun initializeLambda(lambda: ResolvedLambdaAtom) {}
+
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
 
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
@@ -124,4 +126,6 @@ class InferenceSessionForExistingCandidates(
     ): ConstraintSystemCompletionMode? = null
 
     override fun resolveReceiverIndependently(): Boolean = resolveReceiverIndependently
+
+    override fun initializeLambda(lambda: ResolvedLambdaAtom) {}
 }

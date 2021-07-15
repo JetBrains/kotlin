@@ -30,6 +30,8 @@ interface InferenceSession {
                 diagnosticsHolder: KotlinDiagnosticsHolder
             ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
+            override fun initializeLambda(lambda: ResolvedLambdaAtom) { }
+
             override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean = false
             override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean = false
             override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
@@ -52,6 +54,8 @@ interface InferenceSession {
         completionMode: ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType>?
+
+    fun initializeLambda(lambda: ResolvedLambdaAtom)
 
     fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean
     fun callCompleted(resolvedAtom: ResolvedAtom): Boolean

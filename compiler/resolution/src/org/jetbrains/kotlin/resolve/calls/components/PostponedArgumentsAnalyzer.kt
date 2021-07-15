@@ -147,6 +147,7 @@ class PostponedArgumentsAnalyzer(
             returnArgumentsAnalysisResult
 
         if (hasInapplicableCallForBuilderInference) {
+            inferenceSession?.initializeLambda(lambda)
             c.getBuilder().removePostponedVariables()
             return
         }

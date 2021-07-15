@@ -223,13 +223,17 @@ class BuilderInferenceSession(
         return ComposedSubstitutor(currentSubstitutor, createNonFixedTypeToVariableSubstitutor())
     }
 
+    override fun initializeLambda(lambda: ResolvedLambdaAtom) {
+        this.lambda = lambda
+    }
+
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
         completionMode: ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder,
     ): Map<TypeConstructor, UnwrappedType>? {
-        this.lambda = lambda
+        initializeLambda(lambda)
 
         fun getResultingSubstitutor(): NewTypeSubstitutor {
             val storageSubstitutor = initialStorage.buildResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false)
