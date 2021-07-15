@@ -17,16 +17,11 @@
 // usages in build scripts are not tracked properly
 @file:Suppress("unused")
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.register
 import java.io.File
 
 private fun Project.kotlinBuildLocalDependenciesDir(): File =
@@ -147,69 +142,3 @@ fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFi
     )
 
 fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
-
-fun DependencyHandlerScope.excludeInAndroidStudio(rootProject: Project, block: DependencyHandlerScope.() -> Unit) {
-    if (!rootProject.extra.has("versions.androidStudioRelease")) {
-        block()
-    }
-}
-
-fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, body: JavaExec.() -> Unit): TaskProvider<JavaExec> {
-
-    return tasks.register<JavaExec>(name) {
-        val ideaSandboxConfigDir = File(ideaSandboxDir, "config")
-
-        classpath = mainSourceSet.runtimeClasspath
-
-        mainClass.set("com.intellij.idea.Main")
-
-        workingDir = File(intellijRootDir(), "bin")
-
-        jvmArgs(
-            "-Xmx1250m",
-            "-XX:ReservedCodeCacheSize=240m",
-            "-XX:+HeapDumpOnOutOfMemoryError",
-            "-ea",
-            "-Didea.debug.mode=true",
-            "-Didea.system.path=$ideaSandboxDir",
-            "-Didea.config.path=$ideaSandboxConfigDir",
-            "-Didea.tooling.debug=true",
-            "-Dfus.internal.test.mode=true",
-            "-Dapple.laf.useScreenMenuBar=true",
-            "-Dapple.awt.graphics.UseQuartz=true",
-            "-Dsun.io.useCanonCaches=false",
-            "-Dplugin.path=${ideaPluginDir.absolutePath}"
-        )
-
-        jvmArgs("-Didea.platform.prefix=Idea")
-
-        if (rootProject.findProperty("versions.androidStudioRelease") != null) {
-            jvmArgs("-Didea.platform.prefix=AndroidStudio")
-        }
-
-        if (project.hasProperty("noPCE")) {
-            jvmArgs("-Didea.ProcessCanceledException=disabled")
-        }
-
-        jvmArgs("-Didea.is.internal=${project.findProperty("idea.is.internal") ?: true}")
-
-        project.findProperty("idea.args")?.let { arguments ->
-            jvmArgs(arguments.toString().split(" "))
-        }
-
-        args()
-
-        doFirst {
-            val disabledPluginsFile = File(ideaSandboxConfigDir, "disabled_plugins.txt")
-            val disabledPluginsContents = disabledPluginsFile.takeIf { it.isFile }?.readLines()
-            val filteredContents = disabledPluginsContents?.filterNot { it.contains("org.jetbrains.kotlin") }
-            if (filteredContents != null && filteredContents.size != disabledPluginsContents.size) {
-                with(disabledPluginsFile.printWriter()) {
-                    filteredContents.forEach(this::println)
-                }
-            }
-        }
-
-        body()
-    }
-}
