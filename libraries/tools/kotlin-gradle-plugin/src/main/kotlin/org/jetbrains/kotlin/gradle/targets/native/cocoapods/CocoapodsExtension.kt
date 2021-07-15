@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import java.io.File
 import java.net.URI
 
@@ -242,30 +244,33 @@ open class CocoapodsExtension(private val project: Project) {
                 frameworkNameInternal = framework.baseName
                 useDynamicFramework = framework.isStatic.not()
                 if (useDynamicFramework) {
-                    configureDynamicFrameworkLinking(framework)
+                    configureLinkingOptions(framework)
                 }
             }
         }
     }
 
-    private fun configureDynamicFrameworkLinking(framework: Framework) {
+    internal fun configureLinkingOptions(binary: NativeBinary, setRPath: Boolean = false) {
         project.findProperty(KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
-            framework.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
+            binary.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
         }
         pods.all { pod ->
-            framework.linkerOpts("-framework", pod.moduleName)
+            binary.linkerOpts("-framework", pod.moduleName)
             if (project.shouldUseSyntheticProjectSettings &&
                 KotlinCocoapodsPlugin.isAvailableToProduceSynthetic
             ) {
-                framework.linkTaskProvider.configure { task ->
+                binary.linkTaskProvider.configure { task ->
 
-                    val podBuildTaskProvider = project.getPodBuildTaskProvider(framework.target, pod)
+                    val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
                     task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
                     task.dependsOn(podBuildTaskProvider)
 
                     task.doFirst { _ ->
-                        val podBuildSettings = project.getPodBuildSettingsProperties(framework.target, pod)
-                        framework.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
+                        val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)
+                        binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
+                        if (setRPath) {
+                            binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.flatMap { listOf("-rpath", it) })
+                        }
                     }
                 }
             }
