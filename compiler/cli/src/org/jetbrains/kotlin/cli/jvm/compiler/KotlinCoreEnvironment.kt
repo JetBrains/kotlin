@@ -538,11 +538,6 @@ class KotlinCoreEnvironment private constructor(
             val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, unitTestMode)
 
             registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
-            // FIX ME WHEN BUNCH 202 REMOVED: this code is required to support compiler bundled to both 202 and 203.
-            // Please, remove "com.intellij.psi.classFileDecompiler" EP registration once 202 is no longer supported by the compiler
-            if (!ApplicationManager.getApplication().extensionArea.hasExtensionPoint("com.intellij.psi.classFileDecompiler")) {
-                registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/core.xml")
-            }
 
             registerApplicationServicesForCLI(applicationEnvironment)
             registerApplicationServices(applicationEnvironment)

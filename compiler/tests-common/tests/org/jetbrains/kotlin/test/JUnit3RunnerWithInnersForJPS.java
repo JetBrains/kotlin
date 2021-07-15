@@ -88,7 +88,6 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
      */
     private static void ensureCompilerExtensionFilesExists() {
         copyCompilerResourceFile("compiler.xml");
-        copyCompilerResourceFile("core.xml");
     }
 
     private static void copyCompilerResourceFile(String fileName) {
