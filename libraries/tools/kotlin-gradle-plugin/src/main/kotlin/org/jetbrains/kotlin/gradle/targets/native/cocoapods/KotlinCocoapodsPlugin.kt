@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.PLATFORM_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -636,6 +637,15 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    private fun configureTestBinaries(project: Project, cocoapodsExtension: CocoapodsExtension) {
+        project.multiplatformExtension.supportedTargets().all { target ->
+            target.binaries.withType(TestExecutable::class.java) { testExecutable ->
+                cocoapodsExtension.configureLinkingOptions(testExecutable, setRPath = true)
+            }
+        }
+    }
+
+
     override fun apply(project: Project): Unit = with(project) {
 
         pluginManager.withPlugin("kotlin-multiplatform") {
@@ -666,6 +676,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 )
             }
             createInterops(project, kotlinExtension, cocoapodsExtension)
+            configureTestBinaries(project, cocoapodsExtension)
         }
     }
 
