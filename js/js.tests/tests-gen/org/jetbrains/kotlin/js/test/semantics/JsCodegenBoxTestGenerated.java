@@ -19334,34 +19334,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
             }
         }
-
-        @TestMetadata("compiler/testData/codegen/box/properties/publicType")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class PublicType extends AbstractJsCodegenBoxTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInPublicType() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/publicType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
-            }
-
-            @TestMetadata("propertyOverrides.kt")
-            public void testPropertyOverrides() throws Exception {
-                runTest("compiler/testData/codegen/box/properties/publicType/propertyOverrides.kt");
-            }
-
-            @TestMetadata("propertyWithoutOverrides.kt")
-            public void testPropertyWithoutOverrides() throws Exception {
-                runTest("compiler/testData/codegen/box/properties/publicType/propertyWithoutOverrides.kt");
-            }
-
-            @TestMetadata("samplePublicPropertyType.kt")
-            public void testSamplePublicPropertyType() throws Exception {
-                runTest("compiler/testData/codegen/box/properties/publicType/samplePublicPropertyType.kt");
-            }
-        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/publishedApi")

@@ -1802,57 +1802,6 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         }
     }
 
-    @TestMetadata("compiler/testData/ir/irText/properties")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Properties extends AbstractKlibTextTestCase {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInProperties() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-        }
-
-        @TestMetadata("compiler/testData/ir/irText/properties/publicType")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class PublicType extends AbstractKlibTextTestCase {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInPublicType() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties/publicType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-            }
-
-            @TestMetadata("justPrivateNumber.kt")
-            public void testJustPrivateNumber() throws Exception {
-                runTest("compiler/testData/ir/irText/properties/publicType/justPrivateNumber.kt");
-            }
-
-            @TestMetadata("justProtectedNumber.kt")
-            public void testJustProtectedNumber() throws Exception {
-                runTest("compiler/testData/ir/irText/properties/publicType/justProtectedNumber.kt");
-            }
-
-            @TestMetadata("overridingUsualProperties.kt")
-            public void testOverridingUsualProperties() throws Exception {
-                runTest("compiler/testData/ir/irText/properties/publicType/overridingUsualProperties.kt");
-            }
-
-            @TestMetadata("privateNumberWithOverride.kt")
-            public void testPrivateNumberWithOverride() throws Exception {
-                runTest("compiler/testData/ir/irText/properties/publicType/privateNumberWithOverride.kt");
-            }
-
-            @TestMetadata("protectedNumberWithOverride.kt")
-            public void testProtectedNumberWithOverride() throws Exception {
-                runTest("compiler/testData/ir/irText/properties/publicType/protectedNumberWithOverride.kt");
-            }
-        }
-    }
-
     @TestMetadata("compiler/testData/ir/irText/regressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
