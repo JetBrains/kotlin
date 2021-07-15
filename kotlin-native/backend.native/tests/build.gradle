@@ -2364,16 +2364,6 @@ task string0(type: KonanLocalTest) {
 }
 
 task parse0(type: KonanLocalTest) {
-    goldValue = "false\n" +
-            "true\n" +
-            "-1\n" +
-            "10\n" +
-            "170\n" +
-            "30\n" +
-            "4294967295\n" +
-            "bad format\n" +
-            "0.5\n" +
-            "2.39\n"
     source = "runtime/text/parse0.kt"
 }
 
