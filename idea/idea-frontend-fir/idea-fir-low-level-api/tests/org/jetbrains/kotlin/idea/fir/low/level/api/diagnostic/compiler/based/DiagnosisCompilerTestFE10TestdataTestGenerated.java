@@ -19606,6 +19606,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt47729_parenthesis.kt")
+            public void testKt47729_parenthesis() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/kt47729_parenthesis.kt");
+            }
+
+            @Test
             @TestMetadata("literalReceiverWithIntegerValueType.kt")
             public void testLiteralReceiverWithIntegerValueType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/literalReceiverWithIntegerValueType.kt");

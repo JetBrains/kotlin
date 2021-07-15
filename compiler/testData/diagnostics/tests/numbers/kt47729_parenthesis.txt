@@ -1,0 +1,13 @@
+package
+
+public fun takeLong(/*0*/ x: kotlin.Long): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public object Foo {
+    private constructor Foo()
+    public final var longProperty: kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final infix fun infixOperator(/*0*/ x: kotlin.Long): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
