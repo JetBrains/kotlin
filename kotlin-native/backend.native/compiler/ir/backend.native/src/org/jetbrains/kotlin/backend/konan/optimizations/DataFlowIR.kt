@@ -258,7 +258,7 @@ internal object DataFlowIR {
                          arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)
             : VirtualCall(callee, arguments, receiverType, returnType, irCallSite)
 
-        class Singleton(val type: Type, val constructor: FunctionSymbol?) : Node()
+        class Singleton(val type: Type, val constructor: FunctionSymbol?, val arguments: List<Edge>?) : Node()
 
         class AllocInstance(val type: Type, val irCallSite: IrCall?) : Node()
 

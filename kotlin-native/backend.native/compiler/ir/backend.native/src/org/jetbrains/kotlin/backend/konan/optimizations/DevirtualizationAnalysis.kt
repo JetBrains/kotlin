@@ -1194,7 +1194,16 @@ internal object DevirtualizationAnalysis {
                             val type = node.type.resolved()
                             addInstantiatingClass(type)
                             val instanceNode = concreteClass(type)
-                            node.constructor?.let { doCall(it, listOf(instanceNode), type) }
+                            node.constructor?.let {
+                                doCall(
+                                        it,
+                                        @OptIn(ExperimentalStdlibApi::class) buildList {
+                                            add(instanceNode)
+                                            node.arguments?.forEach { add(edgeToConstraintNode(it)) }
+                                        },
+                                        type
+                                )
+                            }
                             instanceNode
                         }
 
