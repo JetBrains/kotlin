@@ -953,4 +953,39 @@ fun getSomething() = 10
             assertContainsRegex(kotlinJvmTarget16Regex)
         }
     }
+
+    @Test
+    fun shouldAllowToApplyPluginWhenAndroidPluginIsMissing() {
+        with(Project("simpleProject", minLogLevel = LogLevel.WARN)) {
+            setupWorkingDir()
+
+            gradleBuildScript().modify {
+                it.lines().joinToString(
+                    separator = "\n",
+                    transform = jvmToAndroidModifier()
+                )
+            }
+            gradleSettingsScript().modify {
+                it.lines().joinToString(
+                    separator = "\n",
+                    transform = jvmToAndroidModifier(true)
+                )
+            }
+
+            build("tasks") {
+                assertFailed()
+                assertContains("'kotlin-android' plugin requires one of the Android Gradle plugins.")
+            }
+        }
+    }
+
+    private fun jvmToAndroidModifier(
+        appendKotlinVersion: Boolean = false
+    ): (String) -> CharSequence = { line ->
+        if (line.contains("id \"org.jetbrains.kotlin.jvm\"")) {
+            "    id \"org.jetbrains.kotlin.android\"" + if (appendKotlinVersion) " version \"${'$'}kotlin_version\"" else ""
+        } else {
+            line
+        }
+    }
 }
