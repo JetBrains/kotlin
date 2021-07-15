@@ -38,6 +38,7 @@ private val KOTLIN_SCRIPT_ANNOTATION_EXPECTED_CLASS = "kotlin.script.experimenta
 private val KOTLIN_JVM_SCRIPT_COMPILER_EXPECTED_CLASS = "kotlin.script.experimental.jvm.JvmScriptCompiler"
 private val KOTLIN_REFLECT_EXPECTED_CLASS = "kotlin.reflect.full.KClasses"
 private val TROVE4J_EXPECTED_CLASS = "gnu.trove.THashMap"
+private val JNA_EXPECTED_CLASS = "com.sun.jna.Structure"
 private val DAEMON_EXPECTED_CLASS = "org.jetbrains.kotlin.daemon.CompileServiceImpl"
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 private val KOTLIN_GRADLE_PLUGIN = "kotlin-gradle-plugin"
@@ -77,7 +78,7 @@ internal fun findKotlinCompilerClasspath(project: Project): List<File> {
     return findKotlinStdlibClasspath(project) +
             findKotlinScriptRuntimeClasspath(project) +
             findKotlinReflectClasspath(project) +
-            listOfNotNull(findTrove4j(), findDaemon())
+            listOfNotNull(findTrove4j(), findJna(), findDaemon())
 }
 
 internal fun findJarByClass(classFqName: String): File? {
@@ -92,6 +93,7 @@ internal fun findJarByClass(classFqName: String): File? {
 }
 
 internal fun findTrove4j() = findJarByClass(TROVE4J_EXPECTED_CLASS)
+internal fun findJna() = findJarByClass(JNA_EXPECTED_CLASS)
 internal fun findDaemon() = findJarByClass(DAEMON_EXPECTED_CLASS)
 
 internal fun findKotlinStdlibClasspath(project: Project): List<File> =
