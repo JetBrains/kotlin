@@ -52,6 +52,7 @@ class CocoaPodsIT : BaseGradleIT() {
     private val cocoapodsMultipleKtPods = "native-cocoapods-multiple"
     private val templateProjectName = "native-cocoapods-template"
     private val groovyTemplateProjectName = "native-cocoapods-template-groovy"
+    private val cocoapodsTestsProjectName = "native-cocoapods-tests"
 
     private val dummyTaskName = ":$DUMMY_FRAMEWORK_TASK_NAME"
     private val podspecTaskName = ":$POD_SPEC_TASK_NAME"
@@ -871,6 +872,9 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testPodDependencyInUnitTests() =
+        getProjectByName(cocoapodsTestsProjectName).testWithWrapper(":iosX64Test")
 
     // paths
 
