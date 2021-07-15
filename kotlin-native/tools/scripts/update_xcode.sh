@@ -2,17 +2,17 @@
 set -e
 
 # "brew install coreutils" for grealpath.
-KONAN_TOOLCHAIN_VERSION=xcode_12_2
+KONAN_TOOLCHAIN_VERSION=xcode_12_5
 SDKS="macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator"
-TARBALL_macosx=target-sysroot-$KONAN_TOOLCHAIN_VERSION-macos_x64
-TARBALL_iphoneos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-ios_arm64
-TARBALL_iphonesimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-ios_x64
-TARBALL_appletvos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-tvos_arm64
-TARBALL_appletvsimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-tvos_x64
-TARBALL_watchos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-watchos_arm32
-TARBALL_watchsimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-watchos_x86
-TARBALL_xcode=target-toolchain-$KONAN_TOOLCHAIN_VERSION-macos_x64
-TARBALL_xcode_addon=xcode-addon-$KONAN_TOOLCHAIN_VERSION-macos_x64
+TARBALL_macosx=target-sysroot-$KONAN_TOOLCHAIN_VERSION-macosx
+TARBALL_iphoneos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-iphoneos
+TARBALL_iphonesimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-iphonesimulator
+TARBALL_appletvos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-appletvos
+TARBALL_appletvsimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-appletvsimulator
+TARBALL_watchos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-watchos
+TARBALL_watchsimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-watchsimulator
+TARBALL_xcode=target-toolchain-$KONAN_TOOLCHAIN_VERSION
+TARBALL_xcode_addon=xcode-addon-$KONAN_TOOLCHAIN_VERSION
 OUT=`pwd`
 
 for s in $SDKS; do
