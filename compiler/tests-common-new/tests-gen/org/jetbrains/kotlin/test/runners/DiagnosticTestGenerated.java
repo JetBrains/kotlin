@@ -1768,6 +1768,32 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/parameters")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Parameters {
+                @Test
+                public void testAllFilesPresentInParameters() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/parameters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/annotations/parameters/expressions")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Expressions {
+                    @Test
+                    public void testAllFilesPresentInExpressions() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/parameters/expressions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("maxValueInt.kt")
+                    public void testMaxValueInt() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/annotations/parameters/expressions/maxValueInt.kt");
+                    }
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/annotations/rendering")
             @TestDataPath("$PROJECT_ROOT")
             public class Rendering {
@@ -19609,6 +19635,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("kt47447.kt")
             public void testKt47447() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/kt47447.kt");
+            }
+
+            @Test
+            @TestMetadata("kt47729.kt")
+            public void testKt47729() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/kt47729.kt");
             }
 
             @Test

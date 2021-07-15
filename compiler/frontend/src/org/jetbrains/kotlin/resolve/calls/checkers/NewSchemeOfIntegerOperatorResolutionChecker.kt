@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.lowerIfFlexible
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -34,6 +36,9 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
             } else {
                 valueParameter.type
             }.unwrap().lowerIfFlexible()
+            if (!expectedType.isPrimitiveNumberOrNullableType()) {
+                continue
+            }
             for (argument in arguments.arguments) {
                 val expression = KtPsiUtil.deparenthesize(argument.getArgumentExpression()) ?: continue
                 val compileTimeValue =
@@ -50,7 +55,7 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
 
                 val valueTypeConstructor = compileTimeValue.unknownIntegerType.constructor as? IntegerLiteralTypeConstructor ?: continue
                 val approximatedType = valueTypeConstructor.getApproximatedType()
-                if (approximatedType != expectedType) {
+                if (approximatedType.constructor != expectedType.constructor) {
                     context.trace.report(Errors.INTEGER_OPERATOR_RESOLVE_WILL_CHANGE.on(expression, approximatedType))
                 }
             }
