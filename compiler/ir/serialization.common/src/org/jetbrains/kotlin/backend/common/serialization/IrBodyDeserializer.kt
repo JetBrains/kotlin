@@ -82,6 +82,7 @@ class IrBodyDeserializer(
     private val declarationDeserializer: IrDeclarationDeserializer,
     private val statementOriginIndex: Map<String, IrStatementOrigin>,
     private val allowErrorStatementOrigins: Boolean, // TODO: support InlinerExpressionLocationHint
+    private val allowErrorLoopIndices: Boolean, // TODO: fix lowerings, which reference out-of-scope loops
 ) {
 
     private val fileLoops = mutableMapOf<Int, IrLoop>()
@@ -501,7 +502,8 @@ class IrBodyDeserializer(
 
         val delegate = declarationDeserializer.deserializeIrSymbolAndRemap(proto.delegate) as IrVariableSymbol
         val getter = declarationDeserializer.deserializeIrSymbolAndRemap(proto.getter) as IrSimpleFunctionSymbol
-        val setter = if (proto.hasSetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
+        val setter =
+            if (proto.hasSetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
         val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrLocalDelegatedPropertySymbol
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
 
@@ -520,8 +522,10 @@ class IrBodyDeserializer(
         val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrPropertySymbol
 
         val field = if (proto.hasField()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.field) as IrFieldSymbol else null
-        val getter = if (proto.hasGetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.getter) as IrSimpleFunctionSymbol else null
-        val setter = if (proto.hasSetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
+        val getter =
+            if (proto.hasGetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.getter) as IrSimpleFunctionSymbol else null
+        val setter =
+            if (proto.hasSetter()) declarationDeserializer.deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
 
         val callable = IrPropertyReferenceImpl(
@@ -772,7 +776,13 @@ class IrBodyDeserializer(
     private fun deserializeBreak(proto: ProtoBreak, start: Int, end: Int, type: IrType): IrBreak {
         val label = if (proto.hasLabel()) fileReader.deserializeString(proto.label) else null
         val loopId = proto.loopId
-        val loop = deserializeLoopHeader(loopId) { error("break clause before loop header") }
+        val loop = deserializeLoopHeader(loopId) {
+            if (allowErrorLoopIndices) {
+                IrWhileLoopImpl(-1, -1, builtIns.unitType, null)
+            } else {
+                error("break clause before loop header")
+            }
+        }
         val irBreak = IrBreakImpl(start, end, type, loop)
         irBreak.label = label
 
@@ -782,7 +792,13 @@ class IrBodyDeserializer(
     private fun deserializeContinue(proto: ProtoContinue, start: Int, end: Int, type: IrType): IrContinue {
         val label = if (proto.hasLabel()) fileReader.deserializeString(proto.label) else null
         val loopId = proto.loopId
-        val loop = deserializeLoopHeader(loopId) { error("continue clause before loop header") }
+        val loop = deserializeLoopHeader(loopId) {
+            if (allowErrorLoopIndices) {
+                IrWhileLoopImpl(-1, -1, builtIns.unitType, null)
+            } else {
+                error("break clause before loop header")
+            }
+        }
         val irContinue = IrContinueImpl(start, end, type, loop)
         irContinue.label = label
 
@@ -881,7 +897,8 @@ class IrBodyDeserializer(
                 it.startsWith(componentPrefix) -> {
                     IrStatementOrigin.COMPONENT_N.withIndex(it.removePrefix(componentPrefix).toInt())
                 }
-                else -> statementOriginIndex[it] ?: if (allowErrorStatementOrigins) object : IrStatementOriginImpl(it) {} else error("Unexpected statement origin: $it")
+                else -> statementOriginIndex[it] ?: if (allowErrorStatementOrigins) object :
+                    IrStatementOriginImpl(it) {} else error("Unexpected statement origin: $it")
             }
         }
     }
