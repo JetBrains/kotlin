@@ -69,15 +69,17 @@ private fun KtCall.stringRepresentation(): String {
         is KtSuccessCallTarget -> symbol.stringValue()
         is KtErrorCallTarget -> "ERR<${this.diagnostic.defaultMessage}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()
+        is Map<*, *> -> entries.joinToString(prefix = "{ ", postfix = " }") { (k, v) -> "${k?.stringValue()} -> (${v?.stringValue()})" }
+        is KtValueArgument -> this.text
         else -> error("unexpected parameter type ${this::class}")
     }
 
     val callInfoClass = this::class
     return buildString {
         append(callInfoClass.simpleName!!)
-        append(": ")
+        append(":\n")
         val propertyByName = callInfoClass.memberProperties.associateBy(KProperty1<*, *>::name)
-        callInfoClass.primaryConstructor!!.parameters.joinTo(this) { parameter ->
+        callInfoClass.primaryConstructor!!.parameters.joinTo(this, separator = "\n") { parameter ->
             val value = propertyByName[parameter.name]!!.javaGetter!!(this@stringRepresentation)?.stringValue()
             "${parameter.name!!} = $value"
         }
