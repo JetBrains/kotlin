@@ -30,15 +30,25 @@ internal class KtFirSymbolDeclarationRendererProvider(
     }
 
     override fun render(symbol: KtSymbol, options: KtDeclarationRendererOptions): String {
-        require(symbol is KtFirSymbol<*>)
-        val containingSymbol = with(analysisSession) {
-            (symbol as? KtSymbolWithKind)?.getContainingSymbol()
-        }
-        check(containingSymbol is KtFirSymbol<*>?)
+        return when (symbol) {
+            is KtPackageSymbol -> {
+                "package ${symbol.fqName.asString()}"
+            }
+            is KtFirSymbol<*> -> {
+                val containingSymbol = with(analysisSession) {
+                    (symbol as? KtSymbolWithKind)?.getContainingSymbol()
+                }
+                check(containingSymbol is KtFirSymbol<*>?)
 
-        return symbol.firRef.withFir(FirResolvePhase.BODY_RESOLVE) { fir ->
-            val containingFir = containingSymbol?.firRef?.withFirUnsafe { it }
-            FirIdeRenderer.render(fir, containingFir, options, fir.moduleData.session)
+                symbol.firRef.withFir(FirResolvePhase.BODY_RESOLVE) { fir ->
+                    val containingFir = containingSymbol?.firRef?.withFirUnsafe { it }
+                    FirIdeRenderer.render(fir, containingFir, options, fir.moduleData.session)
+                }
+            }
+            else -> {
+                error("Unexpected Fir Symbol ${symbol::class.simpleName}")
+            }
         }
+
     }
 }
