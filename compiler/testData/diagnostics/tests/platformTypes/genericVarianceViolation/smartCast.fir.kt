@@ -10,7 +10,7 @@ public class A {
 
 fun main(a: A, ml: Any) {
     if (ml is MutableList<String>) {
-        a.foo(ml)
+        a.foo(<!JAVA_TYPE_MISMATCH!>ml<!>)
         a.foo(ml as List<Any>)
     }
 }
