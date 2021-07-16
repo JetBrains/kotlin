@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -12,12 +13,12 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.TYPEOF_SUSPEND_TYPE
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Type
@@ -71,6 +72,14 @@ class PsiInlineIntrinsicsSupport(
     }
 
     override fun toKotlinType(type: KotlinType): KotlinType = type
+
+    override fun checkAnnotatedType(type: KotlinType) {
+        if (type.annotations.hasAnnotation(StandardNames.FqNames.extensionFunctionType)) {
+            state.diagnostics.report(TYPEOF_EXTENSION_FUNCTION_TYPE.on(reportErrorsOn))
+        } else if (type.annotations.any { it.fqName != JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION }) {
+            state.diagnostics.report(TYPEOF_ANNOTATED_TYPE.on(reportErrorsOn))
+        }
+    }
 
     override fun reportSuspendTypeUnsupported() {
         state.diagnostics.report(TYPEOF_SUSPEND_TYPE.on(reportErrorsOn))

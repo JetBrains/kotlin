@@ -75,6 +75,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
         fun toKotlinType(type: KT): KotlinType
 
+        fun checkAnnotatedType(type: KT)
         fun reportSuspendTypeUnsupported()
         fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name)
     }
