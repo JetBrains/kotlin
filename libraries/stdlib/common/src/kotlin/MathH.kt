@@ -26,6 +26,8 @@ public const val E: Double = 2.718281828459045
  *
  *  Special cases:
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.Doubles.sinCosAndTan
  */
 @SinceKotlin("1.2")
 public expect fun sin(x: Double): Double
@@ -34,6 +36,8 @@ public expect fun sin(x: Double): Double
  *
  *  Special cases:
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.Doubles.sinCosAndTan
  */
 @SinceKotlin("1.2")
 public expect fun cos(x: Double): Double
@@ -42,6 +46,8 @@ public expect fun cos(x: Double): Double
  *
  *  Special cases:
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.Doubles.sinCosAndTan
  */
 @SinceKotlin("1.2")
 public expect fun tan(x: Double): Double
@@ -52,6 +58,8 @@ public expect fun tan(x: Double): Double
  *
  * Special cases:
  *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.Doubles.asinAcosAndAtan
  */
 @SinceKotlin("1.2")
 public expect fun asin(x: Double): Double
@@ -62,6 +70,8 @@ public expect fun asin(x: Double): Double
  *
  * Special cases:
  *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.Doubles.asinAcosAndAtan
  */
 @SinceKotlin("1.2")
 public expect fun acos(x: Double): Double
@@ -72,6 +82,8 @@ public expect fun acos(x: Double): Double
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.Doubles.asinAcosAndAtan
  */
 @SinceKotlin("1.2")
 public expect fun atan(x: Double): Double
@@ -91,6 +103,8 @@ public expect fun atan(x: Double): Double
  *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @sample samples.math.Doubles.atan2
  */
 @SinceKotlin("1.2")
 public expect fun atan2(y: Double, x: Double): Double
@@ -102,6 +116,8 @@ public expect fun atan2(y: Double, x: Double): Double
  *   - `sinh(NaN)` is `NaN`
  *   - `sinh(+Inf)` is `+Inf`
  *   - `sinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.Doubles.sinhCoshAndTanh
  */
 @SinceKotlin("1.2")
 public expect fun sinh(x: Double): Double
@@ -112,6 +128,8 @@ public expect fun sinh(x: Double): Double
  * Special cases:
  *   - `cosh(NaN)` is `NaN`
  *   - `cosh(+Inf|-Inf)` is `+Inf`
+ *
+ * @sample samples.math.Doubles.sinhCoshAndTanh
  */
 @SinceKotlin("1.2")
 public expect fun cosh(x: Double): Double
@@ -123,6 +141,8 @@ public expect fun cosh(x: Double): Double
  *   - `tanh(NaN)` is `NaN`
  *   - `tanh(+Inf)` is `1.0`
  *   - `tanh(-Inf)` is `-1.0`
+ *
+ * @sample samples.math.Doubles.sinhCoshAndTanh
  */
 @SinceKotlin("1.2")
 public expect fun tanh(x: Double): Double
@@ -136,6 +156,8 @@ public expect fun tanh(x: Double): Double
  *   - `asinh(NaN)` is `NaN`
  *   - `asinh(+Inf)` is `+Inf`
  *   - `asinh(-Inf)` is `-Inf`
+ *
+ * @sample samples.math.Doubles.asinhAcoshAndAtanh
  */
 @SinceKotlin("1.2")
 public expect fun asinh(x: Double): Double
@@ -149,6 +171,8 @@ public expect fun asinh(x: Double): Double
  *   - `acosh(NaN)` is `NaN`
  *   - `acosh(x)` is `NaN` when `x < 1`
  *   - `acosh(+Inf)` is `+Inf`
+ *
+ * @sample samples.math.Doubles.asinhAcoshAndAtanh
  */
 @SinceKotlin("1.2")
 public expect fun acosh(x: Double): Double
@@ -163,6 +187,8 @@ public expect fun acosh(x: Double): Double
  *   - `tanh(x)` is `NaN` when `x > 1` or `x < -1`
  *   - `tanh(1.0)` is `+Inf`
  *   - `tanh(-1.0)` is `-Inf`
+ *
+ * @sample samples.math.Doubles.asinhAcoshAndAtanh
  */
 @SinceKotlin("1.2")
 public expect fun atanh(x: Double): Double
@@ -173,6 +199,8 @@ public expect fun atanh(x: Double): Double
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.Doubles.hypot
  */
 @SinceKotlin("1.2")
 public expect fun hypot(x: Double, y: Double): Double
@@ -182,6 +210,8 @@ public expect fun hypot(x: Double, y: Double): Double
  *
  * Special cases:
  *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ *
+ * @sample samples.math.Doubles.sqrt
  */
 @SinceKotlin("1.2")
 public expect fun sqrt(x: Double): Double
@@ -193,6 +223,8 @@ public expect fun sqrt(x: Double): Double
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.Doubles.expAndExpm1
  */
 @SinceKotlin("1.2")
 public expect fun exp(x: Double): Double
@@ -208,6 +240,8 @@ public expect fun exp(x: Double): Double
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ *
+ * @sample samples.math.Doubles.expAndExpm1
  */
 @SinceKotlin("1.2")
 public expect fun expm1(x: Double): Double
@@ -223,6 +257,8 @@ public expect fun expm1(x: Double): Double
  *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.Doubles.logLnLog10Log2AndLn1p
  */
 @SinceKotlin("1.2")
 public expect fun log(x: Double, base: Double): Double
@@ -235,6 +271,8 @@ public expect fun log(x: Double, base: Double): Double
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.Doubles.logLnLog10Log2AndLn1p
  */
 @SinceKotlin("1.2")
 public expect fun ln(x: Double): Double
@@ -243,6 +281,8 @@ public expect fun ln(x: Double): Double
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.Doubles.logLnLog10Log2AndLn1p
  */
 @SinceKotlin("1.2")
 public expect fun log10(x: Double): Double
@@ -251,6 +291,8 @@ public expect fun log10(x: Double): Double
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.Doubles.logLnLog10Log2AndLn1p
  */
 @SinceKotlin("1.2")
 public expect fun log2(x: Double): Double
@@ -268,6 +310,8 @@ public expect fun log2(x: Double): Double
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.Doubles.logLnLog10Log2AndLn1p
  */
 @SinceKotlin("1.2")
 public expect fun ln1p(x: Double): Double
@@ -279,6 +323,8 @@ public expect fun ln1p(x: Double): Double
  *
  * Special cases:
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.Doubles.ceilFloorTruncateAndRound
  */
 @SinceKotlin("1.2")
 public expect fun ceil(x: Double): Double
@@ -290,6 +336,8 @@ public expect fun ceil(x: Double): Double
  *
  * Special cases:
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.Doubles.ceilFloorTruncateAndRound
  */
 @SinceKotlin("1.2")
 public expect fun floor(x: Double): Double
@@ -301,6 +349,8 @@ public expect fun floor(x: Double): Double
  *
  * Special cases:
  *   - `truncate(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.Doubles.ceilFloorTruncateAndRound
  */
 @SinceKotlin("1.2")
 public expect fun truncate(x: Double): Double
@@ -310,6 +360,8 @@ public expect fun truncate(x: Double): Double
  *
  * Special cases:
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
+ *
+ * @sample samples.math.Doubles.ceilFloorTruncateAndRound
  */
 @SinceKotlin("1.2")
 public expect fun round(x: Double): Double
@@ -321,6 +373,8 @@ public expect fun round(x: Double): Double
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Double]
+ *
+ * @sample samples.math.Doubles.abs
  */
 @SinceKotlin("1.2")
 public expect fun abs(x: Double): Double
@@ -333,6 +387,8 @@ public expect fun abs(x: Double): Double
  *
  * Special case:
  *   - `sign(NaN)` is `NaN`
+ *
+ * @sample samples.math.Doubles.sign
  */
 @SinceKotlin("1.2")
 public expect fun sign(x: Double): Double
@@ -342,6 +398,8 @@ public expect fun sign(x: Double): Double
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.Doubles.minAndMax
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Double, b: Double): Double
@@ -350,6 +408,8 @@ public expect fun min(a: Double, b: Double): Double
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.Doubles.minAndMax
  */
 @SinceKotlin("1.2")
 public expect fun max(a: Double, b: Double): Double
@@ -366,6 +426,8 @@ public expect fun max(a: Double, b: Double): Double
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.Doubles.pow
  */
 @SinceKotlin("1.2")
 public expect fun Double.pow(x: Double): Double
@@ -374,6 +436,8 @@ public expect fun Double.pow(x: Double): Double
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.Doubles.pow
  */
 @SinceKotlin("1.2")
 public expect fun Double.pow(n: Int): Double
@@ -385,6 +449,8 @@ public expect fun Double.pow(n: Int): Double
  *   - `NaN.absoluteValue` is `NaN`
  *
  * @see abs function
+ *
+ * @sample samples.math.Doubles.abs
  */
 @SinceKotlin("1.2")
 public expect val Double.absoluteValue: Double
@@ -397,6 +463,8 @@ public expect val Double.absoluteValue: Double
  *
  * Special case:
  *   - `NaN.sign` is `NaN`
+ *
+ * @sample samples.math.Doubles.sign
  */
 @SinceKotlin("1.2")
 public expect val Double.sign: Double
@@ -405,12 +473,16 @@ public expect val Double.sign: Double
  * Returns this value with the sign bit same as of the [sign] value.
  *
  * If [sign] is `NaN` the sign of the result is undefined.
+ *
+ * @sample samples.math.Doubles.withSign
  */
 @SinceKotlin("1.2")
 public expect fun Double.withSign(sign: Double): Double
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * @sample samples.math.Doubles.withSign
  */
 @SinceKotlin("1.2")
 public expect fun Double.withSign(sign: Int): Double
@@ -424,18 +496,24 @@ public expect fun Double.withSign(sign: Int): Double
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
+ *
+ * @sample samples.math.Doubles.ulpNextUpNextDownAndNextTowards
  */
 @SinceKotlin("1.2")
 public expect val Double.ulp: Double
 
 /**
  * Returns the [Double] value nearest to this value in direction of positive infinity.
+ *
+ * @sample samples.math.Doubles.ulpNextUpNextDownAndNextTowards
  */
 @SinceKotlin("1.2")
 public expect fun Double.nextUp(): Double
 
 /**
  * Returns the [Double] value nearest to this value in direction of negative infinity.
+ *
+ * @sample samples.math.Doubles.ulpNextUpNextDownAndNextTowards
  */
 @SinceKotlin("1.2")
 public expect fun Double.nextDown(): Double
@@ -447,6 +525,7 @@ public expect fun Double.nextDown(): Double
  *   - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
  *   - `x.nextTowards(x) == x`
  *
+ * @sample samples.math.Doubles.ulpNextUpNextDownAndNextTowards
  */
 @SinceKotlin("1.2")
 public expect fun Double.nextTowards(to: Double): Double
@@ -460,6 +539,8 @@ public expect fun Double.nextTowards(to: Double): Double
  *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ *
+ * @sample samples.math.Doubles.roundToIntAndRoundToLong
  */
 @SinceKotlin("1.2")
 public expect fun Double.roundToInt(): Int
@@ -473,6 +554,8 @@ public expect fun Double.roundToInt(): Int
  *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
  *
  * @throws IllegalArgumentException when this value is `NaN`
+ *
+ * @sample samples.math.Doubles.roundToIntAndRoundToLong
  */
 @SinceKotlin("1.2")
 public expect fun Double.roundToLong(): Long
