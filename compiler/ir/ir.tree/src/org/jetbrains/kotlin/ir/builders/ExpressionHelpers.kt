@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.isImmutable
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
@@ -378,3 +374,51 @@ inline fun IrBuilderWithScope.irBlockBody(
         endOffset
     ).blockBody(body)
 
+fun IrBuilderWithScope.irConstantPrimitive(value: IrConst<*>) =
+    IrConstantPrimitiveImpl(startOffset, endOffset, value)
+
+fun IrBuilderWithScope.irConstantArray(type: IrType, elements: List<IrConstantValue>) =
+    IrConstantArrayImpl(
+        startOffset, endOffset,
+        type,
+        elements
+    )
+
+fun IrBuilderWithScope.irConstantObject(
+    constructor: IrConstructorSymbol,
+    arguments: List<IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return IrConstantObjectImpl(
+        startOffset, endOffset,
+        constructor,
+        arguments,
+        typeArguments,
+    )
+}
+
+fun IrBuilderWithScope.irConstantObject(
+    clazz: IrClass,
+    arguments: List<IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return irConstantObject(clazz.primaryConstructor?.symbol!!, arguments, typeArguments)
+}
+
+fun IrBuilderWithScope.irConstantObject(
+    clazz: IrClass,
+    elements: Map<String, IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return irConstantObject(
+        clazz,
+        clazz.primaryConstructor!!.symbol.owner.valueParameters.also {
+            require(it.size == elements.size) {
+                "Wrong number of values provided for ${clazz.name} construction: ${elements.size} instead of ${it.size}"
+            }
+        }.map {
+            elements[it.name.asString()] ?: error("No value for field named ${it.name} provided")
+        },
+        typeArguments
+    )
+}

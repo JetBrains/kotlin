@@ -325,6 +325,7 @@ internal class KonanSymbols(
     }
     
     val copyInto = arrayToExtensionSymbolMap("copyInto")
+    val copyOf = arrayToExtensionSymbolMap("copyOf") { it.valueParameters.isEmpty() }
 
     val arrayGet = arrays.associateWith { it.descriptor.unsubstitutedMemberScope
             .getContributedFunctions(Name.identifier("get"), NoLookupLocation.FROM_BACKEND)

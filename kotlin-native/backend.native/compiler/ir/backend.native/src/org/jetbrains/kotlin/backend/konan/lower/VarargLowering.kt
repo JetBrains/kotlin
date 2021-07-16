@@ -34,13 +34,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -108,11 +103,27 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 expression.transformChildrenVoid(transformer)
 
                 val hasSpreadElement = hasSpreadElement(expression)
+                val type = expression.varargElementType
+                val arrayHandle = arrayType(expression.type)
                 val irBuilder = context.createIrBuilder(owner, expression.startOffset, expression.endOffset)
+                val isConstantVararg = expression.elements.all {
+                    it is IrConst<*> || it is IrConstantValue
+                }
+                if (isConstantVararg) {
+                    return irBuilder.irCall(
+                            arrayHandle.copyOfSymbol,
+                    ).apply {
+                        extensionReceiver = arrayHandle.createStatic(irBuilder, type, expression.elements.map {
+                            when (it) {
+                                is IrConst<*> -> irBuilder.irConstantPrimitive(it)
+                                is IrConstantValue -> it
+                                else -> throw IllegalStateException("Try to initialize vararg constantly, when it's impossible")
+                            }
+                        })
+                    }
+                }
                 return irBuilder.irBlock(expression, null, expression.type) {
-                    val type = expression.varargElementType
                     log { "$expression: array type:$type, is array of primitives ${!expression.type.isArray()}" }
-                    val arrayHandle = arrayType(expression.type)
 
                     val vars = expression.elements.map {
                         it to irTemporary(
@@ -217,10 +228,15 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
         }
         val sizeGetterSymbol = arraySymbol.getPropertyGetter("size")!!
         val copyIntoSymbol = symbols.copyInto[arraySymbol]!!
+        val copyOfSymbol = symbols.copyOf[arraySymbol]!!
         protected val singleParameterConstructor =
-            arraySymbol.owner.constructors.find { it.valueParameters.size == 1 }!!
+                arraySymbol.owner.constructors.find { it.valueParameters.size == 1 }!!
 
         abstract fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression
+        abstract fun createStatic(
+                builder: IrBuilderWithScope,
+                elementType: IrType,
+                values: List<IrConstantValue>): IrConstantValue
     }
 
     inner class ReferenceArrayHandle : ArrayHandle(symbols.array) {
@@ -229,6 +245,16 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 putTypeArgument(0, elementType)
                 putValueArgument(0, size)
             }
+        }
+
+        override fun createStatic(
+                builder: IrBuilderWithScope,
+                elementType: IrType,
+                values: List<IrConstantValue>): IrConstantValue {
+            return builder.irConstantArray(
+                    arraySymbol.typeWith(listOf(elementType)),
+                    values
+            )
         }
     }
 
@@ -240,11 +266,18 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 putValueArgument(0, size)
             }
         }
+
+        override fun createStatic(builder: IrBuilderWithScope, elementType: IrType, values: List<IrConstantValue>): IrConstantValue {
+            return builder.irConstantArray(
+                    arraySymbol.defaultType,
+                    values
+            )
+        }
     }
 
     inner class UnsignedArrayHandle(
-        arraySymbol: IrClassSymbol,
-        private val wrappedArrayHandle: PrimitiveArrayHandle
+            arraySymbol: IrClassSymbol,
+            private val wrappedArrayHandle: PrimitiveArrayHandle
     ) : ArrayHandle(arraySymbol) {
 
         override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
@@ -252,6 +285,35 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
             return builder.irCall(singleParameterConstructor).apply {
                 putValueArgument(0, wrappedArray)
             }
+        }
+
+        override fun createStatic(builder: IrBuilderWithScope, elementType: IrType, values: List<IrConstantValue>): IrConstantValue {
+            val casted = values.map {
+                require(it.type == elementType)
+                when (it) {
+                    is IrConstantPrimitive -> {
+                        val castedConst = when (it.value.kind) {
+                            IrConstKind.Byte -> IrConstImpl.byte(it.startOffset, it.endOffset, symbols.byte.defaultType, it.value.value as Byte)
+                            IrConstKind.Short -> IrConstImpl.short(it.startOffset, it.endOffset, symbols.short.defaultType, it.value.value as Short)
+                            IrConstKind.Int -> IrConstImpl.int(it.startOffset, it.endOffset, symbols.int.defaultType, it.value.value as Int)
+                            IrConstKind.Long -> IrConstImpl.long(it.startOffset, it.endOffset, symbols.long.defaultType, it.value.value as Long)
+                            else -> error("Unsupported unsigned constant")
+                        }
+                        builder.irConstantPrimitive(castedConst)
+                    }
+                    is IrConstantObject -> {
+                        it.valueArguments.singleOrNull()
+                                ?: error("Constant of type ${it.type.render()} is expected to have exactly one field")
+                    }
+                    else -> error("unsigned integer can't be represented as ${it::class.qualifiedName}")
+                }
+            }
+            return builder.irConstantObject(
+                    arraySymbol.owner,
+                    mapOf(
+                            "storage" to wrappedArrayHandle.createStatic(builder, elementType, casted)
+                    )
+            )
         }
     }
 
