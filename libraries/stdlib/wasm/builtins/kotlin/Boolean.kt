@@ -11,7 +11,7 @@ import kotlin.wasm.internal.*
  * Represents a value which is either `true` or `false`. On the JVM, non-nullable values of this type are
  * represented as values of the primitive type `boolean`.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Boolean private constructor(private val value: Boolean) : Comparable<Boolean> {
     /**
      * Returns the inverse of this boolean.

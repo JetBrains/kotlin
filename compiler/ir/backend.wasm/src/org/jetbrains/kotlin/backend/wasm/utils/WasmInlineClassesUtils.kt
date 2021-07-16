@@ -32,7 +32,9 @@ class WasmInlineClassesUtils(private val wasmSymbols: WasmSymbols) : InlineClass
     }
 
     override fun isClassInlineLike(klass: IrClass): Boolean {
-        return klass.isInline || klass.hasWasmPrimitiveAnnotation()
+        // TODO: This hook is called from autoboxing lowering so we also handle autoboxing annotation here. In the future it's better
+        // to separate autoboxing from the inline class handling.
+        return klass.isInline || klass.hasWasmAutoboxedAnnotation()
     }
 
     override val boxIntrinsic: IrSimpleFunctionSymbol

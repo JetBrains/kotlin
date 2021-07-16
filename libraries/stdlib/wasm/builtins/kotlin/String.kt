@@ -11,7 +11,7 @@ import kotlin.wasm.internal.*
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
  * implemented as instances of this class.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class String constructor(public val string: String) : Comparable<String>, CharSequence {
     public companion object;
 

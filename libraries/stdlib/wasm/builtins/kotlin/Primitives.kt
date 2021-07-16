@@ -15,7 +15,7 @@ import kotlin.wasm.internal.*
 /**
  * Represents a 8-bit signed integer.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Byte private constructor(public val value: Byte) : Number(), Comparable<Byte> {
     public companion object {
         /**
@@ -359,7 +359,7 @@ private fun byteToStringImpl(byte: Byte): String =
 /**
  * Represents a 16-bit signed integer.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Short private constructor(public val value: Short) : Number(), Comparable<Short> {
     public companion object {
         /**
@@ -701,7 +701,7 @@ private fun shortToStringImpl(x: Short): String = implementedAsIntrinsic
 /**
  * Represents a 32-bit signed integer.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Int private constructor(val value: Int) : Number(), Comparable<Int> {
 
     public companion object {
@@ -1099,7 +1099,7 @@ private fun intToStringImpl(x: Int): String =
 /**
  * Represents a 64-bit signed integer.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Long private constructor(val value: Long) : Number(), Comparable<Long> {
 
     public companion object {
@@ -1473,7 +1473,7 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
 /**
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Float private constructor(public val value: Float) : Number(), Comparable<Float> {
 
     public companion object {
@@ -1786,7 +1786,7 @@ private fun floatToStringImpl(x: Float): String =
 /**
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  */
-@WasmPrimitive
+@WasmAutoboxed
 public class Double private constructor(public val value: Double) : Number(), Comparable<Double> {
 
     public companion object {
