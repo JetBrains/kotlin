@@ -223,6 +223,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = temporaryKaptDirectory("incrementalData")
 
+    private fun Kapt3SubpluginContext.getKaptClasspathSnapshotDir() = temporaryKaptDirectory("classpath-snapshot")
+
     private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = temporaryKaptDirectory("incApCache")
 
     private fun Kapt3SubpluginContext.temporaryKaptDirectory(
@@ -645,10 +647,20 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
     }
 
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): TaskProvider<KaptGenerateStubsTask> {
+        val properties = PropertiesProvider(project)
         val kaptTaskName = getKaptTaskName("kaptGenerateStubs")
+        val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName)
 
-        val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName) { kaptTask ->
-            KaptGenerateStubsTask.Configurator(kotlinCompile.get(), kotlinCompilation).configure(kaptTask)
+        val configurator = KaptGenerateStubsTask.Configurator(
+            kotlinCompile,
+            kotlinCompilation,
+            properties,
+            getKaptClasspathSnapshotDir()
+        )
+        configurator.runAtConfigurationTime(kaptTaskProvider, project)
+
+        kaptTaskProvider.configure { kaptTask ->
+            configurator.configure(kaptTask)
 
             kaptTask.stubsDir.set(getKaptStubsDir())
             kaptTask.destinationDirectory.set(getKaptIncrementalDataDir())
@@ -656,7 +668,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
             kaptTask.kaptClasspath.from(kaptClasspathConfigurations)
 
-            PropertiesProvider(project).mapKotlinTaskProperties(kaptTask)
+            properties.mapKotlinTaskProperties(kaptTask)
 
             if (!includeCompileClasspath) {
                 kaptTask.onlyIf {

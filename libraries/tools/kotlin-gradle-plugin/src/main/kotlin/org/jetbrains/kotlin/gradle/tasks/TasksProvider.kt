@@ -21,7 +21,6 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
@@ -89,12 +88,19 @@ internal open class KotlinTasksProvider {
     ): TaskProvider<out KotlinCompile> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
-        val result = project.registerTask(name, taskClass, constructorArgs = listOf(compilation.kotlinOptions)) {
+        val kotlinCompile = project.registerTask(name, taskClass, constructorArgs = listOf(compilation.kotlinOptions))
+
+        val configurator = KotlinCompile.Configurator<KotlinCompile>(compilation, properties)
+        @Suppress("UNCHECKED_CAST")
+        configurator.runAtConfigurationTime(kotlinCompile as TaskProvider<KotlinCompile>, project)
+
+        kotlinCompile.configure {
             configureAction(it)
-            KotlinCompile.Configurator(compilation).configure(it)
+            configurator.configure(it)
         }
-        configure(result, project, properties, compilation)
-        return result
+        configure(kotlinCompile, project, properties, compilation)
+
+        return kotlinCompile
     }
 
     fun registerKotlinJSTask(

@@ -37,7 +37,7 @@ internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinComp
         usePreciseJavaTracking?.let {
             task.usePreciseJavaTracking = it
         }
-        task.useClasspathSnapshot.value(useClasspathSnapshot).disallowChanges()
+        task.classpathSnapshotProperties.useClasspathSnapshot.value(useClasspathSnapshot).disallowChanges()
         useFir?.let {
             if (it == true) {
                 task.kotlinOptions.useFir = true
