@@ -258,7 +258,7 @@ final class LineBuffer {
         if (lineStart >= 0) {
             otherStart = lineStart;
         } else {
-            // discard beging of the old line
+            // discard beginning of the old line
             otherStart = 0;
         }
 
