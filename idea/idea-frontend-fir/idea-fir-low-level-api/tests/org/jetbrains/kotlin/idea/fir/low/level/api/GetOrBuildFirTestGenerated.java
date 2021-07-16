@@ -476,6 +476,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("nullableTypeWithooutQuestionMark.kt")
+        public void testNullableTypeWithooutQuestionMark() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/types/nullableTypeWithooutQuestionMark.kt");
+        }
+
+        @Test
         @TestMetadata("typeArgument.kt")
         public void testTypeArgument() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/types/typeArgument.kt");
