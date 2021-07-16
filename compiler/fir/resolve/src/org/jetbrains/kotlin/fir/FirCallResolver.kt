@@ -254,7 +254,12 @@ class FirCallResolver(
                     referencedSymbol,
                     nameReference.source,
                     qualifiedAccess.typeArguments,
-                    diagnostic
+                    diagnostic,
+                    nonFatalDiagnostics = extractNonFatalDiagnostics(
+                        nameReference.source,
+                        qualifiedAccess.explicitReceiver,
+                        referencedSymbol
+                    )
                 )
             }
             referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
@@ -274,6 +279,17 @@ class FirCallResolver(
         }
         if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)
         return resultExpression
+    }
+
+    private fun extractNonFatalDiagnostics(
+        source: FirSourceElement?,
+        explicitReceiver: FirExpression?,
+        symbol: FirClassLikeSymbol<*>
+    ): List<ConeDiagnostic> {
+        val prevDiagnostics = (explicitReceiver as? FirResolvedQualifier)?.nonFatalDiagnostics ?: emptyList()
+        return symbol.fir.deprecation?.forUseSite()?.let {
+            prevDiagnostics + ConeDeprecated(source, symbol, it)
+        } ?: prevDiagnostics
     }
 
     fun resolveCallableReference(

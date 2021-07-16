@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Deprecated("Object")
 object Obsolete {
     fun use() {}

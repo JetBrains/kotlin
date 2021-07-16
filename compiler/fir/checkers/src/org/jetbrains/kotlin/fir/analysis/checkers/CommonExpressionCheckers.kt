@@ -121,6 +121,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirStandaloneQualifierChecker,
             FirOptInUsageQualifierChecker,
+            FirDeprecatedQualifierChecker,
         )
 
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>

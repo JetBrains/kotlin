@@ -30,6 +30,7 @@ internal class FirErrorResolvedQualifierImpl(
     override val classId: ClassId?,
     override val symbol: FirClassLikeSymbol<*>?,
     override var isNullableLHSForCallableReference: Boolean,
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorResolvedQualifier() {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.Deprecation
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -145,6 +146,10 @@ class ConeImportFromSingleton(val name: Name) : ConeDiagnostic() {
 
 class ConeUnsupportedDynamicType() : ConeDiagnostic() {
     override val reason: String get() = "Dynamic types are not supported in this context"
+}
+
+class ConeDeprecated(val source: FirSourceElement?, val symbol: FirBasedSymbol<*>, val deprecation: Deprecation) : ConeDiagnostic() {
+    override val reason: String get() = "Deprecated: ${deprecation.message}"
 }
 
 private fun describeSymbol(symbol: FirBasedSymbol<*>): String {

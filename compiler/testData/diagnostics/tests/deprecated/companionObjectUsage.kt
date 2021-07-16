@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Another {
     @Deprecated("Object")
     companion object {

@@ -25,7 +25,7 @@ class A(val v3: Unit)
 // MODULE: m4(m1, m2, m3)
 // FILE: oneExplicitImportOtherStars.kt
 import p1.*
-import p2.A
+import <!DEPRECATION_ERROR!>p2.A<!>
 import p3.*
 
 fun test(a: <!DEPRECATION_ERROR!>A<!>) {

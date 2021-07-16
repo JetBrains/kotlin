@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import <!DEPRECATION!>C<!> as C2
 
 @Deprecated("obsolete")

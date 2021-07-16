@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.Deprecation
 import org.jetbrains.kotlin.fir.declarations.DeprecationLevelValue
 import org.jetbrains.kotlin.fir.declarations.getDeprecation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -50,6 +48,16 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         reporter: DiagnosticReporter
     ) {
         val deprecation = getWorstDeprecation(callSite, referencedSymbol, context) ?: return
+        reportDeprecation(source, referencedSymbol, deprecation, reporter, context)
+    }
+
+    internal fun reportDeprecation(
+        source: FirSourceElement?,
+        referencedSymbol: FirBasedSymbol<*>,
+        deprecation: Deprecation,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ) {
         val diagnostic = when (deprecation.level) {
             DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.DEPRECATION_ERROR
             DeprecationLevelValue.WARNING -> FirErrors.DEPRECATION

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -29,6 +30,7 @@ internal class FirResolvedQualifierImpl(
     override var relativeClassFqName: FqName?,
     override val symbol: FirClassLikeSymbol<*>?,
     override var isNullableLHSForCallableReference: Boolean,
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
     override val typeArguments: MutableList<FirTypeProjection>,
 ) : FirResolvedQualifier() {
     override val classId: ClassId? get() = relativeClassFqName?.let {

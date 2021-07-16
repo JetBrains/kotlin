@@ -527,36 +527,42 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            if (node.tokenType == KtNodeTypes.CALL_EXPRESSION || node.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL) {
-                return markElement(tree.referenceExpression(node, locateReferencedName) ?: node, startOffset, endOffset, tree, node)
-            }
-            if (node.tokenType == KtNodeTypes.PROPERTY_DELEGATE) {
-                return markElement(tree.findExpressionDeep(node) ?: node, startOffset, endOffset, tree, node)
-            }
-            if (node.tokenType == KtNodeTypes.ANNOTATION_ENTRY) {
-                return markElement(
-                    tree.findDescendantByType(node, KtNodeTypes.CONSTRUCTOR_CALLEE) ?: node,
-                    startOffset,
-                    endOffset,
-                    tree,
-                    node
-                )
-            }
-            if (node.tokenType in nodeTypesWithOperation) {
-                return markElement(tree.operationReference(node) ?: node, startOffset, endOffset, tree, node)
-            }
-            if (node.tokenType == KtNodeTypes.TYPE_REFERENCE) {
-                val nodeToMark =
-                    tree.findChildByType(node, KtNodeTypes.NULLABLE_TYPE)
-                        ?.let { tree.findChildByType(it, KtNodeTypes.USER_TYPE) }
-                        ?: node
-                return markElement(nodeToMark, startOffset, endOffset, tree, node)
-            }
-            if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION &&
-                node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION &&
-                node.tokenType != KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION
-            ) {
-                return super.mark(node, startOffset, endOffset, tree)
+            when {
+                node.tokenType == KtNodeTypes.CALL_EXPRESSION || node.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL -> {
+                    return markElement(tree.referenceExpression(node, locateReferencedName) ?: node, startOffset, endOffset, tree, node)
+                }
+                node.tokenType == KtNodeTypes.PROPERTY_DELEGATE -> {
+                    return markElement(tree.findExpressionDeep(node) ?: node, startOffset, endOffset, tree, node)
+                }
+                node.tokenType == KtNodeTypes.ANNOTATION_ENTRY -> {
+                    return markElement(
+                        tree.findDescendantByType(node, KtNodeTypes.CONSTRUCTOR_CALLEE) ?: node,
+                        startOffset,
+                        endOffset,
+                        tree,
+                        node
+                    )
+                }
+                node.tokenType in nodeTypesWithOperation -> {
+                    return markElement(tree.operationReference(node) ?: node, startOffset, endOffset, tree, node)
+                }
+                node.tokenType == KtNodeTypes.TYPE_REFERENCE -> {
+                    val nodeToMark =
+                        tree.findChildByType(node, KtNodeTypes.NULLABLE_TYPE)
+                            ?.let { tree.findChildByType(it, KtNodeTypes.USER_TYPE) }
+                            ?: node
+                    return markElement(nodeToMark, startOffset, endOffset, tree, node)
+                }
+                node.tokenType == KtNodeTypes.IMPORT_DIRECTIVE -> {
+                    val nodeToMark = tree.findChildByType(node, KtStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS) ?: node
+                    return markElement(nodeToMark, startOffset, endOffset, tree, node)
+                }
+                node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION &&
+                        node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION &&
+                        node.tokenType != KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION
+                -> {
+                    return super.mark(node, startOffset, endOffset, tree)
+                }
             }
             val selector = tree.selector(node)
             if (selector != null) {

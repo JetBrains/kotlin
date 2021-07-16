@@ -503,6 +503,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("symbol", classLikeSymbolType, nullable = true)
             +booleanField("isNullableLHSForCallableReference", withReplace = true)
             +booleanField("resolvedToCompanionObject", withReplace = true)
+            +fieldList("nonFatalDiagnostics", coneDiagnosticType)
             +typeArguments.withTransform()
         }
 

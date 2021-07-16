@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.analysis.checkers.collectEnumEntries
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -37,6 +38,7 @@ object FirImportsChecker : FirFileChecker() {
                     checkOperatorRename(import, context, reporter)
                 }
             }
+            checkDeprecatedImport(import, context, reporter)
         }
         checkConflictingImports(declaration.imports, context, reporter)
     }
@@ -174,5 +176,13 @@ object FirImportsChecker : FirFileChecker() {
         }
 
         return hasStatic || !hasIllegal
+    }
+
+    private fun checkDeprecatedImport(import: FirImport, context: CheckerContext, reporter: DiagnosticReporter) {
+        val importedFqName = import.importedFqName ?: return
+        if (importedFqName.isRoot || importedFqName.shortName().asString().isEmpty()) return
+        val classId = (import as? FirResolvedImport)?.resolvedClassId ?: ClassId.topLevel(importedFqName)
+        val classLike: FirRegularClassSymbol = classId.resolveToClass(context) ?: return
+        FirDeprecationChecker.reportDeprecationIfNeeded(import.source, classLike, null, context, reporter)
     }
 }

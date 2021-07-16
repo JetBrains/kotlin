@@ -16,7 +16,7 @@ fun test1a(x: List<<!DEPRECATION!>Obsolete<!>>) = x
 
 val test2 = Obsolete()
 
-val test3 = Obsolete
+val test3 = <!DEPRECATION!>Obsolete<!>
 
 class Test4: <!DEPRECATION!>Obsolete<!>()
 class Test4a: <!DEPRECATION!>IObsolete<!>

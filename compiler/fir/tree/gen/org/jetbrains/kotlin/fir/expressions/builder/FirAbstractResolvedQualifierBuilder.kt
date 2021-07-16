@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -32,6 +33,7 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var symbol: FirClassLikeSymbol<*>?
     abstract var isNullableLHSForCallableReference: Boolean
     abstract var resolvedToCompanionObject: Boolean
+    abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
     abstract val typeArguments: MutableList<FirTypeProjection>
 
     fun build(): FirResolvedQualifier

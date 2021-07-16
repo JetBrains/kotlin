@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class TopLevel {
     @Deprecated("Nested")
     class Nested {
