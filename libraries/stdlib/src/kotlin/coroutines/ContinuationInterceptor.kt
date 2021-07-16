@@ -15,6 +15,8 @@ package kotlin.coroutines
  * to [getPolymorphicElement] and [minusPolymorphicKey] respectively.
  * [ContinuationInterceptor] subtypes can be extracted from the coroutine context using either [ContinuationInterceptor.Key]
  * or subtype key if it extends [AbstractCoroutineContextKey].
+ *
+ * @sample samples.coroutines.Coroutines.interceptor
  */
 @SinceKotlin("1.3")
 public interface ContinuationInterceptor : CoroutineContext.Element {
