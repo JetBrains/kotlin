@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsByExistingArgumentsWith
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 abstract class DescriptorMangleComputer(protected val builder: StringBuilder, private val mode: MangleMode) :
@@ -197,8 +198,20 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             }
             is DynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
             is FlexibleType -> {
-                // TODO: is that correct way to mangle flexible type?
-                mangleType(tBuilder, type.upperBound)
+                // Reproduce type approximation done for flexible types in TypeTranslator.
+                val upper = type.upperBound
+                val upperDescriptor = upper.constructor.declarationDescriptor
+                    ?: error("No descriptor for type $upper")
+                if (upperDescriptor is ClassDescriptor) {
+                    val lower = type.lowerBound
+                    val lowerDescriptor = lower.constructor.declarationDescriptor as? ClassDescriptor
+                        ?: error("No class descriptor for lower type $lower of $type")
+                    val intermediate = if (lowerDescriptor == upperDescriptor) {
+                        lower.replace(newArguments = upper.arguments)
+                    } else lower
+                    val mixed = intermediate.makeNullableAsSpecified(upper.isMarkedNullable)
+                    mangleType(tBuilder, mixed)
+                } else mangleType(tBuilder, upper)
             }
             else -> error("Unexpected type $wtype")
         }
