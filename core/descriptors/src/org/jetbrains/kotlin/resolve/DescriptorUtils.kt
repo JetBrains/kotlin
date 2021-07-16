@@ -25,12 +25,11 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.getContainingClass
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
+import org.jetbrains.kotlin.types.checker.TypeRefinementSupport
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
@@ -419,10 +418,15 @@ fun DeclarationDescriptor.isPrimaryConstructorOfInlineClass(): Boolean =
     this is ConstructorDescriptor && this.isPrimary && this.constructedClass.isInlineClass()
 
 @TypeRefinement
-fun ModuleDescriptor.getKotlinTypeRefiner(): KotlinTypeRefiner = getCapability(REFINER_CAPABILITY)?.value ?: KotlinTypeRefiner.Default
+fun ModuleDescriptor.getKotlinTypeRefiner(): KotlinTypeRefiner =
+    when (val refinerCapability = getCapability(REFINER_CAPABILITY)?.value) {
+        is TypeRefinementSupport.Enabled -> refinerCapability.typeRefiner
+        else -> KotlinTypeRefiner.Default
+    }
 
 @OptIn(TypeRefinement::class)
-fun ModuleDescriptor.isTypeRefinementEnabled(): Boolean = getCapability(REFINER_CAPABILITY)?.value != null
+fun ModuleDescriptor.isTypeRefinementEnabled(): Boolean =
+    getCapability(REFINER_CAPABILITY)?.value?.isEnabled == true
 
 val VariableDescriptor.isUnderscoreNamed
     get() = !name.isSpecial && name.identifier == "_"

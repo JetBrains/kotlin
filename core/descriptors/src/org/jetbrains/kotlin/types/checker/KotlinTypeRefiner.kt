@@ -75,7 +75,13 @@ abstract class KotlinTypeRefiner {
 @TypeRefinement
 fun KotlinTypeRefiner.refineTypes(types: Iterable<KotlinType>): List<KotlinType> = types.map { refineType(it) }
 
-class Ref<T : Any>(var value: T?)
+class Ref<T : Any>(var value: T)
 
 @TypeRefinement
-val REFINER_CAPABILITY = ModuleCapability<Ref<KotlinTypeRefiner>>("KotlinTypeRefiner")
+val REFINER_CAPABILITY = ModuleCapability<Ref<TypeRefinementSupport>>("KotlinTypeRefiner")
+
+sealed class TypeRefinementSupport(val isEnabled: Boolean) {
+    object Disabled : TypeRefinementSupport(isEnabled = false)
+    object EnabledUninitialized : TypeRefinementSupport(isEnabled = true)
+    class Enabled(val typeRefiner: KotlinTypeRefiner) : TypeRefinementSupport(isEnabled = true)
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
+import org.jetbrains.kotlin.types.checker.TypeRefinementSupport
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -24,7 +25,7 @@ class KotlinTypeRefinerImpl(
     storageManager: StorageManager
 ) : KotlinTypeRefiner() {
     init {
-        moduleDescriptor.getCapability(REFINER_CAPABILITY)?.value = this
+        moduleDescriptor.getCapability(REFINER_CAPABILITY)?.value = TypeRefinementSupport.Enabled(this)
     }
 
     private val refinedTypeCache = storageManager.createCacheWithNotNullValues<TypeConstructor, KotlinType>()
