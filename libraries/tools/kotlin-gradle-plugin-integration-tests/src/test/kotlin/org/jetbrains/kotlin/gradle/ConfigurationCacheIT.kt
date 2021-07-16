@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.jetbrains.kotlin.gradle.util.findFileByName
@@ -40,6 +41,15 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             }
         """.trimIndent())
         testConfigurationCacheOf(":publishMavenPublicationToMavenRepository", checkUpToDateOnRebuild = false)
+    }
+
+    @Test
+    fun testMppWithMavenPublish() = with(transformNativeTestProject("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
+        val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs")
+        testConfigurationCacheOf(
+            *(publishedTargets.map { ":publish${it.capitalize()}PublicationToMavenRepository" }.toTypedArray()),
+            checkUpToDateOnRebuild = false
+        )
     }
 
     @Test
