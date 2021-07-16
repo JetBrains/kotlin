@@ -36,6 +36,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val moduleData: FirModuleData,
     override val symbol: FirFieldSymbol,
     override val name: Name,
+    @Volatile
     override var resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
     override var status: FirDeclarationStatus,

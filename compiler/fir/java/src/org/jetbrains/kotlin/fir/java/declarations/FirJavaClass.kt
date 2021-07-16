@@ -32,6 +32,7 @@ import kotlin.properties.Delegates
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: FirSourceElement?,
     override val moduleData: FirModuleData,
+    @Volatile
     override var resolvePhase: FirResolvePhase,
     override val name: Name,
     override val annotations: MutableList<FirAnnotationCall>,

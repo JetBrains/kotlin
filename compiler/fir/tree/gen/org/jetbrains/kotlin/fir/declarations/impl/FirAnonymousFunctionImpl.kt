@@ -55,6 +55,7 @@ internal class FirAnonymousFunctionImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
+    @Volatile
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 

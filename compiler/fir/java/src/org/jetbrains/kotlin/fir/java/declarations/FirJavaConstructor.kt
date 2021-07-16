@@ -37,6 +37,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val typeParameters: MutableList<FirTypeParameterRef>,
     annotationBuilder: () -> List<FirAnnotationCall>,
     override var status: FirDeclarationStatus,
+    @Volatile
     override var resolvePhase: FirResolvePhase,
     override val dispatchReceiverType: ConeKotlinType?,
 ) : FirConstructor() {

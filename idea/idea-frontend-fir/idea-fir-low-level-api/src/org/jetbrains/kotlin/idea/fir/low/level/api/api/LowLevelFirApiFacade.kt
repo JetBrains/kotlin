@@ -125,7 +125,7 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
     action: (D) -> R,
 ): R {
     resolvedFirToPhase(phase, resolveState)
-    return resolveState.withLock(this, DeclarationLockType.READ_LOCK, action)
+    return action(this)
 }
 
 /**
@@ -138,31 +138,7 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
     action: (D) -> R,
 ): R {
     resolvedFirToType(type, resolveState)
-    return resolveState.withLock(this, DeclarationLockType.READ_LOCK, action)
-}
-
-/**
- * Executes [action] with given [FirDeclaration] under write lock, so resolve **is possible** inside [action]
- */
-fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
-    resolveState: FirModuleResolveState,
-    phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
-    action: (D) -> R,
-): R {
-    resolvedFirToPhase(phase, resolveState)
-    return resolveState.withLock(this, DeclarationLockType.WRITE_LOCK, action)
-}
-
-/**
- * Executes [action] with given [FirDeclaration] under write lock, so resolve **is possible** inside [action]
- */
-fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
-    resolveState: FirModuleResolveState,
-    resolveType: ResolveType = ResolveType.BodyResolveWithChildren,
-    action: (D) -> R,
-): R {
-    resolvedFirToType(resolveType, resolveState)
-    return resolveState.withLock(this, DeclarationLockType.WRITE_LOCK, action)
+    return action(this)
 }
 
 /**

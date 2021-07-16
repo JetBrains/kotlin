@@ -73,7 +73,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         declaration.configure {
             +symbolWithPackage("fir.symbols", "FirBasedSymbol", "out FirDeclaration")
             +field("moduleData", firModuleDataType)
-            +field("resolvePhase", resolvePhaseType, withReplace = true).apply { isMutable = true }
+            +field("resolvePhase", resolvePhaseType, withReplace = true).apply { isMutable = true; isVolatile = true }
             +field("origin", declarationOriginType)
             +field("attributes", declarationAttributesType)
             shouldBeAbstractClass()

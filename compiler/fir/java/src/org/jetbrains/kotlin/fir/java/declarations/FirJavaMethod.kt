@@ -50,6 +50,7 @@ import kotlin.properties.Delegates
 class FirJavaMethod @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val moduleData: FirModuleData,
+    @Volatile
     override var resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,

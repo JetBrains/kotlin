@@ -11,6 +11,7 @@ sealed class Field : Importable {
     abstract val name: String
     open val arguments = mutableListOf<Importable>()
     abstract val nullable: Boolean
+    abstract var isVolatile: Boolean
     open var withReplace: Boolean = false
     abstract val isFirType: Boolean
 
@@ -71,6 +72,7 @@ sealed class Field : Importable {
 class FieldWithDefault(val origin: Field) : Field() {
     override val name: String get() = origin.name
     override val type: String get() = origin.type
+    override var isVolatile: Boolean = origin.isVolatile
     override val nullable: Boolean get() = origin.nullable
     override var withReplace: Boolean
         get() = origin.withReplace
@@ -123,7 +125,8 @@ class SimpleField(
     override val packageName: String?,
     val customType: Importable? = null,
     override val nullable: Boolean,
-    override var withReplace: Boolean
+    override var withReplace: Boolean,
+    override var isVolatile: Boolean = false
 ) : Field() {
     override val isFirType: Boolean = false
     override val fullQualifiedName: String?
@@ -138,7 +141,8 @@ class SimpleField(
             packageName,
             customType,
             nullable,
-            withReplace
+            withReplace,
+            isVolatile
         ).apply {
             withBindThis = this@SimpleField.withBindThis
         }
@@ -150,7 +154,8 @@ class SimpleField(
         newType.packageName,
         customType,
         nullable,
-        withReplace
+        withReplace,
+        isVolatile
     ).also {
         it.withBindThis = withBindThis
         updateFieldsInCopy(it)
@@ -170,6 +175,7 @@ class FirField(
     }
 
     override val type: String get() = element.type
+    override var isVolatile: Boolean = false
     override val packageName: String? get() = element.packageName
     override val isFirType: Boolean = true
 
@@ -202,6 +208,7 @@ class FieldList(
     override val nullable: Boolean
         get() = false
 
+    override var isVolatile: Boolean = false
     override var isMutable: Boolean = true
 
     override fun internalCopy(): Field {

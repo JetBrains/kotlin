@@ -41,40 +41,26 @@ internal fun FirLazyDeclarationResolver.lazyResolveDeclaration(
             require(firDeclaration is FirCallableDeclaration) {
                 "CallableReturnType type cannot be applied to ${firDeclaration::class.qualifiedName}"
             }
-            //Need to be sync
-            if (firDeclaration.returnTypeRef is FirResolvedTypeRef) return
-            val containingFile = firDeclaration.getContainingFile()
-            if (containingFile != null) {
-                moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(containingFile, checkPCE) {
-                    if (firDeclaration.returnTypeRef !is FirResolvedTypeRef) {
-                        lazyResolveDeclaration(
-                            firDeclarationToResolve = firDeclaration,
-                            moduleFileCache = moduleFileCache,
-                            toPhase = FirResolvePhase.TYPES,
-                            scopeSession = scopeSession,
-                            checkPCE = checkPCE,
-                        )
-                    }
-                    if (firDeclaration.returnTypeRef !is FirResolvedTypeRef) {
-                        lazyResolveDeclaration(
-                            firDeclarationToResolve = firDeclaration,
-                            moduleFileCache = moduleFileCache,
-                            toPhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-                            scopeSession = scopeSession,
-                            checkPCE = checkPCE,
-                        )
-                    }
-                    check(firDeclaration.returnTypeRef is FirResolvedTypeRef)
-                }
-            } else {
+
+            if (firDeclaration.resolvePhase < FirResolvePhase.TYPES) {
                 lazyResolveDeclaration(
                     firDeclarationToResolve = firDeclaration,
                     moduleFileCache = moduleFileCache,
-                    toPhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+                    toPhase = FirResolvePhase.TYPES,
                     scopeSession = scopeSession,
                     checkPCE = checkPCE,
                 )
             }
+            if (firDeclaration.returnTypeRef is FirResolvedTypeRef) return
+
+            lazyResolveDeclaration(
+                firDeclarationToResolve = firDeclaration,
+                moduleFileCache = moduleFileCache,
+                toPhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+                scopeSession = scopeSession,
+                checkPCE = checkPCE,
+            )
+            check(firDeclaration.returnTypeRef is FirResolvedTypeRef)
         }
         ResolveType.BodyResolveWithChildren, ResolveType.CallableBodyResolve -> {
             require(firDeclaration is FirCallableDeclaration || toResolveType != ResolveType.CallableBodyResolve) {

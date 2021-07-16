@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirFileImpl(
     override val source: FirSourceElement?,
     override val moduleData: FirModuleData,
+    @Volatile
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,

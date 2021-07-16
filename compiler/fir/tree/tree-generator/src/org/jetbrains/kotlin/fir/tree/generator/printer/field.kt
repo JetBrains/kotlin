@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
+import org.jetbrains.kotlin.fir.tree.generator.model.SimpleField
 import org.jetbrains.kotlin.util.SmartPrinter
 
 
 fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: Boolean, end: String) {
+    if (isImplementation && !field.isVal && field.isVolatile) {
+        println("@Volatile")
+    }
     if (override) {
         print("override ")
     }
@@ -23,6 +27,9 @@ fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: B
 }
 
 fun SmartPrinter.printFieldWithDefaultInImplementation(field: Field) {
+    if (!field.isVal && field.isVolatile) {
+        println("@Volatile")
+    }
     val defaultValue = field.defaultValueInImplementation
     print("override ")
     if (field.isVal) {

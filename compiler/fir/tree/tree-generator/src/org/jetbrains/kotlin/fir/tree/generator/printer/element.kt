@@ -37,7 +37,6 @@ fun Element.generateCode(generationPath: File): GeneratedFile {
 fun SmartPrinter.printElement(element: Element) {
     with(element) {
         val isInterface = kind == Kind.Interface || kind == Kind.SealedInterface
-
         fun abstract() {
             if (!isInterface) {
                 print("abstract ")

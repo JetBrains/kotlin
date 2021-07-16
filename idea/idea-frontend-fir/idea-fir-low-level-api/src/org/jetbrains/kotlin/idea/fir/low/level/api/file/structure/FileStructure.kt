@@ -123,9 +123,10 @@ internal class FileStructure private constructor(
             toPhase = FirResolvePhase.BODY_RESOLVE,
             checkPCE = true,
         )
-        return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
-            FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile, moduleFileCache.firFileLockProvider)
-        }
+        return FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile, moduleFileCache.firFileLockProvider)
+//        return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
+//            FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile, moduleFileCache.firFileLockProvider)
+//        }
     }
 
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {

@@ -50,12 +50,6 @@ internal abstract class ModuleFileCache {
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
 
     abstract val firFileLockProvider: LockProvider<FirFile>
-
-    inline fun <D : FirDeclaration, R> withReadLockOn(declaration: D, action: (D) -> R): R {
-        val file = getContainerFirFile(declaration)
-            ?: error("No fir file found for\n${declaration.render()}")
-        return firFileLockProvider.withReadLock(file) { action(declaration) }
-    }
 }
 
 internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFileCache() {

@@ -25,18 +25,16 @@ internal class IdeFirPhaseManager(
         symbol: FirBasedSymbol<*>,
         requiredPhase: FirResolvePhase
     ) {
-        val fir = symbol.fir as FirDeclaration
+        val fir = symbol.fir
         try {
-            if (fir.resolvePhase < requiredPhase) {
-                lazyDeclarationResolver.lazyResolveDeclaration(
-                    firDeclarationToResolve = fir,
-                    moduleFileCache = cache,
-                    scopeSession = ScopeSession(),
-                    toPhase = requiredPhase,
-                    checkPCE = true,
-                    skipLocalDeclaration = true,
-                )
-            }
+            lazyDeclarationResolver.lazyResolveDeclaration(
+                firDeclarationToResolve = fir,
+                moduleFileCache = cache,
+                scopeSession = ScopeSession(),
+                toPhase = requiredPhase,
+                checkPCE = true,
+                skipLocalDeclaration = true,
+            )
         } catch (e: Throwable) {
             sessionInvalidator.invalidate(fir.moduleData.session)
             throw e
