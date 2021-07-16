@@ -4,6 +4,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -27,6 +28,7 @@ KtFirFunctionSymbol:
   annotations: [kotlin/internal/InlineOnly()]
   callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -50,6 +52,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false

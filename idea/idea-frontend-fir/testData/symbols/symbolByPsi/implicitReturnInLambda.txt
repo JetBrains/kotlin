@@ -24,6 +24,7 @@ KtFirLocalVariableSymbol:
 KtFirAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
+  hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverType: null
@@ -66,6 +67,7 @@ KtFirLocalVariableSymbol:
 KtFirAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
+  hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverType: null
@@ -95,6 +97,7 @@ KtFirLocalVariableSymbol:
 KtFirAnonymousFunctionSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
+  hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverType: null
@@ -107,6 +110,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: /foo
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -143,6 +147,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: /bar
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false

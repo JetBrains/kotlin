@@ -4,6 +4,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Function2.invoke
   dispatchType: kotlin/Function2<P1, P2, R>
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -27,6 +28,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Any.equals
   dispatchType: kotlin/Any
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -50,6 +52,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   dispatchType: kotlin/Any
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -73,6 +76,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Any.toString
   dispatchType: kotlin/Any
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false

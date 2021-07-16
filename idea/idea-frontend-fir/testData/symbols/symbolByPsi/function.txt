@@ -17,6 +17,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: /foo
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false

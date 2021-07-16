@@ -31,6 +31,7 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: Anno
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isPrimary: true
   origin: SOURCE
@@ -65,6 +66,7 @@ KtFirFunctionSymbol:
   annotations: [Anno(param1 = funparam, param2 = 3)]
   callableIdIfNonLocal: /X.x
   dispatchType: X
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false

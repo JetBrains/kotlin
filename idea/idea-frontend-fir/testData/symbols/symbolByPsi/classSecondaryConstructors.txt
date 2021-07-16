@@ -5,6 +5,7 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isPrimary: true
   origin: SOURCE
@@ -34,6 +35,7 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isPrimary: false
   origin: SOURCE
@@ -76,6 +78,7 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isPrimary: false
   origin: SOURCE

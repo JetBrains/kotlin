@@ -4,6 +4,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: null
   dispatchType: <anonymous>
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
