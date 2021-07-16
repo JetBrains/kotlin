@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2020 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,10 @@ import static org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager.*;
 /** @noinspection UnusedDeclaration */
 @Mojo(name = "kapt", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
+
+    @Parameter
+    private boolean forceExecuteWithoutKotlinSources = false;
+
     @Parameter
     private String[] annotationProcessors;
 
@@ -76,6 +80,11 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     private ResolutionErrorHandler resolutionErrorHandler;
 
     private AnnotationProcessingManager cachedAnnotationProcessingManager;
+
+    @Override
+    protected boolean isForceExecuteWithoutKotlinSources() {
+        return forceExecuteWithoutKotlinSources;
+    }
 
     private AnnotationProcessingManager getAnnotationProcessingManager() {
         if (cachedAnnotationProcessingManager != null) {
