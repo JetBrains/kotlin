@@ -564,10 +564,18 @@ class FirCallResolver(
     ): FirNamedReference {
         val source = reference.source
 
-        fun chooseMostSpecific(candidates: Collection<Candidate>): Set<Candidate> {
-            // the most specific getter is guaranteed to
-            // come first
-            return setOfNotNull(candidates.firstOrNull())
+        fun chooseMostSpecific(candidates: Collection<Candidate>): Collection<Candidate> {
+            // The most specific getter is guaranteed to
+            // come first, but this isn't the only case
+            // when we'd have here multiple candidates
+
+            candidates.firstOrNull()?.let {
+                if (it.symbol is FirPropertyAccessorSymbol) {
+                    return listOfNotNull(candidates.firstOrNull())
+                }
+            }
+
+            return candidates
         }
 
         val bestCandidates = chooseMostSpecific(candidates)
