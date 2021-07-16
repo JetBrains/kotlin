@@ -103,6 +103,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     public void setVisibility(@NotNull DescriptorVisibility visibility) {
         this.visibility = visibility;
+        if (getOriginal() != this && getOriginal() instanceof FunctionDescriptorImpl) {
+            ((FunctionDescriptorImpl) getOriginal()).setVisibility(visibility);
+        }
     }
 
     public void setOperator(boolean isOperator) {
