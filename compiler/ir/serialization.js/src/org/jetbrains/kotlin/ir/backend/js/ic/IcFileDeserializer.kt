@@ -168,6 +168,7 @@ class IcFileDeserializer(
         additionalStatementOriginIndex = additionalStatementOriginIndex,
         allowErrorStatementOrigins = true,
         allowRedeclaration = true,
+        allowErrorLoopIndices = true,
     )
 
     private val protoFile: ProtoIrFile by lazy { ProtoIrFile.parseFrom(icFileData.file.fileData.codedInputStream, ExtensionRegistryLite.newInstance()) }
