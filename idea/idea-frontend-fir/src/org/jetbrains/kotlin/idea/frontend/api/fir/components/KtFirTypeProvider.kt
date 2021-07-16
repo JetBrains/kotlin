@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.withNullability
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.frontend.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -21,6 +26,8 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
+import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.psi.KtTypeReference
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -49,6 +56,10 @@ internal class KtFirTypeProvider(
             )
         }
         return type.asKtType()
+    }
+
+    override fun getKtType(ktTypeReference: KtTypeReference): KtType = withValidityAssertion {
+        ktTypeReference.getOrBuildFirOfType<FirResolvedTypeRef>(firResolveState).coneType.asKtType()
     }
 
     override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType {

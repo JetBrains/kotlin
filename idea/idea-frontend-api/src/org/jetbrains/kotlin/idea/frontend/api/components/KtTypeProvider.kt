@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
+import org.jetbrains.kotlin.psi.KtTypeReference
 
 public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     public abstract val builtinTypes: KtBuiltinTypes
@@ -16,6 +17,8 @@ public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     public abstract fun approximateToSuperPublicDenotableType(type: KtType): KtType?
 
     public abstract fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType
+
+    public abstract fun getKtType(ktTypeReference: KtTypeReference): KtType
 
     public abstract fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType
 }
@@ -37,6 +40,14 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
 
     public fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
         analysisSession.typeProvider.buildSelfClassType(this)
+
+    /**
+     * Resolve [KtTypeReference] and return corresponding [KtType] if resolved.
+     *
+     * This may raise an exception if the resolution ends up with an unexpected kind.
+     */
+    public fun KtTypeReference.getKtType(): KtType =
+        analysisSession.typeProvider.getKtType(this)
 
     public fun KtType.withNullability(newNullability: KtTypeNullability): KtType =
         analysisSession.typeProvider.withNullability(this, newNullability)
