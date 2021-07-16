@@ -133,7 +133,14 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         gradleProperties().appendText("\nkotlin.incremental.js.ir=true")
         gradleProperties().appendText("\norg.gradle.parallel=true")
 
-        build("assemble") {
+        build(
+            "assemble",
+            options = defaultBuildOptions()
+                .copy(
+                    jsCompilerType = KotlinJsCompilerType.IR,
+                    warningMode = WarningMode.Fail
+                )
+        ) {
             assertSuccessful()
         }
     }
