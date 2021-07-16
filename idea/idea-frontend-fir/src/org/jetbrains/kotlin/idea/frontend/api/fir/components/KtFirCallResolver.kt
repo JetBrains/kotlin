@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -39,6 +40,7 @@ internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtCallResolver(), KtFirAnalysisSessionComponent {
+    private val diagnosticCache = mutableListOf<FirDiagnostic>()
 
     override fun resolveCall(call: KtBinaryExpression): KtCall? = withValidityAssertion {
         when (val fir = call.getOrBuildFir(firResolveState)) {
@@ -180,13 +182,15 @@ internal class KtFirCallResolver(
     private fun FirErrorNamedReference.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            source?.let { diagnostic.asKtDiagnostic(it, qualifiedAccessSource) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
+            source?.let { diagnostic.asKtDiagnostic(it, qualifiedAccessSource, diagnosticCache) }
+                ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
     private fun FirErrorReferenceWithCandidate.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            source?.let { diagnostic.asKtDiagnostic(it,qualifiedAccessSource) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
+            source?.let { diagnostic.asKtDiagnostic(it, qualifiedAccessSource, diagnosticCache) }
+                ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
     private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =

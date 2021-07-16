@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getDiagnostics
@@ -21,6 +22,7 @@ internal class KtFirDiagnosticProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtDiagnosticProvider(), KtFirAnalysisSessionComponent {
+
     override fun getDiagnosticsForElement(
         element: KtElement,
         filter: KtDiagnosticCheckerFilter

@@ -43,8 +43,13 @@ internal interface KtFirAnalysisSessionComponent {
     fun FirPsiDiagnostic.asKtDiagnostic(): KtDiagnosticWithPsi<*> =
         KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as FirDiagnostic)
 
-    fun ConeDiagnostic.asKtDiagnostic(source: FirSourceElement, qualifiedAccessSource: FirSourceElement?): KtDiagnosticWithPsi<*>? {
+    fun ConeDiagnostic.asKtDiagnostic(
+        source: FirSourceElement,
+        qualifiedAccessSource: FirSourceElement?,
+        diagnosticCache: MutableList<FirDiagnostic>
+    ): KtDiagnosticWithPsi<*>? {
         val firDiagnostic = toFirDiagnostics(source, qualifiedAccessSource).firstOrNull() ?: return null
+        diagnosticCache += firDiagnostic
         check(firDiagnostic is FirPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()
     }
