@@ -59,5 +59,5 @@ private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sing
     private val IrType.isKotlinFunInterface: Boolean
         get() = getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
 
-    override val IrType.needEqualsHashCodeMethods get() = isKotlinFunInterface
+    override val IrType.needEqualsHashCodeToStringMethods get() = isKotlinFunInterface
 }
