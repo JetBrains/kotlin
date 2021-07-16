@@ -7,6 +7,8 @@ package test
 
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
+import kotlin.reflect.full.isSubtypeOf
+import kotlin.reflect.full.isSupertypeOf
 import kotlin.test.assertEquals
 
 fun check(expected: String, actual: KType) {
@@ -31,6 +33,11 @@ fun box(): String {
     check("kotlin.collections.MutableListIterator<kotlin.Any>", typeOf<MutableListIterator<Any>>())
     check("kotlin.collections.MutableMap<kotlin.Int, kotlin.Unit>", typeOf<MutableMap<Int, Unit>>())
     check("kotlin.collections.MutableMap.MutableEntry<kotlin.Byte?, kotlin.collections.Set<*>>", typeOf<MutableMap.MutableEntry<Byte?, Set<*>>>())
+
+    check(typeOf<MutableList<Any>>().isSubtypeOf(typeOf<List<Any>>()))
+    check(!typeOf<List<Any>>().isSubtypeOf(typeOf<MutableList<Any>>()))
+    check(typeOf<List<Any>>().isSupertypeOf(typeOf<MutableList<Any>>()))
+    check(!typeOf<MutableList<Any>>().isSupertypeOf(typeOf<List<Any>>()))
 
     return "OK"
 }
