@@ -925,6 +925,40 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
         }
     }
 
+    @Test
+    fun testBrowserNoTasksConfigurationOnHelp() = with(transformProjectWithPluginsDsl("kotlin-js-browser-project")) {
+        gradleBuildScript().appendText(
+            "\n" + """
+            allprojects {
+                tasks.configureEach {
+                    if (this is org.gradle.configuration.Help) return@configureEach
+                    throw GradleException("Task ${'$'}{path} shouldn't be configured")
+                }
+            }
+        """.trimIndent()
+        )
+        build {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testNodeJsNoTasksConfigurationOnHelp() = with(transformProjectWithPluginsDsl("kotlin-js-nodejs-project")) {
+        gradleBuildScript().appendText(
+            "\n" + """
+            allprojects {
+                tasks.configureEach {
+                    if (it instanceof org.gradle.configuration.Help) return
+                    throw new GradleException("Task ${'$'}{path} shouldn't be configured")
+                }
+            }
+        """.trimIndent()
+        )
+        build {
+            assertSuccessful()
+        }
+    }
+
     private fun CompiledProject.getSubprojectPackageJson(subProject: String, projectName: String? = null) =
         fileInWorkingDir("build/js/packages/${projectName ?: project.projectName}-$subProject")
             .resolve(NpmProject.PACKAGE_JSON)
