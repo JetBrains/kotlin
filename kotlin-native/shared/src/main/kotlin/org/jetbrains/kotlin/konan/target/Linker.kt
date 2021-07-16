@@ -184,7 +184,10 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             Family.OSX -> "osx"
             else -> error("Target $target is unsupported")
         }
-        val suffix = if (libraryName.isNotEmpty() && targetTriple.isSimulator) {
+        // TODO: remove after `minimalXcodeVersion` will be 12.
+        // Separate libclang_rt version for simulator appeared in Xcode 12.
+        val compilerRtForSimulatorExists = Xcode.current.version.substringBefore('.').toInt() >= 12
+        val suffix = if ((libraryName.isNotEmpty() || compilerRtForSimulatorExists) && targetTriple.isSimulator) {
             "sim"
         } else {
             ""
