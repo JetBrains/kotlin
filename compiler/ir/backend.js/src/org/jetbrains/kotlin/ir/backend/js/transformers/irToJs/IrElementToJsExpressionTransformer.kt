@@ -70,14 +70,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     private fun toDoubleConst(f: Float) = if (f.isInfinite() || f.isNaN()) f.toDouble() else f.toString().toDouble()
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, context: JsGenerationContext): JsExpression {
-        // TODO revisit
-        return expression.arguments.fold<IrExpression, JsExpression>(JsStringLiteral("")) { jsExpr, irExpr ->
-            JsBinaryOperation(
-                JsBinaryOperator.ADD,
-                jsExpr,
-                irExpr.accept(this, context)
-            )
-        }
+        throw IllegalStateException("String concatenation should have been lowered at this point")
     }
 
     override fun visitGetField(expression: IrGetField, context: JsGenerationContext): JsExpression {
