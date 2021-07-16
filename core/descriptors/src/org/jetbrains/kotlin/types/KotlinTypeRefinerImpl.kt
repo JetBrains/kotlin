@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
@@ -24,8 +25,20 @@ class KotlinTypeRefinerImpl(
     private val moduleDescriptor: ModuleDescriptor,
     storageManager: StorageManager
 ) : KotlinTypeRefiner() {
+    private var isStandalone: Boolean = false
+
+    private constructor(
+        moduleDescriptor: ModuleDescriptor,
+        storageManager: StorageManager,
+        isStandalone: Boolean
+    ) : this(moduleDescriptor, storageManager) {
+        this.isStandalone = isStandalone
+    }
+
     init {
-        moduleDescriptor.getCapability(REFINER_CAPABILITY)?.value = TypeRefinementSupport.Enabled(this)
+        if (!isStandalone) {
+            moduleDescriptor.getCapability(REFINER_CAPABILITY)?.value = TypeRefinementSupport.Enabled(this)
+        }
     }
 
     private val refinedTypeCache = storageManager.createCacheWithNotNullValues<TypeConstructor, KotlinType>()
@@ -147,6 +160,15 @@ class KotlinTypeRefinerImpl(
         )
 
         return result
+    }
+
+    companion object {
+        /**
+         * Create a new *thread unsafe* type refiner instance for the specified module.
+         * Note, that module's type refiner capability won't be changed.
+         */
+        fun createStandaloneInstanceFor(moduleDescriptor: ModuleDescriptor): KotlinTypeRefinerImpl =
+            KotlinTypeRefinerImpl(moduleDescriptor, LockBasedStorageManager.NO_LOCKS, isStandalone = true)
     }
 }
 
