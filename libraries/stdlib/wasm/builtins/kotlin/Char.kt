@@ -13,7 +13,7 @@ import kotlin.wasm.internal.*
  *
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-@WasmPrimitive
+@WasmAutoboxed
 @Suppress("NOTHING_TO_INLINE")
 public class Char private constructor(public val value: Char) : Comparable<Char> {
     /**
