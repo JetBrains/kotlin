@@ -11,7 +11,6 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
@@ -25,18 +24,20 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
+import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
+import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -50,17 +51,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     createDefaultSourceSets = true,
     createTestCompilation = true
 ) {
-
-    private fun createCInteropKlibArtifact(
-        interop: DefaultCInteropSettings,
-        interopTask: TaskProvider<out CInteropProcess>
-    ) = createKlibArtifact(
-        interop.compilation,
-        interopTask.map { it.outputFile },
-        "cinterop-${interop.name}",
-        interopTask,
-        copy = true
-    )
 
     // region Task creation.
     private fun Project.createLinkTask(binary: NativeBinary) {
@@ -219,8 +209,20 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 if (isMain()) {
                     // Register the interop library as an outgoing klib to allow depending on projects with cinterops.
                     project.dependencies.add(target.apiElementsConfigurationName, interopOutput)
+
+                    // Add interop library to special CInteropApiElements configuration
+                    createCInteropApiElementsKlibArtifact(interop, interopTask)
+
                     // Add the interop library in publication.
-                    createCInteropKlibArtifact(interop, interopTask)
+                    createKlibArtifact(
+                        compilation = interop.compilation,
+                        artifactFile = interopTask.map { it.outputFile },
+                        classifier = "cinterop-${interop.name}",
+                        producingTask = interopTask,
+                        copy = true
+                    )
+
+
                     // We cannot add the interop library in an compilation output because in this case
                     // IDE doesn't see this library in module dependencies. So we have to manually add
                     // main interop libraries in dependencies of the default test compilation.
@@ -278,8 +280,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     protected fun configureCInterops(target: KotlinNativeTarget): Unit = with(target.project) {
         target.compilations.all { compilation ->
             createCInteropTasks(compilation, compilation.cinterops)
-            compilation.cinterops.all {
-                defineConfigurationsForCInterop(compilation, it, target, configurations)
+            compilation.cinterops.all { cinterop ->
+                cinterop.dependencyFiles += locateOrCreateCInteropDependencyConfiguration(compilation, cinterop, target)
             }
         }
     }
@@ -411,25 +413,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     companion object {
         const val INTEROP_GROUP = "interop"
         const val RUN_GROUP = "run"
-
-        protected fun defineConfigurationsForCInterop(
-            compilation: KotlinNativeCompilation,
-            cinterop: CInteropSettings,
-            target: KotlinTarget,
-            configurations: ConfigurationContainer
-        ) {
-            val compileOnlyConfiguration = configurations.getByName(compilation.compileOnlyConfigurationName)
-            val implementationConfiguration = configurations.getByName(compilation.implementationConfigurationName)
-
-            cinterop.dependencyFiles = configurations.maybeCreate(cinterop.dependencyConfigurationName).apply {
-                extendsFrom(compileOnlyConfiguration, implementationConfiguration)
-                usesPlatformOf(target)
-                isVisible = false
-                isCanBeConsumed = false
-                attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
-                description = "Dependencies for cinterop '${cinterop.name}' (compilation '${compilation.name}')."
-            }
-        }
 
         internal fun createKlibCompilationTask(
             compilation: KotlinNativeCompilationData<*>
