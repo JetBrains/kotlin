@@ -37,23 +37,23 @@ abstract class AbstractRunner : Runner {
 
         val mainClass = try {
             classLoader.loadClass(className)
-        }
-        catch (e: ClassNotFoundException) {
+        } catch (e: ClassNotFoundException) {
+            throw RunnerException("could not find or load main class $className")
+        } catch (e: NoClassDefFoundError) {
             throw RunnerException("could not find or load main class $className")
         }
 
         val main = try {
             mainClass.getDeclaredMethod("main", Array<String>::class.java)
-        }
-        catch (e: NoSuchMethodException) {
+        } catch (e: NoSuchMethodException) {
             throw RunnerException("'main' method not found in class $className")
         }
 
         if (!Modifier.isStatic(main.modifiers)) {
             throw RunnerException(
-                    "'main' method of class $className is not static. " +
-                    "Please ensure that 'main' is either a top level Kotlin function, " +
-                    "a member function annotated with @JvmStatic, or a static Java method"
+                "'main' method of class $className is not static. " +
+                        "Please ensure that 'main' is either a top level Kotlin function, " +
+                        "a member function annotated with @JvmStatic, or a static Java method"
             )
         }
 
@@ -62,14 +62,11 @@ abstract class AbstractRunner : Runner {
 
         try {
             main.invoke(null, arguments.toTypedArray())
-        }
-        catch (e: IllegalAccessException) {
+        } catch (e: IllegalAccessException) {
             throw RunnerException("'main' method of class $className is not public")
-        }
-        catch (e: InvocationTargetException) {
+        } catch (e: InvocationTargetException) {
             throw e.targetException
-        }
-        finally {
+        } finally {
             if (savedClasspathProperty == null) System.clearProperty("java.class.path")
             else System.setProperty("java.class.path", savedClasspathProperty)
         }
@@ -78,23 +75,21 @@ abstract class AbstractRunner : Runner {
 
 class MainClassRunner(override val className: String) : AbstractRunner() {
     override fun createClassLoader(classpath: List<URL>): ClassLoader =
-            URLClassLoader(classpath.toTypedArray(), null)
+        URLClassLoader(classpath.toTypedArray(), null)
 }
 
 class JarRunner(private val path: String) : AbstractRunner() {
     override val className: String =
+        try {
+            val jar = JarFile(path)
             try {
-                val jar = JarFile(path)
-                try {
-                    jar.manifest.mainAttributes.getValue(Attributes.Name.MAIN_CLASS)
-                }
-                finally {
-                    jar.close()
-                }
+                jar.manifest.mainAttributes.getValue(Attributes.Name.MAIN_CLASS)
+            } finally {
+                jar.close()
             }
-            catch (e: IOException) {
-                throw RunnerException("could not read manifest from " + path + ": " + e.message)
-            }
+        } catch (e: IOException) {
+            throw RunnerException("could not read manifest from " + path + ": " + e.message)
+        }
             ?: throw RunnerException("no Main-Class entry found in manifest in $path")
 
     override fun createClassLoader(classpath: List<URL>): ClassLoader {

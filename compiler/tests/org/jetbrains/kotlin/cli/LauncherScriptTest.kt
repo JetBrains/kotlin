@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
@@ -353,5 +354,71 @@ compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: C
             "-J", expectedStdout = "error: empty -J argument\n",
             expectedExitCode = 1
         )
+    }
+
+    fun testRunClassFileWithExtension() {
+        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        runProcess(
+            "kotlin",
+            "test/HelloWorldKt.class",
+            expectedStdout = "Hello!\n",
+            workDirectory = tmpdir
+        )
+        runProcess(
+            "kotlin",
+            "test.HelloWorldKt.class",
+            expectedExitCode = 1,
+            expectedStderr = "error: could not find or load main class test.HelloWorldKt.class\n",
+            workDirectory = tmpdir
+        )
+
+        val subDir2 = File("$tmpdir/subDir1/subDir2").also { it.mkdirs() }
+        val subDir3 = File("$tmpdir/subDir3").also { it.mkdir() }
+        val subDir1 = subDir2.parentFile
+        fun makeSureTheClassFileExists(classFile: File) {
+            if (!classFile.exists()) {
+                throw FileNotFoundException("class file $classFile is not found")
+            }
+        }
+        runProcess("kotlinc", "$testDataDirectory/defaultPackage.kt", "-d", subDir1.path)
+        runProcess(
+            "kotlin",
+            "DefaultPackageKt.class",
+            expectedStdout = "in default package\n",
+            workDirectory = subDir1
+        )
+        runProcess(
+            "kotlin",
+            "./DefaultPackageKt.class",
+            expectedStdout = "in default package\n",
+            workDirectory = subDir1
+        )
+        runProcess(
+            "kotlin",
+            "./subDir2/../DefaultPackageKt.class",
+            expectedStdout = "in default package\n",
+            workDirectory = subDir1
+        )
+        runProcess(
+            "kotlin",
+            "subDir1/DefaultPackageKt.class",
+            expectedExitCode = 1,
+            expectedStderr = "error: could not find or load main class subDir1.DefaultPackageKt\n",
+            workDirectory = tmpdir
+        ).also { makeSureTheClassFileExists(File("$tmpdir/subDir1/DefaultPackageKt.class")) }
+        runProcess(
+            "kotlin",
+            "../DefaultPackageKt.class",
+            expectedExitCode = 1,
+            expectedStderr = "error: could not find or load main class ../DefaultPackageKt.class\n",
+            workDirectory = subDir2
+        ).also { makeSureTheClassFileExists(File("$tmpdir/subDir1/subDir2/../DefaultPackageKt.class")) }
+        runProcess(
+            "kotlin",
+            "../subDir1/DefaultPackageKt.class",
+            expectedExitCode = 1,
+            expectedStderr = "error: could not find or load main class ../subDir1/DefaultPackageKt.class\n",
+            workDirectory = subDir3
+        ).also { makeSureTheClassFileExists(File("$tmpdir/subDir3/../subDir1/DefaultPackageKt.class")) }
     }
 }
