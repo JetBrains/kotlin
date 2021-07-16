@@ -57,6 +57,9 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
     @Parameter
     private boolean mapDiagnosticLocations = false;
+    
+    @Parameter
+    private String aptMode = "stubsAndApt";
 
     @Parameter
     private List<String> annotationProcessorArgs;
@@ -94,7 +97,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     ) {
         List<KaptOption> options = new ArrayList<>();
 
-        options.add(new KaptOption("aptMode", "stubsAndApt"));
+        options.add(new KaptOption("aptMode", aptMode));
         options.add(new KaptOption("useLightAnalysis", useLightAnalysis));
         options.add(new KaptOption("correctErrorTypes", correctErrorTypes));
         options.add(new KaptOption("mapDiagnosticLocations", mapDiagnosticLocations));
