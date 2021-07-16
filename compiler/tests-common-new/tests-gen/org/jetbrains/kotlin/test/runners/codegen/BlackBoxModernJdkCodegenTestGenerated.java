@@ -130,6 +130,12 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
         }
 
         @Test
+        @TestMetadata("javaRecordsViaKotlinReflection.kt")
+        public void testJavaRecordsViaKotlinReflection() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/javaRecordsViaKotlinReflection.kt");
+        }
+
+        @Test
         @TestMetadata("javaSealedClass.kt")
         public void testJavaSealedClass() throws Exception {
             runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/javaSealedClass.kt");

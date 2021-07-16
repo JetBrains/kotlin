@@ -97,9 +97,6 @@ class ReflectJavaClass(
             .map(::ReflectJavaConstructor)
             .toList()
 
-    override val recordComponents: Collection<JavaRecordComponent>
-        get() = emptyList()
-
     override fun hasDefaultConstructor() = false // any default constructor is returned by constructors
 
     override val lightClassOriginKind: LightClassOriginKind?
@@ -118,9 +115,11 @@ class ReflectJavaClass(
     override val isEnum: Boolean
         get() = klass.isEnum
 
-    // TODO: Support reflect
     override val isRecord: Boolean
-        get() = false
+        get() = Java16SealedRecordLoader.loadIsRecord(klass) ?: false
+
+    override val recordComponents: Collection<JavaRecordComponent>
+        get() = (Java16SealedRecordLoader.loadGetRecordComponents(klass) ?: emptyArray()).map(::ReflectJavaRecordComponent)
 
     override val isSealed: Boolean
         get() = Java16SealedRecordLoader.loadIsSealed(klass) ?: false
@@ -141,6 +140,8 @@ private object Java16SealedRecordLoader {
     class Cache(
         val isSealed: Method?,
         val getPermittedSubclasses: Method?,
+        val isRecord: Method?,
+        val getRecordComponents: Method?
     )
 
     private var _cache: Cache? = null
@@ -152,9 +153,11 @@ private object Java16SealedRecordLoader {
             Cache(
                 clazz.getMethod("isSealed"),
                 clazz.getMethod("getPermittedSubclasses"),
+                clazz.getMethod("isRecord"),
+                clazz.getMethod("getRecordComponents")
             )
         } catch (e: NoSuchMethodException) {
-            Cache(null, null)
+            Cache(null, null, null, null)
         }
     }
 
@@ -178,5 +181,18 @@ private object Java16SealedRecordLoader {
         val getPermittedSubclasses = cache.getPermittedSubclasses ?: return null
         @Suppress("UNCHECKED_CAST")
         return getPermittedSubclasses.invoke(clazz) as Array<Class<*>>
+    }
+
+    fun loadIsRecord(clazz: Class<*>): Boolean? {
+        val cache = initCache()
+        val isRecord = cache.isRecord ?: return null
+        return isRecord.invoke(clazz) as Boolean
+    }
+
+    fun loadGetRecordComponents(clazz: Class<*>): Array<Any>? {
+        val cache = initCache()
+        val getRecordComponents = cache.getRecordComponents ?: return null
+        @Suppress("UNCHECKED_CAST")
+        return getRecordComponents.invoke(clazz) as Array<Any>?
     }
 }
