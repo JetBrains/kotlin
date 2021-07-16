@@ -5,42 +5,19 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.*
 
 public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
-    public abstract fun commonSuperType(expressions: Collection<KtExpression>, context: KtExpression, mode: TypeMappingMode): PsiType?
-    public abstract fun getPsiTypeForKtExpression(expression: KtExpression, mode: TypeMappingMode): PsiType
-    public abstract fun getPsiTypeForKtDeclaration(ktDeclaration: KtDeclaration, mode: TypeMappingMode): PsiType
-    public abstract fun getPsiTypeForKtFunction(ktFunction: KtFunction, mode: TypeMappingMode): PsiType
-    public abstract fun getPsiTypeForKtTypeReference(ktTypeReference: KtTypeReference, mode: TypeMappingMode): PsiType
-    public abstract fun getPsiTypeForReceiverOfDoubleColonExpression(
-        ktDoubleColonExpression: KtDoubleColonExpression,
-        mode: TypeMappingMode
-    ): PsiType?
+    public abstract fun asPsiType(type: KtType, context: PsiElement, mode: TypeMappingMode): PsiType
 }
 
 public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
-    public fun commonSuperType(
-        expressions: Collection<KtExpression>,
-        context: KtExpression,
+    public fun KtType.asPsiType(
+        context: PsiElement,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT
     ): PsiType? =
-        analysisSession.psiTypeProvider.commonSuperType(expressions, context, mode)
-
-    public fun KtExpression.getPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType =
-        analysisSession.psiTypeProvider.getPsiTypeForKtExpression(this, mode)
-
-    public fun KtDeclaration.getPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType =
-        analysisSession.psiTypeProvider.getPsiTypeForKtDeclaration(this, mode)
-
-    public fun KtFunction.getPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType =
-        analysisSession.psiTypeProvider.getPsiTypeForKtFunction(this, mode)
-
-    public fun KtTypeReference.getPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType =
-        analysisSession.psiTypeProvider.getPsiTypeForKtTypeReference(this, mode)
-
-    public fun KtDoubleColonExpression.getReceiverPsiType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): PsiType? =
-        analysisSession.psiTypeProvider.getPsiTypeForReceiverOfDoubleColonExpression(this, mode)
+        analysisSession.psiTypeProvider.asPsiType(this, context, mode)
 }

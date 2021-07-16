@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
@@ -18,11 +17,9 @@ import org.jetbrains.kotlin.idea.frontend.api.KtStarProjectionTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
-import org.jetbrains.kotlin.idea.asJava.asPsiType
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.types.model.convertVariance
@@ -36,9 +33,6 @@ internal interface KtFirAnalysisSessionComponent {
     val firResolveState get() = analysisSession.firResolveState
 
     fun ConeKotlinType.asKtType() = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
-
-    fun ConeKotlinType.asPsiType(mode: TypeMappingMode, psiContext: PsiElement) =
-        asPsiType(rootModuleSession, analysisSession.firResolveState, mode, psiContext)
 
     fun FirPsiDiagnostic.asKtDiagnostic(): KtDiagnosticWithPsi<*> =
         KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as FirDiagnostic)
