@@ -136,8 +136,6 @@ class CoroutineTransformerMethodVisitor(
 
         UninitializedStoresProcessor(methodNode, shouldPreserveClassInitialization).run()
 
-        updateLvtAccordingToLiveness(methodNode, isForNamedFunction)
-
         val spilledToVariableMapping = spillVariables(suspensionPoints, methodNode)
 
         val suspendMarkerVarIndex = methodNode.maxLocals++
@@ -193,6 +191,8 @@ class CoroutineTransformerMethodVisitor(
         dropSuspensionMarkers(methodNode)
         dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
+
+        updateLvtAccordingToLiveness(methodNode, isForNamedFunction)
 
         if (languageVersionSettings.isReleaseCoroutines()) {
             writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
@@ -1298,7 +1298,6 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     method.localVariables.clear()
     // Skip `this` for suspend lambda
     val start = if (isForNamedFunction) 0 else 1
-    val oldLvtNodeToLatestNewLvtNode = mutableMapOf<LocalVariableNode, LocalVariableNode>()
     for (variableIndex in start until method.maxLocals) {
         if (oldLvt.none { it.index == variableIndex }) continue
         var startLabel: LabelNode? = null
@@ -1337,10 +1336,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 // startLabel can be null in case of parameters
                 @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
                 val node = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
-                if (lvtRecord !in oldLvtNodeToLatestNewLvtNode) {
-                    method.localVariables.add(node)
-                }
-                oldLvtNodeToLatestNewLvtNode[lvtRecord] = node
+                method.localVariables.add(node)
             }
         }
     }
