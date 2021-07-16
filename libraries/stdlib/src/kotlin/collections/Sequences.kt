@@ -617,7 +617,7 @@ private class GeneratorSequence<T : Any>(private val getInitialValue: () -> T?, 
  *
  * The operation is _intermediate_ and _stateless_.
  *
- * [IllegalStateException] is thrown on iterating the returned sequence from the second time.
+ * [IllegalStateException] is thrown on iterating the returned sequence for the second time and the following times.
  *
  */
 public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
