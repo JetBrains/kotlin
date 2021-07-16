@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.resolve.constructFunctionalType
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
@@ -30,10 +33,6 @@ internal class KtFirExpressionTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtExpressionTypeProvider(), KtFirAnalysisSessionComponent {
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
-        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveState)
-        firDeclaration.returnTypeRef.coneType.asKtType()
-    }
 
     override fun getKtExpressionType(expression: KtExpression): KtType = withValidityAssertion {
         when (val fir = expression.unwrap().getOrBuildFir(firResolveState)) {
@@ -42,6 +41,16 @@ internal class KtFirExpressionTypeProvider(
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
             else -> error("Unexpected ${fir?.let { it::class }}")
         }
+    }
+
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
+        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveState)
+        firDeclaration.returnTypeRef.coneType.asKtType()
+    }
+
+    override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType = withValidityAssertion {
+        val firFunction = declaration.getOrBuildFirOfType<FirFunction>(firResolveState)
+        firFunction.constructFunctionalType(firFunction.isSuspend).asKtType()
     }
 
     override fun getExpectedType(expression: PsiElement): KtType? {
