@@ -13,9 +13,11 @@ internal fun Project.includeKotlinToolingMetadataInApk() {
         val buildKotlinToolingMetadataTask = buildKotlinToolingMetadataTask ?: return@withId
         val android = project.extensions.getByName("android") as AppExtension
         android.applicationVariants.configureEach { variant ->
-            variant.registerPostJavacGeneratedBytecode(
-                files(buildKotlinToolingMetadataTask.map { it.outputDirectory })
-            )
+            if (!variant.buildType.isDebuggable) {
+                variant.registerPostJavacGeneratedBytecode(
+                    files(buildKotlinToolingMetadataTask.map { it.outputDirectory })
+                )
+            }
         }
     }
 }
