@@ -349,6 +349,28 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-47641 commonizing c-interops does not depend on any source compilation`() {
+        with(Project("commonize-kt-47641-cinterops-compilation-dependency")) {
+            build("commonizeCInterop", options = BuildOptions(forceOutputToStdout = true)) {
+                assertTasksExecuted(":p1:commonizeCInterop")
+                assertTasksExecuted(":p2:commonizeCInterop")
+
+                assertTasksExecuted(":p1:cinteropTestWithPosix.*")
+                assertTasksExecuted(":p2:cinteropTestWithPosix.*")
+                assertTasksExecuted(":p2:cinteropTestWithPosixP2.*")
+
+                /* Make sure that we correctly reference any compile tasks in this test (test is useless otherwise) */
+                assertTasksRegisteredRegex(":p1.*compile.*")
+                assertTasksRegisteredRegex(":p2.*compile.*")
+
+                /* CInterops *shall not* require any compilation */
+                assertTasksNotExecuted(":p1.*compile.*")
+                assertTasksNotExecuted(":p2.*compile.*")
+            }
+        }
+    }
+
     private fun preparedProject(name: String): Project {
         return Project(name).apply {
             setupWorkingDir()

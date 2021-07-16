@@ -517,7 +517,7 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.assertNotContains(regex: Regex) {
-        assertNull(regex.find(output), "Output should not contain '$regex'")
+        assertNull(regex.find(output)?.value, "Output should not contain '$regex'")
     }
 
     fun CompiledProject.assertNoWarnings(sanitize: (String) -> String = { it }) {
@@ -670,6 +670,12 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksRegisteredRegex(vararg tasks: String) {
+        for (task in tasks) {
+            assertContainsRegex("'Register task $task'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksNotRegistered(vararg tasks: String) {
         for (task in tasks) {
             assertNotContains("'Register task $task'")
@@ -691,6 +697,12 @@ abstract class BaseGradleIT {
     fun CompiledProject.assertTasksNotRealized(vararg tasks: String) {
         for (task in tasks) {
             assertNotContains("'Realize task $task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksNotRealizedRegex(vararg tasks: String) {
+        for (task in tasks) {
+            assertNotContains("'Realize task $task'".toRegex())
         }
     }
 
