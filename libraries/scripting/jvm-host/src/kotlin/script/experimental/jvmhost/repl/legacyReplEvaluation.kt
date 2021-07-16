@@ -5,13 +5,13 @@
 
 package kotlin.script.experimental.jvmhost.repl
 
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.common.repl.ReplEvaluator
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
@@ -60,7 +60,8 @@ class JvmReplEvaluator(
             }
         }
 
-        val res = runBlocking { scriptEvaluator(compiledScript, currentConfiguration) }
+        @Suppress("DEPRECATION_ERROR")
+        val res = internalScriptingRunSuspend { scriptEvaluator(compiledScript, currentConfiguration) }
 
         when (res) {
             is ResultWithDiagnostics.Success -> {

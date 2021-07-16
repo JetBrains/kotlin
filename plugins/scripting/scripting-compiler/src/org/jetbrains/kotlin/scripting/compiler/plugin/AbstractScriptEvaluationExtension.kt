@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.core.JavaCoreProjectEnvironment
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -20,11 +19,11 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import java.io.File
 import java.io.Serializable
-import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.StringScriptSource
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.util.renderError
 
 abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
@@ -132,19 +131,20 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
     ): ExitCode {
         val scriptCompiler = createScriptCompiler(environment)
 
-        return runBlocking {
+        @Suppress("DEPRECATION_ERROR")
+        return internalScriptingRunSuspend {
             val compiledScript = scriptCompiler.compile(script, scriptCompilationConfiguration).valueOr {
                 for (report in it.reports) {
                     messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
                 }
-                return@runBlocking ExitCode.COMPILATION_ERROR
+                return@internalScriptingRunSuspend ExitCode.COMPILATION_ERROR
             }
 
             val evalResult = createScriptEvaluator().invoke(compiledScript, evaluationConfiguration).valueOr {
                 for (report in it.reports) {
                     messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
                 }
-                return@runBlocking ExitCode.INTERNAL_ERROR
+                return@internalScriptingRunSuspend ExitCode.INTERNAL_ERROR
             }
 
             when (evalResult.returnValue) {

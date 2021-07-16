@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.script.util
 
 import com.intellij.openapi.util.Disposer
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -55,6 +54,7 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.onSuccess
 import kotlin.script.experimental.api.valueOr
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
@@ -199,7 +199,8 @@ done
                 val script = File(scriptPath).toScriptSource()
                 val newScriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
                 val compiledScript = scriptCompiler.compile(script, newScriptDefinition.compilationConfiguration).onSuccess {
-                    runBlocking {
+                    @Suppress("DEPRECATION_ERROR")
+                    internalScriptingRunSuspend {
                         it.getClass(newScriptDefinition.evaluationConfiguration)
                     }
                 }.valueOr {

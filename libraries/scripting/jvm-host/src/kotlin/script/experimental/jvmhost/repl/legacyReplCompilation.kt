@@ -5,7 +5,6 @@
 
 package kotlin.script.experimental.jvmhost.repl
 
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -56,7 +56,8 @@ class JvmReplCompiler(
             }()
         }
 
-        when (val res = runBlocking { replCompiler.compile(listOf(snippet), scriptCompilationConfiguration) }) {
+        @Suppress("DEPRECATION_ERROR")
+        when (val res = internalScriptingRunSuspend { replCompiler.compile(listOf(snippet), scriptCompilationConfiguration) }) {
             is ResultWithDiagnostics.Success -> {
                 val lineId = LineId(codeLine.no, 0, snippet.hashCode())
                 replCompilerState.apply {

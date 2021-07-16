@@ -38,8 +38,7 @@ dependencies {
     embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
     embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.5.0")
-    embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    embedded(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { 
+    embedded(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) {
         isTransitive = false
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))

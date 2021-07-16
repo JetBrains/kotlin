@@ -16,7 +16,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -34,6 +33,7 @@ import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.*
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.compat.mapToDiagnostics
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
@@ -255,7 +255,8 @@ fun refineScriptCompilationConfiguration(
                 // runBlocking is using there to avoid loading dependencies asynchronously
                 // because it leads to starting more than one gradle daemon in case of resolving dependencies in build.gradle.kts
                 // It is more efficient to use one hot daemon consistently than multiple daemon in parallel
-                runBlocking {
+                @Suppress("DEPRECATION_ERROR")
+                internalScriptingRunSuspend {
                     resolver.resolveAsync(scriptContents, environment)
                 }
             } else {

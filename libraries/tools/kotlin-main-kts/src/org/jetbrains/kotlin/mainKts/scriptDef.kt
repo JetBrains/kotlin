@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.mainKts
 
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.impl.IvyResolver
 import java.io.File
@@ -19,6 +18,7 @@ import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
@@ -135,7 +135,8 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
         }
 
         val resolveResult = try {
-            runBlocking {
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
                 resolver.resolveFromScriptSourceAnnotations(annotations.filter { it.annotation is DependsOn || it.annotation is Repository })
             }
         } catch (e: Throwable) {

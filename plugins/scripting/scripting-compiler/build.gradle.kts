@@ -35,6 +35,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
     testRuntimeOnly(intellijDep()) { includeJars("jps-model", "jna") }
 
     testImplementation(project(":kotlin-reflect"))

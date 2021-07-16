@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.scripting.resolve
 
-import kotlinx.coroutines.runBlocking
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 
 // wraps AsyncDependenciesResolver to provide implementation for synchronous DependenciesResolver::resolve
 class AsyncDependencyResolverWrapper(
@@ -18,8 +18,9 @@ class AsyncDependencyResolverWrapper(
 
     override fun resolve(
             scriptContents: ScriptContents, environment: Environment
-    ): DependenciesResolver.ResolveResult
-            = runBlocking { delegate.resolveAsync(scriptContents, environment) }
+    ): DependenciesResolver.ResolveResult =
+        @Suppress("DEPRECATION_ERROR")
+        internalScriptingRunSuspend { delegate.resolveAsync(scriptContents, environment) }
 
 
     suspend override fun resolveAsync(

@@ -18,6 +18,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":daemon-common")) // TODO: fix import (workaround for jps build)
+    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-reflect"))
