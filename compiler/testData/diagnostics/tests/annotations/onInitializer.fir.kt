@@ -4,8 +4,8 @@ class A {
 }
 
 interface T {
-    @ann init {}
-    @aaa init {}
+    @ann <!ANONYMOUS_INITIALIZER_IN_INTERFACE!>init<!> {}
+    @aaa <!ANONYMOUS_INITIALIZER_IN_INTERFACE!>init<!> {}
 }
 
 annotation class ann

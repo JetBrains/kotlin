@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface NoC {
   <!ANONYMOUS_INITIALIZER_IN_INTERFACE!>init<!> {
 
