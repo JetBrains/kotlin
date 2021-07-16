@@ -10,6 +10,7 @@ package kotlin.collections
 
 import kotlin.collections.builders.SetBuilder
 
+public actual fun <T> emptySet(): Set<T> = java.util.Collections.emptySet()
 
 /**
  * Returns an immutable set containing only the specified object [element].

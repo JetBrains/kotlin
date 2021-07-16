@@ -28,13 +28,6 @@ internal object EmptySet : Set<Nothing>, Serializable {
     private fun readResolve(): Any = EmptySet
 }
 
-
-/**
- * Returns an empty read-only set.  The returned set is serializable (JVM).
- * @sample samples.collections.Collections.Sets.emptyReadOnlySet
- */
-public fun <T> emptySet(): Set<T> = EmptySet
-
 /**
  * Returns a new read-only set with the given elements.
  * Elements of the set are iterated in the order they were specified.
