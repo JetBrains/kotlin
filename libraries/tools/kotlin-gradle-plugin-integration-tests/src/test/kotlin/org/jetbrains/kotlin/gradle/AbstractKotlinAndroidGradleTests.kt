@@ -12,6 +12,7 @@ import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
@@ -433,17 +434,25 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
 
     @Test
     fun `test KotlinToolingMetadataArtifact is bundled into apk`(): Unit = with(Project("kotlinToolingMetadataAndroid")) {
-        build("assemble") {
+        build("assembleDebug") {
+            assertSuccessful()
+            assertTasksNotExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
+
+            val debugApk = project.projectDir.resolve("build/outputs/apk/debug/project-debug.apk")
+            assertTrue(debugApk.exists(), "Missing debug apk ${debugApk.path}")
+            ZipFile(debugApk).use { zip ->
+                assertNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata *not* being packaged into debug apk")
+            }
+        }
+
+        build("assembleRelease") {
             assertSuccessful()
             assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
-            val debugApk = project.projectDir.resolve("build/outputs/apk/debug/project-debug.apk")
             val releaseApk = project.projectDir.resolve("build/outputs/apk/release/project-release-unsigned.apk")
 
-            listOf(debugApk, releaseApk).forEach { apk ->
-                assertTrue(apk.exists(), "Missing apk ${apk.path}")
-                ZipFile(apk).use { zip ->
-                    assertNotNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata being packaged into apk")
-                }
+            assertTrue(releaseApk.exists(), "Missing release apk ${releaseApk.path}")
+            ZipFile(releaseApk).use { zip ->
+                assertNotNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata being packaged into release apk")
             }
         }
     }
