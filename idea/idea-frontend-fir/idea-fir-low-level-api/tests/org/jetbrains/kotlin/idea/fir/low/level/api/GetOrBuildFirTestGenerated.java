@@ -446,6 +446,18 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("functionalType.kt")
+        public void testFunctionalType() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/types/functionalType.kt");
+        }
+
+        @Test
+        @TestMetadata("functionalTypeArgument.kt")
+        public void testFunctionalTypeArgument() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/types/functionalTypeArgument.kt");
+        }
+
+        @Test
         @TestMetadata("invalidTypeArgumentsCount.kt")
         public void testInvalidTypeArgumentsCount() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/types/invalidTypeArgumentsCount.kt");
@@ -473,6 +485,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("nestedTypeArgument.kt")
         public void testNestedTypeArgument() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/types/nestedTypeArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("nullableType.kt")
+        public void testNullableType() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/types/nullableType.kt");
         }
 
         @Test
