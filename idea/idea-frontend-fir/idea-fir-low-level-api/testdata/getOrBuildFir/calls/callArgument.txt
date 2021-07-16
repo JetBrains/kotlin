@@ -1,0 +1,5 @@
+KT element: KtValueArgument
+FIR element: FirConstExpressionImpl
+
+FIR element rendered:
+Int(1)

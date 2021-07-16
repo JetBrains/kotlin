@@ -80,6 +80,18 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("callArgument.kt")
+        public void testCallArgument() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/callArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("calllTypeArguments.kt")
+        public void testCalllTypeArguments() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/calllTypeArguments.kt");
+        }
+
+        @Test
         @TestMetadata("constructorDelegationSuperCall.kt")
         public void testConstructorDelegationSuperCall() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/constructorDelegationSuperCall.kt");
@@ -101,6 +113,18 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("invokeCallArgumentList.kt")
         public void testInvokeCallArgumentList() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/invokeCallArgumentList.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallSelector.kt")
+        public void testQualifiedCallSelector() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/qualifiedCallSelector.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedWholeCall.kt")
+        public void testQualifiedWholeCall() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/calls/qualifiedWholeCall.kt");
         }
     }
 
@@ -177,11 +201,22 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/classAccessExpression.kt");
         }
 
+        @Test
+        @TestMetadata("forExpression.kt")
+        public void testForExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/forExpression.kt");
+        }
 
         @Test
         @TestMetadata("forExpressionRange.kt")
         public void testForExpressionRange() throws Exception {
             runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/forExpressionRange.kt");
+        }
+
+        @Test
+        @TestMetadata("forExpressionVariable.kt")
+        public void testForExpressionVariable() throws Exception {
+            runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/getOrBuildFir/expressions/forExpressionVariable.kt");
         }
 
         @Test
