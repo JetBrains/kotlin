@@ -120,7 +120,7 @@ internal fun ConeKotlinType.asPsiType(
     mode: TypeMappingMode,
     psiContext: PsiElement,
 ): PsiType {
-
+    if (this.isUnit) return PsiType.VOID
     if (this is ConeClassErrorType || this !is SimpleTypeMarker) return psiContext.nonExistentType()
     if (this.typeArguments.any { it is ConeClassErrorType }) return psiContext.nonExistentType()
 
