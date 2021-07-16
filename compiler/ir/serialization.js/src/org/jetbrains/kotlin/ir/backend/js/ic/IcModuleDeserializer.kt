@@ -226,7 +226,7 @@ class IcModuleDeserializer(
             val icFileDeserializer = fileQueue.removeFirst()
             val signature = signatureQueue.removeFirst()
 
-            val declaration = icFileDeserializer.deserializeDeclaration(signature) ?: continue
+            val declaration = icFileDeserializer.deserializeDeclaration(signature) ?: icFileDeserializer.deserializeAnyDeclaration(signature) ?: continue
 
             icFileDeserializer.injectCarriers(declaration, signature)
 
