@@ -777,6 +777,26 @@ public inline operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Sequence<K>
     this.keys.removeAll(keys)
 }
 
+/**
+ * Returns a map containing the keys of `this` map and the [other] map. Where there are values for a certain key the transform function is
+ * applied. If there is a value for only key in a map then the value of the corresponding entry is taken.
+ */
+public inline fun <K, V>Map<out K, V>.merge(other: Map<out K, V>, transform: (a: V, b: V) -> V): Map<K, V> {
+
+    return other.entries.fold(toMutableMap()) { acc, entry ->
+
+        val (key, value) = entry
+
+        if (acc.containsKey(key)) {
+            acc[key] = transform(acc.getValue(key), value)
+        } else {
+            acc[key] = value
+        }
+
+        acc
+    }
+}
+
 
 // do not expose for now @PublishedApi
 internal fun <K, V> Map<K, V>.optimizeReadOnlyMap() = when (size) {
