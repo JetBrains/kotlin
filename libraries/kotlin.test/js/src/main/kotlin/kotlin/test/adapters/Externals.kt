@@ -12,6 +12,8 @@ internal external object QUnit {
     fun module(name: String, suiteFn: () -> Unit): Unit
     fun test(name: String, testFn: (dynamic) -> Any?): Unit
     fun skip(name: String, testFn: (dynamic) -> Any?): Unit
+    fun beforeEach(name: String, beforeFn: () -> Any?): Unit
+    fun afterEach(name: String, afterFn: () -> Any?): Unit
 }
 
 /*
@@ -22,6 +24,8 @@ internal external fun describe(name: String, fn: () -> Unit)
 internal external fun xdescribe(name: String, fn: () -> Unit)
 internal external fun it(name: String, fn: () -> Any?)
 internal external fun xit(name: String, fn: () -> Any?)
+internal external fun beforeEach(name: String, fn: () -> Any?)
+internal external fun afterEach(name: String, fn: () -> Any?)
 
 internal fun isQUnit() = js("typeof QUnit !== 'undefined'")
 

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
+import org.jetbrains.kotlin.js.translate.utils.name
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -72,62 +73,94 @@ class JSTestGenerator(val context: TranslationContext) {
         if (classDescriptor.modality === Modality.ABSTRACT || classDescriptor.isExpect) return
 
         val suiteFunction = JsFunction(context.scope(), JsBlock(), "suite function")
-
         val descriptors = classDescriptor.unsubstitutedMemberScope
                 .getContributedDescriptors(DescriptorKindFilter.FUNCTIONS, MemberScope.ALL_NAME_FILTER)
 
-        val beforeFunctions = descriptors.filterIsInstance<FunctionDescriptor>().filter { it.isBefore }
-        val afterFunctions = descriptors.filterIsInstance<FunctionDescriptor>().filter { it.isAfter }
+        val innerContext = context.contextWithScope(suiteFunction)
+        val classVal = classDescriptor.instance(innerContext)
+        val testInstanceName = JsName("instance${classDescriptor.name.toString()}")
+        val testInstanceRef = testInstanceName.makeRef()
+        val classVar = JsVars.JsVar(testInstanceName, classVal)
 
         descriptors.forEach {
             when {
                 it is ClassDescriptor -> generateTestFunctions(it, suiteFunction)
                 it is FunctionDescriptor && it.isTest ->
-                    generateCodeForTestMethod(it, beforeFunctions, afterFunctions, classDescriptor, suiteFunction)
+                    generateCodeForTestMethod(it, testInstanceRef, suiteFunction)
+                it is FunctionDescriptor && it.isBefore ->
+                    generateCodeForBeforeMethod(it, testInstanceRef, suiteFunction)
+                it is FunctionDescriptor && it.isAfter ->
+                    generateCodeForAfterMethod(it, testInstanceRef, suiteFunction)
             }
         }
 
         if (!suiteFunction.body.isEmpty) {
             val suiteName = JsStringLiteral(classDescriptor.name.toString())
 
+            suiteFunction.body.statements.add(0, JsVars(classVar))
+
             parentFun.body.statements += JsInvocation(suiteRef, suiteName, JsBooleanLiteral(classDescriptor.isIgnored), suiteFunction).makeStmt()
         }
     }
+    private fun generateCodeForBeforeMethod(functionDescriptor: FunctionDescriptor,
+                                            testInstanceRef: JsNameRef,
+                                            parentFun: JsFunction) {
+        val functionBefore = generateBeforeFunction(functionDescriptor, testInstanceRef, parentFun.scope)
+
+        val beforeName = JsStringLiteral(functionDescriptor.name.toString())
+        parentFun.body.statements += JsInvocation(beforeRef, beforeName, functionBefore).makeStmt()
+    }
+
+    private fun generateBeforeFunction(functionDescriptor: FunctionDescriptor,
+                                       testInstanceRef: JsNameRef,
+                                       scope: JsScope): JsFunction {
+        val functionBefore = JsFunction(scope, JsBlock(), "before function")
+
+        fun FunctionDescriptor.buildCall() = CallTranslator.buildCall(context, this, emptyList(), testInstanceRef)
+
+        functionBefore.body.statements += JsReturn(functionDescriptor.buildCall())
+
+        return functionBefore
+    }
+
+    private fun generateCodeForAfterMethod(functionDescriptor: FunctionDescriptor,
+                                           testInstanceRef: JsNameRef,
+                                           parentFun: JsFunction) {
+        val functionAfter = generateAfterFunction(functionDescriptor, testInstanceRef, parentFun.scope)
+
+        val afterName = JsStringLiteral(functionDescriptor.name.toString())
+        parentFun.body.statements += JsInvocation(afterRef, afterName, functionAfter).makeStmt()
+    }
+
+    private fun generateAfterFunction(functionDescriptor: FunctionDescriptor,
+                                      testInstanceRef: JsNameRef,
+                                      scope: JsScope): JsFunction {
+        val functionAfter = JsFunction(scope, JsBlock(), "after function")
+
+        fun FunctionDescriptor.buildCall() = CallTranslator.buildCall(context, this, emptyList(), testInstanceRef)
+
+        functionAfter.body.statements += JsReturn(functionDescriptor.buildCall())
+
+        return functionAfter
+    }
 
     private fun generateCodeForTestMethod(functionDescriptor: FunctionDescriptor,
-                                          beforeDescriptors: List<FunctionDescriptor>,
-                                          afterDescriptors: List<FunctionDescriptor>,
-                                          classDescriptor: ClassDescriptor,
+                                          testInstanceRef: JsNameRef,
                                           parentFun: JsFunction) {
-        val functionToTest = generateTestFunction(functionDescriptor, beforeDescriptors, afterDescriptors, classDescriptor, parentFun.scope)
+        val functionToTest = generateTestFunction(functionDescriptor, testInstanceRef, parentFun.scope)
 
         val testName = JsStringLiteral(functionDescriptor.name.toString())
         parentFun.body.statements += JsInvocation(testRef, testName, JsBooleanLiteral(functionDescriptor.isIgnored), functionToTest).makeStmt()
     }
 
     private fun generateTestFunction(functionDescriptor: FunctionDescriptor,
-                                     beforeDescriptors: List<FunctionDescriptor>,
-                                     afterDescriptors: List<FunctionDescriptor>,
-                                     classDescriptor: ClassDescriptor,
+                                     testInstanceRef: JsNameRef,
                                      scope: JsScope): JsFunction {
         val functionToTest = JsFunction(scope, JsBlock(), "test function")
-        val innerContext = context.contextWithScope(functionToTest)
 
-        val classVal = innerContext.defineTemporary(classDescriptor.instance(innerContext))
+        fun FunctionDescriptor.buildCall() = CallTranslator.buildCall(context, this, emptyList(), testInstanceRef)
 
-        fun FunctionDescriptor.buildCall() = CallTranslator.buildCall(context, this, emptyList(), classVal)
-
-        functionToTest.body.statements += beforeDescriptors.map { it.buildCall().makeStmt() }
-
-        if (afterDescriptors.isEmpty()) {
-            functionToTest.body.statements += JsReturn(functionDescriptor.buildCall())
-        }
-        else {
-            functionToTest.body.statements += JsTry(
-                    JsBlock(JsReturn(functionDescriptor.buildCall())),
-                    listOf(),
-                    JsBlock(afterDescriptors.map { it.buildCall().makeStmt() }))
-        }
+        functionToTest.body.statements += JsReturn(functionDescriptor.buildCall())
 
         return functionToTest
     }
@@ -144,6 +177,8 @@ class JSTestGenerator(val context: TranslationContext) {
 
     private val suiteRef: JsExpression by lazy { findFunction("suite") }
     private val testRef: JsExpression by lazy { findFunction("test") }
+    private val beforeRef: JsExpression by lazy { findFunction("beforeEach") }
+    private val afterRef: JsExpression by lazy { findFunction("afterEach") }
 
     private fun findFunction(name: String): JsExpression {
         val descriptor = DescriptorUtils.getFunctionByNameOrNull(

@@ -45,8 +45,13 @@ class AsyncTest {
     var log = ""
 
     @BeforeTest
-    fun before() {
-        log = ""
+    fun before() = Promise<Unit> { resolve, _ ->
+        js("setTimeout")({ log += "i"; resolve(Unit) }, 200)
+    }
+
+    @AfterTest
+    fun after() = Promise<Unit> { resolve, _ ->
+        js("setTimeout")({ log = ""; resolve(Unit) }, 200)
     }
 
     fun promise(v: Int) = Promise<Int> { resolve, reject ->
@@ -57,6 +62,8 @@ class AsyncTest {
 
     @Test
     fun checkAsyncOrder(): Promise<Unit> {
+        assertEquals("i", log)
+
         log += 1
 
         val p1 = promise(10)
@@ -64,12 +71,18 @@ class AsyncTest {
         log += 2
 
         val p2 = p1.then { result ->
-            assertEquals(log, "1ab23c")
+            assertEquals("i1ab23c", log)
         }
 
         log += 3
 
         return p2
+    }
+
+    @Test
+    fun checkAsyncOrderAgain(): Promise<Unit> {
+        assertEquals("i", log)
+        return Promise.resolve(Unit)
     }
 
     @Test

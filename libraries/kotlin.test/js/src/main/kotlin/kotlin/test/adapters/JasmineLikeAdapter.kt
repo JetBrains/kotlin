@@ -27,4 +27,8 @@ internal class JasmineLikeAdapter : FrameworkAdapter {
             it(name, testFn)
         }
     }
+
+    override fun beforeEach(name: String, beforeFn: () -> Any?) = kotlin.test.adapters.beforeEach(name, beforeFn)
+
+    override fun afterEach(name: String, afterFn: () -> Any?) = kotlin.test.adapters.afterEach(name, afterFn)
 }
