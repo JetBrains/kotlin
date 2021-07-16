@@ -120,7 +120,7 @@ class IcSerializer(
                     fileSerializer.serializeIrSymbol(symbol)
                 }
 
-                val order = storeOrder(file) { symbol ->
+                val order = storeOrder(file, fileDeclarations) { symbol ->
                     fileSerializer.serializeIrSymbol(symbol)
                 }
 
@@ -183,7 +183,7 @@ class IdSignatureSerializerWithForIC(
     }
 }
 
-fun storeOrder(file: IrFile, idSigToLong: (IrSymbol) -> Long): SerializedOrder {
+fun storeOrder(file: IrFile, fileDeclarations: Iterable<IrDeclaration>, idSigToLong: (IrSymbol) -> Long): SerializedOrder {
     val topLevelSignatures = mutableListOf<Long>()
     val containerSignatures = mutableListOf<Long>()
     val declarationSignatures = mutableListOf<ByteArray>()
@@ -192,21 +192,16 @@ fun storeOrder(file: IrFile, idSigToLong: (IrSymbol) -> Long): SerializedOrder {
 
     file.declarations.forEach { d ->
         topLevelSignatures += d.idSigIndex()
-        d.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
+    }
 
-            override fun visitClass(declaration: IrClass) {
-                // First element is the container signature
-                containerSignatures += declaration.idSigIndex()
-                val declarationIds = declaration.declarations.map { it.idSigIndex() }
+    fileDeclarations.forEach { declaration ->
+        if (declaration is IrClass) {
+            // First element is the container signature
+            containerSignatures += declaration.idSigIndex()
+            val declarationIds = declaration.declarations.map { it.idSigIndex() }
 
-                declarationSignatures += IrMemoryLongArrayWriter(declarationIds).writeIntoMemory()
-
-                super.visitClass(declaration)
-            }
-        })
+            declarationSignatures += IrMemoryLongArrayWriter(declarationIds).writeIntoMemory()
+        }
     }
 
     return SerializedOrder(
