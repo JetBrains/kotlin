@@ -169,10 +169,10 @@ class DeclarationsConverter(
         }
     }
 
-    private fun convertImportAlias(importAlias: LighterASTNode): String? {
+    private fun convertImportAlias(importAlias: LighterASTNode): Pair<String, FirSourceElement>? {
         importAlias.forEachChildren {
             when (it.tokenType) {
-                IDENTIFIER -> return it.asText
+                IDENTIFIER -> return Pair(it.asText, it.toFirSourceElement())
             }
         }
 
@@ -186,11 +186,18 @@ class DeclarationsConverter(
         var importedFqName: FqName? = null
         var isAllUnder = false
         var aliasName: String? = null
+        var aliasSource: FirSourceElement? = null
         importDirective.forEachChildren {
             when (it.tokenType) {
                 DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> importedFqName = FqName(it.asText)
                 MUL -> isAllUnder = true
-                IMPORT_ALIAS -> aliasName = convertImportAlias(it)
+                IMPORT_ALIAS -> {
+                    val importAlias = convertImportAlias(it)
+                    if (importAlias != null) {
+                        aliasName = importAlias.first
+                        aliasSource = importAlias.second
+                    }
+                }
             }
         }
 
@@ -199,6 +206,7 @@ class DeclarationsConverter(
             this.importedFqName = importedFqName
             this.isAllUnder = isAllUnder
             this.aliasName = aliasName?.let { Name.identifier(it) }
+            this.aliasSource = aliasSource
         }
     }
 

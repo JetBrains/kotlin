@@ -407,6 +407,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("importedFqName", fqNameType, nullable = true)
             +booleanField("isAllUnder")
             +field("aliasName", nameType, nullable = true)
+            +field("aliasSource", sourceElementType, nullable = true)
         }
 
         resolvedImport.configure {

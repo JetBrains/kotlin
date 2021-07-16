@@ -21,6 +21,7 @@ interface FirImport : FirElement {
     val importedFqName: FqName?
     val isAllUnder: Boolean
     val aliasName: Name?
+    val aliasSource: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImport(this, data)
 

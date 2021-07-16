@@ -810,6 +810,7 @@ open class RawFirBuilder(
                         importedFqName = importDirective.importedFqName
                         isAllUnder = importDirective.isAllUnder
                         aliasName = importDirective.aliasName?.let { Name.identifier(it) }
+                        aliasSource = importDirective.alias?.nameIdentifier?.toFirSourceElement()
                     }
                 }
                 for (declaration in file.declarations) {
