@@ -9,10 +9,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunction
 
 public abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
-    public abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
     public abstract fun getKtExpressionType(expression: KtExpression): KtType
+    public abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
+    public abstract fun getFunctionTypeForKtFunction(declaration: KtFunction): KtType
+
     public abstract fun getExpectedType(expression: PsiElement): KtType?
     public abstract fun isDefinitelyNull(expression: KtExpression): Boolean
     public abstract fun isDefinitelyNotNull(expression: KtExpression): Boolean
@@ -24,6 +27,9 @@ public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
 
     public fun KtDeclaration.getReturnKtType(): KtType =
         analysisSession.expressionTypeProvider.getReturnTypeForKtDeclaration(this)
+
+    public fun KtFunction.getFunctionKtType(): KtType =
+        analysisSession.expressionTypeProvider.getFunctionTypeForKtFunction(this)
 
     /**
      * Returns the expected [KtType] of this [PsiElement] if it is an expression. The returned value should not be a

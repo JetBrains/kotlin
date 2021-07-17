@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.withNullability
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.frontend.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -21,6 +24,10 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
+import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
+import org.jetbrains.kotlin.psi.KtTypeReference
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -49,6 +56,30 @@ internal class KtFirTypeProvider(
             )
         }
         return type.asKtType()
+    }
+
+    override fun getKtType(ktTypeReference: KtTypeReference): KtType? = withValidityAssertion {
+        when (val fir = ktTypeReference.getOrBuildFir(firResolveState)) {
+            is FirErrorTypeRef -> null
+            is FirResolvedTypeRef -> fir.coneType.asKtType()
+            else -> error("Unexpected ${fir::class}")
+        }
+    }
+
+    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? = withValidityAssertion {
+        when (val fir = expression.getOrBuildFir(firResolveState)) {
+            is FirGetClassCall ->
+                fir.typeRef.coneType.getReceiverOfReflectionType()?.asKtType()
+            is FirCallableReferenceAccess ->
+                fir.typeRef.coneType.getReceiverOfReflectionType()?.asKtType()
+            else -> error("Unexpected ${fir::class}")
+        }
+    }
+
+    private fun ConeKotlinType.getReceiverOfReflectionType(): ConeKotlinType? {
+        if (this !is ConeClassLikeType) return null
+        if (lookupTag.classId.packageFqName != StandardClassIds.BASE_REFLECT_PACKAGE) return null
+        return typeArguments.firstOrNull()?.type
     }
 
     override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType {

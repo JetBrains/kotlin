@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.resolve.constructFunctionalType
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
@@ -18,6 +21,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.components.KtExpressionTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.getReferencedElementType
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.unwrap
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassErrorType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -29,10 +33,6 @@ internal class KtFirExpressionTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtExpressionTypeProvider(), KtFirAnalysisSessionComponent {
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
-        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveState)
-        firDeclaration.returnTypeRef.coneType.asKtType()
-    }
 
     override fun getKtExpressionType(expression: KtExpression): KtType = withValidityAssertion {
         when (val fir = expression.unwrap().getOrBuildFir(firResolveState)) {
@@ -43,13 +43,14 @@ internal class KtFirExpressionTypeProvider(
         }
     }
 
-    private fun KtExpression.unwrap(): KtExpression {
-        return when (this) {
-            is KtLabeledExpression -> baseExpression?.unwrap()
-            is KtAnnotatedExpression -> baseExpression?.unwrap()
-            is KtObjectLiteralExpression -> objectDeclaration
-            else -> null
-        } ?: this
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
+        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveState)
+        firDeclaration.returnTypeRef.coneType.asKtType()
+    }
+
+    override fun getFunctionTypeForKtFunction(declaration: KtFunction): KtType = withValidityAssertion {
+        val firFunction = declaration.getOrBuildFirOfType<FirFunction>(firResolveState)
+        firFunction.constructFunctionalType(firFunction.isSuspend).asKtType()
     }
 
     override fun getExpectedType(expression: PsiElement): KtType? {

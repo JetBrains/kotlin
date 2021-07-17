@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
+import org.jetbrains.kotlin.psi.KtTypeReference
 
 public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     public abstract val builtinTypes: KtBuiltinTypes
@@ -16,6 +18,10 @@ public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     public abstract fun approximateToSuperPublicDenotableType(type: KtType): KtType?
 
     public abstract fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType
+
+    public abstract fun getKtType(ktTypeReference: KtTypeReference): KtType?
+
+    public abstract fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType?
 
     public abstract fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType
 }
@@ -37,6 +43,23 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
 
     public fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
         analysisSession.typeProvider.buildSelfClassType(this)
+
+    /**
+     * Resolve [KtTypeReference] and return corresponding [KtType] if resolved.
+     *
+     * Return `null` if the resolution ended up with an error type, which contains the details of the resolution error.
+     * For all other unexpected cases, this may raise an exception.
+     */
+    public fun KtTypeReference.getKtType(): KtType? =
+        analysisSession.typeProvider.getKtType(this)
+
+    /**
+     * Resolve [KtDoubleColonExpression] and return [KtType] of its receiver.
+     *
+     * Return `null` if the resolution fails or the resolved callable reference is not a reflection type.
+     */
+    public fun KtDoubleColonExpression.getReceiverKtType(): KtType? =
+        analysisSession.typeProvider.getReceiverTypeForDoubleColonExpression(this)
 
     public fun KtType.withNullability(newNullability: KtTypeNullability): KtType =
         analysisSession.typeProvider.withNullability(this, newNullability)
