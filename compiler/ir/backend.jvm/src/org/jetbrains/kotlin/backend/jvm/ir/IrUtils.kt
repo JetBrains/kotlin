@@ -412,3 +412,9 @@ inline fun IrElement.hasChild(crossinline block: (IrElement) -> Boolean): Boolea
     }, null)
     return result
 }
+
+val IrClass.isSyntheticSingleton: Boolean
+    get() = (origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+            || origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+            || origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE)
+            && primaryConstructor!!.valueParameters.isEmpty()

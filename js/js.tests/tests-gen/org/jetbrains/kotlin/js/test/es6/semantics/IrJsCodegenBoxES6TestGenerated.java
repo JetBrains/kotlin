@@ -26335,6 +26335,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             public void testJaggedDeep() throws Exception {
                 runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
             }
+
+            @TestMetadata("singletonLambda.kt")
+            public void testSingletonLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/reified/arraysReification/singletonLambda.kt");
+            }
         }
     }
 

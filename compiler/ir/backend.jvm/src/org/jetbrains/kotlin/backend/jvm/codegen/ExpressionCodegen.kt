@@ -586,16 +586,10 @@ class ExpressionCodegen(
         val owner = typeMapper.mapClass(callee.constructedClass)
         val signature = methodSignatureMapper.mapSignatureSkipGeneric(callee)
 
-        closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
-            if (it.wereUsedReifiedParameters()) {
-                putNeedClassReificationMarker(mv)
-                propagateChildReifiedTypeParametersUsages(it)
-            }
-        }
-
         // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
         // instance methods named <init>.
         markLineNumber(expression)
+        putNeedClassReificationMarker(callee.constructedClass)
         mv.anew(owner)
         mv.dup()
 
@@ -724,6 +718,9 @@ class ExpressionCodegen(
             assert(expression.type.isUnit())
             unitValue
         } else {
+            if (expression.symbol.owner.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE) {
+                putNeedClassReificationMarker(expression.symbol.owner.parentAsClass)
+            }
             mv.visitFieldInsn(if (isStatic) Opcodes.GETSTATIC else Opcodes.GETFIELD, ownerName, fieldName, fieldType.descriptor)
             MaterialValue(this, fieldType, callee.type)
         }
@@ -901,6 +898,14 @@ class ExpressionCodegen(
             closureReifiedMarkers[declaration] = childCodegen.reifiedTypeParametersUsages
         }
         return unitValue
+    }
+
+    private fun putNeedClassReificationMarker(declaration: IrClass) {
+        val reifiedTypeParameters = closureReifiedMarkers[declaration] ?: return
+        if (reifiedTypeParameters.wereUsedReifiedParameters()) {
+            putNeedClassReificationMarker(mv)
+            propagateChildReifiedTypeParametersUsages(reifiedTypeParameters)
+        }
     }
 
     private fun generateGlobalReturnFlagIfPossible(expression: IrExpression, label: String) {
