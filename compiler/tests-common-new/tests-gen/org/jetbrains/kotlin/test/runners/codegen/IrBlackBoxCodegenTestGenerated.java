@@ -8113,6 +8113,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("slowHtmlLikeDsl.kt")
+        public void testSlowHtmlLikeDsl() throws Exception {
+            runTest("compiler/testData/codegen/box/controlStructures/slowHtmlLikeDsl.kt");
+        }
+
+        @Test
         @TestMetadata("tcbInEliminatedCondition.kt")
         public void testTcbInEliminatedCondition() throws Exception {
             runTest("compiler/testData/codegen/box/controlStructures/tcbInEliminatedCondition.kt");

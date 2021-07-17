@@ -29,6 +29,7 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
@@ -88,7 +89,9 @@ internal class FixStackAnalyzer(
 
     private val analyzer = InternalAnalyzer(owner)
 
-    private inner class InternalAnalyzer(owner: String) : FlexibleMethodAnalyzer<BasicValue>(owner, method, OptimizationBasicInterpreter()) {
+    private inner class InternalAnalyzer(owner: String) :
+        FlexibleMethodAnalyzer<BasicValue>(owner, method, OptimizationBasicInterpreter()) {
+
         val spilledStacks = hashMapOf<AbstractInsnNode, List<BasicValue>>()
         var maxExtraStackSize = 0; private set
 
@@ -166,12 +169,37 @@ internal class FixStackAnalyzer(
                 }
             }
 
-            override fun getStack(i: Int): BasicValue {
-                return if (i < super.getMaxStackSize()) {
-                    super.getStack(i)
+            override fun setStack(i: Int, value: BasicValue) {
+                if (i < super.getMaxStackSize()) {
+                    super.setStack(i, value)
                 } else {
-                    extraStack[i - maxStackSize]
+                    extraStack[i - maxStackSize] = value
                 }
+            }
+
+            override fun merge(frame: Frame<out BasicValue>, interpreter: Interpreter<BasicValue>): Boolean {
+                val other = frame as FixStackFrame
+                if (stackSizeWithExtra != other.stackSizeWithExtra) {
+                    throw AnalyzerException(null, "Incompatible stack heights")
+                }
+                var changed = false
+                for (i in 0 until stackSize) {
+                    val v0 = super.getStack(i)
+                    val vm = interpreter.merge(v0, other.getStack(i))
+                    if (vm != v0) {
+                        super.setStack(i, vm)
+                        changed = true
+                    }
+                }
+                for (i in 0 until extraStack.size) {
+                    val v0 = extraStack[i]
+                    val vm = interpreter.merge(v0, other.extraStack[i])
+                    if (vm != v0) {
+                        extraStack[i] = vm
+                        changed = true
+                    }
+                }
+                return changed
             }
         }
 
