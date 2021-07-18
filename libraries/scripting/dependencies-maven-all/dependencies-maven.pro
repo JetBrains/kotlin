@@ -1,4 +1,4 @@
--target 1.8
+-target 1.6
 -dontoptimize
 -dontobfuscate
 # -dontshrink
@@ -7,21 +7,19 @@
 
 -dontnote **
 -dontwarn org.jetbrains.kotlin.**
--dontwarn org.apache.commons.**
--dontwarn org.eclipse.sisu.**
--dontwarn org.checkerframework.**
+-dontwarn kotlin.script.experimental.**
+-dontwarn junit.framework.**
 -dontwarn afu.org.checkerframework.**
--dontwarn org.sonatype.plexus.components.**
--dontwarn org.codehaus.plexus.PlexusTestCase
--dontwarn javax.enterprise.inject.**
--dontwarn kotlin.annotations.jvm.**
-# hopefully temporarily, for coroutines
--dontwarn kotlin.time.**
+-dontwarn org.checkerframework.**
+-dontwarn org.testng.**
+-dontwarn org.osgi.**
+-dontwarn javax.el.**
+-dontwarn javax.crypto.**
+-dontwarn javax.interceptor.**
+-dontwarn org.eclipse.sisu.**
+-dontwarn org.slf4j.**
 
--keep class org.jetbrains.kotlin.mainKts.** { *; }
 -keep class kotlin.script.experimental.** { *; }
--keep class org.jetbrains.kotlin.script.util.impl.PathUtilKt { *; }
--keep class org.apache.ivy.plugins.** { *; }
 
 -keep class org.eclipse.sisu.** { *; }
 -keep class org.jetbrains.kotlin.org.eclipse.sisu.** { *; }
@@ -36,8 +34,6 @@
 
 -keep class org.apache.maven.wagon.providers.** { *; }
 -keep class org.jetbrains.kotlin.org.apache.maven.wagon.providers.** { *; }
-
--keep class org.slf4j.** { *; }
 
 -keepclassmembers class * extends java.lang.Enum {
     <fields>;

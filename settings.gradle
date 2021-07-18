@@ -239,6 +239,7 @@ include ":benchmarks",
         ":kotlin-scripting-compiler-impl-embeddable",
         ":kotlin-scripting-dependencies",
         ":kotlin-scripting-dependencies-maven",
+        ":kotlin-scripting-dependencies-maven-all",
         ":kotlin-scripting-jsr223-unshaded",
         ":kotlin-scripting-jsr223-test",
         ":kotlin-scripting-jsr223",
@@ -655,6 +656,7 @@ project(':kotlin-scripting-jvm-host-test').projectDir = "$rootDir/libraries/scri
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host-embeddable" as File
 project(':kotlin-scripting-dependencies').projectDir = "$rootDir/libraries/scripting/dependencies" as File
 project(':kotlin-scripting-dependencies-maven').projectDir = "$rootDir/libraries/scripting/dependencies-maven" as File
+project(':kotlin-scripting-dependencies-maven-all').projectDir = "$rootDir/libraries/scripting/dependencies-maven-all" as File
 project(':kotlin-scripting-jsr223-unshaded').projectDir = "$rootDir/libraries/scripting/jsr223" as File
 project(':kotlin-scripting-jsr223-test').projectDir = "$rootDir/libraries/scripting/jsr223-test" as File
 project(':kotlin-scripting-jsr223').projectDir = "$rootDir/libraries/scripting/jsr223-embeddable" as File
