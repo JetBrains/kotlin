@@ -1347,6 +1347,27 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
         }
     }
 
+    // Merge consequent LVT records, otherwise, atomicfu goes crazy (KT-47749)
+    val toRemove = arrayListOf<LocalVariableNode>()
+    val sortedLVT = method.localVariables.sortedBy { method.instructions.indexOf(it.start) }
+    for (i in sortedLVT.indices) {
+        var endIndex = method.instructions.indexOf(sortedLVT[i].end)
+        for (j in (i + 1) until sortedLVT.size) {
+            val startIndex = method.instructions.indexOf(sortedLVT[j].start)
+            if (endIndex < startIndex) break
+            if (endIndex != startIndex ||
+                sortedLVT[i].index != sortedLVT[j].index ||
+                sortedLVT[i].name != sortedLVT[j].name ||
+                sortedLVT[i].desc != sortedLVT[j].desc
+            ) continue
+            sortedLVT[i].end = sortedLVT[j].end
+            endIndex = method.instructions.indexOf(sortedLVT[j].end)
+            toRemove += sortedLVT[j]
+        }
+    }
+
+    method.localVariables.removeAll(toRemove)
+
     for (variable in oldLvt) {
         // $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
         // For example, $continuation is used to create async stack trace
