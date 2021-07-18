@@ -192,6 +192,8 @@ class CoroutineTransformerMethodVisitor(
         dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
 
+        updateMaxStack(methodNode)
+
         updateLvtAccordingToLiveness(methodNode, isForNamedFunction)
 
         if (languageVersionSettings.isReleaseCoroutines()) {
@@ -791,19 +793,30 @@ class CoroutineTransformerMethodVisitor(
         // Mutate method node
 
         fun generateSpillAndUnspill(suspension: SuspensionPoint, slot: Int, spillableVariable: SpillableVariable?) {
-            if (spillableVariable == null) {
-                with(instructions) {
-                    insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
-                        aconst(null)
-                        store(slot, AsmTypes.OBJECT_TYPE)
-                    })
+            fun splitLvtRecord(local: LocalVariableNode?, localRestart: LabelNode) {
+                // Split the local variable range for the local so that it is visible until the next state label, but is
+                // not visible until it has been unspilled from the continuation on the reentry path.
+                if (local != null) {
+                    val previousEnd = local.end
+                    local.end = suspension.stateLabel
+                    // Add the local back, but end it at the next state label.
+                    methodNode.localVariables.add(local)
+                    // Add a new entry that starts after the local variable is restored from the continuation.
+                    methodNode.localVariables.add(
+                        LocalVariableNode(
+                            local.name,
+                            local.desc,
+                            local.signature,
+                            localRestart,
+                            previousEnd,
+                            local.index
+                        )
+                    )
                 }
-                return
             }
 
             // Find and remove the local variable node, if any, in the local variable table corresponding to the slot that is spilled.
             var local: LocalVariableNode? = null
-            val localRestart = LabelNode().linkWithLabel()
             val iterator = methodNode.localVariables.listIterator()
             while (iterator.hasNext()) {
                 val node = iterator.next()
@@ -817,6 +830,19 @@ class CoroutineTransformerMethodVisitor(
                 }
             }
 
+            if (spillableVariable == null) {
+                with(instructions) {
+                    insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                        aconst(null)
+                        store(slot, AsmTypes.OBJECT_TYPE)
+                    })
+                }
+                val newStart = suspension.tryCatchBlocksContinuationLabel.findNextOrNull { it is LabelNode } as? LabelNode ?: return
+                splitLvtRecord(local, newStart)
+                return
+            }
+
+            val localRestart = LabelNode().linkWithLabel()
             with(instructions) {
                 // store variable before suspension call
                 insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
@@ -846,25 +872,7 @@ class CoroutineTransformerMethodVisitor(
                 })
             }
 
-            // Split the local variable range for the local so that it is visible until the next state label, but is
-            // not visible until it has been unspilled from the continuation on the reentry path.
-            if (local != null) {
-                val previousEnd = local.end
-                local.end = suspension.stateLabel
-                // Add the local back, but end it at the next state label.
-                methodNode.localVariables.add(local)
-                // Add a new entry that starts after the local variable is restored from the continuation.
-                methodNode.localVariables.add(
-                    LocalVariableNode(
-                        local.name,
-                        local.desc,
-                        local.signature,
-                        localRestart,
-                        previousEnd,
-                        local.index
-                    )
-                )
-            }
+            splitLvtRecord(local, localRestart)
         }
 
         fun cleanUpField(suspension: SuspensionPoint, fieldIndex: Int) {
@@ -1254,6 +1262,9 @@ internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, contin
     }
 }
 
+private fun MethodNode.nodeTextWithLiveness(liveness: List<VariableLivenessFrame>): String =
+    liveness.zip(this.instructions.asSequence().toList()).joinToString("\n") { (a, b) -> "$a|${b.insnText}" }
+
 /* We do not want to spill dead variables, thus, we shrink its LVT record to region, where the variable is alive,
  * so, the variable will not be visible in debugger. User can still prolong life span of the variable by using it.
  *
@@ -1288,9 +1299,6 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     fun min(a: LabelNode, b: LabelNode): LabelNode =
         if (method.instructions.indexOf(a) < method.instructions.indexOf(b)) a else b
 
-    fun max(a: LabelNode, b: LabelNode): LabelNode =
-        if (method.instructions.indexOf(a) < method.instructions.indexOf(b)) b else a
-
     val oldLvt = arrayListOf<LocalVariableNode>()
     for (record in method.localVariables) {
         oldLvt += record
@@ -1309,7 +1317,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             if (isAlive(insnIndex, variableIndex) && !isAlive(insnIndex + 1, variableIndex)) {
                 // No variable in LVT -> do not add one
                 val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
-                if (lvtRecord.name == CONTINUATION_VARIABLE_NAME) continue
+                if (lvtRecord.name == CONTINUATION_VARIABLE_NAME || lvtRecord.name == SUSPEND_CALL_RESULT_NAME) continue
                 // End the local when it is no longer live. Since it is not live, we will not spill and unspill it across
                 // suspension points. It is tempting to keep it alive until the next suspension point to leave it visible in
                 // the debugger for as long as possible. However, in the case of loops, the resumption after suspension can
@@ -1340,6 +1348,27 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             }
         }
     }
+
+    // Merge consequent LVT records, otherwise, atomicfu goes crazy (KT-47749)
+    val toRemove = arrayListOf<LocalVariableNode>()
+    val sortedLVT = method.localVariables.sortedBy { method.instructions.indexOf(it.start) }
+    for (i in sortedLVT.indices) {
+        var endIndex = method.instructions.indexOf(sortedLVT[i].end)
+        for (j in (i + 1) until sortedLVT.size) {
+            val startIndex = method.instructions.indexOf(sortedLVT[j].start)
+            if (endIndex < startIndex) break
+            if (endIndex != startIndex ||
+                sortedLVT[i].index != sortedLVT[j].index ||
+                sortedLVT[i].name != sortedLVT[j].name ||
+                sortedLVT[i].desc != sortedLVT[j].desc
+            ) continue
+            sortedLVT[i].end = sortedLVT[j].end
+            endIndex = method.instructions.indexOf(sortedLVT[j].end)
+            toRemove += sortedLVT[j]
+        }
+    }
+
+    method.localVariables.removeAll(toRemove)
 
     for (variable in oldLvt) {
         // $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
