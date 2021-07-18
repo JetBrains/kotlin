@@ -21,7 +21,7 @@ class A {
 // BEs generate continuation classes differently, JVM_IR generates more correctly
 
 // foo, c's lambda and foo's continuation
-// 8 LOCALVARIABLE \$result Ljava/lang/Object;
+// 3 LOCALVARIABLE \$result Ljava/lang/Object;
 
 // foo x 3 since we split the local over restore code for the two calls to block(), and <init>
 // 4 LOCALVARIABLE this LA;
