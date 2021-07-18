@@ -181,14 +181,14 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     }
 
     /**
-     * Splits the [input] CharSequence around matches of this regular expression.
+     * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
-        require(limit >= 0) { "Limit must be non-negative, but was $limit" }
+        requireNonNegativeLimit(limit)
         val matches = findAll(input).let { if (limit == 0) it else it.take(limit - 1) }
         val result = mutableListOf<String>()
         var lastStart = 0
@@ -199,6 +199,39 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
         }
         result.add(input.subSequence(lastStart, input.length).toString())
         return result
+    }
+
+    /**
+     * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
+     *
+     * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
+     * Zero by default means no limit is set.
+     */
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
+        requireNonNegativeLimit(limit)
+
+        return sequence {
+            var match = find(input)
+            if (match == null || limit == 1) {
+                yield(input.toString())
+                return@sequence
+            }
+
+            var nextStart = 0
+            var splitCount = 0
+
+            do {
+                val foundMatch = match!!
+                yield(input.substring(nextStart, foundMatch.range.first))
+                nextStart = foundMatch.range.endInclusive + 1
+                match = foundMatch.next()
+            } while (++splitCount != limit - 1 && match != null)
+
+            yield(input.substring(nextStart, input.length))
+        }
     }
 
 

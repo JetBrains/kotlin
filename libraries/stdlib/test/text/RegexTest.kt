@@ -233,6 +233,18 @@ class RegexTest {
         assertEquals("/2/3/4/", pattern.replace(input, { it.value.length.toString() }))
     }
 
+    private fun testSplitEquals(expected: List<String>, input: CharSequence, regex: Regex, limit: Int = 0) {
+        assertEquals(expected, input.split(regex, limit))
+        assertEquals(expected, regex.split(input, limit))
+
+        listOf(
+            input.splitToSequence(regex, limit),
+            regex.splitToSequence(input, limit)
+        ).forEach { sequence ->
+            assertEquals(expected, sequence.toList())
+            assertEquals(expected, sequence.toList()) // assert multiple iterations over the same sequence succeed
+        }
+    }
 
     @Test fun split() {
         val input = """
@@ -240,9 +252,9 @@ class RegexTest {
          split
         """.trim()
 
-        assertEquals(listOf("some", "word", "split"), "\\s+".toRegex().split(input))
+        testSplitEquals(listOf("some", "word", "split"), input, "\\s+".toRegex())
 
-        assertEquals(listOf("name", "value=5"), "=".toRegex().split("name=value=5", limit = 2))
+        testSplitEquals(listOf("name", "value=5"), "name=value=5", "=".toRegex(), limit = 2)
 
     }
 
@@ -251,19 +263,52 @@ class RegexTest {
 
         val emptyMatch = "".toRegex()
 
-        assertEquals(input.split(""), input.split(emptyMatch))
-        assertEquals(input.split("", limit = 3), input.split(emptyMatch, limit = 3))
+        testSplitEquals(listOf("", "t", "e", "s", "t", ""), input, emptyMatch)
+        testSplitEquals(listOf("", "t", "est"), input, emptyMatch, limit = 3)
 
-        assertEquals("".split(""), "".split(emptyMatch))
+        testSplitEquals("".split(""), "", emptyMatch)
 
         val emptyMatchBeforeT = "(?=t)".toRegex()
 
-        assertEquals(listOf("", "tes", "t"), input.split(emptyMatchBeforeT))
-        assertEquals(listOf("", "test"), input.split(emptyMatchBeforeT, limit = 2))
+        testSplitEquals(listOf("", "tes", "t"), input, emptyMatchBeforeT)
+        testSplitEquals(listOf("", "test"), input, emptyMatchBeforeT, limit = 2)
 
-        assertEquals(listOf("", "tee"), "tee".split(emptyMatchBeforeT))
+        testSplitEquals(listOf("", "tee"), "tee", emptyMatchBeforeT)
     }
 
+    @Test fun splitByNoMatch() {
+        val input = "test"
+        val xMatch = "x".toRegex()
 
+        for (limit in 0..2) {
+            testSplitEquals(listOf(input), input, xMatch, limit)
+        }
+    }
+
+    @Test fun splitWithLimitOne() {
+        val input = "/12/456/7890/"
+        val regex = "\\d+".toRegex()
+
+        testSplitEquals(listOf(input), input, regex, limit = 1)
+    }
+
+    @Test fun findAllAndSplitToSequence() {
+        val input = "a12bc456def7890ghij"
+        val regex = "\\d+".toRegex()
+
+        val matches = regex.findAll(input).map { it.value }.iterator()
+        val splits = regex.splitToSequence(input).iterator()
+
+        assertEquals("12", matches.next())
+        assertEquals("a", splits.next())
+        assertEquals("456", matches.next())
+        assertEquals("bc", splits.next())
+        assertEquals("def", splits.next())
+        assertEquals("ghij", splits.next())
+        assertEquals("7890", matches.next())
+
+        assertFailsWith<NoSuchElementException> { matches.next() }
+        assertFailsWith<NoSuchElementException> { splits.next() }
+    }
 
 }

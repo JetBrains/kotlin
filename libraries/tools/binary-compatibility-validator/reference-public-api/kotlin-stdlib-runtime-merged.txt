@@ -5194,6 +5194,8 @@ public final class kotlin/text/Regex : java/io/Serializable {
 	public final fun replaceFirst (Ljava/lang/CharSequence;Ljava/lang/String;)Ljava/lang/String;
 	public final fun split (Ljava/lang/CharSequence;I)Ljava/util/List;
 	public static synthetic fun split$default (Lkotlin/text/Regex;Ljava/lang/CharSequence;IILjava/lang/Object;)Ljava/util/List;
+	public final fun splitToSequence (Ljava/lang/CharSequence;I)Lkotlin/sequences/Sequence;
+	public static synthetic fun splitToSequence$default (Lkotlin/text/Regex;Ljava/lang/CharSequence;IILjava/lang/Object;)Lkotlin/sequences/Sequence;
 	public final fun toPattern ()Ljava/util/regex/Pattern;
 	public fun toString ()Ljava/lang/String;
 }

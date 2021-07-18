@@ -1237,7 +1237,7 @@ private class DelimitedRangesSequence(
  * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
  */
 private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit." })
+    requireNonNegativeLimit(limit)
 
     return DelimitedRangesSequence(this, startIndex, limit, { currentIndex ->
         indexOfAny(delimiters, currentIndex, ignoreCase = ignoreCase).let { if (it < 0) null else it to 1 }
@@ -1260,12 +1260,15 @@ private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: In
  * that matches this string at that position.
  */
 private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
+    requireNonNegativeLimit(limit)
     val delimitersList = delimiters.asList()
 
     return DelimitedRangesSequence(this, startIndex, limit, { currentIndex -> findAnyOf(delimitersList, currentIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
 
 }
+
+internal fun requireNonNegativeLimit(limit: Int) =
+    require(limit >= 0) { "Limit must be non-negative, but was $limit" }
 
 
 // split
@@ -1340,7 +1343,7 @@ public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = fal
  * @param limit The maximum number of substrings to return.
  */
 private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: Int): List<String> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit." })
+    requireNonNegativeLimit(limit)
 
     var currentOffset = 0
     var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
@@ -1363,13 +1366,24 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
 }
 
 /**
- * Splits this char sequence around matches of the given regular expression.
+ * Splits this char sequence to a list of strings around matches of the given regular expression.
  *
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String> = regex.split(this, limit)
+
+/**
+ * Splits this char sequence to a sequence of strings around matches of the given regular expression.
+ *
+ * @param limit Non-negative value specifying the maximum number of substrings to return.
+ * Zero by default means no limit is set.
+ */
+@SinceKotlin("1.5")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.splitToSequence(regex: Regex, limit: Int = 0): Sequence<String> = regex.splitToSequence(this, limit)
 
 /**
  * Splits this char sequence to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
