@@ -1315,7 +1315,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             if (isAlive(insnIndex, variableIndex) && !isAlive(insnIndex + 1, variableIndex)) {
                 // No variable in LVT -> do not add one
                 val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
-                if (lvtRecord.name == CONTINUATION_VARIABLE_NAME) continue
+                if (lvtRecord.name == CONTINUATION_VARIABLE_NAME || lvtRecord.name == SUSPEND_CALL_RESULT_NAME) continue
                 // End the local when it is no longer live. Since it is not live, we will not spill and unspill it across
                 // suspension points. It is tempting to keep it alive until the next suspension point to leave it visible in
                 // the debugger for as long as possible. However, in the case of loops, the resumption after suspension can
