@@ -198,17 +198,17 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
 
 
     /**
-     * Splits the [input] CharSequence around matches of this regular expression.
+     * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
-        require(limit >= 0, { "Limit must be non-negative, but was $limit." })
+        requireNonNegativeLimit(limit)
 
         val matcher = nativePattern.matcher(input)
-        if (!matcher.find() || limit == 1) return listOf(input.toString())
+        if (limit == 1 || !matcher.find()) return listOf(input.toString())
 
         val result = ArrayList<String>(if (limit > 0) limit.coerceAtMost(10) else 10)
         var lastStart = 0
@@ -223,6 +223,37 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
         result.add(input.substring(lastStart, input.length))
 
         return result
+    }
+
+    /**
+     * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
+     *
+     * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
+     * Zero by default means no limit is set.
+     */
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
+        requireNonNegativeLimit(limit)
+
+        return sequence {
+            val matcher = nativePattern.matcher(input)
+            if (limit == 1 || !matcher.find()) {
+                yield(input.toString())
+                return@sequence
+            }
+
+            var nextStart = 0
+            var splitCount = 0
+
+            do {
+                yield(input.substring(nextStart, matcher.start()))
+                nextStart = matcher.end()
+            } while (++splitCount != limit - 1 && matcher.find())
+
+            yield(input.substring(nextStart, input.length))
+        }
     }
 
     /**

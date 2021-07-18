@@ -65,12 +65,22 @@ expect class Regex {
     fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult>
 
     /**
-     * Splits the [input] CharSequence around matches of this regular expression.
+     * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      */
     fun split(input: CharSequence, limit: Int = 0): List<String>
+
+    /**
+     * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
+     *
+     * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
+     * Zero by default means no limit is set.
+     */
+    @SinceKotlin("1.5")
+    @ExperimentalStdlibApi
+    public fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String>
 
     companion object {
         fun fromLiteral(literal: String): Regex
