@@ -305,7 +305,7 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     }
 
     /**
-     * Splits the [input] CharSequence around matches of this regular expression.
+     * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
@@ -332,6 +332,26 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
         result.add(input.substring(lastStart, input.length))
 
         return result
+    }
+
+    /**
+     * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
+     *
+     * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
+     * Zero by default means no limit is set.
+     */
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    public actual fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String> {
+        require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
+
+        val matches = findAll(input).let { if (limit == 0) it else it.take(limit - 1) }
+        var nextStart = 0
+
+        return matches.map { match ->
+            val start = nextStart
+            nextStart = match.range.endInclusive + 1
+            input.substring(start, match.range.first)
+        } + sequence { yield(input.substring(nextStart, input.length)) }
     }
 
     /**

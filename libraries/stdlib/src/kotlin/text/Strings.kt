@@ -1363,13 +1363,22 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
 }
 
 /**
- * Splits this char sequence around matches of the given regular expression.
+ * Splits this char sequence to a list of strings around matches of the given regular expression.
  *
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String> = regex.split(this, limit)
+
+/**
+ * Splits this char sequence to a sequence of strings around matches of the given regular expression.
+ *
+ * @param limit Non-negative value specifying the maximum number of substrings to return.
+ * Zero by default means no limit is set.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.splitToSequence(regex: Regex, limit: Int = 0): Sequence<String> = regex.splitToSequence(this, limit)
 
 /**
  * Splits this char sequence to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
