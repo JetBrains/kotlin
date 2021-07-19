@@ -38,6 +38,7 @@ abstract class KGPBaseTest {
         val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
         val warningMode: WarningMode = WarningMode.Fail,
         val configurationCache: Boolean = false,
+        val projectIsolation: Boolean = false,
         val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
         val parallel: Boolean = true,
         val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
@@ -66,6 +67,9 @@ abstract class KGPBaseTest {
             if (gradleVersion >= GradleVersion.version("6.6.0")) {
                 arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCache")
                 arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.toLowerCase()}")
+            }
+            if (gradleVersion >= GradleVersion.version("7.1")) {
+                arguments.add("-Dorg.gradle.unsafe.isolated-projects=$projectIsolation")
             }
             if (parallel) {
                 arguments.add("--parallel")

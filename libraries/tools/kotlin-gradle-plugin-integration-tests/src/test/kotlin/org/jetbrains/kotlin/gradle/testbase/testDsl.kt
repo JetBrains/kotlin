@@ -213,7 +213,8 @@ internal fun Path.enableCacheRedirector() {
         "$redirectorScript does not exist! Please provide correct path to 'cacheRedirector.gradle.kts' file."
     }
     val gradleDir = resolve("gradle").also { it.createDirectories() }
-    redirectorScript.copyTo(gradleDir.resolve("cacheRedirector.gradle.kts"))
+    val cacheRedirectFile = gradleDir.resolve("cacheRedirector.gradle.kts")
+    redirectorScript.copyTo(cacheRedirectFile)
 
     val projectCacheRedirectorStatus = Paths
         .get("../../../gradle.properties")
@@ -231,32 +232,31 @@ internal fun Path.enableCacheRedirector() {
             """.trimIndent()
         )
 
-    when {
-        resolve("build.gradle").exists() -> {
-            //language=Groovy
-            resolve("build.gradle").appendText(
-                """
-                
-                allprojects {
-                    apply from: "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
+    val projectDir = toFile()
+    projectDir.walk()
+        .filterNot { it.parentFile == projectDir } // ignore build.gradle for root project
+        .forEach {
+            when (it.name) {
+                "build.gradle" -> {
+                    it.appendText(
+                        """
+
+                            apply from: "$cacheRedirectFile"
+
+                        """.trimIndent()
+                    )
                 }
-                
-                """.trimIndent()
-            )
-        }
-        resolve("build.gradle.kts").exists() -> {
-            //language=Groovy
-            resolve("build.gradle.kts").appendText(
-                """
-                
-                allprojects {
-                    apply(from = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts")
+                "build.gradle.kts" -> {
+                    it.appendText(
+                        """
+
+                            apply(from = "$cacheRedirectFile")
+
+                        """.trimIndent()
+                    )
                 }
-                
-                """.trimIndent()
-            )
+            }
         }
-    }
 }
 
 @OptIn(ExperimentalPathApi::class)

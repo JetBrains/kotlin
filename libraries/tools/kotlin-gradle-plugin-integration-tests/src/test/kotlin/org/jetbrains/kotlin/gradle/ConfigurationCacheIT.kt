@@ -30,7 +30,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             group = "com.example"
             version = "1.0"
             publishing.repositories {
-                maven { 
+                maven {
                     url = "${'$'}buildDir/repo"
                 }
             }
@@ -72,9 +72,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @Test
-    fun testInstantExecution() = with(Project("instantExecution")) {
-        testConfigurationCacheOf("assemble", executedTaskNames = asList(":lib-project:compileKotlin"))
-    }
+    fun testInstantExecution() =
+        // Set min Gradle version to 6.8 because of using DependencyResolutionManagement API to add repositories.
+        with(Project("instantExecution", gradleVersionRequirement = GradleVersionRequired.AtLeast("6.8"))) {
+            testConfigurationCacheOf("assemble", executedTaskNames = asList(":lib-project:compileKotlin"))
+        }
 
     // KT-43605
     @Test

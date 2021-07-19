@@ -1,4 +1,4 @@
-import libProject.Util
+import libproject.Util
 
 /*
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -6,5 +6,5 @@ import libProject.Util
  */
 
 fun main(args: Array<String>) {
-    println(Util.projectName)
+    println(Util().projectName)
 }
