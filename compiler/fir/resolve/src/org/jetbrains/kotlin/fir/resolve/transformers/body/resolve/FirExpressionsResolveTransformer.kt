@@ -236,17 +236,19 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
             else -> {
                 val types = components.findTypesForSuperCandidates(superTypeRefs, containingCall)
-                val resultType = if (types.size == 1) {
-                    // NB: NOT_A_SUPERTYPE is reported by a separate checker
-                    buildResolvedTypeRef {
+                val resultType = when (types.size) {
+                    0 -> buildErrorTypeRef {
+                        source = superReferenceContainer.source
+                        // Report stub error so that it won't surface up. Instead, errors on the callee would be reported.
+                        diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("Unresolved super method", DiagnosticKind.Other))
+                    }
+                    1 -> buildResolvedTypeRef {
                         source = superReferenceContainer.source?.fakeElement(FirFakeSourceElementKind.SuperCallImplicitType)
                         type = types.single()
                     }
-                } else {
-                    buildErrorTypeRef {
+                    else -> buildErrorTypeRef {
                         source = superReferenceContainer.source
-                        // NB: NOT_A_SUPERTYPE is reported by a separate checker
-                        diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("Ambiguous supertype", DiagnosticKind.Other))
+                        diagnostic = ConeSimpleDiagnostic("Ambiguous supertype", DiagnosticKind.AmbiguousSuper)
                     }
                 }
                 superReferenceContainer.resultType =

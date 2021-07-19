@@ -20,9 +20,9 @@ interface AnotherInterface {
 interface DerivedInterface: Interface, AnotherInterface {
     override fun foo() { super.foo() }
     override fun ambiguous() {
-        super.<!UNRESOLVED_REFERENCE!>ambiguous<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.ambiguous()
     }
     override val ambiguousProp: Int
-        get() = super.<!UNRESOLVED_REFERENCE!>ambiguousProp<!>
+        get() = <!AMBIGUOUS_SUPER!>super<!>.ambiguousProp
 }
 
