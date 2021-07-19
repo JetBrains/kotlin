@@ -42,7 +42,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         checkPCE: Boolean,
         collector: FirTowerDataContextCollector? = null,
     ) {
-        if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
+        if (firFile.resolvePhase >= FirResolvePhase.IMPORTS && annotations.all { it.resolveStatus == FirAnnotationResolveStatus.Resolved }) return
         moduleFileCache.firFileLockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
             resolveFileAnnotationsWithoutLock(
                 firFile = firFile,
@@ -65,23 +65,27 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         scopeSession: ScopeSession,
         collector: FirTowerDataContextCollector? = null,
     ) {
-        if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
-        lazyResolveFileDeclarationWithoutLock(
-            firFile = firFile,
-            moduleFileCache = moduleFileCache,
-            toPhase = FirResolvePhase.IMPORTS,
-            scopeSession = scopeSession,
-            checkPCE = false,
-            collector = collector
-        )
+        if (firFile.resolvePhase < FirResolvePhase.IMPORTS) {
+            lazyResolveFileDeclarationWithoutLock(
+                firFile = firFile,
+                moduleFileCache = moduleFileCache,
+                toPhase = FirResolvePhase.IMPORTS,
+                scopeSession = scopeSession,
+                checkPCE = false,
+                collector = collector
+            )
+        }
 
-        FirFileAnnotationsResolveTransformer(
-            firFile = firFile,
-            annotations = annotations,
-            session = firFile.moduleData.session,
-            scopeSession = scopeSession,
-            firTowerDataContextCollector = collector,
-        ).transformDeclaration(firFileBuilder.firPhaseRunner)
+        if (!annotations.all { it.resolveStatus == FirAnnotationResolveStatus.Resolved }) {
+            FirFileAnnotationsResolveTransformer(
+                firFile = firFile,
+                annotations = annotations,
+                session = firFile.moduleData.session,
+                scopeSession = scopeSession,
+                firTowerDataContextCollector = collector,
+            ).transformDeclaration(firFileBuilder.firPhaseRunner)
+        }
+
     }
 
     private fun FirDeclaration.isValidForResolve(): Boolean = when (origin) {
