@@ -170,3 +170,15 @@ class ExpressionRunner(private val code: String) : RunnerWithCompiler() {
         runCompiler(compilerClasspath, compilerArgs)
     }
 }
+
+class FileRunner(private val pathToFile: String) : RunnerWithCompiler() {
+    override fun run(classpath: List<URL>, compilerArguments: List<String>, arguments: List<String>, compilerClasspath: List<URL>) {
+        val compilerArgs = ArrayList<String>().apply {
+            addClasspathArgIfNeeded(classpath)
+            addAll(compilerArguments)
+            add(pathToFile)
+            addScriptArguments(arguments)
+        }
+        runCompiler(compilerClasspath, compilerArgs)
+    }
+}
