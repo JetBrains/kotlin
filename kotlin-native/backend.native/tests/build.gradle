@@ -2669,7 +2669,7 @@ standaloneTest("kt-37572") {
 standaloneTest("custom_hook") {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
     outputChecker = {
-        it.contains("value 42: Error") && it.contains("Uncaught Kotlin exception: kotlin.Error: an error")
+        it.contains("value 42: Error. Runnable state: true") && it.contains("Uncaught Kotlin exception: kotlin.Error: an error")
     }
     expectedExitStatusChecker = { it != 0 }
     source = "runtime/exceptions/custom_hook.kt"
@@ -4315,7 +4315,7 @@ Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosur
 }
 
 standaloneTest("interop_objc_allocException") {
-    disabled = !isAppleTarget(project) || isExperimentalMM // Experimental MM doesn't support thread state switching for terminate handlers yet.
+    disabled = !isAppleTarget(project)
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
     UtilsKt.dependsOnPlatformLibs(it)
@@ -4521,6 +4521,24 @@ interopTest("interop_threadStates_callbacksWithExceptions") {
             !isExperimentalMM // No thread state switching in the legacy MM.
     source = "interop/threadStates/callbacksWithExceptions.kt"
     interop = "threadStates"
+}
+
+interopTest("interop_threadStates_unhandledException") {
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            !isExperimentalMM // No thread state switching in the legacy MM.
+    source = "interop/threadStates/unhandledException.kt"
+    interop = "threadStates"
+    outputChecker = { it.contains("Error. Runnable state: true") }
+    expectedExitStatusChecker = { it != 0 }
+}
+
+interopTest("interop_threadStates_unhandledExceptionInForeignThread") {
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            !isExperimentalMM // No thread state switching in the legacy MM.
+    source = "interop/threadStates/unhandledExceptionInForeignThread.kt"
+    interop = "threadStates"
+    outputChecker = { it.contains("Error. Runnable state: true") }
+    expectedExitStatusChecker = { it != 0 }
 }
 
 interopTest("interop_withSpaces") {
@@ -4805,7 +4823,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignExceptionMode_default") {
-        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for terminate handlers yet.
         source = "interop/objc/foreignException/objcExceptionMode.kt"
         interop = 'foreignExceptionMode_default'
         goldValue = "OK: Ends with uncaught exception handler\n"
@@ -4976,6 +4993,15 @@ for (i in 0..2) {
     }
 }
 
+dynamicTest("produce_dynamic_unhandledException") {
+    disabled = (project.testTarget == 'wasm32') || // Uses exceptions + dynamic is unsupported for wasm.
+            (cacheTesting != null) // Disabled due to KT-47828.
+    source = "produce_dynamic/unhandledException/unhandled.kt"
+    cSource = "$projectDir/produce_dynamic/unhandledException/main.cpp"
+    clangTool = "clang++"
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { str -> str.startsWith("Kotlin hook: Exception. Runnable state: true") }
+}
 
 dynamicTest("interop_concurrentRuntime") {
     disabled = (project.target.name != project.hostName)

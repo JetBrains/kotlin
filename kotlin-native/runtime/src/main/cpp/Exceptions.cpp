@@ -47,6 +47,18 @@ void ThrowException(KRef exception) {
 
 namespace {
 
+// This function accesses a TLS variable under the hood, so it must not be called from a thread destructor (see kotlin::mm::GetMemoryState).
+[[nodiscard]] kotlin::ThreadStateGuard setNativeStateForRegisteredThread(bool reentrant = true) {
+    auto* memoryState = kotlin::mm::GetMemoryState();
+    if (memoryState) {
+        return kotlin::ThreadStateGuard(kotlin::ThreadState::kNative, reentrant);
+    } else {
+        // The current thread is not registered in the Kotlin runtime,
+        // just return an empty guard which doesn't actually switch the state.
+        return kotlin::ThreadStateGuard();
+    }
+}
+
 class {
     /**
      * Timeout 5 sec for concurrent (second) terminate attempt to give a chance the first one to finish.
@@ -61,6 +73,7 @@ class {
         // block() is supposed to be NORETURN, otherwise go to normal abort()
         konan::abort();
       } else {
+        auto guard = setNativeStateForRegisteredThread();
         sleep(timeoutSec);
         // We come here when another terminate handler hangs for 5 sec, that looks fatally broken. Go to forced exit now.
       }
@@ -121,18 +134,25 @@ class TerminateHandler : private kotlin::Pinned {
         try {
           std::rethrow_exception(currentException);
         } catch (ExceptionObjHolder& e) {
-          // Use the reentrant switch because both states are possible here:
-          //  - runnable, if the exception occured in a pure Kotlin thread (except initialization of globals).
-          //  - native, if the throwing code was called from ObjC/Swift or if the exception occured during initialization of globals.
-          kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable, /* reentrant = */ true);
+          // Both thread states are allowed here because there is no guarantee that
+          // C++ runtime will unwind the stack for an unhandled exception. Thus there
+          // is no guarantee that state switches made on interop borders will be rolled back.
+
+          // Moreover, a native code can catch an exception thrown by a Kotlin callback,
+          // store it to a global and then re-throw it in another thread which is not attached
+          // to the Kotlin runtime. To handle this case, use the CalledFromNativeGuard.
+          // TODO: Forbid throwing Kotlin exceptions through the interop border to get rid of this case.
+          kotlin::CalledFromNativeGuard guard(/* reentrant = */ true);
           processUnhandledException(e.GetExceptionObject());
           terminateWithUnhandledException(e.GetExceptionObject());
         } catch (...) {
           // Not a Kotlin exception - call default handler
+          auto guard = setNativeStateForRegisteredThread();
           queuedHandler();
         }
       }
       // Come here in case of direct terminate() call or unknown exception - go to default terminate handler.
+      auto guard = setNativeStateForRegisteredThread();
       queuedHandler();
   }
 
