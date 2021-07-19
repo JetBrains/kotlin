@@ -303,30 +303,33 @@ internal fun Path.enableCacheRedirector() {
             """.trimIndent()
         )
 
-    when {
-        resolve("build.gradle").exists() -> {
-            //language=Groovy
-            resolve("build.gradle").appendText(
-                """
-                
-                allprojects {
-                    apply from: "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
-                }
-                
-                """.trimIndent()
-            )
-        }
-        resolve("build.gradle.kts").exists() -> {
-            //language=Groovy
-            resolve("build.gradle.kts").appendText(
-                """
-                
-                allprojects {
-                    apply(from = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts")
-                }
-                
-                """.trimIndent()
-            )
+    val projectDir = toFile()
+    projectDir.walk().forEach {
+        when (it.name) {
+            "build.gradle" -> {
+                it.appendText(
+                    """
+
+                        def cacheRedirectorFile = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
+                        if (new File(cacheRedirectorFile).exists()) {
+                            apply(from: cacheRedirectorFile)
+                        }
+
+                    """.trimIndent()
+                )
+            }
+            "build.gradle.kts" -> {
+                it.appendText(
+                    """
+
+                        val cacheRedirectorFile = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
+                        if (File(cacheRedirectorFile).exists()) {
+                            apply(from = cacheRedirectorFile)
+                        }
+
+                    """.trimIndent()
+                )
+            }
         }
     }
 }

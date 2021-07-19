@@ -15,6 +15,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.junit.JUnitOptions
@@ -185,7 +186,7 @@ private fun chooseAndAddStdlibDependency(
     }
 
     val isStdlibAddedByUser = sourceSetDependencyConfigurations
-        .flatMap { it.allDependencies }
+        .flatMap { it.allNonProjectDependencies() }
         .any { dependency -> dependency.group == KOTLIN_MODULE_GROUP && dependency.name in stdlibModules }
 
     if (!isStdlibAddedByUser) {
@@ -201,7 +202,7 @@ private fun chooseAndAddStdlibDependency(
 
         // If the exact same module is added in the source sets hierarchy, possibly even with a different scope, we don't add it
         val moduleAddedInHierarchy = hierarchySourceSetsDependencyConfigurations.any {
-            it.allDependencies.any { dependency -> dependency.group == KOTLIN_MODULE_GROUP && dependency.name == stdlibModuleName }
+            it.allNonProjectDependencies().any { dependency -> dependency.group == KOTLIN_MODULE_GROUP && dependency.name == stdlibModuleName }
         }
 
         if (stdlibModuleName != null && !moduleAddedInHierarchy)
@@ -274,7 +275,7 @@ internal fun configureKotlinTestDependency(project: Project) {
             val configuration = project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, scope)
             var finalizingDependencies = false
 
-            configuration.dependencies.matching(::isKotlinTestRootDependency).apply {
+            configuration.nonProjectDependencies().matching(::isKotlinTestRootDependency).apply {
                 firstOrNull()?.let { versionOrNullBySourceSet[kotlinSourceSet] = it.version }
                 whenObjectRemoved {
                     if (!finalizingDependencies && !any())
@@ -400,3 +401,7 @@ private fun Project.tryWithDependenciesIfUnresolved(configuration: Configuration
         reportAlreadyResolved()
     }
 }
+
+private fun Configuration.allNonProjectDependencies() = allDependencies.matching { it !is ProjectDependency }
+
+private fun Configuration.nonProjectDependencies() = dependencies.matching { it !is ProjectDependency }
