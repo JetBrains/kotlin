@@ -73,7 +73,7 @@ internal val IrField.storageKind: FieldStorageKind get() {
 internal fun IrField.needsGCRegistration(context: Context) =
         context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
                 type.binaryTypeIsReference() && // only for references
-                (initializer?.expression !is IrConst<*>? || // which are initialized from heap object
+                (hasNonConstInitializer || // which are initialized from heap object
                         !isFinal) // or are not final
 
 internal fun IrClass.storageKind(context: Context): ObjectStorageKind = when {
@@ -344,7 +344,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun FunctionGenerationContext.initGlobalField(irField: IrField) {
         val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(this)
-        val initialValue = if (irField.initializer?.expression !is IrConst<*>?) {
+        val initialValue = if (irField.hasNonConstInitializer) {
             val initialization = evaluateExpression(irField.initializer!!.expression)
             if (irField.shouldBeFrozen(context))
                 freeze(initialization, currentCodeContext.exceptionHandler)
@@ -943,11 +943,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (context.needGlobalInit(declaration)) {
             val type = codegen.getLLVMType(declaration.type)
             val globalPropertyAccess = context.llvmDeclarations.forStaticField(declaration).storageAddressAccess
-            val initializer = declaration.initializer?.expression as? IrConst<*>
+            val initializer = declaration.initializer?.expression
             val globalProperty = (globalPropertyAccess as? GlobalAddressAccess)?.getAddress(null)
             if (globalProperty != null) {
-                LLVMSetInitializer(globalProperty, if (initializer != null)
-                    evaluateExpression(initializer) else LLVMConstNull(type))
+                LLVMSetInitializer(globalProperty, when (initializer) {
+                    is IrConst<*>, is IrConstantValue -> evaluateExpression(initializer)
+                    else -> LLVMConstNull(type)
+                })
                 // (Cannot do this before the global is initialized).
                 LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)
             }

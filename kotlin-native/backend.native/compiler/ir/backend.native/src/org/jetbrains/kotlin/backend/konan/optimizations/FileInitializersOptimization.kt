@@ -326,6 +326,8 @@ internal object FileInitializersOptimization {
                 override fun visitFunctionReference(expression: IrFunctionReference, data: BitSet) = data
                 override fun visitVararg(expression: IrVararg, data: BitSet) = data
 
+                override fun visitConstantValue(expression: IrConstantValue, data: BitSet) = data
+
                 override fun visitBreak(jump: IrBreak, data: BitSet): BitSet {
                     intersectInitializedFiles(initializedFilesAtLoopsBreaks, jump.loop, data)
                     return data
