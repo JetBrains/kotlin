@@ -734,14 +734,6 @@ tasks {
         dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
         dependsOn(":kotlin-main-kts-test:testWithIr")
-
-        if (kotlinBuildProperties.getOrNull("attachedIntellijVersion") == null &&
-            !kotlinBuildProperties.getBoolean("disableKotlinPluginModules", false)
-        ) {
-            dependsOn(":kotlin-scripting-ide-services-test:test")
-            dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
-        }
-
         dependsOn(":kotlin-scripting-js-test:test")
     }
 
