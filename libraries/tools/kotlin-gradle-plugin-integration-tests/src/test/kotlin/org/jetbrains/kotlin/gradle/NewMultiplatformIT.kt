@@ -705,8 +705,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 "\n" + """
             kotlin.sourceSets.all {
                 languageSettings {
-                    languageVersion = "1.3"
-                    apiVersion = "1.3" 
+                    languageVersion = "1.4"
+                    apiVersion = "1.4" 
                 }
             }
         """.trimIndent()
@@ -716,7 +716,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 build(it) {
                     assertSuccessful()
                     assertTasksExecuted(":$it")
-                    assertContains("-language-version 1.3", "-api-version 1.3")
+                    assertContains("-language-version 1.4", "-api-version 1.4")
                 }
             }
         }
@@ -727,8 +727,8 @@ class NewMultiplatformIT : BaseGradleIT() {
             "\n" + """
                 kotlin.sourceSets.all {
                     it.languageSettings {
-                        // languageVersion = '1.3' // can't do this with Kotlin/Native 1.4+, done below for non-Native tasks
-                        // apiVersion = '1.3' // can't do this with Kotlin/Native 1.4+, done below for non-Native tasks
+                        // languageVersion = '1.4'
+                        // apiVersion = '1.4'
                         enableLanguageFeature('InlineClasses')
                         optInAnnotation('kotlin.ExperimentalUnsignedTypes')
                         optInAnnotation('kotlin.contracts.ExperimentalContracts')
@@ -758,8 +758,8 @@ class NewMultiplatformIT : BaseGradleIT() {
             "\n" + """
             kotlin.sourceSets.all {
                 it.languageSettings {
-                    languageVersion = '1.3'
-                    apiVersion = '1.3' 
+                    languageVersion = '1.4'
+                    apiVersion = '1.4' 
                 }
             }
         """.trimIndent()
@@ -769,7 +769,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             build(it) {
                 assertSuccessful()
                 assertTasksExecuted(":$it")
-                assertContains("-language-version 1.3", "-api-version 1.3")
+                assertContains("-language-version 1.4", "-api-version 1.4")
             }
         }
     }
