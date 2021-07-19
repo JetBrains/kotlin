@@ -424,7 +424,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     override fun visitGetField(expression: IrGetField): IrExpression {
         val field = expression.symbol.owner
         val parent = field.parent
-        if (parent is IrClass && parent.isInline && field.name == parent.inlineClassFieldName) {
+        if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
+            parent is IrClass &&
+            parent.isInline &&
+            field.name == parent.inlineClassFieldName) {
             val receiver = expression.receiver!!.transform(this, null)
             return coerceInlineClasses(receiver, receiver.type, field.type)
         }
