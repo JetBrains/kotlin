@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.idea.asJava.FirLightClassBase
+import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.asJava.FirLightClassForSymbol
 import org.jetbrains.kotlin.idea.asJava.FirLightField
 import org.jetbrains.kotlin.idea.asJava.hasJvmFieldAnnotation
@@ -53,7 +53,6 @@ internal class FirLightAnonymousClassForSymbol(
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
     override fun getOwnMethods(): List<PsiMethod> = _ownMethods
-
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
 
@@ -130,6 +129,14 @@ internal class FirLightAnonymousClassForSymbol(
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = kotlinOrigin?.stub
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = equals(another) //TODO
+
+    //TODO Make containing file not null for symbol without psi
+    private val _containingFile: PsiFile? by lazyPub {
+        val kotlinOrigin = kotlinOrigin ?: return@lazyPub null
+        FirFakeFileImpl(kotlinOrigin, this)
+    }
+
+    override fun getContainingFile(): PsiFile? = _containingFile
 
     override fun equals(other: Any?): Boolean =
         this === other ||

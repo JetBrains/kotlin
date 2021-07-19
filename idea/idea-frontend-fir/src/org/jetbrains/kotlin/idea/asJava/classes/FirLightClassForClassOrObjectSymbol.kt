@@ -161,15 +161,9 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
     override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
 
     override fun getContainingClass(): PsiClass? {
-
         val containingBody = kotlinOrigin?.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
         containingClass?.let { return getOrCreateFirLightClass(it) }
-
-        val containingBlock = kotlinOrigin?.parent as? KtBlockExpression
-//        val containingScript = containingBlock?.parent as? KtScript
-//        containingScript?.let { return KtLightClassForScript.create(it) }
-
         return null
     }
 
