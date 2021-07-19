@@ -26,8 +26,7 @@ fun main(
     b.noBoundsNotNull(aNotNullNotNullNotNull)
     // jspecify_nullness_mismatch
     b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
-    b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    b.noBoundsNotNull(aNotNullNullNotNull)
     // jspecify_nullness_mismatch
     b.noBoundsNotNull(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 
