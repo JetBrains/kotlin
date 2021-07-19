@@ -33,15 +33,19 @@ class CachingLazyStorage<K, V>(
     private val valueExternalizer: DataExternalizer<V>
 ) : LazyStorage<K, V> {
     private var storage: PersistentHashMap<K, V>? = null
+    private var isStorageFileExist = true
 
     private fun getStorageIfExists(): PersistentHashMap<K, V>? {
         if (storage != null) return storage
+
+        if (!isStorageFileExist) return null
 
         if (storageFile.exists()) {
             storage = createMap()
             return storage
         }
 
+        isStorageFileExist = false
         return null
     }
 
