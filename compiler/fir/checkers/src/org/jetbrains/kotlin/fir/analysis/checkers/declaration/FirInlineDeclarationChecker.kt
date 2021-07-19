@@ -10,21 +10,22 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.util.checkChildrenWithCustomVisitor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
+import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
@@ -37,11 +38,15 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isInline) return
         // local inline functions are prohibited
-        if (declaration.isLocalMember) return
+        if (declaration.isLocalMember) {
+            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local inline functions", context)
+            return
+        }
         if (declaration !is FirPropertyAccessor && declaration !is FirSimpleFunction) return
 
         val effectiveVisibility = declaration.effectiveVisibility
         checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
+        checkParameters(declaration, context, reporter)
     }
 
     private fun checkInlineFunctionBody(
@@ -64,7 +69,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             context.session,
             reporter
         )
-        body.checkChildrenWithCustomVisitor(context, visitor)
+        body.checkChildrenWithCustomVisitor((context as PersistentCheckerContext).addDeclaration(function), visitor)
     }
 
     private class Visitor(
@@ -100,6 +105,22 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             val propertySymbol = variableAssignment.calleeReference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
             val setterSymbol = propertySymbol.setterSymbol ?: return
             checkQualifiedAccess(variableAssignment, setterSymbol, data)
+        }
+
+        override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
+            if (!regularClass.classKind.isSingleton && data.containingDeclarations.lastOrNull() === inlineFunction) {
+                reporter.reportOn(regularClass.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local classes", data)
+            } else {
+                super.visitRegularClass(regularClass, data)
+            }
+        }
+
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
+            if (data.containingDeclarations.lastOrNull() === inlineFunction) {
+                reporter.reportOn(simpleFunction.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local functions", data)
+            } else {
+                super.visitSimpleFunction(simpleFunction, data)
+            }
         }
 
         private fun checkReceiversOfQualifiedAccessExpression(
@@ -309,5 +330,50 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             }
             return containingClassVisibility == Visibilities.Private || containingClassVisibility == Visibilities.PrivateToThis
         }
+    }
+
+    private fun checkParameters(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (function !is FirSimpleFunction) return
+
+        if (function.isSuspend) {
+            function.valueParameters
+                .filter { !it.isNoinline && it.defaultValue != null && it.returnTypeRef.coneType.isSuspendFunctionType(context.session) }
+                .forEach { param ->
+                    reporter.reportOn(
+                        param.source,
+                        FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
+                        "Suspend functional parameters with default values",
+                        context
+                    )
+                }
+        }
+
+        //check for inherited default values
+        val classSymbol = function.containingClass()?.toSymbol(context.session) as? FirClassSymbol<*> ?: return
+        if (!function.isOverride) return
+        if (!function.valueParameters.any { it.defaultValue == null }) return
+        val scope = classSymbol.unsubstitutedScope(context)
+
+        //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
+        //and not in processDirectOverriddenFunctionsWithBaseScope
+        scope.processFunctionsByName(function.name) { }
+        val overriddenMembers = scope.getDirectOverriddenMembers(function.symbol, true)
+        val paramsWithDefaults = overriddenMembers.flatMap { it ->
+            if (it !is FirFunctionSymbol<*>) return@flatMap emptyList<Int>()
+            it.valueParameterSymbols.mapIndexedNotNull { idx, param ->
+                idx.takeIf { param.hasDefaultValue }
+            }
+        }.toSet()
+        function.valueParameters.forEachIndexed { idx, param ->
+            if (param.defaultValue == null && paramsWithDefaults.contains(idx)) {
+                reporter.reportOn(
+                    param.source,
+                    FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
+                    "Functional parameters with inherited default values",
+                    context
+                )
+            }
+        }
+
     }
 }

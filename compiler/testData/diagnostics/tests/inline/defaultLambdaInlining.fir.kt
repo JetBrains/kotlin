@@ -39,7 +39,7 @@ abstract class Base {
 }
 
 class Derived : Base() {
-    override final inline fun foo(f: () -> Unit) {
+    override final inline fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>f: () -> Unit<!>) {
         f()
     }
 }

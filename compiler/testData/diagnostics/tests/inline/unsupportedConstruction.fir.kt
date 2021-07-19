@@ -3,7 +3,7 @@
 
 inline fun unsupported() {
 
-    class A {
+    <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> A {
         fun a() {
            class AInner {}
         }
@@ -13,7 +13,7 @@ inline fun unsupported() {
         <!LOCAL_OBJECT_NOT_ALLOWED!>object BInner<!> {}
     }
 
-    fun local() {
+    <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> local() {
         fun localInner() {}
     }
 }
@@ -27,7 +27,7 @@ open class Base {
 }
 
 class Derived: Base() {
-    inline final override fun foo(a: Int) {
+    inline final override fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>a: Int<!>) {
 
     }
 }

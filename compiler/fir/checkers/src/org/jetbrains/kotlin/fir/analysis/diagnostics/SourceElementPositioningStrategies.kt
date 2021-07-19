@@ -281,4 +281,9 @@ object SourceElementPositioningStrategies {
     // TODO
     val ACTUAL_DECLARATION_NAME = DEFAULT
     val INCOMPATIBLE_DECLARATION = DEFAULT
+
+    val NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT,
+        PositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT
+    )
 }

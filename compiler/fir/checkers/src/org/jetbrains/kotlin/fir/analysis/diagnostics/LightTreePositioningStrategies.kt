@@ -860,6 +860,26 @@ object LightTreePositioningStrategies {
             }
         }
     }
+
+    val NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val nodeToMark = when (node.tokenType) {
+                KtNodeTypes.CLASS ->
+                    tree.findChildByType(node, KtTokens.CLASS_KEYWORD)
+                KtNodeTypes.OBJECT_DECLARATION ->
+                    tree.findChildByType(node, KtTokens.OBJECT_KEYWORD)
+                KtNodeTypes.FUN ->
+                    tree.inlineModifier(node) ?: tree.findChildByType(node, KtTokens.FUN_KEYWORD)
+                else -> node
+            }
+            return markElement(nodeToMark ?: node, startOffset, endOffset, tree, node)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
@@ -981,6 +1001,9 @@ internal fun FlyweightCapableTreeStructure<LighterASTNode>.modalityModifier(decl
 
 internal fun FlyweightCapableTreeStructure<LighterASTNode>.overrideModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, KtTokens.OVERRIDE_KEYWORD) }
+
+internal fun FlyweightCapableTreeStructure<LighterASTNode>.inlineModifier(declaration: LighterASTNode): LighterASTNode? =
+    modifierList(declaration)?.let { findChildByType(it, KtTokens.INLINE_KEYWORD) }
 
 internal fun FlyweightCapableTreeStructure<LighterASTNode>.typeParametersList(declaration: LighterASTNode): LighterASTNode? =
     findChildByType(declaration, KtNodeTypes.TYPE_PARAMETER_LIST)

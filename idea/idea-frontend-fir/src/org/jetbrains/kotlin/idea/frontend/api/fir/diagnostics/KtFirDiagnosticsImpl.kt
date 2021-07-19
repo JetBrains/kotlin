@@ -3482,6 +3482,14 @@ internal class NonLocalReturnNotAllowedImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class NotYetSupportedInInlineImpl(
+    override val message: String,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NotYetSupportedInInline(), KtAbstractFirDiagnostic<KtDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class RecursionInInlineImpl(
     override val symbol: KtSymbol,
     firDiagnostic: FirPsiDiagnostic,
