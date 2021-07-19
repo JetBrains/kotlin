@@ -88,9 +88,8 @@ class BytecodeListingTextCollectingVisitor(
     private var classAccess = 0
     private var classSignature: String? = ""
 
-    private fun addAnnotation(desc: String, list: MutableList<String> = declarationsInsideClass.last().annotations) {
-        val name = Type.getType(desc).className
-        list.add("@$name ")
+    private fun addAnnotation(annotation: String) {
+        declarationsInsideClass.last().annotations.add("@$annotation ")
     }
 
     private fun addModifier(text: String, list: MutableList<String>) {
@@ -183,23 +182,17 @@ class BytecodeListingTextCollectingVisitor(
             private var visibleAnnotableParameterCount = methodParamCount
             private var invisibleAnnotableParameterCount = methodParamCount
 
-            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                if (withAnnotations) {
-                    val type = Type.getType(desc).className
-                    methodAnnotations += "@$type "
+            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
+                visitAnnotationImpl { args ->
+                    methodAnnotations += "@" + renderAnnotation(desc, args) + " "
                 }
-                return super.visitAnnotation(desc, visible)
-            }
 
-            override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? {
-                if (withAnnotations) {
-                    val type = Type.getType(desc).className
+            override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? =
+                visitAnnotationImpl { args ->
                     parameterAnnotations.getOrPut(
-                        parameter + methodParamCount - (if (visible) visibleAnnotableParameterCount else invisibleAnnotableParameterCount),
-                        { arrayListOf() }).add("@$type ")
+                        parameter + methodParamCount - (if (visible) visibleAnnotableParameterCount else invisibleAnnotableParameterCount)
+                    ) { arrayListOf() }.add("@" + renderAnnotation(desc, args) + " ")
                 }
-                return super.visitParameterAnnotation(parameter, desc, visible)
-            }
 
             override fun visitEnd() {
                 val parameterWithAnnotations = parameterTypes.mapIndexed { index, parameter ->
@@ -237,21 +230,69 @@ class BytecodeListingTextCollectingVisitor(
         if (access and Opcodes.ACC_VOLATILE != 0) addModifier("volatile", fieldDeclaration.annotations)
 
         return object : FieldVisitor(Opcodes.API_VERSION) {
-            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                if (withAnnotations) {
-                    addAnnotation(desc)
+            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
+                visitAnnotationImpl { args ->
+                    addAnnotation(renderAnnotation(desc, args))
                 }
-                return super.visitAnnotation(desc, visible)
-            }
         }
     }
 
-    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-        if (withAnnotations) {
-            val name = Type.getType(desc).className
-            classAnnotations.add("@$name")
+    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
+        visitAnnotationImpl { args ->
+            classAnnotations.add("@" + renderAnnotation(desc, args))
         }
-        return super.visitAnnotation(desc, visible)
+
+    private fun visitAnnotationImpl(end: (List<String>) -> Unit): AnnotationVisitor? =
+        if (!withAnnotations) null else object : AnnotationVisitor(Opcodes.API_VERSION) {
+            private val arguments = mutableListOf<String>()
+
+            override fun visit(name: String?, value: Any) {
+                val rendered = when (value) {
+                    is String -> "\"$value\""
+                    is Type -> "${value.className}::class"
+                    is BooleanArray -> value.contentToString()
+                    is CharArray -> value.contentToString()
+                    is ByteArray -> value.contentToString()
+                    is ShortArray -> value.contentToString()
+                    is IntArray -> value.contentToString()
+                    is FloatArray -> value.contentToString()
+                    is LongArray -> value.contentToString()
+                    is DoubleArray -> value.contentToString()
+                    else -> value.toString()
+                }
+                arguments +=
+                    if (name != null) "$name=$rendered" else rendered
+            }
+
+            override fun visitEnum(name: String?, descriptor: String, value: String) {
+                // Do not render enum class name to reduce verbosity.
+                arguments +=
+                    if (name != null) "$name=$value" else value
+            }
+
+            override fun visitAnnotation(name: String?, descriptor: String): AnnotationVisitor? =
+                visitAnnotationImpl { args ->
+                    val rendered = renderAnnotation(descriptor, args)
+                    arguments +=
+                        if (name != null) "$name=$rendered" else rendered
+                }
+
+            override fun visitArray(name: String): AnnotationVisitor? =
+                visitAnnotationImpl { args ->
+                    arguments += "$name=[${args.joinToString(", ")}]"
+                }
+
+            override fun visitEnd() {
+                end(arguments)
+            }
+        }
+
+    private fun renderAnnotation(desc: String, args: List<String>): String {
+        val name = Type.getType(desc).className
+        return if (args.isEmpty() || desc == "Lkotlin/Metadata;" || desc == "Lkotlin/coroutines/jvm/internal/DebugMetadata;")
+            name
+        else
+            "$name(${args.joinToString(", ")})"
     }
 
     override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
@@ -277,7 +318,10 @@ class BytecodeListingTextCollectingVisitor(
 
         when {
             innerName == null -> {
-                KtAssert.assertNull("Anonymous classes should have neither innerName nor outerName. Name=$name, outerName=$outerName", outerName)
+                KtAssert.assertNull(
+                    "Anonymous classes should have neither innerName nor outerName. Name=$name, outerName=$outerName",
+                    outerName
+                )
                 declarationsInsideClass.add(Declaration("inner (anonymous) class $name"))
             }
             outerName == null -> {

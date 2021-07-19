@@ -12,9 +12,9 @@ public interface Deprecated {
     public final inner class Deprecated$DefaultImpls
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[PROPERTY])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[])
 @kotlin.Metadata
 public annotation class Foo {
     // source: 'interfaceProperty.kt'

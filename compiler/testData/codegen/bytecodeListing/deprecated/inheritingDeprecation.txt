@@ -51,9 +51,9 @@ public final class ExplicitOverride2 {
 @kotlin.Metadata
 public final class IFoo$DefaultImpls {
     // source: 'inheritingDeprecation.kt'
-    public synthetic deprecated static @kotlin.Deprecated method getExtProp$annotations(p0: java.lang.String): void
+    public synthetic deprecated static @kotlin.Deprecated(message="") method getExtProp$annotations(p0: java.lang.String): void
     public deprecated static @org.jetbrains.annotations.NotNull method getExtProp(@org.jetbrains.annotations.NotNull p0: IFoo, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
-    public synthetic deprecated static @kotlin.Deprecated method getProp$annotations(): void
+    public synthetic deprecated static @kotlin.Deprecated(message="") method getProp$annotations(): void
     public deprecated static @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: IFoo): java.lang.String
     public final inner class IFoo$DefaultImpls
 }

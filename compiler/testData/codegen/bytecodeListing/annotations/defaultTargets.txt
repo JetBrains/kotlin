@@ -10,57 +10,57 @@ public final class A {
     public final method getX(): int
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[FIELD])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[FIELD])
 @kotlin.Metadata
 public annotation class AnnField {
     // source: 'defaultTargets.kt'
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[FIELD, PROPERTY])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[FIELD])
 @kotlin.Metadata
 public annotation class AnnFieldProperty {
     // source: 'defaultTargets.kt'
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[VALUE_PARAMETER, FIELD])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[FIELD, PARAMETER])
 @kotlin.Metadata
 public annotation class AnnParameterField {
     // source: 'defaultTargets.kt'
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[VALUE_PARAMETER, PROPERTY])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[PARAMETER])
 @kotlin.Metadata
 public annotation class AnnParameterProperty {
     // source: 'defaultTargets.kt'
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[PROPERTY])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[])
 @kotlin.Metadata
 public annotation class AnnProperty {
     // source: 'defaultTargets.kt'
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[FIELD, TYPE])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[FIELD, TYPE_USE])
 @kotlin.Metadata
 public annotation class AnnTypeField {
     // source: 'defaultTargets.kt'
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[FIELD])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[FIELD])
 @kotlin.Metadata
 public annotation class Anno {
     // source: 'defaultTargets.kt'

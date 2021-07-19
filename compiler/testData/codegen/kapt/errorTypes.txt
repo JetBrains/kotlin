@@ -1,5 +1,5 @@
 @kotlin.Metadata
-@kotlin.Suppress
+@kotlin.Suppress(names=["UNRESOLVED_REFERENCE"])
 public final class A {
     // source: 'errorTypes.kt'
     private final @org.jetbrains.annotations.NotNull field a: error.NonExistentClass

@@ -6,15 +6,15 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getA(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): java.lang.String
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class Anno {
     // source: 'kt43459.kt'
 }
 
-@kotlin.annotation.Target
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[TYPE])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[TYPE_USE])
 @kotlin.Metadata
 public annotation class TypeAnno {
     // source: 'kt43459.kt'

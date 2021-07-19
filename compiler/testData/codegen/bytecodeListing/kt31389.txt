@@ -13,7 +13,7 @@ public final class Annotation$Companion {
     public final inner class Annotation$Companion
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class Annotation {
     // source: 'kt31389.kt'

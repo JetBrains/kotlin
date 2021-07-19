@@ -1,43 +1,43 @@
-@kotlin.annotation.Target
-@kotlin.annotation.Retention
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[CLASS, CONSTRUCTOR, FUNCTION, PROPERTY])
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
+@java.lang.annotation.Target(value=[TYPE, METHOD, CONSTRUCTOR])
 @kotlin.Metadata
 public annotation class A {
     // source: 'inlineClassWithManyKindsOfMembers.kt'
 }
 
-@kotlin.annotation.Target
-@kotlin.annotation.Retention
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[PROPERTY_GETTER])
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
+@java.lang.annotation.Target(value=[METHOD])
 @kotlin.Metadata
 public annotation class AGet {
     // source: 'inlineClassWithManyKindsOfMembers.kt'
 }
 
-@kotlin.annotation.Target
-@kotlin.annotation.Retention
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[VALUE_PARAMETER])
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
+@java.lang.annotation.Target(value=[PARAMETER])
 @kotlin.Metadata
 public annotation class AReceiver {
     // source: 'inlineClassWithManyKindsOfMembers.kt'
 }
 
-@kotlin.annotation.Target
-@kotlin.annotation.Retention
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[PROPERTY_SETTER])
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
+@java.lang.annotation.Target(value=[METHOD])
 @kotlin.Metadata
 public annotation class ASet {
     // source: 'inlineClassWithManyKindsOfMembers.kt'
 }
 
-@kotlin.annotation.Target
-@kotlin.annotation.Retention
-@java.lang.annotation.Retention
-@java.lang.annotation.Target
+@kotlin.annotation.Target(allowedTargets=[VALUE_PARAMETER])
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
+@java.lang.annotation.Target(value=[PARAMETER])
 @kotlin.Metadata
 public annotation class ASetParam {
     // source: 'inlineClassWithManyKindsOfMembers.kt'
