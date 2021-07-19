@@ -77,8 +77,8 @@ internal class DefaultLanguageSettingsBuilder(@Transient private val project: Pr
             return optInAnnotationsInUse
         }
 
-    override fun optInAnnotation(name: String) {
-        optInAnnotationsInUseImpl += name
+    override fun optIn(annotationName: String) {
+        optInAnnotationsInUseImpl += annotationName
     }
 
     override fun useExperimentalAnnotation(name: String) {
@@ -86,9 +86,9 @@ internal class DefaultLanguageSettingsBuilder(@Transient private val project: Pr
             project,
             "Kotlin language settings function",
             "useExperimentalAnnotation",
-            "optInAnnotation"
+            "optIn"
         )
-        optInAnnotation(name)
+        optIn(name)
     }
 
     /* A Kotlin task that is responsible for code analysis of the owner of this language settings builder. */

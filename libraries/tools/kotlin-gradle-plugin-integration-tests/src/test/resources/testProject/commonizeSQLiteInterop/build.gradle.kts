@@ -21,7 +21,7 @@ kotlin {
     targetBMain.dependsOn(nativeMain)
 
     sourceSets.all {
-        languageSettings.optInAnnotation("kotlin.RequiresOptIn")
+        languageSettings.optIn("kotlin.RequiresOptIn")
     }
 
     targetA.compilations.getByName("main").cinterops.create("sqlite")

@@ -71,7 +71,7 @@ kotlin {
     }
 
     sourceSets.all {
-        languageSettings.optInAnnotation("kotlin.RequiresOptIn")
+        languageSettings.optIn("kotlin.RequiresOptIn")
     }
 
     targets.withType<KotlinNativeTarget>().forEach { target ->

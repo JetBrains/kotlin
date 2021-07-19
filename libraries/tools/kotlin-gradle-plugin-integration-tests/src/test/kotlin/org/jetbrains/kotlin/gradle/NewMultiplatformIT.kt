@@ -730,8 +730,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                         // languageVersion = '1.3' // can't do this with Kotlin/Native 1.4+, done below for non-Native tasks
                         // apiVersion = '1.3' // can't do this with Kotlin/Native 1.4+, done below for non-Native tasks
                         enableLanguageFeature('InlineClasses')
-                        optInAnnotation('kotlin.ExperimentalUnsignedTypes')
-                        optInAnnotation('kotlin.contracts.ExperimentalContracts')
+                        optIn('kotlin.ExperimentalUnsignedTypes')
+                        optIn('kotlin.contracts.ExperimentalContracts')
                         progressiveMode = true
                     }
                     project.ext.set("kotlin.mpp.freeCompilerArgsForSourceSet.${'$'}name", ["-Xno-inline"])
@@ -824,7 +824,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         )
 
         testMonotonousCheck(
-            "languageSettings.optInAnnotation('kotlin.ExperimentalUnsignedTypes')",
+            "languageSettings.optIn('kotlin.ExperimentalUnsignedTypes')",
             "The dependent source set must use all opt-in annotations that its dependency uses."
         )
 
