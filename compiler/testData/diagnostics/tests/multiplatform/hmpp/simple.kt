@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// FIR_IDE_IGNORE
 /*
  * This test is used for general testing of how compiler diagnostics tests for HMPP projects works
  * Js backend is ignored because they use old test infrastructure which doesn't support HMPP
