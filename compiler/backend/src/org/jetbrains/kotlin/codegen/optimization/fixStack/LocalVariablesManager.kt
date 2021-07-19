@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import kotlin.math.max
 
 internal class LocalVariablesManager(val context: FixStackContext, val methodNode: MethodNode) {
@@ -39,7 +38,10 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
         methodNode.maxLocals = max(methodNode.maxLocals, newValue)
     }
 
-    fun allocateVariablesForSaveStackMarker(saveStackMarker: AbstractInsnNode, savedStackValues: List<BasicValue>): SavedStackDescriptor {
+    fun allocateVariablesForSaveStackMarker(
+        saveStackMarker: AbstractInsnNode,
+        savedStackValues: List<FixStackValue>
+    ): SavedStackDescriptor {
         val numRestoreStackMarkers = context.restoreStackMarkersForSaveMarker[saveStackMarker]!!.size
         return allocateNewHandle(numRestoreStackMarkers, saveStackMarker, savedStackValues)
     }
@@ -47,12 +49,8 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
     private fun allocateNewHandle(
         numRestoreStackMarkers: Int,
         saveStackMarker: AbstractInsnNode,
-        savedStackValues: List<BasicValue>
+        savedStackValues: List<FixStackValue>
     ): SavedStackDescriptor {
-        if (savedStackValues.any { it.type == null }) {
-            throw AssertionError("Uninitialized value on stack at ${methodNode.instructions.indexOf(saveStackMarker)}")
-        }
-
         val firstUnusedLocalVarIndex = getFirstUnusedLocalVariableIndex()
         val savedStackDescriptor = SavedStackDescriptor(savedStackValues, firstUnusedLocalVarIndex)
         updateMaxLocals(savedStackDescriptor.firstUnusedLocalVarIndex)
@@ -78,7 +76,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
 
     fun allocateVariablesForBeforeInlineMarker(
         beforeInlineMarker: AbstractInsnNode,
-        savedStackValues: List<BasicValue>
+        savedStackValues: List<FixStackValue>
     ): SavedStackDescriptor {
         return allocateNewHandle(1, beforeInlineMarker, savedStackValues)
     }
@@ -101,7 +99,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
         }
     }
 
-    fun createReturnValueVariable(returnValue: BasicValue): Int {
+    fun createReturnValueVariable(returnValue: FixStackValue): Int {
         val returnValueIndex = getFirstUnusedLocalVariableIndex()
         updateMaxLocals(returnValueIndex + returnValue.size)
         return returnValueIndex

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
 import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
 import org.jetbrains.kotlin.codegen.inline.isMarkedReturn
 import org.jetbrains.kotlin.codegen.optimization.common.FlexibleMethodAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -30,7 +29,6 @@ import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import kotlin.math.max
@@ -50,9 +48,14 @@ internal class FixStackAnalyzer(
 
     val maxExtraStackSize: Int get() = analyzer.maxExtraStackSize
 
-    fun getStackToSpill(location: AbstractInsnNode) = analyzer.spilledStacks[location]
-    fun getActualStack(location: AbstractInsnNode) = getFrame(location)?.getStackContent()
-    fun getActualStackSize(location: AbstractInsnNode) = getFrame(location)?.stackSizeWithExtra ?: DEAD_CODE_STACK_SIZE
+    fun getStackToSpill(location: AbstractInsnNode): List<FixStackValue>? =
+        analyzer.spilledStacks[location]
+
+    fun getActualStack(location: AbstractInsnNode): List<FixStackValue>? =
+        getFrame(location)?.getStackContent()
+
+    fun getActualStackSize(location: AbstractInsnNode): Int =
+        getFrame(location)?.stackSizeWithExtra ?: DEAD_CODE_STACK_SIZE
 
     fun getExpectedStackSize(location: AbstractInsnNode): Int {
         // We should look for expected stack size at loop entry point markers if available,
@@ -90,9 +93,9 @@ internal class FixStackAnalyzer(
     private val analyzer = InternalAnalyzer(owner)
 
     private inner class InternalAnalyzer(owner: String) :
-        FlexibleMethodAnalyzer<BasicValue>(owner, method, OptimizationBasicInterpreter()) {
+        FlexibleMethodAnalyzer<FixStackValue>(owner, method, FixStackInterpreter()) {
 
-        val spilledStacks = hashMapOf<AbstractInsnNode, List<BasicValue>>()
+        val spilledStacks = hashMapOf<AbstractInsnNode, List<FixStackValue>>()
         var maxExtraStackSize = 0; private set
 
         override fun visitControlFlowEdge(insn: Int, successor: Int): Boolean {
@@ -101,15 +104,15 @@ internal class FixStackAnalyzer(
             return !(insnNode is JumpInsnNode && context.breakContinueGotoNodes.contains(insnNode))
         }
 
-        override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> =
+        override fun newFrame(nLocals: Int, nStack: Int): Frame<FixStackValue> =
             FixStackFrame(nLocals, nStack)
 
         private fun indexOf(node: AbstractInsnNode) = method.instructions.indexOf(node)
 
-        inner class FixStackFrame(nLocals: Int, nStack: Int) : Frame<BasicValue>(nLocals, nStack) {
-            val extraStack = Stack<BasicValue>()
+        inner class FixStackFrame(nLocals: Int, nStack: Int) : Frame<FixStackValue>(nLocals, nStack) {
+            val extraStack = Stack<FixStackValue>()
 
-            override fun init(src: Frame<out BasicValue>): Frame<BasicValue> {
+            override fun init(src: Frame<out FixStackValue>): Frame<FixStackValue> {
                 extraStack.clear()
                 extraStack.addAll((src as FixStackFrame).extraStack)
                 return super.init(src)
@@ -120,7 +123,7 @@ internal class FixStackAnalyzer(
                 super.clearStack()
             }
 
-            override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<BasicValue>) {
+            override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<FixStackValue>) {
                 when {
                     PseudoInsn.SAVE_STACK_BEFORE_TRY.isa(insn) ->
                         executeSaveStackBeforeTry(insn)
@@ -141,14 +144,14 @@ internal class FixStackAnalyzer(
 
             val stackSizeWithExtra: Int get() = super.getStackSize() + extraStack.size
 
-            fun getStackContent(): List<BasicValue> {
-                val savedStack = arrayListOf<BasicValue>()
+            fun getStackContent(): List<FixStackValue> {
+                val savedStack = ArrayList<FixStackValue>()
                 IntRange(0, super.getStackSize() - 1).mapTo(savedStack) { super.getStack(it) }
                 savedStack.addAll(extraStack)
                 return savedStack
             }
 
-            override fun push(value: BasicValue) {
+            override fun push(value: FixStackValue?) {
                 if (super.getStackSize() < maxStackSize) {
                     super.push(value)
                 } else {
@@ -157,19 +160,18 @@ internal class FixStackAnalyzer(
                 }
             }
 
-            fun pushAll(values: Collection<BasicValue>) {
+            fun pushAll(values: Collection<FixStackValue>) {
                 values.forEach { push(it) }
             }
 
-            override fun pop(): BasicValue {
-                return if (extraStack.isNotEmpty()) {
+            override fun pop(): FixStackValue? =
+                if (extraStack.isNotEmpty()) {
                     extraStack.pop()
                 } else {
                     super.pop()
                 }
-            }
 
-            override fun setStack(i: Int, value: BasicValue) {
+            override fun setStack(i: Int, value: FixStackValue) {
                 if (i < super.getMaxStackSize()) {
                     super.setStack(i, value)
                 } else {
@@ -177,7 +179,7 @@ internal class FixStackAnalyzer(
                 }
             }
 
-            override fun merge(frame: Frame<out BasicValue>, interpreter: Interpreter<BasicValue>): Boolean {
+            override fun merge(frame: Frame<out FixStackValue>, interpreter: Interpreter<FixStackValue>): Boolean {
                 val other = frame as FixStackFrame
                 if (stackSizeWithExtra != other.stackSizeWithExtra) {
                     throw AnalyzerException(null, "Incompatible stack heights")
