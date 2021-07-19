@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.getGetterWithGreaterVisibility
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
@@ -136,7 +137,9 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         overrideCandidate: FirCallableMemberDeclaration,
         baseDeclaration: FirProperty
     ): Boolean {
-        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
+        val realVisibility = baseDeclaration.getGetterWithGreaterVisibility()?.visibility ?: baseDeclaration.visibility
+
+        if (Visibilities.isPrivate(realVisibility)) return false
 
         if (overrideCandidate !is FirProperty) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false

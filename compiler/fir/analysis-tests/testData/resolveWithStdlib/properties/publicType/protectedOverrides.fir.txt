@@ -4,7 +4,7 @@ FILE: protectedOverrides.kt
             super<R|kotlin/Any|>()
         }
 
-        private final var items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+        private open var items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
             protected get(): R|kotlin/collections/List<kotlin/String>|
             private set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
 
@@ -29,9 +29,9 @@ FILE: protectedOverrides.kt
         private final val realItems: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
             private get(): R|kotlin/collections/List<kotlin/String>|
 
-        public final override var items: R|kotlin/collections/List<kotlin/String>| = this@R|/B|.R|/B.realItems|
-            public get(): R|kotlin/collections/List<kotlin/String>|
-            public set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+        private final override var items: R|kotlin/collections/List<kotlin/String>| = this@R|/B|.R|/B.realItems|
+            private get(): R|kotlin/collections/List<kotlin/String>|
+            private set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
 
         public final override fun toString(): R|kotlin/String| {
             ^toString <strcat>(String(Items: ), this@R|/B|.R|/B.items|, String(, Real Items: ), this@R|/B|.R|/B.realItems|)
@@ -50,11 +50,11 @@ FILE: protectedOverrides.kt
             private get(): R|kotlin/collections/List<kotlin/String>|
             private set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
 
-        public final override var items: R|kotlin/collections/List<kotlin/String>|
-            public get(): R|kotlin/collections/List<kotlin/String>| {
+        private final override var items: R|kotlin/collections/List<kotlin/String>|
+            private get(): R|kotlin/collections/List<kotlin/String>| {
                 ^ this@R|/C|.R|/C.itemsSource|
             }
-            public set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+            private set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
                 this@R|/C|.R|/C.itemsSink| = R|<local>/value|
             }
 
@@ -85,9 +85,9 @@ FILE: protectedOverrides.kt
         private final val realItems: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
             private get(): R|kotlin/collections/List<kotlin/String>|
 
-        public final override var items: R|kotlin/collections/List<kotlin/String>| = this@R|/E|.R|/E.realItems|
-            public get(): R|kotlin/collections/List<kotlin/String>|
-            public set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+        protected final override var items: R|kotlin/collections/List<kotlin/String>| = this@R|/E|.R|/E.realItems|
+            protected get(): R|kotlin/collections/List<kotlin/String>|
+            protected set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
 
         public final override fun toString(): R|kotlin/String| {
             ^toString <strcat>(String(Items: ), this@R|/E|.R|/E.items|, String(, Real Items: ), this@R|/E|.R|/E.realItems|)
@@ -96,6 +96,27 @@ FILE: protectedOverrides.kt
         public final fun add(item: R|kotlin/String|): R|kotlin/Unit| {
             this@R|/E|.R|/E.items|.<Unresolved name: add>#(R|<local>/item|)
         }
+
+    }
+    public final class F : R|A| {
+        public constructor(): R|F| {
+            super<R|A|>()
+        }
+
+        private final val itemsSource: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(A), String(B), String(C)))
+            private get(): R|kotlin/collections/List<kotlin/String>|
+
+        private final var itemsSink: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/List<kotlin/String>|
+            private set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+
+        protected final override var items: R|kotlin/collections/List<kotlin/String>|
+            protected get(): R|kotlin/collections/List<kotlin/String>| {
+                ^ this@R|/F|.R|/F.itemsSource|
+            }
+            protected set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+                this@R|/F|.R|/F.itemsSink| = R|<local>/value|
+            }
 
     }
     public final fun main(): R|kotlin/Unit| {

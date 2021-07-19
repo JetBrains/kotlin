@@ -1,0 +1,50 @@
+FILE: abstractOverrides.kt
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val tags1: R|kotlin/collections/List<kotlin/String>|
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+        private abstract val tags2: R|kotlin/collections/List<kotlin/String>|
+            public get(): R|kotlin/collections/Collection<kotlin/String>|
+
+        protected abstract val tags3: R|kotlin/collections/List<kotlin/String>|
+            public get(): R|kotlin/collections/Collection<kotlin/String>|
+
+        private abstract val tags4: R|kotlin/collections/List<kotlin/String>|
+            protected get(): R|kotlin/collections/Collection<kotlin/String>|
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        private open override val tags1: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+        protected open override val tags2: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(c), String(d)))
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+        public open override val tags3: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(e), String(f)))
+            public get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        protected open override val tags4: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(g), String(h)))
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+    }
+    public final class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+        public final fun fill(): R|kotlin/Unit| {
+            this@R|/C|.R|special/accessor|.<Unresolved name: add>#(String([x]))
+            this@R|/C|.R|/B.tags2|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String([x]))
+            this@R|/C|.R|/B.tags3|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String([y]))
+            this@R|/C|.R|/B.tags4|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String([z]))
+        }
+
+    }

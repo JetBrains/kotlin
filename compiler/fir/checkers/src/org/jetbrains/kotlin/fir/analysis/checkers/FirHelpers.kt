@@ -20,11 +20,8 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
@@ -421,11 +418,12 @@ private fun isSubtypeOfForFunctionalTypeReturningUnit(
 
 fun FirCallableMemberDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
     val classPackage = parentClass.symbol.classId.packageFqName
-    if (visibility == Visibilities.Private ||
-        !visibility.visibleFromPackage(classPackage, symbol.callableId.packageName)
+    val realVisibility = getGetterWithGreaterVisibility()?.visibility ?: visibility
+    if (realVisibility == Visibilities.Private ||
+        !realVisibility.visibleFromPackage(classPackage, symbol.callableId.packageName)
     ) return false
     if (
-        visibility == Visibilities.Internal &&
+        realVisibility == Visibilities.Internal &&
         (moduleData != parentClass.moduleData || parentClass.moduleData in moduleData.friendDependencies)
     ) return false
     return true

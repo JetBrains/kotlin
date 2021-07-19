@@ -39,6 +39,12 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
         @TestDataPath("$PROJECT_ROOT")
         public class PublicType {
             @Test
+            @TestMetadata("abstractExposingGetters.kt")
+            public void testAbstractExposingGetters() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/codegen/box/properties/publicType/abstractExposingGetters.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInPublicType() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/box/properties/publicType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }

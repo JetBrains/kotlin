@@ -5,9 +5,9 @@ open class A {
 
   }
 
-  private val number: Int
+  private open val number: Int
     field = 4
-    get(): Number {
+    open get(): Number {
       return <this>.#number
     }
 
@@ -47,9 +47,12 @@ class D : A {
 
   }
 
-  val number: Int
+  private val number: Int
     field = 10
-    get(): Int
+    get(): Number {
+      return <this>.#number
+    }
+
   val count: Int
     field = 1
     get

@@ -8,12 +8,10 @@ open class A {
     open protected var p3 = 10
         public get(): Any
 
-    // TODO: must be open private
-    private var p4 = 10
+    private open var p4 = 10
         public get(): Number
 
-    // TODO: must be open private
-    private var p5 = 10
+    private open var p5 = 10
         public get(): Number
 }
 
@@ -31,6 +29,7 @@ class B : A() {
     protected override var p4 = 10
         public get(): Number
 
+    // p5 inheirts its private visibility
     override var p5 = 20
-        public get(): <!REDUNDANT_GETTER_TYPE_CHANGE!>Number<!>
+        public get(): Number
 }

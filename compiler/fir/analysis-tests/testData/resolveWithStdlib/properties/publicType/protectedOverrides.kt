@@ -1,8 +1,5 @@
 open class A {
-    // TODO: this should in fact be:
-    // `open private`
-    // but now it reports an error
-    private var items = mutableListOf<String>()
+    private open var items = mutableListOf<String>()
         protected get(): List<String>
 
     fun put(item: String) {
@@ -19,7 +16,7 @@ open class A {
 class B : A() {
     private val realItems = listOf<String>()
 
-    override var items = realItems
+    <!INCOMPLETE_PROPERTY_OVERRIDE!>override var <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>items<!> = realItems<!>
 
     override fun toString() = "Items: $items, Real Items: $realItems"
 }
@@ -28,11 +25,11 @@ class C: A() {
     private val itemsSource = listOf("A", "B", "C")
     private var itemsSink = listOf<String>()
 
-    override var items
+    <!INCOMPLETE_PROPERTY_OVERRIDE!>override var <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>items<!>
         get() = itemsSource
         set(value) {
             itemsSink = value
-        }
+        }<!>
 
     override fun toString() = "Items: $items, Source: $itemsSource, Sink: $itemsSink"
 }
@@ -48,13 +45,24 @@ class D : A() {
 class E : A() {
     private val realItems = listOf<String>()
 
-    override var items = realItems
+    protected override var <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>items<!> = realItems
 
     override fun toString() = "Items: $items, Real Items: $realItems"
 
     fun add(item: String) {
         items.<!UNRESOLVED_REFERENCE!>add<!>(item)
     }
+}
+
+class F : A() {
+    private val itemsSource = listOf("A", "B", "C")
+    private var itemsSink = listOf<String>()
+
+    protected override var <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>items<!>
+        get() = itemsSource
+        set(value) {
+            itemsSink = value
+        }
 }
 
 fun main() {

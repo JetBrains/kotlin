@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.getGetterWithGreaterVisibility
+import org.jetbrains.kotlin.fir.resolve.hasGetterWithGreaterVisibility
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -256,7 +257,23 @@ object FirOverrideChecker : FirClassChecker() {
             return null
         }
 
-        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it.fir).coneType.upperBoundIfFlexible() }
+        val isVar = this is FirProperty && this.isVar
+        val bounds = if (isVar || hasGetterWithGreaterVisibility()) {
+            // We should check the property's own type against parent
+            // properties' own types, and their exposing getters will
+            // be checked by `checkPermissiveGetter()`.
+            // For a var we must require the properties' own types
+            // match exactly to support setters.
+            overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it.fir).coneType.upperBoundIfFlexible() }
+        } else {
+            // We are working with a usual property, so its
+            // type must be consistent either with the parent property's
+            // own type or its exposing getter if present.
+            overriddenSymbols.map {
+                val typeHolder = it.fir.getGetterWithGreaterVisibility() ?: it.fir
+                context.returnTypeCalculator.tryCalculateReturnType(typeHolder).coneType.upperBoundIfFlexible()
+            }
+        }
 
         for (it in bounds.indices) {
             val overriddenDeclaration = overriddenSymbols[it].fir

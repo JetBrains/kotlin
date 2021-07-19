@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 open class A {
-    /*open*/ private val number = 4
+    private open val number = 4
         public get(): Number
 }
 
@@ -13,9 +13,6 @@ class C : A() {
 }
 
 class D : A() {
-    // the compiler thinks this is a
-    // public override, so REDUNDANT_GETTER_TYPE_CHANGE
-    // will be reported here
     override val number = 10
         public get(): Number
 

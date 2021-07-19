@@ -5434,6 +5434,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             @TestDataPath("$PROJECT_ROOT")
             public class PublicType {
                 @Test
+                @TestMetadata("abstractOverrides.kt")
+                public void testAbstractOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/abstractOverrides.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInPublicType() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
                 }

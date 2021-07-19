@@ -5,15 +5,15 @@ FILE fqName:<root> fileName:/privateNumberWithOverride.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:number visibility:private modality:FINAL [val]
+    PROPERTY name:number visibility:private modality:OPEN [val]
       FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=4
-      FUN name:<get-number> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Number
-        correspondingProperty: PROPERTY name:number visibility:private modality:FINAL [val]
+      FUN name:<get-number> visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Number
+        correspondingProperty: PROPERTY name:number visibility:private modality:OPEN [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-number> (): kotlin.Number declared in <root>.A'
+          RETURN type=kotlin.Nothing from='public open fun <get-number> (): kotlin.Number declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-number>' type=<root>.A origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -91,13 +91,17 @@ FILE fqName:<root> fileName:/privateNumberWithOverride.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.A]'
-    PROPERTY name:number visibility:public modality:FINAL [val]
+    PROPERTY name:number visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=10
-      FUN name:<get-number> visibility:public modality:FINAL <> ($this:<root>.D) returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:number visibility:public modality:FINAL [val]
+      FUN name:<get-number> visibility:public modality:FINAL <> ($this:<root>.D) returnType:kotlin.Number
+        correspondingProperty: PROPERTY name:number visibility:private modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.D
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-number> (): kotlin.Number declared in <root>.D'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.D declared in <root>.D.<get-number>' type=<root>.D origin=null
     PROPERTY name:count visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:count type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
