@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeProjection
@@ -382,6 +383,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeParameter: KtTypeParameterSymbol
         abstract val type: KtClassLikeSymbol
         abstract val bounds: List<KtType>
+    }
+
+    abstract class AmbiguousSuper : KtFirDiagnostic<KtSuperExpression>() {
+        override val diagnosticClass get() = AmbiguousSuper::class
     }
 
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {

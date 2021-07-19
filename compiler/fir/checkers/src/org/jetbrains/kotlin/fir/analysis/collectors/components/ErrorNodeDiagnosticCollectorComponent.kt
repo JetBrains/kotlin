@@ -79,7 +79,10 @@ class ErrorNodeDiagnosticCollectorComponent(
     private fun FirExpression?.cannotBeResolved(): Boolean {
         return when (val diagnostic = (this?.typeRef as? FirErrorTypeRef)?.diagnostic) {
             is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall -> true
-            is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype || diagnostic.kind == DiagnosticKind.SuperNotAvailable || diagnostic.kind == DiagnosticKind.UnresolvedLabel
+            is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype ||
+                    diagnostic.kind == DiagnosticKind.SuperNotAvailable ||
+                    diagnostic.kind == DiagnosticKind.UnresolvedLabel ||
+                    diagnostic.kind == DiagnosticKind.AmbiguousSuper
             else -> false
         }
     }
