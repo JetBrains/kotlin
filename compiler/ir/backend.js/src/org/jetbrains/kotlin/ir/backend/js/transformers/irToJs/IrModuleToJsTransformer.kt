@@ -41,6 +41,7 @@ class IrModuleToJsTransformer(
     private val multiModule: Boolean = false,
     private val relativeRequirePath: Boolean = false,
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
+    private val removeUnusedAssociatedObjects: Boolean = true,
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
@@ -69,7 +70,7 @@ class IrModuleToJsTransformer(
         val jsCode = if (fullJs) generateWrappedModuleBody(modules, exportedModule, namer) else null
 
         val dceJsCode = if (dceJs) {
-            eliminateDeadDeclarations(modules, backendContext)
+            eliminateDeadDeclarations(modules, backendContext, removeUnusedAssociatedObjects)
             // Use a fresh namer for DCE so that we could compare the result with DCE-driven
             // TODO: is this mode relevant for scripting? If yes, refactor so that the external name tables are used here when needed.
             val namer = NameTables(emptyList(), context = backendContext)
