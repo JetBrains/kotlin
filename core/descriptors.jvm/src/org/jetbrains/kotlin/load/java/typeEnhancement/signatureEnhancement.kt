@@ -398,6 +398,14 @@ class SignatureEnhancement(
                     }
 
             val boundsFromTypeParameterForArgument = typeParameterForArgument?.boundsNullability() ?: return result
+
+            if (defaultTypeQualifier == null && result == null && boundsFromTypeParameterForArgument.qualifier == NullabilityQualifier.NULLABLE) {
+                return NullabilityQualifierWithMigrationStatus(
+                    NullabilityQualifier.FORCE_FLEXIBILITY,
+                    boundsFromTypeParameterForArgument.isForWarningOnly
+                )
+            }
+
             if (result == null) return boundsFromTypeParameterForArgument
 
             return mostSpecific(boundsFromTypeParameterForArgument, result)

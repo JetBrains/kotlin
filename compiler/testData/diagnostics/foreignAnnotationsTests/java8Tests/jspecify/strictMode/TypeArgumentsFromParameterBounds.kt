@@ -42,10 +42,8 @@ fun main(
     // jspecify_nullness_mismatch
     a.bar(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
 
-    // jspecify_nullness_mismatch
-    b.bar(<!TYPE_MISMATCH!>aNotNullNotNullNotNull<!>)
-    // jspecify_nullness_mismatch
-    b.bar(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    b.bar(aNotNullNotNullNotNull)
+    b.bar(aNotNullNotNullNull)
     b.bar(aNotNullNullNotNull)
     b.bar(aNotNullNullNull)
 }
