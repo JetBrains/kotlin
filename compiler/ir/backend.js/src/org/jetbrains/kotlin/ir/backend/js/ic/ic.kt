@@ -193,6 +193,7 @@ fun icCompile(
         multiModule = multiModule,
         relativeRequirePath = relativeRequirePath,
         moduleToName = moduleToName,
+        removeUnusedAssociatedObjects = false,
     )
 
     irFactory.stageController = object : StageController(999) {}

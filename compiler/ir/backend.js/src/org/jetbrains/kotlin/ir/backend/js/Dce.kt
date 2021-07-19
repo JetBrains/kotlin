@@ -29,18 +29,20 @@ import java.util.*
 
 fun eliminateDeadDeclarations(
     modules: Iterable<IrModuleFragment>,
-    context: JsIrBackendContext
+    context: JsIrBackendContext,
+    removeUnusedAssociatedObjects: Boolean = true,
 ) {
 
     val allRoots = context.irFactory.stageController.withInitialIr { buildRoots(modules, context) }
 
-    val usefulDeclarations = usefulDeclarations(allRoots, context)
+    val usefulDeclarations = usefulDeclarations(allRoots, context, removeUnusedAssociatedObjects)
 
     context.irFactory.stageController.unrestrictDeclarationListsAccess {
         processUselessDeclarations(
             modules,
             usefulDeclarations,
-            context
+            context,
+            removeUnusedAssociatedObjects,
         )
     }
 }
@@ -111,7 +113,8 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
 private fun processUselessDeclarations(
     modules: Iterable<IrModuleFragment>,
     usefulDeclarations: Set<IrDeclaration>,
-    context: JsIrBackendContext
+    context: JsIrBackendContext,
+    removeUnusedAssociatedObjects: Boolean,
 ) {
     modules.forEach { module ->
         module.files.forEach {
@@ -136,7 +139,7 @@ private fun processUselessDeclarations(
                     // Remove annotations for `findAssociatedObject` feature, which reference objects eliminated by the DCE.
                     // Otherwise `JsClassGenerator.generateAssociatedKeyProperties` will try to reference the object factory (which is removed).
                     // That will result in an error from the Namer. It cannot generate a name for an absent declaration.
-                    if (declaration.annotations.any { !it.shouldKeepAnnotation() }) {
+                    if (removeUnusedAssociatedObjects && declaration.annotations.any { !it.shouldKeepAnnotation() }) {
                         declaration.annotations = declaration.annotations.filter { it.shouldKeepAnnotation() }
                     }
                 }
@@ -216,7 +219,11 @@ private fun IrField.isKotlinPackage() =
     fqNameWhenAvailable?.asString()?.startsWith("kotlin") == true
 
 // TODO refactor it, the function became too big. Please contact me (Zalim) before doing it.
-fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendContext): Set<IrDeclaration> {
+fun usefulDeclarations(
+    roots: Iterable<IrDeclaration>,
+    context: JsIrBackendContext,
+    removeUnusedAssociatedObjects: Boolean,
+): Set<IrDeclaration> {
     val printReachabilityInfo =
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.js.ir.dce.print.reachability.info")
@@ -479,11 +486,11 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
         // Handle objects, constructed via `findAssociatedObject` annotation
         referencedJsClassesFromExpressions += constructedClasses.filterDescendantsOf(referencedJsClassesFromExpressions) // Grow the set of possible results of instance::class expression
         for (klass in classesWithObjectAssociations) {
-            if (klass !in referencedJsClasses && klass !in referencedJsClassesFromExpressions) continue
+            if (removeUnusedAssociatedObjects && klass !in referencedJsClasses && klass !in referencedJsClassesFromExpressions) continue
 
             for (annotation in klass.annotations) {
                 val annotationClass = annotation.symbol.owner.constructedClass
-                if (annotationClass !in referencedJsClasses) continue
+                if (removeUnusedAssociatedObjects && annotationClass !in referencedJsClasses) continue
 
                 annotation.associatedObject()?.let { obj ->
                     context.mapping.objectToGetInstanceFunction[obj]?.enqueue(klass, "associated object factory")
