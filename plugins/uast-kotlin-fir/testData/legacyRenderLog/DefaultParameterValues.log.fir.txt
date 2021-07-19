@@ -1,8 +1,0 @@
-UFile (package = )
-    UClass (name = DefaultParameterValuesKt)
-        UMethod (name = foo)
-            UParameter (name = a)
-                ULiteralExpression (value = 1)
-            UParameter (name = foo)
-                ULiteralExpression (value = null)
-            UBlockExpression

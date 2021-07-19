@@ -1,6 +1,0 @@
-// "Convert member to extension" "true"
-
-expect class Foo {
-}
-
-expect val Foo.foo: Int

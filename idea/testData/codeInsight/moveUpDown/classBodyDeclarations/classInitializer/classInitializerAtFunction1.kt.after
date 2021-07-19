@@ -1,9 +1,0 @@
-// MOVE: down
-class A {
-    fun foo() {
-
-    }
-    <caret>init {
-
-    }
-}

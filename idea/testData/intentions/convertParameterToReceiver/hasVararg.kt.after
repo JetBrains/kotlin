@@ -1,7 +1,0 @@
-interface A {
-    fun String.foo(vararg args: Any)
-}
-class B : A {
-    override fun String.foo(vararg args: Any) {
-    }
-}

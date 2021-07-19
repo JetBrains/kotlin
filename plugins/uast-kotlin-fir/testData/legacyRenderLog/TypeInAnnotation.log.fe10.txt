@@ -1,5 +1,0 @@
-UFile (package = )
-    UClass (name = C)
-        UMethod (name = foo)
-            UBlockExpression
-        UMethod (name = C)

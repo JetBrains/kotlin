@@ -1,9 +1,0 @@
-class B extends A {
-    void bar() {
-        System.out.println(getFoo());
-    }
-
-    private String getFoo() {
-        return "foo";
-    }
-}

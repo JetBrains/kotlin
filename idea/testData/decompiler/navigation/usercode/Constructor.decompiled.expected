@@ -1,3 +1,0 @@
-ClassWithConstructor.class
-public final class <1><3>ClassWithConstructor public <2>constructor(a: kotlin.String, b: kotlin.Any) {
-    public <4>constructor(a: kotlin.String) { /* compiled code */ }

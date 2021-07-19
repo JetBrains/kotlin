@@ -1,7 +1,0 @@
-// REPL_MODE: true
-
-val (foo, bar) = 1 to "2"
-foo                          // RESULT: res1: kotlin.Int = 1
-bar                          // RESULT: res2: kotlin.String = 2
-val (_, baz) = 3 to "4"
-baz                          // RESULT: res4: kotlin.String = 4

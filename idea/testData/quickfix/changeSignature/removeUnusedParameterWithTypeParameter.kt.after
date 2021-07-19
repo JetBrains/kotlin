@@ -1,6 +1,0 @@
-// "Remove parameter 'x'" "true"
-fun foo(<caret>) {}
-
-fun test() {
-    foo()
-}

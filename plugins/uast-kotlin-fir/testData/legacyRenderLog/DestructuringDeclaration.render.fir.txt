@@ -1,6 +1,0 @@
-public final class DestructuringDeclarationKt {
-    public static final fun foo(data: java.lang.Object) : void {
-        [!] UnknownKotlinExpression (DESTRUCTURING_DECLARATION)
-        [!] UnknownKotlinExpression (DESTRUCTURING_DECLARATION)
-    }
-}

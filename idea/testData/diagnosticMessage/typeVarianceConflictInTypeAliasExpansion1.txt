@@ -1,2 +1,0 @@
-<!-- typeVarianceConflictInTypeAliasExpansion1 -->
-Type parameter S is declared as 'out' but occurs in 'invariant' position in abbreviated type AInvOutTT<S> /* = InvOut<S, S> */

@@ -1,5 +1,0 @@
-class Bar {
-    {
-        Foo.foo();
-    }
-}

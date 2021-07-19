@@ -1,3 +1,0 @@
-package TestData
-
-class TestSample() {}

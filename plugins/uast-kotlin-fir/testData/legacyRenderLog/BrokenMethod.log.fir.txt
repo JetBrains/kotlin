@@ -1,6 +1,0 @@
-UFile (package = )
-    UClass (name = BrokenMethodKt)
-        UMethod (name = main)
-            UParameter (name = args)
-            UBlockExpression
-                [!] UnknownKotlinExpression (CLASS)

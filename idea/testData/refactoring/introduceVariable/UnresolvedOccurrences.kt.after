@@ -1,8 +1,0 @@
-fun a() {
-    val foo = Foo()
-    val x = foo
-    println(foo)
-    println(Foo)
-    println(Foo(1))
-    println(1.Foo())
-}

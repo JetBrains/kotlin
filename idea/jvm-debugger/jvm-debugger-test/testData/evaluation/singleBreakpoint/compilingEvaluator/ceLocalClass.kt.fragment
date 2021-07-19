@@ -1,8 +1,0 @@
-class MyClass {
-    fun test() = 2
-}
-
-val a = MyClass()
-a.test()
-
-// RESULT: 2: I

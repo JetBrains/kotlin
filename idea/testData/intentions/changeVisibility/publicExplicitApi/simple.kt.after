@@ -1,4 +1,0 @@
-// COMPILER_ARGUMENTS: -Xexplicit-api=strict
-public class C {
-    public fun foo(){}
-}

@@ -1,3 +1,0 @@
-[NotNull Values]
-5 	<bold>val x</bold> = f() (in test())
-5 		<bold>val x</bold> = f() (in test())

@@ -1,4 +1,0 @@
-Class test.Bar, referenced in field J.bar, will not be accessible from module A
-Class test.Foo, referenced in field J.foo, will not be accessible from module A
-Class test.J, referenced in property Bar.j, will not be accessible in module B
-Class test.J, referenced in property Foo.j, will not be accessible in module B

@@ -1,5 +1,0 @@
-package q
-
-fun bar() {
-
-}

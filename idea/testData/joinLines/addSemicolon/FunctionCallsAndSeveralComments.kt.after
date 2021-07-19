@@ -1,3 +1,0 @@
-fun foo() {
-    /*0*/println(); /*1*/ /*2*/<caret> println()  // 4
-}

@@ -1,6 +1,0 @@
-public final class StringTemplateWithVarKt {
-    @org.jetbrains.annotations.NotNull private static final var bar: java.lang.String = "bar"
-    @org.jetbrains.annotations.NotNull private static final var f: java.lang.String = "foo" + bar
-    public static final fun getBar() : java.lang.String = UastEmptyExpression
-    public static final fun getF() : java.lang.String = UastEmptyExpression
-}

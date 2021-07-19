@@ -1,6 +1,0 @@
-fun some() {
-    String()
-}
-
-// ELEMENT: String
-// TAIL_TEXT: "(bytes: ByteArray) (kotlin.text)"

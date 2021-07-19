@@ -1,6 +1,0 @@
-fun g(p: Int): Boolean = TODO()
-
-fun main(args: Array<String>) {
-    println(1)
-    g(1)
-}

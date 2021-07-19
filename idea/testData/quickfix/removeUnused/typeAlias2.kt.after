@@ -1,7 +1,0 @@
-// "Safe delete 'Other'" "true"
-
-enum class MyEnum {
-    HELLO,
-    WORLD
-}
-

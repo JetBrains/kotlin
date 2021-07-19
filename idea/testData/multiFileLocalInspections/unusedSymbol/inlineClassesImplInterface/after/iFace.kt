@@ -1,3 +1,0 @@
-interface IFace {
-    fun foo()
-}

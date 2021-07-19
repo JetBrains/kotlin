@@ -1,6 +1,0 @@
-fun <T> buildList(size: Int) = listOf<T>()
-
-fun f() {
-    buildList<String>(size = 5)
-}
-

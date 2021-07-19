@@ -1,7 +1,0 @@
-UFile (package = )
-    UClass (name = PropertyDelegateKt)
-        UMethod (name = getSdCardPath)
-        UMethod (name = localPropertyTest)
-            UBlockExpression
-                [!] UnknownKotlinExpression (PROPERTY)
-        UMethod (name = getAnnotatedDelegate)

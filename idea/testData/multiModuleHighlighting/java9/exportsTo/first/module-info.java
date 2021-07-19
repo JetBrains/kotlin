@@ -1,3 +1,0 @@
-module first {
-    requires dependency;
-}

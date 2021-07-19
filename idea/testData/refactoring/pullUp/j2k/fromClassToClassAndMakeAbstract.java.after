@@ -1,7 +1,0 @@
-abstract class B extends A {
-    // INFO: {"checked": "true", "toAbstract": "true"}
-    @Override
-    boolean foo(int n) {
-        return n > 0;
-    }
-}

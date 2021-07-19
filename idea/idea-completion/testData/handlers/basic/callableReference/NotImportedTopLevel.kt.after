@@ -1,6 +1,0 @@
-import kotlin.concurrent.timerTask
-
-val v = ::timerTask<caret>
-
-// INVOCATION_COUNT: 2
-// ELEMENT: timerTask

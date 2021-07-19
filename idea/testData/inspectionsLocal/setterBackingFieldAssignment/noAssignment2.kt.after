@@ -1,9 +1,0 @@
-class Test {
-    var foo: Int = 1
-        set(value) {
-            bar(field)
-            field = value
-        }
-
-    fun bar(i: Int) {}
-}

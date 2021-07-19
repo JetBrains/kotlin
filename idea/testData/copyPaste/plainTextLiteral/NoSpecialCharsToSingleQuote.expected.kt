@@ -1,1 +1,0 @@
-val fo ="some plain string"

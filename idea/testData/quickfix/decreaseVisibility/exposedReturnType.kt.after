@@ -1,8 +1,0 @@
-// "Make 'bar' private" "true"
-// ACTION: Make 'Data' internal
-
-private data class Data(val x: Int)
-
-class First {
-    private fun bar(x: Int) = Data(x)
-}

@@ -1,8 +1,0 @@
-// "Change to var" "true"
-class A(var a: Int) {
-    fun foo() {
-        a = 5
-    }
-}
-
-/* IGNORE_FIR */

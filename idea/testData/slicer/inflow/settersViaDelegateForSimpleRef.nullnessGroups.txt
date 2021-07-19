@@ -1,3 +1,0 @@
-[NotNull Values]
-22 	println("Now my name is '$<bold>name</bold>'") (in AClass.uses())
-22 		println("Now my name is '$<bold>name</bold>'") (in AClass.uses())

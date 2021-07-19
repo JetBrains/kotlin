@@ -1,7 +1,0 @@
-fun test(b: Boolean): Int {
-    if (b) {
-        throw AssertionError()
-    } else {
-        return 1
-    }
-}

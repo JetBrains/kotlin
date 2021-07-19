@@ -1,4 +1,0 @@
-MODULE common { platform=[JVM, JS, Native]; root=common }
-MODULE jvm { platform=[JVM]; root=jvm }
-
-jvm -> common { kind=DEPENDS_ON }

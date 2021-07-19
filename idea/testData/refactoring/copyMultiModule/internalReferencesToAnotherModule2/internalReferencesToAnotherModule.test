@@ -1,4 +1,0 @@
-{
-  "mainFile": "A/src/foo/test.kt",
-  "targetDirectory": "B/src/bar"
-}

@@ -1,3 +1,0 @@
-final class A {
-
-}

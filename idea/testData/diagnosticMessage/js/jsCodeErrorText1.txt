@@ -1,4 +1,0 @@
-<!-- jsCodeErrorText1 -->
-JavaScript: missing variable name in code:
-var      = 10;
-   ^^^^^^^^   

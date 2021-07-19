@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-fun test(s: String) {
-    println(1)
-    println(2)
-}

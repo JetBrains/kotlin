@@ -1,1 +1,0 @@
-class X private constructor()

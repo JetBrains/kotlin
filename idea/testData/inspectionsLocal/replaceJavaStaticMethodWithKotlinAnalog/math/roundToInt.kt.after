@@ -1,7 +1,0 @@
-import kotlin.math.roundToInt
-
-// FIX: Replace with `roundToInt` function
-// WITH_RUNTIME
-fun test(x: Double) {
-    x.roundToInt()
-}

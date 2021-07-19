@@ -1,5 +1,0 @@
-class Foo
-interface ISomething {
-    // INFO: {checked: "true"}
-    var independent: Int
-}

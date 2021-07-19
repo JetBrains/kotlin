@@ -1,8 +1,0 @@
-class F(a: Int?) {
-    val b = a
-    val c = b ?: 2
-}
-
-fun main(args: Array<String>) {
-    F(1).c
-}

@@ -1,6 +1,0 @@
-val prop: Int = run {
-    print("a")
-    val v = 1
-    <caret>v
-    1
-}

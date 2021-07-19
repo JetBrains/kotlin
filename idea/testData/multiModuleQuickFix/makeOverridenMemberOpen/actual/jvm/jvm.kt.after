@@ -1,9 +1,0 @@
-// "Make OClass.overrideMe open" "true"
-
-actual open class OClass actual constructor() {
-    actual open val overrideMe: String = ""
-}
-
-class Another: OClass() {
-    override val overrideMe = ""
-}

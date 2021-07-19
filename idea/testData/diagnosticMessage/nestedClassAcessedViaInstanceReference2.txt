@@ -1,2 +1,0 @@
-<!-- nestedClassAcessedViaInstanceReference2 -->
-Nested enum class 'NestedEnum' accessed via instance reference

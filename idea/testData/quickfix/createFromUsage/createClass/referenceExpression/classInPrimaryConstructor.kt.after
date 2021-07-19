@@ -1,7 +1,0 @@
-// "Create class 'X'" "true"
-
-class Foo(x: X)
-
-class X {
-
-}

@@ -1,5 +1,0 @@
-// "Make 'A' not open" "true"
-<caret>enum class A() {
-}
-
-/* IGNORE_FIR */

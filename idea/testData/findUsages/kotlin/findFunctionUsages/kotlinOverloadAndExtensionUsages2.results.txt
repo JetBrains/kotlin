@@ -1,3 +1,0 @@
-Function call 11 O.foo()
-Function call 3 a.foo("")
-Function call 7 x.foo(0)

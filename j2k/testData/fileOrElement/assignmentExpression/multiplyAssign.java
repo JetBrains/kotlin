@@ -1,2 +1,0 @@
-//statement
-x *= 2

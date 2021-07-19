@@ -1,1 +1,0 @@
-actual inline fun <reified T> inlineFun(t: T) {}

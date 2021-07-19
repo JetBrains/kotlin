@@ -1,3 +1,0 @@
-interface Inter {
-    String something();
-}

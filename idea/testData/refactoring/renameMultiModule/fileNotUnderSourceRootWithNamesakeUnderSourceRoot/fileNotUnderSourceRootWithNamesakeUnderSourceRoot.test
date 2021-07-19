@@ -1,6 +1,0 @@
-{
-  "type": "FILE",
-  "file": "A/notSrc/test.kt",
-  "newName": "test2.kt",
-  "isMultiModule": "true"
-}

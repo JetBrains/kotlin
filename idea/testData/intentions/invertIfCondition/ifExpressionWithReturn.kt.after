@@ -1,8 +1,0 @@
-fun foo(): Int {
-    val x = 0
-
-    if (x != 1) {
-        return 0
-    }
-    return x + 1
-}

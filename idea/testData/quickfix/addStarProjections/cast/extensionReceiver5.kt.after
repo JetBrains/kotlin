@@ -1,6 +1,0 @@
-// "Change type arguments to <*, *>" "true"
-fun test(a: Any) {
-    (a as Map<*, *>).bar()
-}
-
-fun <T> Map<T, *>.bar() {}

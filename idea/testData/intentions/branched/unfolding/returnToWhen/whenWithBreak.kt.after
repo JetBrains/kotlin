@@ -1,9 +1,0 @@
-fun test(b: Boolean): Int {
-    loop@ while (true) {
-        when (b) {
-            true -> return 1
-            else -> break@loop
-        }
-    }
-    return 0
-}

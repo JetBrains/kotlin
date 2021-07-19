@@ -1,3 +1,0 @@
-withoutSetter -> UField (name = withoutSetter)
-get -> [!] UnknownKotlinExpression (PROPERTY_ACCESSOR)
-field -> USimpleNameReferenceExpression (identifier = field)

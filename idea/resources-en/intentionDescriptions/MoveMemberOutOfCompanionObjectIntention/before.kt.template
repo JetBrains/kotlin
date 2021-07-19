@@ -1,7 +1,0 @@
-class A {
-    companion object {
-        <spot>fun foo() = 1</spot>
-    }
-}
-
-fun bar() = A.foo()

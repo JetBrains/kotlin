@@ -1,4 +1,0 @@
-// "Add function body" "true"
-fun foo() {}
-
-/* IGNORE_FIR */

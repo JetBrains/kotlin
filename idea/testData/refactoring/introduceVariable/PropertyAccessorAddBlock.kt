@@ -1,1 +1,0 @@
-val x: Int get() = <selection>1</selection>

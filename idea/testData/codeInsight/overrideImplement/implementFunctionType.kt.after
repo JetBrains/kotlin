@@ -1,6 +1,0 @@
-// FIR_IDENTICAL
-class C : (String) -> Boolean {
-    override fun invoke(p1: String): Boolean {
-        <selection><caret>TODO("Not yet implemented")</selection>
-    }
-}

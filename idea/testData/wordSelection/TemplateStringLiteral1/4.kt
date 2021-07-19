@@ -1,1 +1,0 @@
-val v = <selection>"aaa $x <caret>bbb"</selection>

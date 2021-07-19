@@ -1,5 +1,0 @@
-Simple -> UClass (name = Simple)
-method -> UMethod (name = method)
-    println -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
-property -> UField (name = property)
-String -> USimpleNameReferenceExpression (identifier = String)

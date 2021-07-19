@@ -1,9 +1,0 @@
-// SUGGESTED_NAMES: s, getX
-fun foo(a: Int): String {
-    val x = "x${s()}$a"
-    val y = "${a}${s()}x"
-    val z = "xcf$a"
-    return "ab${s()}ef"
-}
-
-private fun s() = "cd"

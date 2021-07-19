@@ -1,7 +1,0 @@
-// "Make 'Foo' not open" "true"
-class A {
-    companion object Foo {
-        fun a(): Int = 1
-    }
-}
-/* IGNORE_FIR */

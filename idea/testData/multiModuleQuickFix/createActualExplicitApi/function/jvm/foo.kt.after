@@ -1,4 +1,0 @@
-// foo: to be implemented
-public actual fun foo(arg: Int): String {
-    TODO("Not yet implemented")
-}

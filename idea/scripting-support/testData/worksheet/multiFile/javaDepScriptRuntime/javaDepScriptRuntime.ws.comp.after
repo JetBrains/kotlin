@@ -1,5 +1,0 @@
-// REPL_MODE: false
-
-import myTest.MyJavaClass
-
-MyJavaClass().test()         // RESULT: 1

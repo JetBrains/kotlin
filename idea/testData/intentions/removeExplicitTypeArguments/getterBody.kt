@@ -1,5 +1,0 @@
-// IS_APPLICABLE: true
-// WITH_RUNTIME
-
-val x: List<String>
-    get() = listOf<caret><String>()

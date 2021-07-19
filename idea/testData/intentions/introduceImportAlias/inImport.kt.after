@@ -1,9 +1,0 @@
-package test
-
-import test.Foo as <caret>Foo1
-
-class Foo
-
-fun main() {
-    Foo1()
-}

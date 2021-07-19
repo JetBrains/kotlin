@@ -1,9 +1,0 @@
-package ppp
-
-object OOO {
-    fun foo() {
-        Nested()
-    }
-
-    private class Nested
-}

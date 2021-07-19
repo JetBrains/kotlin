@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-fun test(b: Boolean, x: Int, y: Int?) {
-    val list = mutableListOf<Int?>()
-    list += if (b) {
-        x
-    } else {
-        y
-    }
-}

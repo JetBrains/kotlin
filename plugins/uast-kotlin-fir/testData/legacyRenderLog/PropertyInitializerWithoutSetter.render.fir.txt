@@ -1,7 +1,0 @@
-public final class PropertyInitializerWithoutSetterKt {
-    private static var withoutSetter: java.lang.String = "/sdcard"
-    public static final fun getWithoutSetter() : java.lang.String {
-        return field
-    }
-    public static final fun setWithoutSetter(value: java.lang.String) : void = UastEmptyExpression
-}

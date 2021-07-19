@@ -1,8 +1,0 @@
-UFile (package = ) [public abstract interface Foo {...]
-    UClass (name = Foo) [public abstract interface Foo {...}]
-        UMethod (name = bar) [public default fun bar() : java.lang.String {...}]
-            UBlockExpression [{...}]
-                UReturnExpression [return "Hello!"]
-                    ULiteralExpression (value = "Hello!") ["Hello!"] : PsiType:String
-    UClass (name = Baz) [public final class Baz : Foo {...}]
-        UMethod (name = Baz) [public fun Baz() = UastEmptyExpression]

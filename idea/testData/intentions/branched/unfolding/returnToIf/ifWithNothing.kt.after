@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-fun test(b: Boolean): Int {
-    if (b) {
-        return 1
-    } else {
-        TODO()
-    }
-}

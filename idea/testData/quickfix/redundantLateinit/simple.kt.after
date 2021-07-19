@@ -1,5 +1,0 @@
-// "Remove 'lateinit' modifier" "true"
-
-class Test {
-    private<caret> var foo: String = ""
-}

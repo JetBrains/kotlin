@@ -1,5 +1,0 @@
-public final class C {
-    public final fun foo() : void {
-    }
-    public fun C() = UastEmptyExpression
-}

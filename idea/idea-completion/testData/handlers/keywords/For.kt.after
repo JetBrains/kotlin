@@ -1,6 +1,0 @@
-// FIR_COMPARISON
-fun t() {
-    for (<caret>)
-}
-
-// ELEMENT: for

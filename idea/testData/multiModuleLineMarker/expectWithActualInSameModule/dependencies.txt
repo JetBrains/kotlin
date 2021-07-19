@@ -1,1 +1,0 @@
-MODULE common { platform=[JVM, JS, Native] }

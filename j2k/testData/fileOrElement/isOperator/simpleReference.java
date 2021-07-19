@@ -1,2 +1,0 @@
-//expression
-a instanceof String

@@ -1,5 +1,0 @@
-// "Move annotation to receiver type" "true"
-
-annotation class Ann
-
-<caret>val @receiver:Ann String.bar get() = ""

@@ -1,7 +1,0 @@
-open class K
-
-fun foo(n: Int) {
-    val x = <spot>object</spot> : K() {
-        fun bar() = n
-    }
-}

@@ -1,8 +1,0 @@
-// FIR_COMPARISON
-package some
-
-import other.someProp
-
-fun other() {
-    val v = "$someProp<caret>"
-}

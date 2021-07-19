@@ -1,8 +1,0 @@
-// COMPILER_ARGUMENTS: -XXLanguage:+NewInference
-
-val s = object : Sam {
-    override fun test(b: Boolean): String? {
-        if (b) return "x"
-        return "y"
-    }
-}

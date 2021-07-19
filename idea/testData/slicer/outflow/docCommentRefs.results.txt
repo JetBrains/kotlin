@@ -1,3 +1,0 @@
-4 <bold>fun foo(): Int</bold> = 10 (in KotlinClass)
-10 	val v = <bold>foo()</bold> (in KotlinClass.bar())
-10 		<bold>val v</bold> = foo() (in KotlinClass.bar())

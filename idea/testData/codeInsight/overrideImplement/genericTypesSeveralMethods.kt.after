@@ -1,8 +1,0 @@
-// FIR_IDENTICAL
-// from KT-488
-
-class MyClass<A: Comparable<A>> : Iterable<A> {
-    override fun iterator(): Iterator<A> {
-        <selection><caret>TODO("Not yet implemented")</selection>
-    }
-}

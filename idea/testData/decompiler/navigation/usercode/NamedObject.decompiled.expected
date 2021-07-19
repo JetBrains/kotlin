@@ -1,3 +1,0 @@
-NamedObject.class
-public object <1>NamedObject {
-    public final val <2>objectMember: kotlin.Int /* compiled code */

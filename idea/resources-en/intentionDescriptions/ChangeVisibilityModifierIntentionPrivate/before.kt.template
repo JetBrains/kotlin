@@ -1,4 +1,0 @@
-class C {
-    <spot>public</spot> fun foo() {
-    }
-}

@@ -1,2 +1,0 @@
-// "Make type parameter reified and function inline" "true"
-inline fun <reified T> test(a: String) = a is T

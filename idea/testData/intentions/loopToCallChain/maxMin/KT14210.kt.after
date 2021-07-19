@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'filter{}.maxOrNull()'"
-// INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.maxOrNull()'"
-fun f(list: List<Int>) {
-    val <caret>result = list
-        .filter { it % 2 == 0 }
-        .maxOrNull()
-        ?: -1
-}

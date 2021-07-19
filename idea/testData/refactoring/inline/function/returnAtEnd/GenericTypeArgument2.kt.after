@@ -1,8 +1,0 @@
-package adadawwq32q
-
-import test.pack.one.SomeFace
-import test.pack.one.downUnder
-
-fun callDown() {
-    val result = downUnder<SomeFace>()
-}

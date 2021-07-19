@@ -1,7 +1,0 @@
-7 val x = <bold>""</bold>.extensionProp (in foo())
-7 	<bold>val x</bold> = "".extensionProp (in foo())
-7 		val x = <bold>"".extensionProp</bold> (in foo())
-3 			<bold>val Any.extensionProp: Any</bold>
-4 				get() = <bold>this</bold> (in extensionProp.get on Any)
-3 					val <bold>Any</bold>.extensionProp: Any (in extensionProp on Any)
-7 						val x = <bold>""</bold>.extensionProp (in foo())

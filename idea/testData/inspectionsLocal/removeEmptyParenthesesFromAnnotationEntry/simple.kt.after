@@ -1,6 +1,0 @@
-annotation class MyAnnotation
-
-@MyAnnotation
-fun test() {
-
-}

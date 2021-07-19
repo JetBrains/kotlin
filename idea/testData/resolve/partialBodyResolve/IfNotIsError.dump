@@ -1,8 +1,0 @@
-Resolve target: value-parameter p: kotlin.Any smart-cast to kotlin.String
-----------------------------------------------
-fun foo(p: Any) {
-    if (p !is String) {
-        error("Not String")
-    }
-    println(<caret>p.length)
-}

@@ -1,5 +1,0 @@
-// To be implemented
-
-class Some<T>
-
-expect val <T> Some<T>.<caret>foo: Some<T>

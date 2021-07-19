@@ -1,7 +1,0 @@
-a -> UField (name = a)
-readLine -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
-b -> UField (name = b)
-a -> USimpleNameReferenceExpression (identifier = a)
-a -> null
-    println -> null
-    println -> null

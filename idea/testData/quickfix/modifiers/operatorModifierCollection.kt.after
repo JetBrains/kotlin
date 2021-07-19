@@ -1,8 +1,0 @@
-// "Add 'operator' modifier" "true"
-class A {
-    operator fun contains(x: Any): Boolean = false
-}
-
-fun foo() = 0 in A()
-
-/* IGNORE_FIR */

@@ -1,3 +1,0 @@
-[kotlinTraitDerivedLocalObjects.0.kt] Unclassified usage 8 open class A: X {
-[kotlinTraitDerivedLocalObjects.1.kt] Unclassified usage 10 object O2: X {
-[kotlinTraitDerivedLocalObjects.1.kt] Unclassified usage 5 object O1: A() {

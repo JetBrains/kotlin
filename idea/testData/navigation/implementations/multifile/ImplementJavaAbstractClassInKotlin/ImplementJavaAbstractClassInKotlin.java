@@ -1,2 +1,0 @@
-public abstract class JavaBase {
-}

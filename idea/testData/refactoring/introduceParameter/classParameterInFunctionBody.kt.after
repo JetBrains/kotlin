@@ -1,8 +1,0 @@
-// TARGET:
-class A(a: Int, val i: Int = 1 + 2) {
-    fun foo() = i
-}
-
-fun test() {
-    A(1)
-}

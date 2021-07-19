@@ -1,8 +1,0 @@
-enum class A {
-    ENUM_OPTION_A,
-    ENUM_OPTION_B,
-    ENUM_OPTION_C,
-    ENUM_OPTION_D
-}
-
-// SET_INT: ENUM_CONSTANTS_WRAP = 2

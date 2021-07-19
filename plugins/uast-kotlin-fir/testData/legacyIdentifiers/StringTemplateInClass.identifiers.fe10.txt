@@ -1,4 +1,0 @@
-Demo -> UClass (name = Demo)
-foo -> UField (name = foo)
-X -> USimpleNameReferenceExpression (identifier = X)
-bar -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))

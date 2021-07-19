@@ -1,5 +1,0 @@
-UFile (package = test.pkg)
-    UClass (name = Test)
-        UMethod (name = Test)
-        UMethod (name = test1)
-            UBlockExpression

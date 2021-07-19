@@ -1,5 +1,0 @@
-MODULE jvm { platform=[JVM] }
-
-jvm -> STDLIB_JVM { kind=DEPENDENCY }
-jvm -> STDLIB_COMMON { kind=DEPENDENCY }
-jvm -> MOCK_JDK { kind=DEPENDENCY }

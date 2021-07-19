@@ -1,7 +1,0 @@
-// REPL_MODE: false
-
-val (foo, bar) = 1 to "2"    // RESULT: val foo: Int; val bar: String
-foo                          // RESULT: 1
-bar                          // RESULT: 2
-val (_, baz) = 3 to "4"      // RESULT: val baz: String
-baz                          // RESULT: 4

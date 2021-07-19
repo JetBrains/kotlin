@@ -1,8 +1,0 @@
-class MyClass: MySuperClass() {
-    fun test() = publicFun()
-}
-
-val a = MyClass()
-a.test()
-
-// RESULT: 1: I

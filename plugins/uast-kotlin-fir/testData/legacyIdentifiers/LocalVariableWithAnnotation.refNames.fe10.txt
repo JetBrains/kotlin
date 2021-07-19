@@ -1,1 +1,0 @@
-TestAnnotation -> UAnnotation (fqName = TestAnnotation) from KtNameReferenceExpression

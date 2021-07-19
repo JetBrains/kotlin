@@ -1,3 +1,0 @@
-fun neq(a: Boolean, b: Boolean) {
-    if (b or a) {}
-}

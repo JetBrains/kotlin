@@ -1,3 +1,0 @@
-withoutSetter -> UField (name = withoutSetter)
-get -> UMethod (name = getWithoutSetter)
-field -> USimpleNameReferenceExpression (identifier = field)

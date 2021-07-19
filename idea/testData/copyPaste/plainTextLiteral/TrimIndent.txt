@@ -1,3 +1,0 @@
-def foo(a)
-    a ? 0 : 1
-end

@@ -1,3 +1,0 @@
-fun Int.foo(x: Int) = this - x
-
-val x = Int::foo

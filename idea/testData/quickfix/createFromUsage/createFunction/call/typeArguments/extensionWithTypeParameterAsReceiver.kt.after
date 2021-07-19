@@ -1,8 +1,0 @@
-// "Create extension function 'T.bar'" "true"
-fun <T> foo(t: T) {
-    t.bar()
-}
-
-private fun <T> T.bar() {
-    TODO("Not yet implemented")
-}

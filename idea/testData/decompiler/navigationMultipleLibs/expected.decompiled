@@ -1,6 +1,0 @@
-A.class
-public final class A public <3>constructor() {
- LClass.class
-public final class <1>LClass public constructor() {
- LibraryKt.class
-public fun lib.LClass.<2>f(a: lib.A): kotlin.Unit { /* compiled code */ }

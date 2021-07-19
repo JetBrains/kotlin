@@ -1,5 +1,0 @@
-// "Replace with '@JvmInline value'" "true"
-// WITH_RUNTIME
-
-@JvmInline
-value class IC(val i: Int)

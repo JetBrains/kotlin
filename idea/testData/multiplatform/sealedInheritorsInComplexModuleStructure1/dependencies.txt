@@ -1,6 +1,0 @@
-MODULE common { platform=[JVM, JS, Native]; root=common }
-MODULE intermediate { platform=[JVM]; root=intermediate }
-MODULE main { platform=[JVM]; root=main }
-
-intermediate -> common { kind=DEPENDS_ON }
-main -> intermediate { kind=DEPENDS_ON }

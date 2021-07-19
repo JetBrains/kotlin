@@ -1,7 +1,0 @@
-class Foo {
-    fun test() {
-        <caret>s()
-    }
-}
-
-fun Foo.s() = ""

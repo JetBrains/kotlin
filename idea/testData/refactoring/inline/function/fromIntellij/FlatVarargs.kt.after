@@ -1,9 +1,0 @@
-fun xxx() {
-    bar("aa", "hh")
-}
-
-fun bar(s: String, ss: String) {
-
-}
-
-fun bar(vararg ss: String) {}

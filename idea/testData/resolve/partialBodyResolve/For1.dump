@@ -1,7 +1,0 @@
-Resolve target: null
-----------------------------------------------
-fun foo(p: Any?, c: Collection<String>) {
-    /* STATEMENT DELETED: for (e in c) { print(p!!) } */
-
-    <caret>xxx
-}

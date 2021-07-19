@@ -1,4 +1,0 @@
-9 <bold>val x</bold> = foo (in test())
-9 	val x = <bold>foo</bold> (in test())
-3 		<bold>val foo: Int</bold>
-5 			return <bold>0</bold> (in foo.get)

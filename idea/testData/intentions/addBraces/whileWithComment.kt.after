@@ -1,7 +1,0 @@
-fun foo() {}
-
-fun test(b: Boolean) {
-    while (b) {
-        /* aaa */ foo() // bbb
-    }
-}

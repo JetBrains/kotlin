@@ -1,6 +1,0 @@
-// "Make 'SealedClass' public" "true"
-// ACTION: "Make 'Test' private"
-
-sealed class SealedClass
-
-class Test : SealedClass()

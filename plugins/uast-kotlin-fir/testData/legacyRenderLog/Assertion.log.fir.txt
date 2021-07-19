@@ -1,7 +1,0 @@
-UFile (package = )
-    UClass (name = AssertionKt)
-        UMethod (name = foo)
-            UBlockExpression
-                [!] UnknownKotlinExpression (PROPERTY)
-                UReturnExpression
-                    [!] UnknownKotlinExpression (POSTFIX_EXPRESSION)

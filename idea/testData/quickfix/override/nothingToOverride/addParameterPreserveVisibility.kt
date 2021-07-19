@@ -1,8 +1,0 @@
-// "Change function signature to 'fun f(a: Int)'" "true"
-interface A {
-    fun f(a: Int)
-}
-
-class B : A {
-    public <caret>override fun f() {}
-}

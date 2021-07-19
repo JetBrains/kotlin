@@ -1,2 +1,0 @@
-<!-- unusedParameter1 -->
-Parameter 'unused' is never used

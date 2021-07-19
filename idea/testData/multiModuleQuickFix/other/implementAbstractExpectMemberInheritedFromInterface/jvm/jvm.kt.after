@@ -1,8 +1,0 @@
-// "Implement members" "true"
-// DISABLE-ERRORS
-
-actual class C : I {
-    actual override fun f() {
-        TODO("Not yet implemented")
-    }
-}

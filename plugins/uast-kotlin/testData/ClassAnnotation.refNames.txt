@@ -1,6 +1,0 @@
-Test -> UAnnotation (fqName = null) from KtNameReferenceExpression
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
-MyAnnotation -> UAnnotation (fqName = MyAnnotation) from KtNameReferenceExpression
-MyAnnotation -> UAnnotation (fqName = MyAnnotation) from KtNameReferenceExpression
-MyAnnotation -> UAnnotation (fqName = MyAnnotation) from KtNameReferenceExpression
-MyAnnotation -> UAnnotation (fqName = MyAnnotation) from KtNameReferenceExpression

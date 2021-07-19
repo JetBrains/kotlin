@@ -1,3 +1,0 @@
-import test.MyAlias
-
-fun foo(): MyAlias<caret>

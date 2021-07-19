@@ -1,5 +1,0 @@
-fun f() {
-    for (<caret>j in 1..2) {
-        println(j + j)
-    }
-}

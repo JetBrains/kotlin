@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun Int.foo() {
-    also(::println)
-}

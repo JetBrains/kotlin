@@ -1,6 +1,0 @@
-val objects: kotlin.collections.MutableList<kotlin.Any> = getObjects()
-for (object in objects) {
-  if (object.isEmpty) {
-    break
-  }
-}

@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-
-fun foo() {
-    for (it in listOf(1)) {
-        listOf(1).forEach { return@forEach }
-    }
-}

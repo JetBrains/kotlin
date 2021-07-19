@@ -1,9 +1,0 @@
-open class A {
-    // INFO: {"checked": "true"}
-    protected fun foo(): Int = 1
-}
-
-class B: A() {
-
-    fun bar() = foo() + 1
-}

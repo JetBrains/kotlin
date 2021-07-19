@@ -1,5 +1,0 @@
-fun a() {
-    val b = true
-    if (b) 2
-    else 1
-}

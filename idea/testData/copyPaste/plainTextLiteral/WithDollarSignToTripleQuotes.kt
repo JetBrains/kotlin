@@ -1,1 +1,0 @@
-val a ="""literal <caret> literal"""

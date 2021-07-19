@@ -1,1 +1,0 @@
-class TestClass(val <caret>text: String)

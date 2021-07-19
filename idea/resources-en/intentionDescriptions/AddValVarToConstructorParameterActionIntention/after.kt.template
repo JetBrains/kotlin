@@ -1,1 +1,0 @@
-class Foo(n: Int, <spot>val s</spot>: String)

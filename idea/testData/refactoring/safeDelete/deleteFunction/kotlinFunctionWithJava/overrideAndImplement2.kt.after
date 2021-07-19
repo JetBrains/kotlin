@@ -1,6 +1,0 @@
-class A {
-}
-
-interface Z {
-    fun foo()
-}

@@ -1,3 +1,0 @@
-private fun interface I {
-    fun test()
-}

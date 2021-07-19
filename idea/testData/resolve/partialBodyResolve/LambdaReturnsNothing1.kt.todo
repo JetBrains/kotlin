@@ -1,8 +1,0 @@
-fun foo(p: String?) {
-    val lambda = { () -> throw Exception() }
-    if (p == null) {
-        lambda()
-    }
-
-    <caret>p.size
-}

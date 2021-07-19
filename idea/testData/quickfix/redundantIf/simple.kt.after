@@ -1,4 +1,0 @@
-// "Remove redundant 'if' statement" "true"
-fun bar(value: Int): Boolean {
-    return value % 2 == 0
-}

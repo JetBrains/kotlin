@@ -1,1 +1,0 @@
-New instance creation 9 return Bar()

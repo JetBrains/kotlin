@@ -1,1 +1,0 @@
-internal interface Test

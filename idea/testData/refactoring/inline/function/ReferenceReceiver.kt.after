@@ -1,5 +1,0 @@
-fun main() {
-    val second = listOf("hello", "world")
-    val result = second.any(listOf("hello")::contains)
-    println(result)
-}

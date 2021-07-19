@@ -1,6 +1,0 @@
-annotation class Small(val i: Int, val s: String)
-
-@Small(1, "2")
-private fun test1() {
-
-}

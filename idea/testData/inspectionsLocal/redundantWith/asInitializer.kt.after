@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-fun test(): Int {
-    println()
-    return 42
-}

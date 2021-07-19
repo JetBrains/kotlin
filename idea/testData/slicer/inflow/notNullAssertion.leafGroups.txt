@@ -1,5 +1,0 @@
-3 fun test(<bold>s: String?</bold>) { (in test(String?))
-4 	<bold>val x</bold> = s!! (in test(String?))
-4 		val x = <bold>s!!</bold> (in test(String?))
-4 			val x = <bold>s</bold>!! (in test(String?))
-3 				fun test(<bold>s: String?</bold>) { (in test(String?))

@@ -1,2 +1,0 @@
-Value read 19 val (x1, y1) = if (b) {
-Value read 20 A(1, "").apply { val (x2, y2) = this }

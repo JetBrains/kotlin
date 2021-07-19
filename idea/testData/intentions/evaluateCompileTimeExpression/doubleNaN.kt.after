@@ -1,2 +1,0 @@
-// INTENTION_TEXT: "Replace with 'Double.NaN'"
-val x = Double.NaN

@@ -1,2 +1,0 @@
-Parameter s is used in method body
-Parameter s is used in method body

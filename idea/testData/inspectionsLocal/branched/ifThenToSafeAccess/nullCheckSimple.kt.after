@@ -1,3 +1,0 @@
-fun foo(arg: Any?): Any? {
-    return arg
-}

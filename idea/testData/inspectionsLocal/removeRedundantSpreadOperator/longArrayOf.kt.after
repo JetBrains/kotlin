@@ -1,5 +1,0 @@
-fun foo(vararg x: Long) {}
-
-fun bar() {
-    foo(1L)
-}

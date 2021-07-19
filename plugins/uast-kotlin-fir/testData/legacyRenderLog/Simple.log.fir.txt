@@ -1,9 +1,0 @@
-UFile (package = )
-    UClass (name = Simple)
-        UField (name = property)
-            ULiteralExpression (value = "Mary")
-        UMethod (name = Simple)
-        UMethod (name = method)
-            UBlockExpression
-                [!] UnknownKotlinExpression (CALL_EXPRESSION)
-        UMethod (name = getProperty)

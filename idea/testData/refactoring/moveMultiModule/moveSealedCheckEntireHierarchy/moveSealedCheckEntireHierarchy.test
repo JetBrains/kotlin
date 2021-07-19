@@ -1,7 +1,0 @@
-{
-  "mainFile": "A/src/sealed/SealedHierarchy.kt",
-  "type": "MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS",
-  "targetPackage": "other",
-  "targetSourceRoot": "A/src",
-  "withRuntime": "false"
-}

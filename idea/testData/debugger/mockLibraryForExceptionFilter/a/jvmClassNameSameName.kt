@@ -1,3 +1,0 @@
-package renamed
-
-fun bar() { }

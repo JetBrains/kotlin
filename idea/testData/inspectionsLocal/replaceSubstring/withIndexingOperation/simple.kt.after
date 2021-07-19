@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun foo() {
-    "abc"[0]
-}

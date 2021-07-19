@@ -1,1 +1,0 @@
-val <caret>a = 1

@@ -1,2 +1,0 @@
-bar -> USimpleNameReferenceExpression (identifier = bar) from KtSimpleNameStringTemplateEntry
-bar -> USimpleNameReferenceExpression (identifier = bar) from KtNameReferenceExpression

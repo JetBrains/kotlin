@@ -1,3 +1,0 @@
-package test;
-
-class ExtendInterfaceWithDefaultMethodAndCompatibilityAll implements KotlinInterface {}

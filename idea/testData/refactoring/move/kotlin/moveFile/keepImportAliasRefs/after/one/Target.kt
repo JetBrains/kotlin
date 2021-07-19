@@ -1,3 +1,0 @@
-package one
-
-class ImportedWithAlias

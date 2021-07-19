@@ -1,3 +1,0 @@
-import java.util.TreeMap
-
-val x = TreeMap<java.util.Date, String>(1)

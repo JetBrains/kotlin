@@ -1,7 +1,0 @@
-fun foo(f: () -> String) {}
-
-fun test() {
-    foo(fun(): String {
-        return ""
-    })
-}

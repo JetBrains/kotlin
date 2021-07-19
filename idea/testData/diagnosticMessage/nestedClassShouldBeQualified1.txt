@@ -1,2 +1,0 @@
-<!-- nestedClassShouldBeQualified1 -->
-Nested class 'Nested' should be qualified as 'A.B.Nested'

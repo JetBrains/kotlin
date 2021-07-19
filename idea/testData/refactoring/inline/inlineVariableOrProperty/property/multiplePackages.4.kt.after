@@ -1,5 +1,0 @@
-package baz
-
-import bar.x
-
-fun test() = x + y + 1

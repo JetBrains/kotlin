@@ -1,3 +1,0 @@
-4 <bold>var x: Int</bold> (in A)
-7 	x = <bold>1</bold> (in A)
-14 	x = <bold>2</bold> (in A.test())

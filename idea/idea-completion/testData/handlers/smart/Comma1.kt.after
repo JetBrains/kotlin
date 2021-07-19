@@ -1,7 +1,0 @@
-fun foo(s: String){ }
-
-fun bar(sss: String) {
-    foo(sss)<caret>
-}
-
-//ELEMENT: sss

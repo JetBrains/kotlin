@@ -1,2 +1,0 @@
-//statement
-Boolean i = false;

@@ -1,1 +1,0 @@
-Method bar() uses object Test which will be inaccessible after move

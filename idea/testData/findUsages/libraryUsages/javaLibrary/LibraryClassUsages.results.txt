@@ -1,2 +1,0 @@
-Local variable declaration 10 val foo: Foo
-Usage in import 7 import library.Foo

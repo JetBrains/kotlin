@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun foo() {
-    val t = 5.0.toString()
-}

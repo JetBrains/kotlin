@@ -1,8 +1,0 @@
-package sample
-
-fun foo(s: String){
-    val s1: String = s<caret>
-}
-
-//ELEMENT: s
-//CHAR: \t

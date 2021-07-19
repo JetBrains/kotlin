@@ -1,9 +1,0 @@
-UFile (package = ) [public final class CycleInTypeParametersKt {...]
-    UClass (name = CycleInTypeParametersKt) [public final class CycleInTypeParametersKt {...}]
-        UField (name = a) [private static final var a: Device<?> = null as? Device<?>]
-            UBinaryExpressionWithType [null as? Device<?>] = Undetermined
-                ULiteralExpression (value = null) [null] = null
-                UTypeReferenceExpression (name = Device<?>) [Device<?>] = Undetermined
-        UMethod (name = getA) [public static final fun getA() : Device<?> = UastEmptyExpression]
-    UClass (name = Device) [public final class Device {...}]
-        UMethod (name = Device) [public fun Device() = UastEmptyExpression]

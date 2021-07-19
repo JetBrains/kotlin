@@ -1,5 +1,0 @@
-expect class Some {
-    companion object {
-        fun createMe(): Some
-    }
-}

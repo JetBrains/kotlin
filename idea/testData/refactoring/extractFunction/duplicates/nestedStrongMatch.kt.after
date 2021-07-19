@@ -1,8 +1,0 @@
-// SUGGESTED_NAMES: i, getY
-// SIBLING:
-fun main(args: Array<String>) {
-    val x = i()
-    val y = i()
-}
-
-private fun i() = 1 + 1

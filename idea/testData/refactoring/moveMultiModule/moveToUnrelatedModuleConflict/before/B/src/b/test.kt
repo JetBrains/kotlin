@@ -1,3 +1,0 @@
-package b
-
-class X

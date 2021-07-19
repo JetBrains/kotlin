@@ -1,8 +1,0 @@
-Function call 13 a()
-Function call 14 a(1)
-Function call 15 b()
-Function call 16 b(1)
-Usage in import 6 import c.a
-Usage in import 6 import c.a
-Usage in import 7 import c.a as b
-Usage in import 7 import c.a as b

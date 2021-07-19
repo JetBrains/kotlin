@@ -1,4 +1,0 @@
-MainKt.class
-public fun <T : kotlin.CharSequence> <2>funWithTypeParam(t: T): kotlin.Unit { /* compiled code */ }
-
-public fun <T : kotlin.Number> <1>funWithTypeParam(t: T): kotlin.Unit { /* compiled code */ }

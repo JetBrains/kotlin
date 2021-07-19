@@ -1,5 +1,0 @@
-FILE: myProperty.kt
-    public final [BODY_RESOLVE] val myProperty: R|kotlin/Int|
-        [BODY_RESOLVE] public get(): R|kotlin/Int| {
-            ^ Int(42)
-        }

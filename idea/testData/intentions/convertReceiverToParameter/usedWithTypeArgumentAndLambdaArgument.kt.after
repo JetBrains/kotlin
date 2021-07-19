@@ -1,5 +1,0 @@
-fun <T> foo(any: Any, callback: () -> Unit) {}
-
-fun bar() {
-    foo<Int>("") {}
-}

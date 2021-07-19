@@ -1,4 +1,0 @@
-6 for (<bold>s</bold> in list) (in f4(List<String>))
-7 	if (<bold>s</bold>.length == 0) (in f4(List<String>))
-8 	f1(<bold>s</bold>) (in f4(List<String>))
-3 		fun f1(<bold>param: String</bold>) {} (in f1(String))

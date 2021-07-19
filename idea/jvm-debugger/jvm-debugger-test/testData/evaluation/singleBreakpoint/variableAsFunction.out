@@ -1,9 +1,0 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
-LineBreakpoint created at variableAsFunction.kt:14
-Run Java
-Connected to the target VM
-variableAsFunction.kt:14
-Compile bytecode for foo(5)
-Disconnected from the target VM
-
-Process finished with exit code 0

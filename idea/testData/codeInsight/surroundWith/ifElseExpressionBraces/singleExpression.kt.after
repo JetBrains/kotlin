@@ -1,6 +1,0 @@
-fun foo() {
-    val a = if (<selection></selection>) {
-        "aaa"
-    } else {
-    }
-}

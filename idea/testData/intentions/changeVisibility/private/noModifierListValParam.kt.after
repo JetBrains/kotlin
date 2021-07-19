@@ -1,1 +1,0 @@
-class C(<caret>private val v: Int)

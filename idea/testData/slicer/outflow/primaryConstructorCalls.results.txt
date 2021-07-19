@@ -1,8 +1,0 @@
-3 open class A<bold>(n: Int)</bold> { (in A)
-3 	<bold>super</bold>(1);
-4 	constructor() : <bold>this(1)</bold> (in constructor A())
-7 	class B : <bold>A(1)</bold> (in B)
-7 	A a = new <bold>A</bold>(1);
-10 	constructor() : <bold>super(1)</bold> (in constructor C())
-14 	val x = <bold>A(1)</bold> (in test())
-14 		<bold>val x</bold> = A(1) (in test())

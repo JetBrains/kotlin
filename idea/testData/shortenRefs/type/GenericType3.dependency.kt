@@ -1,3 +1,0 @@
-package dependency
-
-class Array

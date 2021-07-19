@@ -1,3 +1,0 @@
-// "Make 'foo' not abstract" "true"
-fun foo() {}
-/* IGNORE_FIR */

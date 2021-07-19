@@ -1,9 +1,0 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
-LineBreakpoint created at twoLambdasOnOneLineSecond.kt:8 lambdaOrdinal = 2
-Run Java
-Connected to the target VM
-twoLambdasOnOneLineSecond.kt:8
-Compile bytecode for it
-Disconnected from the target VM
-
-Process finished with exit code 0

@@ -1,2 +1,0 @@
-//method
-abstract int getNoofGears();

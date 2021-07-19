@@ -1,8 +1,0 @@
-package test.pkg
-
-public final class ReifiedKt {
-}
-
-public final class Context {
-    public fun Context() = UastEmptyExpression
-}

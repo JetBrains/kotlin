@@ -1,8 +1,0 @@
-UFile (package = )
-    UClass (name = Style)
-        UField (name = value)
-        UField (name = SHEET)
-        UMethod (name = Style)
-            UParameter (name = value)
-        UMethod (name = getValue)
-        UMethod (name = getExitAnimation)

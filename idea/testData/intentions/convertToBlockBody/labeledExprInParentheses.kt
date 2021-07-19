@@ -1,1 +1,0 @@
-fun foo(): Int = <caret>(ann@ 1)

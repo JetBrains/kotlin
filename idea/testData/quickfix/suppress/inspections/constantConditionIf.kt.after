@@ -1,9 +1,0 @@
-// "Suppress 'ConstantConditionIf' for fun foo" "true"
-
-@Suppress("ConstantConditionIf")
-fun foo() {
-    if (true) {
-    }
-}
-
-// TOOL: org.jetbrains.kotlin.idea.inspections.ConstantConditionIfInspection

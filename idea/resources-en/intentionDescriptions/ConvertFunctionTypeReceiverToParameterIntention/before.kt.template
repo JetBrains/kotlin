@@ -1,3 +1,0 @@
-fun foo(f: <spot>Int</spot>.(s: String) -> Boolean) = 1.f("2")
-
-fun bar = foo { s -> s.length() > this }

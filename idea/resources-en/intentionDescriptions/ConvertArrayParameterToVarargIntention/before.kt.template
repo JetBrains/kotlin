@@ -1,1 +1,0 @@
-fun foo(<spot>a: Array<String></spot>): Int = a.size

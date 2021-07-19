@@ -1,4 +1,0 @@
-// FIR_COMPARISON
-class C {
-    companion object<caret>
-}

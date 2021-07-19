@@ -1,8 +1,0 @@
-fun <T> foo(klass: Class<T>) {}
-
-fun bar() {
-    foo<String>(String::class.java)<caret>
-}
-
-// ELEMENT: String
-

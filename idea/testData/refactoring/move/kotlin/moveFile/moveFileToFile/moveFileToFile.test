@@ -1,6 +1,0 @@
-{
-  "comment": "Such move is forbidden",
-  "mainFile": "test.txt",
-  "type": "MOVE_FILES",
-  "targetFile": "test.xml"
-}

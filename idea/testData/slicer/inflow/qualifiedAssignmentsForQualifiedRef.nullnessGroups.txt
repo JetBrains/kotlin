@@ -1,3 +1,0 @@
-[NotNull Values]
-15 	val v = "Now my name is '${a.<bold>name</bold>}'" (in main(Array<String>))
-15 		val v = "Now my name is '${a.<bold>name</bold>}'" (in main(Array<String>))

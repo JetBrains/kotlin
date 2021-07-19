@@ -1,3 +1,0 @@
-data class SomeName(val a: Int, val b: Int, val c: String)
-
-fun SomeName.func() = copy(a = 1, b = 0)

@@ -1,3 +1,0 @@
-These declarations cannot be transformed:
-a: Some
-(a: Some, b: Int)

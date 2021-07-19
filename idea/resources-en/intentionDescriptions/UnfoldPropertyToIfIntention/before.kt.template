@@ -1,5 +1,0 @@
-val res = if (ok) {
-    "ok"
-} else {
-    "failed"
-}

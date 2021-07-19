@@ -1,8 +1,0 @@
-fun foo(a: Int, i: Int = a + 1): Int {
-    val b = i * 2
-    return a + b
-}
-
-fun test() {
-    foo(1)
-}

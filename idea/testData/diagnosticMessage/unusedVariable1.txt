@@ -1,2 +1,0 @@
-<!-- unusedVariable1 -->
-Variable 'x' is never used

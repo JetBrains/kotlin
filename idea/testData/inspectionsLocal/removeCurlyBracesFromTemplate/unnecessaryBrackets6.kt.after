@@ -1,6 +1,0 @@
-// HIGHLIGHT: INFORMATION
-
-fun foo() {
-    val x = 4
-    val y = """text$x moretext"""
-}

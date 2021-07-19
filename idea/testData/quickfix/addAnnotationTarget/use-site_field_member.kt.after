@@ -1,9 +1,0 @@
-// "Add annotation target" "true"
-
-@Target(AnnotationTarget.FIELD)
-annotation class Ann
-
-class Test {
-    @field:Ann
-    var foo = ""
-}

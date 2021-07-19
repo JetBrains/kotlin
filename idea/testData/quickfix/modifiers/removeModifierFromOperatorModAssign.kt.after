@@ -1,6 +1,0 @@
-// "Remove 'operator' modifier" "true"
-
-object A {
-    <caret>fun modAssign(x: Int) {}
-}
-/* IGNORE_FIR */

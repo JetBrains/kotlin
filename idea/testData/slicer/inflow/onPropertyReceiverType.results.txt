@@ -1,3 +1,0 @@
-3 var <bold>Any</bold>.property: Int (in property on Any)
-8 	val v = <bold>"a"</bold>.property (in foo())
-9 	<bold>"b"</bold>.property = 2 (in foo())

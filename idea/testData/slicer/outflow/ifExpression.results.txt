@@ -1,3 +1,0 @@
-3 fun test(m: Int, <bold>n: Int</bold>) { (in test(Int, Int))
-4 	val x = if (m > 1) <bold>n</bold> else 1 (in test(Int, Int))
-4 		<bold>val x</bold> = if (m > 1) n else 1 (in test(Int, Int))

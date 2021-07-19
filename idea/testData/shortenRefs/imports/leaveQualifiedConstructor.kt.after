@@ -1,3 +1,0 @@
-import java.util.Date
-
-val x = dependency.Date(1)

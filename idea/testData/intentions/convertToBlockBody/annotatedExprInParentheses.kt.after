@@ -1,7 +1,0 @@
-@Target(AnnotationTarget.EXPRESSION)
-@Retention(AnnotationRetention.SOURCE)
-annotation class ann
-
-fun foo(): Int {
-    return (@ann 1)
-}

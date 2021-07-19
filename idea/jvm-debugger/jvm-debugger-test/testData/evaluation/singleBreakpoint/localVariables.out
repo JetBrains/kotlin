@@ -1,9 +1,0 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
-LineBreakpoint created at localVariables.kt:6
-Run Java
-Connected to the target VM
-localVariables.kt:6
-Compile bytecode for aaa1
-Disconnected from the target VM
-
-Process finished with exit code 0

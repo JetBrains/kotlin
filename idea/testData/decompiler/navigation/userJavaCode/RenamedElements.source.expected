@@ -1,7 +1,0 @@
-RenamedElementsKt.class
-<1>// IntelliJ API Decompiler stub source generated from a class file
-// Implementation of methods is not available
-
-package testData.libraries
-
-@kotlin.jvm.JvmName public fun <2>funToRename(x: kotlin.Int): kotlin.Unit { /* compiled code */ }

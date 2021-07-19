@@ -1,7 +1,0 @@
-fun test(i: Int): Boolean {
-    return if (i == 1 || i == 2 || i == 3) {
-        true
-    } else {
-        false
-    }
-}

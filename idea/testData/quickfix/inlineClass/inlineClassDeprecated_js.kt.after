@@ -1,4 +1,0 @@
-// "Replace with 'value'" "true"
-// JS
-
-value class IC(val i: Int)

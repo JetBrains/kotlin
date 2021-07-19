@@ -1,4 +1,0 @@
-fun test(): Int {
-    val x = 1
-    return x + x
-}

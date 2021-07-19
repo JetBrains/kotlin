@@ -1,3 +1,0 @@
-// "Remove 'toString()' call" "true"
-
-fun foo(arg: Any) = "arg = ${arg}xy"

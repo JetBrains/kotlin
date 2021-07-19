@@ -1,2 +1,0 @@
-<!-- differentNamesForSameParameter1 -->
-Names of the parameter #1 conflict in the following members of supertypes: 'public abstract fun foo(x: Int): Unit defined in A, public open fun foo(y: Int): Unit defined in B'. This may cause problems when calling this function with named arguments.

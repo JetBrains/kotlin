@@ -1,6 +1,0 @@
-// FIR_COMPARISON
-fun foo(): Collection<String> {
-    return emptyList()<caret>
-}
-
-// ELEMENT: "return emptyList()"

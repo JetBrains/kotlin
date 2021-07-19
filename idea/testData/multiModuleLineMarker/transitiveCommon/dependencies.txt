@@ -1,6 +1,0 @@
-MODULE base_common { platform=[JVM, JS, Native] }
-MODULE user_common { platform=[JVM, JS, Native] }
-MODULE user_jvm { platform=[JVM] }
-
-user_common -> base_common { kind=DEPENDS_ON }
-user_jvm -> user_common { kind=DEPENDS_ON }

@@ -1,2 +1,0 @@
-Unclassified usage 10 interface U: T
-Unclassified usage 7 interface T: A

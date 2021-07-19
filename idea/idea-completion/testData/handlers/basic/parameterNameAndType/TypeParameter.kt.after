@@ -1,3 +1,0 @@
-fun<T> foo(t: T<caret>)
-
-// ELEMENT_TEXT: t: T

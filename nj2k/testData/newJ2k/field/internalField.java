@@ -1,3 +1,0 @@
-class C {
-Foo f;
-}

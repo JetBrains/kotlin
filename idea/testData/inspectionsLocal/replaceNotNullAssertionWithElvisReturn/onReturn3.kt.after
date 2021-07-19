@@ -1,5 +1,0 @@
-fun test(a: Int?): Int? {
-    return check(a ?: return null)
-}
-
-fun check(i: Int): Int = i

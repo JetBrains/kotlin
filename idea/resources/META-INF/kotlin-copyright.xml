@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.intellij.copyright">
-    <updater filetype="Kotlin" implementationClass="org.jetbrains.kotlin.idea.copyright.UpdateKotlinCopyrightsProvider"/>
-  </extensions>
-</idea-plugin>

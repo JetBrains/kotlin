@@ -1,4 +1,0 @@
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
-bar -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
-text -> USimpleNameReferenceExpression (identifier = text) from KtNameReferenceExpression
-Any -> USimpleNameReferenceExpression (identifier = Any) from KtNameReferenceExpression

@@ -1,5 +1,0 @@
-<node text="Object (java.lang)">
-  <node text="BaseClass ()" base="true">
-    <node text="DerivedClass ()"/>
-  </node>
-</node>

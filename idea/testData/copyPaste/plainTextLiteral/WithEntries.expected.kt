@@ -1,1 +1,0 @@
-val a="Hello, ${a.substring("a${'c'}".length)}.length)}"

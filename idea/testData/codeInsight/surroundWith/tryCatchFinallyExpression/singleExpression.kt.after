@@ -1,7 +1,0 @@
-fun foo() {
-    val a = try {
-        "aaa"
-    } catch (e: <selection>Exception</selection>) {
-    } finally {
-    }
-}

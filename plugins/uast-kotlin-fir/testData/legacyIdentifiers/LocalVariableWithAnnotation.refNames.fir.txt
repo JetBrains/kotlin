@@ -1,1 +1,0 @@
-TestAnnotation -> USimpleNameReferenceExpression (identifier = TestAnnotation) from KtNameReferenceExpression

@@ -1,7 +1,0 @@
-Any -> USimpleNameReferenceExpression (identifier = Any) from KtNameReferenceExpression
-to -> USimpleNameReferenceExpression (identifier = to) from KtOperationReferenceExpression
-Suppress -> UAnnotation (fqName = kotlin.Suppress) from KtNameReferenceExpression
-data -> USimpleNameReferenceExpression (identifier = data) from KtNameReferenceExpression
-Pair -> USimpleNameReferenceExpression (identifier = Pair) from KtNameReferenceExpression
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression

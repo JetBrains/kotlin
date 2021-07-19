@@ -1,9 +1,0 @@
-sealed class MyEnum(val s: String = "") {
-    fun foo() {
-
-    }
-
-    object FOO : MyEnum("FOO")
-    object BAR : MyEnum("BAR")
-    object DEFAULT : MyEnum()
-}

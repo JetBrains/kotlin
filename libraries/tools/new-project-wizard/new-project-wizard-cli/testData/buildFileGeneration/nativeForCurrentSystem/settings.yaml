@@ -1,8 +1,0 @@
-kotlin:
-  projectKind: Multiplatform
-  modules:
-    - type: multiplatform
-      name: a
-      subModules:
-        - type: nativeForCurrentSystem
-          name: myNative

@@ -1,1 +1,0 @@
-Value read 28 takeFun2 { a, n -> val (x, y) = a!! }

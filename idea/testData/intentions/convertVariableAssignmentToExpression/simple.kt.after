@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-var x = 5
-fun foo() {
-    10.also { x = it }
-}

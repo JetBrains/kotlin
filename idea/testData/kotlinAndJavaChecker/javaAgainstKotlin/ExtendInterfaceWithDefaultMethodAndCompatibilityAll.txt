@@ -1,1 +1,0 @@
-// COMPILER_ARGUMENTS: -Xjvm-default=all

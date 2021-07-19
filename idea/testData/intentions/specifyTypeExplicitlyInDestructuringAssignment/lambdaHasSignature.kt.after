@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-fun test() {
-    val list = emptyList<Pair<Int, String>>()
-    list.forEach { (i: Int, s: String)<caret>: Pair<Int, String> ->
-    }
-}

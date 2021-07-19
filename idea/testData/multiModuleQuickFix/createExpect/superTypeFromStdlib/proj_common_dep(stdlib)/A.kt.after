@@ -1,1 +1,0 @@
-expect class <caret>A : HashMap<Int, Int>

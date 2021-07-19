@@ -1,9 +1,0 @@
-abstract class I implements T {
-    T u;
-
-}
-
-class J implements T {
-    T u;
-
-}

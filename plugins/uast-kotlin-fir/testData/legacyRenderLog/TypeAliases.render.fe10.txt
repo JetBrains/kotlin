@@ -1,6 +1,0 @@
-public final class TypeAliasesKt {
-}
-
-public final class A {
-    public fun A() = UastEmptyExpression
-}

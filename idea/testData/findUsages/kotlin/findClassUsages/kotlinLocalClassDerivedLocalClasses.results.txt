@@ -1,3 +1,0 @@
-Unclassified usage 12 class C: A()
-Unclassified usage 14 class D: T
-Unclassified usage 7 class B: A()

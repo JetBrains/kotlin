@@ -1,5 +1,0 @@
-package pack
-
-fun test() {
-
-}

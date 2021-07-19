@@ -1,3 +1,0 @@
-UFile (package = declaration)
-    UImportStatement (isOnDemand = true)
-    UImportStatement (isOnDemand = true)

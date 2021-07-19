@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-// SIBLING:
-fun foo() {
-    val (a, b) = pair()
-}
-
-private fun pair() = 1 to 2

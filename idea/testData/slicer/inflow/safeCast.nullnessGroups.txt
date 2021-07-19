@@ -1,5 +1,0 @@
-[NotNull Values]
-4 	val x = <bold>o</bold> as? String (in test(Any))
-4 		<bold>val x</bold> = o as? String (in test(Any))
-4 			val x = <bold>o as? String</bold> (in test(Any))
-4 				val x = <bold>o</bold> as? String (in test(Any))

@@ -1,8 +1,0 @@
-// "Create enum constant 'C'" "true"
-enum class E {
-    A, B, <caret>C
-}
-
-fun foo() {
-    E.C
-}

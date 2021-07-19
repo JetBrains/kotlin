@@ -1,7 +1,0 @@
-Style -> UClass (name = Style)
-value -> UParameter (name = value)
-String -> USimpleNameReferenceExpression (identifier = String)
-SYSTEM -> [!] UnknownKotlinExpression (ENUM_ENTRY)
-USER -> [!] UnknownKotlinExpression (ENUM_ENTRY)
-INTERNAL -> [!] UnknownKotlinExpression (ENUM_ENTRY)
-UNKNOWN -> [!] UnknownKotlinExpression (ENUM_ENTRY)

@@ -1,4 +1,0 @@
-// REPL_MODE: false
-
-foo()    // ERROR: Unresolved reference: foo
-/** unresolved.kts:3 Unresolved reference: foo */

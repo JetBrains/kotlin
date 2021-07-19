@@ -1,9 +1,0 @@
-// FIR_COMPARISON
-package first
-
-import second.helloFun
-
-fun firstFun() {
-    val a = ""
-    a.helloFun()
-}

@@ -1,4 +1,0 @@
-UFile (package = ) [public final class TypeAliasesKt {...]
-    UClass (name = TypeAliasesKt) [public final class TypeAliasesKt {...}]
-    UClass (name = A) [public final class A {...}]
-        UMethod (name = A) [public fun A() = UastEmptyExpression]

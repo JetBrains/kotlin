@@ -1,7 +1,0 @@
-interface T{
-    fun foo(): Int {
-        return i()
-    }
-
-    fun i() = 1
-}

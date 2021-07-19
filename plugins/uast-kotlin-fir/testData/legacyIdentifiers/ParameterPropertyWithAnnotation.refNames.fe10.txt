@@ -1,8 +1,0 @@
-MyAnnotation -> UAnnotation (fqName = MyAnnotation) from KtNameReferenceExpression
-Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
-MyAnnotation -> UAnnotation (fqName = MyAnnotation) from KtNameReferenceExpression
-MyAnnotation2 -> UAnnotation (fqName = MyAnnotation2) from KtNameReferenceExpression
-MyAnnotation3 -> UAnnotation (fqName = MyAnnotation3) from KtNameReferenceExpression
-MyAnnotation4 -> UAnnotation (fqName = MyAnnotation4) from KtNameReferenceExpression
-MyAnnotation5 -> UAnnotation (fqName = MyAnnotation5) from KtNameReferenceExpression
-Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression

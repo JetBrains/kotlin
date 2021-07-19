@@ -1,4 +1,0 @@
-UFile (package = )
-    UClass (name = TypeAliasesKt)
-    UClass (name = A)
-        UMethod (name = A)

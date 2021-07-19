@@ -1,7 +1,0 @@
-
-@Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class ParameterAnnotation(val a: Int = 0)
-
-class TestClass(@ParameterAnnotation(42) text: String = "LoremIpsum", val flag: Boolean) {
-    private val text = text
-}

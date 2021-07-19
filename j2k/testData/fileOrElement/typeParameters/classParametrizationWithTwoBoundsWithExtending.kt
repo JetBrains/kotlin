@@ -1,1 +1,0 @@
-internal class C<T : INode> : A() where T : Comparable<T>

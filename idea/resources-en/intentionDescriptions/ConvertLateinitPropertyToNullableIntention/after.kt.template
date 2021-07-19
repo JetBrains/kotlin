@@ -1,3 +1,0 @@
-class C {
-    var foo: String? = null
-}

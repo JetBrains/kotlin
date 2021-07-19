@@ -1,2 +1,0 @@
-[common.kt] Function call 2 boo("a")
-[common.kt] Function call 3 boo("b")

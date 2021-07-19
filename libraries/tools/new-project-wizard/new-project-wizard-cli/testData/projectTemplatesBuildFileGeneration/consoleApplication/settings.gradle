@@ -1,9 +1,0 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-        maven { url 'KOTLIN_REPO' }
-    }
-
-}
-rootProject.name = 'consoleApplication'

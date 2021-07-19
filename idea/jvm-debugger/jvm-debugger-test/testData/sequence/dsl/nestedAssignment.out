@@ -1,6 +1,0 @@
-var a: kotlin.Int
-if (true) {
-  a = 100
-} else { 
-  a = 200
-}

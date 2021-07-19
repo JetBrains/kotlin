@@ -1,2 +1,0 @@
-// INTENTION_TEXT: Make public
-class C<caret>(val   /* check no reformat here */ v: Int)

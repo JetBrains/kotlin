@@ -1,6 +1,0 @@
-fun foo(x: Int) {
-    val w = x + 1
-    val z = w + 1
-    // y
-    val s = "y"
-}

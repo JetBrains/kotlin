@@ -1,9 +1,0 @@
-UFile (package = ) [public final class LocalVariableWithAnnotationKt {...]
-    UClass (name = LocalVariableWithAnnotationKt) [public final class LocalVariableWithAnnotationKt {...}]
-        UMethod (name = foo) [public static final fun foo() : void {...}]
-            UBlockExpression [{...}] : PsiType:void
-                UDeclarationsExpression [@TestAnnotation var bar: java.lang.String = "lorem ipsum"]
-                    ULocalVariable (name = bar) [@TestAnnotation var bar: java.lang.String = "lorem ipsum"]
-                        UAnnotation (fqName = TestAnnotation) [@TestAnnotation]
-                        ULiteralExpression (value = "lorem ipsum") ["lorem ipsum"] : PsiType:String
-    UClass (name = TestAnnotation) [public abstract annotation TestAnnotation {...}]

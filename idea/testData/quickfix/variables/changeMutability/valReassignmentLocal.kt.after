@@ -1,7 +1,0 @@
-// "Change to var" "true"
-fun foo() {
-    var a = 1
-    <caret>a = 3
-}
-
-/* IGNORE_FIR */

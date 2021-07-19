@@ -1,2 +1,0 @@
-<!-- nestedClassShouldBeQualified4 -->
-Nested class 'Nested' should be qualified as 'C.Companion.D::Nested'

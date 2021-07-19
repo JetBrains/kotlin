@@ -1,7 +1,0 @@
-{
-  "type": "KOTLIN_FUNCTION",
-  "classId": "testing/rename/B",
-  "oldName": "run",
-  "newName": "lol",
-  "comment": "Rename method with binary function overridden"
-}

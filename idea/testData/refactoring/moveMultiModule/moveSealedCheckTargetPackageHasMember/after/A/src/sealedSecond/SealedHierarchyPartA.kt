@@ -1,4 +1,0 @@
-package sealedSecond
-
-sealed interface SealedInterfaceA
-sealed class HierarchyClassA: SealedInterfaceA, SealedInterfaceB

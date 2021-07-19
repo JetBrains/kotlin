@@ -1,7 +1,0 @@
-a -> UField (name = a)
-readLine -> [!] UnknownKotlinExpression (CALL_EXPRESSION)
-b -> UField (name = b)
-a -> USimpleNameReferenceExpression (identifier = a)
-a -> null
-    println -> null
-    println -> null

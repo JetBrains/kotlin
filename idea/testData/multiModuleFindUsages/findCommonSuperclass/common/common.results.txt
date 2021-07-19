@@ -1,2 +1,0 @@
-[common.kt] Supertype 5 expect class Inheritor : OClass
-[jvm.kt] Supertype 2 actual class Inheritor : OClass(42)

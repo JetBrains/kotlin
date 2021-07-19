@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-fun test() {
-    listOf("A").forEach {
-        setOf(1).map {
-            val it = "B"
-            it.length
-        }
-    }
-}

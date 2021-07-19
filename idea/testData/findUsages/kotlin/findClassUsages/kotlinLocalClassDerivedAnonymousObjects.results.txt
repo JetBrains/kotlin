@@ -1,3 +1,0 @@
-Unclassified usage 12 val c = object: A() {}
-Unclassified usage 14 val d = object: T {}
-Unclassified usage 7 val b = object: A() {}

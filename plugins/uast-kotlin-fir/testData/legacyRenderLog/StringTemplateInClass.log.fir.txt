@@ -1,8 +1,0 @@
-UFile (package = )
-    UClass (name = Demo)
-        UField (name = foo)
-            UQualifiedReferenceExpression
-                USimpleNameReferenceExpression (identifier = X)
-                [!] UnknownKotlinExpression (CALL_EXPRESSION)
-        UMethod (name = Demo)
-        UMethod (name = getFoo)

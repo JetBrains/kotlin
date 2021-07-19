@@ -1,6 +1,0 @@
-fun <T> buildType(size: Int): T = TODO()
-
-fun f() {
-    buildType<Unit>(size = 5)
-}
-

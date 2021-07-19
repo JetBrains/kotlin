@@ -1,9 +1,0 @@
-// "Create function 'foo'" "true"
-
-fun test(o: Any) {
-    if (o is String) foo(o)
-}
-
-fun foo(o: String) {
-    TODO("Not yet implemented")
-}

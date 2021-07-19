@@ -1,9 +1,0 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
-LineBreakpoint created at package.kt:6
-Run Java
-Connected to the target VM
-package.kt:6
-Compile bytecode for 1
-Disconnected from the target VM
-
-Process finished with exit code 0

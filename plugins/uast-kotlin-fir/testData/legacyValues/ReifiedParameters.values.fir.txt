@@ -1,2 +1,0 @@
-UFile (package = ) [public final class ReifiedParametersKt {...]
-    UClass (name = ReifiedParametersKt) [public final class ReifiedParametersKt {...}]

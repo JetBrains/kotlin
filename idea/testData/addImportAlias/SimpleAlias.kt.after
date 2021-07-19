@@ -1,3 +1,0 @@
-import foo.Some as Some1
-
-val some = Some1()

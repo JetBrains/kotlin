@@ -1,8 +1,0 @@
-open class A(n: Int, s: String, val i: Int) {
-
-}
-
-class B(
-        // INFO: {"checked": "true"}
-        i: Int
-) : A(s = "2", i = i, n = 1)

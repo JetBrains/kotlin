@@ -1,7 +1,0 @@
-UFile (package = ) [import java.lang.Thread.currentThread...]
-    UImportStatement (isOnDemand = false) [import java.lang.Thread.currentThread]
-    UImportStatement (isOnDemand = false) [import java.lang.Thread.NORM_PRIORITY]
-    UImportStatement (isOnDemand = false) [import java.lang.Thread.UncaughtExceptionHandler]
-    UImportStatement (isOnDemand = false) [import java.lang.Thread.sleep]
-    UImportStatement (isOnDemand = false) [import kotlin.collections.emptyList]
-    UImportStatement (isOnDemand = false) [import kotlin.Int.Companion.SIZE_BYTES]

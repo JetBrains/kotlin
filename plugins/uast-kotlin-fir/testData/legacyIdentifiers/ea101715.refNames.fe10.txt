@@ -1,1 +1,0 @@
-Obj -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression

@@ -1,3 +1,0 @@
-// "Add 'crossinline' to parameter 'x'" "true"
-
-inline fun foo(crossinline x: suspend () -> Unit) {}

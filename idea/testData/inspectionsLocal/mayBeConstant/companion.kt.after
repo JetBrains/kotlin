@@ -1,5 +1,0 @@
-class Your {
-    companion object {
-        const val IMPORTANT = 2 * 2
-    }
-}

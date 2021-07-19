@@ -1,6 +1,0 @@
-UFile (package = )
-    UClass (name = LocalVariableWithAnnotationKt)
-        UMethod (name = foo)
-            UBlockExpression
-                [!] UnknownKotlinExpression (PROPERTY)
-    UClass (name = TestAnnotation)

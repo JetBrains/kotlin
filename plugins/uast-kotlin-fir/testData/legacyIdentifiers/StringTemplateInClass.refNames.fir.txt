@@ -1,3 +1,0 @@
-bar("lorem") -> UQualifiedReferenceExpression from KtDotQualifiedExpression
-X -> USimpleNameReferenceExpression (identifier = X) from KtNameReferenceExpression
-bar -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression

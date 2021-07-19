@@ -1,4 +1,0 @@
-fun test(b: Boolean): Unit = try {
-    fun a() {}
-} catch (e: Exception) {
-}

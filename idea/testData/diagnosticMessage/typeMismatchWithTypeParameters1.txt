@@ -1,2 +1,0 @@
-<!-- typeMismatchWithTypeParameters1 -->
-Type mismatch: inferred type is T#2 (type parameter of myPackage.a.b.A.f) but T#1 (type parameter of myPackage.a.b.A) was expected

@@ -1,5 +1,0 @@
-<node text="Object (java.lang)">
-  <node text="KotlinClass ()">
-    <node text="MyClass ()" base="true"/>
-  </node>
-</node>

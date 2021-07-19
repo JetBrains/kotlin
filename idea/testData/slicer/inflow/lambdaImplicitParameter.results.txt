@@ -1,4 +1,0 @@
-9 val v = <bold>it</bold> (in test())
-8 	[LAMBDA CALLS ARGUMENT #0] foo <bold>{</bold> (in test())
-3 		[LAMBDA CALLS ARGUMENT #0] fun foo(<bold>f: (Int) -> Unit</bold>) { (in foo((Int) -> Unit))
-4 			f(<bold>1</bold>) (in foo((Int) -> Unit))

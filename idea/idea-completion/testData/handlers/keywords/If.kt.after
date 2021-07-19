@@ -1,8 +1,0 @@
-// FIR_COMPARISON
-fun t() {
-    while (true) {
-        if (<caret>)
-    }
-}
-
-// ELEMENT: if

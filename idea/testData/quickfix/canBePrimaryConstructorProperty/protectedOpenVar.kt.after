@@ -1,3 +1,0 @@
-// "Move to constructor" "true"
-class Container(protected open var index: Int) {
-}

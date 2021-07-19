@@ -1,1 +1,0 @@
-Value write 10 Foo(1).x = 1

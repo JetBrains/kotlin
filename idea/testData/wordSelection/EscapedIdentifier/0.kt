@@ -1,2 +1,0 @@
-fun `my <caret>function`() {
-}

@@ -1,1 +1,0 @@
-this.foo(<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is String but T was expected">"a"</error>)

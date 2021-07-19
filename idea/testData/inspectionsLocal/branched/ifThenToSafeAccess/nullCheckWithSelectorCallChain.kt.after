@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-val nullableString: String? = "abc"
-
-val foo = nullableString?.toUpperCase()?.toLowerCase()

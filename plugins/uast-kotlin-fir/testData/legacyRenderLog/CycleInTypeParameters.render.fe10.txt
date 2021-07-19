@@ -1,8 +1,0 @@
-public final class CycleInTypeParametersKt {
-    @org.jetbrains.annotations.Nullable private static final var a: Device<?> = null as? Device<?>
-    public static final fun getA() : Device<?> = UastEmptyExpression
-}
-
-public final class Device {
-    public fun Device() = UastEmptyExpression
-}

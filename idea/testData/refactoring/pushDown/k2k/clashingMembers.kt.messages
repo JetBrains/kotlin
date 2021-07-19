@@ -1,3 +1,0 @@
-Class B already contains function 'fun foo(Int): Int'
-Class B already contains nested class named X
-Class B already contains property 'val x: Int'

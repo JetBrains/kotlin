@@ -1,2 +1,0 @@
-// DISABLE-ERRORS
-expect annotation class A(val a: Int)

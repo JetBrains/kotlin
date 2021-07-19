@@ -1,9 +1,0 @@
-class Foo {
-    fun foo() {
-        fun a() {
-        }
-        <caret>a
-    }
-
-    val a = 1
-}

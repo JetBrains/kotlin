@@ -1,7 +1,0 @@
-Resolve target: value-parameter p: kotlin.String?
-----------------------------------------------
-fun foo(p: String?) {
-    /* STATEMENT DELETED: fun local(): String? { if (p == null) return null print(p.size) return "" } */
-
-    <caret>p?.size
-}

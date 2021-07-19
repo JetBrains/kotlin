@@ -1,3 +1,0 @@
-Unclassified usage 13 doSomething(object : A() {}, object: Z {})
-Unclassified usage 13 doSomething(object : A() {}, object: Z {})
-Unclassified usage 16 val x = object: Z {

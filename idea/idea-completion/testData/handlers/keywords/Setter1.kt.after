@@ -1,7 +1,0 @@
-// FIR_COMPARISON
-var v: Int
-    get() = 0
-    set(value) = <caret>
-
-// ELEMENT: "set"
-// TAIL_TEXT: "(value) = ..."

@@ -1,1 +1,0 @@
-const val name = 42

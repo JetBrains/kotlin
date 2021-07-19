@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun foo() {
-    val t = 42.toString() + 6
-}

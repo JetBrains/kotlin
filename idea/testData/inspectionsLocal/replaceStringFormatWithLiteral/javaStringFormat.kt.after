@@ -1,8 +1,0 @@
-// RUNTIME_WITH_FULL_JDK
-
-fun test() {
-    val foo = 1
-    val bar = 2
-
-    "foo is $foo, bar is $bar."
-}

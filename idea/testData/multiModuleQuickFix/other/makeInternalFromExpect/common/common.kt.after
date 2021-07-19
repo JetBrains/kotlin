@@ -1,5 +1,0 @@
-// "Make 'getInternal' internal" "true"
-
-internal expect class Internal
-
-internal expect fun getInternal(): Internal

@@ -1,1 +1,0 @@
-Property foo uses property bar which will be inaccessible after move

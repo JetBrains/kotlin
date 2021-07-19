@@ -1,6 +1,0 @@
-import java.util.Random
-
-fun foo(){
-    val Random = 1
-    val x = Random()
-}

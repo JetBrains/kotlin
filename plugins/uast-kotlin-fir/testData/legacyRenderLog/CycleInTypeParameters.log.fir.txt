@@ -1,9 +1,0 @@
-UFile (package = )
-    UClass (name = CycleInTypeParametersKt)
-        UField (name = a)
-            UBinaryExpressionWithType
-                ULiteralExpression (value = null)
-                UTypeReferenceExpression (name = Device<?>)
-        UMethod (name = getA)
-    UClass (name = Device)
-        UMethod (name = Device)

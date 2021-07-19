@@ -1,1 +1,0 @@
-class MyClass<caret>: JavaClass() {}

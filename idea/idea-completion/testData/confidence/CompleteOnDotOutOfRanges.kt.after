@@ -1,5 +1,0 @@
-fun test() {
-  12.inc().<caret>
-}
-
-// TYPE: "."

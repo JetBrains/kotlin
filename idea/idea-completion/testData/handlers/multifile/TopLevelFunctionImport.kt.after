@@ -1,8 +1,0 @@
-// FIR_COMPARISON
-package some
-
-import jettesting.data.somefun
-
-fun other() {
-    somefun(<caret>)
-}

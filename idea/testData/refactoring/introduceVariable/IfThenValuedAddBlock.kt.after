@@ -1,6 +1,0 @@
-fun a(x: Int) {
-    val t = if (x > 0) {
-        val i = x + x
-        i - 1
-    } else x * x + 1
-}

@@ -1,3 +1,0 @@
-// "Add constructor parameter 'foos'" "true"
-abstract class Foo(foos: List<String>)
-class Bar(foos: List<String>) : Foo(foos)

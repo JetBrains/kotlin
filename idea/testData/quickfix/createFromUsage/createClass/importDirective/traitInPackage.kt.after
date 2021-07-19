@@ -1,8 +1,0 @@
-// "Create interface 'A'" "true"
-package p
-
-import p.A
-
-interface A {
-
-}

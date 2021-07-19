@@ -1,3 +1,0 @@
-fun test() {
-    lateinit var foo: String
-}

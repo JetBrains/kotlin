@@ -1,3 +1,0 @@
-fun foo(p: Int) {
-    val v = "line 1\nline 2: $p\nline 3"
-}

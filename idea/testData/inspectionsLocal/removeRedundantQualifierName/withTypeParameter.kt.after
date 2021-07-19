@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun main() {
-    Pair<Int, Int>(1, 1)
-}

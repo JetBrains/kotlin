@@ -1,8 +1,0 @@
-Checked type of a
-Resolved a[1]
-Resolved a[2]
-Searched references to B
-Searched references to a in non-Java files
-Searched references to parameter a of B.set(i: Int, a: B) in non-Java files
-Used plain search of B.set(i: Int, a: B) in LocalSearchScope:
-    CLASS:B

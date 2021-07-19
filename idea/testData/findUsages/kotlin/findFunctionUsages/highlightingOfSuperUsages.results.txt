@@ -1,3 +1,0 @@
-Function call 15 i.foo()
-Function call 16 A().foo()
-Function call 17 B().foo()

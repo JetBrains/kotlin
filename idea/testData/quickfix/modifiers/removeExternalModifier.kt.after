@@ -1,5 +1,0 @@
-// "Remove 'external' modifier" "true"
-
-class B {
-    val foo: Int = 23
-}

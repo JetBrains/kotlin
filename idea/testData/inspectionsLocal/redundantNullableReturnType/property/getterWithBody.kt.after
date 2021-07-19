@@ -1,5 +1,0 @@
-// PROBLEM: 'foo' is always non-null type
-val foo: Int
-    get() {
-        return 1
-    }

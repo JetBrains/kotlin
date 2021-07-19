@@ -1,6 +1,0 @@
-// "Remove initializer from property" "true"
-
-class A {
-    lateinit var str: String<caret>
-}
-/* IGNORE_FIR */

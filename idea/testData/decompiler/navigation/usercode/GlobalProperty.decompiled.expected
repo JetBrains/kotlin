@@ -1,4 +1,0 @@
-MainKt.class
-public val <1>globalVal: testData.libraries.Pair<kotlin.Int, kotlin.String> /* compiled code */
-
-public val <2>globalValWithGetter: kotlin.Long /* compiled code */

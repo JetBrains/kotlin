@@ -1,5 +1,0 @@
-fun foo(x: Any?) {
-    if (x == null) {
-        <caret>
-    }
-}

@@ -1,3 +1,0 @@
-// REPL_MODE: true
-
-println("hello")    // OUTPUT: hello

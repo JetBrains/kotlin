@@ -1,5 +1,0 @@
-fun foo(y: Boolean) {
-    bar() && y || (y && bar())
-}
-
-fun bar(): Boolean = false

@@ -1,6 +1,0 @@
-fun foo(a: Int, i: (Int) -> Int = { a -> a }): String {
-    val x = "-${i(a)}"
-    val y = "x${i(a)}y"
-    val z = "x$ay"
-    return "abc${i(a)}def"
-}

@@ -1,5 +1,0 @@
-public
-@foo
-fun foo() {
-}
-

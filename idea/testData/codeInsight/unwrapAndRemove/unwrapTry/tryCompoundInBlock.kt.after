@@ -1,7 +1,0 @@
-// OPTION: 1
-fun foo(n : Int): Int {
-    val m = n + 1
-    m/0
-
-    return 0
-}

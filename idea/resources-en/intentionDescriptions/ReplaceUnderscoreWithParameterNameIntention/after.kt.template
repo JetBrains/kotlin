@@ -1,1 +1,0 @@
-val (first, <spot>second</spot>) = Pair(1, 2)

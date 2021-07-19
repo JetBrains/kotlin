@@ -1,8 +1,0 @@
-//
-actual open class A {
-    actual open fun String.c(a: Int) {}
-}
-
-class B : A() {
-    override fun String.c(a: Int) {}
-}

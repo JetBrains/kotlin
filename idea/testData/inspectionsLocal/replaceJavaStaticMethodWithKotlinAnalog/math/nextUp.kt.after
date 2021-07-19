@@ -1,6 +1,0 @@
-import kotlin.math.nextUp
-
-// WITH_RUNTIME
-fun test(x: Double) {
-    x.nextUp()
-}

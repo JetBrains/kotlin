@@ -1,3 +1,0 @@
-Function call 11 a.set(2, B(2))
-Implicit 'set' 12 a[1] = B(2)
-Unclassified usage 13 a[2]++

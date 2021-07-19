@@ -1,2 +1,0 @@
-val abc: Boolean
-    get() = true

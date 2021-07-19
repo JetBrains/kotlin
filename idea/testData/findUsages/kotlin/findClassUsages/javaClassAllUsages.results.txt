@@ -1,4 +1,0 @@
-Field declaration 4 private Server myServer = new Server();
-Method parameter declaration 6 public void setServer(Server server) {
-Method return type 10 public Server getMyServer() {
-New instance creation 4 private Server myServer = new Server();

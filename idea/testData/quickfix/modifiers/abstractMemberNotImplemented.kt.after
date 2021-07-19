@@ -1,3 +1,0 @@
-// "Make 'Foo' 'abstract'" "true"
-
-abstract class <caret>Foo : List<String> {}

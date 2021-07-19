@@ -1,4 +1,0 @@
-UFile (package = test.pkg)
-    UClass (name = ReifiedKt)
-    UClass (name = Context)
-        UMethod (name = Context)

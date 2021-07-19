@@ -1,4 +1,0 @@
-class A {
-    val foo: Int
-        <spot>get() = 1</spot>
-}

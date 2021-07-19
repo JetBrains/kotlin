@@ -1,9 +1,0 @@
-package b
-
-import a.A
-import a.R
-import c.C
-
-typealias S = A<C<Int>>
-
-fun foo() = R(1)

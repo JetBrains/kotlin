@@ -1,7 +1,0 @@
-import java.sql.Date as SqlDate
-
-fun foo() {
-    val v: SqlDate = SqlDate<caret>
-}
-
-// ELEMENT: "SqlDate"

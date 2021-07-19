@@ -1,6 +1,0 @@
-Test -> USimpleNameReferenceExpression (identifier = Test) from KtNameReferenceExpression
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
-MyAnnotation -> USimpleNameReferenceExpression (identifier = MyAnnotation) from KtNameReferenceExpression
-MyAnnotation -> USimpleNameReferenceExpression (identifier = MyAnnotation) from KtNameReferenceExpression
-MyAnnotation -> USimpleNameReferenceExpression (identifier = MyAnnotation) from KtNameReferenceExpression
-MyAnnotation -> USimpleNameReferenceExpression (identifier = MyAnnotation) from KtNameReferenceExpression

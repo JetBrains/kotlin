@@ -1,6 +1,0 @@
-fun foo(): dynamic = 1
-
-fun test(): Any? {
-    val foo = foo()
-    return foo
-}

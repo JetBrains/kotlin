@@ -1,9 +1,0 @@
-MODULE a-common { platform=[JVM, JS, Native] }
-MODULE a-js { platform=[JS] }
-MODULE a-jvm { platform=[JVM] }
-MODULE b-common { platform=[JVM, JS, Native] }
-
-a-js -> a-common { kind=DEPENDS_ON }
-a-jvm -> a-common { kind=DEPENDS_ON }
-
-a-common -> b-common { kind=DEPENDENCY }

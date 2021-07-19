@@ -1,9 +1,0 @@
-fun foo(r: Runnable){}
-
-fun bar(){
-    foo(Thread.currentThread())<caret>
-}
-
-
-// INVOCATION_COUNT: 2
-// ELEMENT_TEXT: Thread.currentThread

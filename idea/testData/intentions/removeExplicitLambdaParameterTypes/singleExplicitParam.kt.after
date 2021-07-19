@@ -1,5 +1,0 @@
-// SKIP_ERRORS_AFTER
-
-fun main() {
-    val double = { x -> x * 2 }
-}

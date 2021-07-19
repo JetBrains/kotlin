@@ -1,3 +1,0 @@
-PROTO DIFFERENCE in test/ClassWithPrivatePrimaryConstructorAdded: CONSTRUCTOR_LIST
-PROTO DIFFERENCE in test/ClassWithPrivatePrimaryConstructorChanged: CONSTRUCTOR_LIST
-PROTO DIFFERENCE in test/ClassWithPrivatePrimaryConstructorRemoved: CONSTRUCTOR_LIST

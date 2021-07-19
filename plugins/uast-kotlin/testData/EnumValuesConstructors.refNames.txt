@@ -1,5 +1,0 @@
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
-Style -> UClass (name = Style) from KtEnumEntrySuperclassReferenceExpression
-Style -> UClass (name = Style) from KtEnumEntrySuperclassReferenceExpression
-Style -> UClass (name = Style) from KtEnumEntrySuperclassReferenceExpression
-Style -> UClass (name = Style) from KtEnumEntrySuperclassReferenceExpression

@@ -1,4 +1,0 @@
-fun f(p: Any) {
-    if (p is String) return
-    //TODO
-}

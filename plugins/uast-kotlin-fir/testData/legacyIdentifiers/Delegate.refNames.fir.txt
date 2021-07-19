@@ -1,8 +1,0 @@
-Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
-Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
-Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
-lazy -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
-MyColor -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
-lazy -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
-MyColor -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression
-MyColor -> [!] UnknownKotlinExpression (CALL_EXPRESSION) from KtNameReferenceExpression

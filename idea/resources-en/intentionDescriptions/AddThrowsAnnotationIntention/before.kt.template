@@ -1,5 +1,0 @@
-class MyException : Exception()
-
-fun test() {
-    throw MyException()
-}

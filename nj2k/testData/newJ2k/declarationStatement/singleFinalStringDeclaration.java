@@ -1,2 +1,0 @@
-//statement
-final String s;

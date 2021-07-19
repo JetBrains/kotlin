@@ -1,8 +1,0 @@
-// FIR_IDENTICAL
-package foo
-
-class Impl : Bar() {
-    override fun f(): Any {
-        <selection><caret>return super.f()</selection>
-    }
-}

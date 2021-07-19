@@ -1,9 +1,0 @@
-package qqqq
-
-import a
-import b
-import foo.isXXX
-
-fun foo() {
-    !"".isXXX<caret>
-}

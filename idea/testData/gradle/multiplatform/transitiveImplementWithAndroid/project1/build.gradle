@@ -1,5 +1,0 @@
-apply plugin: 'kotlin-platform-common'
-
-sourceSets {
-    custom
-}

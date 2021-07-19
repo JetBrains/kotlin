@@ -1,8 +1,0 @@
-// HIGHLIGHT: GENERIC_ERROR_OR_WARNING
-fun test(b: Boolean): Int {
-    return if (b) foo() else bar()
-}
-
-fun foo() = 1
-
-fun bar() = 2

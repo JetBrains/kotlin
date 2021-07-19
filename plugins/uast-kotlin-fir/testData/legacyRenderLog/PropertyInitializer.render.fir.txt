@@ -1,9 +1,0 @@
-public final class TestPropertyInitializer {
-    public fun TestPropertyInitializer() = UastEmptyExpression
-    public final fun getWithSetter() : java.lang.String {
-        return field
-    }
-    public final fun setWithSetter(p: java.lang.String) : void {
-        [!] UnknownKotlinExpression (BINARY_EXPRESSION)
-    }
-}

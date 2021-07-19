@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-import java.util.ArrayList
-
-fun f() {
-    val c = listOf<List<Int>>()
-    val v : List<List<Int>> = ArrayList(c)
-}

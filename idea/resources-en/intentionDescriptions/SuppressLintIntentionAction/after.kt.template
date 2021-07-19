@@ -1,2 +1,0 @@
-@SuppressLint("SdCardPath")
-val a = "/sdcard"

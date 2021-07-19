@@ -1,9 +1,0 @@
-// "Remove branch" "true"
-fun test(x: Int): String {
-    return when (x) {
-        1 -> "1"
-        2 -> "2"
-        else -> ""
-    }
-}
-/* IGNORE_FIR */

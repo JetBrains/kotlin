@@ -1,9 +1,0 @@
-pkg -> USimpleNameReferenceExpression (identifier = pkg) from KtDotQualifiedExpression
-test -> USimpleNameReferenceExpression (identifier = test) from KtNameReferenceExpression
-pkg -> USimpleNameReferenceExpression (identifier = pkg) from KtNameReferenceExpression
-Deprecated -> UAnnotation (fqName = kotlin.Deprecated) from KtNameReferenceExpression
-level -> USimpleNameReferenceExpression (identifier = level) from KtNameReferenceExpression
-HIDDEN -> USimpleNameReferenceExpression (identifier = HIDDEN) from KtDotQualifiedExpression
-DeprecationLevel -> USimpleNameReferenceExpression (identifier = DeprecationLevel) from KtNameReferenceExpression
-HIDDEN -> USimpleNameReferenceExpression (identifier = HIDDEN) from KtNameReferenceExpression
-message -> USimpleNameReferenceExpression (identifier = message) from KtNameReferenceExpression

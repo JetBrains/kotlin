@@ -1,8 +1,0 @@
-// FIX: Convert receiver to parameter
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-
-fun calcSomething() = 42
-
-suspend fun foo(coroutineScope: CoroutineScope) = coroutineScope.async { calcSomething() }

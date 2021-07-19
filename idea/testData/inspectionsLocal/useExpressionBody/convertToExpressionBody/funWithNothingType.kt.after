@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-
-fun foo()<selection>: Nothing</selection> = throw UnsupportedOperationException()

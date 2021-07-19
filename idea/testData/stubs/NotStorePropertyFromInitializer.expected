@@ -1,8 +1,0 @@
-PsiJetFileStubImpl[package=]
-  PACKAGE_DIRECTIVE
-  IMPORT_LIST
-  FUN[fqName=some, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=some]
-    TYPE_REFERENCE
-      USER_TYPE
-        REFERENCE_EXPRESSION[referencedName=DoubleArray]
-    VALUE_PARAMETER_LIST

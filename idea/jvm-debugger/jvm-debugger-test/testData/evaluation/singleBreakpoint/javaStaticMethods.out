@@ -1,9 +1,0 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
-LineBreakpoint created at javaStaticMethods.kt:8
-Run Java
-Connected to the target VM
-javaStaticMethods.kt:8
-Compile bytecode for JavaStatic.state()
-Disconnected from the target VM
-
-Process finished with exit code 0

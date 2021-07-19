@@ -1,8 +1,0 @@
-// FIR_COMPARISON
-package test
-
-class T {
-    class TT
-}
-
-fun foo(t: (T) -> T.TT) {}

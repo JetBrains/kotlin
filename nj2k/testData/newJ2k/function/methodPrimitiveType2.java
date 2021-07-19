@@ -1,2 +1,0 @@
-//method
-boolean main() {}

@@ -1,7 +1,0 @@
-fun f() {
-    try {
-    }
-    catch (<caret>e1: Exception) {
-        println(e1)
-    }
-}

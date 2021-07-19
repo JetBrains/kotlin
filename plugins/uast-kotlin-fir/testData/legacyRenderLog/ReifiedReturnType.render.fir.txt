@@ -1,9 +1,0 @@
-public final class ReifiedReturnTypeKt {
-    public static final fun copyWhenGreater(list: java.util.List<? extends T>, threshold: T, threshold2: B) : B {
-        return threshold2
-    }
-}
-
-public final class Foo {
-    public fun Foo() = UastEmptyExpression
-}

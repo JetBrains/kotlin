@@ -1,3 +1,0 @@
-[NotNull Values]
-8 	val v = "And now my name is '$<bold>name</bold>'" (in AClass.uses())
-8 		val v = "And now my name is '$<bold>name</bold>'" (in AClass.uses())

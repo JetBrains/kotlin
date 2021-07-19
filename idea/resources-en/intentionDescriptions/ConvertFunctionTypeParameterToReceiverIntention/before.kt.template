@@ -1,3 +1,0 @@
-fun foo(f: (n: <spot>Int</spot>, s: String) -> Boolean) = f(1, "2")
-
-fun bar = foo { n, s -> s.length() > n }

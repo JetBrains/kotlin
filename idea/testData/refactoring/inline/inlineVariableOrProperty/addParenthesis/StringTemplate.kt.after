@@ -1,3 +1,0 @@
-fun f() {
-    println("value is ${150 + 150}")
-}

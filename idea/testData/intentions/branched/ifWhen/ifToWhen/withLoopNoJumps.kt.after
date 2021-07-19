@@ -1,7 +1,0 @@
-fun test() {
-    for (i in -2..2) {
-        when {
-            i > 0 -> i.hashCode()
-        }
-    }
-}

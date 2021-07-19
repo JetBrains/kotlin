@@ -1,7 +1,0 @@
-fun foo() {
-    val pair = 1 to <caret>
-}
-
-// ELEMENT: to
-// CHAR: ' '
-

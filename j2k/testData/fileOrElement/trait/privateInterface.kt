@@ -1,1 +1,0 @@
-private interface Test

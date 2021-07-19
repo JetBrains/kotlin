@@ -1,7 +1,0 @@
-class Some {
-    fun bar() {}
-}
-
-fun Some?.foo() {
-    this?.bar()
-}

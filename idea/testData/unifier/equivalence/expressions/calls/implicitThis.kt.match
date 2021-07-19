@@ -1,5 +1,0 @@
-bar()
-
-this.bar()
-
-this@A.bar()

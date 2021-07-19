@@ -1,4 +1,0 @@
-Callable reference 5 val a = A::foo
-Callable reference 6 val b = B::foo
-Function call 2 A().foo()
-Function call 3 B().foo()

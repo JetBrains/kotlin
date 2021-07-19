@@ -1,3 +1,0 @@
-// "Add 'toString()' call" "true"
-
-val s: String = (1 + 2 * 3).toString()<caret>

@@ -1,1 +1,0 @@
-expect fun <caret>foo(i: Int, d: Double, s: String): Boolean

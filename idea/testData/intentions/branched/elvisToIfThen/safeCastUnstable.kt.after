@@ -1,6 +1,0 @@
-class My(var z: Any, val x: Int) {
-    fun foo() {
-        val z1 = z
-        val y = if (z1 is My) z1 else 42
-    }
-}

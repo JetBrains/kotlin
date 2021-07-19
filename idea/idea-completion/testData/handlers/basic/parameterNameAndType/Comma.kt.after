@@ -1,6 +1,0 @@
-class FooBar
-
-fun f(bar: FooBar, <caret>)
-
-// ELEMENT_TEXT: bar: FooBar
-// CHAR: ','

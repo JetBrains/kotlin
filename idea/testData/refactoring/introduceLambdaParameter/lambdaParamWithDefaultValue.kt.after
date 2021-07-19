@@ -1,8 +1,0 @@
-fun foo(a: Int, s: String, i: (Int) -> Int = { a -> a + 1 }): Int {
-    val t = i(a) * 2
-    return i(a) - t
-}
-
-fun test() {
-    foo(1, "2")
-}

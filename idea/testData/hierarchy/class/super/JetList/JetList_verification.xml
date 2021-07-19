@@ -1,5 +1,0 @@
-<node text="List (java.util)" base="true">
-  <node text="Collection (java.util)">
-    <node text="Iterable (java.lang)"/>
-  </node>
-</node>

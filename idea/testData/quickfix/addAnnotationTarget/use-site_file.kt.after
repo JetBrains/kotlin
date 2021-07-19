@@ -1,5 +1,0 @@
-// "Add annotation target" "true"
-@file:FileAnn
-
-@Target(AnnotationTarget.FILE)
-annotation class FileAnn

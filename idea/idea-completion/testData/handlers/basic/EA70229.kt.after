@@ -1,7 +1,0 @@
-// FIR_COMPARISON
-// ELEMENT: foo
-// CHAR: '\t'
-
-fun foo(handler: () -> Unit){}
-
-val v = foo { <caret> }

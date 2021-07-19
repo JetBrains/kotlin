@@ -1,8 +1,0 @@
-3 fun test(<bold>n: Int</bold>) { (in test(Int))
-4 	<bold>var x</bold> = n (in test(Int))
-4 		var x = <bold>n</bold> (in test(Int))
-3 			fun test(<bold>n: Int</bold>) { (in test(Int))
-
-6 x = <bold>0</bold> (in test(Int))
-4 	<bold>var x</bold> = n (in test(Int))
-6 		x = <bold>0</bold> (in test(Int))

@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'maxOrNull()'"
-// IS_APPLICABLE_2: false
-fun getMaxLineWidth(list: List<Float>): Float {
-    val <caret>max = list.maxOrNull()
-        ?: 0.0f
-    return max
-}

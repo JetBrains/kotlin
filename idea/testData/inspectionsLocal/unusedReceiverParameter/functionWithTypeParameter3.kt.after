@@ -1,7 +1,0 @@
-interface TypeHolder<T, U>
-
-fun foo() {}
-
-fun test(holder: TypeHolder<String, Int>) {
-    foo()
-}

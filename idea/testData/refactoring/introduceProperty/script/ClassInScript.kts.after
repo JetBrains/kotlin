@@ -1,6 +1,0 @@
-// EXTRACTION_TARGET: property with initializer
-class A {
-    private val i = 1
-
-    fun f() = i
-}

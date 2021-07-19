@@ -1,5 +1,0 @@
-data class Foo(val name: String) {
-    override fun equals(other: Any?): Boolean {
-        <selection><caret>return super.equals(other)</selection>
-    }
-}

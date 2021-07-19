@@ -1,7 +1,0 @@
-/*All (1)*/fun foo(/*All (2)*/arg: /*All (3)*/String/*(3)*//*(2)*/) {
-    /*All (4)*/arg/*(4)*/
-}/*(1)*/
-
-/*None (5)*/fun bar(/*None (6)*/arg: /*None (7)*/Int/*(7)*//*(6)*/) {
-    /*None (8)*/arg/*(8)*/
-}/*(5)*/

@@ -1,1 +1,0 @@
-Class java.util.Properties, referenced in property packJvm.user, will not be accessible in module B

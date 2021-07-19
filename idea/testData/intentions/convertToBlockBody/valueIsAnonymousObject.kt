@@ -1,1 +1,0 @@
-fun f() = <caret>object {  }

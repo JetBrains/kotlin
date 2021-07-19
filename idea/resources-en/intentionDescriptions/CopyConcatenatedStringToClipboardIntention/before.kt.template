@@ -1,3 +1,0 @@
-fun p(s: String, t: String) {
-    println(<spot>"s: $s t: $t"</spot>)
-}

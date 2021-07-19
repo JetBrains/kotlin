@@ -1,5 +1,0 @@
-// "Make 'Foo' not open" "true"
-object Foo {
-    fun a(): Int = 1
-}
-/* IGNORE_FIR */

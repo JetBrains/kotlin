@@ -1,9 +1,0 @@
-Resolved INSTANCE()
-Searched imported static member PsiField:INSTANCE in [KtFile: javaInvokeWithStaticImport.0.kt]
-Searched imported static member PsiField:INSTANCE in [KtFile: javaInvokeWithStaticImport.1.kt]
-Searched references to JavaClassWI
-Searched references to JavaClassWI.Other
-Searched references to static INSTANCE in non-Java files by request JavaClassWI.*
-Searched references to static INSTANCE in non-Java files by request JavaClassWI.INSTANCE
-Searched references to static INSTANCE in non-Java files by request JavaClassWI.Other.*
-Searched references to static INSTANCE in non-Java files by request Other.INSTANCE

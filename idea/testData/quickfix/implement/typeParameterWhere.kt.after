@@ -1,5 +1,0 @@
-// "Implement interface" "true"
-// SHOULD_BE_AVAILABLE_AFTER_EXECUTION
-
-interface Base<T> where T : Any
-class BaseImpl<T> : Base<T> where T : Any

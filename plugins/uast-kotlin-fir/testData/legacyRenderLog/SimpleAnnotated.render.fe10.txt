@@ -1,9 +1,0 @@
-public final class SimpleAnnotated {
-    @org.jetbrains.annotations.NotNull @kotlin.SinceKotlin(version = "1.0") private final var property: java.lang.String = "Mary"
-    @kotlin.Suppress(names = "abc")
-    public final fun method() : void {
-        println("Hello, world!")
-    }
-    public final fun getProperty() : java.lang.String = UastEmptyExpression
-    public fun SimpleAnnotated() = UastEmptyExpression
-}

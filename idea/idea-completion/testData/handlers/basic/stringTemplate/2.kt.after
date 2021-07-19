@@ -1,8 +1,0 @@
-// FIR_COMPARISON
-package ppp
-
-fun foo(p: String): String {
-    val s = "${foo(<caret>)}"
-}
-
-// ELEMENT: foo

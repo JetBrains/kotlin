@@ -1,6 +1,0 @@
-fun foo(arg: Int) {
-    when (arg) {
-        0 -> return
-    }
-    if (arg == 1) else return
-}

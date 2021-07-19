@@ -1,4 +1,0 @@
-fun f(p: Any, set: Set<Any>) {
-    if (p !in set) return
-    //TODO
-}

@@ -1,2 +1,0 @@
-<!-- constructorsRedeclaration2 -->
-Conflicting overloads: public constructor Element(x: String) defined in Element, public constructor Element(x: String) defined in Element

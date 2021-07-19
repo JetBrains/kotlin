@@ -1,5 +1,0 @@
-public final class IfKt {
-    public static final fun test(@org.jetbrains.annotations.NotNull b: boolean) : java.lang.Object {
-        return if (b) (4 * 10 + 2) else "42"
-    }
-}

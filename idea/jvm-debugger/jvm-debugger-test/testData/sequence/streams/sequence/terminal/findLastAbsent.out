@@ -1,9 +1,0 @@
-LineBreakpoint created at FindLastAbsent.kt:5
-Run Java
-Connected to the target VM
-FindLastAbsent.kt:5
-Exception caught: junit.framework.AssertionFailedError: Type inference failed. Expected type mismatch: inferred type is Int? but Int was expected, Type inference failed. Expected type mismatch: inferred type is Int? but Int was expected
-WRONG!
-Disconnected from the target VM
-
-Process finished with exit code 0

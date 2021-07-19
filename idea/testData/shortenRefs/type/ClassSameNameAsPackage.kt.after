@@ -1,4 +1,0 @@
-import same.same
-
-fun f(s: same) {
-}

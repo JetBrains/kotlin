@@ -1,1 +1,0 @@
-val <caret>foo: Boolean = true

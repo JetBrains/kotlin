@@ -1,1 +1,0 @@
-val f = fun(i: Int, <caret>_: String) = i

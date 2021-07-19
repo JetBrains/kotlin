@@ -1,4 +1,0 @@
-MODULE base { platform=[JVM]; root=base;  additionalCompilerArgs=-Xjvm-default=disable }
-MODULE clash { platform=[JVM]; root=clash; additionalCompilerArgs=-Xjvm-default=all-compatibility }
-
-clash -> base { kind=DEPENDS_ON }

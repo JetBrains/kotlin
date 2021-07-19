@@ -1,5 +1,0 @@
-{
-  "filesToMove": ["A/src/test/Foo.kt", "A/src/test/Bar.kt"],
-  "type": "MOVE_FILES_WITH_DECLARATIONS",
-  "targetDirectory": "B/src/test2"
-}

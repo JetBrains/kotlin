@@ -1,5 +1,0 @@
-8 <bold>val hello</bold> = "Hello" (in main(Array<String>))
-9 	val v = "hello = $<bold>hello</bold>" (in main(Array<String>))
-10 	f1(<bold>hello</bold>) (in main(Array<String>))
-3 		fun f1(<bold>param: String</bold>){ (in f1(String))
-4 			val a = "param = $<bold>param</bold>" (in f1(String))

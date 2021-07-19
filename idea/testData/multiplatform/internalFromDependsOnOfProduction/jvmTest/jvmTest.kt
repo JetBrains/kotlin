@@ -1,3 +1,0 @@
-fun usageInTest() {
-    internalFromCommon()
-}

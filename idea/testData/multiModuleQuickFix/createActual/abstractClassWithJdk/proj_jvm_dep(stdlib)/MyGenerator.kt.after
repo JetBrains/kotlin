@@ -1,6 +1,0 @@
-import kotlin.random.Random
-
-// MyGenerator: to be implemented
-actual abstract class MyGenerator {
-    actual abstract fun generate(): Random
-}

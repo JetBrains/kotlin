@@ -1,8 +1,0 @@
-UFile (package = )
-    UClass (name = InKt)
-        UMethod (name = foo)
-            UBlockExpression
-                [!] UnknownKotlinExpression (PROPERTY)
-                [!] UnknownKotlinExpression (PROPERTY)
-                UReturnExpression
-                    [!] UnknownKotlinExpression (BINARY_EXPRESSION)

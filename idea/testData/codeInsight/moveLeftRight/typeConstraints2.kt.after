@@ -1,4 +1,0 @@
-// MOVE: left
-interface Foo<E>
-interface Bar<K, V>
-interface Baz<E, K, N> where <caret>E: Any, B : Bar<E, K>, F: Foo<E>

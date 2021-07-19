@@ -1,6 +1,0 @@
-import dependency.AnObject
-import dependency.extFun
-
-fun foo() {
-    AnObject.extFun()
-}

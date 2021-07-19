@@ -1,2 +1,0 @@
-//statement
-do {} while (true)

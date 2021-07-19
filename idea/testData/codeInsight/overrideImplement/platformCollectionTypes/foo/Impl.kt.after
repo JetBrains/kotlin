@@ -1,7 +1,0 @@
-import foo.A
-
-class B : A {
-    override fun foo(): MutableList<String> {
-        <selection><caret>TODO("Not yet implemented")</selection>
-    }
-}

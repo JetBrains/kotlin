@@ -1,5 +1,0 @@
-public final class IfStatementKt {
-    public static final fun foo() : void {
-        var x: int = if ("abc" != "def") 1 else 0
-    }
-}

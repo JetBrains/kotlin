@@ -1,5 +1,0 @@
-fun foo() {
-    <spot>for (x in list) {
-        x.bar()
-    }</spot>
-}

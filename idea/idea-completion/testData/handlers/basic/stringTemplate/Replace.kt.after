@@ -1,7 +1,0 @@
-// FIR_COMPARISON
-fun foo(): String {
-    val s = "${foo()<caret>}"
-}
-
-// ELEMENT: foo
-// CHAR: \t

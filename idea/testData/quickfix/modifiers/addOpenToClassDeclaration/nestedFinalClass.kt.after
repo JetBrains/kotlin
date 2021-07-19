@@ -1,6 +1,0 @@
-// "Make 'B' 'open'" "true"
-class A {
-    open class B
-}
-
-class C : <caret>A.B()

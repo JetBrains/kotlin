@@ -1,8 +1,0 @@
-fun provideSimple() = listOf("statement 0")
-fun callInDefault(simple: List<String> = provideSimple(), complex: List<String> = run {
-    val result = mutableListOf("statement 1")
-    result.add("statement 2")
-    result
-}
-) {
-}

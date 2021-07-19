@@ -1,8 +1,0 @@
-import org.jetbrains.annotations.NotNull;
-
-class A {
-
-    public final int n;
-    @NotNull
-    public final String s;
-}

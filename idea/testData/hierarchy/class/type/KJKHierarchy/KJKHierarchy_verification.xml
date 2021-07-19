@@ -1,7 +1,0 @@
-<node text="Object (java.lang)">
-  <node text="A ()" base="true">
-    <node text="MyClass ()">
-      <node text="B ()"/>
-    </node>
-  </node>
-</node>

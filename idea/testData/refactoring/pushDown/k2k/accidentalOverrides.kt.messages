@@ -1,4 +1,0 @@
-Function 'fun foo(Boolean): Boolean' in class B will override corresponding member of class A after refactoring
-Function 'fun foo(Int, Int): Int' in class B will override corresponding member of class A after refactoring
-Property 'val y: Boolean' in class B will override corresponding member of class A after refactoring
-Property 'val z: Int' in class B will override corresponding member of class A after refactoring

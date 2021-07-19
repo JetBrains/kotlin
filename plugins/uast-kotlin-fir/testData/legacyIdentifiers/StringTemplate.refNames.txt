@@ -1,6 +1,0 @@
-foo -> USimpleNameReferenceExpression (identifier = foo) from KtSimpleNameStringTemplateEntry
-foo -> USimpleNameReferenceExpression (identifier = foo) from KtNameReferenceExpression
-bar -> USimpleNameReferenceExpression (identifier = bar) from KtSimpleNameStringTemplateEntry
-bar -> USimpleNameReferenceExpression (identifier = bar) from KtNameReferenceExpression
-baz -> USimpleNameReferenceExpression (identifier = baz) from KtSimpleNameStringTemplateEntry
-baz -> USimpleNameReferenceExpression (identifier = baz) from KtNameReferenceExpression

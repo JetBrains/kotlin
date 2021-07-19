@@ -1,6 +1,0 @@
-import kotlin.String
-
-// IGNORE_FIR
-class String {}
-
-val x: String = ""

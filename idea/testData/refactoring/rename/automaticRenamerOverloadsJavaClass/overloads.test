@@ -1,7 +1,0 @@
-{
-  "type": "JAVA_METHOD",
-  "classId": "/JavaSuper",
-  "methodSignature": "void foo()",
-  "newName": "bar",
-  "mainFile": "JavaSuper.java"
-}

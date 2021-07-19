@@ -1,4 +1,0 @@
-package newPackage
-
-fun foo() {
-}

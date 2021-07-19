@@ -1,7 +1,0 @@
-// "Create property 'foo'" "true"
-// ERROR: Property must be initialized
-class Cyclic<E : Cyclic<E>>
-
-fun test() {
-    val c : Cyclic<*> = <caret>foo
-}

@@ -1,2 +1,0 @@
-// "Remove redundant 'if' statement" "true"
-fun bar(value: Int) = value % 2 == 0

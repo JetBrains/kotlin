@@ -1,5 +1,0 @@
-PsiJetFileStubImpl[package=]
-  PACKAGE_DIRECTIVE
-  IMPORT_LIST
-  PROPERTY[fqName=a, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]
-  PROPERTY[fqName=b, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=b]

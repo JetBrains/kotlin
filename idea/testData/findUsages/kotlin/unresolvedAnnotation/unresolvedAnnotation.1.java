@@ -1,1 +1,0 @@
-public class Client extends Foo {}

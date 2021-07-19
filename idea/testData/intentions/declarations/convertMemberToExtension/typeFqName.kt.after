@@ -1,6 +1,0 @@
-class Owner {
-}
-
-fun Owner.<caret>f(p: kotlin.Int): kotlin.String {
-    return p.toString()
-}

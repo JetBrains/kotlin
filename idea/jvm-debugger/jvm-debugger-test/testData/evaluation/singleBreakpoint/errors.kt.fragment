@@ -1,5 +1,0 @@
-prop += 1
-prop2 +=2
-prop + prop2
-
-// RESULT: 6: I

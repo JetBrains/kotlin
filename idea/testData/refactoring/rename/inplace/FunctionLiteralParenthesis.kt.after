@@ -1,3 +1,0 @@
-fun f() {
-    val f = { <caret>y: Int -> y + y }
-}

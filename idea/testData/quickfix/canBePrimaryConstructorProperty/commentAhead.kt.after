@@ -1,7 +1,0 @@
-// "Move to constructor" "true"
-class Complex(
-    /**
-     * Very complex field x
-     */
-    val x: Int, y: Double, z: String) {
-}

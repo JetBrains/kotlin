@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-
-inline fun <reified T : CharSequence, reified U, X> foo() {
-    __dummyTestFun__<T, U>()
-}
-
-inline fun <reified T : CharSequence, reified U> __dummyTestFun__() {
-    listOf(T::class, U::class)
-}

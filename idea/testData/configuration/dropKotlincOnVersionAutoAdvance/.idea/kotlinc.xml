@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-    <component name="KotlinCommonCompilerArguments">
-        <option name="apiVersion" value="1.4" />
-        <option name="languageVersion" value="1.4" />
-    </component>
-</project>

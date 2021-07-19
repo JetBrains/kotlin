@@ -1,2 +1,0 @@
-<!-- illegalSuspendCall1 -->
-Suspend function 'foo' should be called only from a coroutine or another suspend function

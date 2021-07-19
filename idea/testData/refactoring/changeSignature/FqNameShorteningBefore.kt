@@ -1,1 +1,0 @@
-class <caret>C(val n: Int)

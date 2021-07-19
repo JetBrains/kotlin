@@ -1,3 +1,0 @@
-[javaDerivedClassUsages2.0.kt] Unclassified usage 12 open class C: Y {
-[javaDerivedClassUsages2.0.kt] Unclassified usage 8 open class A: X {
-[javaDerivedClassUsages2.1.java] Unclassified usage 1 class B extends A {

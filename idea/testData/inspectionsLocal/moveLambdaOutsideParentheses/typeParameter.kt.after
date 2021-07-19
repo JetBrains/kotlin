@@ -1,5 +1,0 @@
-fun <T> foo(t: T) {}
-
-fun test() {
-    foo { "a" }
-}

@@ -1,3 +1,0 @@
-// "Move type parameter constraint to 'where' clause" "true"
-fun <T> foo() where T : Cloneable, T : Comparable<*> {
-}

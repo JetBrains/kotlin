@@ -1,4 +1,0 @@
-var x = 5
-fun foo() {
-    <spot>10.also { x = it }</spot>
-}

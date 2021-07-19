@@ -1,9 +1,0 @@
-// CHOOSE_USE_SITE_TARGET: delegate
-// WITH_RUNTIME
-
-annotation class A
-
-class Property {
-    @delegate:A
-    val foo: String by lazy { "" }
-}

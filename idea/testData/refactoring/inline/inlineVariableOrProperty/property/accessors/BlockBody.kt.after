@@ -1,4 +1,0 @@
-fun foo() {
-    println("access!")
-    println(1)
-}

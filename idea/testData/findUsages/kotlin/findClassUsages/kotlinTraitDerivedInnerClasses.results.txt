@@ -1,3 +1,0 @@
-[kotlinTraitDerivedInnerClasses.0.kt] Unclassified usage 8 open class A: X {
-[kotlinTraitDerivedInnerClasses.1.kt] Unclassified usage 4 open class B: A() {
-[kotlinTraitDerivedInnerClasses.1.kt] Unclassified usage 8 open class C: Y {

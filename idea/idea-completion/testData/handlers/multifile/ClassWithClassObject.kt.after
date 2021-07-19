@@ -1,6 +1,0 @@
-import pack.KtClass
-
-// FIR_COMPARISON
-fun foo() {
-    KtClass<caret>
-}

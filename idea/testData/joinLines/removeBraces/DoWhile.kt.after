@@ -1,3 +1,0 @@
-fun foo() {
-    do <caret>if (bar()) break while (true)
-}

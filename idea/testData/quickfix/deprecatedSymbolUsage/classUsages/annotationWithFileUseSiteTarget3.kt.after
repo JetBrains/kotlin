@@ -1,6 +1,0 @@
-// "Replace with 'OptIn(*markerClass)'" "true"
-// WITH_RUNTIME
-@file:OptIn(Foo::class, Bar::class)
-
-annotation class Foo
-annotation class Bar

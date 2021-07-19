@@ -1,8 +1,0 @@
-// FIR_COMPARISON
-fun bar() {}
-
-fun test(){
-    "${bar()<caret>}"
-}
-
-// ELEMENT: bar

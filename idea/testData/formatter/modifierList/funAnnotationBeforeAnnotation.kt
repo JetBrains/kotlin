@@ -1,4 +1,0 @@
-@annot
-@foo fun foo() {
-}
-

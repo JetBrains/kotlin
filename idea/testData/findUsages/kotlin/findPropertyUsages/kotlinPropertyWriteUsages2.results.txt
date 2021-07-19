@@ -1,3 +1,0 @@
-[kotlinPropertyWriteUsages2.0.kt] Value write 17 super<A>.foo = value
-[kotlinPropertyWriteUsages2.1.kt] Value write 10 b.foo = "b"
-[kotlinPropertyWriteUsages2.1.kt] Value write 6 a.foo = "a"

@@ -1,9 +1,0 @@
-val a = "a"
-val b = when (a) {
-    "a" -> "A"
-    "b" -> "B"
-    else -> throw RuntimeException()
-}
-b
-
-// RESULT: "A": Ljava/lang/String;

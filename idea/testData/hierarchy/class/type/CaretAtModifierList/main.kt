@@ -1,4 +1,0 @@
-<caret>public class MyClass {
-}
-
-

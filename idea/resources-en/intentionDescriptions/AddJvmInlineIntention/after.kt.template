@@ -1,2 +1,0 @@
-<spot>@JvmInline</spot>
-value class IC(val i: Int)

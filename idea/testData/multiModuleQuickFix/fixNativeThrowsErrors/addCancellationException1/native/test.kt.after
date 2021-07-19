@@ -1,6 +1,0 @@
-import kotlin.coroutines.cancellation.CancellationException
-
-// "Add 'CancellationException::class'" "true"
-
-@Throws(Error::class, CancellationException::class)
-suspend fun addCE() {}

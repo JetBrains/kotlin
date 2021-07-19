@@ -1,4 +1,0 @@
-expect open class A<T : A<T>> {
-    class C<T>
-    inner class B<F : C<C<C<A<T>>>>>
-}

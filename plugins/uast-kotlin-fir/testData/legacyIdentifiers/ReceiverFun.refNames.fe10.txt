@@ -1,9 +1,0 @@
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
-MyReceiverAnnotation -> UAnnotation (fqName = MyReceiverAnnotation) from KtNameReferenceExpression
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
-length -> USimpleNameReferenceExpression (identifier = length) from KtDotQualifiedExpression
-length -> USimpleNameReferenceExpression (identifier = length) from KtNameReferenceExpression
-MyReceiverAnnotation -> UAnnotation (fqName = MyReceiverAnnotation) from KtNameReferenceExpression
-String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
-Regex -> USimpleNameReferenceExpression (identifier = Regex) from KtNameReferenceExpression
-toRegex -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression

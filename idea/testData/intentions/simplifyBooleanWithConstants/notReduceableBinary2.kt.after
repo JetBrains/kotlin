@@ -1,4 +1,0 @@
-fun test() {
-    foo(false || !true) + foo(false)
-}
-fun foo(v: Boolean): Int = 1

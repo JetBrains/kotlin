@@ -1,9 +1,0 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
-LineBreakpoint created at enums.kt:7
-Run Java
-Connected to the target VM
-enums.kt:7
-Compile bytecode for A == MyEnum.A
-Disconnected from the target VM
-
-Process finished with exit code 0

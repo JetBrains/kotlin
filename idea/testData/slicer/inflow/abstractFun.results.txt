@@ -1,3 +1,0 @@
-4 fun foo(<bold>p: Int</bold>) (in I.foo(Int))
-12 	foo(<bold>1</bold>) (in C.f())
-17 	i.foo(<bold>2</bold>) (in f(I))

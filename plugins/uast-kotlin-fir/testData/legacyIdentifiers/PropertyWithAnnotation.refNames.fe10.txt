@@ -1,8 +1,0 @@
-TestAnnotation -> UAnnotation (fqName = TestAnnotation) from KtNameReferenceExpression
-Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
-TestAnnotation -> UAnnotation (fqName = TestAnnotation) from KtNameReferenceExpression
-Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
-TestAnnotation -> UAnnotation (fqName = TestAnnotation) from KtNameReferenceExpression
-Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
-field -> USimpleNameReferenceExpression (identifier = field) from KtNameReferenceExpression
-value -> USimpleNameReferenceExpression (identifier = value) from KtNameReferenceExpression

@@ -1,5 +1,0 @@
-// "Add annotation target" "true"
-@Target(AnnotationTarget.PROPERTY)
-annotation class PropertyAnn
-
-class Property(@property:PropertyAnn val foo: String)

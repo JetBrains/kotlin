@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-// SUGGESTED_NAMES: s, getS
-fun test() {
-    val s = s()
-}
-
-private fun s() = J.notNull()

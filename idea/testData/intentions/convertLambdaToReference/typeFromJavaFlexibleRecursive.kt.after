@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-// See KT-13411
-
-fun use() {
-    val text = B.text
-    text.map(MutableList<Any>::toString)
-}

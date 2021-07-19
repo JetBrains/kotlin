@@ -1,1 +1,0 @@
-Property a.val1, referenced in property a.val2, will not be accessible from module A

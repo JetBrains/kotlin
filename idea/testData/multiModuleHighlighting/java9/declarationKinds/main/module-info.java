@@ -1,3 +1,0 @@
-module main {
-    requires dependency;
-}

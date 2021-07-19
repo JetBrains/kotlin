@@ -1,7 +1,0 @@
-interface X {
-    infix fun plus(p: Int): Int
-}
-
-fun foo(x: X) {
-    (x plus 1).minus(2)
-}

@@ -1,6 +1,0 @@
-MODULE commonMpp { platform=[JVM, JS, Native] }
-MODULE jvmMpp { platform=[JVM] }
-MODULE nonMpp { platform=[JVM] }
-
-nonMpp -> jvmMpp { kind=DEPENDENCY }
-jvmMpp -> commonMpp { kind=DEPENDS_ON }

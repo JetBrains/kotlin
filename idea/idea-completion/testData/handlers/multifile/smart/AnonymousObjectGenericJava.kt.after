@@ -1,7 +1,0 @@
-fun<T> f(){
-    JavaClass<T>(object : Comparator<T> {
-        override fun compare(var1: T, var2: T): Int {
-            TODO("Not yet implemented")
-        }
-    })
-}

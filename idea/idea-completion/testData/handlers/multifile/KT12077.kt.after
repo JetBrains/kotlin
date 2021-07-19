@@ -1,6 +1,0 @@
-package some
-
-import other.SomeAnnotation
-
-class Complete(@set:SomeAnnotation<caret> var field: Int)
-// FIR_COMPARISON

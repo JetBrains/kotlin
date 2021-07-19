@@ -1,4 +1,0 @@
-lazy -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
-lazy -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
-Suppress -> UAnnotation (fqName = kotlin.Suppress) from KtNameReferenceExpression
-lazy -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression

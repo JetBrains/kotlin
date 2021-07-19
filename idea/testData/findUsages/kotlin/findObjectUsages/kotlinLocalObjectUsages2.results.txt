@@ -1,1 +1,0 @@
-Value read 8 return Bar

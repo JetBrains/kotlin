@@ -1,8 +1,0 @@
-// IGNORE_BACKEND: JVM_WITH_IR_EVALUATOR, JVM_IR_WITH_IR_EVALUATOR
-// IGNORE_BACKEND: JVM_WITH_OLD_EVALUATOR, JVM_IR_WITH_OLD_EVALUATOR
-LineBreakpoint created at color.kt:7
-Run Java
-Connected to the target VM
-color.kt:7
-Disconnected from the target VM
-Process finished with exit code 0

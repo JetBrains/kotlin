@@ -1,6 +1,0 @@
-import kotlin.math.sqrt
-
-// WITH_RUNTIME
-fun test(x: Double) {
-    sqrt(x)
-}

@@ -1,5 +1,0 @@
-4 fun bar(n: Int) = <bold>n</bold> (in test())
-4 	<bold>fun bar(n: Int)</bold> = n (in test())
-5 		[LAMBDA CALLS] val x = (<bold>::bar</bold>)(1) (in test())
-5 			val x = <bold>(::bar)(1)</bold> (in test())
-5 				<bold>val x</bold> = (::bar)(1) (in test())

@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-abstract class Owner {
-}
-
-fun Owner.f() {
-    <caret><selection>TODO("Not yet implemented")</selection>
-}

@@ -1,2 +1,0 @@
-//statement
-return 1;

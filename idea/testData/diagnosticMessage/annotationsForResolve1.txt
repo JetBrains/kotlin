@@ -1,2 +1,0 @@
-<!-- annotationsForResolve1 -->
-Type mismatch: inferred type is String but Int was expected

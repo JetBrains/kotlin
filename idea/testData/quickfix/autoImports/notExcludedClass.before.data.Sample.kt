@@ -1,3 +1,0 @@
-package somePackage
-
-class NotExcludedClass

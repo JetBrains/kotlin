@@ -1,8 +1,0 @@
-// IS_APPLICABLE: true
-fun foo() {
-    bar({ it })
-}
-
-fun bar(b: (Int) -> Int) {
-    b(1)
-}

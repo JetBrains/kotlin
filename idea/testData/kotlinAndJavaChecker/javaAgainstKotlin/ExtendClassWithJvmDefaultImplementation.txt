@@ -1,3 +1,0 @@
-// LANGUAGE_LEVEL 1.8
-// WITH_RUNTIME
-// COMPILER_ARGUMENTS: -jvm-target, 1.8, -Xjvm-default=enable

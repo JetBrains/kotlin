@@ -1,5 +1,0 @@
-package a
-
-import b.B
-
-actual class A : B()

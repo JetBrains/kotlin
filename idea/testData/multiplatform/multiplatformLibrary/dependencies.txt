@@ -1,8 +1,0 @@
-MODULE common { platform=[JVM, JS, Native]; root=common }
-MODULE jvm { platform=[JVM]; root=jvm; testRoot=jvmTest}
-MODULE js { platform=[JS]; root=js }
-
-common -> STDLIB_COMMON, KOTLIN_SDK { kind=DEPENDENCY }
-jvm -> common { kind=DEPENDS_ON }
-jvm -> STDLIB_JVM, KOTLIN_TEST, KOTLIN_TEST_JVM, JUNIT, MOCK_JDK { kind=DEPENDENCY }
-js -> common, KOTLIN_SDK { kind=DEPENDS_ON }

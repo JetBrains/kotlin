@@ -1,9 +1,0 @@
-interface A {
-    fun foo(): Int
-}
-
-class B : A {
-    <spot>override fun foo(): Int {
-        throw UnsupportedOperationException()
-    }</spot>
-}

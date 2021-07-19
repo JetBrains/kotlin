@@ -1,1 +1,0 @@
-header fun foo(): Int
