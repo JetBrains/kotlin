@@ -621,6 +621,38 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Build should not produce warninings when '-no-jdk' option is present")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun noWarningOnNoJdkOptionPresent(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            useToolchainToCompile(11)
+
+            //language=groovy
+            rootBuildGradle.append(
+                """
+                
+                import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+                
+                tasks
+                    .withType(KotlinCompile.class)
+                    .configureEach {
+                        kotlinOptions {
+                            noJdk = true
+                        }                
+                    }
+                """.trimIndent()
+            )
+
+            build("build") {
+                assertOutputDoesNotContain("w: The '-jdk-home' option is ignored because '-no-jdk' is specified")
+            }
+        }
+    }
+
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
