@@ -655,6 +655,18 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
                 }
 
                 @Test
+                @TestMetadata("kt47422.kt")
+                public void testKt47422() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47422.kt");
+                }
+
+                @Test
+                @TestMetadata("kt47437.kt")
+                public void testKt47437() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47437.kt");
+                }
+
+                @Test
                 @TestMetadata("NonPlatformTypeParameter.kt")
                 public void testNonPlatformTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NonPlatformTypeParameter.kt");
