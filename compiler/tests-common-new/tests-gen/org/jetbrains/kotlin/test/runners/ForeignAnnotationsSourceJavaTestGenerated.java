@@ -655,6 +655,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
+                @TestMetadata("kt47396.kt")
+                public void testKt47396() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47396.kt");
+                }
+
+                @Test
                 @TestMetadata("kt47422.kt")
                 public void testKt47422() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/kt47422.kt");

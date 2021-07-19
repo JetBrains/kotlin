@@ -358,7 +358,8 @@ class SignatureEnhancement(
                     ?: computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
                         nullabilityFromBoundsForTypeBasedOnTypeParameter,
                         defaultTypeQualifier,
-                        typeParameterForArgument
+                        typeParameterForArgument,
+                        isFromStarProjection
                     )
 
             val isNotNullTypeParameter =
@@ -385,7 +386,8 @@ class SignatureEnhancement(
         private fun computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
             nullabilityFromBoundsForTypeBasedOnTypeParameter: NullabilityQualifierWithMigrationStatus?,
             defaultTypeQualifier: JavaDefaultQualifiers?,
-            typeParameterForArgument: TypeParameterDescriptor?
+            typeParameterForArgument: TypeParameterDescriptor?,
+            isFromStarProjection: Boolean
         ): NullabilityQualifierWithMigrationStatus? {
 
             val result =
@@ -406,7 +408,7 @@ class SignatureEnhancement(
                 )
             }
 
-            if (result == null) return boundsFromTypeParameterForArgument
+            if (result == null || isFromStarProjection) return boundsFromTypeParameterForArgument
 
             return mostSpecific(boundsFromTypeParameterForArgument, result)
         }
