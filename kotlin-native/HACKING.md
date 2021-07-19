@@ -25,15 +25,15 @@ Set AGENT variable to the JVMTI agent provided by YourKit, like
 
 To profile standard library compilation:
 
-        ./gradlew -PstdLibJvmArgs="-agentpath:$AGENT=probe_disable=*,listen=all,tracing"  dist
+        ./gradlew -PstdLibJvmArgs="-agentpath:$AGENT=probe_disable=*,listen=all,tracing"  :kotlin-native:dist
 
 To profile platform libraries start build of proper target like this:
 
-        ./gradlew -PplatformLibsJvmArgs="-agentpath:$AGENT=probe_disable=*,listen=all,tracing"  ios_arm64PlatformLibs
+        ./gradlew -PplatformLibsJvmArgs="-agentpath:$AGENT=probe_disable=*,listen=all,tracing"  :kotlin-native:ios_arm64PlatformLibs
 
 To profile standalone code compilation use:
 
-        JAVA_OPTS="-agentpath:$AGENT=probe_disable=*,listen=all,tracing" ./dist/bin/konanc file.kt
+        JAVA_OPTS="-agentpath:$AGENT=probe_disable=*,listen=all,tracing" ./kotlin-native/dist/bin/konanc file.kt
 
 Then attach to the desired application in YourKit GUI and use CPU tab to inspect CPU consuming methods.
 Saving the trace may be needed for more analysis. Adjusting `-Xmx` in `$HOME/.yjp/ui.ini` could help
@@ -48,13 +48,13 @@ There are several gradle flags one can use for Konan build.
 
 * **-Pbuild_flags** passes flags to the compiler used to build stdlib
 
-        ./gradlew -Pbuild_flags="--disable lower_inline --print_ir" stdlib
+        ./gradlew -Pbuild_flags="--disable lower_inline --print_ir" :kotlin-native:stdlib
 
 * **-Pshims** compiles LLVM interface with tracing "shims". Allowing one 
     to trace the LLVM calls from the compiler.
     Make sure to rebuild the project.
 
-        ./gradlew -Pshims=true dist
+        ./gradlew -Pshims=true :kotlin-native:dist
 
  ## Compiler environment variables
 
@@ -66,40 +66,36 @@ There are several gradle flags one can use for Konan build.
 
 To run blackbox compiler tests from JVM Kotlin use (takes time):
 
-    ./gradlew run_external
-
-To update the blackbox compiler tests set TeamCity build number in `gradle.properties`:
-
-    testKotlinVersion=<build number>
+    ./gradlew :kotlin-native:run_external
 
 * **-Pfilter** allows one to choose test files to run.
 
-        ./gradlew -Pfilter=overflowLong.kt run_external
+        ./gradlew -Pfilter=overflowLong.kt :kotlin-native:run_external
 
 * **-Pprefix** allows one to choose external test directories to run. Only tests from directories with given prefix will be executed.
 
-        ./gradlew -Pprefix=build_external_compiler_codegen_box_cast run_external
+        ./gradlew -Pprefix=build_external_compiler_codegen_box_cast :kotlin-native:run_external
 
 * **-Ptest_flags** passes flags to the compiler used to compile tests
 
-        ./gradlew -Ptest_flags="--time" backend.native:tests:array0
+        ./gradlew -Ptest_flags="--time" :kotlin-native:backend.native:tests:array0
 
 * **-Ptest_target** specifies cross target for a test run. 
 
-        ./gradlew -Ptest_target=raspberrypi backend.native:tests:array0
+        ./gradlew -Ptest_target=raspberrypi :kotlin-native:backend.native:tests:array0
 
 * **-Premote=user@host** sets remote test execution login/hostname. Good for cross compiled tests.
 
-        ./gradlew -Premote=kotlin@111.22.33.444 backend.native:tests:run
+        ./gradlew -Premote=kotlin@111.22.33.444 :kotlin-native:backend.native:tests:run
 
 * **-Ptest_verbose** enables printing compiler args and other helpful information during a test execution.
 
-        ./gradlew -Ptest_verbose :backend.native:tests:mpp_optional_expectation
+        ./gradlew -Ptest_verbose :kotlin-native:backend.native:tests:mpp_optional_expectation
         
 * **-Ptest_two_stage** enables two-stage compilation of tests. If two-stage compilation is enabled, test sources are compiled into a klibrary
 and then a final native binary is produced from this klibrary using the -Xinclude compiler flag.
 
-        ./gradlew -Ptest_two_stage backend.native:tests:array0
+        ./gradlew -Ptest_two_stage :kotlin-native:backend.native:tests:array0
         
 * **-Ptest_with_cache_kind=static|dynamic** enables using caches during testing. 
        
@@ -107,63 +103,102 @@ and then a final native binary is produced from this klibrary using the -Xinclud
  
 To run runtime unit tests on the host machine for both mimalloc and the standard allocator:
 
-    ./gradlew hostRuntimeTests
+    ./gradlew :kotlin-native:hostRuntimeTests
        
-To run tests for only one of these two allocators, run `hostStdAllocRuntimeTests` or `hostMimallocRuntimeTests`.
+To run tests for only one of these two allocators, run `:kotlin-native:hostStdAllocRuntimeTests` or `:kotlin-native:hostMimallocRuntimeTests`.
 
 We use [Google Test](https://github.com/google/googletest) to execute the runtime unit tests. The build automatically fetches
-the specified Google Test revision to `runtime/googletest`. It is possible to manually modify the downloaded GTest sources for debug
+the specified Google Test revision to `kotlin-native/runtime/googletest`. It is possible to manually modify the downloaded GTest sources for debug
 purposes; the build will not overwrite them by default.
 
 To forcibly redownload Google Test when running tests, use the corresponding project property:
 
-     ./gradlew hostRuntimeTests -Prefresh-gtest
+     ./gradlew :kotlin-native:hostRuntimeTests -Prefresh-gtest
 
 or run the `downloadGTest` task directly with the `--refresh` CLI key:
 
-    ./gradlew downloadGTest --refresh
+    ./gradlew :kotlin-native:downloadGTest --refresh
     
-To use a local GTest copy instead of the downloaded one, add the following line to `runtime/build.gradle.kts`:
+To use a local GTest copy instead of the downloaded one, add the following line to `kotlin-native/runtime/build.gradle.kts`:
 
     googletest.useLocalSources("<path to local GTest sources>")
+
+## Debugging Kotlin/Native compiler
+
+In order to debug Kotlin/Native compiler using IntelliJ IDEA, you should run it from the command line in a special way to wait for the debbuger connection. This requires adding certain JVM options before running the compiler. These flags could be set via environment variable `JAVA_OPTS`.
+The following bash script (`debug.sh`) can be used to debug:
+
+```shell
+#!/bin/bash
+set -e
+JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" "$@"
+```
+
+Running Kotlin/Native compiler with this script
+
+```shell
+~/debug.sh <path_to_kotlin>/kotlin-native/dist/bin/konanc ...
+```
+
+makes the compiler wait for the remote debugger to connect.
+
+You can get ther command line output of the compiler from the detailed Gradle output of your project's build process.  To see the the detailed Gradle output, run the gradle command with `-i` flag.
+
+The next step is setting up your debug configuration in IntelliJ IDEA. After opening Kotlin project in IDEA (more information can be found on
+https://github.com/JetBrains/kotlin#build-environment-requirements and
+https://github.com/JetBrains/kotlin#-working-with-the-project-in-intellij-idea), create a remote debugger config.
+
+Use `Edit Configurations` in dropdown menu with your run/debug configurations and add a new `Remote JVM Debug`.
+In settings, select the same port you specified in `JAVA_OPTS` in the `debug.sh` script.
+Now just run this configuration. It’ll attach and let the compiler run.
+
+## Developing Kotlin/Native runtime in CLion
+
+It's possible to use CLion to develop C++ runtime code efficiently and to have navigation in C++ code.
+To open runtime code in CLion as project and use all provided features of CLion, use a compilation database.
+It lets CLion detect project files and extract all the necessary compiler information, such as include paths and compilation flags.
+To generate a compilation database for the Kotlin/Native runtime, run the Gradle task
+`./gradlew :kotlin-native:compdb`.
+This task generates `<path_to_kotlin>/kotlin-native/compile_commands.json` file that should be opened in CLion as project.
+Other developer tools also can use generated compilation database, but then `clangd` tool should be installed manually.
 
  ## Performance measurement
   
  Firstly, it's necessary to build analyzer tool to have opportunity to compare different performance results:
  
-    cd tools/benchmarksAnalyzer
-    ../../gradlew build
+    cd kotlin-native/tools/benchmarksAnalyzer
+    ../../../gradlew build
     
  To measure performance of Kotlin/Native compiler on existing benchmarks:
  
-    cd performance
-    ../gradlew :konanRun
+    cd kotlin-native/performance
+    ../../gradlew :konanRun
 
  **NOTE**: **konanRun** task needs built compiler and libs. To test against working tree make sure to run
 
-    ./gradlew dist distPlatformLibs
+    ./gradlew :kotlin-native:dist :kotlin-native:distPlatformLibs
 
  before **konanRun**
     
  **konanRun** task can be run separately for one/several benchmark applications:
  
-    cd performance
-    ../gradlew :cinterop:konanRun
+    cd kotlin-native/performance
+    ../../gradlew :cinterop:konanRun
     
  **konanRun** task has parameter `filter` which allows to run only some subset of benchmarks:
  
-    cd performance
-    ../gradlew :cinterop:konanRun --filter=struct,macros
+    cd kotlin-native/performance
+    ../../gradlew :cinterop:konanRun --filter=struct,macros
     
  Or you can use `filterRegex` if you want to specify the filter as regexes:
  
-    cd performance
-    ../gradlew :ring:konanRun --filterRegex=String.*,Loop.*
+    cd kotlin-native/performance
+    ../../gradlew :ring:konanRun --filterRegex=String.*,Loop.*
     
  There us also verbose mode to follow progress of running benchmarks
  
-    cd performance
-    ../gradlew :cinterop:konanRun --verbose
+    cd kotlin-native/performance
+    ../../gradlew :cinterop:konanRun --verbose
     
     > Task :performance:cinterop:konanRun
     [DEBUG] Warm up iterations for benchmark macros
@@ -172,23 +207,23 @@ To use a local GTest copy instead of the downloaded one, add the following line 
     
  There are also tasks for running benchmarks on JVM (pay attention, some benchmarks e.g. cinterop benchmarks can't be run on JVM)
  
-    cd performance
-    ../gradlew :jvmRun
+    cd kotlin-native/performance
+    ../../gradlew :jvmRun
     
  Files with results of benchmarks run are saved in `performance/build/nativeReport.json` for konanRun and `jvmReport.json` for jvmRun.
  You can change the output filename by setting the `nativeJson` property for konanRun and `jvmJson` for jvmRun:
 
-    cd performance
-    ../gradlew :ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
+    cd kotlin-native/performance
+    ../../gradlew :ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
 
  You can use the `compilerArgs` property to pass flags to the compiler used to compile the benchmarks:
 
-    cd performance
-    ../gradlew :konanRun -PcompilerArgs="--time -g"
+    cd kotlin-native/performance
+    ../../gradlew :konanRun -PcompilerArgs="--time -g"
 
  To compare different results run benchmarksAnalyzer tool:
  
-    cd tools/benchmarksAnalyzer/build/bin/<target>/benchmarksAnalyzerReleaseExecutable/
+    cd kotlin-native/tools/benchmarksAnalyzer/build/bin/<target>/benchmarksAnalyzerReleaseExecutable/
     ./benchmarksAnalyzer.kexe <file1> <file2>
     
  Tool has several renders which allow produce output report in different forms (text, html, etc.). To set up render use flag `--render/-r`.
@@ -214,35 +249,12 @@ To use a local GTest copy instead of the downloaded one, add the following line 
      teamcity:id:42491947:nativeReport.json
      
  Pay attention, user and password information(with flag `-u <username>:<password>`) should be provided to get data from TeamCity.
-   
-## Composite build and testing
-
-If you have a fix spanning both Kotlin and Kotlin/native workspaces you need to be able to test Kotlin/Native composite build. Here's how to do it manually:
-
-### Have a composite build with the proper Kotlin tag.
-
-Find the version of Kotlin the current native is guaranteed to build with. 
-The version is specified in `kotlin-native/gradle.properties`. For example:
-```
-kotlinVersion=1.3.70-dev-1526
-```
-Checkout `kotlin` workspace to tag `build-1.3.70-dev-1526`. Make sure its path ends with `.../kotlin`. 
-Otherwise issues will arise.
-Direct `kotlin-native` build to the kotlin with `kotlinProjectPath` in native's `gradle.properties`.
-
-Now you have the kotlin + kotlin-native combination that is known to build.
-Apply your fix on top of both workspaces and run
-```
-$ ./gradlew dist
-```
-
-in `kotlin-native` to check the buildability.
 
 ### Testing native
 
 For a quick check use:
 ```
-$ ./gradlew sanity 2>&1 | tee log
+$ ./gradlew :kotlin-native:sanity 2>&1 | tee log
 ```
 
 For a longer, more thorough testing build the complete build. Make sure you are running it on a macOS. 
@@ -251,15 +263,15 @@ For a longer, more thorough testing build the complete build. Make sure you are 
 Have a complete build:
 
 ```
-$ ./gradlew bundle # includes dist as its part
+$ ./gradlew :kotlin-native:bundle # includes dist as its part
 ```
 
 then run two test sets:
 
 ```
-$ ./gradlew backend.native:tests:run 2>&1 | tee log
+$ ./gradlew :kotlin-native:backend.native:tests:run 2>&1 | tee log
 
-$ ./gradlew backend.native:tests:runExternal -Ptest_two_stage=true 2>&1 | tee log
+$ ./gradlew :kotlin-native:backend.native:tests:runExternal -Ptest_two_stage=true 2>&1 | tee log
 
 ```
 
