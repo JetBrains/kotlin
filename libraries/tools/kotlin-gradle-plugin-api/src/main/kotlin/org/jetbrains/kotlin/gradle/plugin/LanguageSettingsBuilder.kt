@@ -18,10 +18,10 @@ interface LanguageSettingsBuilder : LanguageSettings {
 
     override val enabledLanguageFeatures: Set<String>
 
-    @Deprecated("Unsupported and will be removed in next major releases", replaceWith = ReplaceWith("optInAnnotation(name)"))
+    @Deprecated("Unsupported and will be removed in next major releases", replaceWith = ReplaceWith("optIn(name)"))
     fun useExperimentalAnnotation(name: String)
 
-    fun optInAnnotation(name: String)
+    fun optIn(annotationName: String)
 
     override val experimentalAnnotationsInUse: Set<String>
 }
