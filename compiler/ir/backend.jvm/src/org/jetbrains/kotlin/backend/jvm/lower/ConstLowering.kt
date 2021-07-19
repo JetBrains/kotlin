@@ -52,6 +52,7 @@ class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid()
 
     private fun IrExpression.lowerConstRead(receiver: IrExpression?, field: IrField?): IrExpression? {
         val value = field?.constantValue() ?: return null
+        transformChildrenVoid()
         val resultExpression = if (context.state.shouldInlineConstVals)
             value.copyWithOffsets(startOffset, endOffset)
         else
