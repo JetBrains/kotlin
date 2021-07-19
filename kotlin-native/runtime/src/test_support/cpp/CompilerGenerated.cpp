@@ -8,6 +8,16 @@
 #include "ObjectTestSupport.hpp"
 #include "Types.h"
 
+using kotlin::test_support::internal::createCleanerWorkerMock;
+using kotlin::test_support::internal::shutdownCleanerWorkerMock;
+using kotlin::test_support::internal::reportUnhandledExceptionMock;
+using kotlin::test_support::internal::Kotlin_runUnhandledExceptionHookMock;
+
+testing::MockFunction<KInt()>* kotlin::test_support::internal::createCleanerWorkerMock = nullptr;
+testing::MockFunction<void(KInt, bool)>* kotlin::test_support::internal::shutdownCleanerWorkerMock = nullptr;
+testing::MockFunction<void(KRef)>* kotlin::test_support::internal::reportUnhandledExceptionMock = nullptr;
+testing::MockFunction<void(KRef)>* kotlin::test_support::internal::Kotlin_runUnhandledExceptionHookMock = nullptr;
+
 namespace {
 
 struct EmptyPayload {
@@ -48,11 +58,6 @@ struct KBox {
     ObjHeader header;
     const T value;
 };
-
-testing::StrictMock<testing::MockFunction<KInt()>>* createCleanerWorkerMock = nullptr;
-testing::StrictMock<testing::MockFunction<void(KInt, bool)>>* shutdownCleanerWorkerMock = nullptr;
-testing::StrictMock<testing::MockFunction<void(KRef)>>* reportUnhandledExceptionMock = nullptr;
-testing::StrictMock<testing::MockFunction<void(KRef)>>* Kotlin_runUnhandledExceptionHookMock = nullptr;
 
 } // namespace
 
@@ -285,18 +290,3 @@ KInt Kotlin_CleanerImpl_createCleanerWorker() {
 
 } // extern "C"
 
-ScopedStrictMockFunction<KInt()> ScopedCreateCleanerWorkerMock() {
-    return ScopedStrictMockFunction<KInt()>(&createCleanerWorkerMock);
-}
-
-ScopedStrictMockFunction<void(KInt, bool)> ScopedShutdownCleanerWorkerMock() {
-    return ScopedStrictMockFunction<void(KInt, bool)>(&shutdownCleanerWorkerMock);
-}
-
-ScopedStrictMockFunction<void(KRef)> ScopedReportUnhandledExceptionMock() {
-    return ScopedStrictMockFunction<void(KRef)>(&reportUnhandledExceptionMock);
-}
-
-ScopedStrictMockFunction<void(KRef)> ScopedKotlin_runUnhandledExceptionHookMock() {
-    return ScopedStrictMockFunction<void(KRef)>(&Kotlin_runUnhandledExceptionHookMock);
-}
