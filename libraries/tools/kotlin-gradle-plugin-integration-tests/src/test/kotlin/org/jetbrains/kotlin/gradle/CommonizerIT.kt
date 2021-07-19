@@ -135,10 +135,10 @@ class CommonizerIT : BaseGradleIT() {
             val expectedOutputDirectoryForBuild = projectDir.resolve("build/classes/kotlin/commonizer")
 
             build(":copyCommonizeCInteropForIde") {
+                assertSuccessful()
                 assertTasksExecuted(":cinteropCurlTargetA")
                 assertTasksExecuted(":cinteropCurlTargetB")
                 assertTasksExecuted(":commonizeCInterop")
-                assertSuccessful()
 
                 assertTrue(expectedOutputDirectoryForIde.isDirectory, "Missing output directory for IDE")
                 assertTrue(expectedOutputDirectoryForBuild.isDirectory, "Missing output directory for build")

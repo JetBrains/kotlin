@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
+import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupKotlinNativePlatformDependencies
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
@@ -89,6 +90,10 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             project.gradle.projectsEvaluated {
                 project.setupKotlinNativePlatformDependencies()
             }
+        }
+
+        SingleActionPerProject.run(project, "setupCInteropCommonizerDependencies") {
+            project.setupCInteropCommonizerDependencies()
         }
 
         if (!konanTarget.enabledOnCurrentHost) {

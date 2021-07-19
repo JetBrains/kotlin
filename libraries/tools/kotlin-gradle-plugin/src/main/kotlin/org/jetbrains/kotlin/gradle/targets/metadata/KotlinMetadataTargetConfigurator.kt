@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
-import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
-import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
-import org.jetbrains.kotlin.gradle.targets.native.internal.getLibraries
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -316,21 +313,6 @@ class KotlinMetadataTargetConfigurator :
                     // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
                     // not resolved:
                     compileDependencyFiles = project.files()
-                }
-            }
-
-            if (this is KotlinSharedNativeCompilation) {
-                project.commonizeCInteropTask?.let { task ->
-                    compileDependencyFiles = compileDependencyFiles.plus(task.getLibraries(this))
-                }
-                project.copyCommonizeCInteropForIdeTask?.let { task ->
-                    val libraries = task.getLibraries(this)
-                    kotlinSourceSetsIncludingDefault.filterIsInstance<DefaultKotlinSourceSet>().forEach { sourceSet ->
-                        val dependencyConfigurationName =
-                            if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
-                            else sourceSet.implementationMetadataConfigurationName
-                        project.dependencies.add(dependencyConfigurationName, libraries)
-                    }
                 }
             }
         }

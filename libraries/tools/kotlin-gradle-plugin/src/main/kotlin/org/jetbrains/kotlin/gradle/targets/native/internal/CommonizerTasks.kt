@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -50,8 +51,11 @@ internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
             return locateOrRegisterTask(
                 "commonizeCInterop",
                 invokeWhenRegistered = {
+                    val task = this
                     commonizeTask.dependsOn(this)
-                    commonizeNativeDistributionTask?.let(this::dependsOn)
+                    whenEvaluated {
+                        commonizeNativeDistributionTask?.let(task::dependsOn)
+                    }
                 },
                 configureTask = {
                     group = "interop"
