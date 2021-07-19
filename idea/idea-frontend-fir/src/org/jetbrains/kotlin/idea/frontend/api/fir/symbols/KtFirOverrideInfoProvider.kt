@@ -50,8 +50,11 @@ class KtFirOverrideInfoProvider(
         return memberSymbol.firRef.withFir { memberFir ->
             if (memberFir !is FirCallableDeclaration) return@withFir null
             parentClassSymbol.firRef.withFir inner@{ parentClassFir ->
-                if (parentClassSymbol !is FirClassSymbol<*>) return@inner null
-                memberFir.symbol.getImplementationStatus(SessionHolderImpl(firAnalysisSession.rootModuleSession, ScopeSession()), parentClassSymbol)
+                val parentClassFirSymbol = parentClassFir.symbol as? FirClassSymbol<*> ?: return@inner null
+                memberFir.symbol.getImplementationStatus(
+                    SessionHolderImpl(firAnalysisSession.rootModuleSession, ScopeSession()),
+                    parentClassFirSymbol
+                )
             }
         }
     }
