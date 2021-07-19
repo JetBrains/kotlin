@@ -45,7 +45,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
 /**
- * @see FlexibleMethodAnalyzer
+ * @see org.jetbrains.kotlin.codegen.optimization.fixStack.HackedFixStackMethodAnalyzerBase
  */
 @Suppress("DuplicatedCode")
 open class FastMethodAnalyzer<V : Value>(
