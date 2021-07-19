@@ -216,18 +216,22 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
 
             val start = System.currentTimeMillis()
-            buildCache(
-                cachePath = outputFilePath,
-                project = projectJs,
-                mainModule = mainModule,
-                analyzer = AnalyzerWithCompilerReport(config.configuration),
-                configuration = config.configuration,
-                allDependencies = resolvedLibraries,
-                friendDependencies = friendDependencies,
-                icCache = checkCaches(resolvedLibraries, icCaches, skipLib = mainModule.lib.libraryFile.absolutePath)
-            )
+            if (buildCache(
+                    cachePath = outputFilePath,
+                    project = projectJs,
+                    mainModule = mainModule,
+                    analyzer = AnalyzerWithCompilerReport(config.configuration),
+                    configuration = config.configuration,
+                    allDependencies = resolvedLibraries,
+                    friendDependencies = friendDependencies,
+                    icCache = checkCaches(resolvedLibraries, icCaches, skipLib = mainModule.lib.libraryFile.absolutePath)
+                )
+            ) {
+                messageCollector.report(INFO, "IC cache building duration: ${System.currentTimeMillis() - start}ms")
+            } else {
+                messageCollector.report(INFO, "IC cache up-to-date check duration: ${System.currentTimeMillis() - start}ms")
+            }
 
-            messageCollector.report(INFO, "IC cache building duration: ${System.currentTimeMillis() - start}ms")
             return OK
         }
 

@@ -25,6 +25,7 @@ import kotlin.random.nextULong
 private val compilerVersion = Random.nextULong()
 
 // TODO more parameters for lowerings
+// Returns true if caches were built. False if caches were up-to-date.
 fun buildCache(
     cachePath: String,
     project: Project,
@@ -36,7 +37,7 @@ fun buildCache(
     exportedDeclarations: Set<FqName> = emptySet(),
     forceClean: Boolean = false,
     icCache: IcCacheInfo = IcCacheInfo.EMPTY,
-) {
+): Boolean {
     val dependencyHashes = allDependencies.getFullList(TopologicalLibraryOrder).mapNotNull {
         val path = it.libraryFile.absolutePath
         icCache.md5[path]
@@ -46,7 +47,7 @@ fun buildCache(
 
     if (!forceClean) {
         val oldCacheInfo = CacheInfo.load(cachePath)
-        if (oldCacheInfo != null && md5 == oldCacheInfo.md5) return
+        if (oldCacheInfo != null && md5 == oldCacheInfo.md5) return false
     }
 
     val icDir = File(cachePath)
@@ -58,6 +59,8 @@ fun buildCache(
     icData.writeTo(File(cachePath))
 
     CacheInfo(cachePath, mainModule.lib.libraryFile.absolutePath, md5).save()
+
+    return true
 }
 
 private fun File.md5(additional: Iterable<ULong> = emptyList()): ULong {
