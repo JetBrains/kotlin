@@ -16,6 +16,7 @@
 #include "Types.h"
 
 using namespace kotlin;
+using namespace kotlin::test_support;
 using testing::_;
 
 // TODO: Also test disposal. (This requires extracting Worker interface)
