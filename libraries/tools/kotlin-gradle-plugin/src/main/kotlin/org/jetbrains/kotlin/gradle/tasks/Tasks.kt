@@ -670,8 +670,15 @@ abstract class KotlinCompile @Inject constructor(
 
     private fun validateKotlinAndJavaHasSameTargetCompatibility(args: K2JVMCompilerArguments) {
         associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
-            val normalizedJavaVersion = if (targetCompatibility == "1.9") "9" else targetCompatibility
-            if (normalizedJavaVersion != args.jvmTarget) {
+            val normalizedJavaTarget = when (targetCompatibility) {
+                "6" -> "1.6"
+                "7" -> "1.7"
+                "8" -> "1.8"
+                "1.9" -> "9"
+                else -> targetCompatibility
+            }
+
+            if (normalizedJavaTarget != args.jvmTarget) {
                 val javaTaskName = associatedJavaCompileTaskName.get()
                 val errorMessage = "'$javaTaskName' task (current target is $targetCompatibility) and " +
                         "'$name' task (current target is ${args.jvmTarget}) " +

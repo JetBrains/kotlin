@@ -590,6 +590,37 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Should correctly validate JVM targets in mixed Kotlin/Java projects that are using <JDK1.8")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun oldJdkMixedJavaKotlinTargetVerification(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            //language=groovy
+            rootBuildGradle.append(
+                """
+                
+                java {
+                    toolchain {
+                        languageVersion.set(JavaLanguageVersion.of(8))
+                    }
+                }
+                
+                """.trimIndent()
+            )
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            build("build")
+        }
+    }
+
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
