@@ -194,6 +194,23 @@ open class ReportWithPrefixes @Inject constructor(
     }
 }
 
+/**
+ * Returns a list of Clang -cc1 arguments (including -cc1 itself) that are used for bitcode compilation in Kotlin/Native.
+ *
+ * See also: [org.jetbrains.kotlin.backend.konan.BitcodeCompiler]
+ */
+private fun buildClangFlags(configurables: Configurables): List<String> = mutableListOf<String>().apply {
+    require(configurables is ClangFlags)
+    addAll(configurables.clangFlags)
+    addAll(configurables.clangNooptFlags)
+    val targetTriple = if (configurables is AppleConfigurables) {
+        configurables.targetTriple.withOSVersion(configurables.osVersionMin)
+    } else {
+        configurables.targetTriple
+    }
+    addAll(listOf("-triple", targetTriple.toString()))
+}.toList()
+
 private fun createTestTask(
         project: Project,
         testName: String,
@@ -253,7 +270,6 @@ private fun createTestTask(
         dependsOn(tasksToLink)
     }
 
-    val clangFlags = platformManager.platform(konanTarget).configurables as ClangFlags
     val compileTask = project.tasks.create(
             "${testName}Compile",
             CompileNativeTest::class.java,
@@ -262,8 +278,7 @@ private fun createTestTask(
     ).apply {
         this.sanitizer = sanitizer
         dependsOn(llvmLinkTask)
-        clangArgs.addAll(clangFlags.clangFlags)
-        clangArgs.addAll(clangFlags.clangNooptFlags)
+        clangArgs.addAll(buildClangFlags(platformManager.platform(konanTarget).configurables))
     }
 
     val mimallocEnabled = testedTaskNames.any { it.contains("mimalloc", ignoreCase = true) }
