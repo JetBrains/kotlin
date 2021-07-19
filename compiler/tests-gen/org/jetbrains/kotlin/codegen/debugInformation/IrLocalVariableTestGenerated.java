@@ -276,6 +276,12 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
         }
 
         @Test
+        @TestMetadata("mergeLvt.kt")
+        public void testMergeLvt() throws Exception {
+            runTest("compiler/testData/debug/localVariables/suspend/mergeLvt.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/debug/localVariables/suspend/simple.kt");
