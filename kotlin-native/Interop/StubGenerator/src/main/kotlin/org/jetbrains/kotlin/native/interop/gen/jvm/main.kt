@@ -229,10 +229,6 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
     val verbose = cinteropArguments.verbose
 
     val entryPoint = def.config.entryPoints.atMostOne()
-    val linkerOpts =
-            def.config.linkerOpts.toTypedArray() + 
-            tool.defaultCompilerOpts + 
-            additionalLinkerOpts
     val linkerName = cinteropArguments.linker ?: def.config.linker
     val linker = "${tool.llvmHome}/bin/$linkerName"
     val compiler = "${tool.llvmHome}/bin/clang"
@@ -359,7 +355,10 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             val compilerCmd = arrayOf(compiler, *compilerArgs,
                     "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
             runCmd(compilerCmd, verbose)
-
+            val linkerOpts =
+                    def.config.linkerOpts.toTypedArray() +
+                            tool.getDefaultCompilerOptsForLanguage(library.language) +
+                            additionalLinkerOpts
             val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
             val linkerCmd = arrayOf(linker,
                     outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
@@ -477,7 +476,7 @@ internal fun buildNativeLibrary(
     val language = selectNativeLanguage(def.config)
     val compilerOpts: List<String> = mutableListOf<String>().apply {
         addAll(def.config.compilerOpts)
-        addAll(tool.defaultCompilerOpts)
+        addAll(tool.getDefaultCompilerOptsForLanguage(language))
         // We compile with -O2 because Clang may insert inline asm in bitcode at -O0.
         // It is undesirable in case of watchos_arm64 since we target armv7k
         // for this target instead of arm64_32 because it is not supported in LLVM 8.
