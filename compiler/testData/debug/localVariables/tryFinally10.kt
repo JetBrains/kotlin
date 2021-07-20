@@ -23,7 +23,7 @@ fun compute(): String {
         }
     } finally {
         val s2 = "OK"
-        x = s2  // TODO: Why is `s2` not visible here?
+        x = s2
     }
     return "FAIL"
 }
@@ -49,7 +49,7 @@ fun box() {
 // test.kt:10 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
 // test.kt:21 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, $i$a$-f-TestKt$compute$1:int=0:int
 // test.kt:25 compute:
-// test.kt:26 compute:
+// test.kt:26 compute: s2:java.lang.String="OK":java.lang.String
 // test.kt:32 box:
 // test.kt:33 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
 // test.kt:34 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String

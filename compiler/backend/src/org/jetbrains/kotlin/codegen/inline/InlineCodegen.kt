@@ -187,6 +187,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
                 processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
                 processor.localVarsMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
+                finallyNode.localVariables.forEach {
+                    processor.localVarsMetaInfo.addNewInterval(LocalVarNodeWrapper(it))
+                }
             }
 
             curInstr = curInstr.next
