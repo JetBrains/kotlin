@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.types.isError
 
 class AnnotationChecker(
     private val additionalCheckers: Iterable<AdditionalAnnotationChecker>,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val platformAnnotationFeaturesSupport: PlatformAnnotationFeaturesSupport,
 ) {
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor, trace.bindingContext)
@@ -132,7 +133,7 @@ class AnnotationChecker(
 
             val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget() ?: property.getDefaultUseSiteTarget(descriptor)
             val existingAnnotations = propertyAnnotations[useSiteTarget] ?: continue
-            if (classDescriptor in existingAnnotations && !classDescriptor.isRepeatableAnnotation()) {
+            if (classDescriptor in existingAnnotations && !isRepeatableAnnotation(classDescriptor)) {
                 if (reportError) {
                     trace.reportDiagnosticOnce(Errors.REPEATED_ANNOTATION.on(entry))
                 } else {
@@ -231,7 +232,7 @@ class AnnotationChecker(
             val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
                     || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
 
-            if (duplicateAnnotation && !classDescriptor.isRepeatableAnnotation()) {
+            if (duplicateAnnotation && !isRepeatableAnnotation(classDescriptor)) {
                 trace.report(Errors.REPEATED_ANNOTATION.on(entry))
             }
 
@@ -291,6 +292,9 @@ class AnnotationChecker(
             )
         }
     }
+
+    private fun isRepeatableAnnotation(descriptor: ClassDescriptor): Boolean =
+        descriptor.isRepeatableAnnotation() || platformAnnotationFeaturesSupport.isRepeatableAnnotationClass(descriptor)
 
     companion object {
         private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")

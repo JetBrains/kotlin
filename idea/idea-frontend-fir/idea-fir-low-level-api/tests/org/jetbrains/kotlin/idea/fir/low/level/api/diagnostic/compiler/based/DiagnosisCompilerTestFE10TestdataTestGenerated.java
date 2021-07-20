@@ -1140,12 +1140,6 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
-            @TestMetadata("deprecatedRepeatable.kt")
-            public void testDeprecatedRepeatable() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/deprecatedRepeatable.kt");
-            }
-
-            @Test
             @TestMetadata("dontReportWarningAboutChangingExecutionOrderForVararg.kt")
             public void testDontReportWarningAboutChangingExecutionOrderForVararg() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/dontReportWarningAboutChangingExecutionOrderForVararg.kt");

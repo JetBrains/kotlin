@@ -115,6 +115,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JvmSamConversionOracle>()
         container.useImpl<JvmAdditionalClassPartsProvider>()
         container.useImpl<JvmRecordApplicabilityChecker>()
+        container.useImpl<JvmPlatformAnnotationFeaturesSupport>()
 
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
