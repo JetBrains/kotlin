@@ -323,6 +323,7 @@ private val jvmFilePhases = listOf(
 
     inventNamesForLocalClassesPhase,
     kCallableNamePropertyPhase,
+    repeatedAnnotationPhase,
     annotationPhase,
     annotationImplementationPhase,
     polymorphicSignaturePhase,

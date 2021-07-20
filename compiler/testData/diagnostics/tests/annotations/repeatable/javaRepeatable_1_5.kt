@@ -1,3 +1,4 @@
+// !LANGUAGE: -RepeatableAnnotations
 // FULL_JDK
 // FILE: Runtime.java
 

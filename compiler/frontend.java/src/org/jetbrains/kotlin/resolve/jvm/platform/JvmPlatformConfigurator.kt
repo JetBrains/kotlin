@@ -73,7 +73,6 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
     ),
 
     additionalAnnotationCheckers = listOf(
-        RepeatableAnnotationChecker,
         FileClassAnnotationsChecker,
         ExplicitMetadataChecker
     ),
@@ -125,5 +124,6 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
         super.configureModuleDependentCheckers(container)
         container.useImpl<ExpectedActualDeclarationChecker>()
+        container.useImpl<RepeatableAnnotationChecker>()
     }
 }

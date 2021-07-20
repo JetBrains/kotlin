@@ -437,6 +437,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/annotations/repeatable")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Repeatable {
+            @Test
+            public void testAllFilesPresentInRepeatable() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations/typeAnnotations")
         @TestDataPath("$PROJECT_ROOT")
         public class TypeAnnotations {

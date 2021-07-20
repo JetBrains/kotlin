@@ -1,3 +1,5 @@
+// !LANGUAGE: -RepeatableAnnotations
+
 @Repeatable
 annotation class repann
 
@@ -18,14 +20,14 @@ annotation class binrepann
 @Repeatable
 annotation class repexpr
 
-@repann @repann class DoubleAnnotated
+@repann <!NON_SOURCE_REPEATED_ANNOTATION!>@repann<!> class DoubleAnnotated
 
 @repann1(1) @repann1(2) @repann1(3) class TripleAnnotated
 
 @repann2(true) @repann2(false) @repann2(false) @repann2(true) class FourTimesAnnotated
 
-@binrepann @binrepann class BinaryAnnotated
+@binrepann <!NON_SOURCE_REPEATED_ANNOTATION!>@binrepann<!> class BinaryAnnotated
 
-@repann @repann fun foo(@repann @repann x: Int): Int {
+@repann <!NON_SOURCE_REPEATED_ANNOTATION!>@repann<!> fun foo(@repann <!NON_SOURCE_REPEATED_ANNOTATION!>@repann<!> x: Int): Int {
     @repexpr @repexpr return x
 }

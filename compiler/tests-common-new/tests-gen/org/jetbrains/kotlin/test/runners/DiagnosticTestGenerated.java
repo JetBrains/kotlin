@@ -2101,21 +2101,39 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("javaRepeatable.kt")
-                public void testJavaRepeatable() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatable.kt");
+                @TestMetadata("javaRepeatable_1_5.kt")
+                public void testJavaRepeatable_1_5() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatable_1_5.kt");
                 }
 
                 @Test
-                @TestMetadata("javaUnrepeatable.kt")
-                public void testJavaUnrepeatable() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaUnrepeatable.kt");
+                @TestMetadata("javaRepeatable_1_6.kt")
+                public void testJavaRepeatable_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatable_1_6.kt");
                 }
 
                 @Test
-                @TestMetadata("kotlinRepeatable.kt")
-                public void testKotlinRepeatable() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/kotlinRepeatable.kt");
+                @TestMetadata("javaUnrepeatable_1_5.kt")
+                public void testJavaUnrepeatable_1_5() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaUnrepeatable_1_5.kt");
+                }
+
+                @Test
+                @TestMetadata("javaUnrepeatable_1_6.kt")
+                public void testJavaUnrepeatable_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaUnrepeatable_1_6.kt");
+                }
+
+                @Test
+                @TestMetadata("kotlinRepeatable_1_5.kt")
+                public void testKotlinRepeatable_1_5() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/kotlinRepeatable_1_5.kt");
+                }
+
+                @Test
+                @TestMetadata("kotlinRepeatable_1_6.kt")
+                public void testKotlinRepeatable_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/kotlinRepeatable_1_6.kt");
                 }
             }
 

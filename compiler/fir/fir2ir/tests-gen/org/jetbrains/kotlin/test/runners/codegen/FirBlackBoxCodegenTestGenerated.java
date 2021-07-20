@@ -497,6 +497,28 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/annotations/repeatable")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Repeatable {
+            @Test
+            public void testAllFilesPresentInRepeatable() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("javaAnnotation.kt")
+            public void testJavaAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/repeatable/javaAnnotation.kt");
+            }
+
+            @Test
+            @TestMetadata("jvmRepeatableKotlinAnnotation.kt")
+            public void testJvmRepeatableKotlinAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/repeatable/jvmRepeatableKotlinAnnotation.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations/typeAnnotations")
         @TestDataPath("$PROJECT_ROOT")
         public class TypeAnnotations {

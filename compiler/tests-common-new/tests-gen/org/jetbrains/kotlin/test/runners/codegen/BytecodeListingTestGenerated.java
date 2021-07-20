@@ -423,6 +423,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testUnsignedTypes() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/unsignedTypes.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/annotations/repeatable")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Repeatable {
+            @Test
+            public void testAllFilesPresentInRepeatable() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
     }
 
     @Nested

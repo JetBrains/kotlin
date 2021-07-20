@@ -1,3 +1,4 @@
+// !LANGUAGE: -RepeatableAnnotations
 // FULL_JDK
 // FILE: Runtime.java
 
@@ -22,11 +23,11 @@ public @interface Source {}
 
 // FILE: usage.kt
 
-@Runtime <!REPEATED_ANNOTATION!>@Runtime<!>
+@Runtime @Runtime
 class UseRuntime
 
-@Clazz <!REPEATED_ANNOTATION!>@Clazz<!>
+@Clazz @Clazz
 class UseClazz
 
-@Source <!REPEATED_ANNOTATION!>@Source<!>
+@Source @Source
 class UseSource

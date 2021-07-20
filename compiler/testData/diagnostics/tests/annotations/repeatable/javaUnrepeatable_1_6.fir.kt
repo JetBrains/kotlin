@@ -1,39 +1,25 @@
+// !LANGUAGE: +RepeatableAnnotations
 // FULL_JDK
 // FILE: Runtime.java
 
 import java.lang.annotation.*;
 
-@Repeatable(Runtime.Container.class)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Runtime {
-    public @interface Container {
-        Runtime[] value();
-    }
-}
+public @interface Runtime {}
 
 // FILE: Clazz.java
 
 import java.lang.annotation.*;
 
-@Repeatable(Clazz.Container.class)
 @Retention(RetentionPolicy.CLASS)
-public @interface Clazz {
-    public @interface Container {
-        Clazz[] value();
-    }
-}
+public @interface Clazz {}
 
 // FILE: Source.java
 
 import java.lang.annotation.*;
 
-@Repeatable(Source.Container.class)
 @Retention(RetentionPolicy.SOURCE)
-public @interface Source {
-    public @interface Container {
-        Source[] value();
-    }
-}
+public @interface Source {}
 
 // FILE: usage.kt
 
