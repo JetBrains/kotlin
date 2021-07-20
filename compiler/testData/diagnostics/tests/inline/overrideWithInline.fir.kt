@@ -34,12 +34,12 @@ class CDerived : IBase {
 
 open class COpen : IBase {
     override inline final fun foo() {}
-    override inline fun bar() {}
+    <!DECLARATION_CANT_BE_INLINED!>override inline fun bar()<!> {}
     override inline final fun <reified T> qux(x: T) {}
 
     open class COpenNested : IBase {
         override inline final fun foo() {}
-        override inline fun bar() {}
+        <!DECLARATION_CANT_BE_INLINED!>override inline fun bar()<!> {}
         override inline final fun <reified T> qux(x: T) {}
     }
 
@@ -52,7 +52,7 @@ open class COpen : IBase {
     fun aMethod() {
         open class COpenLocal : IBase {
             override inline final fun foo() {}
-            override inline fun bar() {}
+            <!DECLARATION_CANT_BE_INLINED!>override inline fun bar()<!> {}
             override inline final fun <reified T> qux(x: T) {}
         }
     }

@@ -2210,6 +2210,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val symbol: KtSymbol
     }
 
+    abstract class DeclarationCantBeInlined : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = DeclarationCantBeInlined::class
+    }
+
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         abstract val objectName: Name

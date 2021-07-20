@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.util.checkChildrenWithCustomVisitor
@@ -50,6 +51,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
         checkParameters(declaration, context, reporter)
         checkNothingToInline(declaration, context, reporter)
+        checkCanBeInlined(declaration, effectiveVisibility, context, reporter)
     }
 
     private fun checkInlineFunctionBody(
@@ -402,7 +404,25 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             }
         if (hasInlinableParameters) return
         if (function.isInlineOnly()) return
-        
+
         reporter.reportOn(function.source, FirErrors.NOTHING_TO_INLINE, context)
+    }
+
+    private fun checkCanBeInlined(
+        declaration: FirFunction,
+        effectiveVisibility: EffectiveVisibility,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (declaration !is FirSimpleFunction) return
+        if (declaration.containingClass() == null) return
+        if (effectiveVisibility == EffectiveVisibility.PrivateInClass) return
+        val isFinal = when (declaration) {
+            is FirPropertyAccessor -> context.findClosest<FirProperty>()?.isFinal ?: declaration.isFinal
+            else -> declaration.isFinal
+        }
+        if (!isFinal) {
+            reporter.reportOn(declaration.source, FirErrors.DECLARATION_CANT_BE_INLINED, context)
+        }
     }
 }

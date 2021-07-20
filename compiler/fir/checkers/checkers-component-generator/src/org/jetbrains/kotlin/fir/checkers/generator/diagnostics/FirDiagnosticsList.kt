@@ -1173,6 +1173,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SUPER_CALL_FROM_PUBLIC_INLINE by warning<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Symbol>("symbol")
         }
+
+        val DECLARATION_CANT_BE_INLINED by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {
