@@ -106,13 +106,17 @@ class IcModuleDeserializer(
         val icDeserializer = moduleReversedFileIndex[topLevelSignature]
             ?: error("No file for $topLevelSignature (@ $idSig) in module $moduleDescriptor")
 
-        topLevelSignature.originalEnqueue(icDeserializer)
-        idSig.enqueue(icDeserializer)
-        linker.modulesWithReachableTopLevels.add(this)
-
-        return icDeserializer.originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
+        val symbol = icDeserializer.originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
             linker.deserializedSymbols.add(it)
         }
+
+        if (!symbol.isBound) {
+            topLevelSignature.originalEnqueue(icDeserializer)
+            idSig.enqueue(icDeserializer)
+            linker.modulesWithReachableTopLevels.add(this)
+        }
+
+        return symbol
     }
 
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns, emptyList())
@@ -209,14 +213,15 @@ class IcModuleDeserializer(
 
     override fun postProcess() {
         icDeserializers.forEach { icDeserializer ->
-            if (!icDeserializer.visited.isEmpty()) {
-                val file = icDeserializer.originalFileDeserializer.file
-                icDeserializer.init()
-                icDeserializer.reversedSignatureIndex.keys.forEach {
-                    if (it in icModuleReversedFileIndex) error("Duplicate signature $it in both ${icModuleReversedFileIndex[it]!!.originalFileDeserializer.file.path} and in ${file.path}")
-
-                    icModuleReversedFileIndex[it] = icDeserializer
+            val file = icDeserializer.originalFileDeserializer.file
+            icDeserializer.init()
+            icDeserializer.reversedSignatureIndex.keys.forEach {
+                if (it in icModuleReversedFileIndex) {
+                    val existed = icModuleReversedFileIndex[it]!!
+                    error("Duplicate signature $it in both ${existed.originalFileDeserializer.file.path} and in ${file.path}")
                 }
+
+                icModuleReversedFileIndex[it] = icDeserializer
             }
         }
 

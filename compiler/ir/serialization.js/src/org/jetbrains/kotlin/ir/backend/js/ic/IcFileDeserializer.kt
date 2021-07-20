@@ -83,13 +83,17 @@ class IcFileDeserializer(
         val topLevelSig = idSig.topLevelSignature()
 
         if (idSig in originalFileDeserializer.reversedSignatureIndex) {
-            topLevelSig.originalEnqueue(this)
-            idSig.enqueue(this)
-            linker.modulesWithReachableTopLevels.add(moduleDeserializer)
-
-            return originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
+            val symbol = originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
                 linker.deserializedSymbols.add(it)
             }
+
+            if (!symbol.isBound) {
+                topLevelSig.originalEnqueue(this)
+                idSig.enqueue(this)
+                linker.modulesWithReachableTopLevels.add(moduleDeserializer)
+            }
+
+            return symbol
         } else {
 
             val actualModuleDeserializer =
@@ -174,7 +178,7 @@ class IcFileDeserializer(
 
     private val carrierDeserializer by lazy { CarrierDeserializer(declarationDeserializer, icFileData.carriers) }
 
-    val reversedSignatureIndex: Map<IdSignature, Int> by lazy { protoFile.declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap() }
+    val reversedSignatureIndex: Map<IdSignature, Int> = protoFile.declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
 
     val visited = HashSet<IdSignature>()
 
