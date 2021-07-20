@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.visualizer
 import org.jetbrains.kotlin.compiler.visualizer.FirVisualizer
 import org.jetbrains.kotlin.compiler.visualizer.PsiVisualizer
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.TestRunner
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -26,9 +27,14 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFi
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
 abstract class AbstractVisualizerBlackBoxTest {
-    private val commonConfiguration: TestConfigurationBuilder.() -> Unit = {
+    private fun <O : ResultingArtifact.FrontendOutput<O>> createConfiguration(
+        filePath: String,
+        frontendKind: FrontendKind<O>,
+        frontendFacade: Constructor<FrontendFacade<O>>
+    ): TestConfiguration = testConfiguration(filePath) {
         assertions = JUnit5Assertions
         testInfo = KotlinTestInfo("_undefined_", "_testUndefined_", setOf())
+        startingArtifactFactory = { ResultingArtifact.Source() }
 
         useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
         useAdditionalService<BackendKindExtractor>(::BackendKindExtractorImpl)
@@ -38,6 +44,7 @@ abstract class AbstractVisualizerBlackBoxTest {
         globalDefaults {
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Source
+            frontend = frontendKind
         }
 
         defaultDirectives {
@@ -49,28 +56,20 @@ abstract class AbstractVisualizerBlackBoxTest {
             ::JvmEnvironmentConfigurator,
         )
 
-        useFrontendFacades(
-            ::ClassicFrontendFacade,
-            ::FirFrontendFacade
-        )
-
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,
             ::CodegenHelpersSourceFilesProvider
         )
-    }
 
-    private fun createConfiguration(filePath: String, frontend: FrontendKind<*>) = testConfiguration(filePath) {
-        commonConfiguration()
-        globalDefaults { this.frontend = frontend }
+        facadeStep(frontendFacade)
     }
 
     fun runTest(filePath: String) {
         lateinit var psiRenderResult: String
         lateinit var firRenderResult: String
 
-        val psiConfiguration = createConfiguration(filePath, FrontendKinds.ClassicFrontend)
+        val psiConfiguration = createConfiguration(filePath, FrontendKinds.ClassicFrontend, ::ClassicFrontendFacade)
         TestRunner(psiConfiguration).runTest(filePath) { testConfiguration ->
             testConfiguration.testServices.moduleStructure.modules.forEach { psiModule ->
                 val psiArtifact = testConfiguration.testServices.dependencyProvider.getArtifact(psiModule, FrontendKinds.ClassicFrontend)
@@ -79,7 +78,7 @@ abstract class AbstractVisualizerBlackBoxTest {
             }
         }
 
-        val firConfiguration = createConfiguration(filePath, FrontendKinds.FIR)
+        val firConfiguration = createConfiguration(filePath, FrontendKinds.FIR, ::FirFrontendFacade)
         TestRunner(firConfiguration).runTest(filePath) { testConfiguration ->
             testConfiguration.testServices.moduleStructure.modules.forEach { firModule ->
                 val firArtifact = testConfiguration.testServices.dependencyProvider.getArtifact(firModule, FrontendKinds.FIR)

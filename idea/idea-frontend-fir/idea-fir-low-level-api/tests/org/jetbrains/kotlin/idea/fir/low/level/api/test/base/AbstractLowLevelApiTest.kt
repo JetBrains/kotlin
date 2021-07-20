@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -61,6 +62,7 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable))
         configureTest(this)
 
+        startingArtifactFactory = { ResultingArtifact.Source() }
         this.testInfo = this@AbstractLowLevelApiTest.testInfo
     }
 

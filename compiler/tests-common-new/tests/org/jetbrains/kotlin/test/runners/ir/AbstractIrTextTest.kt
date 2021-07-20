@@ -6,16 +6,23 @@
 package org.jetbrains.kotlin.test.runners.ir
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
+import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -24,9 +31,13 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractIrTextTestBase(
-    private val frontend: FrontendKind<*>
-) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
+    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
+{
+    abstract val frontend: FrontendKind<*>
+    abstract val frontendFacade: Constructor<FrontendFacade<R>>
+    abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = this@AbstractIrTextTestBase.frontend
@@ -52,32 +63,48 @@ abstract class AbstractIrTextTestBase(
             ::CodegenHelpersSourceFilesProvider,
         )
 
-        useFrontendFacades(
-            ::ClassicFrontendFacade,
-            ::FirFrontendFacade
-        )
+        facadeStep(frontendFacade)
+        classicFrontendHandlersStep {
+            useHandlers(
+                ::NoCompilationErrorsHandler
+            )
+        }
 
-        useFrontendHandlers(
-            ::NoCompilationErrorsHandler,
-            ::NoFirCompilationErrorsHandler,
-        )
+        firHandlersStep {
+            useHandlers(
+                ::NoFirCompilationErrorsHandler
+            )
+        }
 
-        useFrontend2BackendConverters(
-            ::ClassicFrontend2IrConverter,
-            ::Fir2IrResultsConverter
-        )
+        facadeStep(converter)
 
-        useBackendHandlers(
-            ::IrTextDumpHandler,
-            ::IrTreeVerifierHandler,
-            ::IrPrettyKotlinDumpHandler
-        )
+        irHandlersStep {
+            useHandlers(
+                ::IrTextDumpHandler,
+                ::IrTreeVerifierHandler,
+                ::IrPrettyKotlinDumpHandler
+            )
+        }
     }
 }
 
-open class AbstractIrTextTest : AbstractIrTextTestBase(FrontendKinds.ClassicFrontend)
+open class AbstractIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArtifact>() {
+    override val frontend: FrontendKind<*>
+        get() = FrontendKinds.ClassicFrontend
+    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
+        get() = ::ClassicFrontend2IrConverter
+}
 
-open class AbstractFir2IrTextTest : AbstractIrTextTestBase(FrontendKinds.FIR) {
+open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() {
+    override val frontend: FrontendKind<*>
+        get() = FrontendKinds.FIR
+    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
+    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrResultsConverter
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

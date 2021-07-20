@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -382,6 +383,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 "test${testDataFile.nameWithoutExtension.replaceFirstChar(Char::uppercaseChar)}",
                 emptySet()
             )
+            startingArtifactFactory = { ResultingArtifact.Source() }
         }.build(testDataFile.path)
     }
 

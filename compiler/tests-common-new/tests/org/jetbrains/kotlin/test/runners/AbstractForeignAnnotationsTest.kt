@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
+import org.jetbrains.kotlin.test.builders.classicFrontendStep
+import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.SKIP_TXT
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ANNOTATIONS_PATH
@@ -60,11 +62,13 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useFrontendFacades(::ClassicFrontendFacade)
-        useFrontendHandlers(
-            ::DeclarationsDumpHandler,
-            ::ClassicDiagnosticsHandler,
-        )
+        classicFrontendStep()
+        classicFrontendHandlersStep {
+            useHandlers(
+                ::DeclarationsDumpHandler,
+                ::ClassicDiagnosticsHandler,
+            )
+        }
 
         forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/tests/*") {
             defaultDirectives {
@@ -88,7 +92,9 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
         }
 
         forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/*") {
-            useFrontendHandlers(::JspecifyDiagnosticComplianceHandler)
+            configureClassicFrontendHandlersStep {
+                useHandlers(::JspecifyDiagnosticComplianceHandler)
+            }
             useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
         }
     }

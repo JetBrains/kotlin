@@ -83,10 +83,9 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
 
         configureTest()
         defaultConfiguration(this)
-        unregisterAllFacades()
+
         useAdditionalService(::TestModuleInfoProvider)
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable))
-        useFrontendFacades(::LowLevelFirFrontendFacade)
     }
 
     open fun TestConfigurationBuilder.configureTest() {}

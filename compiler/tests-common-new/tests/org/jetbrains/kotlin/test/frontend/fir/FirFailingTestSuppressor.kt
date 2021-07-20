@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
@@ -15,7 +16,13 @@ class FirFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecke
         val testFile = testServices.moduleStructure.originalTestDataFiles.first()
         val failFile = testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail")
         val exceptionFromFir =
-            failedAssertions.firstOrNull { it is WrappedException.FromFacade.Frontend || it is WrappedException.FromFrontendHandler }
+            failedAssertions.firstOrNull {
+                when (it) {
+                    is WrappedException.FromFacade -> it.facade is FirFrontendFacade
+                    is WrappedException.FromHandler -> it.handler.artifactKind == FrontendKinds.FIR
+                    else -> false
+                }
+            }
         return when {
             failFile.exists() && exceptionFromFir != null -> emptyList()
             failFile.exists() && exceptionFromFir == null -> {

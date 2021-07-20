@@ -33,11 +33,12 @@ abstract class AbstractVisualizerTest : AbstractKotlinCompilerTest() {
             ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
         )
-        useFrontendFacades(
-            ::FirFrontendFacade,
-            ::ClassicFrontendFacade
-        )
-        useFrontendHandlers(handler)
+        // TODO
+//        useFrontendFacades(
+//            ::FirFrontendFacade,
+//            ::ClassicFrontendFacade
+//        )
+//        useFrontendHandlers(handler)
 
         defaultDirectives {
             +JvmEnvironmentConfigurationDirectives.WITH_STDLIB

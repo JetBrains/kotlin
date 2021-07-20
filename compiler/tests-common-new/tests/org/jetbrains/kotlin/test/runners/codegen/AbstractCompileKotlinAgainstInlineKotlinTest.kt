@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -45,9 +46,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<I : ResultingArt
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, I>>
     abstract val backendFacade: Constructor<BackendFacade<I, BinaryArtifacts.Jvm>>
 
-    override fun TestConfigurationBuilder.configuration() = configurationImpl()
-
-    protected fun TestConfigurationBuilder.configurationImpl() {
+    override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForCodegenTest(
             FrontendKinds.ClassicFrontend,
             ::ClassicFrontendFacade,
@@ -55,7 +54,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<I : ResultingArt
             backendFacade
         )
         useInlineHandlers()
-        commonHandlersForBoxTest()
+        configureCommonHandlersForBoxTest()
         useModuleStructureTransformers(
             ModuleTransformerForTwoFilesBoxTests()
         )
@@ -82,11 +81,15 @@ open class AbstractIrCompileKotlinAgainstInlineKotlinTest :
 }
 
 open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrCompileKotlinAgainstInlineKotlinTest() {
-    override fun TestConfigurationBuilder.configuration() {
-        // call super
-        configurationImpl()
-        useConfigurators(::SerializeSetter)
-        useBackendHandlers(::CheckInlineBodies)
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.apply {
+            useConfigurators(::SerializeSetter)
+
+            configureIrHandlersStep {
+                useHandlers(::CheckInlineBodies)
+            }
+        }
     }
 
     private class SerializeSetter(testServices: TestServices) : EnvironmentConfigurator(testServices) {

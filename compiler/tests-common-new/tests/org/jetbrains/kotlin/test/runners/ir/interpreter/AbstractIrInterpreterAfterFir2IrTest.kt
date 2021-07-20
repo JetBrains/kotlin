@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrInterpreterBackendHandler
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.model.BinaryKind
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.preprocessors.IrInterpreterImplicitKotlinImports
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -50,15 +50,19 @@ open class AbstractIrInterpreterAfterFir2IrTest : AbstractKotlinCompilerWithTarg
             ::JvmEnvironmentConfigurator,
         )
 
+        firFrontendStep()
+        fir2IrStep()
+
+        irHandlersStep {
+            useHandlers(::IrInterpreterBackendHandler)
+        }
+
+
         useAdditionalSourceProviders(::IrInterpreterHelpersSourceFilesProvider)
         useSourcePreprocessor(::IrInterpreterImplicitKotlinImports)
 
-        useFrontendFacades(::FirFrontendFacade)
-        useFrontend2BackendConverters(::Fir2IrResultsConverter)
-        useBackendFacades(::JvmIrBackendFacade)
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
-        useBackendHandlers(::IrInterpreterBackendHandler)
         enableMetaInfoHandler()
     }
 }
@@ -68,6 +72,6 @@ class IrInterpreterEnvironmentConfigurator(testServices: TestServices) : Environ
         directives: RegisteredDirectives,
         languageVersion: LanguageVersion
     ): Map<AnalysisFlag<*>, Any?> {
-        return super.provideAdditionalAnalysisFlags(directives, languageVersion) + (AnalysisFlags.builtInsFromSources to true)
+        return mapOf(AnalysisFlags.builtInsFromSources to true)
     }
 }
