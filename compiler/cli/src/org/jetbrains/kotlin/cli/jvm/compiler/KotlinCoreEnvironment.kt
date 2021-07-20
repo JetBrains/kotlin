@@ -539,7 +539,7 @@ class KotlinCoreEnvironment private constructor(
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
                 ZipHandler.clearFileAccessorCache()
-                FastJarHandler.cleanFileAccessorsCache()
+                (environment.jarFileSystem as? FastJarFileSystem)?.clearHandlersCache()
             }
         }
 
