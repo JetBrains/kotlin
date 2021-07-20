@@ -9,17 +9,19 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractTestFacade<I : ResultingArtifact<I>, O : ResultingArtifact<O>> {
+interface ServicesAndDirectivesContainer {
+    val additionalServices: List<ServiceRegistrationData>
+        get() = emptyList()
+
+    val directiveContainers: List<DirectivesContainer>
+        get() = emptyList()
+}
+
+abstract class AbstractTestFacade<I : ResultingArtifact<I>, O : ResultingArtifact<O>> : ServicesAndDirectivesContainer {
     abstract val inputKind: TestArtifactKind<I>
     abstract val outputKind: TestArtifactKind<O>
 
     abstract fun transform(module: TestModule, inputArtifact: I): O?
-
-    open val additionalServices: List<ServiceRegistrationData>
-        get() = emptyList()
-
-    open val additionalDirectives: List<DirectivesContainer>
-        get() = emptyList()
 }
 
 abstract class FrontendFacade<R : ResultingArtifact.FrontendOutput<R>>(

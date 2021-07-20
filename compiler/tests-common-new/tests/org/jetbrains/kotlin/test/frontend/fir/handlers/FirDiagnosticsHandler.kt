@@ -61,7 +61,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     private val diagnosticsService: DiagnosticsService
         get() = testServices.diagnosticsService
 
-    override val directivesContainers: List<DirectivesContainer> =
+    override val directiveContainers: List<DirectivesContainer> =
         listOf(DiagnosticsDirectives)
 
     override val additionalServices: List<ServiceRegistrationData> =

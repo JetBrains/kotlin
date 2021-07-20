@@ -38,7 +38,7 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         )
     }
 
-    override val directives: List<DirectivesContainer> =
+    override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {

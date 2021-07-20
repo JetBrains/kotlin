@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.util.withIndent
 class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     private val dumper = MultiModuleInfoDumperImpl()
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {

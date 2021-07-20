@@ -124,7 +124,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         }
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JvmEnvironmentConfigurationDirectives)
 
     override val additionalServices: List<ServiceRegistrationData>

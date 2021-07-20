@@ -42,7 +42,7 @@ class DeclarationsDumpHandler(
         private val JAVA_PACKAGE_PATTERN = Pattern.compile("^\\s*package [.\\w\\d]*", Pattern.MULTILINE)
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(DiagnosticsDirectives)
 
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumperImpl(moduleHeaderTemplate = "// -- Module: <%s> --")

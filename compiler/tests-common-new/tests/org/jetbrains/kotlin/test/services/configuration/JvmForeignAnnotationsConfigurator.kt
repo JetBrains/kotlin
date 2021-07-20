@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
@@ -23,9 +24,10 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
@@ -40,7 +42,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         const val JSR_305_TEST_ANNOTATIONS_PATH = "compiler/testData/diagnostics/helpers/jsr305_test_annotations"
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(ForeignAnnotationsDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)

@@ -24,7 +24,7 @@ class CoroutineHelpersSourceFilesProvider(testServices: TestServices, testDataPa
     private val stateMachineCheckerPath = "$helpersPath/StateMachineChecker.kt"
     private val tailCallOptimizationCheckerPath = "$helpersPath/TailCallOptimizationChecker.kt"
 
-    override val directives: List<DirectivesContainer> =
+    override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)

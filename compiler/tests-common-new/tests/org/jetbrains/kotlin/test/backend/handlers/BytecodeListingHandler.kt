@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import java.io.File
 
 class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     private val multiModuleInfoDumper = MultiModuleInfoDumperImpl()

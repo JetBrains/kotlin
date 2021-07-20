@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class FirMetaInfoDiffSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override val directives: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {

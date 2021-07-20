@@ -39,7 +39,7 @@ class FirFrontendFacade(
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirModuleInfoProvider))
 
-    override val additionalDirectives: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun analyze(module: TestModule): FirOutputArtifact {

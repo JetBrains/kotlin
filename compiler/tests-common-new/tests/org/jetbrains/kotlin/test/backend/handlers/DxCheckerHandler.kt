@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 
 class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {

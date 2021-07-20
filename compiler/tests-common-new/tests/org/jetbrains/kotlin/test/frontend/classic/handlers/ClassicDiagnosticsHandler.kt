@@ -29,10 +29,9 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import java.util.*
 
 class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(testServices) {
-    override val directivesContainers: List<DirectivesContainer> =
+    override val directiveContainers: List<DirectivesContainer> =
         listOf(DiagnosticsDirectives)
 
     override val additionalServices: List<ServiceRegistrationData> =

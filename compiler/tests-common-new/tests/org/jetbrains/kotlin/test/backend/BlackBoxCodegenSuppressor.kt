@@ -14,14 +14,17 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.joinToArrayString
 
 class BlackBoxCodegenSuppressor(
     testServices: TestServices,
     val customIgnoreDirective: ValueDirective<TargetBackend>? = null
 ) : AfterAnalysisChecker(testServices) {
-    override val directives: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)

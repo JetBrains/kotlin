@@ -96,7 +96,7 @@ abstract class AbstractCompilerBasedTest : AbstractKotlinCompilerTest() {
         testServices: TestServices
     ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
 
-        override val additionalDirectives: List<DirectivesContainer>
+        override val directiveContainers: List<DirectivesContainer>
             get() = listOf(FirDiagnosticsDirectives)
 
         override fun analyze(module: TestModule): FirOutputArtifact {

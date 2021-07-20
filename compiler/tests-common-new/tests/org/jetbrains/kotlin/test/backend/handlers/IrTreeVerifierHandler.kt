@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 class IrTreeVerifierHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: IrBackendInput) {

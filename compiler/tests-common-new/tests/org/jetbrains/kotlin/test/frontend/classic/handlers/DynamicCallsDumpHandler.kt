@@ -26,7 +26,7 @@ class DynamicCallsDumpHandler(testServices: TestServices) : ClassicFrontendAnaly
         private const val DYNAMIC_PREFIX = ".dynamic.txt"
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(DiagnosticsDirectives)
 
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumperImpl(moduleHeaderTemplate = "// -- Module: <%s> --")

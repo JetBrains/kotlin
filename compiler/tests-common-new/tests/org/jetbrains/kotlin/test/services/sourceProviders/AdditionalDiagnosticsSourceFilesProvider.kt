@@ -24,7 +24,7 @@ class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices, baseD
         INFERENCE_HELPERS to "$helpersPath/inference/inferenceUtils.kt"
     )
 
-    override val directives: List<DirectivesContainer> =
+    override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)

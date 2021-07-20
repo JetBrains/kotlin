@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.test.services
 
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
+import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
 
-abstract class AdditionalSourceProvider(val testServices: TestServices) {
-    open val directives: List<DirectivesContainer>
-        get() = emptyList()
-
+abstract class AdditionalSourceProvider(val testServices: TestServices) : ServicesAndDirectivesContainer {
     /**
      * Note that you can not use [testServices.moduleStructure] here because it's not initialized yet
      */

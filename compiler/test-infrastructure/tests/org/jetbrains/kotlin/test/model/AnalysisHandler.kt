@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.test.Assertions
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -15,15 +13,9 @@ abstract class AnalysisHandler<A : ResultingArtifact<A>>(
     val testServices: TestServices,
     val failureDisablesNextSteps: Boolean,
     val doNotRunIfThereWerePreviousFailures: Boolean
-) {
+) : ServicesAndDirectivesContainer {
     protected val assertions: Assertions
         get() = testServices.assertions
-
-    open val directivesContainers: List<DirectivesContainer>
-        get() = emptyList()
-
-    open val additionalServices: List<ServiceRegistrationData>
-        get() = emptyList()
 
     abstract val artifactKind: TestArtifactKind<A>
 

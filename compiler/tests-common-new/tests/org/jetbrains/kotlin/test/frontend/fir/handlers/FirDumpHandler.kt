@@ -20,7 +20,7 @@ class FirDumpHandler(
 ) : FirAnalysisHandler(testServices) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumperImpl()
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {

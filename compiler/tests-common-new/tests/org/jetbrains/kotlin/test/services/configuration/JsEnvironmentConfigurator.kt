@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.joinToArrayString
 
 class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JsEnvironmentConfigurationDirectives)
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {

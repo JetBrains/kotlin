@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.utils.firTestDataFile
 import java.io.File
 
 class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override val directives: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun check(failedAssertions: List<WrappedException>) {

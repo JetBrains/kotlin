@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isKtFile
-import java.util.LinkedHashMap
 
 class BytecodeTextHandler(testServices: TestServices, private val shouldEnableExplicitly: Boolean = false) :
     JvmBinaryArtifactHandler(testServices) {
@@ -25,7 +24,7 @@ class BytecodeTextHandler(testServices: TestServices, private val shouldEnableEx
         private const val IGNORED_PREFIX = "helpers/"
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {

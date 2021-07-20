@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
@@ -33,7 +36,6 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumperImpl
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import java.io.File
-import java.io.PrintStream
 
 class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     companion object {
@@ -51,7 +53,7 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         }
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
 
     private val baseDumper = MultiModuleInfoDumperImpl()

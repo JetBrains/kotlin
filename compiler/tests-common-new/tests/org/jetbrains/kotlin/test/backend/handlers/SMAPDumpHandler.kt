@@ -27,7 +27,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
         const val SMAP_NON_SEP_EXT = "smap-nonseparate-compilation"
     }
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
     private val dumper = MultiModuleInfoDumperImpl(moduleHeaderTemplate = null)

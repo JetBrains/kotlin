@@ -30,7 +30,7 @@ class IrPrettyKotlinDumpHandler(testServices: TestServices) : AbstractIrHandler(
 
     private val dumper = MultiModuleInfoDumperImpl("// MODULE: %s")
 
-    override val directivesContainers: List<DirectivesContainer>
+    override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
