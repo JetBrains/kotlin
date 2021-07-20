@@ -102,6 +102,8 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     INLINE_PARAMETER_MODIFIER,
     ABSTRACT_MODIFIER,
     LABEL,
+    COMMAS,
+
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"

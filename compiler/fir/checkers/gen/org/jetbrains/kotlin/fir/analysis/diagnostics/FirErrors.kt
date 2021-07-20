@@ -542,6 +542,7 @@ object FirErrors {
     val INVALID_IF_AS_EXPRESSION by error0<KtIfExpression>(SourceElementPositioningStrategies.IF_EXPRESSION)
     val ELSE_MISPLACED_IN_WHEN by error0<KtWhenEntry>(SourceElementPositioningStrategies.ELSE_ENTRY)
     val ILLEGAL_DECLARATION_IN_WHEN_SUBJECT by error1<KtElement, String>()
+    val COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT by error0<PsiElement>(SourceElementPositioningStrategies.COMMAS)
 
     // Context tracking
     val TYPE_PARAMETER_IS_NOT_AN_EXPRESSION by error1<KtSimpleNameExpression, FirTypeParameterSymbol>()

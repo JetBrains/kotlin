@@ -3156,6 +3156,13 @@ internal class IllegalDeclarationInWhenSubjectImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class CommaInWhenConditionWithoutArgumentImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CommaInWhenConditionWithoutArgument(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class TypeParameterIsNotAnExpressionImpl(
     override val typeParameter: KtTypeParameterSymbol,
     firDiagnostic: FirPsiDiagnostic,

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_POSITION_VARIANCE
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers.commaSeparated
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.STRING
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.commaSeparated
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
@@ -87,6 +87,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CATCH_PARAMETER_W
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_ON_NULLABLE
@@ -1371,6 +1372,7 @@ class FirDefaultErrorMessages {
                 TO_STRING,
                 WHEN_MISSING_CASES
             )
+            map.put(COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, "Deprecated syntax. Use '||' instead of commas in when-condition for 'when' without argument")
 
             // Context tracking
             map.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", SYMBOL)

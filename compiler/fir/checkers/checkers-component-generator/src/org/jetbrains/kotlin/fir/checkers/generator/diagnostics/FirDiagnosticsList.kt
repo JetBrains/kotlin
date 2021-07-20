@@ -1018,6 +1018,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ILLEGAL_DECLARATION_IN_WHEN_SUBJECT by error<KtElement> {
             parameter<String>("illegalReason")
         }
+        val COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT by error<PsiElement>(PositioningStrategy.COMMAS)
     }
 
     val CONTEXT_TRACKING by object : DiagnosticGroup("Context tracking") {
