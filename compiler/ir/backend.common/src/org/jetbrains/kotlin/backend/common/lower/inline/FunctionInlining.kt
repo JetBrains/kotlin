@@ -195,8 +195,10 @@ class FunctionInlining(
             val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, endOffset, endOffset)
 
             val transformer = ParameterSubstitutor()
-            statements.transform { it.transform(transformer, data = null) }
-            statements.addAll(0, evaluationStatements)
+            val newStatements = mutableListOf<IrStatement>()
+
+            newStatements.addAll(evaluationStatements)
+            statements.mapTo(newStatements) { it.transform(transformer, data = null) as IrStatement }
 
             return IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
@@ -204,7 +206,7 @@ class FunctionInlining(
                 type = callSite.type,
                 symbol = irReturnableBlockSymbol,
                 origin = null,
-                statements = statements,
+                statements = newStatements,
                 inlineFunctionSymbol = callee.symbol
             ).apply {
                 transformChildrenVoid(object : IrElementTransformerVoid() {
