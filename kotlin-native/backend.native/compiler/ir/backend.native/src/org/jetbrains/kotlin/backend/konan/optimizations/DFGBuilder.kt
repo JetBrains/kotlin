@@ -758,67 +758,64 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                 else
                                                     it
                                             }
-                                    if (callee is IrConstructor) {
-                                        error("Constructor call should be done with IrConstructorCall")
-                                    } else {
-                                        if (value.isVirtualCall) {
-                                            val owner = callee.parentAsClass
-                                            val actualReceiverType = value.dispatchReceiver!!.type
-                                            val actualReceiverClassifier = actualReceiverType.classifierOrFail
 
-                                            val receiverType =
-                                                    if (actualReceiverClassifier is IrTypeParameterSymbol
-                                                            || !callee.isReal /* Could be a bridge. */)
-                                                        symbolTable.mapClassReferenceType(owner)
-                                                    else {
-                                                        val actualClassAtCallsite =
-                                                                (actualReceiverClassifier as IrClassSymbol).descriptor
+                                    if (value.isVirtualCall) {
+                                        val owner = callee.parentAsClass
+                                        val actualReceiverType = value.dispatchReceiver!!.type
+                                        val actualReceiverClassifier = actualReceiverType.classifierOrFail
+
+                                        val receiverType =
+                                                if (actualReceiverClassifier is IrTypeParameterSymbol
+                                                        || !callee.isReal /* Could be a bridge. */)
+                                                    symbolTable.mapClassReferenceType(owner)
+                                                else {
+                                                    val actualClassAtCallsite =
+                                                            (actualReceiverClassifier as IrClassSymbol).descriptor
 //                                                        assert (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
 //                                                            "Expected an inheritor of ${owner.descriptor}, but was $actualClassAtCallsite"
 //                                                        }
-                                                        if (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
-                                                            symbolTable.mapClassReferenceType(actualReceiverClassifier.owner) // Box if inline class.
-                                                        } else {
-                                                            symbolTable.mapClassReferenceType(owner)
-                                                        }
+                                                    if (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
+                                                        symbolTable.mapClassReferenceType(actualReceiverClassifier.owner) // Box if inline class.
+                                                    } else {
+                                                        symbolTable.mapClassReferenceType(owner)
                                                     }
+                                                }
 
-                                            val isAnyMethod = callee.target.parentAsClass.isAny()
-                                            if (owner.isInterface && !isAnyMethod) {
-                                                val itablePlace = context.getLayoutBuilder(owner).itablePlace(callee)
-                                                DataFlowIR.Node.ItableCall(
-                                                        symbolTable.mapFunction(callee.target),
-                                                        receiverType,
-                                                        itablePlace.interfaceId,
-                                                        itablePlace.methodIndex,
-                                                        arguments,
-                                                        mapReturnType(value.type, callee.target.returnType),
-                                                        value
-                                                )
-                                            } else {
-                                                val vtableIndex = if (isAnyMethod)
-                                                    context.getLayoutBuilder(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
-                                                else
-                                                    context.getLayoutBuilder(owner).vtableIndex(callee)
-                                                DataFlowIR.Node.VtableCall(
-                                                        symbolTable.mapFunction(callee.target),
-                                                        receiverType,
-                                                        vtableIndex,
-                                                        arguments,
-                                                        mapReturnType(value.type, callee.target.returnType),
-                                                        value
-                                                )
-                                            }
-                                        } else {
-                                            val actualCallee = value.actualCallee
-                                            DataFlowIR.Node.StaticCall(
-                                                    symbolTable.mapFunction(actualCallee),
+                                        val isAnyMethod = callee.target.parentAsClass.isAny()
+                                        if (owner.isInterface && !isAnyMethod) {
+                                            val itablePlace = context.getLayoutBuilder(owner).itablePlace(callee)
+                                            DataFlowIR.Node.ItableCall(
+                                                    symbolTable.mapFunction(callee.target),
+                                                    receiverType,
+                                                    itablePlace.interfaceId,
+                                                    itablePlace.methodIndex,
                                                     arguments,
-                                                    actualCallee.dispatchReceiverParameter?.let { symbolTable.mapType(it.type) },
-                                                    mapReturnType(value.type, actualCallee.returnType),
+                                                    mapReturnType(value.type, callee.target.returnType),
+                                                    value
+                                            )
+                                        } else {
+                                            val vtableIndex = if (isAnyMethod)
+                                                context.getLayoutBuilder(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
+                                            else
+                                                context.getLayoutBuilder(owner).vtableIndex(callee)
+                                            DataFlowIR.Node.VtableCall(
+                                                    symbolTable.mapFunction(callee.target),
+                                                    receiverType,
+                                                    vtableIndex,
+                                                    arguments,
+                                                    mapReturnType(value.type, callee.target.returnType),
                                                     value
                                             )
                                         }
+                                    } else {
+                                        val actualCallee = value.actualCallee
+                                        DataFlowIR.Node.StaticCall(
+                                                symbolTable.mapFunction(actualCallee),
+                                                arguments,
+                                                actualCallee.dispatchReceiverParameter?.let { symbolTable.mapType(it.type) },
+                                                mapReturnType(value.type, actualCallee.returnType),
+                                                value
+                                        )
                                     }
                                 }
                             }

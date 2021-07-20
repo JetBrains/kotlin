@@ -126,5 +126,5 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
     }
 
     private val IrField.hasNonConstInitializer: Boolean
-        get() = initializer.let { it != null && it !is IrConst<*> }
+        get() = initializer?.expression.let { it != null && it !is IrConst<*> }
 }

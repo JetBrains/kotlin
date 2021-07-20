@@ -241,6 +241,8 @@ fun StructDef.fieldsHaveDefaultAlignment(): Boolean {
                 offset = it.offset / 8 + it.typeSize
             }
             is BitField -> return false
+            is AnonymousInnerRecord,
+            is IncompleteField -> {}
         }
     }
 

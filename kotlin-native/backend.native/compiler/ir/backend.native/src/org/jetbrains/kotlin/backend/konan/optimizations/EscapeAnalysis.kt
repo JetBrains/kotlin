@@ -231,6 +231,13 @@ internal object EscapeAnalysis {
                             for (value in node.values)
                                 assignRole(node, Role.ASSIGNED, RoleInfoEntry(value.node, null))
                         }
+                        is DataFlowIR.Node.AllocInstance,
+                        is DataFlowIR.Node.Call,
+                        is DataFlowIR.Node.Const,
+                        is DataFlowIR.Node.FunctionReference,
+                        is DataFlowIR.Node.Null,
+                        is DataFlowIR.Node.Parameter,
+                        is DataFlowIR.Node.Scope -> {}
                     }
                 }
                 FunctionAnalysisResult(function, nodesRoles)

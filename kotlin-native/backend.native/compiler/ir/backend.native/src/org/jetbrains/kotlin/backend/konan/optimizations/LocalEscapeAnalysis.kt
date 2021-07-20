@@ -136,6 +136,11 @@ internal object LocalEscapeAnalysis {
                 is DataFlowIR.Node.Parameter -> {
                     node.escapeState = EscapeState.ARG_ESCAPE
                 }
+                is DataFlowIR.Node.AllocInstance,
+                is DataFlowIR.Node.Const,
+                is DataFlowIR.Node.FunctionReference,
+                is DataFlowIR.Node.Null,
+                is DataFlowIR.Node.Scope -> {}
             }
         }
 

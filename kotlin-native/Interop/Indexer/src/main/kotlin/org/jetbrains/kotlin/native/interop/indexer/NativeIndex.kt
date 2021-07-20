@@ -175,6 +175,8 @@ abstract class StructDef(val size: Long, val align: Int) {
                 when (it) {
                     is Field -> add(it)
                     is AnonymousInnerRecord -> addAll(it.def.fields)
+                    is BitField,
+                    is IncompleteField -> {}
                 }
             }
         }
@@ -185,6 +187,8 @@ abstract class StructDef(val size: Long, val align: Int) {
                 when (it) {
                     is BitField -> add(it)
                     is AnonymousInnerRecord -> addAll(it.def.bitFields)
+                    is Field,
+                    is IncompleteField -> {}
                 }
             }
         }
