@@ -150,7 +150,7 @@ internal class FixStackAnalyzer(
                 return savedStack
             }
 
-            override fun push(value: FixStackValue?) {
+            override fun push(value: FixStackValue) {
                 if (super.getStackSize() < maxStackSize) {
                     super.push(value)
                 } else {
@@ -163,7 +163,7 @@ internal class FixStackAnalyzer(
                 values.forEach { push(it) }
             }
 
-            override fun pop(): FixStackValue? =
+            override fun pop(): FixStackValue =
                 if (extraStack.isNotEmpty()) {
                     extraStack.pop()
                 } else {

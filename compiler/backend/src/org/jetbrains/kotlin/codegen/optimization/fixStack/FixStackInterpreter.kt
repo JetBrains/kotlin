@@ -32,28 +32,26 @@ open class FixStackInterpreter : Interpreter<FixStackValue>(API_VERSION) {
             BIPUSH, SIPUSH ->
                 FixStackValue.INT
             LDC -> {
-                val cst = (insn as LdcInsnNode).cst
-                if (cst is Int) {
-                    FixStackValue.INT
-                } else if (cst is Float) {
-                    FixStackValue.FLOAT
-                } else if (cst is Long) {
-                    FixStackValue.LONG
-                } else if (cst is Double) {
-                    FixStackValue.DOUBLE
-                } else if (cst is String) {
-                    FixStackValue.OBJECT
-                } else if (cst is Type) {
-                    val sort = cst.sort
-                    if (sort == Type.OBJECT || sort == Type.ARRAY || sort == Type.METHOD) {
+                when (val cst = (insn as LdcInsnNode).cst) {
+                    is Int ->
+                        FixStackValue.INT
+                    is Float ->
+                        FixStackValue.FLOAT
+                    is Long ->
+                        FixStackValue.LONG
+                    is Double ->
+                        FixStackValue.DOUBLE
+                    is String, is Handle ->
                         FixStackValue.OBJECT
-                    } else {
-                        throw IllegalArgumentException("Illegal LDC constant $cst")
+                    is Type -> {
+                        val sort = cst.sort
+                        if (sort == Type.OBJECT || sort == Type.ARRAY || sort == Type.METHOD)
+                            FixStackValue.OBJECT
+                        else
+                            throw IllegalArgumentException("Illegal LDC constant $cst")
                     }
-                } else if (cst is Handle) {
-                    FixStackValue.OBJECT
-                } else {
-                    throw IllegalArgumentException("Illegal LDC constant $cst")
+                    else ->
+                        throw IllegalArgumentException("Illegal LDC constant $cst")
                 }
             }
             GETSTATIC ->
@@ -64,8 +62,15 @@ open class FixStackInterpreter : Interpreter<FixStackValue>(API_VERSION) {
                 throw IllegalArgumentException("Unexpected instruction: " + insn.insnOpcodeText)
         }
 
-    override fun copyOperation(insn: AbstractInsnNode, value: FixStackValue?): FixStackValue? =
-        value
+    override fun copyOperation(insn: AbstractInsnNode, value: FixStackValue?): FixStackValue =
+        when (insn.opcode) {
+            ILOAD -> FixStackValue.INT
+            LLOAD -> FixStackValue.LONG
+            FLOAD -> FixStackValue.FLOAT
+            DLOAD -> FixStackValue.DOUBLE
+            ALOAD -> FixStackValue.OBJECT
+            else -> value!!
+        }
 
     override fun binaryOperation(insn: AbstractInsnNode, value1: FixStackValue?, value2: FixStackValue?): FixStackValue? =
         when (insn.opcode) {
