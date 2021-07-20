@@ -795,7 +795,7 @@ class IrBodyDeserializer(
             if (allowErrorLoopIndices) {
                 IrWhileLoopImpl(-1, -1, builtIns.unitType, null)
             } else {
-                error("break clause before loop header")
+                error("continue clause before loop header")
             }
         }
         val irContinue = IrContinueImpl(start, end, type, loop)
