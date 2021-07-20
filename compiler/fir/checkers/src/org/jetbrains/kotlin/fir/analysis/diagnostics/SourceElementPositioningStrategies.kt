@@ -272,6 +272,10 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.DECLARATION_WITH_BODY,
         PositioningStrategies.DECLARATION_WITH_BODY
     )
+    val COMMAS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.COMMAS,
+        PositioningStrategies.COMMAS
+    )
 
     val UNREACHABLE_CODE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.UNREACHABLE_CODE,

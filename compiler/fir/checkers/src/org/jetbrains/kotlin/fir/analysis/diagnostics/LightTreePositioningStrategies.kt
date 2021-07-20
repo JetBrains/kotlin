@@ -910,6 +910,26 @@ object LightTreePositioningStrategies {
             return markElement(nodeToMark, startOffset, endOffset, tree, node)
         }
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    val COMMAS: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return buildList {
+                val childrenRef = Ref<Array<LighterASTNode?>>()
+                tree.getChildren(node, childrenRef)
+                for (child in childrenRef.get()) {
+                    if (child != null && child.tokenType == KtTokens.COMMA) {
+                        add(markSingleElement(child, child, startOffset, endOffset, tree, node))
+                    }
+                }
+            }
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =

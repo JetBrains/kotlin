@@ -1958,6 +1958,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val illegalReason: String
     }
 
+    abstract class CommaInWhenConditionWithoutArgument : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = CommaInWhenConditionWithoutArgument::class
+    }
+
     abstract class TypeParameterIsNotAnExpression : KtFirDiagnostic<KtSimpleNameExpression>() {
         override val diagnosticClass get() = TypeParameterIsNotAnExpression::class
         abstract val typeParameter: KtTypeParameterSymbol
