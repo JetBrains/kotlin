@@ -21,8 +21,11 @@ fun compute(): String {
             }
         }
     } finally {
-        val s2 = "OK"
-        x = s2  // TODO: Why is `s2` not visible here?
+        var s2 = "NOPE"
+        for (j in 0 until 1) {
+            s2 = "OK"
+        }
+        x = s2
     }
     return "FAIL"
 }
@@ -36,7 +39,7 @@ fun box() {
 // IGNORE_BACKEND: JVM
 
 // LOCAL VARIABLES
-// test.kt:31 box:
+// test.kt:34 box:
 // test.kt:10 compute:
 // test.kt:11 compute:
 // test.kt:12 compute:
@@ -48,7 +51,10 @@ fun box() {
 // test.kt:4 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f:int=0:int
 // test.kt:20 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f:int=0:int, $i$a$-f-TestKt$compute$1:int=0:int
 // test.kt:24 compute:
-// test.kt:25 compute:
-// test.kt:31 box:
-// test.kt:32 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
-// test.kt:33 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
+// test.kt:25 compute: s2:java.lang.String="NOPE":java.lang.String
+// test.kt:26 compute: s2:java.lang.String="NOPE":java.lang.String, j:int=0:int
+// test.kt:25 compute: s2:java.lang.String="OK":java.lang.String, j:int=0:int
+// test.kt:28 compute: s2:java.lang.String="OK":java.lang.String
+// test.kt:34 box:
+// test.kt:35 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
+// test.kt:36 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
