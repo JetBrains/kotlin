@@ -5475,6 +5475,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("longPropertyChain.kt")
+                public void testLongPropertyChain() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/longPropertyChain.kt");
+                }
+
+                @Test
                 @TestMetadata("moreIncompletenessChecks.kt")
                 public void testMoreIncompletenessChecks() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/moreIncompletenessChecks.kt");
