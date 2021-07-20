@@ -963,6 +963,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     indexCxxFunction(cursor)
                 }
 
+                CXCursorKind.CXCursor_Namespace -> {
+                    visitChildren(cursor) { childCursor, _ ->
+                        indexCxxDeclaration(childCursor)
+                        CXChildVisitResult.CXChildVisit_Continue
+                    }
+                }
+
                 else -> {
                 }
             }
