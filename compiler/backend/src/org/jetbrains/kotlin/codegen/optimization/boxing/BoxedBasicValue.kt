@@ -56,7 +56,7 @@ class TaintedBoxedValue(private val boxedBasicValue: CleanBoxedValue) : BoxedBas
 
 
 class BoxedValueDescriptor(
-    private val boxedType: Type,
+    boxedType: Type,
     val boxingInsn: AbstractInsnNode,
     val progressionIterator: ProgressionIteratorBasicValue?,
     val generationState: GenerationState
