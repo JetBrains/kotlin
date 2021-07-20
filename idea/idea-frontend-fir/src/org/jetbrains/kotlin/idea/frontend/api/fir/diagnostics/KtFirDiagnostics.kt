@@ -2160,6 +2160,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val message: String
     }
 
+    abstract class NothingToInline : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NothingToInline::class
+    }
+
     abstract class RecursionInInline : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = RecursionInInline::class
         abstract val symbol: KtSymbol

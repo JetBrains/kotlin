@@ -6,7 +6,7 @@ fun f() {
     LocalClass().foo = 1
 }
 
-internal inline fun internal() {
+internal <!NOTHING_TO_INLINE!>inline<!> fun internal() {
     f()
 }
 

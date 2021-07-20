@@ -1,4 +1,4 @@
-inline fun inlineFun() {
+<!NOTHING_TO_INLINE!>inline<!> fun inlineFun() {
     <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun() {}
     <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> LocalClass {}
 }

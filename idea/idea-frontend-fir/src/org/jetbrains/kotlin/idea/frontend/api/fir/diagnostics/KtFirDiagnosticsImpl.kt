@@ -3490,6 +3490,13 @@ internal class NotYetSupportedInInlineImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class NothingToInlineImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NothingToInline(), KtAbstractFirDiagnostic<KtDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class RecursionInInlineImpl(
     override val symbol: KtSymbol,
     firDiagnostic: FirPsiDiagnostic,

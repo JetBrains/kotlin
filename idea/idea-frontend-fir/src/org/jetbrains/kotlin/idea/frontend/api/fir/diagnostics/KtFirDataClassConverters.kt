@@ -3099,6 +3099,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NOTHING_TO_INLINE) { firDiagnostic ->
+        NothingToInlineImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RECURSION_IN_INLINE) { firDiagnostic ->
         RecursionInInlineImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),

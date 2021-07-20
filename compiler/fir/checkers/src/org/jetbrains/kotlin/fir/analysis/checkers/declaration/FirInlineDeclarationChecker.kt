@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.util.checkChildrenWithCustomVisitor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -47,6 +49,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         val effectiveVisibility = declaration.effectiveVisibility
         checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
         checkParameters(declaration, context, reporter)
+        checkNothingToInline(declaration, context, reporter)
     }
 
     private fun checkInlineFunctionBody(
@@ -374,6 +377,21 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                 )
             }
         }
+    }
 
+    private fun checkNothingToInline(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (function !is FirSimpleFunction) return
+        if (function.isExpect || function.isSuspend) return
+        if (function.typeParameters.any { it.symbol.isReified }) return
+        val hasInlinableParameters =
+            function.valueParameters.any { param ->
+                val type = param.returnTypeRef.coneType
+                !param.isNoinline && !type.isNullable
+                        && (type.isFunctionalType(context.session) || type.isSuspendFunctionType(context.session))
+            }
+        if (hasInlinableParameters) return
+        if (function.isInlineOnly()) return
+        
+        reporter.reportOn(function.source, FirErrors.NOTHING_TO_INLINE, context)
     }
 }

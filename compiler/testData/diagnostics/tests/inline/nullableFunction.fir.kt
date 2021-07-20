@@ -12,10 +12,10 @@ public inline fun <T> submitNoInline(noinline action: Function1<Int, Int>?, s: (
     action?.invoke(10)
 }
 
-public inline fun <T> Function1<Int, Int>?.submit() {
+public <!NOTHING_TO_INLINE!>inline<!> fun <T> Function1<Int, Int>?.submit() {
 
 }
 
-public inline fun <T> submit(action: Function1<Int, Int>?) {
+public <!NOTHING_TO_INLINE!>inline<!> fun <T> submit(action: Function1<Int, Int>?) {
 
 }
