@@ -89,7 +89,6 @@ abstract class BasicIrBoxTest(
 
     override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
 
-    @Suppress("ConstantConditionIf")
     override fun translateFiles(
         units: List<TranslationUnit>,
         outputFile: File,
@@ -111,7 +110,8 @@ abstract class BasicIrBoxTest(
         safeExternalBoolean: Boolean,
         safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
         skipMangleVerification: Boolean,
-        abiVersion: KotlinAbiVersion
+        abiVersion: KotlinAbiVersion,
+        icCache: MutableMap<String, SerializedIcData>
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
@@ -124,6 +124,8 @@ abstract class BasicIrBoxTest(
         }).map { File(it).absolutePath }.toMutableList()
 
         val klibPath = outputFile.absolutePath.replace("_v5.js", "/")
+
+        prepareRuntimePirCaches(config, icCache)
 
         if (isMainModule && klibMainModule) {
             generateKLib(
@@ -173,29 +175,6 @@ abstract class BasicIrBoxTest(
             }
 
             if (!skipRegularMode) {
-                val icCache: Map<String, SerializedIcData> = if (!runIcMode) emptyMap() else {
-                    val map = mutableMapOf<String, SerializedIcData>()
-                    for (path in allKlibPaths) {
-                        val icData = predefinedKlibHasIcCache[path] ?: prepareSingleLibraryIcCache(
-                            project = project,
-                            analyzer = AnalyzerWithCompilerReport(config.configuration),
-                            configuration = config.configuration,
-                            libPath = path,
-                            dependencies = allKlibPaths,
-                            icCache = map
-                        )
-
-                        if (path in predefinedKlibHasIcCache) {
-                            predefinedKlibHasIcCache[path] = icData
-                        }
-
-                        map[path] = icData
-                    }
-
-                    map
-                }
-
-
                 val irFactory = if (lowerPerModule) PersistentIrFactory() else IrFactoryImpl
                 val compiledModule = compile(
                     project = config.project,
@@ -269,10 +248,45 @@ abstract class BasicIrBoxTest(
                 null
             )
 
+            if (runIcMode) {
+                icCache[actualOutputFile] = createPirCache(actualOutputFile, allKlibPaths + actualOutputFile, config, icCache)
+            }
+
             logger.logFile("Output klib", File(actualOutputFile))
 
             compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
         }
+    }
+
+
+    private fun createPirCache(path: String, allKlibPaths: Collection<String>, config: JsConfig, icCache: Map<String, SerializedIcData>): SerializedIcData {
+        val icData = predefinedKlibHasIcCache[path] ?: prepareSingleLibraryIcCache(
+            project = project,
+            analyzer = AnalyzerWithCompilerReport(config.configuration),
+            configuration = config.configuration,
+            libPath = path,
+            dependencies = allKlibPaths,
+            icCache = icCache
+        )
+
+        if (path in predefinedKlibHasIcCache) {
+            predefinedKlibHasIcCache[path] = icData
+        }
+
+        return icData
+    }
+
+    private fun prepareRuntimePirCaches(config: JsConfig, icCache: MutableMap<String, SerializedIcData>) {
+        if (!runIcMode) return
+
+        val defaultRuntimePath = File(defaultRuntimeKlib).canonicalPath
+        icCache[defaultRuntimePath] = createPirCache(defaultRuntimePath, listOf(defaultRuntimePath), config, icCache)
+
+        val fullRuntimePath = File(fullRuntimeKlib).canonicalPath
+        icCache[fullRuntimePath] = createPirCache(fullRuntimePath, listOf(fullRuntimePath), config, icCache)
+
+        val testKlibPath = File(kotlinTestKLib).canonicalPath
+        icCache[testKlibPath] = createPirCache(testKlibPath, listOf(fullRuntimePath, testKlibPath), config, icCache)
     }
 
     private fun fromSysPropertyOrAll(key: String, all: Set<AnyNamedPhase>): Set<AnyNamedPhase> {
@@ -290,10 +304,10 @@ abstract class BasicIrBoxTest(
         val dependencyPaths = mutableListOf<String>()
 
         dependencies.forEach { (moduleId, outputs) ->
-            val wrappedCode = wrapWithModuleEmulationMarkers(outputs.jsCode, config.moduleKind, moduleId)
+            val moduleWrappedCode = wrapWithModuleEmulationMarkers(outputs.jsCode, config.moduleKind, moduleId)
             val dependencyPath = outputFile.absolutePath.replace("_v5.js", "-${moduleId}_v5.js")
             dependencyPaths += dependencyPath
-            File(dependencyPath).write(wrappedCode)
+            File(dependencyPath).write(moduleWrappedCode)
         }
 
         cachedDependencies[outputFile.absolutePath] = dependencyPaths

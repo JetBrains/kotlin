@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
+import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -190,6 +191,7 @@ abstract class BasicBoxTest(
             }
             val testModuleName = if (runPlainBoxFunction) null else mainModuleName
             val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
+            val icCache = mutableMapOf<String, SerializedIcData>()
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependenciesSymbols.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
@@ -230,7 +232,8 @@ abstract class BasicBoxTest(
                     safeExternalBoolean,
                     safeExternalBooleanDiagnostic,
                     skipMangleVerification,
-                    abiVersion
+                    abiVersion,
+                    icCache
                 )
 
                 when {
@@ -487,7 +490,8 @@ abstract class BasicBoxTest(
         safeExternalBoolean: Boolean,
         safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
         skipMangleVerification: Boolean,
-        abiVersion: KotlinAbiVersion
+        abiVersion: KotlinAbiVersion,
+        icCache: MutableMap<String, SerializedIcData>
     ) {
         val kotlinFiles = module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -541,7 +545,8 @@ abstract class BasicBoxTest(
             safeExternalBoolean,
             safeExternalBooleanDiagnostic,
             skipMangleVerification,
-            abiVersion
+            abiVersion,
+            icCache
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
@@ -639,7 +644,8 @@ abstract class BasicBoxTest(
             safeExternalBoolean = false,
             safeExternalBooleanDiagnostic = null,
             skipMangleVerification = false,
-            abiVersion = KotlinAbiVersion.CURRENT
+            abiVersion = KotlinAbiVersion.CURRENT,
+            mutableMapOf()
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -722,7 +728,8 @@ abstract class BasicBoxTest(
         safeExternalBoolean: Boolean,
         safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
         skipMangleVerification: Boolean,
-        abiVersion: KotlinAbiVersion
+        abiVersion: KotlinAbiVersion,
+        icCache: MutableMap<String, SerializedIcData>
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
