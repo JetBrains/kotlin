@@ -139,7 +139,7 @@ internal class ModuleMetadataEmitter(
 
         override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
                 data.withMappingExtensions {
-                    KmTypeAlias(element.flags, element.alias.topLevelName.replace("::", "__")).also { km ->
+                    KmTypeAlias(element.flags, element.alias.topLevelName.rectifySpelling).also { km ->
                         km.underlyingType = element.aliasee.map(shouldExpandTypeAliases = false)
                         km.expandedType = element.aliasee.map()
                     }
@@ -269,7 +269,7 @@ private class MappingExtensions(
             }
             // Nested classes should dot-separated.
             append(getRelativeFqName(asSimpleName = false))
-        }.replace("::", "__")
+        }.rectifySpelling
 
     val PropertyStub.flags: Flags
         get() = flagsOfNotNull(
@@ -611,4 +611,11 @@ private class MappingExtensions(
             }
             is PropertyStub.Kind.Constant -> kind
         }
+
+    // We use it here because at the earlier stages we still need the original spelling in cpp bridges.
+    // As an alternative, we could introduce StructDecl.originalSpelling vs StructDecl.spelling
+    val String.rectifySpelling
+        // We only get "::" in names for C++ nested classes or using C++ namespaces.
+        // The IDE chokes on "::", so mangle it to "__".
+        get() = this.replace("::", "__")
 }

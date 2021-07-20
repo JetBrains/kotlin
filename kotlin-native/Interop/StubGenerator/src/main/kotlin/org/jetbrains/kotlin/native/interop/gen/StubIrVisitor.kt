@@ -172,14 +172,17 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub, val context: Stubs
 
     override fun visitAnnotation(element: AnnotationStub): AnnotationStub = element
 
+    private val knownPrefixes = listOf("Sk", "Gr", "skia::textlayout::")
 
     fun managedWrapperClassifier(cppClassifier: Classifier): Classifier? {
-        if (!(cppClassifier.topLevelName.startsWith("Sk") || cppClassifier.topLevelName.startsWith("Gr"))) return null
+        val prefix = knownPrefixes.singleOrNull {
+            cppClassifier.topLevelName.startsWith(it)
+        } ?: return null
         if (cppClassifier.topLevelName == "SkString") return null
-        // TODO: We only managed C++ classes, not structs for now.
+        // TODO: We only manage C++ classes, not structs for now.
         if (!(context as StubsBuildingContextImpl).isClass(cppClassifier.topLevelName)) return null
 
-        return Classifier.topLevel(cppClassifier.pkg, cppClassifier.topLevelName.drop(2))
+        return Classifier.topLevel(cppClassifier.pkg, cppClassifier.topLevelName.drop(prefix.length))
     }
 
 }
