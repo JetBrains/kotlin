@@ -72,6 +72,9 @@ internal open class HackedFixStackMethodAnalyzerBase<V : Value>(
     fun analyze(): Array<Frame<V>?> {
         if (nInsns == 0) return frames
 
+        // This is a very specific version of method bytecode analyzer that doesn't perform any DFA,
+        // but infers stack types for reachable instructions instead.
+
         checkAssertions()
 
         computeExceptionEdges()

@@ -179,28 +179,7 @@ internal class FixStackAnalyzer(
             }
 
             override fun merge(frame: Frame<out FixStackValue>, interpreter: Interpreter<FixStackValue>): Boolean {
-                val other = frame as FixStackFrame
-                if (stackSizeWithExtra != other.stackSizeWithExtra) {
-                    throw AnalyzerException(null, "Incompatible stack heights")
-                }
-                var changed = false
-                for (i in 0 until stackSize) {
-                    val v0 = super.getStack(i)
-                    val vm = interpreter.merge(v0, other.getStack(i))
-                    if (vm != v0) {
-                        super.setStack(i, vm)
-                        changed = true
-                    }
-                }
-                for (i in 0 until extraStack.size) {
-                    val v0 = extraStack[i]
-                    val vm = interpreter.merge(v0, other.extraStack[i])
-                    if (vm != v0) {
-                        extraStack[i] = vm
-                        changed = true
-                    }
-                }
-                return changed
+                throw UnsupportedOperationException("Stack normalization should not merge frames")
             }
         }
 
