@@ -39,9 +39,9 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
                 visibilitiesAreCompatible = false
                 reporter.reportOn(getter.source, FirErrors.GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY, context)
             } else if (difference > 0 && getter.hasBody) {
-                reporter.reportOn(getter.source, FirErrors.MORE_VISIBLE_GETTER_WITH_BODY, context)
+                reporter.reportOn(getter.source, FirErrors.EXPOSING_GETTER_WITH_BODY, context)
             } else if (difference > 0 && property.delegate != null) {
-                reporter.reportOn(property.source, FirErrors.PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER, context)
+                reporter.reportOn(property.source, FirErrors.PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER, context)
             }
             if (property.symbol.callableId.classId != null && getter.body != null && property.delegate == null) {
                 if (isLegallyAbstract(property, context)) {

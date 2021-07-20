@@ -760,12 +760,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
         }
         val REDUNDANT_GETTER_VISIBILITY_CHANGE by warning<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
-        val MORE_VISIBLE_GETTER_WITH_BODY by error<KtPropertyAccessor>()
+        val EXPOSING_GETTER_WITH_BODY by error<KtPropertyAccessor>()
         val INCOMPLETE_PROPERTY_OVERRIDE by error<KtDeclaration> {
             parameter<Visibility>("requiredVisibility")
             parameter<Visibility>("actualVisibility")
         }
-        val PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER by error<KtProperty>()
+        val PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER by error<KtProperty>()
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
     }
 

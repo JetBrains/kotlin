@@ -7,7 +7,7 @@ class SomeClass {
     }
 
     private val shmitems = mutableListOf<String>()
-        <!MORE_VISIBLE_GETTER_WITH_BODY!>protected get(): List<String> = field<!>
+        <!EXPOSING_GETTER_WITH_BODY!>protected get(): List<String> = field<!>
 
     val balalitems = mutableListOf<String>()
         <!GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>protected<!> get(): List<String> = field
@@ -22,7 +22,7 @@ class SomeClass {
         <!REDUNDANT_GETTER_VISIBILITY_CHANGE!>public<!> get(): Int
 
     private val otditems = mutableListOf<String>()
-        <!MORE_VISIBLE_GETTER_WITH_BODY!>public get(): List<String> {
+        <!EXPOSING_GETTER_WITH_BODY!>public get(): List<String> {
             println("strelyai, ne otdam")
             return field
         }<!>

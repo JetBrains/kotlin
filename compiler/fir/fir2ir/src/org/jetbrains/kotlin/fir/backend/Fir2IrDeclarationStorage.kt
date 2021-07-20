@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.getGetterWithGreaterVisibility
+import org.jetbrains.kotlin.fir.resolve.getExposingGetter
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -612,7 +612,7 @@ class Fir2IrDeclarationStorage(
             val accessorReturnType = if (isSetter) {
                 irBuiltIns.unitType
             } else {
-                property.getGetterWithGreaterVisibility()?.returnTypeRef?.toIrType() ?: propertyType
+                property.getExposingGetter()?.returnTypeRef?.toIrType() ?: propertyType
             }
             val visibility = propertyAccessor?.visibility?.let {
                 components.visibilityConverter.convertToDescriptorVisibility(it)

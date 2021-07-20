@@ -17,28 +17,28 @@ open class A {
     // no applicable candidates message, because
     // the delegate's getter type differs from the
     // property's getter return type
-    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p1 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+    <!PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER!>open protected var p1 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
         public get(): Number<!>
 
-    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p2 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+    <!PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER!>open protected var p2 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
         public get(): Number<!>
 
-    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p3 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+    <!PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER!>open protected var p3 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
         public get(): Number<!>
 
-    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p4 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+    <!PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER!>open protected var p4 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
         public get(): Number<!>
 
-    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected var p5 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
+    <!PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER!>open protected var p5 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!>
         public get(): Number<!>
 
-    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected val p6 by Delegate()
+    <!PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER!>open protected val p6 by Delegate()
         public get(): Number<!>
 
-    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected val p7 by Delegate()
+    <!PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER!>open protected val p7 by Delegate()
         public get(): Number<!>
 
-    <!PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER!>open protected val p8 by Delegate()
+    <!PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER!>open protected val p8 by Delegate()
         public get(): Number<!>
 }
 

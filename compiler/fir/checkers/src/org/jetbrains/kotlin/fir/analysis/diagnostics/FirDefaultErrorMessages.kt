@@ -213,7 +213,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_LAMBDA_EXPRE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MORE_VISIBLE_GETTER_WITH_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSING_GETTER_WITH_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
@@ -268,7 +268,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
@@ -1036,7 +1036,7 @@ class FirDefaultErrorMessages {
             map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
             map.put(
                 GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
-                "Getter visibility must be more permissive or the same as property visibility"
+                "Getter visibility must be more permissive or the same as the property visibility"
             )
             map.put(
                 SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
@@ -1060,7 +1060,7 @@ class FirDefaultErrorMessages {
                 "This getter has the same return type as the property, so there is no need in it"
             )
             map.put(
-                MORE_VISIBLE_GETTER_WITH_BODY,
+                EXPOSING_GETTER_WITH_BODY,
                 "Custom bodies are not supported for getters with a more permissive visibility than the visibility of the property"
             )
             map.put(
@@ -1070,7 +1070,7 @@ class FirDefaultErrorMessages {
                 VISIBILITY
             )
             map.put(
-                PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER,
+                PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER,
                 "Properties can't both have a delegate and a getter with a greater visibility"
             )
             map.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations")

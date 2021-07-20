@@ -455,7 +455,7 @@ fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAs
  * the visibility of this, returns that getter.
  * Returns null otherwise.
  */
-fun FirDeclaration.getGetterWithGreaterVisibility(): FirPropertyAccessor? {
+fun FirDeclaration.getExposingGetter(): FirPropertyAccessor? {
     if (this !is FirProperty) {
         return null
     }
@@ -475,6 +475,6 @@ fun FirDeclaration.getGetterWithGreaterVisibility(): FirPropertyAccessor? {
  * whose visibility is more permissive than
  * the visibility of this. Returns false otherwise.
  */
-fun FirDeclaration.hasGetterWithGreaterVisibility(): Boolean {
-    return getGetterWithGreaterVisibility() != null
+fun FirDeclaration.hasExposingGetter(): Boolean {
+    return getExposingGetter() != null
 }

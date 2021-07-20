@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.resolve.hasGetterWithGreaterVisibility
+import org.jetbrains.kotlin.fir.resolve.hasExposingGetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 
@@ -223,7 +223,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
     }
 
     private fun FirDeclaration.hasIssuesWithExposingGetter(compatibilityType: CompatibilityInfo): Boolean {
-        val allIsOk = if (hasGetterWithGreaterVisibility()) {
+        val allIsOk = if (hasExposingGetter()) {
             compatibilityType.compatibleEntities includes CompatibleEntities.PROPERTIES_WITH_EXPOSING_GETTERS
         } else {
             compatibilityType.compatibleEntities includes CompatibleEntities.OTHER

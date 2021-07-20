@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.resolve.getGetterWithGreaterVisibility
-import org.jetbrains.kotlin.fir.resolve.hasGetterWithGreaterVisibility
+import org.jetbrains.kotlin.fir.resolve.getExposingGetter
+import org.jetbrains.kotlin.fir.resolve.hasExposingGetter
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -136,13 +136,13 @@ object FirOverrideChecker : FirClassChecker() {
      * further use.
      */
     private class VisibilityInfoProvider(val fir: FirCallableMemberDeclaration) {
-        val permissiveGetter = fir.getGetterWithGreaterVisibility()
+        val exposingGetter = fir.getExposingGetter()
 
-        val hasPermissiveGetter: Boolean
-            get() = permissiveGetter != null
+        val hasExposingGetter: Boolean
+            get() = exposingGetter != null
 
         val actualVisibility: Visibility
-            get() = permissiveGetter?.visibility ?: fir.visibility
+            get() = exposingGetter?.visibility ?: fir.visibility
 
         val actualInfo: VisibilityInfo
             get() = VisibilityInfo(fir, actualVisibility)
@@ -184,7 +184,7 @@ object FirOverrideChecker : FirClassChecker() {
         context: CheckerContext
     ): Boolean {
         actualInfo.checkAccessPrivilegeOrOnWeaker(other.actualInfo, reporter, context) {
-            if (!hasPermissiveGetter && other.hasPermissiveGetter) {
+            if (!hasExposingGetter && other.hasExposingGetter) {
                 reporter.reportIncompletePropertyOverride(other.actualVisibility, fir, context)
             } else {
                 reporter.reportCannotWeakenAccessPrivilege(fir, other.fir, context)
@@ -194,15 +194,15 @@ object FirOverrideChecker : FirClassChecker() {
         }
 
         // This particular case means we are
-        // overriding a property with a more permissive
+        // overriding a property with an exposing
         // getter with a new property with some new
-        // more permissive getter. Previous check resulted
+        // exposing getter. Previous check resulted
         // in comparing the visibilities of the getters
         // and now we'll check the visibilities of the
         // properties themselves to make sure that
-        // the overridden on has a greater visibility.
+        // the overridden one has a greater visibility.
 
-        if (hasPermissiveGetter && other.hasPermissiveGetter) {
+        if (hasExposingGetter && other.hasExposingGetter) {
             formalInfo.checkAccessPrivilegeOrOnWeaker(other.formalInfo, reporter, context) {
                 reporter.reportCannotWeakenAccessPrivilege(fir, other.fir, context)
             }.onTrue {
@@ -258,7 +258,7 @@ object FirOverrideChecker : FirClassChecker() {
         }
 
         val isVar = this is FirProperty && this.isVar
-        val bounds = if (isVar || hasGetterWithGreaterVisibility()) {
+        val bounds = if (isVar || hasExposingGetter()) {
             // We should check the property's own type against parent
             // properties' own types, and their exposing getters will
             // be checked by `checkPermissiveGetter()`.
@@ -270,7 +270,7 @@ object FirOverrideChecker : FirClassChecker() {
             // type must be consistent either with the parent property's
             // own type or its exposing getter if present.
             overriddenSymbols.map {
-                val typeHolder = it.fir.getGetterWithGreaterVisibility() ?: it.fir
+                val typeHolder = it.fir.getExposingGetter() ?: it.fir
                 context.returnTypeCalculator.tryCalculateReturnType(typeHolder).coneType.upperBoundIfFlexible()
             }
         }
@@ -294,43 +294,43 @@ object FirOverrideChecker : FirClassChecker() {
         return null
     }
 
-    private fun FirCallableMemberDeclaration.checkPermissiveGetter(
+    private fun FirCallableMemberDeclaration.checkExposingGetter(
         overriddenSymbols: List<FirCallableSymbol<*>>,
         typeCheckerContext: AbstractTypeCheckerContext,
         context: CheckerContext,
     ): Triple<FirPropertyAccessor, ConeKotlinType, ConeKotlinType>? {
-        val permissiveGetter = getGetterWithGreaterVisibility()
+        val exposingGetter = getExposingGetter()
             ?: return null
 
-        val permissiveGetterReturnType = permissiveGetter.returnTypeRef.coneType
+        val exposingGetterReturnType = exposingGetter.returnTypeRef.coneType
 
         // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
-        if (permissiveGetterReturnType is ConeKotlinErrorType) {
+        if (exposingGetterReturnType is ConeKotlinErrorType) {
             return null
         }
 
-        val superPermissiveGetters = overriddenSymbols.mapNotNull {
-            it.fir.safeAs<FirProperty>()?.getGetterWithGreaterVisibility()
+        val superExposingGetters = overriddenSymbols.mapNotNull {
+            it.fir.safeAs<FirProperty>()?.getExposingGetter()
         }
 
-        for (getter in superPermissiveGetters) {
-            val superPermissiveGetterReturnType = context.returnTypeCalculator.tryCalculateReturnType(getter)
+        for (getter in superExposingGetters) {
+            val superExposingGetterReturnType = context.returnTypeCalculator.tryCalculateReturnType(getter)
                 .coneType
                 .upperBoundIfFlexible()
                 .substituteAllTypeParameters(this, getter, context)
 
-            if (superPermissiveGetterReturnType is ConeKotlinErrorType) {
+            if (superExposingGetterReturnType is ConeKotlinErrorType) {
                 continue
             }
 
             val isReturnTypeOkForOverride = AbstractTypeChecker.isSubtypeOf(
                 typeCheckerContext,
-                permissiveGetterReturnType,
-                superPermissiveGetterReturnType
+                exposingGetterReturnType,
+                superExposingGetterReturnType
             )
 
             if (!isReturnTypeOkForOverride) {
-                return Triple(permissiveGetter, permissiveGetterReturnType, superPermissiveGetterReturnType)
+                return Triple(exposingGetter, exposingGetterReturnType, superExposingGetterReturnType)
             }
         }
 
@@ -402,7 +402,7 @@ object FirOverrideChecker : FirClassChecker() {
             }
         }
 
-        member.checkPermissiveGetter(
+        member.checkExposingGetter(
             overriddenSymbols = overriddenMemberSymbols,
             typeCheckerContext = typeCheckerContext,
             context = context,

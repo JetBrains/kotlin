@@ -39,7 +39,7 @@ class C2(
 ) : C1() {
     <!INCOMPLETE_PROPERTY_OVERRIDE!>override val p3 get() = "lol"<!>
     <!INCOMPLETE_PROPERTY_OVERRIDE!>override val p4 = "lol"<!>
-    override val p6 <!MORE_VISIBLE_GETTER_WITH_BODY!><!REDUNDANT_GETTER_VISIBILITY_CHANGE!>public<!> get() = "lol"<!>
+    override val p6 <!EXPOSING_GETTER_WITH_BODY!><!REDUNDANT_GETTER_VISIBILITY_CHANGE!>public<!> get() = "lol"<!>
     public override val p8 get() = "lol"
 
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>override val <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>p9<!><!> public get(): Any

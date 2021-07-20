@@ -81,13 +81,13 @@ private class TowerScopeLevelProcessor(
         scope: FirScope,
         builtInExtensionFunctionReceiverValue: ReceiverValue?
     ) {
-        // if we are about to consume a property
-        // candidate where the property has a
-        // getter with a more permissive visibility,
-        // we should prepare a separate candidate
-        // for that getter;
+        // If we are about to consume a property
+        // candidate where the property has an
+        // exposing getter (the one with a more
+        // permissive visibility), we should prepare
+        // a separate candidate for that getter
 
-        // this candidate will be checked by
+        // This candidate will be checked by
         // VisibilityChecker after the main one
         // and will be disabled if the property
         // can be accessed directly
@@ -120,7 +120,7 @@ private class TowerScopeLevelProcessor(
             candidateFactory.context
         )
 
-        // it's important to collect the getter
+        // It's important to collect the getter
         // after its property so that VisibilityChecker
         // is able to check the property visibility first
         // and disable the getter
@@ -138,14 +138,14 @@ private class TowerScopeLevelProcessor(
     ): Candidate? {
         val getter = property.getter ?: return null
 
-        // right now a getter can't have
+        // Right now a getter can't have
         // a visibility smaller than the
         // property
         if (getter.visibility == property.visibility) {
             return null
         }
 
-        // so here the getter has a greater
+        // So here the getter has a greater
         // visibility
         return candidateFactory.createCandidate(
             callInfo,

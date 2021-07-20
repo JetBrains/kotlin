@@ -418,12 +418,12 @@ private fun isSubtypeOfForFunctionalTypeReturningUnit(
 
 fun FirCallableMemberDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
     val classPackage = parentClass.symbol.classId.packageFqName
-    val realVisibility = getGetterWithGreaterVisibility()?.visibility ?: visibility
-    if (realVisibility == Visibilities.Private ||
-        !realVisibility.visibleFromPackage(classPackage, symbol.callableId.packageName)
+    val selfOrExposingVisibility = getExposingGetter()?.visibility ?: visibility
+    if (selfOrExposingVisibility == Visibilities.Private ||
+        !selfOrExposingVisibility.visibleFromPackage(classPackage, symbol.callableId.packageName)
     ) return false
     if (
-        realVisibility == Visibilities.Internal &&
+        selfOrExposingVisibility == Visibilities.Internal &&
         (moduleData != parentClass.moduleData || parentClass.moduleData in moduleData.friendDependencies)
     ) return false
     return true

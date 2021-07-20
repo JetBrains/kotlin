@@ -2139,7 +2139,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.MORE_VISIBLE_GETTER_WITH_BODY) { firDiagnostic ->
+    add(FirErrors.EXPOSING_GETTER_WITH_BODY) { firDiagnostic ->
         MoreVisibleGetterWithBodyImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
@@ -2153,7 +2153,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.PROPERTY_WITH_DELEGATE_AND_PERMISSIVE_GETTER) { firDiagnostic ->
+    add(FirErrors.PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER) { firDiagnostic ->
         PropertyWithDelegateAndPermissiveGetterImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,

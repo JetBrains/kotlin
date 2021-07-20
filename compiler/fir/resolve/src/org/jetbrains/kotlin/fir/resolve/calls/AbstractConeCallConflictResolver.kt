@@ -104,26 +104,11 @@ abstract class AbstractConeCallConflictResolver(
             declaration is FirVariable -> createFlatSignature(call, declaration)
             declaration is FirClass -> createFlatSignature(call, declaration)
             declaration is FirTypeAlias -> createFlatSignature(call, declaration)
-            // it's a getter with a greater visibility;
-            // it's property's candidate also makes its way here
+            // It's an exposing getter
             declaration is FirPropertyAccessor && declaration.isGetter -> null
-//            declaration is FirPropertyAccessor && declaration.isGetter -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
         }
     }
-
-//    private fun createFlatSignature(call: Candidate, accessor: FirPropertyAccessor): FlatSignature<Candidate> {
-//        return FlatSignature(
-//            call,
-//            emptyList(),
-//            listOfNotNull(accessor.receiverTypeRef?.coneType),
-//            accessor.receiverTypeRef != null,
-//            false,
-//            0,
-//            accessor.isExpect == true,
-//            false // TODO
-//        )
-//    }
 
     protected fun createFlatSignature(call: Candidate, variable: FirVariable): FlatSignature<Candidate> {
         return FlatSignature(
