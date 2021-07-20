@@ -600,6 +600,7 @@ object FirErrors {
     val NON_LOCAL_RETURN_NOT_ALLOWED by error1<KtElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val NOT_YET_SUPPORTED_IN_INLINE by error1<KtDeclaration, String>(SourceElementPositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
     val NOTHING_TO_INLINE by warning0<KtDeclaration>(SourceElementPositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
+    val NULLABLE_INLINE_PARAMETER by error2<KtDeclaration, FirValueParameterSymbol, FirBasedSymbol<*>>()
     val RECURSION_IN_INLINE by error1<KtElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val NON_PUBLIC_CALL_FROM_PUBLIC_INLINE by error2<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE by error2<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

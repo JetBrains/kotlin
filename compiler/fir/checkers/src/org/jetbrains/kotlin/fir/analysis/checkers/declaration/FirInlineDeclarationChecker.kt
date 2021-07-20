@@ -338,17 +338,28 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
     private fun checkParameters(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (function !is FirSimpleFunction) return
 
-        if (function.isSuspend) {
-            function.valueParameters
-                .filter { !it.isNoinline && it.defaultValue != null && it.returnTypeRef.coneType.isSuspendFunctionType(context.session) }
-                .forEach { param ->
-                    reporter.reportOn(
-                        param.source,
-                        FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
-                        "Suspend functional parameters with default values",
-                        context
-                    )
-                }
+        for (param in function.valueParameters) {
+            if (param.isNoinline) continue
+
+            val coneType = param.returnTypeRef.coneType
+            if (function.isSuspend && param.defaultValue != null && coneType.isSuspendFunctionType(context.session)) {
+                reporter.reportOn(
+                    param.source,
+                    FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
+                    "Suspend functional parameters with default values",
+                    context
+                )
+            }
+
+            if (coneType.isNullable && coneType.isFunctionalType(context.session)) {
+                reporter.reportOn(
+                    param.source,
+                    FirErrors.NULLABLE_INLINE_PARAMETER,
+                    param.symbol,
+                    function.symbol,
+                    context
+                )
+            }
         }
 
         //check for inherited default values

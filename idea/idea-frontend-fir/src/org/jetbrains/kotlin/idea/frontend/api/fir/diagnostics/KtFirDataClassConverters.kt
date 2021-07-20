@@ -3105,6 +3105,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NULLABLE_INLINE_PARAMETER) { firDiagnostic ->
+        NullableInlineParameterImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b.fir),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RECURSION_IN_INLINE) { firDiagnostic ->
         RecursionInInlineImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),

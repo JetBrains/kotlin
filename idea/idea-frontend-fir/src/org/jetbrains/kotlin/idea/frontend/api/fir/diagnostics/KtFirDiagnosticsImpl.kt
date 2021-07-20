@@ -3497,6 +3497,15 @@ internal class NothingToInlineImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class NullableInlineParameterImpl(
+    override val parameter: KtSymbol,
+    override val function: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NullableInlineParameter(), KtAbstractFirDiagnostic<KtDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class RecursionInInlineImpl(
     override val symbol: KtSymbol,
     firDiagnostic: FirPsiDiagnostic,
