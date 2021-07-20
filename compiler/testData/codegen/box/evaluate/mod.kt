@@ -1,3 +1,4 @@
+// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // IGNORE_FIR_DIAGNOSTICS
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
