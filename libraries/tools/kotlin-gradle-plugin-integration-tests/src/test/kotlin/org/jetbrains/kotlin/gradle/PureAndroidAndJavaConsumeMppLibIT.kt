@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -38,15 +40,25 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
     @Parameterized.Parameter(1)
     lateinit var isAndroidDebugOnlyParameter: RefBoolean
 
-    @Test
-    fun test() {
+    lateinit var buildOptions: BuildOptions
+
+    @Before
+    override fun setUp() {
         val jdk11Home = File(System.getProperty("jdk11Home"))
         Assume.assumeTrue("This test requires JDK11 for AGP7", jdk11Home.isDirectory)
-        val buildOptions = defaultBuildOptions().copy(
+
+        buildOptions = defaultBuildOptions().copy(
             javaHome = jdk11Home,
             androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = AGPVersion.v7_0_0
         )
+        buildOptions.acceptAndroidSdkLicenses()
+
+        super.setUp()
+    }
+
+    @Test
+    fun test() {
         val gradleVersionRequirement = GradleVersionRequired.AtLeast("7.0")
 
         val isAndroidDebugOnly = isAndroidDebugOnlyParameter.booleanValue()

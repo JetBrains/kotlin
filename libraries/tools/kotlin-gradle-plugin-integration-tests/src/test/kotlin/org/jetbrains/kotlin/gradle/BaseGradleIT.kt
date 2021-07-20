@@ -41,10 +41,10 @@ abstract class BaseGradleIT {
     val isTeamCityRun = System.getenv("TEAMCITY_VERSION") != null
 
     @Before
-    fun setUp() {
+    open fun setUp() {
         // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
         workingDir = createTempDir(if (isWindows) "" else "BaseGradleIT")
-        acceptAndroidSdkLicenses()
+        defaultBuildOptions().acceptAndroidSdkLicenses()
     }
 
     @After
@@ -53,9 +53,11 @@ abstract class BaseGradleIT {
     }
 
     // https://developer.android.com/studio/intro/update.html#download-with-gradle
-    fun acceptAndroidSdkLicenses() = defaultBuildOptions().androidHome?.let {
-        val sdkLicensesDir = it.resolve("licenses")
-        if(!sdkLicensesDir.exists()) sdkLicensesDir.mkdirs()
+    fun BuildOptions.acceptAndroidSdkLicenses() {
+        if (this.androidHome == null) return
+
+        val sdkLicensesDir = this.androidHome.resolve("licenses")
+        if (!sdkLicensesDir.exists()) sdkLicensesDir.mkdirs()
 
         val sdkLicenses = listOf(
             "8933bad161af4178b1185d1a37fbf41ea5269c55",
