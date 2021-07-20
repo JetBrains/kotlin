@@ -272,6 +272,46 @@ extern KBox<KLong> LONG_CACHE[] = {
         {{}, 1},
 };
 
+OBJ_GETTER(Kotlin_boxByte, KByte value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxShort, KShort value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxInt, KInt value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxLong, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxUByte, KUByte value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxUShort, KUShort value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxUInt, KUInt value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxULong, KULong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxFloat, KFloat value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_boxDouble, KDouble value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 RUNTIME_NORETURN OBJ_GETTER(Kotlin_Throwable_getMessage, KRef throwable) {
     throw std::runtime_error("Not implemented for tests");
 }
