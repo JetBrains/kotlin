@@ -301,7 +301,7 @@ private fun File.readCompiledScript(): CompiledScript {
 private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 private fun Class<*>.supertypes(): MutableList<Class<*>> = when {
-    superclass == null -> interfaces.toMutableList() ?: mutableListOf()
+    superclass == null -> interfaces.toMutableList()
     interfaces.isEmpty() -> mutableListOf(superclass)
     else -> ArrayList<Class<*>>(interfaces.size + 1).apply {
         interfaces.toCollection(this@apply)

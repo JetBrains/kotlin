@@ -207,7 +207,7 @@ internal class AetherResolveSession(
         if (mirrors != null) {
             for (mirror in mirrors) {
                 selector.add(
-                    mirror.id, mirror.url, mirror.layout, false,
+                    mirror.id, mirror.url, mirror.layout, false, false,
                     mirror.mirrorOf, mirror.mirrorOfLayouts
                 )
             }

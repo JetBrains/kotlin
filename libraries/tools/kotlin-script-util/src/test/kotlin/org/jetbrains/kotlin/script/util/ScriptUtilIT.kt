@@ -166,6 +166,7 @@ done
 
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 addKotlinSourceRoot(scriptPath)
+                @Suppress("DEPRECATION")
                 getResourcePathForClass(DependsOn::class.java).let {
                     if (it.exists()) {
                         addJvmClasspathRoot(it)

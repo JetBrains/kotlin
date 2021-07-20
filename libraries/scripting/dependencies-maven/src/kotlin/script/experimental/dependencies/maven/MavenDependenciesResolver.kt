@@ -98,6 +98,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
              */
             setAuthentication(
                 AuthenticationBuilder().apply {
+                    @Suppress("DEPRECATION")
                     val mavenRepo = repositoryCoordinates as? MavenRepositoryCoordinates
                     val username = options.username ?: mavenRepo?.username
                     val password = options.password ?: mavenRepo?.password

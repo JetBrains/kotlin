@@ -34,7 +34,7 @@ private class InternalScriptingRunSuspend<T> : Continuation<T> {
 
     fun await(): T = synchronized(this) {
         while (true) {
-            when (val result: Result<T>? = this.result) {
+            when (this.result) {
                 null -> @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") (this as Object).wait()
                 else -> break
             }
