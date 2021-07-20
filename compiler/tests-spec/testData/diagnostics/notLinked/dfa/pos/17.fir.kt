@@ -26,7 +26,7 @@ fun case_2(x: Unit?) {
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Nothing?) {
-    if (x != null) else throw Exception()
+    if (<!SENSELESS_COMPARISON!>x != null<!>) else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
 }
 

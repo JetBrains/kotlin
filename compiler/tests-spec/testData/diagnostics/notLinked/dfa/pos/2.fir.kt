@@ -181,21 +181,21 @@ fun case_8(b: Boolean, c: Boolean?) {
     val a = Case8_16__2()
 
     if (a.x !== null && false) {
-        if (false || false || false || false || a.x != null || false || false || false) {
-            if (a.x !== null && true) {
-                if (a.x != null && b) {
-                    if (a.x != null && b && !b) {
-                        if (a.x != null && c != null && !c) {
-                            if (a.x !== null && c) {
-                                if (a.x != null && b && b && b && b && b && b && b && b && b && b && b) {
-                                    if (a.x != null && !b && !b && !b && !b && !b && !b && !b && !b && !b) {
-                                        if (a.x !== null && null == null) {
-                                            if (a.x != null && null!!) {
-                                                if (a.x != null) {
-                                                    if (a.x != null) {
-                                                        if (a.x !== null) {
-                                                            if (a.x != null) {
-                                                                if (a.x !== null) {
+        if (false || false || false || false || <!SENSELESS_COMPARISON!>a.x != null<!> || false || false || false) {
+            if (<!SENSELESS_COMPARISON!>a.x !== null<!> && true) {
+                if (<!SENSELESS_COMPARISON!>a.x != null<!> && b) {
+                    if (<!SENSELESS_COMPARISON!>a.x != null<!> && b && !b) {
+                        if (<!SENSELESS_COMPARISON!>a.x != null<!> && c != null && !c) {
+                            if (<!SENSELESS_COMPARISON!>a.x !== null<!> && c) {
+                                if (<!SENSELESS_COMPARISON!>a.x != null<!> && b && b && b && b && b && b && b && b && b && b && b) {
+                                    if (<!SENSELESS_COMPARISON!>a.x != null<!> && !b && !b && !b && !b && !b && !b && !b && !b && !b) {
+                                        if (<!SENSELESS_COMPARISON!>a.x !== null<!> && <!SENSELESS_COMPARISON!>null == null<!>) {
+                                            if (<!SENSELESS_COMPARISON!>a.x != null<!> && null!!) {
+                                                if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                                    if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                                        if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+                                                            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+                                                                if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
                                                                     a.x
                                                                     a.x.equals(null)
                                                                     a.x.propT
@@ -408,35 +408,35 @@ fun case_16(b: Boolean, c: Boolean?) {
     val a = Case8_16__2()
 
     if (a.x != null && false && false && false && false && false && false) {
-        if ( a.x == null || false) {
+        if ( <!SENSELESS_COMPARISON!>a.x == null<!> || false) {
         } else {
-            if ( a.x === null && true) {
+            if ( <!SENSELESS_COMPARISON!>a.x === null<!> && true) {
             } else {
-                if (a.x == null || !b) {
+                if (<!SENSELESS_COMPARISON!>a.x == null<!> || !b) {
                 } else {
-                    if (a.x == null || b || !b) {
+                    if (<!SENSELESS_COMPARISON!>a.x == null<!> || b || !b) {
                     } else {
-                        if (a.x == null || c == null || !c) {
+                        if (<!SENSELESS_COMPARISON!>a.x == null<!> || c == null || !c) {
                         } else {
-                            if (a.x === null || c) {
+                            if (<!SENSELESS_COMPARISON!>a.x === null<!> || c) {
                             } else {
-                                if (a.x == null || b || b || b || b || b || b || b || b || b || b || b) {
+                                if (<!SENSELESS_COMPARISON!>a.x == null<!> || b || b || b || b || b || b || b || b || b || b || b) {
                                 } else {
-                                    if (a.x == null || !b || !b || !b || !b || !b || !b || !b || !b || !b) {
+                                    if (<!SENSELESS_COMPARISON!>a.x == null<!> || !b || !b || !b || !b || !b || !b || !b || !b || !b) {
                                     } else {
-                                        if (a.x === null || null == null) {
+                                        if (<!SENSELESS_COMPARISON!>a.x === null<!> || <!SENSELESS_COMPARISON!>null == null<!>) {
                                         } else {
-                                            if (a.x == null || null!!) {
+                                            if (<!SENSELESS_COMPARISON!>a.x == null<!> || null!!) {
                                             } else {
-                                                if (a.x == null) {
+                                                if (<!SENSELESS_COMPARISON!>a.x == null<!>) {
                                                 } else {
-                                                    if (a.x == null) {
+                                                    if (<!SENSELESS_COMPARISON!>a.x == null<!>) {
                                                     } else {
-                                                        if (a.x === null) {
+                                                        if (<!SENSELESS_COMPARISON!>a.x === null<!>) {
                                                         } else {
-                                                            if (a.x == null) {
+                                                            if (<!SENSELESS_COMPARISON!>a.x == null<!>) {
                                                             } else {
-                                                                if (a.x === null) {
+                                                                if (<!SENSELESS_COMPARISON!>a.x === null<!>) {
                                                                 } else {
                                                                     a.x
                                                                     a.x.equals(null)

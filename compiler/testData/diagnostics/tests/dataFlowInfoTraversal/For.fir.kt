@@ -10,7 +10,7 @@ fun foo() {
         bar(x)
         for (q in a) {
             bar(x)
-            if (x == null) bar(x)
+            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x)
         }
     }
 

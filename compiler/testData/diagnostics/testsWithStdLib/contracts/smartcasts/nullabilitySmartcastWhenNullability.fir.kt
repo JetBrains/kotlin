@@ -39,7 +39,7 @@ fun notNullWhenNotNull (x: Int?): Int? {
 
 fun testNotNullWhenNotNull (x: Int?) {
     if (notNullWhenNotNull(x) == null) {
-        x == null
+        <!SENSELESS_COMPARISON!>x == null<!>
     }
     else {
         x<!UNSAFE_CALL!>.<!>dec()
@@ -49,7 +49,7 @@ fun testNotNullWhenNotNull (x: Int?) {
         x<!UNSAFE_CALL!>.<!>dec()
     }
     else {
-        x == null
+        <!SENSELESS_COMPARISON!>x == null<!>
     }
 
     x<!UNSAFE_CALL!>.<!>dec()

@@ -96,7 +96,7 @@ fun case_8(x: Boolean?) {
 // TESTCASE NUMBER: 9
 fun case_9(x: Boolean?) {
     while (x ?: return)
-    while (x == null)
+    while (<!SENSELESS_COMPARISON!>x == null<!>)
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)

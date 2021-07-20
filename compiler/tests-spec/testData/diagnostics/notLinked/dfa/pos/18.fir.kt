@@ -31,7 +31,7 @@ fun case_2(x: Unit?) {
 // TESTCASE NUMBER: 3
 fun case_3(x: Nothing?, f: Boolean) {
     do {
-        if (x != null) else break
+        if (<!SENSELESS_COMPARISON!>x != null<!>) else break
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.hashCode()
     } while (f)
 }

@@ -56,7 +56,7 @@ fun test() {
         if (get() == null) {}
         if (get() === null) {}
 
-        if (x != null) {
+        if (<!SENSELESS_COMPARISON!>x != null<!>) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
             x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
             x.equals("")
@@ -73,7 +73,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.hashCode()
         }
 
@@ -83,7 +83,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.equals("")
         }
 
@@ -93,7 +93,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.<!NONE_APPLICABLE!>toString<!>("")
         }
 
@@ -103,7 +103,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.test()
         }
 
@@ -113,7 +113,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.hashCode()
         }
 
@@ -123,7 +123,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.equals("")
         }
 
@@ -133,7 +133,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.<!NONE_APPLICABLE!>toString<!>("")
         }
 
@@ -143,7 +143,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.test()
         }
 
@@ -172,35 +172,35 @@ fun test() {
         if (get() == null) {}
         if (get() === null) {}
 
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
         }
 
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
         }
 
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
         }
 
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.test2()
         }
 
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
         }
 
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
         }
 
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
         }
 
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.test2()
         }
 
@@ -210,7 +210,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.equals("")
         }
 
@@ -220,7 +220,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.hashCode()
         }
         ""
@@ -229,7 +229,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.toString()
         }
         ""
@@ -238,7 +238,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.test()
         }
         ""
@@ -247,7 +247,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.equals("")
         }
 
@@ -257,7 +257,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.hashCode()
         }
         ""
@@ -266,7 +266,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.toString()
         }
         ""
@@ -275,7 +275,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        if (x === null) {
+        if (<!SENSELESS_COMPARISON!>x === null<!>) {
             x.test()
         }
         ""
@@ -302,7 +302,7 @@ fun test() {
         if (get() == null) {}
         if (get() === null) {}
 
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
             x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
             x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()

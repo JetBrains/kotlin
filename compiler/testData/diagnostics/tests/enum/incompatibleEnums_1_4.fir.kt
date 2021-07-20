@@ -85,8 +85,8 @@ fun foo5(i: MyInterface, a: Any) {
 }
 
 fun foo6(e1: E1?, e2: E2) {
-    E1.A == null
-    null == E1.A
+    <!SENSELESS_COMPARISON!>E1.A == null<!>
+    <!SENSELESS_COMPARISON!>null == E1.A<!>
     e1 == null
     null == e1
 
@@ -95,10 +95,10 @@ fun foo6(e1: E1?, e2: E2) {
     <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e1 == e2<!>
     <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e2 == e1<!>
 
-    e2 == null
-    null == e2
-    E1.A == null
-    null == E1.A
+    <!SENSELESS_COMPARISON!>e2 == null<!>
+    <!SENSELESS_COMPARISON!>null == e2<!>
+    <!SENSELESS_COMPARISON!>E1.A == null<!>
+    <!SENSELESS_COMPARISON!>null == E1.A<!>
 }
 
 fun foo7(e1: E1?, e2: E2?) {
