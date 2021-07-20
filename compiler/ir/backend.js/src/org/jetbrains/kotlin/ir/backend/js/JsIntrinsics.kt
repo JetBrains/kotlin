@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.constructors
@@ -22,8 +21,7 @@ import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-class JsIntrinsics(private val irBuiltIns: IrBuiltInsOverDescriptors, val context: JsIrBackendContext) {
+class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 

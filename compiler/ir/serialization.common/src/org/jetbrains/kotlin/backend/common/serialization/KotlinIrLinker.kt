@@ -308,7 +308,6 @@ abstract class KotlinIrLinker(
         return deserializerForModule.moduleFragment
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun maybeWrapWithBuiltInAndInit(
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer

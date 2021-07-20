@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -178,8 +177,7 @@ class JsIrBackendContext(
     private val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    val intrinsics = JsIntrinsics(irBuiltIns as IrBuiltInsOverDescriptors, this)
+    val intrinsics = JsIntrinsics(irBuiltIns, this)
 
     override val sharedVariablesManager = JsSharedVariablesManager(this)
 
