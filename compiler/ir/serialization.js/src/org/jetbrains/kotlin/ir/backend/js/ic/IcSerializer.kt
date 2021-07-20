@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.IdSignatureClashTracker
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
@@ -18,11 +19,13 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.serialization.serializeCarriers
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -88,45 +91,48 @@ class IcSerializer(
                 skipExpects = true,
                 icMode = true,
                 allowNullTypes = true,
-                allowErrorStatementOrigins = true
+                allowErrorStatementOrigins = true,
+                compatibilityMode = CompatibilityMode.CURRENT
             )
 
-            bodies.forEach { body ->
-                if (body is IrExpressionBody) {
-                    fileSerializer.serializeIrExpressionBody(body.expression)
-                } else {
-                    fileSerializer.serializeIrStatementBody(body)
+            icDeclarationTable.inFile(file) {
+                bodies.forEach { body ->
+                    if (body is IrExpressionBody) {
+                        fileSerializer.serializeIrExpressionBody(body.expression)
+                    } else {
+                        fileSerializer.serializeIrStatementBody(body)
+                    }
                 }
+
+                // Only save newly created declarations
+                val newDeclarations = fileDeclarations.filter { d ->
+                    d is PersistentIrDeclarationBase<*> && (d.createdOn > 0 || /*d.isFakeOverride ||*/ (d is IrValueParameter || d is IrTypeParameter) && (d.parent as IrDeclaration).isFakeOverride)
+                }
+
+                val serializedCarriers = fileSerializer.serializeCarriers(
+                    fileDeclarations,
+                    bodies,
+                ) { declaration ->
+                    icDeclarationTable.signatureByDeclaration(declaration, compatibleMode = false)
+                }
+
+                val serializedMappings = mappings.state.serializeMappings(fileDeclarations) { symbol ->
+                    fileSerializer.serializeIrSymbol(symbol)
+                }
+
+                val order = storeOrder(file) { symbol ->
+                    fileSerializer.serializeIrSymbol(symbol)
+                }
+
+                val serializedIrFile = fileSerializer.serializeDeclarationsForIC(file, newDeclarations)
+
+                icData += SerializedIcDataForFile(
+                    serializedIrFile,
+                    serializedCarriers,
+                    serializedMappings,
+                    order,
+                )
             }
-
-            // Only save newly created declarations
-            val newDeclarations = fileDeclarations.filter { d ->
-                d is PersistentIrDeclarationBase<*> && (d.createdOn > 0 || /*d.isFakeOverride ||*/ (d is IrValueParameter || d is IrTypeParameter) && (d.parent as IrDeclaration).isFakeOverride)
-            }
-
-            val serializedCarriers = fileSerializer.serializeCarriers(
-                fileDeclarations,
-                bodies,
-            ) { declaration ->
-                icDeclarationTable.signatureByDeclaration(declaration)
-            }
-
-            val serializedMappings = mappings.state.serializeMappings(fileDeclarations) { symbol ->
-                fileSerializer.serializeIrSymbol(symbol)
-            }
-
-            val order = storeOrder(file) { symbol ->
-                fileSerializer.serializeIrSymbol(symbol)
-            }
-
-            val serializedIrFile = fileSerializer.serializeDeclarationsForIC(file, newDeclarations)
-
-            icData += SerializedIcDataForFile(
-                serializedIrFile,
-                serializedCarriers,
-                serializedMappings,
-                order,
-            )
         }
 
         return SerializedIcData(icData)
@@ -143,9 +149,9 @@ class IcSerializer(
 
         override val signaturer: IdSignatureSerializer = IdSignatureSerializerWithForIC(globalDeclarationTable.publicIdSignatureComputer, this, newLocalIndex, newScopeIndex)
 
-        override fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
+        override fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
             return existingMappings.getOrPut(declaration.symbol) {
-                irFactory.declarationSignature(declaration) ?: super.signatureByDeclaration(declaration)
+                irFactory.declarationSignature(declaration) ?: super.signatureByDeclaration(declaration, compatibleMode)
             }
         }
     }
@@ -165,7 +171,7 @@ class IdSignatureSerializerWithForIC(
         scopeIndex = scopeIndexOffset
     }
 
-    override fun IrDeclaration.createFileLocalSignature(parentSignature: IdSignature, localIndex: Long): IdSignature {
+    override fun IrDeclaration.createFileLocalSignature(parentSignature: IdSignature, localIndex: Long, description: String?): IdSignature {
         if (this is IrTypeParameter) {
             return IdSignature.GlobalFileLocalSignature(parentSignature, 1000_000_000_000L + index, fileOrNull?.path ?: "")
         }

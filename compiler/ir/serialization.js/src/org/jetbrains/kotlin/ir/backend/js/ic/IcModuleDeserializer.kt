@@ -13,16 +13,15 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.impl.IrLongArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 class IcModuleDeserializer(
@@ -35,7 +34,7 @@ class IcModuleDeserializer(
     override val strategy: DeserializationStrategy,
     private val containsErrorCode: Boolean = false,
     private val useGlobalSignatures: Boolean = false,
-) : IrModuleDeserializer(moduleDescriptor) {
+) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 
@@ -95,7 +94,7 @@ class IcModuleDeserializer(
     override fun contains(idSig: IdSignature): Boolean = idSig in moduleReversedFileIndex || idSig in icModuleReversedFileIndex
 
     override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        assert(idSig.isPublic)
+        assert(idSig.isPubliclyVisible)
 
         if (idSig in icModuleReversedFileIndex) {
             val icDeserializer = icModuleReversedFileIndex[idSig]!!

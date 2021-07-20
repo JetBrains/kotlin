@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.StageController
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.KotlinLikeDumpOptions
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.FqName
 import java.io.PrintWriter
@@ -28,9 +31,9 @@ fun prepareSingleLibraryIcCache(
     project: Project,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
-    library: KotlinLibrary,
-    dependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary> = emptyList(),
+    libPath: String,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String> = emptyList(),
     exportedDeclarations: Set<FqName> = emptySet(),
     icCache: Map<String, SerializedIcData> = emptyMap(),
 ): SerializedIcData {
@@ -40,7 +43,7 @@ fun prepareSingleLibraryIcCache(
 
     val (context, deserializer, allModules) = prepareIr(
         project,
-        MainModule.Klib(library),
+        MainModule.Klib(libPath),
         analyzer,
         configuration,
         dependencies,
@@ -119,8 +122,8 @@ fun icCompile(
     mainModule: MainModule,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
@@ -143,7 +146,7 @@ fun icCompile(
         mainModule,
         analyzer,
         configuration,
-        allDependencies,
+        dependencies,
         friendDependencies,
         exportedDeclarations,
         dceRuntimeDiagnostic,
@@ -212,8 +215,8 @@ private fun prepareIr(
     mainModule: MainModule,
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
+    dependencies: Collection<String>,
+    friendDependencies: Collection<String>,
     exportedDeclarations: Set<FqName> = emptySet(),
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
@@ -234,7 +237,7 @@ private fun prepareIr(
     }
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName, loweredIrLoaded) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory, cacheProvider)
+        loadIr(project, mainModule, analyzer, configuration, dependencies, friendDependencies, irFactory, false, cacheProvider)
 
     val moduleDescriptor = moduleFragment.descriptor
 

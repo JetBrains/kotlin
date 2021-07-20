@@ -95,7 +95,7 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor, val 
 }
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
-class IrModuleDeserializerWithBuiltIns(
+open class IrModuleDeserializerWithBuiltIns(
     private val builtIns: IrBuiltIns,
     private val delegate: IrModuleDeserializer
 ) : IrModuleDeserializer(delegate.moduleDescriptor, delegate.libraryAbiVersion) {

@@ -75,10 +75,11 @@ class IcFileDeserializer(
         linker.fakeOverrideBuilder.platformSpecificClassFilter,
         linker.fakeOverrideBuilder,
         allowRedeclaration = true,
+        compatibilityMode = CompatibilityMode.CURRENT
     )
 
     private fun deserializeOriginalPublicSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        assert(idSig.isPublic)
+        assert(idSig.isPubliclyVisible)
 
         val topLevelSig = idSig.topLevelSignature()
 
@@ -172,6 +173,7 @@ class IcFileDeserializer(
         additionalStatementOriginIndex = additionalStatementOriginIndex,
         allowErrorStatementOrigins = true,
         allowRedeclaration = true,
+        compatibilityMode = CompatibilityMode.CURRENT
     )
 
     private val protoFile: ProtoIrFile by lazy { ProtoIrFile.parseFrom(icFileData.file.fileData.codedInputStream, ExtensionRegistryLite.newInstance()) }
@@ -220,6 +222,7 @@ class IcFileDeserializer(
 
     private fun deserializePublicSymbol(idSig: IdSignature, kind: BinarySymbolData.SymbolKind) : IrSymbol {
         // TODO: reference lowered declarations cross-module
+        if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return (idSig as IdSignature.FileSignature).fileSymbol
         val topLevelSig = idSig.topLevelSignature()
         val actualModuleDeserializer =
             moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig) ?:
@@ -314,4 +317,6 @@ private class FileReaderFromSerializedIrFile(val irFile: SerializedIrFile) : IrL
     override fun string(index: Int): ByteArray = stringReader.tableItemBytes(index)
 
     override fun body(index: Int): ByteArray = bodyReader.tableItemBytes(index)
+
+    override fun debugInfo(index: Int): ByteArray? = null
 }

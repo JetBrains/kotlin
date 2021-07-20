@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.backend.common.overrides
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
@@ -28,11 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 
 class FakeOverrideGlobalDeclarationTable(
     mangler: KotlinMangler.IrMangler
@@ -71,16 +68,16 @@ class FakeOverrideBuilder(
     val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
-    irBuiltIns: IrBuiltIns,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     val signatureSerializerFactory: (PublicIdSignatureComputer, DeclarationTable) -> IdSignatureSerializer = ::IdSignatureSerializer,
+    private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler, signatureSerializerFactory),
 ) : FakeOverrideBuilderStrategy() {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
 
     private val irOverridingUtil = IrOverridingUtil(typeSystem, this)
 
     // TODO: The declaration table is needed for the signaturer.
-    private val fakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler, signatureSerializerFactory)
+//    private val fakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler, signatureSerializerFactory)
 
     private val fakeOverrideCandidates = mutableMapOf<IrClass, CompatibilityMode>()
     fun enqueueClass(clazz: IrClass, signature: IdSignature, compatibilityMode: CompatibilityMode) {

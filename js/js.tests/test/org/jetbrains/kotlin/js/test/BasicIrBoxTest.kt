@@ -126,19 +126,17 @@ abstract class BasicIrBoxTest(
         val klibPath = outputFile.absolutePath.replace("_v5.js", "/")
 
         if (isMainModule && klibMainModule) {
-            val resolvedLibraries = jsResolveLibraries(allKlibPaths, emptyList(), messageCollectorLogger(MessageCollector.NONE))
-
             generateKLib(
                 project = config.project,
                 files = filesToCompile,
                 analyzer = AnalyzerWithCompilerReport(config.configuration),
                 configuration = config.configuration,
-                allDependencies = resolvedLibraries,
+                dependencies = allKlibPaths,
                 friendDependencies = emptyList(),
                 irFactory = IrFactoryImpl,
                 outputKlibPath = klibPath,
                 nopack = true,
-                null
+                jsOutputName = null
             )
 
             allKlibPaths += File(klibPath).absolutePath
@@ -171,29 +169,27 @@ abstract class BasicIrBoxTest(
             val mainModule = if (!klibMainModule) {
                 MainModule.SourceFiles(filesToCompile)
             } else {
-                val mainLib = resolvedLibraries.getFullList().find { it.libraryFile.absolutePath == File(klibPath).absolutePath }!!
-                MainModule.Klib(mainLib)
+                MainModule.Klib(klibPath)
             }
 
             if (!skipRegularMode) {
                 val icCache: Map<String, SerializedIcData> = if (!runIcMode) emptyMap() else {
                     val map = mutableMapOf<String, SerializedIcData>()
-                    for (klibPath in allKlibPaths) {
-                        val icData = predefinedKlibHasIcCache[klibPath] ?: prepareSingleLibraryIcCache(
+                    for (path in allKlibPaths) {
+                        val icData = predefinedKlibHasIcCache[path] ?: prepareSingleLibraryIcCache(
                             project = project,
                             analyzer = AnalyzerWithCompilerReport(config.configuration),
                             configuration = config.configuration,
-                            library = resolvedLibraries.getFullList()
-                                .single { it.libraryFile.absolutePath == File(klibPath).absolutePath },
-                            dependencies = resolvedLibraries.filterRoots { it.library.libraryFile.absolutePath == File(klibPath).absolutePath },
+                            libPath = path,
+                            dependencies = allKlibPaths,
                             icCache = map
                         )
 
-                        if (klibPath in predefinedKlibHasIcCache) {
-                            predefinedKlibHasIcCache[klibPath] = icData
+                        if (path in predefinedKlibHasIcCache) {
+                            predefinedKlibHasIcCache[path] = icData
                         }
 
-                        map[klibPath] = icData
+                        map[path] = icData
                     }
 
                     map

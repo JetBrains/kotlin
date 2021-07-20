@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.render
 
 
 interface IdSignatureClashTracker {
@@ -36,7 +37,7 @@ abstract class GlobalDeclarationTable(
     constructor(mangler: KotlinMangler.IrMangler) : this(mangler, IdSignatureClashTracker.DEFAULT_TRACKER)
 
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
-        (builtIns as IrBuiltInsOverDescriptors).knownBuiltins.forEach {
+        builtIns.knownBuiltins.forEach {
             val symbol = (it as IrSymbolOwner).symbol
             table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
         }

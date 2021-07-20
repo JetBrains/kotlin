@@ -9,19 +9,17 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerWithBuiltIns
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 class IrIcModuleDeserializerWithBuiltIns(
     builtIns: IrBuiltIns,
-    functionFactory: IrAbstractFunctionFactory,
     delegate: IrModuleDeserializer,
-) : IrModuleDeserializerWithBuiltIns(builtIns, functionFactory, delegate) {
+) : IrModuleDeserializerWithBuiltIns(builtIns, delegate) {
 
     override fun additionalBuiltIns(builtIns: IrBuiltIns): Map<IdSignature, IrSymbol> {
         val result = mutableMapOf<IdSignature, IrSymbol>()

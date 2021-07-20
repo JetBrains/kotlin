@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 
@@ -72,7 +73,7 @@ fun compile(
             mainModule,
             analyzer,
             configuration,
-            allDependencies,
+            dependencies,
             friendDependencies,
             mainArguments,
             exportedDeclarations,
