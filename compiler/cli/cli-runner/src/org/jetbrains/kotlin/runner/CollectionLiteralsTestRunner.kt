@@ -22,8 +22,8 @@ fun main() {
         "lib/kotlin-compiler.jar"
     ).map(::resolveKt)
 
-    val runner = FileRunner(SIMPLE_FIR_TEST)
-    runner.run(cp, listOf("-Xuse-fir"), emptyList(), compilerCp)
+    val runner = ReplRunner()
+    runner.run(cp, listOf("-Xuse-fir", SIMPLE_FIR_TEST), emptyList(), compilerCp)
 }
 
 private fun File.toURL2(): URL {
