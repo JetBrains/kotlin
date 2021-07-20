@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -51,6 +54,16 @@ class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileL
     override fun visitDeclaration(declaration: IrDeclarationBase) {
         declaration.annotations = transformAnnotations(declaration.annotations)
         super.visitDeclaration(declaration)
+    }
+
+    override fun visitClass(declaration: IrClass) {
+        if (declaration.kind == ClassKind.ANNOTATION_CLASS &&
+            declaration.hasAnnotation(StandardNames.FqNames.repeatable) &&
+            !declaration.hasAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION)
+        ) {
+            declaration.declarations.add(context.cachedDeclarations.getRepeatedAnnotationSyntheticContainer(declaration))
+        }
+        super.visitClass(declaration)
     }
 
     private fun transformAnnotations(annotations: List<IrConstructorCall>): List<IrConstructorCall> {
@@ -85,7 +98,7 @@ class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileL
             (containerClassReference.symbol as? IrClassSymbol)?.owner
                 ?: error("Repeatable annotation container must be a class: $annotationClass")
         } else {
-            TODO("Kotlin repeatable annotations")
+            context.cachedDeclarations.getRepeatedAnnotationSyntheticContainer(annotationClass)
         }
     }
 

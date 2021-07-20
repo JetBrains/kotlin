@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
@@ -19,11 +18,14 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -276,36 +278,10 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext) {
                     field.initializer = initializer
                 }
 
-                property.addSimpleFieldGetter(from.type, this, field)
+                property.addDefaultGetter(this, context.irBuiltIns)
             }
         }
     }
-
-    private fun IrProperty.addSimpleFieldGetter(type: IrType, irScriptClass: IrClass, field: IrField) =
-        addGetter {
-            returnType = type
-        }.apply {
-            dispatchReceiverParameter = irScriptClass.thisReceiver!!.copyTo(this)
-            body = IrBlockBodyImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
-                    IrReturnImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        context.irBuiltIns.nothingType,
-                        symbol,
-                        IrGetFieldImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            field.symbol,
-                            type,
-                            IrGetValueImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                dispatchReceiverParameter!!.type,
-                                dispatchReceiverParameter!!.symbol
-                            )
-                        )
-                    )
-                )
-            )
-        }
 }
 
 data class ScriptToClassTransformerContext(

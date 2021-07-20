@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.getAnnotationRetention
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.annotation.ElementType
 
 internal val additionalClassAnnotationPhase = makeIrFilePhase(
@@ -60,10 +59,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
     private fun generateRetentionAnnotation(irClass: IrClass) {
         if (irClass.hasAnnotation(JvmAnnotationNames.RETENTION_ANNOTATION)) return
-        val kotlinRetentionPolicyCall = irClass.getAnnotation(StandardNames.FqNames.retention)
-        val kotlinRetentionPolicyName =
-            kotlinRetentionPolicyCall?.getValueArgument(0)?.safeAs<IrGetEnumValue>()?.symbol?.owner?.name?.asString()
-        val kotlinRetentionPolicy = kotlinRetentionPolicyName?.let { KotlinRetention.valueOf(it) }
+        val kotlinRetentionPolicy = irClass.getAnnotationRetention()
         val javaRetentionPolicy = kotlinRetentionPolicy?.let { symbols.annotationRetentionMap[it] } ?: symbols.rpRuntime
 
         irClass.annotations +=

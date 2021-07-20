@@ -7,11 +7,16 @@ package org.jetbrains.kotlin.ir.builders.declarations
 
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -105,6 +110,35 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
             getter.parent = this@addGetter.parent
         }
     }
+
+fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
+    val field = backingField!!
+    addGetter {
+        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        returnType = field.type
+    }.apply {
+        dispatchReceiverParameter = parentClass.thisReceiver!!.copyTo(this)
+        body = factory.createBlockBody(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                IrReturnImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    builtIns.nothingType,
+                    symbol,
+                    IrGetFieldImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        field.symbol,
+                        field.type,
+                        IrGetValueImpl(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                            dispatchReceiverParameter!!.type,
+                            dispatchReceiverParameter!!.symbol
+                        )
+                    )
+                )
+            )
+        )
+    }
+}
 
 @PublishedApi
 internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
