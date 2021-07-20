@@ -44,3 +44,4 @@ interface StubIrTransformer {
     fun visitReceiverParameter(element: ReceiverParameterStub): ReceiverParameterStub
 
 }
+

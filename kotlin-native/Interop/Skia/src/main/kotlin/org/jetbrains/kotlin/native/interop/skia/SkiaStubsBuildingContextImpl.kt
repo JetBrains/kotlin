@@ -30,15 +30,19 @@ class SkiaStubsBuildingContextImpl(stubIrContext: StubIrContext) : StubsBuilding
         return decl.def?.kind == StructDef.Kind.CLASS
     }
 
+    private val knownPrefixes = listOf("Sk", "Gr", "skia::textlayout::")
+
     override fun managedWrapperClassifier(cppClassifier: Classifier): Classifier? {
         if (cppClassifier.pkg != "org.jetbrains.skiko.skia.native") return null
         // TODO: it'd be nice to check inheritance from SkiaRefCnt or CPlusPlusClass,
         // but unable to do that at StubType level.
-        if (!(cppClassifier.topLevelName.startsWith("Sk") || cppClassifier.topLevelName.startsWith("Gr"))) return null
+        val prefix = knownPrefixes.singleOrNull {
+                        cppClassifier.topLevelName.startsWith(it)
+                    } ?: return null
         if (cppClassifier.topLevelName == "SkString") return null
-        // TODO: We only managed C++ classes, not structs for now.
+        // TODO: We only manage C++ classes, not structs for now.
         if (!isCppClass(cppClassifier.topLevelName)) return null
 
-        return Classifier.topLevel(cppClassifier.pkg, cppClassifier.topLevelName.drop(2))
+        return Classifier.topLevel(cppClassifier.pkg, cppClassifier.topLevelName.drop(prefix.length))
     }
 }
