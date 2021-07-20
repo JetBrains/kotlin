@@ -28,6 +28,9 @@ fun KonanTarget.supportsMimallocAllocator(): Boolean =
         else -> false // watchOS/tvOS/android_x86/android_arm32 aren't tested; linux_mips32/linux_mipsel32 need linking with libatomic.
     }
 
+fun KonanTarget.supportsLibBacktrace(): Boolean =
+        this.family.isAppleFamily || this.family == Family.LINUX || this.family == Family.ANDROID
+
 fun KonanTarget.supportsThreads(): Boolean =
      when(this) {
         is KonanTarget.WASM32 -> false
