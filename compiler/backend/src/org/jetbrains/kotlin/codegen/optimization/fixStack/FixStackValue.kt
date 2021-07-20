@@ -19,7 +19,8 @@ enum class FixStackValue(
     LONG(2, Opcodes.LLOAD, Opcodes.LSTORE, Opcodes.POP2),
     FLOAT(1, Opcodes.FLOAD, Opcodes.FSTORE, Opcodes.POP),
     DOUBLE(2, Opcodes.DLOAD, Opcodes.DSTORE, Opcodes.POP2),
-    OBJECT(1, Opcodes.ALOAD, Opcodes.ASTORE, Opcodes.POP)
+    OBJECT(1, Opcodes.ALOAD, Opcodes.ASTORE, Opcodes.POP),
+    UNINITIALIZED(1, -1, -1, -1)
     ;
 
     override fun getSize(): Int = _size

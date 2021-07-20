@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.optimization.fixStack
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
 import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
-import org.jetbrains.kotlin.codegen.inline.isMarkedReturn
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -132,10 +131,8 @@ internal class FixStackAnalyzer(
                         executeBeforeInlineCallMarker(insn)
                     isAfterInlineMarker(insn) ->
                         executeAfterInlineCallMarker(insn)
-                    isMarkedReturn(insn) -> {
-                        // KT-9644: might throw "Incompatible return type" on non-local return, in fact we don't care.
-                        if (insn.opcode == Opcodes.RETURN) return
-                    }
+                    insn.opcode == Opcodes.RETURN ->
+                        return
                 }
 
                 super.execute(insn, interpreter)
@@ -151,6 +148,9 @@ internal class FixStackAnalyzer(
             }
 
             override fun push(value: FixStackValue) {
+                if (value == FixStackValue.UNINITIALIZED) {
+                    throw AnalyzerException(null, "Uninitialized value on stack")
+                }
                 if (super.getStackSize() < maxStackSize) {
                     super.push(value)
                 } else {

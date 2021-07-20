@@ -14,8 +14,9 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 
 open class FixStackInterpreter : Interpreter<FixStackValue>(API_VERSION) {
 
-    override fun newValue(type: Type?): FixStackValue? =
+    override fun newValue(type: Type?): FixStackValue =
         type?.toFixStackValue()
+            ?: FixStackValue.UNINITIALIZED
 
     override fun newOperation(insn: AbstractInsnNode): FixStackValue? =
         when (insn.opcode) {
