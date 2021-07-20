@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -246,7 +247,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         val platform = platforms.first()
 
-        val nativeTargets = getNativeTargets(platform, archs)
+        val nativeTargets = AppleSdk.defineNativeTargets(platform, archs)
 
         check(nativeTargets.isNotEmpty()) { "Could not identify native targets for platform: '$platform' and architectures: '$archs'" }
 
@@ -268,85 +269,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             createSyncForFatFramework(project, kotlinExtension, requestedBuildType, nativeTargets)
         }
     }
-
-    private fun getNativeTargets(platform: String, archs: List<String>): List<KonanTarget> {
-        class UnknownArchitectureException(platform: String, arch: String) :
-            IllegalArgumentException("Architecture $arch is not supported for platform $platform")
-
-        val targets: MutableSet<KonanTarget> = mutableSetOf()
-
-        when (platform) {
-
-            "iphoneos" -> {
-                targets.addAll(archs.map { arch ->
-                    when (arch) {
-                        "arm64", "arm64e" -> IOS_ARM64
-                        "armv7", "armv7s" -> IOS_ARM32
-                        else -> throw UnknownArchitectureException(platform, arch)
-                    }
-                })
-            }
-            "iphonesimulator" -> {
-                targets.addAll(archs.map { arch ->
-                    when (arch) {
-                        "arm64", "arm64e" -> IOS_SIMULATOR_ARM64
-                        "x86_64" -> IOS_X64
-                        else -> throw UnknownArchitectureException(platform, arch)
-                    }
-                })
-            }
-            "watchos" -> {
-                targets.addAll(archs.map { arch ->
-                    when (arch) {
-                        "armv7k" -> WATCHOS_ARM32
-                        "arm64_32" -> WATCHOS_ARM64
-                        else -> throw UnknownArchitectureException(platform, arch)
-                    }
-                })
-            }
-            "watchsimulator" -> {
-                targets.addAll(archs.map { arch ->
-                    when (arch) {
-                        "arm64", "arm64e" -> WATCHOS_SIMULATOR_ARM64
-                        "i386" -> WATCHOS_X86
-                        "x86_64" -> WATCHOS_X64
-                        else -> throw UnknownArchitectureException(platform, arch)
-                    }
-                })
-            }
-            "appletvos" -> {
-                targets.addAll(archs.map { arch ->
-                    when (arch) {
-                        "arm64", "arm64e" -> TVOS_ARM64
-                        else -> throw UnknownArchitectureException(platform, arch)
-                    }
-                })
-            }
-            "appletvsimulator" -> {
-                targets.addAll(archs.map { arch ->
-                    when (arch) {
-                        "arm64", "arm64e" -> TVOS_SIMULATOR_ARM64
-                        "x86_64" -> TVOS_X64
-                        else -> throw UnknownArchitectureException(platform, arch)
-                    }
-                })
-            }
-            "macosx" -> {
-                targets.addAll(archs.map { arch ->
-                    when (arch) {
-                        "arm64" -> MACOS_ARM64
-                        "x86_64" -> MACOS_X64
-                        else -> throw UnknownArchitectureException(platform, arch)
-                    }
-                })
-            }
-
-            else -> throw IllegalArgumentException("Platform $platform is not supported")
-        }
-
-        return targets.toList()
-    }
-
 
     private fun createInterops(
         project: Project,
