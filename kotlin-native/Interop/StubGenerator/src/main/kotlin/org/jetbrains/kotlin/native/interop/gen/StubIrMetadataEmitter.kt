@@ -139,7 +139,7 @@ internal class ModuleMetadataEmitter(
 
         override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
                 data.withMappingExtensions {
-                    KmTypeAlias(element.flags, element.alias.topLevelName).also { km ->
+                    KmTypeAlias(element.flags, element.alias.topLevelName.replace("::", "__")).also { km ->
                         km.underlyingType = element.aliasee.map(shouldExpandTypeAliases = false)
                         km.expandedType = element.aliasee.map()
                     }
@@ -269,7 +269,7 @@ private class MappingExtensions(
             }
             // Nested classes should dot-separated.
             append(getRelativeFqName(asSimpleName = false))
-        }
+        }.replace("::", "__")
 
     val PropertyStub.flags: Flags
         get() = flagsOfNotNull(
