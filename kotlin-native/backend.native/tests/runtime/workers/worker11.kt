@@ -102,7 +102,7 @@ val counters = Array(COUNT) { AtomicInt(0) }
         }
     }
     workers.forEach {
-        it.executeAfter(1000*1000*1000, {
+        it.executeAfter((1000*1000*1000).toLong(), {
             println("DELAY EXECUTED")
             assert(false)
         }.freeze())
