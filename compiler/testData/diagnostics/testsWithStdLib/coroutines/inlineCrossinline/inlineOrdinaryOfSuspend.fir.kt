@@ -18,7 +18,7 @@ interface SuspendRunnable {
 // suspend calls possible inside lambda matching to the parameter
 
 inline fun test(c: suspend () -> Unit) {
-    c()
+    <!ILLEGAL_SUSPEND_FUNCTION_CALL!>c<!>()
     val o = object: SuspendRunnable {
         override suspend fun run() {
             c()

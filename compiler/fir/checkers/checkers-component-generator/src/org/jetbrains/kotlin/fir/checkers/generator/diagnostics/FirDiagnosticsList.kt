@@ -1182,6 +1182,15 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val OPERATOR_RENAMED_ON_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME)
     }
+
+    val SUSPEND by object : DiagnosticGroup("Suspend errors") {
+        val ILLEGAL_SUSPEND_FUNCTION_CALL by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("suspendCallable")
+        }
+        val ILLEGAL_SUSPEND_PROPERTY_ACCESS by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("suspendCallable")
+        }
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

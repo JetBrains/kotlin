@@ -191,6 +191,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SELECTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_FUNCTION_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
@@ -1476,6 +1478,18 @@ class FirDefaultErrorMessages {
                 TO_STRING
             )
             map.put(OPERATOR_RENAMED_ON_IMPORT, "Operator renamed to a different operator on import")
+
+            // Suspend
+            map.put(
+                ILLEGAL_SUSPEND_FUNCTION_CALL,
+                "Suspend function ''{0}'' should be called only from a coroutine or another suspend function",
+                SYMBOL
+            )
+            map.put(
+                ILLEGAL_SUSPEND_PROPERTY_ACCESS,
+                "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function",
+                SYMBOL
+            )
 
             // Extended checkers group
             map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")

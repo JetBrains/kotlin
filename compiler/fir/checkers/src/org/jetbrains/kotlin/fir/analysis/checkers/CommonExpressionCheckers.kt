@@ -41,7 +41,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirSealedClassConstructorCallChecker,
             FirUninitializedEnumChecker,
             FirFunInterfaceConstructorReferenceChecker,
-            FirReifiedChecker
+            FirReifiedChecker,
+            FirSuspendCallChecker,
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
