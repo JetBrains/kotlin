@@ -3,7 +3,7 @@ fun f() {
   var s: String?
   s = "a"
   var s1 = "" // String � ?
-  if (s != null) {    // Redundant
+  if (<!SENSELESS_COMPARISON!>s != null<!>) {    // Redundant
     s1.length
     // We can do smartcast here and below
     s1 = s.toString() // return String?

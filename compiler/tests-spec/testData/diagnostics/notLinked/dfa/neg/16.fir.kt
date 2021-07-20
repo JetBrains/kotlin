@@ -17,7 +17,7 @@ fun case_1(x: ClassWithCustomEquals) {
 
 // TESTCASE NUMBER: 2
 fun case_2(x: ClassWithCustomEquals) {
-    if (x == null) {
+    if (<!SENSELESS_COMPARISON!>x == null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>.inv()
     }
@@ -75,7 +75,7 @@ fun case_6(x: ClassWithCustomEquals) {
 
 // TESTCASE NUMBER: 7
 fun case_7(x: ClassWithCustomEquals) {
-    if ((x != null) == false) {
+    if ((<!SENSELESS_COMPARISON!>x != null<!>) == false) {
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>.inv()
     }

@@ -18,7 +18,7 @@ import orherpackage.*
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
-    if (x != null || x != null || x != null || x != null || x != null || x != null || x != null) {
+    if (x != null || <!SENSELESS_COMPARISON!>x != null<!> || <!SENSELESS_COMPARISON!>x != null<!> || <!SENSELESS_COMPARISON!>x != null<!> || <!SENSELESS_COMPARISON!>x != null<!> || <!SENSELESS_COMPARISON!>x != null<!> || <!SENSELESS_COMPARISON!>x != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.propT
@@ -38,14 +38,14 @@ fun case_1(x: Any?) {
  * ISSUES: KT-28159
  */
 fun case_2(x: Nothing?) {
-    if (x !== null && x !== null) {
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x !== null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3() {
-    if (Object.prop_1 == null && Object.prop_1 == null)
+    if (Object.prop_1 == null && <!SENSELESS_COMPARISON!>Object.prop_1 == null<!>)
     else {
         Object.prop_1
         Object.prop_1.equals(null)
@@ -80,7 +80,7 @@ fun case_4(x: Char?) {
 fun case_5() {
     val x: Unit? = null
 
-    if (x !== null || x !== null && x !== null || x !== null && x !== null) {
+    if (x !== null || <!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x !== null<!> || <!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!>x !== null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.propT
@@ -115,7 +115,7 @@ fun case_6(x: Class?) {
 // TESTCASE NUMBER: 7
 fun case_7() {
     val x: EmptyObject? = null
-    if (x != null || x != null || <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & kotlin.Nothing?")!>x<!> != null) {
+    if (x != null || <!SENSELESS_COMPARISON!>x != null<!> || <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & kotlin.Nothing?")!>x<!> != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & EmptyObject")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & EmptyObject")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & EmptyObject")!>x<!>.propT
@@ -131,7 +131,7 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasString) {
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!> != null) {
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!> != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.propT
@@ -147,9 +147,9 @@ fun case_8(x: TypealiasString) {
 
 // TESTCASE NUMBER: 9
 fun case_9(x: TypealiasNullableString?) {
-    if (x === null && x === null || x === null) {
+    if (x === null && <!SENSELESS_COMPARISON!>x === null<!> || <!SENSELESS_COMPARISON!>x === null<!>) {
 
-    } else if (x === null || x === null) {
+    } else if (<!SENSELESS_COMPARISON!>x === null<!> || <!SENSELESS_COMPARISON!>x === null<!>) {
     } else if (false) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString? & kotlin.Any & TypealiasNullableString")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString? & kotlin.Any & TypealiasNullableString")!>x<!>.equals(null)
@@ -168,7 +168,7 @@ fun case_9(x: TypealiasNullableString?) {
 fun case_10() {
     val a = Class()
 
-    if (a.prop_4 === null || a.prop_4 === null || true) {
+    if (a.prop_4 === null || <!SENSELESS_COMPARISON!>a.prop_4 === null<!> || true) {
         if (a.prop_4 != null) {
             a.prop_4
             a.prop_4.equals(null)
@@ -191,10 +191,10 @@ fun case_11(x: TypealiasNullableString?, y: TypealiasNullableString) {
     if (x == null) {
 
     } else {
-        if (x != null) {
-            if (y != null || y != null) {
-                if (stringProperty == null && nullableNothingProperty == null) {
-                    if (t != null || t != null) {
+        if (<!SENSELESS_COMPARISON!>x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>y != null<!> || <!SENSELESS_COMPARISON!>y != null<!>) {
+                if (<!SENSELESS_COMPARISON!>stringProperty == null<!> && <!SENSELESS_COMPARISON!>nullableNothingProperty == null<!>) {
+                    if (<!SENSELESS_COMPARISON!>t != null<!> || <!SENSELESS_COMPARISON!>t != null<!>) {
                         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString? & kotlin.Any & TypealiasNullableString")!>x<!>
                         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString? & kotlin.Any & TypealiasNullableString")!>x<!>.equals(null)
                         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString? & kotlin.Any & TypealiasNullableString")!>x<!>.propT
@@ -213,8 +213,8 @@ fun case_11(x: TypealiasNullableString?, y: TypealiasNullableString) {
 }
 
 // TESTCASE NUMBER: 12
-fun case_12(x: TypealiasNullableString, y: TypealiasNullableString) = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>if (x == null) "1"
-    else if (y === null || y === null) {
+fun case_12(x: TypealiasNullableString, y: TypealiasNullableString) = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>if (<!SENSELESS_COMPARISON!>x == null<!>) "1"
+    else if (<!SENSELESS_COMPARISON!>y === null<!> || <!SENSELESS_COMPARISON!>y === null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propAny

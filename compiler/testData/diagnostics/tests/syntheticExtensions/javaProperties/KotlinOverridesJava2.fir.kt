@@ -6,7 +6,7 @@ abstract class KotlinClass : JavaInterface1, JavaInterface2 {
 fun foo(k: KotlinClass) {
     useString(k.getSomething())
     useString(k.something)
-    if (k.something == null) return
+    if (<!SENSELESS_COMPARISON!>k.something == null<!>) return
 
     k.setSomething(1)
     k.something = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>

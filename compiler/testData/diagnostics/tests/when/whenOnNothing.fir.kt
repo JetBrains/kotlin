@@ -3,7 +3,7 @@
 // exhaustive
 fun test1(n: Nothing) = when (n) { }
 fun test2(n: Nothing?) = when (n) {
-    null -> {}
+    <!SENSELESS_NULL_IN_WHEN!>null<!> -> {}
 }
 
 // not exhaustive

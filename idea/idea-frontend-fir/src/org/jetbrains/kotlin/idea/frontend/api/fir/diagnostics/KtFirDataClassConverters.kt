@@ -2608,6 +2608,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.SENSELESS_COMPARISON) { firDiagnostic ->
+        SenselessComparisonImpl(
+            firDiagnostic.a.source!!.psi as KtExpression,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SENSELESS_NULL_IN_WHEN) { firDiagnostic ->
+        SenselessNullInWhenImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.UNSAFE_CALL) { firDiagnostic ->
         UnsafeCallImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

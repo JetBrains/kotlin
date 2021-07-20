@@ -69,7 +69,7 @@ fun case_3(value_1: Int?) {
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
-    if (contracts.case_4(value_1) != null) {
+    if (<!SENSELESS_COMPARISON!>contracts.case_4(value_1) != null<!>) {
         value_1.toByte()
     }
 }

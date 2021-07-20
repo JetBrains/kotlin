@@ -47,7 +47,7 @@ fun case_1(x: Any?) {
  * ISSUES: KT-28159
  */
 fun case_2(x: Nothing?) {
-    if (x !== null) {
+    if (<!SENSELESS_COMPARISON!>x !== null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.hashCode()
     }
@@ -56,18 +56,18 @@ fun case_2(x: Nothing?) {
 // TESTCASE NUMBER: 3
 fun case_3() {
     if (Object.prop_1 == null)
-        else {
-            Object.prop_1
-            Object.prop_1.equals(null)
-            Object.prop_1.propT
-            Object.prop_1.propAny
-            Object.prop_1.propNullableT
-            Object.prop_1.propNullableAny
-            Object.prop_1.funT()
-            Object.prop_1.funAny()
-            Object.prop_1.funNullableT()
-            Object.prop_1.funNullableAny()
-        }
+    else {
+        Object.prop_1
+        Object.prop_1.equals(null)
+        Object.prop_1.propT
+        Object.prop_1.propAny
+        Object.prop_1.propNullableT
+        Object.prop_1.propNullableAny
+        Object.prop_1.funT()
+        Object.prop_1.funAny()
+        Object.prop_1.funNullableT()
+        Object.prop_1.funNullableAny()
+    }
 }
 
 // TESTCASE NUMBER: 4
@@ -122,7 +122,7 @@ fun case_6(x: EmptyClass?) {
 
 // TESTCASE NUMBER: 7
 fun case_7() {
-    if (nullableNumberProperty != null || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Nothing?")!>nullableNumberProperty<!> != null) {
+    if (nullableNumberProperty != null || <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Nothing?")!>nullableNumberProperty<!> != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>nullableNumberProperty<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>nullableNumberProperty<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>nullableNumberProperty<!>.propT
@@ -138,16 +138,16 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasNullableString) {
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.equals(null)
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propT
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propAny
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propNullableT
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propNullableAny
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.funT()
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.funAny()
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.funNullableT()
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.funNullableAny()
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.equals(null)
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propT
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propAny
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propNullableT
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.propNullableAny
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.funT()
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.funAny()
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.funNullableT()
+    if (<!SENSELESS_COMPARISON!>x !== null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!> != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Any & TypealiasNullableString")!>x<!>.funNullableAny()
 }
 
 // TESTCASE NUMBER: 9
@@ -195,9 +195,9 @@ fun case_11(x: TypealiasNullableStringIndirect?, y: TypealiasNullableStringIndir
     if (x == null) {
 
     } else {
-        if (y != null) {
+        if (<!SENSELESS_COMPARISON!>y != null<!>) {
             if (nullableStringProperty == null) {
-                if (t != null) {
+                if (<!SENSELESS_COMPARISON!>t != null<!>) {
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect? & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect? & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.equals(null)
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect? & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propT
@@ -216,18 +216,18 @@ fun case_11(x: TypealiasNullableStringIndirect?, y: TypealiasNullableStringIndir
 
 // TESTCASE NUMBER: 12
 fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndirect) =
-    if (x == null) "1"
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.equals(null)
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propT
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propAny
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propNullableT
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propNullableAny
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.funT()
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.funAny()
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.funNullableT()
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.funNullableAny()
-    else "-1"
+    if (<!SENSELESS_COMPARISON!>x == null<!>) "1"
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.equals(null)
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propT
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propAny
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propNullableT
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.propNullableAny
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.funT()
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.funAny()
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.funNullableT()
+else if (<!SENSELESS_COMPARISON!>y === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>.funNullableAny()
+else "-1"
 
 // TESTCASE NUMBER: 13
 fun case_13(x: otherpackage.Case13?) =
@@ -258,52 +258,52 @@ fun case_14() {
     val a = Case14()
 
     if (a.x != null) {
-        if (a.x != null) {
-            if (a.x !== null) {
-                if (a.x != null) {
-                    if (a.x != null) {
-                        if (a.x != null) {
-                            if (a.x !== null) {
-                                if (a.x != null) {
-                                    if (a.x != null) {
-                                        if (a.x !== null) {
-                                            if (a.x != null) {
-                                                if (a.x != null) {
-                                                    if (a.x != null) {
-                                                        if (a.x !== null) {
-                                                            if (a.x != null) {
-                                                                if (a.x !== null) {
-                                                                    a.x
-                                                                        a.x.equals(null)
-                                                                        a.x.propT
-                                                                        a.x.propAny
-                                                                        a.x.propNullableT
-                                                                        a.x.propNullableAny
-                                                                        a.x.funT()
-                                                                        a.x.funAny()
-                                                                        a.x.funNullableT()
-                                                                        a.x.funNullableAny()
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
+            if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
+            a.x
+            a.x.equals(null)
+            a.x.propT
+            a.x.propAny
+            a.x.propNullableT
+            a.x.propNullableAny
+            a.x.funT()
+            a.x.funAny()
+            a.x.funNullableT()
+            a.x.funNullableAny()
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
         }
     }
 }
 
 // TESTCASE NUMBER: 15
 fun case_15(x: EmptyObject) {
-    val t = if (x === null) "" else {
+    val t = if (<!SENSELESS_COMPARISON!>x === null<!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.propT
@@ -321,7 +321,7 @@ fun case_15(x: EmptyObject) {
 fun case_16() {
     val x: TypealiasNullableNothing = null
 
-    if (x != null) {
+    if (<!SENSELESS_COMPARISON!>x != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing & kotlin.Any & TypealiasNullableNothing")!>x<!>
     }
 }
@@ -633,26 +633,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (b != null) this.b.funAny()
         if (b != null) this.b.funNullableT()
         if (b != null) this.b.funNullableAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.equals(null)
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propT
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propAny
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableT
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableAny
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funT()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableT()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>
-        if (b != null || this.b != null) this.b.equals(null)
-        if (b != null || this.b != null) this.b.propT
-        if (b != null || this.b != null) this.b.propAny
-        if (b != null || this.b != null) this.b.propNullableT
-        if (b != null || this.b != null) this.b.propNullableAny
-        if (b != null || this.b != null) this.b.funT()
-        if (b != null || this.b != null) this.b.funAny()
-        if (b != null || this.b != null) this.b.funNullableT()
-        if (b != null || this.b != null) this.b.funNullableAny()
-        if (b != null || this.b != null) this.b
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.equals(null)
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.equals(null)
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propNullableT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propNullableAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funNullableT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funNullableAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b
 
         if (c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
 
@@ -702,26 +702,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propT
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propAny
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableT
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableAny
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funT()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
-        if (c != null || this.c != null) this.c.equals(null)
-        if (c != null || this.c != null) this.c.propT
-        if (c != null || this.c != null) this.c.propAny
-        if (c != null || this.c != null) this.c.propNullableT
-        if (c != null || this.c != null) this.c.propNullableAny
-        if (c != null || this.c != null) this.c.funT()
-        if (c != null || this.c != null) this.c.funAny()
-        if (c != null || this.c != null) this.c.funNullableT()
-        if (c != null || this.c != null) this.c.funNullableAny()
-        if (c != null || this.c != null) this.c
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.equals(null)
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propNullableT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propNullableAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funNullableT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funNullableAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c
 
         if (d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
 
@@ -771,26 +771,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propT
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propAny
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableT
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableAny
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funT()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
-        if (d != null || this.d != null) this.d.equals(null)
-        if (d != null || this.d != null) this.d.propT
-        if (d != null || this.d != null) this.d.propAny
-        if (d != null || this.d != null) this.d.propNullableT
-        if (d != null || this.d != null) this.d.propNullableAny
-        if (d != null || this.d != null) this.d.funT()
-        if (d != null || this.d != null) this.d.funAny()
-        if (d != null || this.d != null) this.d.funNullableT()
-        if (d != null || this.d != null) this.d.funNullableAny()
-        if (d != null || this.d != null) this.d
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.equals(null)
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propNullableT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propNullableAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funNullableT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funNullableAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d
 
         if (e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
 
@@ -840,26 +840,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (e != null) this.e.funNullableT()
         if (e != null) this.e.funNullableAny()
         if (e != null) this.e
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propT
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propAny
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableT
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableAny
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funT()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableT()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>
-        if (e != null || this.e != null) this.e.equals(null)
-        if (e != null || this.e != null) this.e.propT
-        if (e != null || this.e != null) this.e.propAny
-        if (e != null || this.e != null) this.e.propNullableT
-        if (e != null || this.e != null) this.e.propNullableAny
-        if (e != null || this.e != null) this.e.funT()
-        if (e != null || this.e != null) this.e.funAny()
-        if (e != null || this.e != null) this.e.funNullableT()
-        if (e != null || this.e != null) this.e.funNullableAny()
-        if (e != null || this.e != null) this.e
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.equals(null)
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propNullableT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propNullableAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funNullableT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funNullableAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e
 
         if (f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
 
@@ -909,26 +909,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (f != null) this.f.funNullableT()
         if (f != null) this.f.funNullableAny()
         if (f != null) this.f
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propT
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propAny
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableT
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableAny
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funT()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableT()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>
-        if (f != null || this.f != null) this.f.equals(null)
-        if (f != null || this.f != null) this.f.propT
-        if (f != null || this.f != null) this.f.propAny
-        if (f != null || this.f != null) this.f.propNullableT
-        if (f != null || this.f != null) this.f.propNullableAny
-        if (f != null || this.f != null) this.f.funT()
-        if (f != null || this.f != null) this.f.funAny()
-        if (f != null || this.f != null) this.f.funNullableT()
-        if (f != null || this.f != null) this.f.funNullableAny()
-        if (f != null || this.f != null) this.f
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.equals(null)
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propNullableT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propNullableAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funNullableT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funNullableAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f
 
         if (x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
 
@@ -978,26 +978,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
-        if (x != null || this.x != null) this.x.equals(null)
-        if (x != null || this.x != null) this.x.propT
-        if (x != null || this.x != null) this.x.propAny
-        if (x != null || this.x != null) this.x.propNullableT
-        if (x != null || this.x != null) this.x.propNullableAny
-        if (x != null || this.x != null) this.x.funT()
-        if (x != null || this.x != null) this.x.funAny()
-        if (x != null || this.x != null) this.x.funNullableT()
-        if (x != null || this.x != null) this.x.funNullableAny()
-        if (x != null || this.x != null) this.x
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.equals(null)
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propNullableT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propNullableAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funNullableT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funNullableAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x
 
         if (y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
 
@@ -1047,26 +1047,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (y != null) this.y.funNullableT()
         if (y != null) this.y.funNullableAny()
         if (y != null) this.y
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propT
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propAny
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableT
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableAny
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funT()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funAny()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableT()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableAny()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>
-        if (y != null || this.y != null) this.y.equals(null)
-        if (y != null || this.y != null) this.y.propT
-        if (y != null || this.y != null) this.y.propAny
-        if (y != null || this.y != null) this.y.propNullableT
-        if (y != null || this.y != null) this.y.propNullableAny
-        if (y != null || this.y != null) this.y.funT()
-        if (y != null || this.y != null) this.y.funAny()
-        if (y != null || this.y != null) this.y.funNullableT()
-        if (y != null || this.y != null) this.y.funNullableAny()
-        if (y != null || this.y != null) this.y
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.equals(null)
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propNullableT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propNullableAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funNullableT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funNullableAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y
 
         if (z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
 
@@ -1116,26 +1116,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propT
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propAny
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableT
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableAny
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funT()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funAny()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
-        if (z != null || this.z != null) this.z
-        if (z != null || this.z != null) this.z.equals(null)
-        if (z != null || this.z != null) this.z.propT
-        if (z != null || this.z != null) this.z.propAny
-        if (z != null || this.z != null) this.z.propNullableT
-        if (z != null || this.z != null) this.z.propNullableAny
-        if (z != null || this.z != null) this.z.funT()
-        if (z != null || this.z != null) this.z.funAny()
-        if (z != null || this.z != null) this.z.funNullableT()
-        if (z != null || this.z != null) this.z.funNullableAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.equals(null)
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propNullableT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propNullableAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funNullableT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funNullableAny()
 
         if (u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
 
@@ -1185,26 +1185,26 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (u != null) this.u.funNullableT()
         if (u != null) this.u.funNullableAny()
         if (u != null) this.u
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propT
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propAny
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableT
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableAny
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funT()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funAny()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableT()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableAny()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>
-        if (u != null || this.u != null) this.u.equals(null)
-        if (u != null || this.u != null) this.u.propT
-        if (u != null || this.u != null) this.u.propAny
-        if (u != null || this.u != null) this.u.propNullableT
-        if (u != null || this.u != null) this.u.propNullableAny
-        if (u != null || this.u != null) this.u.funT()
-        if (u != null || this.u != null) this.u.funAny()
-        if (u != null || this.u != null) this.u.funNullableT()
-        if (u != null || this.u != null) this.u.funNullableAny()
-        if (u != null || this.u != null) this.u
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.equals(null)
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propNullableT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propNullableAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funNullableT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funNullableAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u
 
         v = 0
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
@@ -1217,48 +1217,48 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null || this.v != null) this.v.equals(null)
-        if (v != null || this.v != null) this.v.propT
-        if (v != null || this.v != null) this.v.propAny
-        if (v != null || this.v != null) this.v.propNullableT
-        if (v != null || this.v != null) this.v.propNullableAny
-        if (v != null || this.v != null) this.v.funT()
-        if (v != null || this.v != null) this.v.funAny()
-        if (v != null || this.v != null) this.v.funNullableT()
-        if (v != null || this.v != null) this.v.funNullableAny()
-        if (v != null || this.v != null) this.v
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v
 
-        w = if (null != null) 10 else null
+        w = if (<!SENSELESS_COMPARISON!>null != null<!>) 10 else null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int?")!>w<!>
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
@@ -1280,34 +1280,34 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableT
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableAny
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funT()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
-        if (w != null || this.w != null) this.w.equals(null)
-        if (w != null || this.w != null) this.w.propT
-        if (w != null || this.w != null) this.w.propAny
-        if (w != null || this.w != null) this.w.propNullableT
-        if (w != null || this.w != null) this.w.propNullableAny
-        if (w != null || this.w != null) this.w.funT()
-        if (w != null || this.w != null) this.w.funAny()
-        if (w != null || this.w != null) this.w.funNullableT()
-        if (w != null || this.w != null) this.w.funNullableAny()
-        if (w != null || this.w != null) this.w
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.equals(null)
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propNullableT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propNullableAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funNullableT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funNullableAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w
 
         s = null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>s<!>.hashCode()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>s<!>
-        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (s != null || this.s != null) this.s
+        if (<!SENSELESS_COMPARISON!>s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>this.s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>s != null<!> || <!SENSELESS_COMPARISON!>this.s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>s != null<!> || <!SENSELESS_COMPARISON!>this.s != null<!>) this.s
     }
 
     fun test() {
@@ -1677,26 +1677,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (b != null) this.b.funNullableT()
         if (b != null) this.b.funNullableAny()
         if (b != null) this.b
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.equals(null)
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propT
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propAny
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableT
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableAny
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funT()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableT()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>
-        if (b != null || this.b != null) this.b.equals(null)
-        if (b != null || this.b != null) this.b.propT
-        if (b != null || this.b != null) this.b.propAny
-        if (b != null || this.b != null) this.b.propNullableT
-        if (b != null || this.b != null) this.b.propNullableAny
-        if (b != null || this.b != null) this.b.funT()
-        if (b != null || this.b != null) this.b.funAny()
-        if (b != null || this.b != null) this.b.funNullableT()
-        if (b != null || this.b != null) this.b.funNullableAny()
-        if (b != null || this.b != null) this.b
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.equals(null)
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.equals(null)
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propNullableT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propNullableAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funNullableT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funNullableAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b
 
         if (c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
 
@@ -1746,26 +1746,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propT
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propAny
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableT
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableAny
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funT()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
-        if (c != null || this.c != null) this.c.equals(null)
-        if (c != null || this.c != null) this.c.propT
-        if (c != null || this.c != null) this.c.propAny
-        if (c != null || this.c != null) this.c.propNullableT
-        if (c != null || this.c != null) this.c.propNullableAny
-        if (c != null || this.c != null) this.c.funT()
-        if (c != null || this.c != null) this.c.funAny()
-        if (c != null || this.c != null) this.c.funNullableT()
-        if (c != null || this.c != null) this.c.funNullableAny()
-        if (c != null || this.c != null) this.c
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.equals(null)
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propNullableT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propNullableAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funNullableT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funNullableAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c
 
         if (d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
 
@@ -1815,26 +1815,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propT
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propAny
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableT
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableAny
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funT()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
-        if (d != null || this.d != null) this.d.equals(null)
-        if (d != null || this.d != null) this.d.propT
-        if (d != null || this.d != null) this.d.propAny
-        if (d != null || this.d != null) this.d.propNullableT
-        if (d != null || this.d != null) this.d.propNullableAny
-        if (d != null || this.d != null) this.d.funT()
-        if (d != null || this.d != null) this.d.funAny()
-        if (d != null || this.d != null) this.d.funNullableT()
-        if (d != null || this.d != null) this.d.funNullableAny()
-        if (d != null || this.d != null) this.d
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.equals(null)
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propNullableT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propNullableAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funNullableT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funNullableAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d
 
         if (e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
 
@@ -1884,26 +1884,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (e != null) this.e.funNullableT()
         if (e != null) this.e.funNullableAny()
         if (e != null) this.e
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propT
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propAny
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableT
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableAny
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funT()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableT()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>
-        if (e != null || this.e != null) this.e.equals(null)
-        if (e != null || this.e != null) this.e.propT
-        if (e != null || this.e != null) this.e.propAny
-        if (e != null || this.e != null) this.e.propNullableT
-        if (e != null || this.e != null) this.e.propNullableAny
-        if (e != null || this.e != null) this.e.funT()
-        if (e != null || this.e != null) this.e.funAny()
-        if (e != null || this.e != null) this.e.funNullableT()
-        if (e != null || this.e != null) this.e.funNullableAny()
-        if (e != null || this.e != null) this.e
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.equals(null)
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propNullableT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propNullableAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funNullableT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funNullableAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e
 
         if (f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
 
@@ -1953,26 +1953,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (f != null) this.f.funNullableT()
         if (f != null) this.f.funNullableAny()
         if (f != null) this.f
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propT
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propAny
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableT
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableAny
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funT()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableT()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>
-        if (f != null || this.f != null) this.f.equals(null)
-        if (f != null || this.f != null) this.f.propT
-        if (f != null || this.f != null) this.f.propAny
-        if (f != null || this.f != null) this.f.propNullableT
-        if (f != null || this.f != null) this.f.propNullableAny
-        if (f != null || this.f != null) this.f.funT()
-        if (f != null || this.f != null) this.f.funAny()
-        if (f != null || this.f != null) this.f.funNullableT()
-        if (f != null || this.f != null) this.f.funNullableAny()
-        if (f != null || this.f != null) this.f
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.equals(null)
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propNullableT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propNullableAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funNullableT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funNullableAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f
 
         if (x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
 
@@ -2022,26 +2022,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
-        if (x != null || this.x != null) this.x.equals(null)
-        if (x != null || this.x != null) this.x.propT
-        if (x != null || this.x != null) this.x.propAny
-        if (x != null || this.x != null) this.x.propNullableT
-        if (x != null || this.x != null) this.x.propNullableAny
-        if (x != null || this.x != null) this.x.funT()
-        if (x != null || this.x != null) this.x.funAny()
-        if (x != null || this.x != null) this.x.funNullableT()
-        if (x != null || this.x != null) this.x.funNullableAny()
-        if (x != null || this.x != null) this.x
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.equals(null)
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propNullableT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propNullableAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funNullableT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funNullableAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x
 
         if (y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
 
@@ -2091,26 +2091,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (y != null) this.y.funNullableT()
         if (y != null) this.y.funNullableAny()
         if (y != null) this.y
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propT
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propAny
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableT
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableAny
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funT()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funAny()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableT()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableAny()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>
-        if (y != null || this.y != null) this.y.equals(null)
-        if (y != null || this.y != null) this.y.propT
-        if (y != null || this.y != null) this.y.propAny
-        if (y != null || this.y != null) this.y.propNullableT
-        if (y != null || this.y != null) this.y.propNullableAny
-        if (y != null || this.y != null) this.y.funT()
-        if (y != null || this.y != null) this.y.funAny()
-        if (y != null || this.y != null) this.y.funNullableT()
-        if (y != null || this.y != null) this.y.funNullableAny()
-        if (y != null || this.y != null) this.y
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.equals(null)
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propNullableT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propNullableAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funNullableT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funNullableAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y
 
         if (z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
 
@@ -2160,26 +2160,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propT
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propAny
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableT
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableAny
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funT()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funAny()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
-        if (z != null || this.z != null) this.z.equals(null)
-        if (z != null || this.z != null) this.z.propT
-        if (z != null || this.z != null) this.z.propAny
-        if (z != null || this.z != null) this.z.propNullableT
-        if (z != null || this.z != null) this.z.propNullableAny
-        if (z != null || this.z != null) this.z.funT()
-        if (z != null || this.z != null) this.z.funAny()
-        if (z != null || this.z != null) this.z.funNullableT()
-        if (z != null || this.z != null) this.z.funNullableAny()
-        if (z != null || this.z != null) this.z
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.equals(null)
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propNullableT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propNullableAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funNullableT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funNullableAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z
 
         if (u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
 
@@ -2229,26 +2229,26 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (u != null) this.u.funNullableT()
         if (u != null) this.u.funNullableAny()
         if (u != null) this.u
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propT
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propAny
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableT
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableAny
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funT()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funAny()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableT()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableAny()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>
-        if (u != null || this.u != null) this.u.equals(null)
-        if (u != null || this.u != null) this.u.propT
-        if (u != null || this.u != null) this.u.propAny
-        if (u != null || this.u != null) this.u.propNullableT
-        if (u != null || this.u != null) this.u.propNullableAny
-        if (u != null || this.u != null) this.u.funT()
-        if (u != null || this.u != null) this.u.funAny()
-        if (u != null || this.u != null) this.u.funNullableT()
-        if (u != null || this.u != null) this.u.funNullableAny()
-        if (u != null || this.u != null) this.u
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.equals(null)
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propNullableT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propNullableAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funNullableT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funNullableAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u
 
         v = 0
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
@@ -2261,48 +2261,48 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null || this.v != null) this.v.equals(null)
-        if (v != null || this.v != null) this.v.propT
-        if (v != null || this.v != null) this.v.propAny
-        if (v != null || this.v != null) this.v.propNullableT
-        if (v != null || this.v != null) this.v.propNullableAny
-        if (v != null || this.v != null) this.v.funT()
-        if (v != null || this.v != null) this.v.funAny()
-        if (v != null || this.v != null) this.v.funNullableT()
-        if (v != null || this.v != null) this.v.funNullableAny()
-        if (v != null || this.v != null) this.v
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v
 
-        w = if (null != null) 10 else null
+        w = if (<!SENSELESS_COMPARISON!>null != null<!>) 10 else null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int?")!>w<!>
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
@@ -2324,34 +2324,34 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableT
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableAny
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funT()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
-        if (w != null || this.w != null) this.w.equals(null)
-        if (w != null || this.w != null) this.w.propT
-        if (w != null || this.w != null) this.w.propAny
-        if (w != null || this.w != null) this.w.propNullableT
-        if (w != null || this.w != null) this.w.propNullableAny
-        if (w != null || this.w != null) this.w.funT()
-        if (w != null || this.w != null) this.w.funAny()
-        if (w != null || this.w != null) this.w.funNullableT()
-        if (w != null || this.w != null) this.w.funNullableAny()
-        if (w != null || this.w != null) this.w
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.equals(null)
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propNullableT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propNullableAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funNullableT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funNullableAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w
 
         s = null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>s<!>.hashCode()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>s<!>
-        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (s != null || this.s != null) this.s
+        if (<!SENSELESS_COMPARISON!>s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>this.s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>s != null<!> || <!SENSELESS_COMPARISON!>this.s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>s != null<!> || <!SENSELESS_COMPARISON!>this.s != null<!>) this.s
     }
 
     fun test() {
@@ -2723,26 +2723,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (b != null) this.b.funNullableT()
         if (b != null) this.b.funNullableAny()
         if (b != null) this.b
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.equals(null)
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propT
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propAny
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableT
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableAny
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funT()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableT()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>
-        if (b != null || this.b != null) this.b.equals(null)
-        if (b != null || this.b != null) this.b.propT
-        if (b != null || this.b != null) this.b.propAny
-        if (b != null || this.b != null) this.b.propNullableT
-        if (b != null || this.b != null) this.b.propNullableAny
-        if (b != null || this.b != null) this.b.funT()
-        if (b != null || this.b != null) this.b.funAny()
-        if (b != null || this.b != null) this.b.funNullableT()
-        if (b != null || this.b != null) this.b.funNullableAny()
-        if (b != null || this.b != null) this.b
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.equals(null)
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.propNullableAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>.funNullableAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.equals(null)
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propNullableT
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.propNullableAny
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funNullableT()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b.funNullableAny()
+        if (b != null || <!SENSELESS_COMPARISON!>this.b != null<!>) this.b
 
         if (c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
 
@@ -2792,26 +2792,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propT
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propAny
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableT
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableAny
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funT()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
-        if (c != null || this.c != null) this.c.equals(null)
-        if (c != null || this.c != null) this.c.propT
-        if (c != null || this.c != null) this.c.propAny
-        if (c != null || this.c != null) this.c.propNullableT
-        if (c != null || this.c != null) this.c.propNullableAny
-        if (c != null || this.c != null) this.c.funT()
-        if (c != null || this.c != null) this.c.funAny()
-        if (c != null || this.c != null) this.c.funNullableT()
-        if (c != null || this.c != null) this.c.funNullableAny()
-        if (c != null || this.c != null) this.c
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.equals(null)
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.propNullableAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>.funNullableAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>c<!>
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.equals(null)
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propNullableT
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.propNullableAny
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funNullableT()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c.funNullableAny()
+        if (c != null || <!SENSELESS_COMPARISON!>this.c != null<!>) this.c
 
         if (d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
 
@@ -2861,26 +2861,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propT
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propAny
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableT
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableAny
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funT()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
-        if (d != null || this.d != null) this.d.equals(null)
-        if (d != null || this.d != null) this.d.propT
-        if (d != null || this.d != null) this.d.propAny
-        if (d != null || this.d != null) this.d.propNullableT
-        if (d != null || this.d != null) this.d.propNullableAny
-        if (d != null || this.d != null) this.d.funT()
-        if (d != null || this.d != null) this.d.funAny()
-        if (d != null || this.d != null) this.d.funNullableT()
-        if (d != null || this.d != null) this.d.funNullableAny()
-        if (d != null || this.d != null) this.d
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.equals(null)
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.propNullableAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>.funNullableAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>d<!>
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.equals(null)
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propNullableT
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.propNullableAny
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funNullableT()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d.funNullableAny()
+        if (d != null || <!SENSELESS_COMPARISON!>this.d != null<!>) this.d
 
         if (e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
 
@@ -2930,26 +2930,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (e != null) this.e.funNullableT()
         if (e != null) this.e.funNullableAny()
         if (e != null) this.e
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propT
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propAny
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableT
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableAny
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funT()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableT()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>
-        if (e != null || this.e != null) this.e.equals(null)
-        if (e != null || this.e != null) this.e.propT
-        if (e != null || this.e != null) this.e.propAny
-        if (e != null || this.e != null) this.e.propNullableT
-        if (e != null || this.e != null) this.e.propNullableAny
-        if (e != null || this.e != null) this.e.funT()
-        if (e != null || this.e != null) this.e.funAny()
-        if (e != null || this.e != null) this.e.funNullableT()
-        if (e != null || this.e != null) this.e.funNullableAny()
-        if (e != null || this.e != null) this.e
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.equals(null)
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.propNullableAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>.funNullableAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>e<!>
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.equals(null)
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propNullableT
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.propNullableAny
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funNullableT()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e.funNullableAny()
+        if (e != null || <!SENSELESS_COMPARISON!>this.e != null<!>) this.e
 
         if (f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
 
@@ -2999,26 +2999,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (f != null) this.f.funNullableT()
         if (f != null) this.f.funNullableAny()
         if (f != null) this.f
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propT
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propAny
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableT
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableAny
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funT()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableT()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>
-        if (f != null || this.f != null) this.f.equals(null)
-        if (f != null || this.f != null) this.f.propT
-        if (f != null || this.f != null) this.f.propAny
-        if (f != null || this.f != null) this.f.propNullableT
-        if (f != null || this.f != null) this.f.propNullableAny
-        if (f != null || this.f != null) this.f.funT()
-        if (f != null || this.f != null) this.f.funAny()
-        if (f != null || this.f != null) this.f.funNullableT()
-        if (f != null || this.f != null) this.f.funNullableAny()
-        if (f != null || this.f != null) this.f
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.equals(null)
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.propNullableAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>.funNullableAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>f<!>
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.equals(null)
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propNullableT
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.propNullableAny
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funNullableT()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f.funNullableAny()
+        if (f != null || <!SENSELESS_COMPARISON!>this.f != null<!>) this.f
 
         if (x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
 
@@ -3068,26 +3068,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
-        if (x != null || this.x != null) this.x.equals(null)
-        if (x != null || this.x != null) this.x.propT
-        if (x != null || this.x != null) this.x.propAny
-        if (x != null || this.x != null) this.x.propNullableT
-        if (x != null || this.x != null) this.x.propNullableAny
-        if (x != null || this.x != null) this.x.funT()
-        if (x != null || this.x != null) this.x.funAny()
-        if (x != null || this.x != null) this.x.funNullableT()
-        if (x != null || this.x != null) this.x.funNullableAny()
-        if (x != null || this.x != null) this.x
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.equals(null)
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propNullableT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propNullableAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funNullableT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funNullableAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x
 
         if (y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
 
@@ -3137,26 +3137,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (y != null) this.y.funNullableT()
         if (y != null) this.y.funNullableAny()
         if (y != null) this.y
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propT
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propAny
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableT
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableAny
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funT()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funAny()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableT()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableAny()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>
-        if (y != null || this.y != null) this.y.equals(null)
-        if (y != null || this.y != null) this.y.propT
-        if (y != null || this.y != null) this.y.propAny
-        if (y != null || this.y != null) this.y.propNullableT
-        if (y != null || this.y != null) this.y.propNullableAny
-        if (y != null || this.y != null) this.y.funT()
-        if (y != null || this.y != null) this.y.funAny()
-        if (y != null || this.y != null) this.y.funNullableT()
-        if (y != null || this.y != null) this.y.funNullableAny()
-        if (y != null || this.y != null) this.y
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.equals(null)
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propNullableT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propNullableAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funNullableT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funNullableAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y
 
         if (z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
 
@@ -3206,26 +3206,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
         if (this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propT
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propAny
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableT
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableAny
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funT()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funAny()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
-        if (z != null || this.z != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
-        if (z != null || this.z != null) this.z.equals(null)
-        if (z != null || this.z != null) this.z.propT
-        if (z != null || this.z != null) this.z.propAny
-        if (z != null || this.z != null) this.z.propNullableT
-        if (z != null || this.z != null) this.z.propNullableAny
-        if (z != null || this.z != null) this.z.funT()
-        if (z != null || this.z != null) this.z.funAny()
-        if (z != null || this.z != null) this.z.funNullableT()
-        if (z != null || this.z != null) this.z.funNullableAny()
-        if (z != null || this.z != null) this.z
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.equals(null)
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.propNullableAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>.funNullableAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>z<!>
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.equals(null)
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propNullableT
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.propNullableAny
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funNullableT()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z.funNullableAny()
+        if (z != null || <!SENSELESS_COMPARISON!>this.z != null<!>) this.z
 
         if (u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
 
@@ -3275,26 +3275,26 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (u != null) this.u.funNullableT()
         if (u != null) this.u.funNullableAny()
         if (u != null) this.u
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propT
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propAny
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableT
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableAny
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funT()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funAny()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableT()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableAny()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>
-        if (u != null || this.u != null) this.u.equals(null)
-        if (u != null || this.u != null) this.u.propT
-        if (u != null || this.u != null) this.u.propAny
-        if (u != null || this.u != null) this.u.propNullableT
-        if (u != null || this.u != null) this.u.propNullableAny
-        if (u != null || this.u != null) this.u.funT()
-        if (u != null || this.u != null) this.u.funAny()
-        if (u != null || this.u != null) this.u.funNullableT()
-        if (u != null || this.u != null) this.u.funNullableAny()
-        if (u != null || this.u != null) this.u
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.equals(null)
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propNullableT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propNullableAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funNullableT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funNullableAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u
 
         v = 0
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
@@ -3307,48 +3307,48 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null || this.v != null) this.v.equals(null)
-        if (v != null || this.v != null) this.v.propT
-        if (v != null || this.v != null) this.v.propAny
-        if (v != null || this.v != null) this.v.propNullableT
-        if (v != null || this.v != null) this.v.propNullableAny
-        if (v != null || this.v != null) this.v.funT()
-        if (v != null || this.v != null) this.v.funAny()
-        if (v != null || this.v != null) this.v.funNullableT()
-        if (v != null || this.v != null) this.v.funNullableAny()
-        if (v != null || this.v != null) this.v
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v
 
-        w = if (null != null) 10 else null
+        w = if (<!SENSELESS_COMPARISON!>null != null<!>) 10 else null
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
@@ -3369,34 +3369,34 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableT
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableAny
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funT()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
-        if (w != null || this.w != null) this.w.equals(null)
-        if (w != null || this.w != null) this.w.propT
-        if (w != null || this.w != null) this.w.propAny
-        if (w != null || this.w != null) this.w.propNullableT
-        if (w != null || this.w != null) this.w.propNullableAny
-        if (w != null || this.w != null) this.w.funT()
-        if (w != null || this.w != null) this.w.funAny()
-        if (w != null || this.w != null) this.w.funNullableT()
-        if (w != null || this.w != null) this.w.funNullableAny()
-        if (w != null || this.w != null) this.w
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.equals(null)
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propNullableT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propNullableAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funNullableT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funNullableAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w
 
         s = null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>s<!>.hashCode()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>s<!>
-        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (s != null || this.s != null) this.s
+        if (<!SENSELESS_COMPARISON!>s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>this.s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>s != null<!> || <!SENSELESS_COMPARISON!>this.s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>s != null<!> || <!SENSELESS_COMPARISON!>this.s != null<!>) this.s
     }
 
     fun test() {
@@ -3785,26 +3785,26 @@ object Case32 {
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
         if (this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
-        if (x != null || this.x != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
-        if (x != null || this.x != null) this.x.equals(null)
-        if (x != null || this.x != null) this.x.propT
-        if (x != null || this.x != null) this.x.propAny
-        if (x != null || this.x != null) this.x.propNullableT
-        if (x != null || this.x != null) this.x.propNullableAny
-        if (x != null || this.x != null) this.x.funT()
-        if (x != null || this.x != null) this.x.funAny()
-        if (x != null || this.x != null) this.x.funNullableT()
-        if (x != null || this.x != null) this.x.funNullableAny()
-        if (x != null || this.x != null) this.x
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propNullableAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.funNullableAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.equals(null)
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propNullableT
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.propNullableAny
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funNullableT()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x.funNullableAny()
+        if (x != null || <!SENSELESS_COMPARISON!>this.x != null<!>) this.x
 
         if (y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
 
@@ -3854,26 +3854,26 @@ object Case32 {
         if (y != null) this.y.funNullableT()
         if (y != null) this.y.funNullableAny()
         if (y != null) this.y
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propT
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propAny
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableT
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableAny
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funT()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funAny()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableT()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableAny()
-        if (y != null || this.y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>
-        if (y != null || this.y != null) this.y.equals(null)
-        if (y != null || this.y != null) this.y.propT
-        if (y != null || this.y != null) this.y.propAny
-        if (y != null || this.y != null) this.y.propNullableT
-        if (y != null || this.y != null) this.y.propNullableAny
-        if (y != null || this.y != null) this.y.funT()
-        if (y != null || this.y != null) this.y.funAny()
-        if (y != null || this.y != null) this.y.funNullableT()
-        if (y != null || this.y != null) this.y.funNullableAny()
-        if (y != null || this.y != null) this.y
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.equals(null)
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.propNullableAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>.funNullableAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit? & kotlin.Unit")!>y<!>
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.equals(null)
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propNullableT
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.propNullableAny
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funNullableT()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y.funNullableAny()
+        if (y != null || <!SENSELESS_COMPARISON!>this.y != null<!>) this.y
 
         if (u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
 
@@ -3923,26 +3923,26 @@ object Case32 {
         if (u != null) this.u.funNullableT()
         if (u != null) this.u.funNullableAny()
         if (u != null) this.u
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propT
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propAny
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableT
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableAny
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funT()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funAny()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableT()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableAny()
-        if (u != null || this.u != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>
-        if (u != null || this.u != null) this.u.equals(null)
-        if (u != null || this.u != null) this.u.propT
-        if (u != null || this.u != null) this.u.propAny
-        if (u != null || this.u != null) this.u.propNullableT
-        if (u != null || this.u != null) this.u.propNullableAny
-        if (u != null || this.u != null) this.u.funT()
-        if (u != null || this.u != null) this.u.funAny()
-        if (u != null || this.u != null) this.u.funNullableT()
-        if (u != null || this.u != null) this.u.funNullableAny()
-        if (u != null || this.u != null) this.u
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.equals(null)
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.propNullableAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>.funNullableAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>u<!>
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.equals(null)
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propNullableT
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.propNullableAny
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funNullableT()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u.funNullableAny()
+        if (u != null || <!SENSELESS_COMPARISON!>this.u != null<!>) this.u
 
         v = 0
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
@@ -3955,48 +3955,48 @@ object Case32 {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
-        if (v != null || this.v != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
-        if (v != null || this.v != null) this.v.equals(null)
-        if (v != null || this.v != null) this.v.propT
-        if (v != null || this.v != null) this.v.propAny
-        if (v != null || this.v != null) this.v.propNullableT
-        if (v != null || this.v != null) this.v.propNullableAny
-        if (v != null || this.v != null) this.v.funT()
-        if (v != null || this.v != null) this.v.funAny()
-        if (v != null || this.v != null) this.v.funNullableT()
-        if (v != null || this.v != null) this.v.funNullableAny()
-        if (v != null || this.v != null) this.v
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.equals(null)
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propNullableT
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.propNullableAny
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funNullableT()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v.funNullableAny()
+        if (<!SENSELESS_COMPARISON!>v != null<!> || <!SENSELESS_COMPARISON!>this.v != null<!>) this.v
 
-        w = if (null != null) 10 else null
+        w = if (<!SENSELESS_COMPARISON!>null != null<!>) 10 else null
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
@@ -4017,34 +4017,34 @@ object Case32 {
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableT
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableAny
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funT()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
-        if (w != null || this.w != null) this.w.equals(null)
-        if (w != null || this.w != null) this.w.propT
-        if (w != null || this.w != null) this.w.propAny
-        if (w != null || this.w != null) this.w.propNullableT
-        if (w != null || this.w != null) this.w.propNullableAny
-        if (w != null || this.w != null) this.w.funT()
-        if (w != null || this.w != null) this.w.funAny()
-        if (w != null || this.w != null) this.w.funNullableT()
-        if (w != null || this.w != null) this.w.funNullableAny()
-        if (w != null || this.w != null) this.w
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.equals(null)
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.propNullableAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>.funNullableAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Int")!>w<!>
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.equals(null)
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propNullableT
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.propNullableAny
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funNullableT()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w.funNullableAny()
+        if (w != null || <!SENSELESS_COMPARISON!>this.w != null<!>) this.w
 
         s = null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>s<!>.hashCode()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>s<!>
-        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
-        if (s != null || this.s != null) this.s
+        if (<!SENSELESS_COMPARISON!>s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>this.s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>s != null<!> || <!SENSELESS_COMPARISON!>this.s != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>s<!>
+        if (<!SENSELESS_COMPARISON!>s != null<!> || <!SENSELESS_COMPARISON!>this.s != null<!>) this.s
     }
 
     fun test() {

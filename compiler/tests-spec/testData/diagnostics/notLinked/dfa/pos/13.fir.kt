@@ -107,7 +107,7 @@ fun <T> case_4(x: T?) {
 // TESTCASE NUMBER: 5
 fun <T> case_5(x: T?) {
     if (x is Interface1) {
-        if (x != null) {
+        if (<!SENSELESS_COMPARISON!>x != null<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("T? & Interface1 & T?!!")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("T? & Interface1 & T?!!")!>x<!>.equals(null)
             x.propT
@@ -387,7 +387,7 @@ fun <T> case_8(x: T) {
 
 // TESTCASE NUMBER: 9
 fun <T : Number> case_9(x: T) {
-    if (x != null) {
+    if (<!SENSELESS_COMPARISON!>x != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
@@ -682,7 +682,7 @@ fun <T> case_12(x: T) where T : Number?, T: Interface1? {
  * ISSUES: KT-28785
  */
 fun <T> case_13(x: T) where T : Out<*>?, T: Comparable<T?> {
-    if (x != null) {
+    if (<!SENSELESS_COMPARISON!>x != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
@@ -3986,7 +3986,7 @@ fun <T> case_56(x: T) where T : Number?, T: Interface1? {
  * ISSUES: KT-28785
  */
 fun <T> case_57(x: T) where T : Out<*>?, T: Comparable<T?> {
-    if (x != null) {
+    if (<!SENSELESS_COMPARISON!>x != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase

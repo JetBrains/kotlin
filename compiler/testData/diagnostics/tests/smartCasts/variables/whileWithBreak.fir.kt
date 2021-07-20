@@ -4,7 +4,7 @@ fun String.next(): String {
 
 fun list(start: String) {
     var e: Any? = start
-    if (e==null) return
+    if (<!SENSELESS_COMPARISON!>e==null<!>) return
     while (e is String) {
         // Smart cast due to the loop condition
         if (e.length == 0)

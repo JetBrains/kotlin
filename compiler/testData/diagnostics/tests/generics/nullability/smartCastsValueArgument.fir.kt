@@ -8,7 +8,7 @@ fun <T : CharSequence?> foo(x: T) {
     var y1: CharSequence = ""
     var y2: String = ""
     if (x != null) {
-        if (x != null) {}
+        if (<!SENSELESS_COMPARISON!>x != null<!>) {}
 
         y1 = x
         y2 = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>

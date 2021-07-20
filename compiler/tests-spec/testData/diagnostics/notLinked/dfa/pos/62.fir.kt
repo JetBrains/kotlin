@@ -34,7 +34,7 @@ fun case_2(x: Any) {
     val y = when(x) {
         true -> "true"
         false -> "false"
-        null -> "false"
+        <!SENSELESS_NULL_IN_WHEN!>null<!> -> "false"
     }
 }
 
@@ -98,7 +98,7 @@ fun case_7(x: Any) {
         val y = when(x) {
             true -> "true"
             false -> "false"
-            null -> "false"
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> "false"
         }
     }
 }
@@ -155,7 +155,7 @@ fun case_10(x: Any): String {
 fun case_11(x: Any?): String? {
     if (x is Nothing?) {
         return when(x) {
-            null -> null
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
         }
     }
     return ""
@@ -169,7 +169,7 @@ fun case_11(x: Any?): String? {
 fun case_12(x: Any?): String? {
     if (x == null) {
         return when(x) {
-            null -> null
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
         }
     }
     return ""
@@ -183,7 +183,7 @@ fun case_12(x: Any?): String? {
 fun case_13(x: Any?): String? {
     if (x === null) {
         return when(x) {
-            null -> null
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
         }
     }
     return ""
@@ -197,7 +197,7 @@ fun case_13(x: Any?): String? {
 fun case_14(x: Any?): String? {
     x as Nothing?
     return when(x) {
-        null -> null
+        <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
     }
 }
 
@@ -220,7 +220,7 @@ fun case_16(x: Any) {
             EnumClass.SOUTH -> 2
             EnumClass.WEST -> 3
             EnumClass.EAST -> 4
-            null -> 5
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
         }
     }
 }
@@ -256,7 +256,7 @@ fun case_19(x: Any): Int {
             EnumClass.SOUTH -> 2
             EnumClass.WEST -> 3
             EnumClass.EAST -> 4
-            null -> 5
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
         }
     }
     return 0
@@ -323,7 +323,7 @@ fun case_25(x: Any) {
             is SealedChild1 -> 1
             is SealedChild2 -> 2
             is SealedChild3 -> 3
-            null -> 5
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
         }
     }
 }
@@ -356,7 +356,7 @@ fun case_28(x: Any): Int {
             is SealedChild1 -> 1
             is SealedChild2 -> 2
             is SealedChild3 -> 3
-            null -> 5
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
         }
     }
     return 0
@@ -401,7 +401,7 @@ fun case_32(x: Any) {
             SealedWithObjectsChild1 -> 1
             SealedWithObjectsChild2 -> 2
             SealedWithObjectsChild3 -> 3
-            null -> 5
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
         }
     }
 }
@@ -434,7 +434,7 @@ fun case_35(x: Any): Int {
             SealedWithObjectsChild1 -> 1
             SealedWithObjectsChild2 -> 2
             SealedWithObjectsChild3 -> 3
-            null -> 5
+            <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
         }
     }
     return 0

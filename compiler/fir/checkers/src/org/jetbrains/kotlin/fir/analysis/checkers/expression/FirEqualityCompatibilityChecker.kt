@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
@@ -15,17 +16,34 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
+import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     override fun check(expression: FirEqualityOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val arguments = expression.argumentList.arguments
         if (arguments.size != 2) return
-        val lType = arguments[0].typeRef.coneType
-        val rType = arguments[1].typeRef.coneType
+        val lExpr = arguments[0]
+        val rExpr = arguments[1]
+        checkCompatibility(lExpr, rExpr, context, expression, reporter)
+        checkSensibleness(lExpr, rExpr, context, expression, reporter)
+    }
+
+    private fun checkCompatibility(
+        lExpr: FirExpression,
+        rExpr: FirExpression,
+        context: CheckerContext,
+        expression: FirEqualityOperatorCall,
+        reporter: DiagnosticReporter
+    ) {
+        val lType = lExpr.typeRef.coneType
+        val rType = rExpr.typeRef.coneType
         // If one of the type is already `Nothing?`, we skip reporting further comparison. This is to allow comparing with `null`, which has
         // type `Nothing?`
         if (lType.isNullableNothing || rType.isNullableNothing) return
@@ -94,5 +112,35 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         if (isEnum) return true
         val firRegularClass = (this as? ConeClassLikeType)?.lookupTag?.toFirRegularClass(context.session) ?: return false
         return firRegularClass.isEnumClass
+    }
+
+    private fun checkSensibleness(
+        lExpr: FirExpression,
+        rExpr: FirExpression,
+        context: CheckerContext,
+        expression: FirEqualityOperatorCall,
+        reporter: DiagnosticReporter
+    ) {
+        val expressionComparedWithNull = when {
+            lExpr.isNullLiteral -> rExpr
+            rExpr.isNullLiteral -> lExpr
+            else -> return
+        }
+        val type = expressionComparedWithNull.typeRef.coneType
+        if (type is ConeKotlinErrorType) return
+        val isPositiveCompare = expression.operation == FirOperation.EQ || expression.operation == FirOperation.IDENTITY
+        val compareResult = with(context.session.typeContext) {
+            when {
+                // `null` literal has type `Nothing?`
+                type.isNullableNothing || (expressionComparedWithNull is FirExpressionWithSmartcastToNull && expressionComparedWithNull.isStable) -> isPositiveCompare
+                !type.isNullableType() -> !isPositiveCompare
+                else -> return
+            }
+        }
+        if (expression.source?.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+            reporter.reportOn(expression.source, FirErrors.SENSELESS_COMPARISON, expression, compareResult, context)
+        } else {
+            reporter.reportOn(expression.source, FirErrors.SENSELESS_NULL_IN_WHEN, context)
+        }
     }
 }
