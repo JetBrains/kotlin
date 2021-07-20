@@ -8,14 +8,10 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.util.containers.FactoryMap
-import com.intellij.util.io.FileAccessorCache
 import com.intellij.util.text.ByteArrayCharSequence
-import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.RandomAccessFile
-import java.nio.ByteBuffer
-import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
 class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) : ZipHandler(path) {
@@ -31,7 +27,9 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) : ZipHandl
                 ourEntryMap = mappedByteBuffer.parseCentralDirectory().associateBy { it.relativePath }
                 cachedManifest = ourEntryMap[MANIFEST_PATH]?.let(mappedByteBuffer::contentsToByteArray)
             } finally {
-                mappedByteBuffer.unmapBuffer()
+                with(fileSystem) {
+                    mappedByteBuffer.unmapBuffer()
+                }
             }
         }
 

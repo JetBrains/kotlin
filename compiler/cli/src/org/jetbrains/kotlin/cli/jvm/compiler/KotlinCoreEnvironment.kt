@@ -69,7 +69,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
-import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarHandler
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrar
@@ -171,9 +170,28 @@ class KotlinCoreEnvironment private constructor(
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
+        if (configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)) {
+            messageCollector?.report(
+                STRONG_WARNING,
+                "Using new faster version of JAR FS: it should make your build faster, but the new implementation is experimental"
+            )
+        }
+
         jarFileSystem = when {
-            configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM) ||
-                    configuration.getBoolean(CommonConfigurationKeys.USE_FIR) -> FastJarFileSystem()
+            configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM) || configuration.getBoolean(CommonConfigurationKeys.USE_FIR) -> {
+                val fastJarFs = FastJarFileSystem.createIfUnmappingPossible()
+
+                if (fastJarFs == null) {
+                    messageCollector?.report(
+                        STRONG_WARNING,
+                        "Your JDK doesn't seem to support mapped buffer unmapping, so the slower (old) version of JAR FS will be used"
+                    )
+                    applicationEnvironment.jarFileSystem
+                } else {
+                    fastJarFs
+                }
+            }
+
             else -> applicationEnvironment.jarFileSystem
         }
 

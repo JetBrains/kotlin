@@ -19,7 +19,7 @@ import java.nio.channels.FileChannel
 
 private typealias RandomAccessFileAndBuffer = Pair<RandomAccessFile, MappedByteBuffer>
 
-class FastJarFileSystem : DeprecatedVirtualFileSystem() {
+class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByteBuffer.() -> Unit) : DeprecatedVirtualFileSystem() {
     private val myHandlers: MutableMap<String, FastJarHandler> =
         ConcurrentFactoryMap.createMap { key: String -> FastJarHandler(this@FastJarFileSystem, key) }
 
@@ -69,25 +69,27 @@ class FastJarFileSystem : DeprecatedVirtualFileSystem() {
             val pathInJar = path.substring(separator + 2)
             return Couple.of(localPath, pathInJar)
         }
+
+        fun createIfUnmappingPossible(): FastJarFileSystem? {
+            val cleanerCallBack = prepareCleanerCallback() ?: return null
+            return FastJarFileSystem(cleanerCallBack)
+        }
     }
 }
 
 
 private val IS_PRIOR_9_JRE = System.getProperty("java.specification.version", "").startsWith("1.")
 
-internal fun ByteBuffer.unmapBuffer() {
-    if (!isDirect) return
-
-    try {
+private fun prepareCleanerCallback(): ((ByteBuffer) -> Unit)? {
+    return try {
         if (IS_PRIOR_9_JRE) {
-            val cleaner = this::class.java.getMethod("cleaner")
-
+            val cleaner = Class.forName("java.nio.DirectByteBuffer").getMethod("cleaner")
             cleaner.isAccessible = true
 
             val clean = Class.forName("sun.misc.Cleaner").getMethod("clean")
             clean.isAccessible = true
 
-            clean.invoke(cleaner.invoke(this))
+            { buffer: ByteBuffer -> clean.invoke(cleaner.invoke(buffer)) }
         } else {
             val unsafeClass = try {
                 Class.forName("sun.misc.Unsafe")
@@ -103,10 +105,11 @@ internal fun ByteBuffer.unmapBuffer() {
             val theUnsafeField = unsafeClass.getDeclaredField("theUnsafe")
             theUnsafeField.isAccessible = true
 
-            val theUnsafe = theUnsafeField.get(null)
+            val theUnsafe = theUnsafeField.get(null);
 
-            clean.invoke(theUnsafe, this)
+            { buffer: ByteBuffer -> clean.invoke(theUnsafe, buffer) }
         }
     } catch (ex: Exception) {
+        null
     }
 }
