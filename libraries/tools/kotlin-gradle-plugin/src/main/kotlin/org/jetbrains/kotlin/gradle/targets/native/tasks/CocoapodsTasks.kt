@@ -84,7 +84,7 @@ open class PodspecTask : DefaultTask() {
     @TaskAction
     fun generate() {
 
-        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFileProvider.get().parentFile).path
+        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFileProvider.get().parentFile).invariantSeparatorsPath
         val dependencies = pods.get().map { pod ->
             val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
             "|    spec.dependency '${pod.name}'$versionSuffix"
@@ -101,7 +101,7 @@ open class PodspecTask : DefaultTask() {
             """.trimIndent()
         }
 
-        val gradleCommand = "\$REPO_ROOT/${gradleWrapper.toRelativeString(project.projectDir)}"
+        val gradleCommand = "\$REPO_ROOT/${gradleWrapper.relativeTo(project.projectDir).invariantSeparatorsPath}"
 
         val deploymentTargets = run {
             listOf(ios, osx, tvos, watchos).map { it.get() }.filter { it.deploymentTarget != null }.joinToString("\n") {
