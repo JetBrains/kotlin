@@ -3825,26 +3825,14 @@ createInterop("leakMemoryWithRunningThread") {
 }
 
 createInterop("cppClass") {
-    if (isAppleTarget(project)) {
-        // TODO: For cpp we need a header with `new`.
-        it.extraOpts "-compiler-option", "-I$llvmHome/include/c++/v1"
-    }
     it.defFile 'interop/cpp/cppClass.def'
 }
 
 createInterop("cppTypes") {
-    if (isAppleTarget(project)) {
-        // TODO: For cpp we need a header with `new`.
-        it.extraOpts "-compiler-option", "-I$llvmHome/include/c++/v1"
-    }
     it.defFile 'interop/cpp/types.def'
 }
 
 createInterop("cppSkia") {
-    if (PlatformInfo.isMac()) {
-        // TODO: For cpp we need a header with `new`.
-        it.extraOpts "-compiler-option", "-I$llvmHome/include/c++/v1"
-    }
     it.defFile 'interop/cpp/skia.def'
 }
 
