@@ -18892,6 +18892,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaInterop extends AbstractLightAnalysisModeTest {
+        @TestMetadata("conflictingOverloadsForThrowableInheritors.kt")
+        public void ignoreConflictingOverloadsForThrowableInheritors() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/conflictingOverloadsForThrowableInheritors.kt");
+        }
+
+        @TestMetadata("conflictingOverloadsForThrowableInheritors2.kt")
+        public void ignoreConflictingOverloadsForThrowableInheritors2() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/conflictingOverloadsForThrowableInheritors2.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -18903,16 +18913,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("ambiguousJavaVararg.kt")
         public void testAmbiguousJavaVararg() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/ambiguousJavaVararg.kt");
-        }
-
-        @TestMetadata("conflictingOverloadsForThrowableInheritors.kt")
-        public void testConflictingOverloadsForThrowableInheritors() throws Exception {
-            runTest("compiler/testData/codegen/box/javaInterop/conflictingOverloadsForThrowableInheritors.kt");
-        }
-
-        @TestMetadata("conflictingOverloadsForThrowableInheritors2.kt")
-        public void testConflictingOverloadsForThrowableInheritors2() throws Exception {
-            runTest("compiler/testData/codegen/box/javaInterop/conflictingOverloadsForThrowableInheritors2.kt");
         }
 
         @TestMetadata("genericSamProjectedOut.kt")
