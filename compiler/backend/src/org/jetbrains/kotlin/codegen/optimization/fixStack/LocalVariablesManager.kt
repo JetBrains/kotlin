@@ -51,6 +51,10 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
         saveStackMarker: AbstractInsnNode,
         savedStackValues: List<FixStackValue>
     ): SavedStackDescriptor {
+        if (savedStackValues.any { it == FixStackValue.UNINITIALIZED }) {
+            throw AssertionError("Uninitialized value on stack at ${methodNode.instructions.indexOf(saveStackMarker)}: $savedStackValues")
+        }
+
         val firstUnusedLocalVarIndex = getFirstUnusedLocalVariableIndex()
         val savedStackDescriptor = SavedStackDescriptor(savedStackValues, firstUnusedLocalVarIndex)
         updateMaxLocals(savedStackDescriptor.firstUnusedLocalVarIndex)

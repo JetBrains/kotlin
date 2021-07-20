@@ -26,7 +26,6 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import kotlin.math.max
@@ -142,15 +141,14 @@ internal class FixStackAnalyzer(
 
             fun getStackContent(): List<FixStackValue> {
                 val savedStack = ArrayList<FixStackValue>()
-                IntRange(0, super.getStackSize() - 1).mapTo(savedStack) { super.getStack(it) }
+                for (i in 0 until super.getStackSize()) {
+                    savedStack.add(super.getStack(i))
+                }
                 savedStack.addAll(extraStack)
                 return savedStack
             }
 
             override fun push(value: FixStackValue) {
-                if (value == FixStackValue.UNINITIALIZED) {
-                    throw AnalyzerException(null, "Uninitialized value on stack")
-                }
                 if (super.getStackSize() < maxStackSize) {
                     super.push(value)
                 } else {
