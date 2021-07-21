@@ -504,7 +504,7 @@ class FirCallCompletionResultsWriterTransformer(
             .map {
                 finalSubstitutor.substituteOrSelf(it).let { substitutedType ->
                     typeApproximator.approximateToSuperType(
-                        substitutedType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
+                        substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximation,
                     ) ?: substitutedType
                 }
             }

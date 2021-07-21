@@ -5,7 +5,7 @@ FILE: kt40131.kt
         }
     public final val <T : R|kotlin/reflect/KClass<*>|> R|T|.myJava1: R|java/lang/Class<*>|
         public get(): R|java/lang/Class<*>| {
-            ^ this@R|/myJava1|.R|/javaImpl|<R|kotlin/Any|>
+            ^ this@R|/myJava1|.R|/javaImpl|<R|CapturedType(*)|>
         }
     public final val <E : R|kotlin/Any|, T : R|kotlin/reflect/KClass<E>|> R|T|.myJava2: R|java/lang/Class<E>|
         public get(): R|java/lang/Class<E>| {
