@@ -1,0 +1,2 @@
+Resolved to:
+0: (in Foo) fun invoke(vararg a: kotlin.Any)

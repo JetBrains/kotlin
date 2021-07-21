@@ -1,0 +1,2 @@
+Resolved to:
+0: (in t.A.Named) val i: kotlin.Int

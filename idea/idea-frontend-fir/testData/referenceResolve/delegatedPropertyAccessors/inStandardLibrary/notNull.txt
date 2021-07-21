@@ -1,0 +1,3 @@
+Resolved to:
+0: (in kotlin.properties.ReadWriteProperty) operator fun getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int
+1: (in kotlin.properties.ReadWriteProperty) operator fun setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int)

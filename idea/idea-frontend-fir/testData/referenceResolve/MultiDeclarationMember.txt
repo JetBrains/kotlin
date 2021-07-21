@@ -1,0 +1,2 @@
+Resolved to:
+0: (in a.MyPair) operator fun component2(): kotlin.Int

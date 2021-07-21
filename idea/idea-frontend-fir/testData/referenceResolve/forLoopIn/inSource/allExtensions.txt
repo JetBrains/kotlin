@@ -1,0 +1,4 @@
+Resolved to:
+0: (in ROOT) fun Foo.iterator(): Iterator
+1: (in ROOT) fun Iterator.hasNext(): kotlin.Boolean
+2: (in ROOT) fun Iterator.next(): kotlin.Any

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.frontend.api
 
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.idea.fir.frontend.api.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.components.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.components.AbstractHLExpressionTypeTest
 import org.jetbrains.kotlin.idea.fir.frontend.api.components.AbstractOverriddenDeclarationProviderTest
@@ -75,6 +76,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractRendererTest> {
                 model("components/declarationRenderer")
+            }
+
+            testClass<AbstractReferenceResolveTest> {
+                model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 

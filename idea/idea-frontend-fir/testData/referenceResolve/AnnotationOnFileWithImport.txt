@@ -1,0 +1,2 @@
+Resolved to:
+0: constructor(message: kotlin.String, replaceWith: kotlin.ReplaceWith = ..., level: kotlin.DeprecationLevel = ...)
