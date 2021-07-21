@@ -715,20 +715,13 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            if (node.tokenType == KtNodeTypes.RETURN) {
-                val parent = tree.getParent(node)
-                if (parent != null) {
-                    val label = tree.findDescendantByType(parent, KtNodeTypes.LABEL)
-                    if (label != null) {
-                        return markElement(label, startOffset, endOffset - 1, tree, node)
-                    }
-                }
+            val nameIdentifier = tree.nameIdentifier(node)
+            if (nameIdentifier != null) {
+                return markElement(nameIdentifier, startOffset, endOffset, tree, node)
             }
-
-            val descendants =
-                tree.collectDescendantsOfType(node, KtTokens.IDENTIFIER) { descendant -> descendant.toString().all { it == '_' } }
-            if (descendants.isNotEmpty())
-                return descendants.map { markSingleElement(it, it, startOffset, endOffset, tree, node) }
+            if (node.tokenType == KtNodeTypes.LABEL_QUALIFIER) {
+                return super.mark(node, startOffset, endOffset - 1, tree)
+            }
             return super.mark(node, startOffset, endOffset, tree)
         }
     }

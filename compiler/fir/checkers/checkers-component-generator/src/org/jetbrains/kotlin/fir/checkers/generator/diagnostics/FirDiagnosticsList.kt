@@ -1068,8 +1068,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
         }
 
-        val UNDERSCORE_IS_RESERVED by error<KtElement>(PositioningStrategy.RESERVED_UNDERSCORE)
-        val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error<KtElement>(PositioningStrategy.RESERVED_UNDERSCORE)
+        val UNDERSCORE_IS_RESERVED by error<PsiElement>(PositioningStrategy.RESERVED_UNDERSCORE)
+        val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error<PsiElement>(PositioningStrategy.RESERVED_UNDERSCORE)
 
         val EQUALITY_NOT_APPLICABLE by error<KtBinaryExpression> {
             parameter<String>("operator")

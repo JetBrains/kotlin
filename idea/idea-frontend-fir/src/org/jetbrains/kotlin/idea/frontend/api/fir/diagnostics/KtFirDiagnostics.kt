@@ -2003,11 +2003,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualType: KtType
     }
 
-    abstract class UnderscoreIsReserved : KtFirDiagnostic<KtElement>() {
+    abstract class UnderscoreIsReserved : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = UnderscoreIsReserved::class
     }
 
-    abstract class UnderscoreUsageWithoutBackticks : KtFirDiagnostic<KtElement>() {
+    abstract class UnderscoreUsageWithoutBackticks : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = UnderscoreUsageWithoutBackticks::class
     }
 

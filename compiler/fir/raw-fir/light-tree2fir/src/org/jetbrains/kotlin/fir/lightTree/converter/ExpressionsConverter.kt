@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.diagnostics.ConeNotAnnotationContainer
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreIsReserved
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -969,9 +966,16 @@ class ExpressionsConverter(
     private fun convertSimpleNameExpression(referenceExpression: LighterASTNode): FirQualifiedAccessExpression {
         return buildQualifiedAccessExpression {
             source = referenceExpression.toFirSourceElement()
+
+            val nameSource = this@buildQualifiedAccessExpression.source
+            val rawText = referenceExpression.asText
+            if (nameSource != null && rawText.isUnderscore) {
+                nonFatalDiagnostics.add(ConeUnderscoreUsageWithoutBackticks(nameSource))
+            }
+
             calleeReference = buildSimpleNamedReference {
-                source = this@buildQualifiedAccessExpression.source
-                name = referenceExpression.asText.nameAsSafeName()
+                source = nameSource
+                name = rawText.nameAsSafeName()
             }
         }
     }

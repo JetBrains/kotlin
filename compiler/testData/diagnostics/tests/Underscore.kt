@@ -48,3 +48,13 @@ val something2 = doIt { _ -> 1 }
 var p: Int?
     get() = null
     set(_) {}
+
+object `____` {
+    object Nested {
+        fun method() {}
+    }
+}
+
+fun test() {
+    <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>____<!>.Nested.method()
+}

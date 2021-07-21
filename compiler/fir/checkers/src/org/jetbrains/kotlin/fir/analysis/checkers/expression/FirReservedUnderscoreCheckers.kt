@@ -5,108 +5,34 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreUsageWithoutBackticks
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.text
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType
 
 object FirReservedUnderscoreExpressionChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        val source = expression.source
-
-        if (expression is FirFunctionCall) {
-            val calleeReferenceSource = expression.calleeReference.source
-            if (calleeReferenceSource is FirLightSourceElement && calleeReferenceSource.lighterASTNode.tokenType == KtNodeTypes.OPERATION_REFERENCE) {
-                return
+        when (expression) {
+            is FirResolvable -> {
+                reportIfUnderscore(expression.calleeReference.source, context, reporter, isExpression = true)
             }
-
-            reportIfUnderscore(
-                expression.calleeReference.source.text, expression.calleeReference.source, context, reporter,
-                isExpression = true
-            )
-        } else if (expression is FirQualifiedAccess) {
-            if (source is FirPsiSourceElement) {
-                reportIfUnderscoreInQualifiedAccess(source, expression, context, reporter)
-            } else if (source is FirLightSourceElement) {
-                reportIfUnderscoreInQualifiedAccess(source, expression, context, reporter)
-            }
-        } else if (expression is FirGetClassCall) {
-            for (argument in expression.argumentList.arguments) {
-                reportIfUnderscore(argument.source.text, expression.source, context, reporter, isExpression = true)
-            }
-        } else if (expression is FirReturnExpression) {
-            var labelName: String? = null
-            if (source is FirPsiSourceElement) {
-                labelName = (source.psi.parent as? KtLabeledExpression)?.getLabelName()
-            } else if (source is FirLightSourceElement) {
-                val parent = source.treeStructure.getParent(source.lighterASTNode)
-                if (parent != null && parent.tokenType == KtNodeTypes.LABELED_EXPRESSION) {
-                    labelName = source.treeStructure.findDescendantByType(parent, KtNodeTypes.LABEL).toString()
-                    labelName = labelName.substring(0, labelName.length - 1)
+            is FirResolvedQualifier -> {
+                for (reservedUnderscoreDiagnostic in expression.nonFatalDiagnostics.filterIsInstance<ConeUnderscoreUsageWithoutBackticks>()) {
+                    reporter.reportOn(reservedUnderscoreDiagnostic.source, FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS, context)
                 }
             }
-
-            reportIfUnderscore(labelName, expression.source, context, reporter)
-        }
-    }
-
-    private fun reportIfUnderscoreInQualifiedAccess(
-        source: FirPsiSourceElement,
-        expression: FirStatement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        fun processQualifiedAccess(psi: PsiElement?) {
-            if (psi is KtNameReferenceExpression) {
-                reportIfUnderscore(psi.text, expression.source, context, reporter, isExpression = true)
-            } else if (psi is KtDotQualifiedExpression || psi is KtCallableReferenceExpression) {
-                processQualifiedAccess(psi.firstChild)
-                processQualifiedAccess(psi.lastChild)
-            }
-        }
-
-        val psi = source.psi
-        if (psi.parent !is KtDotQualifiedExpression && psi.parent !is KtCallableReferenceExpression) {
-            processQualifiedAccess(psi)
-        }
-    }
-
-    private fun reportIfUnderscoreInQualifiedAccess(
-        source: FirLightSourceElement,
-        expression: FirStatement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        fun processQualifiedAccess(lightSourceElement: LighterASTNode?) {
-            val tokenType = lightSourceElement?.tokenType
-            if (tokenType is KtNameReferenceExpressionElementType) {
-                reportIfUnderscore(lightSourceElement.toString(), expression.source, context, reporter, isExpression = true)
-            } else if (lightSourceElement != null && (tokenType is KtDotQualifiedExpressionElementType || tokenType == KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION)) {
-                val children = lightSourceElement.getChildren(source.treeStructure)
-                processQualifiedAccess(children.first())
-                processQualifiedAccess(children.last())
-            }
-        }
-
-        val astNode = source.lighterASTNode
-        val parent = source.treeStructure.getParent(astNode)
-        if (parent?.tokenType !is KtDotQualifiedExpressionElementType && parent?.tokenType != KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION) {
-            processQualifiedAccess(astNode)
         }
     }
 }
@@ -114,27 +40,29 @@ object FirReservedUnderscoreExpressionChecker : FirBasicExpressionChecker() {
 object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (
-            declaration is FirClass ||
-            declaration is FirFunction ||
+            declaration is FirRegularClass ||
             declaration is FirTypeParameter ||
             declaration is FirProperty ||
             declaration is FirTypeAlias
         ) {
             reportIfUnderscore(declaration, context, reporter)
+        } else if (declaration is FirFunction) {
+            if (declaration is FirSimpleFunction) {
+                reportIfUnderscore(declaration, context, reporter)
+            }
 
-            if (declaration is FirFunction) {
-                for (parameter in declaration.valueParameters) {
-                    reportIfUnderscore(
-                        parameter,
-                        context,
-                        reporter,
-                        isSingleUnderscoreAllowed = declaration is FirAnonymousFunction || declaration is FirPropertyAccessor
-                    )
-                }
+            val isSingleUnderscoreAllowed = declaration is FirAnonymousFunction || declaration is FirPropertyAccessor
+            for (parameter in declaration.valueParameters) {
+                reportIfUnderscore(
+                    parameter,
+                    context,
+                    reporter,
+                    isSingleUnderscoreAllowed = isSingleUnderscoreAllowed
+                )
             }
         } else if (declaration is FirFile) {
             for (import in declaration.imports) {
-                reportIfUnderscore(import.aliasName?.asString(), import.source, context, reporter)
+                reportIfUnderscore(import.aliasSource, context, reporter, isExpression = false)
             }
         }
     }
@@ -146,64 +74,98 @@ private fun reportIfUnderscore(
     reporter: DiagnosticReporter,
     isSingleUnderscoreAllowed: Boolean = false
 ) {
-    val source = declaration.source
-    val rawIdentifier = when (source) {
+    val declarationSource = declaration.source
+    val rawName = when (declarationSource) {
         is FirPsiSourceElement ->
-            (source.psi as? PsiNameIdentifierOwner)?.nameIdentifier?.text
+            (declarationSource.psi as? PsiNameIdentifierOwner)?.nameIdentifier?.text
         is FirLightSourceElement ->
-            source.treeStructure.nameIdentifier(source.lighterASTNode)?.toString()
+            declarationSource.treeStructure.nameIdentifier(declarationSource.lighterASTNode)?.toString()
         else ->
             null
     }
 
-    reportIfUnderscore(rawIdentifier, source, context, reporter, isSingleUnderscoreAllowed)
+    reportIfUnderscore(rawName, declarationSource, context, reporter, isSingleUnderscoreAllowed)
 
     val returnOrReceiverTypeRef = when (declaration) {
-        is FirValueParameter -> declaration.returnTypeRef.source
-        is FirFunction -> declaration.receiverTypeRef?.source
+        is FirValueParameter -> declaration.returnTypeRef
+        is FirFunction -> declaration.receiverTypeRef
         else -> null
     }
 
-    val isReportUnderscoreInReturnOrReceiverTypeRef = when (returnOrReceiverTypeRef) {
-        is FirPsiSourceElement -> {
-            val psi = returnOrReceiverTypeRef.psi
-            psi is KtTypeReference && psi.anyDescendantOfType<LeafPsiElement> { isUnderscore(it.text) }
-        }
-        is FirLightSourceElement -> {
-            val lighterASTNode = returnOrReceiverTypeRef.lighterASTNode
-            lighterASTNode.tokenType == KtNodeTypes.TYPE_REFERENCE &&
-                    source?.treeStructure?.findFirstDescendant(lighterASTNode)
-                    { it.tokenType == KtNodeTypes.REFERENCE_EXPRESSION && isUnderscore(it.toString()) } != null
-        }
-        else -> {
-            false
-        }
-    }
+    if (returnOrReceiverTypeRef is FirResolvedTypeRef) {
+        val delegatedTypeRef = returnOrReceiverTypeRef.delegatedTypeRef
+        if (delegatedTypeRef is FirUserTypeRef) {
+            for (qualifierPart in delegatedTypeRef.qualifier) {
+                reportIfUnderscore(qualifierPart.source, context, reporter, isExpression = true)
 
-    if (isReportUnderscoreInReturnOrReceiverTypeRef) {
-        reporter.reportOn(returnOrReceiverTypeRef, FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS, context)
+                for (typeArgument in qualifierPart.typeArgumentList.typeArguments) {
+                    reportIfUnderscore(typeArgument.source, context, reporter, isExpression = true)
+                }
+            }
+        }
     }
 }
 
 private fun reportIfUnderscore(
-    text: CharSequence?,
     source: FirSourceElement?,
     context: CheckerContext,
     reporter: DiagnosticReporter,
-    isSingleUnderscoreAllowed: Boolean = false,
-    isExpression: Boolean = false
+    isExpression: Boolean
 ) {
-    if (text == null || isSingleUnderscoreAllowed && text == "_") {
+    if (source != null && source.kind !is FirFakeSourceElementKind) {
+        var rawName: String? = null
+        if (source is FirPsiSourceElement) {
+            val psi = source.psi
+            rawName = if (psi is KtNameReferenceExpression) {
+                psi.getReferencedNameElement().node.text
+            } else if (psi is KtTypeProjection) {
+                psi.typeReference?.typeElement?.text
+            } else if (psi is LeafPsiElement && psi.elementType == KtTokens.IDENTIFIER) {
+                psi.text
+            } else {
+                null
+            }
+        } else if (source is FirLightSourceElement) {
+            val tokenType = source.elementType
+            rawName = if (tokenType is KtNameReferenceExpressionElementType || tokenType == KtTokens.IDENTIFIER) {
+                source.lighterASTNode.toString()
+            } else if (tokenType is KtTypeProjectionElementType) {
+                source.lighterASTNode.getChildren(source.treeStructure).last().toString()
+            } else {
+                null
+            }
+        }
+
+        if (rawName?.isUnderscore == true) {
+            reporter.reportOn(
+                source,
+                if (isExpression) FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS else FirErrors.UNDERSCORE_IS_RESERVED,
+                context
+            )
+        }
+    }
+}
+
+private fun reportIfUnderscore(
+    rawName: CharSequence?,
+    source: FirSourceElement?,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+    isSingleUnderscoreAllowed: Boolean
+) {
+    if (source == null || rawName == null || isSingleUnderscoreAllowed && rawName == "_") {
         return
     }
 
-    if (isUnderscore(text)) {
+    if (rawName.isUnderscore && source.kind !is FirFakeSourceElementKind) {
         reporter.reportOn(
             source,
-            if (isExpression) FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS else FirErrors.UNDERSCORE_IS_RESERVED,
+            FirErrors.UNDERSCORE_IS_RESERVED,
             context
         )
     }
 }
 
-private fun isUnderscore(text: CharSequence) = text.all { it == '_' }
+val CharSequence.isUnderscore: Boolean
+    get() = all { it == '_' }
+

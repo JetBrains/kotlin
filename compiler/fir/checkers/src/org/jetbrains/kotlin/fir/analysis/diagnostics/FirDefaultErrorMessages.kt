@@ -387,6 +387,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNDERSCORE_IS_RESERVED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNEXPECTED_SAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENUM_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENUM_ENTRY
@@ -1387,6 +1389,14 @@ class FirDefaultErrorMessages {
                 TO_STRING,
                 RENDER_TYPE,
                 RENDER_TYPE,
+            )
+            map.put(
+                UNDERSCORE_IS_RESERVED,
+                "Names _, __, ___, ..., are reserved in Kotlin"
+            )
+            map.put(
+                UNDERSCORE_USAGE_WITHOUT_BACKTICKS,
+                "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
             )
             map.put(
                 EQUALITY_NOT_APPLICABLE,

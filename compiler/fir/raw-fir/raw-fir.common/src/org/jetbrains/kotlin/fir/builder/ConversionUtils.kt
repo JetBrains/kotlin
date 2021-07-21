@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -250,13 +251,17 @@ private fun FirExpression.createConventionCall(
 fun generateAccessExpression(
     qualifiedSource: FirSourceElement?,
     calleeReferenceSource: FirSourceElement?,
-    name: Name
+    name: Name,
+    diagnostic: ConeDiagnostic? = null
 ): FirQualifiedAccessExpression =
     buildQualifiedAccessExpression {
         this.source = qualifiedSource
         calleeReference = buildSimpleNamedReference {
             this.source = calleeReferenceSource
             this.name = name
+        }
+        if (diagnostic != null) {
+            this.nonFatalDiagnostics.add(diagnostic)
         }
     }
 
