@@ -130,96 +130,113 @@ class SwiftInteropBenchmarks {
     }
 
     func searchRoutesInSwiftMultigraph() {
-        initMultigraph(size: SMALL_BENCHMARK_SIZE)
-        for _ in 0...SMALL_BENCHMARK_SIZE {
-            var vertexes = Array(multigraph.allVertexes)
-            var result = multigraph.searchRoutesWithLimits(start: 1,
-                                                           finish: NSNumber(value: SMALL_BENCHMARK_SIZE / 2 + SMALL_BENCHMARK_SIZE / 4),
-                                                           limits: SimpleCost(cost: SMALL_BENCHMARK_SIZE / 5))
-            var count = result.map{ $0.count }.reduce(0, +)
+        autoreleasepool {
+            initMultigraph(size: SMALL_BENCHMARK_SIZE)
+            for _ in 0...SMALL_BENCHMARK_SIZE {
+                var vertexes = Array(multigraph.allVertexes)
+                var result = multigraph.searchRoutesWithLimits(start: 1,
+                                                               finish: NSNumber(value: SMALL_BENCHMARK_SIZE / 2 + SMALL_BENCHMARK_SIZE / 4),
+                                                               limits: SimpleCost(cost: SMALL_BENCHMARK_SIZE / 5))
+                var count = result.map{ $0.count }.reduce(0, +)
+            }
         }
     }
 
     func searchTravelRoutes() {
-        cityMap = CityMap()
-        initCityMap(size: BENCHMARK_SIZE)
-        let transports: Set = [Transport.car, Transport.underground]
-        let interests: Set = [Interest.sight, Interest.culture]
-        let cost = RouteCost(moneyCost: 500, timeCost: 6, interests: interests, transport: transports)
-        for _ in 0...SMALL_BENCHMARK_SIZE {
-            var result = cityMap.getRoutes(start: Array(cityMap.allPlaces).first!, finish: Array(cityMap.allPlaces).last!, limits: cost)
-            var totalCost = result.flatMap{ $0 }.map { $0.cost.moneyCost }.reduce(0, +)
+        autoreleasepool {
+            cityMap = CityMap()
+            initCityMap(size: BENCHMARK_SIZE)
+            let transports: Set = [Transport.car, Transport.underground]
+            let interests: Set = [Interest.sight, Interest.culture]
+            let cost = RouteCost(moneyCost: 500, timeCost: 6, interests: interests, transport: transports)
+            for _ in 0...SMALL_BENCHMARK_SIZE {
+                var result = cityMap.getRoutes(start: Array(cityMap.allPlaces).first!, finish: Array(cityMap.allPlaces).last!, limits: cost)
+                var totalCost = result.flatMap{ $0 }.map { $0.cost.moneyCost }.reduce(0, +)
+            }
         }
     }
 
     func availableTransportOnMap() {
-        cityMap = CityMap()
-        initCityMap(size: MEDIUM_BENCHMARK_SIZE)
-        Set(cityMap.allRoutes.map { (cityMap.getRouteById(id: $0.id).cost as! RouteCost).transport })
+        autoreleasepool {
+            cityMap = CityMap()
+            initCityMap(size: MEDIUM_BENCHMARK_SIZE)
+            Set(cityMap.allRoutes.map { (cityMap.getRouteById(id: $0.id).cost as! RouteCost).transport })
+        }
     }
 
     func allPlacesMapedByInterests() {
-        cityMap = CityMap()
-        initCityMap(size: MEDIUM_BENCHMARK_SIZE)
-        let placesByInterests = cityMap.allPlaces.reduce([Interest: Array<Place>]()) { (dict, place) -> [Interest: Array<Place>] in
-            var dict = dict
-            if (dict[place.interestCategory] != nil) {
-                dict[place.interestCategory]?.append(place)
-            } else {
-                dict[place.interestCategory] = [place]
+        autoreleasepool {
+            cityMap = CityMap()
+            initCityMap(size: MEDIUM_BENCHMARK_SIZE)
+            let placesByInterests = cityMap.allPlaces.reduce([Interest: Array<Place>]()) { (dict, place) -> [Interest: Array<Place>] in
+                var dict = dict
+                if (dict[place.interestCategory] != nil) {
+                    dict[place.interestCategory]?.append(place)
+                } else {
+                    dict[place.interestCategory] = [place]
+                }
+                return dict
             }
-            return dict
         }
-
     }
 
     func getAllPlacesWithStraightRoutesTo() {
-        cityMap = CityMap()
-        initCityMap(size: MEDIUM_BENCHMARK_SIZE)
-        for _ in 0...SMALL_BENCHMARK_SIZE {
-            let start = cityMap.allPlaces.randomElement()!
-            let availableRoutes = cityMap.getAllStraightRoutesFrom(place: start)
-            var _ = availableRoutes.map { $0.to }
+        autoreleasepool {
+            cityMap = CityMap()
+            initCityMap(size: MEDIUM_BENCHMARK_SIZE)
+            for _ in 0...SMALL_BENCHMARK_SIZE {
+                let start = cityMap.allPlaces.randomElement()!
+                let availableRoutes = cityMap.getAllStraightRoutesFrom(place: start)
+                var _ = availableRoutes.map { $0.to }
+            }
         }
     }
 
     func goToAllAvailablePlaces() {
-        cityMap = CityMap()
-        initCityMap(size: MEDIUM_BENCHMARK_SIZE)
-        for _ in 0...SMALL_BENCHMARK_SIZE {
-            let start = cityMap.allPlaces.randomElement()!
-            let availableRoutes = cityMap.getAllStraightRoutesFrom(place: start)
-            availableRoutes.map { 2 * $0.cost.moneyCost }
+        autoreleasepool {
+            cityMap = CityMap()
+            initCityMap(size: MEDIUM_BENCHMARK_SIZE)
+            for _ in 0...SMALL_BENCHMARK_SIZE {
+                let start = cityMap.allPlaces.randomElement()!
+                let availableRoutes = cityMap.getAllStraightRoutesFrom(place: start)
+                availableRoutes.map { 2 * $0.cost.moneyCost }
+            }
         }
     }
 
     func removeVertexAndEdgesSwiftMultigraph() {
-        initMultigraph(size: SMALL_BENCHMARK_SIZE)
-        let multigraphCopy = multigraph.doCopyMultigraph()
-        var edges = multigraphCopy.allEdges
-        while (!edges.isEmpty) {
-            multigraphCopy.removeEdge(id: UInt32(edges.randomElement()!))
-            let vertexes = multigraphCopy.allVertexes as! Set<NSNumber>
-            multigraphCopy.removeVertex(vertex: vertexes.randomElement()!)
-            edges = multigraphCopy.allEdges
+        autoreleasepool {
+            initMultigraph(size: SMALL_BENCHMARK_SIZE)
+            let multigraphCopy = multigraph.doCopyMultigraph()
+            var edges = multigraphCopy.allEdges
+            while (!edges.isEmpty) {
+                multigraphCopy.removeEdge(id: UInt32(edges.randomElement()!))
+                let vertexes = multigraphCopy.allVertexes as! Set<NSNumber>
+                multigraphCopy.removeVertex(vertex: vertexes.randomElement()!)
+                edges = multigraphCopy.allEdges
+            }
         }
     }
 
     func stringInterop() {
-        cityMap = CityMap()
-        fillCityMap()
-        let place = cityMap.allPlaces.first!
-        for _ in 0...BENCHMARK_SIZE {
-            let _ = place.fullDescription
+        autoreleasepool {
+            cityMap = CityMap()
+            fillCityMap()
+            let place = cityMap.allPlaces.first!
+            for _ in 0...BENCHMARK_SIZE {
+                let _ = place.fullDescription
+            }
         }
     }
 
     func simpleFunction() {
-        cityMap = CityMap()
-        fillCityMap()
-        let place = cityMap.allPlaces.first!
-        for _ in 0...BENCHMARK_SIZE {
-            let _ = place.compareTo(other:place)
+        autoreleasepool {
+            cityMap = CityMap()
+            fillCityMap()
+            let place = cityMap.allPlaces.first!
+            for _ in 0...BENCHMARK_SIZE {
+                let _ = place.compareTo(other:place)
+            }
         }
     }
 }
