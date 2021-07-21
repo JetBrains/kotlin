@@ -30,7 +30,7 @@ fun String.asFsdAddress(): String {
 fun box(): String {
     val state = Test().state
     if (state is GoBuildingRunningState<*>) {
-        <!DEBUG_INFO_SMARTCAST, TYPE_MISMATCH_WARNING!>state<!>.buildingWorkingDirectory.asFsdAddress()
+        state.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>buildingWorkingDirectory<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>asFsdAddress<!>()
     }
     return "OK"
 }

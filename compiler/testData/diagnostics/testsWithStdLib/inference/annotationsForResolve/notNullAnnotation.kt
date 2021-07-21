@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: -TypeEnhancementImprovementsInStrictMode
 
 // FILE: SmartFMap.java
 

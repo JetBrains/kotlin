@@ -50,14 +50,14 @@ fun poll11(flag: Boolean): Flow<String> {
 
 fun poll12(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::bar3<!> } else { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo3<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        val inv = if (flag) { ::bar3 } else { ::foo3 }
+        inv()
     }
 }
 
 fun poll13(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { ::bar2 } else { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo3<!> }
+        val inv = if (flag) { ::bar2 } else { ::foo3 }
         inv()
     }
 }
@@ -71,8 +71,8 @@ fun poll14(flag: Boolean): Flow<String> {
 
 fun poll15(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::bar5<!> } else { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo5<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        val inv = if (flag) { ::bar5 } else { ::foo5 }
+        inv()
     }
 }
 
@@ -86,14 +86,14 @@ fun poll16(flag: Boolean): Flow<String> {
 fun poll17(flag: Boolean): Flow<String> {
     return flow {
         val inv = if (flag) { foo7() } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> }
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        inv
     }
 }
 
 fun poll4(): Flow<String> {
     return flow {
-        val inv = try { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::bar<!> } finally { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        val inv = try { ::bar } finally { ::foo }
+        inv()
     }
 }
 
@@ -106,8 +106,8 @@ fun poll41(): Flow<String> {
 
 fun poll42(): Flow<String> {
     return flow {
-        val inv = try { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::bar3<!> } finally { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo3<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        val inv = try { ::bar3 } finally { ::foo3 }
+        inv()
     }
 }
 
@@ -120,8 +120,8 @@ fun poll43(): Flow<String> {
 
 fun poll44(): Flow<String> {
     return flow {
-        val inv = try { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::bar5<!> } finally { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo5<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        val inv = try { ::bar5 } finally { ::foo5 }
+        inv()
     }
 }
 
@@ -141,8 +141,8 @@ fun poll46(): Flow<String> {
 
 fun poll5(): Flow<String> {
     return flow {
-        val inv = try { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::bar<!> } catch (e: Exception) { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo<!> } finally { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        val inv = try { ::bar } catch (e: Exception) { ::foo } finally { ::foo }
+        inv()
     }
 }
 
@@ -155,8 +155,8 @@ fun poll51(): Flow<String> {
 
 fun poll52(): Flow<String> {
     return flow {
-        val inv = try { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::bar3<!> } catch (e: Exception) { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo3<!> } finally { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo3<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        val inv = try { ::bar3 } catch (e: Exception) { ::foo3 } finally { ::foo3 }
+        inv()
     }
 }
 
@@ -169,8 +169,8 @@ fun poll53(): Flow<String> {
 
 fun poll54(): Flow<String> {
     return flow {
-        val inv = try { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::bar5<!> } catch (e: Exception) { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo5<!> } finally { <!TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE!>::foo5<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        val inv = try { ::bar5 } catch (e: Exception) { ::foo5 } finally { ::foo5 }
+        inv()
     }
 }
 
@@ -184,6 +184,6 @@ fun poll55(): Flow<String> {
 fun poll56(): Flow<String> {
     return flow {
         val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        inv
     }
 }

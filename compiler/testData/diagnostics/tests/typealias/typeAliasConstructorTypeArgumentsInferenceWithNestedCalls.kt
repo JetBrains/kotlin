@@ -1,3 +1,4 @@
+// !LANGUAGE: -TypeEnhancementImprovementsInStrictMode
 // FULL_JDK
 
 // FILE: MapLike.java
