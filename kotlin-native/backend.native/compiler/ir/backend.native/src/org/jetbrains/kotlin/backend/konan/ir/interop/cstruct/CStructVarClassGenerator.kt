@@ -8,10 +8,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.companionObject
-import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
-import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.irBlockBody
@@ -20,10 +17,10 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
+import org.jetbrains.kotlin.backend.konan.ir.interop.*
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -303,7 +300,7 @@ internal class CStructVarClassGenerator(
                             IrFunctionExpressionImpl(
                                     startOffset = SYNTHETIC_OFFSET,
                                     endOffset = SYNTHETIC_OFFSET,
-                                    type = irBuiltIns.function(1).typeWith(cppValType, irBuiltIns.unitType),
+                                    type = irBuiltIns.functionN(1).typeWith(cppValType, irBuiltIns.unitType),
                                     origin = IrStatementOrigin.LAMBDA,
                                     function = lambda
                             )
