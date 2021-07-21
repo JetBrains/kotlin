@@ -17,5 +17,5 @@ public open class Foo</*0*/ T : Boo<K!>!, /*1*/ K : Boo<X!>!, /*2*/ X : Boo<K!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ open fun test1(): (Foo<(raw) Boo<Boo<Boo<*>!>!>!, (raw) Boo<Boo<*>!>!, (raw) Boo<Boo<*>!>!>..Foo<out Boo<out Boo<out Boo<*>!>!>!, out Boo<out Boo<*>!>!, out Boo<out Boo<*>!>!>?)
+    public/*package*/ open fun test1(): (Foo<(raw) Boo<Boo<Boo<*>!>!>!, (raw) Boo<Boo<*>!>!, (raw) Boo<*>!>..Foo<out Boo<out Boo<out Boo<*>!>!>!, out Boo<out Boo<*>!>!, out Boo<*>!>?)
 }
