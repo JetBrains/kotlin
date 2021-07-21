@@ -34,13 +34,12 @@ private object XcodeEnvironment {
                 ?: System.getenv("KOTLIN_FRAMEWORK_BUILD_TYPE")?.toNativeBuildType()
         }
 
-    val target: KonanTarget?
-        get() {
-            val sdk = System.getenv("SDK_NAME") ?: return null
-            val arch = System.getenv("NATIVE_ARCH") ?: return null
-            val nativeTargets = AppleSdk.defineNativeTargets(sdk, listOf(arch))
 
-            return nativeTargets.firstOrNull()
+    val targets: List<KonanTarget>
+        get() {
+            val sdk = System.getenv("SDK_NAME") ?: return emptyList()
+            val archs = System.getenv("ARCHS")?.split(" ") ?: return emptyList()
+            return AppleSdk.defineNativeTargets(sdk, archs)
         }
 
     val frameworkSearchDir: File?
@@ -63,6 +62,15 @@ private object XcodeEnvironment {
 private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): TaskProvider<Copy>? {
     if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHost) return null
 
+    val envTargets = XcodeEnvironment.targets
+    if (envTargets.size > 1) {
+        logger.debug(
+            "Unable to register assemble Apple framework task because " +
+                    "'ARCHS' contains more than one value."
+        )
+        return null
+    }
+
     val frameworkBuildType = framework.buildType
     val frameworkTarget = framework.target
     val frameworkTaskName = lowerCamelCaseName(
@@ -74,7 +82,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
     )
 
     val envBuildType = XcodeEnvironment.buildType
-    val envTarget = XcodeEnvironment.target
+    val envTarget = envTargets.firstOrNull()
     val envFrameworkSearchDir = XcodeEnvironment.frameworkSearchDir
 
     if (envBuildType == null || envTarget == null || envFrameworkSearchDir == null) {
@@ -87,7 +95,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
         } else {
             logger.debug(
                 "Not registering $frameworkTaskName, since not called from Xcode " +
-                        "('SDK_NAME' and 'CONFIGURATION' not provided)"
+                        "('SDK_NAME', 'ARCHS' and 'CONFIGURATION' not provided)"
             )
         }
         return null
@@ -108,22 +116,22 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val assembleTask = registerAssembleAppleFrameworkTask(framework) ?: return
 
     val envBuildType = XcodeEnvironment.buildType
-    val envTarget = XcodeEnvironment.target
+    val envTargets = XcodeEnvironment.targets
     val envEmbeddedFrameworksDir = XcodeEnvironment.embeddedFrameworksDir
     val envFrameworkSearchDir = XcodeEnvironment.frameworkSearchDir
     val envSign = XcodeEnvironment.sign
 
     val frameworkTaskName = lowerCamelCaseName("embedAndSign", framework.namePrefix, "AppleFrameworkForXcode")
 
-    if (envBuildType == null || envTarget == null || envEmbeddedFrameworksDir == null || envFrameworkSearchDir == null) {
+    if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null || envFrameworkSearchDir == null) {
         logger.debug(
             "Not registering $frameworkTaskName, since not called from Xcode " +
-                    "('SDK_NAME', 'CONFIGURATION', 'TARGET_BUILD_DIR' and 'FRAMEWORKS_FOLDER_PATH' not provided)"
+                    "('SDK_NAME', 'CONFIGURATION', 'TARGET_BUILD_DIR', 'ARCHS' and 'FRAMEWORKS_FOLDER_PATH' not provided)"
         )
         return
     }
 
-    if (framework.buildType != envBuildType || framework.konanTarget != envTarget) return
+    if (framework.buildType != envBuildType || !envTargets.contains(framework.konanTarget)) return
 
     registerTask<Copy>(frameworkTaskName) { task ->
         task.group = "build"
@@ -132,7 +140,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         task.dependsOn(assembleTask)
         task.inputs.apply {
             property("type", envBuildType)
-            property("target", envTarget)
+            property("targets", envTargets)
             property("embeddedFrameworksDir", envEmbeddedFrameworksDir)
             property("sign", envSign)
         }
