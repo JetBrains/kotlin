@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluato
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
+import org.jetbrains.kotlin.load.java.lazy.types.TypeParameterUpperBoundEraser
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
