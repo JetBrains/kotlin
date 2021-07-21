@@ -267,11 +267,14 @@ class KotlinCoreEnvironment private constructor(
         this.initialRoots.addAll(initialRoots)
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
+            /*
+            // Temporarily disable until compiler is bootstrapped to 1.6.
             JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
                 messageCollector,
                 configuration,
                 initialRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
             )
+            */
         }
 
         val (roots, singleJavaFileRoots) =
