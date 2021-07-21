@@ -61,8 +61,6 @@ internal open class HackedFixStackMethodAnalyzerBase<V : Value>(
     private val queue = IntArray(nInsns)
     private var top = 0
 
-    private val singlePredBlock = IntArray(nInsns)
-
     protected open fun newFrame(nLocals: Int, nStack: Int): Frame<V> = Frame(nLocals, nStack)
 
     protected open fun visitControlFlowEdge(insn: Int, successor: Int): Boolean = true
@@ -78,8 +76,6 @@ internal open class HackedFixStackMethodAnalyzerBase<V : Value>(
         checkAssertions()
 
         computeExceptionEdges()
-
-        initSinglePredBlocks()
 
         val current = newFrame(method.maxLocals, method.maxStack)
         val handler = newFrame(method.maxLocals, method.maxStack)
@@ -134,85 +130,6 @@ internal open class HackedFixStackMethodAnalyzerBase<V : Value>(
         }
 
         return frames
-    }
-
-    private fun initSinglePredBlocks() {
-        markSinglePredBlockEntries()
-        markSinglePredBlockBodies()
-    }
-
-    private fun markSinglePredBlockEntries() {
-        // Method entry point is SPB entry point.
-        var blockId = 0
-        singlePredBlock[0] = ++blockId
-
-        // Every jump target is SPB entry point.
-        for (insn in insnsArray) {
-            when (insn) {
-                is JumpInsnNode -> {
-                    val labelIndex = insn.label.indexOf()
-                    if (singlePredBlock[labelIndex] == 0) {
-                        singlePredBlock[labelIndex] = ++blockId
-                    }
-                }
-                is LookupSwitchInsnNode -> {
-                    insn.dflt?.let { dfltLabel ->
-                        val dfltIndex = dfltLabel.indexOf()
-                        if (singlePredBlock[dfltIndex] == 0) {
-                            singlePredBlock[dfltIndex] = ++blockId
-                        }
-                    }
-                    for (label in insn.labels) {
-                        val labelIndex = label.indexOf()
-                        if (singlePredBlock[labelIndex] == 0) {
-                            singlePredBlock[labelIndex] = ++blockId
-                        }
-                    }
-                }
-                is TableSwitchInsnNode -> {
-                    insn.dflt?.let { dfltLabel ->
-                        val dfltIndex = dfltLabel.indexOf()
-                        if (singlePredBlock[dfltIndex] == 0) {
-                            singlePredBlock[dfltIndex] = ++blockId
-                        }
-                    }
-                    for (label in insn.labels) {
-                        val labelIndex = label.indexOf()
-                        if (singlePredBlock[labelIndex] == 0) {
-                            singlePredBlock[labelIndex] = ++blockId
-                        }
-                    }
-                }
-            }
-        }
-
-        // Every try-catch block handler entry point is SPB entry point
-        for (tcb in method.tryCatchBlocks) {
-            val handlerIndex = tcb.handler.indexOf()
-            if (singlePredBlock[handlerIndex] == 0) {
-                singlePredBlock[handlerIndex] = ++blockId
-            }
-        }
-    }
-
-    private fun markSinglePredBlockBodies() {
-        var current = 0
-        for ((i, insn) in insnsArray.withIndex()) {
-            if (singlePredBlock[i] == 0) {
-                singlePredBlock[i] = current
-            } else {
-                // Entered a new SPB.
-                current = singlePredBlock[i]
-            }
-
-            // GOTO, ATHROW, *RETURN instructions terminate current SPB.
-            when (insn.opcode) {
-                Opcodes.GOTO,
-                Opcodes.ATHROW,
-                in Opcodes.IRETURN..Opcodes.RETURN ->
-                    current = 0
-            }
-        }
     }
 
     private fun AbstractInsnNode.indexOf() = method.instructions.indexOf(this)
