@@ -52,7 +52,7 @@ class PureAndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
             androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = AGPVersion.v7_0_0
         )
-        buildOptions.acceptAndroidSdkLicenses()
+        buildOptions.androidHome?.let { acceptAndroidSdkLicenses(it) }
 
         super.setUp()
     }

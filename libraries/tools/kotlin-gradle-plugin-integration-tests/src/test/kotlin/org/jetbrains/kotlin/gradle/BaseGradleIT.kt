@@ -44,7 +44,7 @@ abstract class BaseGradleIT {
     open fun setUp() {
         // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
         workingDir = createTempDir(if (isWindows) "" else "BaseGradleIT")
-        defaultBuildOptions().acceptAndroidSdkLicenses()
+        defaultBuildOptions().androidHome?.let { acceptAndroidSdkLicenses(it) }
     }
 
     @After
@@ -52,47 +52,45 @@ abstract class BaseGradleIT {
         workingDir.deleteRecursively()
     }
 
-    // https://developer.android.com/studio/intro/update.html#download-with-gradle
-    fun BuildOptions.acceptAndroidSdkLicenses() {
-        if (this.androidHome == null) return
-
-        val sdkLicensesDir = this.androidHome.resolve("licenses")
-        if (!sdkLicensesDir.exists()) sdkLicensesDir.mkdirs()
-
-        val sdkLicenses = listOf(
-            "8933bad161af4178b1185d1a37fbf41ea5269c55",
-            "d56f5187479451eabf01fb78af6dfcb131a6481e",
-            "24333f8a63b6825ea9c5514f83c2829b004d1fee",
-        )
-        val sdkPreviewLicense = "84831b9409646a918e30573bab4c9c91346d8abd"
-
-        val sdkLicenseFile = sdkLicensesDir.resolve("android-sdk-license")
-        if (!sdkLicenseFile.exists()) {
-            sdkLicenseFile.createNewFile()
-            sdkLicenseFile.writeText(
-                sdkLicenses.joinToString(separator = "\n")
-            )
-        } else {
-            sdkLicenses
-                .subtract(
-                    sdkLicenseFile.readText().lines()
-                )
-                .forEach {
-                    sdkLicenseFile.appendText("$it\n")
-                }
-        }
-
-        val sdkPreviewLicenseFile = sdkLicensesDir.resolve("android-sdk-preview-license")
-        if (!sdkPreviewLicenseFile.exists()) {
-            sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
-        } else {
-            if (sdkPreviewLicense != sdkPreviewLicenseFile.readText().trim()) {
-                sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
-            }
-        }
-    }
 
     companion object {
+        // https://developer.android.com/studio/intro/update.html#download-with-gradle
+        fun acceptAndroidSdkLicenses(androidHome: File) {
+            val sdkLicensesDir = androidHome.resolve("licenses")
+            if (!sdkLicensesDir.exists()) sdkLicensesDir.mkdirs()
+
+            val sdkLicenses = listOf(
+                "8933bad161af4178b1185d1a37fbf41ea5269c55",
+                "d56f5187479451eabf01fb78af6dfcb131a6481e",
+                "24333f8a63b6825ea9c5514f83c2829b004d1fee",
+            )
+            val sdkPreviewLicense = "84831b9409646a918e30573bab4c9c91346d8abd"
+
+            val sdkLicenseFile = sdkLicensesDir.resolve("android-sdk-license")
+            if (!sdkLicenseFile.exists()) {
+                sdkLicenseFile.createNewFile()
+                sdkLicenseFile.writeText(
+                    sdkLicenses.joinToString(separator = "\n")
+                )
+            } else {
+                sdkLicenses
+                    .subtract(
+                        sdkLicenseFile.readText().lines()
+                    )
+                    .forEach {
+                        sdkLicenseFile.appendText("$it\n")
+                    }
+            }
+
+            val sdkPreviewLicenseFile = sdkLicensesDir.resolve("android-sdk-preview-license")
+            if (!sdkPreviewLicenseFile.exists()) {
+                sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
+            } else {
+                if (sdkPreviewLicense != sdkPreviewLicenseFile.readText().trim()) {
+                    sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
+                }
+            }
+        }
 
         private object DaemonRegistry {
             // wrapper version to the number of daemon runs performed
