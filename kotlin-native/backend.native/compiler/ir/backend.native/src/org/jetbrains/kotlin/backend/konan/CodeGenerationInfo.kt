@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.name.FqName
 
 internal fun IrClass.isNonGeneratedAnnotation(): Boolean =
         this.kind == ClassKind.ANNOTATION_CLASS &&
-                !this.annotations.hasAnnotation(serialInfoAnnotationFqName)
+                !this.annotations.hasAnnotation(serialInfoAnnotationFqName) &&
+                !this.annotations.hasAnnotation(inheritableSerialInfoFqName)
 
 private val serialInfoAnnotationFqName = FqName("kotlinx.serialization.SerialInfo")
+private val inheritableSerialInfoFqName = FqName("kotlinx.serialization.InheritableSerialInfo")
 
 /**
  * We don't need to generate RTTI in some cases, e.g. Objective-C external classes.

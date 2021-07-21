@@ -44,6 +44,11 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/IncorrectTransient2.kt");
     }
 
+    @TestMetadata("InheritableInfo.kt")
+    public void testInheritableInfo() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/InheritableInfo.kt");
+    }
+
     @TestMetadata("LazyRecursionBug.kt")
     public void testLazyRecursionBug() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/LazyRecursionBug.kt");

@@ -33,7 +33,6 @@ import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDesc
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.IMPL_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_CLASS_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialInfoFqName
 import java.util.*
 
 object KSerializerDescriptorResolver {
@@ -48,7 +47,7 @@ object KSerializerDescriptorResolver {
     fun isSerialInfoImpl(thisDescriptor: ClassDescriptor): Boolean {
         return thisDescriptor.name == IMPL_NAME
                 && thisDescriptor.containingDeclaration is LazyClassDescriptor
-                && thisDescriptor.containingDeclaration.annotations.hasAnnotation(serialInfoFqName)
+                && (thisDescriptor.containingDeclaration as ClassDescriptor).isSerialInfoAnnotation
     }
 
     fun addSerialInfoSuperType(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {

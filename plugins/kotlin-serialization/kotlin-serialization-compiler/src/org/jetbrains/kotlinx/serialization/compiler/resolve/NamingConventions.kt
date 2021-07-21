@@ -28,7 +28,9 @@ object SerializationAnnotations {
     internal val serialNameAnnotationFqName = FqName("kotlinx.serialization.SerialName")
     internal val requiredAnnotationFqName = FqName("kotlinx.serialization.Required")
     val serialTransientFqName = FqName("kotlinx.serialization.Transient")
+    // Also implicitly used in kotlin-native.compiler.backend.native/CodeGenerationInfo.kt
     internal val serialInfoFqName = FqName("kotlinx.serialization.SerialInfo")
+    internal val inheritableSerialInfoFqName = FqName("kotlinx.serialization.InheritableSerialInfo")
     internal val encodeDefaultFqName = FqName("kotlinx.serialization.EncodeDefault")
 
     internal val contextualFqName = FqName("kotlinx.serialization.ContextualSerialization") // this one is deprecated

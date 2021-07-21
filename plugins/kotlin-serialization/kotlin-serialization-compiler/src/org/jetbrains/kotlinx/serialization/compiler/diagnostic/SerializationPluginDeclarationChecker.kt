@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
@@ -51,6 +54,33 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         checkCorrectTransientAnnotationIsUsed(descriptor, props.serializableProperties, context.trace)
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
+        checkInheritedAnnotations(descriptor, declaration, context.trace)
+    }
+
+    private fun checkInheritedAnnotations(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
+        val annotationsFilter: (Annotations) -> List<Pair<FqName, AnnotationDescriptor>> = { an ->
+            an.map { it.annotationClass!!.fqNameSafe to it }
+                .filter { it.second.annotationClass?.isInheritableSerialInfoAnnotation == true }
+        }
+        val annotationByFq: MutableMap<FqName, AnnotationDescriptor> = mutableMapOf()
+        val reported: MutableSet<FqName> = mutableSetOf()
+        // my annotations
+        annotationByFq.putAll(annotationsFilter(descriptor.annotations))
+        // inherited
+        for (clazz in descriptor.getAllSuperClassifiers()) {
+            val annotations = annotationsFilter(clazz.annotations)
+            annotations.forEach { (fqname, call) ->
+                if (fqname in annotationByFq) {
+                    val existing = annotationByFq.getValue(fqname)
+                    if (existing.allValueArguments != call.allValueArguments) {
+                        if (reported.add(fqname)) {
+                            val entry = (existing as? LazyAnnotationDescriptor)?.annotationEntry ?: declaration
+                            trace.report(SerializationErrors.INCONSISTENT_INHERITABLE_SERIALINFO.on(entry, existing.type, clazz.defaultType))
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun checkMinRuntime(versions: VersionReader.RuntimeVersions, descriptor: ClassDescriptor, trace: BindingTrace) {

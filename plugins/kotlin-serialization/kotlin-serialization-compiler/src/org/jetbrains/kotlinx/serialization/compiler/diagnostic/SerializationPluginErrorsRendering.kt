@@ -116,5 +116,12 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.STRING,
             Renderers.STRING
         )
+
+        MAP.put(
+            SerializationErrors.INCONSISTENT_INHERITABLE_SERIALINFO,
+            "Argument values for inheritable serial info annotation ''{0}'' must be the same as the values in parent type ''{1}''",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
     }
 }
