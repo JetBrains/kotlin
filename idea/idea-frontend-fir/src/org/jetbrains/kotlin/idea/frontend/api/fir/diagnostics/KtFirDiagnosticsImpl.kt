@@ -3581,6 +3581,13 @@ internal class OverrideByInlineImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class ReifiedTypeParameterInOverrideImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ReifiedTypeParameterInOverride(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     firDiagnostic: FirPsiDiagnostic,

@@ -2218,6 +2218,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OverrideByInline::class
     }
 
+    abstract class ReifiedTypeParameterInOverride : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ReifiedTypeParameterInOverride::class
+    }
+
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         abstract val objectName: Name

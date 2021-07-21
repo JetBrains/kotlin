@@ -364,6 +364,14 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             }
         }
 
+        if (overriddenSymbols.isNotEmpty()) {
+            for (param in function.typeParameters) {
+                if (param.isReified) {
+                    reporter.reportOn(param.source, FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE, context)
+                }
+            }
+        }
+
         //check for inherited default values
         val paramsWithDefaults = overriddenSymbols.flatMap {
             if (it !is FirFunctionSymbol<*>) return@flatMap emptyList<Int>()
