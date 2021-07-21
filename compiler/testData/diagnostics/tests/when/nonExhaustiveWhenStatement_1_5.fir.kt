@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes +ProhibitNonExhaustiveWhenOnAlgebraicTypes
+// !LANGUAGE: -WarnAboutNonExhaustiveWhenOnAlgebraicTypes -ProhibitNonExhaustiveWhenOnAlgebraicTypes
 
 enum class SomeEnum {
     A, B
@@ -18,25 +17,25 @@ sealed interface IBase {
 // ------------------ not null ------------------
 
 fun test_1(x: SomeEnum) {
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         SomeEnum.A -> ""
     }
 }
 
 fun test_2(x: Base) {
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         is Base.A -> ""
     }
 }
 
 fun test_3(x: IBase) {
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         is IBase.A -> ""
     }
 }
 
 fun test_4(x: Boolean) {
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         true -> ""
     }
 }
@@ -44,47 +43,47 @@ fun test_4(x: Boolean) {
 // ------------------ nullable ------------------
 
 fun test_5(x: SomeEnum?) {
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         SomeEnum.A -> ""
         SomeEnum.B -> ""
     }
 
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         SomeEnum.A -> ""
         null -> ""
     }
 }
 
 fun test_6(x: Base?) {
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         is Base.A -> ""
         is Base.B -> ""
     }
 
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         is Base.A -> ""
         null -> ""
     }
 }
 
 fun test_7(x: IBase?) {
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         is IBase.A -> ""
         is IBase.B -> ""
     }
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         is IBase.A -> ""
         null -> ""
     }
 }
 
 fun test_8(x: Boolean?) {
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         true -> ""
         false -> ""
     }
 
-    <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (x) {
         true -> ""
         null -> ""
     }

@@ -1,3 +1,4 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // See also: KT-11998
 data class My(val x: Boolean?)
 

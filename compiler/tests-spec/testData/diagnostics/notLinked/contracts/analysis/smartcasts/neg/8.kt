@@ -1,3 +1,4 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*

@@ -37,10 +37,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.*
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingDescriptor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
@@ -56,7 +54,6 @@ import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.indexOrMinusOne
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
@@ -1025,23 +1022,62 @@ class ControlFlowInformationProviderImpl private constructor(
                         }
                         continue
                     }
-                    if (!usedAsExpression && missingCases.isNotEmpty()) {
-                        val kind = when {
-                            WhenChecker.getClassDescriptorOfTypeIfSealed(subjectType) != null -> AlgebraicTypeKind.Sealed
-                            WhenChecker.getClassDescriptorOfTypeIfEnum(subjectType) != null -> AlgebraicTypeKind.Enum
-                            subjectType?.isBooleanOrNullableBoolean() == true -> AlgebraicTypeKind.Boolean
-                            else -> null
-                        }
+                    if (!usedAsExpression) {
 
-                        if (kind != null) {
-                            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveWhenOnAlgebraicTypes)) {
-                                trace.report(NO_ELSE_IN_WHEN.on(element, missingCases))
-                            } else {
-                                trace.report(NON_EXHAUSTIVE_WHEN_STATEMENT.on(element, kind.displayName, missingCases))
-                            }
+                    }
+                    if (!usedAsExpression) {
+                        if (languageVersionSettings.supportsFeature(LanguageFeature.WarnAboutNonExhaustiveWhenOnAlgebraicTypes)) {
+                            // report warnings on all non-exhaustive when's with algebraic subject
+                            checkExhaustiveWhenStatement(subjectType, element, missingCases)
+                        } else {
+                            // report info if subject is sealed class and warning if it is enum
+                            checkWhenStatement(subjectType, element, context)
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun checkWhenStatement(
+        subjectType: KotlinType?,
+        element: KtWhenExpression,
+        context: BindingContext
+    ) {
+        val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(subjectType)
+        if (enumClassDescriptor != null) {
+            val enumMissingCases = WhenChecker.getEnumMissingCases(element, context, enumClassDescriptor)
+            if (enumMissingCases.isNotEmpty()) {
+                trace.report(NON_EXHAUSTIVE_WHEN.on(element, enumMissingCases))
+            }
+        }
+        val sealedClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfSealed(subjectType)
+        if (sealedClassDescriptor != null) {
+            val sealedMissingCases = WhenChecker.getSealedMissingCases(element, context, sealedClassDescriptor)
+            if (sealedMissingCases.isNotEmpty()) {
+                trace.report(NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS.on(element, sealedMissingCases))
+            }
+        }
+    }
+
+    private fun checkExhaustiveWhenStatement(
+        subjectType: KotlinType?,
+        element: KtWhenExpression,
+        missingCases: List<WhenMissingCase>
+    ) {
+        if (missingCases.isEmpty()) return
+        val kind = when {
+            WhenChecker.getClassDescriptorOfTypeIfSealed(subjectType) != null -> AlgebraicTypeKind.Sealed
+            WhenChecker.getClassDescriptorOfTypeIfEnum(subjectType) != null -> AlgebraicTypeKind.Enum
+            subjectType?.isBooleanOrNullableBoolean() == true -> AlgebraicTypeKind.Boolean
+            else -> null
+        }
+
+        if (kind != null) {
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveWhenOnAlgebraicTypes)) {
+                trace.report(NO_ELSE_IN_WHEN.on(element, missingCases))
+            } else {
+                trace.report(NON_EXHAUSTIVE_WHEN_STATEMENT.on(element, kind.displayName, missingCases))
             }
         }
     }

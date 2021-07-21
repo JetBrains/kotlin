@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 fun test1() {
     if (true) {
         <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (true) {
