@@ -14,8 +14,8 @@ internal object AppleSdk {
 
         val targets: MutableSet<KonanTarget> = mutableSetOf()
 
-        when (platform) {
-            "iphoneos" -> {
+        when {
+            platform.startsWith("iphoneos") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "arm64", "arm64e" -> KonanTarget.IOS_ARM64
@@ -24,7 +24,7 @@ internal object AppleSdk {
                     }
                 })
             }
-            "iphonesimulator" -> {
+            platform.startsWith("iphonesimulator") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "arm64", "arm64e" -> KonanTarget.IOS_SIMULATOR_ARM64
@@ -33,7 +33,7 @@ internal object AppleSdk {
                     }
                 })
             }
-            "watchos" -> {
+            platform.startsWith("watchos") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "armv7k" -> KonanTarget.WATCHOS_ARM32
@@ -42,7 +42,7 @@ internal object AppleSdk {
                     }
                 })
             }
-            "watchsimulator" -> {
+            platform.startsWith("watchsimulator") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "arm64", "arm64e" -> KonanTarget.WATCHOS_SIMULATOR_ARM64
@@ -52,7 +52,7 @@ internal object AppleSdk {
                     }
                 })
             }
-            "appletvos" -> {
+            platform.startsWith("appletvos") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "arm64", "arm64e" -> KonanTarget.TVOS_ARM64
@@ -60,7 +60,7 @@ internal object AppleSdk {
                     }
                 })
             }
-            "appletvsimulator" -> {
+            platform.startsWith("appletvsimulator") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "arm64", "arm64e" -> KonanTarget.TVOS_SIMULATOR_ARM64
@@ -69,7 +69,7 @@ internal object AppleSdk {
                     }
                 })
             }
-            "macosx" -> {
+            platform.startsWith("macosx") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "arm64" -> KonanTarget.MACOS_ARM64
