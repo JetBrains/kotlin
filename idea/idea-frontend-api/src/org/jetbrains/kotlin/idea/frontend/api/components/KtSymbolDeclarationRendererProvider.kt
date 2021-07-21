@@ -108,6 +108,8 @@ public enum class RendererModifier(public val includeByDefault: Boolean) {
 
     public companion object {
         public val ALL: Set<RendererModifier> = values().toSet()
+        public val DEFAULT: Set<RendererModifier> = values().filterTo(mutableSetOf()) { it.includeByDefault }
+        public val NONE: Set<RendererModifier> = emptySet()
     }
 }
 

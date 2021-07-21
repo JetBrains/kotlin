@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
 
+import com.intellij.DynamicBundle
+import com.intellij.core.CoreApplicationEnvironment
+import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElementFinder
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
-import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.FirModuleResolveStateConfiguratorForSingleModuleTestImpl
-import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.registerTestServices
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Disposer
+import com.intellij.psi.impl.source.tree.TreeCopyHandler
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.*
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -36,6 +38,7 @@ import kotlin.io.path.nameWithoutExtension
 abstract class AbstractLowLevelApiTest : TestWithDisposable() {
     private lateinit var testInfo: KotlinTestInfo
 
+    @OptIn(TestInfrastructureInternals::class)
     private val configure: TestConfigurationBuilder.() -> Unit = {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -95,10 +98,25 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
             registerServicesForProject(this)
         }
 
-        doTestByFileStructure(moduleInfo.ktFiles.toList(), moduleStructure, testServices)
+        registerApplicationServices()
+
+        doTestByFileStructure(
+            moduleInfo.testFilesToKtFiles.filter { (testFile, _) -> !testFile.isAdditional }.values.toList(),
+            moduleStructure,
+            testServices
+        )
+    }
+
+    private fun registerApplicationServices() {
+        val application = ApplicationManager.getApplication() as MockApplication
+        KotlinCoreEnvironment.underApplicationLock {
+            registerApplicationServices(application)
+        }
     }
 
     protected open fun registerServicesForProject(project: MockProject) {}
+
+    protected open fun registerApplicationServices(application: MockApplication) {}
 
     protected abstract fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices)
 

@@ -462,9 +462,14 @@ class KotlinCoreEnvironment private constructor(
     companion object {
         private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
 
-        private val APPLICATION_LOCK = Object()
+        @PublishedApi
+        internal val APPLICATION_LOCK = Object()
+
         private var ourApplicationEnvironment: KotlinCoreApplicationEnvironment? = null
         private var ourProjectCount = 0
+
+        inline fun <R> underApplicationLock(action: () -> R): R =
+            synchronized(APPLICATION_LOCK) { action() }
 
         @JvmStatic
         fun createForProduction(

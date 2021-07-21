@@ -71,9 +71,13 @@ class ExpressionMarkerProvider(testServices: TestServices) : TestService {
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <reified P : KtElement> getElementOfTypAtCaret(file: KtFile): P {
-        val offset = atCaret[file.name]
+    fun getCaretPosition(file: KtFile): Int {
+        return atCaret[file.name]
             ?: error("No caret found in file")
+    }
+
+    inline fun <reified P : KtElement> getElementOfTypAtCaret(file: KtFile): P {
+        val offset = getCaretPosition(file)
         return file.findElementAt(offset)
             ?.parentOfType<P>()
             ?: error("No expression found at caret")
