@@ -25,6 +25,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
     }
 
     @Test
+    @TestMetadata("annotationConstructorCallNative.kt")
+    public void testAnnotationConstructorCallNative() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/annotationConstructorCallNative.kt");
+    }
+
+    @Test
     @TestMetadata("sharedImmutable.kt")
     public void testSharedImmutable() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");

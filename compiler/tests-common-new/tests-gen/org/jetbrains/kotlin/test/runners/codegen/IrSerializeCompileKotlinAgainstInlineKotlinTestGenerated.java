@@ -26,6 +26,28 @@ public class IrSerializeCompileKotlinAgainstInlineKotlinTestGenerated extends Ab
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/boxInline/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+        @Test
+        public void testAllFilesPresentInAnnotations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("annotationInstanceInlining.kt")
+        public void testAnnotationInstanceInlining() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/annotations/annotationInstanceInlining.kt");
+        }
+
+        @Test
+        @TestMetadata("instanceInAnonymousClass.kt")
+        public void testInstanceInAnonymousClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/annotations/instanceInAnonymousClass.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")
     @TestDataPath("$PROJECT_ROOT")
     public class AnonymousObject {
