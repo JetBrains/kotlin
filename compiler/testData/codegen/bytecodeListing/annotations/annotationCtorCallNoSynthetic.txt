@@ -1,0 +1,18 @@
+@kotlin.Metadata
+public final class AnnotationCtorCallNoSyntheticKt {
+    // source: 'annotationCtorCallNoSynthetic.kt'
+    public final static @Foo method box(): void
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Bar {
+    // source: 'annotationCtorCallNoSynthetic.kt'
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Foo {
+    // source: 'annotationCtorCallNoSynthetic.kt'
+    public abstract method bar(): Bar
+}

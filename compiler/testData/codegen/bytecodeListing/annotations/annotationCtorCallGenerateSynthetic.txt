@@ -1,0 +1,32 @@
+@kotlin.Metadata
+public synthetic final class AnnotationCtorCallGenerateSyntheticKt$annotationImpl$Foo$0 {
+    // source: 'annotationCtorCallGenerateSynthetic.kt'
+    private synthetic final field int: int
+    public method <init>(p0: int): void
+    public synthetic final method annotationType(): java.lang.Class
+    public final method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method hashCode(): int
+    public synthetic final method int(): int
+    public final @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public synthetic inner class AnnotationCtorCallGenerateSyntheticKt$annotationImpl$Foo$0
+}
+
+@kotlin.Metadata
+public final class AnnotationCtorCallGenerateSyntheticKt {
+    // source: 'annotationCtorCallGenerateSynthetic.kt'
+    public final static method box(): void
+    public synthetic inner class AnnotationCtorCallGenerateSyntheticKt$annotationImpl$Foo$0
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Bar {
+    // source: 'annotationCtorCallGenerateSynthetic.kt'
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Foo {
+    // source: 'annotationCtorCallGenerateSynthetic.kt'
+    public abstract method int(): int
+}
