@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.originalForIntersectionOverrideAttr
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtOverrideInfoProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
@@ -39,10 +37,10 @@ class KtFirOverrideInfoProvider(
         require(classSymbol is KtFirSymbol<*>)
 
         // Inspecting visibility requires resolving to status
-        return memberSymbol.firRef.withFirWithResolveAllowed outer@{ memberFir ->
+        return memberSymbol.firRef.withFirWithPossibleResolveInside(FirResolvePhase.STATUS) outer@{ memberFir ->
             if (memberFir !is FirCallableDeclaration) return@outer false
 
-            classSymbol.firRef.withFirWithResolveAllowed inner@{ parentClassFir ->
+            classSymbol.firRef.withFirWithPossibleResolveInside inner@{ parentClassFir ->
                 if (parentClassFir !is FirClass) return@inner false
 
                 memberFir.isVisibleInClass(parentClassFir)
@@ -55,10 +53,10 @@ class KtFirOverrideInfoProvider(
         require(parentClassSymbol is KtFirSymbol<*>)
 
         // Inspecting implementation status requires resolving to status
-        return memberSymbol.firRef.withFirWithResolveAllowed outer@{ memberFir ->
+        return memberSymbol.firRef.withFirWithPossibleResolveInside(FirResolvePhase.STATUS) outer@{ memberFir ->
             if (memberFir !is FirCallableDeclaration) return@outer null
 
-            parentClassSymbol.firRef.withFirWithResolveAllowed inner@{ parentClassFir ->
+            parentClassSymbol.firRef.withFirWithPossibleResolveInside inner@{ parentClassFir ->
                 if (parentClassFir !is FirClass) return@inner null
 
                 memberFir.symbol.getImplementationStatus(
@@ -103,12 +101,3 @@ class KtFirOverrideInfoProvider(
         return member
     }
 }
-
-/**
- * Convenience function.
- *
- * We use [FirRefWithValidityCheck.withFirWithPossibleResolveInside] instead of [FirRefWithValidityCheck.withFir] because we want to be able
- * to call this function inside itself - and it requires write lock, since each layer might want to call resolve and to use write lock.
- */
-private inline fun <D : FirDeclaration, R> FirRefWithValidityCheck<D>.withFirWithResolveAllowed(crossinline action: (D) -> R): R =
-    withFirWithPossibleResolveInside(phase = FirResolvePhase.RAW_FIR, action)

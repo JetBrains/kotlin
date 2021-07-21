@@ -24,11 +24,11 @@ internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.toAnnotationsList(
 }
 
 internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.containsAnnotation(classId: ClassId): Boolean =
-    withFir(ResolveType.AnnotationType) { fir ->
+    withFirByType(ResolveType.AnnotationType) { fir ->
         fir.annotations.any { it.getClassId(fir.moduleData.session) == classId }
     }
 
 internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.getAnnotationClassIds(): Collection<ClassId> =
-    withFir(ResolveType.AnnotationType) { fir ->
+    withFirByType(ResolveType.AnnotationType) { fir ->
         fir.annotations.mapNotNull { it.getClassId(fir.moduleData.session) }
     }

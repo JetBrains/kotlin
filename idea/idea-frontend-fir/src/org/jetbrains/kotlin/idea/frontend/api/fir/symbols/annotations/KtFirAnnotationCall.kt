@@ -31,7 +31,7 @@ internal class KtFirAnnotationCall(
     }
 
     override val classId: ClassId? by cached {
-        containingDeclaration.withFirWithPossibleResolveInside(ResolveType.AnnotationType) { fir ->
+        containingDeclaration.withFirByTypeWithPossibleResolveInside(ResolveType.AnnotationType) { fir ->
             annotationCallRef.getClassId(fir.moduleData.session)
         }
     }

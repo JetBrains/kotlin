@@ -58,10 +58,10 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
      * Runs [action] with fir element with write action hold
      * Consider using this then [action] may call some resolve
      */
-    inline fun <R> withFirWithPossibleResolveInside(
+    inline fun <R> withFirByTypeWithPossibleResolveInside(
         resolveType: ResolveType = ResolveType.NoResolve,
         crossinline action: (fir: D) -> R
-    ): R = withFir(resolveType, action)
+    ): R = withFirByType(resolveType, action)
 
     val resolveState
         get() = resolveStateWeakRef.get() ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
@@ -71,7 +71,7 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
             withFir(phase) { fir -> createValue(fir) }
         }
 
-    inline fun <R> withFir(type: ResolveType, crossinline action: (fir: D) -> R): R {
+    inline fun <R> withFirByType(type: ResolveType, crossinline action: (fir: D) -> R): R {
         token.assertIsValidAndAccessible()
         val fir = firWeakRef.get()
             ?: throw EntityWasGarbageCollectedException("FirElement")
@@ -82,7 +82,7 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
 
     inline fun <R> withFirAndCache(type: ResolveType, crossinline createValue: (fir: D) -> R) =
         ValidityAwareCachedValue(token) {
-            withFir(type) { fir -> createValue(fir) }
+            withFirByType(type) { fir -> createValue(fir) }
         }
 }
 
