@@ -94,13 +94,12 @@ object ProtoMapValueExternalizer : DataExternalizer<ProtoMapValue> {
     }
 }
 
-
 abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
     override fun save(output: DataOutput, map: Map<String, T>?) {
         output.writeInt(map!!.size)
 
         for ((key, value) in map.entries) {
-            IOUtil.writeString(key, output)
+            output.writeString(key)
             writeValue(output, value)
         }
     }
@@ -110,7 +109,7 @@ abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
         val map = HashMap<String, T>(size)
 
         repeat(size) {
-            val name = IOUtil.readString(input)!!
+            val name = input.readString()
             map[name] = readValue(input)
         }
 
@@ -121,7 +120,6 @@ abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
     protected abstract fun readValue(input: DataInput): T
 }
 
-
 object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
     override fun readValue(input: DataInput): Long = input.readLong()
 
@@ -130,58 +128,43 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
     }
 }
 
-object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
-    override fun save(output: DataOutput, map: Map<String, Any>?) {
-        output.writeInt(map!!.size)
-        for (name in map.keys.sorted()) {
-            IOUtil.writeString(name, output)
-            val value = map[name]!!
-            when (value) {
-                is Int -> {
-                    output.writeByte(Kind.INT.ordinal)
-                    output.writeInt(value)
-                }
-                is Float -> {
-                    output.writeByte(Kind.FLOAT.ordinal)
-                    output.writeFloat(value)
-                }
-                is Long -> {
-                    output.writeByte(Kind.LONG.ordinal)
-                    output.writeLong(value)
-                }
-                is Double -> {
-                    output.writeByte(Kind.DOUBLE.ordinal)
-                    output.writeDouble(value)
-                }
-                is String -> {
-                    output.writeByte(Kind.STRING.ordinal)
-                    IOUtil.writeString(value, output)
-                }
-                else -> throw IllegalStateException("Unexpected constant class: ${value::class.java}")
+/** [DataExternalizer] for a Kotlin constant. */
+object ConstantExternalizer : DataExternalizer<Any> {
+
+    override fun save(output: DataOutput, value: Any) {
+        when (value) {
+            is Int -> {
+                output.writeByte(Kind.INT.ordinal)
+                output.writeInt(value)
             }
+            is Float -> {
+                output.writeByte(Kind.FLOAT.ordinal)
+                output.writeFloat(value)
+            }
+            is Long -> {
+                output.writeByte(Kind.LONG.ordinal)
+                output.writeLong(value)
+            }
+            is Double -> {
+                output.writeByte(Kind.DOUBLE.ordinal)
+                output.writeDouble(value)
+            }
+            is String -> {
+                output.writeByte(Kind.STRING.ordinal)
+                output.writeString(value)
+            }
+            else -> throw IllegalStateException("Unexpected constant class: ${value::class.java}")
         }
     }
 
-    override fun read(input: DataInput): Map<String, Any> {
-        val size = input.readInt()
-        val map = HashMap<String, Any>(size)
-
-        repeat(size) {
-            val name = IOUtil.readString(input)!!
-            val kind = Kind.values()[input.readByte().toInt()]
-
-            val value: Any = when (kind) {
-                Kind.INT -> input.readInt()
-                Kind.FLOAT -> input.readFloat()
-                Kind.LONG -> input.readLong()
-                Kind.DOUBLE -> input.readDouble()
-                Kind.STRING -> IOUtil.readString(input)!!
-            }
-
-            map[name] = value
+    override fun read(input: DataInput): Any {
+        return when (Kind.values()[input.readByte().toInt()]) {
+            Kind.INT -> input.readInt()
+            Kind.FLOAT -> input.readFloat()
+            Kind.LONG -> input.readLong()
+            Kind.DOUBLE -> input.readDouble()
+            Kind.STRING -> input.readString()
         }
-
-        return map
     }
 
     private enum class Kind {
@@ -190,11 +173,18 @@ object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
 }
 
 object IntExternalizer : DataExternalizer<Int> {
+    override fun save(output: DataOutput, value: Int) = output.writeInt(value)
     override fun read(input: DataInput): Int = input.readInt()
+}
 
-    override fun save(output: DataOutput, value: Int) {
-        output.writeInt(value)
-    }
+object LongExternalizer : DataExternalizer<Long> {
+    override fun save(output: DataOutput, value: Long) = output.writeLong(value)
+    override fun read(input: DataInput): Long = input.readLong()
+}
+
+object StringExternalizer : DataExternalizer<String> {
+    override fun save(output: DataOutput, value: String) = IOUtil.writeString(value, output)
+    override fun read(input: DataInput): String = IOUtil.readString(input)
 }
 
 
@@ -244,3 +234,69 @@ open class CollectionExternalizer<T>(
 object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })
 
 object IntCollectionExternalizer : CollectionExternalizer<Int>(IntExternalizer, { HashSet() })
+
+fun DataOutput.writeString(value: String) = StringExternalizer.save(this, value)
+
+fun DataInput.readString(): String = StringExternalizer.read(this)
+
+class ListExternalizer<T>(
+    private val elementExternalizer: DataExternalizer<T>
+) : DataExternalizer<List<T>> {
+
+    override fun save(output: DataOutput, value: List<T>) {
+        output.writeInt(value.size)
+        value.forEach {
+            elementExternalizer.save(output, it)
+        }
+    }
+
+    override fun read(input: DataInput): List<T> {
+        val size = input.readInt()
+        val list = ArrayList<T>(size)
+        repeat(size) {
+            list.add(elementExternalizer.read(input))
+        }
+        return list
+    }
+}
+
+class LinkedHashMapExternalizer<K, V>(
+    private val keyExternalizer: DataExternalizer<K>,
+    private val valueExternalizer: DataExternalizer<V>
+) : DataExternalizer<LinkedHashMap<K, V>> {
+
+    override fun save(output: DataOutput, map: LinkedHashMap<K, V>) {
+        output.writeInt(map.size)
+        for ((key, value) in map) {
+            keyExternalizer.save(output, key)
+            valueExternalizer.save(output, value)
+        }
+    }
+
+    override fun read(input: DataInput): LinkedHashMap<K, V> {
+        val size = input.readInt()
+        val map = LinkedHashMap<K, V>(size)
+        repeat(size) {
+            val key = keyExternalizer.read(input)
+            val value = valueExternalizer.read(input)
+            map[key] = value
+        }
+        return map
+    }
+}
+
+class NullableValueExternalizer<T>(private val valueExternalizer: DataExternalizer<T>) : DataExternalizer<T> {
+
+    override fun save(output: DataOutput, value: T?) {
+        output.writeBoolean(value != null)
+        value?.let {
+            valueExternalizer.save(output, it)
+        }
+    }
+
+    override fun read(input: DataInput): T? {
+        return if (input.readBoolean()) {
+            valueExternalizer.read(input)
+        } else null
+    }
+}

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.incremental
 
 import com.google.gson.GsonBuilder
-import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -35,7 +34,7 @@ abstract class ClasspathSnapshotTestCommon {
             check(relativePath.endsWith(".class"))
         }
 
-        fun snapshot() = KotlinClassSnapshot(KotlinClassInfo.tryCreateFrom(asFile().readBytes())!!)
+        fun snapshot() = ClassSnapshotter.snapshot(asFile().readBytes())
     }
 
     open class TestSourceFile(val sourceFile: SourceFile, val tmpDir: TemporaryFolder) {

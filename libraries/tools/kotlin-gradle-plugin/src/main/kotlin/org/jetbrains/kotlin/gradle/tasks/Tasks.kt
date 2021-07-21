@@ -778,8 +778,8 @@ abstract class KotlinCompile @Inject constructor(
         val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
         val previousSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
 
-        val currentSnapshot = ClasspathSnapshotSerializer.readFromFiles(currentSnapshotFiles)
-        val previousSnapshot = ClasspathSnapshotSerializer.readFromFiles(previousSnapshotFiles)
+        val currentSnapshot = ClasspathSnapshotSerializer.load(currentSnapshotFiles)
+        val previousSnapshot = ClasspathSnapshotSerializer.load(previousSnapshotFiles)
 
         return ClasspathChangesComputer.getChanges(currentSnapshot, previousSnapshot)
     }
