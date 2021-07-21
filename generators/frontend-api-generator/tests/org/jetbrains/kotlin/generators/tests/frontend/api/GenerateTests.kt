@@ -57,10 +57,9 @@ fun main(args: Array<String>) {
                 model("symbols/symbolByFqName")
             }
 
-            // todo
-//            testClass<AbstractSymbolByReferenceTest> {
-//                model("symbols/symbolByReference")
-//            }
+            testClass<AbstractSymbolByReferenceTest> {
+                model("symbols/symbolByReference")
+            }
 
             testClass<AbstractExpectedExpressionTypeTest> {
                 model("components/expectedExpressionType")
