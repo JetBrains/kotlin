@@ -19,12 +19,7 @@ dependencies {
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testImplementation(projectTests(":generators:test-generator"))
 
-    Platform[202] {
-        testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
-    }
-    Platform[203].orHigher {
-        testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
-    }
+    testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
     testRuntimeOnly(compile(intellijDep()) { includeJars("jna", rootProject = rootProject) })
 }
 

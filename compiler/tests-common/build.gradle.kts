@@ -57,12 +57,7 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(toolsJar())
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[202] {
-        testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
-    }
-    Platform[203].orHigher {
-        testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
-    }
+    testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
     testCompile(intellijDep()) {
         includeJars(
             "guava",

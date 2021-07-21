@@ -207,12 +207,7 @@ dependencies {
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
 
-    Platform[202] {
-        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
-    }
-    Platform[203].orHigher {
-        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
-    }
+    fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
 
     fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
 
