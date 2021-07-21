@@ -27,7 +27,7 @@ open class TypeApproximatorConfiguration {
 
     open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
     open fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
-        false  // true means that this type we can leave as is
+        true  // false means that this type we can leave as is
 
     abstract class AllFlexibleSameValue : TypeApproximatorConfiguration() {
         abstract val allFlexible: Boolean
@@ -60,7 +60,7 @@ open class TypeApproximatorConfiguration {
 
         // i.e. will be approximated only approximatedCapturedStatus captured types
         override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
-            type.captureStatus(ctx) != approximatedCapturedStatus
+            type.captureStatus(ctx) == approximatedCapturedStatus
 
         override val intersection: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
@@ -86,7 +86,7 @@ open class TypeApproximatorConfiguration {
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
         override val errorType: Boolean get() = true
 
-        override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = true
+        override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = false
     }
 
     object UpperBoundAwareIntersectionTypeApproximator : AllFlexibleSameValue() {
