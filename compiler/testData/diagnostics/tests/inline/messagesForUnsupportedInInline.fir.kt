@@ -12,7 +12,7 @@ abstract class Base {
 }
 
 class Derived : Base() {
-    override final inline fun withDefault(
+    <!OVERRIDE_BY_INLINE!>override final inline fun withDefault(
             <!NOT_YET_SUPPORTED_IN_INLINE!>f: () -> Unit<!>
-    ) {}
+    )<!> {}
 }

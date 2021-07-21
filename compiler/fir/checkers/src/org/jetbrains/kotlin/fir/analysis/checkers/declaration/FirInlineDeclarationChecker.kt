@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.util.checkChildrenWithCustomVisitor
@@ -49,9 +48,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
 
         val effectiveVisibility = declaration.effectiveVisibility
         checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
-        checkParameters(declaration, context, reporter)
-        checkNothingToInline(declaration, context, reporter)
-        checkCanBeInlined(declaration, effectiveVisibility, context, reporter)
+        checkCallableDeclaration(declaration, context, reporter)
     }
 
     private fun checkInlineFunctionBody(
@@ -337,9 +334,12 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         }
     }
 
-    private fun checkParameters(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (function !is FirSimpleFunction) return
-
+    private fun checkParameters(
+        function: FirSimpleFunction,
+        overriddenSymbols: List<FirCallableSymbol<out FirCallableDeclaration>>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         for (param in function.valueParameters) {
             if (param.isNoinline) continue
 
@@ -365,16 +365,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         }
 
         //check for inherited default values
-        val classSymbol = function.containingClass()?.toSymbol(context.session) as? FirClassSymbol<*> ?: return
-        if (!function.isOverride) return
-        if (!function.valueParameters.any { it.defaultValue == null }) return
-        val scope = classSymbol.unsubstitutedScope(context)
-
-        //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
-        //and not in processDirectOverriddenFunctionsWithBaseScope
-        scope.processFunctionsByName(function.name) { }
-        val overriddenMembers = scope.getDirectOverriddenMembers(function.symbol, true)
-        val paramsWithDefaults = overriddenMembers.flatMap { it ->
+        val paramsWithDefaults = overriddenSymbols.flatMap {
             if (it !is FirFunctionSymbol<*>) return@flatMap emptyList<Int>()
             it.valueParameterSymbols.mapIndexedNotNull { idx, param ->
                 idx.takeIf { param.hasDefaultValue }
@@ -392,8 +383,17 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         }
     }
 
-    private fun checkNothingToInline(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (function !is FirSimpleFunction) return
+    private fun FirCallableDeclaration.getOverriddenSymbols(context: CheckerContext): List<FirCallableSymbol<out FirCallableDeclaration>> {
+        if (!this.isOverride) return emptyList()
+        val classSymbol = this.containingClass()?.toSymbol(context.session) as? FirClassSymbol<*> ?: return emptyList()
+        val scope = classSymbol.unsubstitutedScope(context)
+        //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
+        //and not in processDirectOverriddenFunctionsWithBaseScope
+        scope.processFunctionsByName(this.symbol.name) { }
+        return scope.getDirectOverriddenMembers(this.symbol, true)
+    }
+
+    private fun checkNothingToInline(function: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (function.isExpect || function.isSuspend) return
         if (function.typeParameters.any { it.symbol.isReified }) return
         val hasInlinableParameters =
@@ -409,20 +409,32 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
     }
 
     private fun checkCanBeInlined(
-        declaration: FirFunction,
+        declaration: FirCallableDeclaration,
         effectiveVisibility: EffectiveVisibility,
         context: CheckerContext,
         reporter: DiagnosticReporter
-    ) {
-        if (declaration !is FirSimpleFunction) return
-        if (declaration.containingClass() == null) return
-        if (effectiveVisibility == EffectiveVisibility.PrivateInClass) return
-        val isFinal = when (declaration) {
-            is FirPropertyAccessor -> context.findClosest<FirProperty>()?.isFinal ?: declaration.isFinal
-            else -> declaration.isFinal
-        }
-        if (!isFinal) {
+    ): Boolean {
+        if (declaration.containingClass() == null) return true
+        if (effectiveVisibility == EffectiveVisibility.PrivateInClass) return true
+
+        if (!declaration.isFinal) {
             reporter.reportOn(declaration.source, FirErrors.DECLARATION_CANT_BE_INLINED, context)
+            return false
+        }
+        return true
+    }
+
+    internal fun checkCallableDeclaration(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration is FirPropertyAccessor) return
+        val overriddenSymbols = declaration.getOverriddenSymbols(context)
+        if (declaration is FirSimpleFunction) {
+            checkParameters(declaration, overriddenSymbols, context, reporter)
+            checkNothingToInline(declaration, context, reporter)
+        }
+        val canBeInlined = checkCanBeInlined(declaration, declaration.effectiveVisibility, context, reporter)
+
+        if (canBeInlined && overriddenSymbols.isNotEmpty()) {
+            reporter.reportOn(declaration.source, FirErrors.OVERRIDE_BY_INLINE, context)
         }
     }
 }

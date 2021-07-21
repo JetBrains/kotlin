@@ -27,7 +27,7 @@ open class Base {
 }
 
 class Derived: Base() {
-    inline final override fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>a: Int<!>) {
+    <!OVERRIDE_BY_INLINE!>inline final override fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>a: Int<!>)<!> {
 
     }
 }
