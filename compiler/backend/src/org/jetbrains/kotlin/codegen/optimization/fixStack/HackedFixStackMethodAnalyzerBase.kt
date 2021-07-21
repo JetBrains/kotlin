@@ -94,7 +94,11 @@ internal open class HackedFixStackMethodAnalyzerBase<V : Value>(
                 if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
                     visitNopInsn(f, insn)
                 } else {
-                    current.init(f).execute(insnNode, interpreter)
+                    current.init(f)
+                    if (insnOpcode != Opcodes.RETURN) {
+                        // Don't care about possibly incompatible return type
+                        current.execute(insnNode, interpreter)
+                    }
 
                     when {
                         insnNode is JumpInsnNode ->
