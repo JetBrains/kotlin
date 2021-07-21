@@ -110,12 +110,11 @@ object FirOptInUsageBaseChecker {
                 }
             }
             if (fir !is FirConstructor) {
-                // Note: coneType here crashes on overridden members
-                fir.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-                fir.receiverTypeRef?.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
+                fir.returnTypeRef.coneType.addExperimentalities(context, result, visited)
+                fir.receiverTypeRef?.coneType.addExperimentalities(context, result, visited)
                 if (fir is FirSimpleFunction) {
                     fir.valueParameters.forEach {
-                        it.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
+                        it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
                     }
                 }
             }
