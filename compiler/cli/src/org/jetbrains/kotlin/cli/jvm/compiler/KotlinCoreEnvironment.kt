@@ -543,7 +543,14 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment == null) {
-                    val disposable = Disposer.newDisposable()
+                    val disposable = if (unitTestMode) {
+                        parentDisposable
+                    } else {
+                        // TODO this is a memory leak in the compiler, as this Disposable is not registered and thus is never disposed
+                        // but using parentDisposable as disposable in compiler, causes access to application extension points after
+                        // they was disposed, this needs to be fixed
+                        Disposer.newDisposable("Disposable for the KotlinCoreApplicationEnvironment")
+                    }
                     ourApplicationEnvironment = createApplicationEnvironment(disposable, configuration, unitTestMode)
                     ourProjectCount = 0
                     Disposer.register(disposable, Disposable {

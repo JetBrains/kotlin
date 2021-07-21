@@ -76,6 +76,7 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
     protected fun runTest(path: String) {
         testDataPath = Paths.get(path)
         val testConfiguration = testConfiguration(path, configure)
+        Disposer.register(disposable, testConfiguration.rootDisposable)
         val testServices = testConfiguration.testServices
         val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
             path,
