@@ -16,4 +16,8 @@ class JavaTypeEnhancementState(
     companion object {
         val DEFAULT = JavaTypeEnhancementState(getDefaultJsr305Settings(), ::getDefaultReportLevelForAnnotation)
     }
+
+    override fun toString(): String {
+        return "JavaTypeEnhancementState(jsr305=$jsr305, getReportLevelForAnnotation=$getReportLevelForAnnotation)"
+    }
 }
