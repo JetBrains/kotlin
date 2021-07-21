@@ -1,5 +1,154 @@
 # CHANGELOG
 
+## 1.5.30-M1
+
+### Compiler
+
+#### New Features
+
+- [`KT-32443`](https://youtrack.jetbrains.com/issue/KT-32443) Experimental declarations should be contagious even when they are not explicitly used
+- [`KT-45844`](https://youtrack.jetbrains.com/issue/KT-45844) Forbid using experimental markers on override declarations
+- [`KT-45845`](https://youtrack.jetbrains.com/issue/KT-45845) Forbid using experimental markers on getter
+- [`KT-46644`](https://youtrack.jetbrains.com/issue/KT-46644) Resolve overrides for IrProperty on deserialization
+- [`KT-46967`](https://youtrack.jetbrains.com/issue/KT-46967) Support class type parameters annotations in FIR
+- [`KT-47402`](https://youtrack.jetbrains.com/issue/KT-47402) Native: optimize access to object declarations that have only const vals and no init blocks
+
+#### Fixes
+
+- [`KT-22852`](https://youtrack.jetbrains.com/issue/KT-22852) Report diagnostics on implicit usages of experimental API
+- [`KT-22941`](https://youtrack.jetbrains.com/issue/KT-22941) Experimental marker annotation with SOURCE retention is compiled without error
+- [`KT-24993`](https://youtrack.jetbrains.com/issue/KT-24993) Inference for buildSequence/yield doesn't work for labeled lambdas
+- [`KT-31728`](https://youtrack.jetbrains.com/issue/KT-31728) Incorrect EXPERIMENTAL_OVERRIDE_ERROR for override of experimental function in anonymous object
+- [`KT-33364`](https://youtrack.jetbrains.com/issue/KT-33364) Kotlin/Native debugger: execution stops only at next line for breakpoint at when expression without parameter
+- [`KT-42139`](https://youtrack.jetbrains.com/issue/KT-42139) NI: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER for emptyList / listOf (with no arguments) / emptyMap / mapOf (with no arguments) inside if block inside `sequence` block
+- [`KT-44241`](https://youtrack.jetbrains.com/issue/KT-44241) NI: BuilderInference regression
+- [`KT-44372`](https://youtrack.jetbrains.com/issue/KT-44372) FIR: KClass::java cannot be resolved as callable reference
+- [`KT-44547`](https://youtrack.jetbrains.com/issue/KT-44547) Native: wrong RTTI when overriding functions with equal signatures but different type arguments
+- [`KT-44571`](https://youtrack.jetbrains.com/issue/KT-44571) Segfault on unnecessary int unboxing
+- [`KT-45083`](https://youtrack.jetbrains.com/issue/KT-45083) Problem with property reference in builder inference
+- [`KT-45315`](https://youtrack.jetbrains.com/issue/KT-45315) Deprecate (V)::a reference resolution to companion in FE 1.0
+- [`KT-46393`](https://youtrack.jetbrains.com/issue/KT-46393) AE: "1 trailing arguments were found in Any<T> type" for private function with implicit anonymous return type inside generic class
+- [`KT-46661`](https://youtrack.jetbrains.com/issue/KT-46661) FIR: Investigate inference issue with self-types and star projection
+- [`KT-46775`](https://youtrack.jetbrains.com/issue/KT-46775) [Native] [IR] Support multiple suspend lambdas as class supertypes
+- [`KT-46836`](https://youtrack.jetbrains.com/issue/KT-46836) Error: Invalid LLVM module on inlineClasses external tests
+- [`KT-46838`](https://youtrack.jetbrains.com/issue/KT-46838) NullPointerException: Parameter specified as non-null is null in CollectionsKt.joinToString()
+- [`KT-46896`](https://youtrack.jetbrains.com/issue/KT-46896) Native IR: NPE when using irBuiltIns.suspendFunction
+- [`KT-46996`](https://youtrack.jetbrains.com/issue/KT-46996) FIR: INFERENCE_NO_INFORMATION_FOR_PARAMETER on type aliases with non-trivial expansions
+- [`KT-47034`](https://youtrack.jetbrains.com/issue/KT-47034) KtValueArgument.getArgumentExpression could lead to StubBasedPsiElementBase.notBoundInExistingAst
+- [`KT-47052`](https://youtrack.jetbrains.com/issue/KT-47052) BuilderInference case with flatMapTo doesn't work properly
+- [`KT-47082`](https://youtrack.jetbrains.com/issue/KT-47082) Stub type variable is leaked (reproduces with K/N during deserialization)
+- [`KT-47143`](https://youtrack.jetbrains.com/issue/KT-47143) ClassicTypeSystemContext couldn't handle: Captured(*) in Kotlin 1.5.0
+- [`KT-47148`](https://youtrack.jetbrains.com/issue/KT-47148) Type mismatch: inferred type is Any? but T? was expected
+- [`KT-47180`](https://youtrack.jetbrains.com/issue/KT-47180) Forbid using OptIn markers on local variable, value parameter or field
+- [`KT-47181`](https://youtrack.jetbrains.com/issue/KT-47181) Forbid using OptIn markers on types or type parameters
+- [`KT-47183`](https://youtrack.jetbrains.com/issue/KT-47183) Segfault on int unboxing
+- [`KT-47208`](https://youtrack.jetbrains.com/issue/KT-47208) Backend Internal error: Exception during IR lowering: assert at IrOverridingUtilKt.buildFakeOverrideMember
+- [`KT-47276`](https://youtrack.jetbrains.com/issue/KT-47276) Nullability annotations without target are ignored if type enhancement improvements are enabled
+- [`KT-47450`](https://youtrack.jetbrains.com/issue/KT-47450) StackOverflowException in psi2ir with many chained binary expressions
+- [`KT-47462`](https://youtrack.jetbrains.com/issue/KT-47462) K/N: AssertionError: Unbound private symbol org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl@6cb748db (NON-PUBLIC API): deserialized class Companion
+
+### IDE
+
+- [`KT-44643`](https://youtrack.jetbrains.com/issue/KT-44643) ISE: Could not generate LightClass for some declared in <null> on initialisation by `lazy` in a JVM module of a multiplatform project
+
+### IDE. Gradle Integration
+
+- [`KT-47163`](https://youtrack.jetbrains.com/issue/KT-47163) KJS / Gradle: `Could not resolve <artifact>` despite being resolvable & project buildable
+
+### IDE. JS
+
+- [`KT-47557`](https://youtrack.jetbrains.com/issue/KT-47557) KJS: With NPM dependency IDEA import fails when performed before Gradle build
+
+### JavaScript
+
+- [`KT-38363`](https://youtrack.jetbrains.com/issue/KT-38363) JS IR BE: support IC for lowerings
+- [`KT-45738`](https://youtrack.jetbrains.com/issue/KT-45738) KJS / IR: Wrong generated code for `when` statement
+- [`KT-46520`](https://youtrack.jetbrains.com/issue/KT-46520) KJS / IR: ISE "Can't find name for declaration FUN name:CharArray_init_$Create$" on callable reference to Array constructor
+- [`KT-46551`](https://youtrack.jetbrains.com/issue/KT-46551) KJS / IR: Add a basic sourcemap generation
+
+### Libraries
+
+- [`KT-47477`](https://youtrack.jetbrains.com/issue/KT-47477) Could not resolve kotlin-test during project import in case of multiplatform with only JVM target platform
+
+### Native
+
+- [`KT-35001`](https://youtrack.jetbrains.com/issue/KT-35001) warning: linking module flags 'SDK Version': IDs have conflicting values ('[2 x i32] [i32 13, i32 2]'
+- [`KT-43475`](https://youtrack.jetbrains.com/issue/KT-43475) Kotlin/Native compiler: Including a static C library increased cross-compilation time from 3.5minutes to 1 hour 40 minutes
+- [`KT-44148`](https://youtrack.jetbrains.com/issue/KT-44148) Escape analysis failure: Heap space out of memory
+
+### Native. C and ObjC Import
+
+- [`KT-46711`](https://youtrack.jetbrains.com/issue/KT-46711) platform.windows._LARGE_INTEGER cannot be passed by value
+
+### Native. ObjC Export
+
+- [`KT-43780`](https://youtrack.jetbrains.com/issue/KT-43780) Improve Swift/Obj-C ergonomics for object and companion object
+- [`KT-46431`](https://youtrack.jetbrains.com/issue/KT-46431) KMP accessing a property of an anonymous inner class that inherits from an abstract class causes a 'NSGenericException', reason: '[Shared_kobjcc0 ] is abstract' exception.
+- [`KT-47042`](https://youtrack.jetbrains.com/issue/KT-47042) Kotlin/Native: Concurrency Interoperability with Objective-C (Swift 5.5)
+
+### Native. Platforms
+
+- [`KT-44321`](https://youtrack.jetbrains.com/issue/KT-44321) Support Apple Silicon without Rosetta 2
+
+### Reflection
+
+- [`KT-18277`](https://youtrack.jetbrains.com/issue/KT-18277) InvalidProtocolBufferException: Stream closed on multithreaded access to built-ins data in reflection
+- [`KT-44977`](https://youtrack.jetbrains.com/issue/KT-44977) Reflection: ClassCastException caused by annotations with "AnnotationTarget.TYPE" usage on array attributes access
+
+### Tools. CLI
+
+- [`KT-40979`](https://youtrack.jetbrains.com/issue/KT-40979) CLI: Executing "kotlinc.bat" at a root path, errors are not reported with a correct filepath
+- [`KT-40994`](https://youtrack.jetbrains.com/issue/KT-40994) CLI: Add documentation for -J argument in `kotlinc -help`
+- [`KT-46764`](https://youtrack.jetbrains.com/issue/KT-46764) CLI: Java record defined in a single file root is not resolved
+
+### Tools. Commonizer
+
+- [`KT-45992`](https://youtrack.jetbrains.com/issue/KT-45992) [Commonizer] Allow commonization of TypeAlias and Class with same name
+- [`KT-46716`](https://youtrack.jetbrains.com/issue/KT-46716) [Commonizer] Analyze leaf source sets with original platform libraries
+- [`KT-46957`](https://youtrack.jetbrains.com/issue/KT-46957) [Commonizer] Unresolved classifier: platform/posix/ptrdiff_t for linuxMips32
+- [`KT-47133`](https://youtrack.jetbrains.com/issue/KT-47133) Forbid cinterop commonization with hierarchical commonization turned off
+- [`KT-47301`](https://youtrack.jetbrains.com/issue/KT-47301) [Commonizer] Associative commonization
+
+### Tools. Compiler Plugins
+
+- [`KT-46723`](https://youtrack.jetbrains.com/issue/KT-46723) Kotlin Lombok: JPS: config file is searched in directory relative to compiler daemon
+- [`KT-46739`](https://youtrack.jetbrains.com/issue/KT-46739) @SerialInfo NPE with default parameter
+
+### Tools. Gradle
+
+- [`KT-13258`](https://youtrack.jetbrains.com/issue/KT-13258) Kotlin compiler doesn't respect Gradle's "sourceCompatibility" and "targetCompatibility"
+- [`KT-43095`](https://youtrack.jetbrains.com/issue/KT-43095) Add support for Java Toolchain to the Gradle plugin
+- [`KT-45611`](https://youtrack.jetbrains.com/issue/KT-45611) KGP should declare JDK version as input
+- [`KT-47185`](https://youtrack.jetbrains.com/issue/KT-47185) Migrate Gradle Integration tests to use cache redirector
+
+### Tools. Gradle. JS
+
+- [`KT-47176`](https://youtrack.jetbrains.com/issue/KT-47176) KJS: Actualize NPM dependencies
+- [`KT-47154`](https://youtrack.jetbrains.com/issue/KT-47154) KJS / Gradle: Compile task reads dependencies metadata from filesystem too long on large projects
+- [`KT-47114`](https://youtrack.jetbrains.com/issue/KT-47114) KJS / IR: Could not resolve `coroutines-core-js`
+- [`KT-43379`](https://youtrack.jetbrains.com/issue/KT-43379) KJS / Gradle: On windows, an invalid regex is generated for Webpack ProgressPlugin
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-47126`](https://youtrack.jetbrains.com/issue/KT-47126) ios() target shortcuts should not include Apple Silicon by default
+
+### Tools. Gradle. Native
+
+- [`KT-42023`](https://youtrack.jetbrains.com/issue/KT-42023) Kotlin Native Cocoapods plugin fails when Xcode project has custom CONFIGURATION names
+
+### Tools. Incremental Compile
+
+- [`KT-27660`](https://youtrack.jetbrains.com/issue/KT-27660) JS Incremental compilation fails with java.io.IOException: java.lang.ArrayIndexOutOfBoundsException: Array index out of range: 0
+
+### Tools. JPS
+
+- [`KT-45763`](https://youtrack.jetbrains.com/issue/KT-45763) Failing tests in KotlinIDE
+
+### Tools. Scripts
+
+- [`KT-46646`](https://youtrack.jetbrains.com/issue/KT-46646) Scripts: ArrayIndexOutOfBoundsException on an empty script running
+
+
 ## 1.5.21
 
 ### Compiler
