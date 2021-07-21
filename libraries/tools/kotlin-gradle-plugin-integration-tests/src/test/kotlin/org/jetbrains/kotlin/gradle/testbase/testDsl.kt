@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicenses
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.*
 import java.nio.file.Files.copy
@@ -40,6 +42,7 @@ fun KGPBaseTest.project(
     )
     projectPath.addDefaultBuildFiles()
     projectPath.enableCacheRedirector()
+    projectPath.enableAndroidSdk()
     if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
     val gradleRunner = GradleRunner
@@ -203,6 +206,19 @@ private fun Path.addDefaultBuildFiles() {
             }
         }
     }
+}
+
+@OptIn(ExperimentalPathApi::class)
+internal fun Path.enableAndroidSdk() {
+    val androidSdk = KtTestUtil.findAndroidSdk()
+    resolve("local.properties")
+        .also { if (!it.exists()) it.createFile() }
+        .appendText(
+            """
+            sdk.dir=${androidSdk.absolutePath.replace('\\', '/')}
+            """.trimIndent()
+        )
+    acceptAndroidSdkLicenses(androidSdk)
 }
 
 @OptIn(ExperimentalPathApi::class)
