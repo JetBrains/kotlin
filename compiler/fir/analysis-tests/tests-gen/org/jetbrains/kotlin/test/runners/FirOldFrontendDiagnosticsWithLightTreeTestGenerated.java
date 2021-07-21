@@ -31412,6 +31412,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("nonExhaustiveWhenStatement_1_5.kt")
+            public void testNonExhaustiveWhenStatement_1_5() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/nonExhaustiveWhenStatement_1_5.kt");
+            }
+
+            @Test
             @TestMetadata("nonExhaustiveWhenStatement_1_6.kt")
             public void testNonExhaustiveWhenStatement_1_6() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/nonExhaustiveWhenStatement_1_6.kt");

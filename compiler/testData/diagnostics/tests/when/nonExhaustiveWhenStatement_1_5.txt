@@ -1,0 +1,78 @@
+package
+
+public fun test_1(/*0*/ x: SomeEnum): kotlin.Unit
+public fun test_10(/*0*/ x: Base?): kotlin.Unit
+public fun test_11(/*0*/ x: IBase?): kotlin.Unit
+public fun test_12(/*0*/ x: kotlin.Boolean?): kotlin.Unit
+public fun test_13(/*0*/ x: SomeEnum?): kotlin.Unit
+public fun test_14(/*0*/ x: Base?): kotlin.Unit
+public fun test_15(/*0*/ x: IBase?): kotlin.Unit
+public fun test_16(/*0*/ x: kotlin.Boolean?): kotlin.Unit
+public fun test_2(/*0*/ x: Base): kotlin.Unit
+public fun test_3(/*0*/ x: IBase): kotlin.Unit
+public fun test_4(/*0*/ x: kotlin.Boolean): kotlin.Unit
+public fun test_5(/*0*/ x: SomeEnum?): kotlin.Unit
+public fun test_6(/*0*/ x: Base?): kotlin.Unit
+public fun test_7(/*0*/ x: IBase?): kotlin.Unit
+public fun test_8(/*0*/ x: kotlin.Boolean?): kotlin.Unit
+public fun test_9(/*0*/ x: SomeEnum?): kotlin.Unit
+
+public sealed class Base {
+    protected constructor Base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class A : Base {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class B : Base {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public sealed interface IBase {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface A : IBase {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface B : IBase {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final enum class SomeEnum : kotlin.Enum<SomeEnum> {
+    enum entry A
+
+    enum entry B
+
+    private constructor SomeEnum()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: SomeEnum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<SomeEnum!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SomeEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<SomeEnum>
+}

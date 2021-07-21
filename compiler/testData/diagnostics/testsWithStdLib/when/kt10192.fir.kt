@@ -1,3 +1,4 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 fun test1() {
     if (true) {
         when (true) {

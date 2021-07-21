@@ -1,4 +1,4 @@
-// !LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes +ProhibitNonExhaustiveWhenOnAlgebraicTypes
+// !LANGUAGE: -WarnAboutNonExhaustiveWhenOnAlgebraicTypes -ProhibitNonExhaustiveWhenOnAlgebraicTypes
 
 enum class SomeEnum {
     A, B
@@ -17,19 +17,19 @@ sealed interface IBase {
 // ------------------ not null ------------------
 
 fun test_1(x: SomeEnum) {
-    when (x) {
+    <!NON_EXHAUSTIVE_WHEN!>when<!> (x) {
         SomeEnum.A -> ""
     }
 }
 
 fun test_2(x: Base) {
-    when (x) {
+    <!NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS!>when<!> (x) {
         is Base.A -> ""
     }
 }
 
 fun test_3(x: IBase) {
-    when (x) {
+    <!NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS!>when<!> (x) {
         is IBase.A -> ""
     }
 }
@@ -48,7 +48,7 @@ fun test_5(x: SomeEnum?) {
         SomeEnum.B -> ""
     }
 
-    when (x) {
+    <!NON_EXHAUSTIVE_WHEN!>when<!> (x) {
         SomeEnum.A -> ""
         null -> ""
     }
@@ -60,7 +60,7 @@ fun test_6(x: Base?) {
         is Base.B -> ""
     }
 
-    when (x) {
+    <!NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS!>when<!> (x) {
         is Base.A -> ""
         null -> ""
     }
@@ -71,7 +71,7 @@ fun test_7(x: IBase?) {
         is IBase.A -> ""
         is IBase.B -> ""
     }
-    when (x) {
+    <!NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS!>when<!> (x) {
         is IBase.A -> ""
         null -> ""
     }

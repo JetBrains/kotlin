@@ -214,6 +214,7 @@ enum class LanguageFeature(
     SafeCallsAreAlwaysNullable(KOTLIN_1_6),
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_6),
     TypeInferenceOnCallsWithSelfTypes(KOTLIN_1_6),
+    WarnAboutNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_6, kind = BUG_FIX),
 
     // 1.7
 

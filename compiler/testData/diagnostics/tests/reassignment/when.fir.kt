@@ -1,3 +1,4 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // !DIAGNOSTICS: -UNUSED_VALUE
 
 fun foo(f: Boolean): Int {
