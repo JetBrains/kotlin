@@ -3179,6 +3179,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NON_INTERNAL_PUBLISHED_API) { firDiagnostic ->
+        NonInternalPublishedApiImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE) { firDiagnostic ->
         ReifiedTypeParameterInOverrideImpl(
             firDiagnostic as FirPsiDiagnostic,

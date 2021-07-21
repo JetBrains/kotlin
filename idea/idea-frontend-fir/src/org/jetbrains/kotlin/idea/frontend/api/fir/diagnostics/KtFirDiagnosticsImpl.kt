@@ -3581,6 +3581,13 @@ internal class OverrideByInlineImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class NonInternalPublishedApiImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NonInternalPublishedApi(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ReifiedTypeParameterInOverrideImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

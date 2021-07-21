@@ -1177,6 +1177,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DECLARATION_CANT_BE_INLINED by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
         
         val OVERRIDE_BY_INLINE by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+        
+        val NON_INTERNAL_PUBLISHED_API by error<KtElement>()
 
         val REIFIED_TYPE_PARAMETER_IN_OVERRIDE by error<KtElement>(PositioningStrategy.REIFIED_MODIFIER)
 

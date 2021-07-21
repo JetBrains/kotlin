@@ -264,6 +264,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_EXHAUSTIVE_WHEN_STATEMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_INTERNAL_PUBLISHED_API
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_LOCAL_SUSPENSION_POINT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_MEMBER_FUNCTION_NO_BODY
@@ -936,6 +937,7 @@ class FirDefaultErrorMessages {
             map.put(OVERRIDE_BY_INLINE, "Override by an inline function")
             map.put(REIFIED_TYPE_PARAMETER_IN_OVERRIDE, "Override by a function with reified type parameter")
             map.put(INLINE_PROPERTY_WITH_BACKING_FIELD, "Inline property cannot have backing field")
+            map.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable for internal declaration")
             map.put(RESERVED_MEMBER_INSIDE_INLINE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
             map.put(
                 SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS,

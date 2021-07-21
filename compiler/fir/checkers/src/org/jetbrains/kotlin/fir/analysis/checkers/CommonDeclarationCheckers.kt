@@ -130,6 +130,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val annotatedDeclarationCheckers: Set<FirAnnotatedDeclarationChecker>
         get() = setOf(
             FirAnnotationChecker,
+            FirPublishedApiChecker,
         )
 
     override val typeAliasCheckers: Set<FirTypeAliasChecker>
