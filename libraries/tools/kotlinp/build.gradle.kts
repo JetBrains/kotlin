@@ -26,13 +26,13 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":generators:test-generator"))
 
-    testRuntimeOnly(project(":kotlinx-metadata-jvm"/*, configuration = "runtime"*/))
+    testRuntimeOnly(project(":kotlinx-metadata-jvm"))
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer") }
 
-    shadows(project(":kotlinx-metadata-jvm", configuration = "runtimeElements"))
+    shadows(project(":kotlinx-metadata-jvm"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
 }
 

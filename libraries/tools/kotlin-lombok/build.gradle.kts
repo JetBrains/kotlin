@@ -21,7 +21,6 @@ publishGradlePlugin()
 
 sourcesJar()
 javadocJar()
-noDefaultJar()
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 
 tasks {

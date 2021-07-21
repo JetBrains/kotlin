@@ -1,15 +1,11 @@
-
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.jvm.tasks.Jar
-
 description = "Kotlin Scripting JSR-223 support"
 
-plugins { java }
-
-val packedJars by configurations.creating
+plugins {
+    java
+}
 
 dependencies {
-    packedJars(project(":kotlin-scripting-jsr223-unshaded")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-jsr223-unshaded")) { isTransitive = false }
     runtimeOnly(project(":kotlin-script-runtime"))
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-scripting-common"))
@@ -26,12 +22,6 @@ sourceSets {
 
 publish()
 
-noDefaultJar()
-
-runtimeJar(rewriteDepsToShadedCompiler(
-        tasks.register<ShadowJar>("shadowJar")  {
-            from(packedJars)
-        }
-))
+runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 sourcesJar()
 javadocJar()

@@ -12,7 +12,7 @@ dependencies {
     api project(':kotlin-gradle-plugin-api')
 
     compileOnly kotlinStdlib()
-    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+    compileOnly project(':kotlin-compiler-embeddable')
 
     embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }
@@ -21,7 +21,6 @@ jar {
     manifestAttributes(manifest, project)
 }
 
-ArtifactsKt.noDefaultJar(project)
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
 configureSourcesJar()
 configureJavadocJar()

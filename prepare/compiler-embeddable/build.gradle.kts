@@ -41,8 +41,6 @@ sourceSets {
 
 publish()
 
-noDefaultJar()
-
 // dummy is used for rewriting dependencies to the shaded packages in the embeddable compiler
 compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
     archiveClassifier.set("dummy")

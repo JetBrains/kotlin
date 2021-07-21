@@ -1,9 +1,7 @@
-import org.gradle.jvm.tasks.Jar
-
 description = "Annotation Processor for Kotlin (for using with embeddable compiler)"
 
 plugins {
-    `java`
+    java
 }
 
 dependencies {
@@ -12,7 +10,6 @@ dependencies {
 
 publish()
 
-noDefaultJar()
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 
 sourcesJar()

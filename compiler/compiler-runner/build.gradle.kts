@@ -12,10 +12,10 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":daemon-common-new"))
-    api(projectRuntimeJar(":kotlin-daemon-client"))
+    api(project(":kotlin-daemon-client"))
     compileOnly(project(":compiler:util"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    runtimeOnly(project(":kotlin-compiler-embeddable"))
     api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 }
 

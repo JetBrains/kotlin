@@ -108,8 +108,6 @@ fun Project.kotlinBuiltins(forJvm: Boolean): Any =
     else dependencies.project(":core:builtins", configuration = "runtimeElementsJvm".takeIf { forJvm })
 
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
-fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
-fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
 
 enum class JpsDepScope {
     COMPILE, TEST, RUNTIME, PROVIDED

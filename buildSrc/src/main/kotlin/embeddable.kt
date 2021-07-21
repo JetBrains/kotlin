@@ -4,12 +4,13 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySubstitution
 import org.gradle.api.artifacts.component.ProjectComponentSelector
+import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
-import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.register
 import java.io.File
 
@@ -69,10 +70,18 @@ private fun ShadowJar.configureEmbeddableCompilerRelocation(withJavaxInject: Boo
     }
 }
 
-private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Unit): TaskProvider<out ShadowJar> {
+private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Unit): TaskProvider<ShadowJar> {
 
-    val compilerJar = configurations.getOrCreate("compilerJar")
-    dependencies.add(compilerJar.name, dependencies.project(":kotlin-compiler", configuration = "runtimeJar"))
+    val compilerJar = configurations.getOrCreate("compilerJar").apply {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        }
+    }
+
+    dependencies.add(compilerJar.name, dependencies.project(":kotlin-compiler")) { isTransitive = false }
 
     return tasks.register<ShadowJar>(taskName) {
         destinationDirectory.set(project.file(File(buildDir, "libs")))
@@ -100,7 +109,7 @@ fun Project.configureShadowJarSubstitutionInCompileClasspath() {
     }
 }
 
-fun Project.embeddableCompiler(taskName: String = "embeddable", body: ShadowJar.() -> Unit = {}): TaskProvider<out ShadowJar> =
+fun Project.embeddableCompiler(taskName: String = "embeddable", body: ShadowJar.() -> Unit = {}): TaskProvider<ShadowJar> =
     compilerShadowJar(taskName) {
         configureEmbeddableCompilerRelocation()
         body()
@@ -141,8 +150,8 @@ fun Project.embeddableCompilerDummyForDependenciesRewriting(
 }
 
 fun Project.rewriteDepsToShadedJar(
-    originalJarTask: TaskProvider<out Jar>, shadowJarTask: TaskProvider<out Jar>, body: Jar.() -> Unit = {}
-): TaskProvider<out Jar> {
+    originalJarTask: TaskProvider<out Jar>, shadowJarTask: TaskProvider<ShadowJar>, body: Jar.() -> Unit = {}
+): TaskProvider<ShadowJar> {
     originalJarTask.configure {
         archiveClassifier.set("original")
     }
@@ -154,7 +163,7 @@ fun Project.rewriteDepsToShadedJar(
 
         // When Gradle traverses the inputs, reject the shaded compiler JAR,
         // which leads to the content of that JAR being excluded as well:
-        val compilerDummyJarFile = project.provider { configurations.getByName("compilerDummyJar").singleFile }
+        val compilerDummyJarFile = project.provider { project.configurations.getByName("compilerDummyJar").singleFile }
         exclude { it.file == compilerDummyJarFile.get() }
 
         archiveClassifier.set("original")
@@ -163,8 +172,8 @@ fun Project.rewriteDepsToShadedJar(
     return shadowJarTask
 }
 
-fun Project.rewriteDepsToShadedCompiler(originalJarTask: TaskProvider<out Jar>, body: Jar.() -> Unit = {}): TaskProvider<out Jar> =
+fun Project.rewriteDepsToShadedCompiler(originalJarTask: TaskProvider<out Jar>, body: Jar.() -> Unit = {}): TaskProvider<ShadowJar> =
     rewriteDepsToShadedJar(originalJarTask, embeddableCompilerDummyForDependenciesRewriting(), body)
 
-fun Project.rewriteDefaultJarDepsToShadedCompiler(body: Jar.() -> Unit = {}): TaskProvider<out Jar> =
+fun Project.rewriteDefaultJarDepsToShadedCompiler(body: Jar.() -> Unit = {}): TaskProvider<ShadowJar> =
     rewriteDepsToShadedJar(tasks.named<Jar>("jar"), embeddableCompilerDummyForDependenciesRewriting(), body)

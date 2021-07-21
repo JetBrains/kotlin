@@ -56,8 +56,6 @@ if (deployVersion != null) {
     publish()
 }
 
-noDefaultJar()
-
 runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     callGroovy("manifestAttributes", manifest, project)
     manifest.attributes["Implementation-Version"] = version

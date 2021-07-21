@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-scripting-compiler"))
-    api(projectRuntimeJar(":kotlin-daemon-client"))
+    api(project(":kotlin-daemon-client"))
     compileOnly("org.jetbrains.kotlin:jcabi-aether:1.0-dev-3")
     compileOnly("org.sonatype.aether:aether-api:1.13.1")
     compileOnly("org.apache.maven:maven-core:3.0.3")

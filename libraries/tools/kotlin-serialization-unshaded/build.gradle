@@ -6,11 +6,6 @@ dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }
 
-TaskProvider<Jar> jar = tasks.named("jar")
-jar.configure {
-    manifestAttributes(manifest, project)
-}
-
-ArtifactsKt.runtimeJar(project, jar, {})
+ArtifactsKt.runtimeJar(project, {})
 configureSourcesJar()
 configureJavadocJar()

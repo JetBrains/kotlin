@@ -14,6 +14,7 @@ val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("
 
 dependencies {
     testImplementation(project(":kotlin-gradle-plugin"))
+    testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(project(":kotlin-project-model"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(kotlinGradlePluginTest)
@@ -26,12 +27,12 @@ dependencies {
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
-    testImplementation(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(intellijCoreDep()) { includeJars("jdom") }
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
-    testCompileOnly(project(path = ":kotlin-gradle-plugin-test-utils-embeddable", configuration = "compile"))
-    testRuntimeOnly(projectRuntimeJar(":kotlin-gradle-plugin-test-utils-embeddable"))
+    testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))
+    testRuntimeOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))
 
     testImplementation(project(path = ":examples:annotation-processor-example"))
     testImplementation(kotlinStdlib("jdk8"))
@@ -45,7 +46,7 @@ dependencies {
     testImplementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
     testApiJUnit5(vintageEngine = true, jupiterParams = true)
 
-    testRuntimeOnly(projectRuntimeJar(":kotlin-android-extensions"))
+    testRuntimeOnly(project(":kotlin-android-extensions"))
     testRuntimeOnly(project(":compiler:tests-mutes"))
 
     // Workaround for missing transitive import of the common(project `kotlin-test-common`

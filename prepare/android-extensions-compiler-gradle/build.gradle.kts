@@ -1,6 +1,3 @@
-
-import org.gradle.jvm.tasks.Jar
-
 description = "Kotlin Android Extensions Compiler"
 
 plugins {
@@ -14,7 +11,7 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
-    runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    runtimeOnly(project(":kotlin-compiler-embeddable"))
     compileOnly(commonDep("com.google.android", "android"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
@@ -29,7 +26,6 @@ sourceSets {
 
 publish()
 
-noDefaultJar()
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 
 sourcesJar()

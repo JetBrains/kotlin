@@ -11,13 +11,12 @@ dependencies {
     api project(':kotlin-gradle-plugin-api')
     api project(':kotlin-gradle-plugin-model')
 
-    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
+    compileOnly project(':kotlin-compiler-embeddable')
     compileOnly project(':kotlin-allopen-compiler-plugin')
 
     embedded(project(":kotlin-allopen-compiler-plugin")) { transitive = false }
 }
 
-ArtifactsKt.noDefaultJar(project)
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
 configureSourcesJar()
 configureJavadocJar()

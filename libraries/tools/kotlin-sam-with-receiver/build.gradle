@@ -20,5 +20,4 @@ dependencies {
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin")) { transitive = false }
 }
 
-ArtifactsKt.noDefaultJar(project)
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})

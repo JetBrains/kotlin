@@ -1,5 +1,6 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.gradle.publish.PublishTask
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -8,8 +9,6 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.attributes.Bundling
-import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
@@ -68,15 +67,9 @@ fun Project.noDefaultJar() {
     }
 }
 
-fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = runtimeJar(getOrCreateTask("jar", body)) { }
-
-fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {}): TaskProvider<T> {
-
-    tasks.named<Jar>("jar").configure {
-        removeArtifacts(configurations.getOrCreate("archives"), this)
-    }
-
-    task.configure {
+fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
+    val jarTask = tasks.named<Jar>("jar")
+    jarTask.configure {
         configurations.findByName("embedded")?.let { embedded ->
             dependsOn(embedded)
             from {
@@ -88,29 +81,23 @@ fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {})
         body()
     }
 
+    return jarTask
+}
+
+fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> {
+
+    noDefaultJar()
+
+    task.configure {
+        configurations = configurations + listOf(project.configurations["embedded"])
+        setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        body()
+    }
+
     project.addArtifact("archives", task, task)
-    project.addArtifact("runtimeJar", task, task)
-    project.configurations.findByName("runtime")?.let {
-        project.addArtifact(it.name, task, task)
-    }
-
-    val runtimeJar = configurations.maybeCreate("runtimeJar").apply {
-        isCanBeConsumed = true
-        isCanBeResolved = false
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
-            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-        }
-    }
-
-    configurePublishedComponent {
-        withVariantsFromConfiguration(configurations[RUNTIME_ELEMENTS_CONFIGURATION_NAME]) { skip() }
-        addVariantsFromConfiguration(runtimeJar) { }
-    }
-
-    (components.findByName("java") as AdhocComponentWithVariants?)?.addVariantsFromConfiguration(runtimeJar) { }
+    project.addArtifact("runtimeElements", task, task)
+    project.addArtifact("apiElements", task, task)
 
     return task
 }

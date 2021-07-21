@@ -1,8 +1,8 @@
-import org.gradle.jvm.tasks.Jar
-
 description = "Kotlin Scripting JVM host (for using with embeddable compiler)"
 
-plugins { java }
+plugins {
+    java
+}
 
 dependencies {
     embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
@@ -20,8 +20,6 @@ sourceSets {
 }
 
 publish()
-
-noDefaultJar()
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 sourcesJar()
