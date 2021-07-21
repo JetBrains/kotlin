@@ -1,3 +1,4 @@
+// !LANGUAGE: -SuspendFunctionAsSupertype
 // SKIP_TXT
 
 import kotlin.reflect.*
