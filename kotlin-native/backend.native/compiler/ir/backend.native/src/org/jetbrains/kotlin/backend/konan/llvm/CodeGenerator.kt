@@ -1400,7 +1400,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
 
         val shouldHaveCleanupLandingpad = forwardingForeignExceptionsTerminatedWith != null ||
-                needSlots ||
+                /*needSlots ||*/
                 !stackLocalsManager.isEmpty() ||
                 (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
 
@@ -1437,7 +1437,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                     positionAtEnd(bbCleanup)
                 }
 
-                releaseVars()
+                releaseVarsLeaveFrame()
                 handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
                 LLVMBuildResume(builder, landingpad)
             }
@@ -1606,6 +1606,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
         }
+        stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
+    }
+
+    private fun releaseVarsLeaveFrame() {
         stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
     }
 }
