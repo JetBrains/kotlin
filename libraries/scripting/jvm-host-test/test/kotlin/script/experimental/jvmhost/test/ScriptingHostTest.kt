@@ -287,13 +287,13 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testCompileOptionsLanguageVersion() {
-        val script = "fun interface FunInterface {\n    fun invoke()\n}"
+        val script = "sealed interface Interface {\n    fun invoke()\n}"
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            compilerOptions("-language-version", "1.3")
+            compilerOptions("-language-version", "1.4")
         }
         val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        res.reports.find { it.message.startsWith("The feature \"functional interface conversion\" is only available since language version 1.4") }
+        res.reports.find { it.message.startsWith("The feature \"sealed interfaces\" is only available since language version 1.5") }
             ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
