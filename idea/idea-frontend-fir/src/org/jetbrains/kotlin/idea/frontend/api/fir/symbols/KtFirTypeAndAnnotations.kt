@@ -69,7 +69,7 @@ internal fun FirRefWithValidityCheck<FirRegularClass>.superTypesAndAnnotationsLi
         if(fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
             fir.superTypeRefs.mapToTypeAndAnnotations(this, builder)
         } else null
-    } ?: withFirByTypeWithPossibleResolveInside(ResolveType.NoResolve) { fir ->
+    } ?: withFirByType(ResolveType.NoResolve) { fir ->
         fir.resolveSupertypesInTheAir(builder.rootSession).mapToTypeAndAnnotations(this, builder)
     }
 }

@@ -45,24 +45,6 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
         return action(fir)
     }
 
-    /**
-     * Runs [action] with fir element with write action hold
-     * Consider using this then [action] may call some resolve
-     */
-    inline fun <R> withFirWithPossibleResolveInside(
-        phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
-        crossinline action: (fir: D) -> R
-    ): R = withFir(phase, action)
-
-    /**
-     * Runs [action] with fir element with write action hold
-     * Consider using this then [action] may call some resolve
-     */
-    inline fun <R> withFirByTypeWithPossibleResolveInside(
-        resolveType: ResolveType = ResolveType.NoResolve,
-        crossinline action: (fir: D) -> R
-    ): R = withFirByType(resolveType, action)
-
     val resolveState
         get() = resolveStateWeakRef.get() ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
 

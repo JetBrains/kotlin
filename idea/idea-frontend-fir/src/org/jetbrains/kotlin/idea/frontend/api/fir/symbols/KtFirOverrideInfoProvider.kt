@@ -37,10 +37,10 @@ class KtFirOverrideInfoProvider(
         require(classSymbol is KtFirSymbol<*>)
 
         // Inspecting visibility requires resolving to status
-        return memberSymbol.firRef.withFirWithPossibleResolveInside(FirResolvePhase.STATUS) outer@{ memberFir ->
+        return memberSymbol.firRef.withFir(FirResolvePhase.STATUS) outer@{ memberFir ->
             if (memberFir !is FirCallableDeclaration) return@outer false
 
-            classSymbol.firRef.withFirWithPossibleResolveInside inner@{ parentClassFir ->
+            classSymbol.firRef.withFir inner@{ parentClassFir ->
                 if (parentClassFir !is FirClass) return@inner false
 
                 memberFir.isVisibleInClass(parentClassFir)
@@ -53,10 +53,10 @@ class KtFirOverrideInfoProvider(
         require(parentClassSymbol is KtFirSymbol<*>)
 
         // Inspecting implementation status requires resolving to status
-        return memberSymbol.firRef.withFirWithPossibleResolveInside(FirResolvePhase.STATUS) outer@{ memberFir ->
+        return memberSymbol.firRef.withFir(FirResolvePhase.STATUS) outer@{ memberFir ->
             if (memberFir !is FirCallableDeclaration) return@outer null
 
-            parentClassSymbol.firRef.withFirWithPossibleResolveInside inner@{ parentClassFir ->
+            parentClassSymbol.firRef.withFir inner@{ parentClassFir ->
                 if (parentClassFir !is FirClass) return@inner null
 
                 memberFir.symbol.getImplementationStatus(
