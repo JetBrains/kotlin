@@ -17,8 +17,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile as KotlinCompileTask
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsBase
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinJavaToolchain.Companion.TOOLCHAIN_SUPPORTED_VERSION
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.property
@@ -31,7 +30,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     private val objects: ObjectFactory,
     projectLayout: ProjectLayout,
     gradle: Gradle,
-    kotlinCompileTaskProvider: () -> KotlinCompileTask<KotlinJvmOptionsBase>?
+    kotlinCompileTaskProvider: () -> KotlinCompile?
 ) : KotlinJavaToolchain {
 
     private val currentGradleVersion = GradleVersion.version(gradle.gradleVersion)
@@ -120,15 +119,19 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
             ?: throw GradleException("Toolchain support is available from $TOOLCHAIN_SUPPORTED_VERSION")
 
     private abstract class JvmTargetUpdater(
-        private val kotlinCompileTaskProvider: () -> KotlinCompileTask<KotlinJvmOptionsBase>?
+        private val kotlinCompileTaskProvider: () -> KotlinCompile?
     ) {
         fun updateJvmTarget(
             jdkVersion: JavaVersion
         ) {
-            kotlinCompileTaskProvider()?.kotlinOptions {
-                if (jvmTargetField == null) {
+            kotlinCompileTaskProvider()?.let { task ->
+                // parentKotlinOptionsImpl is set from 'kotlin-android' plugin
+                val appliedJvmTargets = listOfNotNull(task.kotlinOptions, task.parentKotlinOptionsImpl.orNull)
+                    .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTargetField }
+
+                if (appliedJvmTargets.isEmpty()) {
                     // For Java 9 JavaVersion returns "1.9" that is not accepted by Kotlin compiler
-                    jvmTarget = if (jdkVersion == JavaVersion.VERSION_1_9) {
+                    task.kotlinOptions.jvmTarget = if (jdkVersion == JavaVersion.VERSION_1_9) {
                         "9"
                     } else {
                         jdkVersion.toString()
@@ -141,7 +144,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     private class DefaultJdkSetter(
         private val providedJvm: Property<Jvm>,
         private val currentGradleVersion: GradleVersion,
-        kotlinCompileTaskProvider: () -> KotlinCompileTask<KotlinJvmOptionsBase>?
+        kotlinCompileTaskProvider: () -> KotlinCompile?
     ) : JvmTargetUpdater(kotlinCompileTaskProvider),
         KotlinJavaToolchain.JdkSetter {
 
@@ -174,7 +177,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
     private inner class DefaultJavaToolchainSetter(
         private val providedJvm: Property<Jvm>,
-        kotlinCompileTaskProvider: () -> KotlinCompileTask<KotlinJvmOptionsBase>?
+        kotlinCompileTaskProvider: () -> KotlinCompile?
     ) : JvmTargetUpdater(kotlinCompileTaskProvider),
         KotlinJavaToolchain.JavaToolchainSetter {
         override fun use(

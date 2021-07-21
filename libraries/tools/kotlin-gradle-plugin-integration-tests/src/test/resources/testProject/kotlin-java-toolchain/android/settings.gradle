@@ -1,0 +1,21 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.jvm" version "$kotlin_version"
+        id "org.jetbrains.kotlin.android" version "$kotlin_version"
+        id "org.jetbrains.kotlin.kapt" version "$kotlin_version"
+    }
+
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.android.application") {
+                useModule("com.android.tools.build:gradle:$agp_version")
+            }
+        }
+    }
+}

@@ -653,6 +653,24 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Toolchain should take into account kotlin options that are set via android extension")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun kotlinOptionsAndroidAndToolchain(gradleVersion: GradleVersion) {
+        project("android".fullProjectName, gradleVersion) {
+            useToolchainExtension(11)
+
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            build("assembleDebug", "-Pagp_version=${TestVersions.AGP.AGP_42}")
+        }
+    }
+
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
