@@ -20,4 +20,8 @@ interface TestVersions {
         val CURRENT
             get() = System.getProperty("kotlinVersion") ?: error("Required to specify kotlinVersion system property for tests")
     }
+
+    object AGP {
+        const val AGP_42 = "4.2.2"
+    }
 }
