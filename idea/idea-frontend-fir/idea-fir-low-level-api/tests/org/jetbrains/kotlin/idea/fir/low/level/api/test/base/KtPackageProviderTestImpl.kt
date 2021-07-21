@@ -15,13 +15,26 @@ internal class KtPackageProviderTestImpl(
     scope: GlobalSearchScope,
     files: Collection<KtFile>
 ) : KtPackageProvider() {
-    private val filesInScope = files.filter { scope.contains(it.virtualFile) }
+
+    private val packageToSubPackageNames: Map<FqName, Set<Name>> = run {
+        val filesInScope = files.filter { scope.contains(it.virtualFile) }
+        val packages = mutableMapOf<FqName, MutableSet<Name>>()
+        filesInScope.forEach { file ->
+            var currentPackage = FqName.ROOT
+            for (subPackage in file.packageFqName.pathSegments()) {
+                packages.getOrPut(currentPackage) { mutableSetOf() } += subPackage
+                currentPackage = currentPackage.child(subPackage)
+            }
+            packages.computeIfAbsent(currentPackage) { mutableSetOf() }
+        }
+        packages
+    }
 
     override fun isPackageExists(packageFqName: FqName): Boolean {
-        return filesInScope.any { it.packageFqName == packageFqName }
+        return packageFqName in packageToSubPackageNames
     }
 
     override fun getKotlinSubPackageFqNames(packageFqName: FqName): Set<Name> {
-        TODO("Not yet implemented")
+        return packageToSubPackageNames[packageFqName] ?: emptySet()
     }
 }
