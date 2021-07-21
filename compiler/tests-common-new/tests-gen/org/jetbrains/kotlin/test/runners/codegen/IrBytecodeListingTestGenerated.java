@@ -317,18 +317,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
-        @TestMetadata("annotationCtorCallGenerateSynthetic.kt")
-        public void testAnnotationCtorCallGenerateSynthetic() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationCtorCallGenerateSynthetic.kt");
-        }
-
-        @Test
-        @TestMetadata("annotationCtorCallNoSynthetic.kt")
-        public void testAnnotationCtorCallNoSynthetic() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationCtorCallNoSynthetic.kt");
-        }
-
-        @Test
         @TestMetadata("annotationsOnDelegatedMembers.kt")
         public void testAnnotationsOnDelegatedMembers() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationsOnDelegatedMembers.kt");

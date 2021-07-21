@@ -1104,12 +1104,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("ConstructorCallAllowed.kt")
-            public void testConstructorCallAllowed() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/ConstructorCallAllowed.kt");
-            }
-
-            @Test
             @TestMetadata("DanglingInScript.kts")
             public void testDanglingInScript() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/DanglingInScript.kts");
