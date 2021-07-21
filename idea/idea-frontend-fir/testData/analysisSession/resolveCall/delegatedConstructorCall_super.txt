@@ -1,0 +1,4 @@
+KtDelegatedConstructorCall:
+argumentMapping = { i + j -> (p1: kotlin.Int) }
+targetFunction = <constructor>(p1: kotlin.Int): Base
+kind = SUPER_CALL

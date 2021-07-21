@@ -1,0 +1,4 @@
+KtDelegatedConstructorCall:
+argumentMapping = { s.length -> (p1: kotlin.Int) }
+targetFunction = <constructor>(p1: kotlin.Int): Sub
+kind = THIS_CALL

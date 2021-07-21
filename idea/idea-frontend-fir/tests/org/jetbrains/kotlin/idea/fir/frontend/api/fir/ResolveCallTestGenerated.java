@@ -25,6 +25,30 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("delegatedConstructorCall_super.kt")
+    public void testDelegatedConstructorCall_super() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/delegatedConstructorCall_super.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_super_unresolved.kt")
+    public void testDelegatedConstructorCall_super_unresolved() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/delegatedConstructorCall_super_unresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_this.kt")
+    public void testDelegatedConstructorCall_this() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/delegatedConstructorCall_this.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_this_unresolved.kt")
+    public void testDelegatedConstructorCall_this_unresolved() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/delegatedConstructorCall_this_unresolved.kt");
+    }
+
+    @Test
     @TestMetadata("functionCallInTheSameFile.kt")
     public void testFunctionCallInTheSameFile() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallInTheSameFile.kt");
@@ -70,6 +94,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     @TestMetadata("simpleCallWithNonMatchingArgs.kt")
     public void testSimpleCallWithNonMatchingArgs() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/simpleCallWithNonMatchingArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedSuperReference.kt")
+    public void testUnresolvedSuperReference() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/unresolvedSuperReference.kt");
     }
 
     @Test

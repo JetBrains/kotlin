@@ -1,0 +1,4 @@
+KtDelegatedConstructorCall:
+argumentMapping = { s -> (p1: kotlin.Int) }
+targetFunction = ERR<Argument type mismatch: actual type is kotlin/String but kotlin/Int was expected, [<constructor>(p1: kotlin.Int): Base]>
+kind = SUPER_CALL
