@@ -1,3 +1,5 @@
+// This test can be removed as soon as the compiler stops supporting language version 1.5.
+// !LANGUAGE: -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // WITH_RUNTIME
 
 interface A { val x: Int }
