@@ -27,10 +27,13 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
@@ -71,58 +74,61 @@ object FirOptInUsageBaseChecker {
         return result
     }
 
-    fun FirAnnotatedDeclaration.loadExperimentalities(
+    fun FirBasedSymbol<*>.loadExperimentalities(
         context: CheckerContext, fromSetter: Boolean
     ): Set<Experimentality> = loadExperimentalities(
         context, knownExperimentalities = null, visited = mutableSetOf(), fromSetter
     )
 
     @OptIn(SymbolInternals::class)
-    private fun FirAnnotatedDeclaration.loadExperimentalities(
+    private fun FirBasedSymbol<*>.loadExperimentalities(
         context: CheckerContext,
         knownExperimentalities: SmartSet<Experimentality>?,
         visited: MutableSet<FirAnnotatedDeclaration>,
         fromSetter: Boolean,
     ): Set<Experimentality> {
-        if (!visited.add(this)) return emptySet()
+        ensureResolved(FirResolvePhase.STATUS)
+        val fir = this.fir as? FirAnnotatedDeclaration ?: return emptySet()
+        if (!visited.add(fir)) return emptySet()
         val result = knownExperimentalities ?: SmartSet.create()
         val session = context.session
-        if (this is FirCallableDeclaration) {
-            val parentClass = containingClass()?.toFirRegularClass(session)
-            if (this.isSubstitutionOrIntersectionOverride) {
-                val parentClassScope = parentClass?.unsubstitutedScope(context)
-                if (this is FirSimpleFunction) {
-                    parentClassScope?.processDirectlyOverriddenFunctions(symbol) {
-                        it.fir.loadExperimentalities(context, result, visited, fromSetter = false)
+        if (fir is FirCallableDeclaration) {
+            val parentClassSymbol = fir.containingClass()?.toSymbol(session) as? FirRegularClassSymbol
+            if (fir.isSubstitutionOrIntersectionOverride) {
+                parentClassSymbol?.ensureResolved(FirResolvePhase.STATUS)
+                val parentClassScope = parentClassSymbol?.unsubstitutedScope(context)
+                if (this is FirNamedFunctionSymbol) {
+                    parentClassScope?.processDirectlyOverriddenFunctions(this) {
+                        it.loadExperimentalities(context, result, visited, fromSetter = false)
                         ProcessorAction.NEXT
                     }
-                } else if (this is FirProperty) {
-                    parentClassScope?.processDirectlyOverriddenProperties(symbol) {
-                        it.fir.loadExperimentalities(context, result, visited, fromSetter)
+                } else if (this is FirPropertySymbol) {
+                    parentClassScope?.processDirectlyOverriddenProperties(this) {
+                        it.loadExperimentalities(context, result, visited, fromSetter)
                         ProcessorAction.NEXT
                     }
                 }
             }
-            if (this !is FirConstructor) {
+            if (fir !is FirConstructor) {
                 // Note: coneType here crashes on overridden members
-                returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-                receiverTypeRef?.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-                if (this is FirSimpleFunction) {
-                    valueParameters.forEach {
+                fir.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
+                fir.receiverTypeRef?.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
+                if (fir is FirSimpleFunction) {
+                    fir.valueParameters.forEach {
                         it.returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
                     }
                 }
             }
-            parentClass?.loadExperimentalities(context, result, visited, fromSetter = false)
-            if (fromSetter && this is FirProperty) {
-                setter?.loadExperimentalities(context, result, visited, fromSetter = false)
+            parentClassSymbol?.loadExperimentalities(context, result, visited, fromSetter = false)
+            if (fromSetter && this is FirPropertySymbol) {
+                setterSymbol?.loadExperimentalities(context, result, visited, fromSetter = false)
             }
-        } else if (this is FirRegularClass && !this.isLocal) {
-            val parentClassSymbol = symbol.outerClassSymbol(context)
-            parentClassSymbol?.fir?.loadExperimentalities(context, result, visited, fromSetter = false)
+        } else if (this is FirRegularClassSymbol && fir is FirRegularClass && !fir.isLocal) {
+            val parentClassSymbol = outerClassSymbol(context)
+            parentClassSymbol?.loadExperimentalities(context, result, visited, fromSetter = false)
         }
 
-        for (annotation in annotations) {
+        for (annotation in fir.annotations) {
             val annotationType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
             if (annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_SETTER || fromSetter) {
                 result.addIfNotNull(
@@ -133,12 +139,12 @@ object FirOptInUsageBaseChecker {
             }
         }
 
-        if (this is FirTypeAlias) {
-            expandedTypeRef.coneType.addExperimentalities(context, result, visited)
+        if (fir is FirTypeAlias) {
+            fir.expandedTypeRef.coneType.addExperimentalities(context, result, visited)
         }
 
-        if (getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) != null) {
-            val accessibility = checkSinceKotlinVersionAccessibility(context)
+        if (fir.getAnnotationByClassId(OptInNames.WAS_EXPERIMENTAL_CLASS_ID) != null) {
+            val accessibility = fir.checkSinceKotlinVersionAccessibility(context)
             if (accessibility is FirSinceKotlinAccessibility.NotAccessibleButWasExperimental) {
                 accessibility.markerClasses.forEach {
                     it.ensureResolved(FirResolvePhase.STATUS)
@@ -151,34 +157,17 @@ object FirOptInUsageBaseChecker {
         return result
     }
 
-    @OptIn(SymbolInternals::class)
     private fun ConeKotlinType?.addExperimentalities(
         context: CheckerContext,
         result: SmartSet<Experimentality>,
         visited: MutableSet<FirAnnotatedDeclaration> = mutableSetOf()
     ) {
-        when (this) {
-            !is ConeClassLikeType -> return
-            else -> {
-                val expandedType = fullyExpandedType(context.session)
-                if (this === expandedType) {
-                    expandedType.lookupTag.toFirRegularClass(context.session)?.loadExperimentalities(
-                        context, result, visited, fromSetter = false
-                    )
-                    typeArguments.forEach {
-                        if (!it.isStarProjection) it.type?.addExperimentalities(context, result, visited)
-                    }
-                } else {
-                    val symbol = lookupTag.toSymbol(context.session)
-                    if (symbol != null) {
-                        symbol.ensureResolved(FirResolvePhase.STATUS)
-                        symbol.fir.loadExperimentalities(context, result, visited, fromSetter = false)
-                    }
-                    expandedType.typeArguments.forEach {
-                        if (!it.isStarProjection) it.type?.addExperimentalities(context, result, visited)
-                    }
-                }
-            }
+        if (this !is ConeClassLikeType) return
+        lookupTag.toSymbol(context.session)?.loadExperimentalities(
+            context, result, visited, fromSetter = false
+        )
+        fullyExpandedType(context.session).typeArguments.forEach {
+            if (!it.isStarProjection) it.type?.addExperimentalities(context, result, visited)
         }
     }
 
