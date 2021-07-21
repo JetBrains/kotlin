@@ -3,10 +3,9 @@ Buildfile: [TestData]/build.xml
 
 build:
   [kotlinc] Compiling [[TestData]/main.kt] => [[Temp]/hello.jar]
-  [kotlinc] warning: language version 1.3 is deprecated and its support will be removed in a future version of Kotlin
-  [kotlinc] [TestData]/main.kt:4:21: error: 'break' and 'continue' are not allowed in 'when' statements. Consider using labels to continue/break from the outer loop
-  [kotlinc]             true -> break
-  [kotlinc]                     ^
+  [kotlinc] [TestData]/main.kt:1:18: error: the feature "definitely not null type parameters" is only available since language version 1.6
+  [kotlinc] fun <T> f(t: T): T!! = t!!
+  [kotlinc]                  ^
 
 ERR:
 
