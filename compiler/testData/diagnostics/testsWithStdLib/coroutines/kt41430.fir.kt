@@ -1,4 +1,4 @@
-// ISSUE: KT-41430
+// ISSUE: KT-41430, KT-47830
 
 class A
 
