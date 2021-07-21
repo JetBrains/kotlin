@@ -26,7 +26,6 @@ open class SimpleClass
 interface GenericInterface<Z>
 open class GenericClass<Z>
 
-@Suppress("UNSUPPORTED")
 class Simple<@TypeParameterAnn("T") @TypeParameterAnnBinary @TypeParameterAnnSource T> {
     fun test(p: T) : T {
         return p

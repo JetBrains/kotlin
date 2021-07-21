@@ -88,6 +88,9 @@ public final class foo/InterfaceClassBound : java/lang/Object {
 
 <T:Ljava/lang/Object;>Ljava/lang/Object;
 public final class foo/Simple : java/lang/Object {
+  @Lfoo/TypeParameterAnn;([name="T"]) : CLASS_TYPE_PARAMETER 0, null
+  @Lfoo/TypeParameterAnnBinary;([]) : CLASS_TYPE_PARAMETER 0, null // invisible
+
     public void <init>()
 
     (TT;)TT;
