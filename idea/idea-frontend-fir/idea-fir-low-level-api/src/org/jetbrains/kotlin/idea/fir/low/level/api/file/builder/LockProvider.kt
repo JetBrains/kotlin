@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import com.google.common.collect.MapMaker
+import com.google.common.util.concurrent.CycleDetectingLockFactory
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
@@ -16,8 +17,16 @@ import kotlin.concurrent.withLock
 internal class LockProvider<KEY> {
     private val locks: ConcurrentMap<KEY, ReentrantLock> = MapMaker().weakKeys().makeMap()
 
+    @Suppress("UnstableApiUsage")
+    private val lockFactory = CycleDetectingLockFactory.newInstance(CycleDetectingLockFactory.Policies.THROW)
+
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun getLockFor(key: KEY) = locks.getOrPut(key) { ReentrantLock() }
+    private inline fun getLockFor(key: KEY) = locks.getOrPut(key) {
+        val file = key as FirFile
+        val name = "${file.packageDirective.packageFqName.asString()}.${file.name}"
+        @Suppress("UnstableApiUsage")
+        lockFactory.newReentrantLock(name)
+    }
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withWriteLock(key: KEY, action: () -> R): R =

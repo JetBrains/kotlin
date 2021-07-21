@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyRe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeEnsureBasedTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
@@ -38,7 +39,7 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         session,
         scopeSession,
         ImplicitBodyResolveComputationSession(),
-        ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+        ::FirIdeEnsureBasedTransformerForReturnTypeCalculator
     ),
     firTowerDataContextCollector = towerDataContextCollector,
     firProviderInterceptor = firProviderInterceptor,

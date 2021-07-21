@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTy
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ensurePhase
 
@@ -40,7 +40,7 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
         session,
         scopeSession,
         implicitBodyResolveComputationSession,
-        ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+        ::FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
     )
 ) {
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.tryCollectDesignationWithFile

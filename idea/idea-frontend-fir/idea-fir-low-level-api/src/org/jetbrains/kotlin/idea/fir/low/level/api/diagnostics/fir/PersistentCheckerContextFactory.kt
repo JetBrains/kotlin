@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 
 internal object PersistentCheckerContextFactory {
     fun createEmptyPersistenceCheckerContext(sessionHolder: SessionHolder): PersistentCheckerContext {
@@ -18,7 +18,7 @@ internal object PersistentCheckerContextFactory {
             sessionHolder.session,
             ScopeSession(),
             ImplicitBodyResolveComputationSession(),
-            ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+            ::FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
         )
         return PersistentCheckerContext(sessionHolder, returnTypeCalculator)
     }
