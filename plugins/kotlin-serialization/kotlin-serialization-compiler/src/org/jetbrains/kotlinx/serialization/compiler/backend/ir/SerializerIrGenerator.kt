@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
@@ -96,7 +95,7 @@ open class SerializerIrGenerator(
                         addElementsContentToDescriptor(serialDescImplClass, localDesc, addFuncS)
                         // add class annotations
                         copySerialInfoAnnotationsToDescriptor(
-                            serializableIrClass.annotations,
+                            collectSerialInfoAnnotations(serializableIrClass),
                             localDesc,
                             serialDescImplClass.referenceFunctionSymbol(CallingConventions.addClassAnnotation)
                         )
