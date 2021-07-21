@@ -28079,6 +28079,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt47785.kt")
+        public void testKt47785() throws Exception {
+            runTest("compiler/testData/codegen/box/platformTypes/kt47785.kt");
+        }
+
+        @Test
         @TestMetadata("rawTypeWithNestedClass.kt")
         public void testRawTypeWithNestedClass() throws Exception {
             runTest("compiler/testData/codegen/box/platformTypes/rawTypeWithNestedClass.kt");

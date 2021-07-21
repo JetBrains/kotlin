@@ -23755,6 +23755,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/platformTypes/kt14989.kt");
         }
 
+        @TestMetadata("kt47785.kt")
+        public void testKt47785() throws Exception {
+            runTest("compiler/testData/codegen/box/platformTypes/kt47785.kt");
+        }
+
         @TestMetadata("rawTypeWithNestedClass.kt")
         public void testRawTypeWithNestedClass() throws Exception {
             runTest("compiler/testData/codegen/box/platformTypes/rawTypeWithNestedClass.kt");

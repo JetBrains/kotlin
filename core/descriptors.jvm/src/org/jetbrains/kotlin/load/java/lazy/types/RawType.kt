@@ -104,12 +104,15 @@ class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: Simple
 internal object RawSubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) = TypeProjectionImpl(eraseType(key))
 
+    private val typeParameterUpperBoundEraser = TypeParameterUpperBoundEraser()
+
     private val lowerTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)
     private val upperTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND)
 
     private fun eraseType(type: KotlinType, attr: JavaTypeAttributes = JavaTypeAttributes(TypeUsage.COMMON)): KotlinType {
         return when (val declaration = type.constructor.declarationDescriptor) {
-            is TypeParameterDescriptor -> eraseType(declaration.getErasedUpperBound(isRaw = true, attr), attr)
+            is TypeParameterDescriptor ->
+                eraseType(typeParameterUpperBoundEraser.getErasedUpperBound(declaration, isRaw = true, attr), attr)
             is ClassDescriptor -> {
                 val declarationForUpper =
                     type.upperIfFlexible().constructor.declarationDescriptor
@@ -170,7 +173,7 @@ internal object RawSubstitution : TypeSubstitution() {
     fun computeProjection(
         parameter: TypeParameterDescriptor,
         attr: JavaTypeAttributes,
-        erasedUpperBound: KotlinType = parameter.getErasedUpperBound(isRaw = true, attr)
+        erasedUpperBound: KotlinType = typeParameterUpperBoundEraser.getErasedUpperBound(parameter, isRaw = true, attr)
     ) = when (attr.flexibility) {
         // Raw(List<T>) => (List<Any?>..List<*>)
         // Raw(Enum<T>) => (Enum<Enum<*>>..Enum<out Enum<*>>)
