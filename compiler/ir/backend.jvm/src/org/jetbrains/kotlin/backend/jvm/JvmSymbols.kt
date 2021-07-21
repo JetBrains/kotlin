@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -802,19 +802,30 @@ class JvmSymbols(
         }
     }
 
+    private fun IrClass.addArraysEqualsFunction(arrayType: IrSimpleType) {
+        addFunction("equals", irBuiltIns.booleanType, isStatic = true).apply {
+            addValueParameter("a", arrayType)
+            addValueParameter("b", arrayType)
+
+        }
+    }
+
     val arraysClass: IrClassSymbol =
         createClass(FqName("java.util.Arrays")) { irClass ->
-            irClass.addArraysCopyOfFunction(booleanArrayType)
-            irClass.addArraysCopyOfFunction(byteArrayType)
-            irClass.addArraysCopyOfFunction(charArrayType)
-            irClass.addArraysCopyOfFunction(shortArrayType)
-            irClass.addArraysCopyOfFunction(intArrayType)
-            irClass.addArraysCopyOfFunction(longArrayType)
-            irClass.addArraysCopyOfFunction(floatArrayType)
-            irClass.addArraysCopyOfFunction(doubleArrayType)
-
-            // public static <T> T[] copyOf(T[] original, int newLength)
-            irClass.addArraysCopyOfFunction(arrayOfAnyNType)
+            for (type in listOf(
+                booleanArrayType,
+                byteArrayType,
+                charArrayType,
+                shortArrayType,
+                intArrayType,
+                longArrayType,
+                floatArrayType,
+                doubleArrayType,
+                arrayOfAnyNType
+            )) {
+                irClass.addArraysCopyOfFunction(type)
+                irClass.addArraysEqualsFunction(type)
+            }
         }
 
     fun getArraysCopyOfFunction(arrayType: IrSimpleType): IrSimpleFunctionSymbol {

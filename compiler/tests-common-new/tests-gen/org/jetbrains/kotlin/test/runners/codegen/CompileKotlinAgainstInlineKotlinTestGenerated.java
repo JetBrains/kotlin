@@ -26,6 +26,16 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/boxInline/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+        @Test
+        public void testAllFilesPresentInAnnotations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")
     @TestDataPath("$PROJECT_ROOT")
     public class AnonymousObject {

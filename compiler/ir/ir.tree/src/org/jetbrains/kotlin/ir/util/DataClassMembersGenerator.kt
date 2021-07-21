@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -34,7 +32,7 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class DataClassMembersGenerator(
     val context: IrGeneratorContext,
-    val symbolTable: SymbolTable,
+    val symbolTable: ReferenceSymbolTable,
     val irClass: IrClass,
     val origin: IrDeclarationOrigin
 ) {
@@ -43,10 +41,23 @@ abstract class DataClassMembersGenerator(
 
     inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
-            symbolTable.withScope(irDeclaration) {
+            symbolTable.withReferenceScope(irDeclaration) {
                 builder(irDeclaration)
             }
         }
+
+    private val intClass = context.builtIns.int
+    private val intType = context.builtIns.intType
+
+    open val intTimesSymbol: IrSimpleFunctionSymbol =
+        intClass.unsubstitutedMemberScope.findFirstFunction("times") {
+            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType)
+        }.let { symbolTable.referenceSimpleFunction(it) }
+
+    open val intPlusSymbol: IrSimpleFunctionSymbol =
+        intClass.unsubstitutedMemberScope.findFirstFunction("plus") {
+            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType)
+        }.let { symbolTable.referenceSimpleFunction(it) }
 
     private inner class MemberFunctionBuilder(
         startOffset: Int = UNDEFINED_OFFSET,
@@ -206,7 +217,7 @@ abstract class DataClassMembersGenerator(
 
         fun generateToStringMethodBody(properties: List<IrProperty>) {
             val irConcat = irConcat()
-            irConcat.addArgument(irString(irClass.name.asString() + "("))
+            irConcat.addArgument(irString(irClass.classNameForToString() + "("))
             var first = true
             for (property in properties) {
                 if (!first) irConcat.addArgument(irString(", "))
@@ -362,4 +373,6 @@ abstract class DataClassMembersGenerator(
             generateToStringMethodBody(properties)
         }
     }
+
+    open fun IrClass.classNameForToString(): String = irClass.name.asString()
 }
