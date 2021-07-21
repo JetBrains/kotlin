@@ -32,9 +32,8 @@ object ClasspathEntrySnapshotter {
 object ClassSnapshotter {
 
     fun snapshot(classContents: ByteArray): ClassSnapshot {
-        // TODO Add custom serialization to KotlinClassInfo then return it here. For now, use JavaClassSnapshot.
-        KotlinClassInfo.tryCreateFrom(classContents)?.let { KotlinClassSnapshot(it) }
-        return JavaClassSnapshot()
+        return KotlinClassInfo.tryCreateFrom(classContents)?.let { KotlinClassSnapshot(it) }
+            ?: JavaClassSnapshot
     }
 }
 
