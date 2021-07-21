@@ -48,15 +48,20 @@ class ProgramWithDependencyOnCompiler(
     private fun runJava(workingDirectory: File, vararg arguments: String): String {
         val pb = ProcessBuilder()
             .directory(workingDirectory)
-            .command(KotlinIntegrationTestBase.getJavaRuntime().absolutePath, *arguments)
+            .command(KotlinIntegrationTestBase.getJavaRuntime().absolutePath, *arguments).redirectErrorStream(true)
         val process = pb.start()
-        val stdout = String(process.inputStream.readBytes())
-        val stderr = String(process.errorStream.readBytes())
+        val stdout = StringBuilder()
+
+        process.inputStream.bufferedReader().useLines {
+            it.forEach { string ->
+                stdout.appendLine(string)
+            }
+        }
+
         process.waitFor()
 
-        TestCase.assertEquals("Exit code should be 0.", 0, process.exitValue())
-        TestCase.assertEquals("Stderr should be empty.", "", stderr)
+        TestCase.assertEquals("Exit code should be 0, but $stdout", 0, process.exitValue())
 
-        return stdout.trimEnd()
+        return stdout.toString().trimEnd()
     }
 }
