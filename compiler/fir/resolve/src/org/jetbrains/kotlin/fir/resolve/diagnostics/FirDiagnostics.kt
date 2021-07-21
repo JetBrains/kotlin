@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -112,8 +113,8 @@ abstract class ConeUnmatchedTypeArgumentsError(val desiredCount: Int, val type: 
 class ConeWrongNumberOfTypeArgumentsError(
     val desiredCount: Int,
     val symbol: FirRegularClassSymbol,
-    val source: FirSourceElement?
-) : ConeDiagnostic() {
+    source: FirSourceElement
+) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Wrong number of type arguments"
 }
 

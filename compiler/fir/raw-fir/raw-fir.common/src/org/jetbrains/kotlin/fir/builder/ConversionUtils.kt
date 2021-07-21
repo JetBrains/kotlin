@@ -542,6 +542,9 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression, source: FirSour
     }
 }
 
+val CharSequence.isUnderscore: Boolean
+    get() = all { it == '_' }
+
 data class CalleeAndReceiver(
     val reference: FirNamedReference,
     val receiverExpression: FirExpression? = null,

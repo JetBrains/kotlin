@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreIsReserved
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.*
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -1192,6 +1194,53 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             return action()
         } finally {
             context.forcedElementSourceKind = currentForced
+        }
+    }
+
+    protected fun buildLabelAndErrorSource(rawName: String, source: FirSourceElement): Pair<FirLabel, FirSourceElement?> {
+        val firLabel = buildLabel {
+            name = KtPsiUtil.unquoteIdentifier(rawName)
+            this.source = source
+        }
+
+        return Pair(firLabel, if (rawName.isUnderscore) firLabel.source else null)
+    }
+
+    protected fun buildExpressionWithErrorLabel(
+        element: FirElement?,
+        errorLabelSource: FirSourceElement?,
+        elementSource: FirSourceElement
+    ): FirElement {
+        return if (element != null) {
+            if (errorLabelSource != null) {
+                buildErrorExpression {
+                    this.source = element.source
+                    this.expression = element as? FirExpression
+                    diagnostic = ConeUnderscoreIsReserved(errorLabelSource)
+                }
+            } else {
+                element
+            }
+        } else {
+            buildErrorExpression(elementSource, ConeSimpleDiagnostic("Empty label", DiagnosticKind.Syntax))
+        }
+    }
+
+    protected fun convertValueParameterName(
+        safeName: Name,
+        rawName: String?,
+        valueParameterDeclaration: ValueParameterDeclaration
+    ): Name {
+        return if (valueParameterDeclaration == ValueParameterDeclaration.LAMBDA && rawName == "_"
+            ||
+            valueParameterDeclaration == ValueParameterDeclaration.CATCH &&
+            baseSession.sessionProvider != null &&
+            baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ForbidReferencingToUnderscoreNamedParameterOfCatchBlock) &&
+            safeName.asString() == "_"
+        ) {
+            SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        } else {
+            safeName
         }
     }
 

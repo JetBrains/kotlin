@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.diagnostics.ConeNotAnnotationContainer
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -2219,21 +2217,24 @@ open class RawFirBuilder(
         }
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: Unit): FirElement {
-            val sourceElement = expression.toFirSourceElement()
             val label = expression.getTargetLabel()
-            val size = context.firLabels.size
+            val previousLabelsSize = context.firLabels.size
+            var errorLabelSource: FirSourceElement? = null
+
             if (label != null) {
-                context.firLabels += buildLabel {
-                    source = label.toFirPsiSourceElement()
-                    name = label.getReferencedName()
-                }
+                val rawName = label.getReferencedNameElement().node!!.text
+                val labelAndErrorSource = buildLabelAndErrorSource(rawName, label.toFirPsiSourceElement())
+                context.firLabels += labelAndErrorSource.first
+                errorLabelSource = labelAndErrorSource.second
             }
+
             val result = expression.baseExpression?.accept(this, data)
-                ?: buildErrorExpression(sourceElement, ConeSimpleDiagnostic("Empty label", DiagnosticKind.Syntax))
-            if (size != context.firLabels.size) {
+
+            if (context.firLabels.size != previousLabelsSize) {
                 context.firLabels.removeLast()
             }
-            return result
+
+            return buildExpressionWithErrorLabel(result, errorLabelSource, expression.toFirSourceElement())
         }
 
         override fun visitAnnotatedExpression(expression: KtAnnotatedExpression, data: Unit): FirElement {

@@ -301,13 +301,16 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 (parameterClass != null && parameterClass.classId.relativeClassName.parent().isRoot)
                 || outerClass != null
             ) {
-                return ConeClassErrorType(
-                    ConeWrongNumberOfTypeArgumentsError(
-                        actualTypeParametersCount,
-                        parameterClass?.symbol ?: symbol,
-                        getTypeArgumentsOrNameSource(userTypeRef, qualifierPartIndex)
+                val source = getTypeArgumentsOrNameSource(userTypeRef, qualifierPartIndex)
+                if (source != null) {
+                    return ConeClassErrorType(
+                        ConeWrongNumberOfTypeArgumentsError(
+                            actualTypeParametersCount,
+                            parameterClass?.symbol ?: symbol,
+                            source
+                        )
                     )
-                )
+                }
             }
         }
 

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeNotAnnotationContainer
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreIsReserved
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -331,13 +332,17 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitLabeledExpression
      */
     private fun convertLabeledExpression(labeledExpression: LighterASTNode): FirElement {
-        val size = context.firLabels.size
         var firExpression: FirElement? = null
+        val previousLabelsSize = context.firLabels.size
+        var errorLabelSource: FirSourceElement? = null
+
         labeledExpression.forEachChildren {
             when (it.tokenType) {
-                LABEL_QUALIFIER -> context.firLabels += buildLabel {
-                    source = labeledExpression.toFirLightSourceElement(tree)
-                    name = it.toString().replace("@", "")
+                LABEL_QUALIFIER -> {
+                    val rawName = it.toString()
+                    val pair = buildLabelAndErrorSource(rawName.substring(0, rawName.length - 1), it.toFirSourceElement())
+                    context.firLabels += pair.first
+                    errorLabelSource = pair.second
                 }
                 BLOCK -> firExpression = declarationsConverter.convertBlock(it)
                 PROPERTY -> firExpression = declarationsConverter.convertPropertyDeclaration(it)
@@ -345,11 +350,11 @@ class ExpressionsConverter(
             }
         }
 
-        if (size != context.firLabels.size) {
+        if (context.firLabels.size != previousLabelsSize) {
             context.firLabels.removeLast()
-            //println("Unused label: ${labeledExpression.getAsString()}")
         }
-        return firExpression ?: buildErrorExpression(null, ConeSimpleDiagnostic("Empty label", DiagnosticKind.Syntax))
+
+        return buildExpressionWithErrorLabel(firExpression, errorLabelSource, labeledExpression.toFirSourceElement())
     }
 
     /**
