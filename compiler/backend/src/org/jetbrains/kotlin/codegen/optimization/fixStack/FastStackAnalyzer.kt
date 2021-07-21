@@ -46,7 +46,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Value
  * @see org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
  */
 @Suppress("DuplicatedCode")
-internal open class HackedFixStackMethodAnalyzerBase<V : Value>(
+internal open class FastStackAnalyzer<V : Value>(
     private val owner: String,
     val method: MethodNode,
     protected val interpreter: Interpreter<V>

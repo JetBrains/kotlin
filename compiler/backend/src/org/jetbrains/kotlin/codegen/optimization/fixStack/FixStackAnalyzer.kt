@@ -90,7 +90,7 @@ internal class FixStackAnalyzer(
     private val analyzer = InternalAnalyzer(owner)
 
     private inner class InternalAnalyzer(owner: String) :
-        HackedFixStackMethodAnalyzerBase<FixStackValue>(owner, method, FixStackInterpreter()) {
+        FastStackAnalyzer<FixStackValue>(owner, method, FixStackInterpreter()) {
 
         val spilledStacks = hashMapOf<AbstractInsnNode, List<FixStackValue>>()
         var maxExtraStackSize = 0; private set

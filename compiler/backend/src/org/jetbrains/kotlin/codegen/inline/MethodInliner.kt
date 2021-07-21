@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.*
-import org.jetbrains.kotlin.codegen.optimization.fixStack.HackedFixStackMethodAnalyzerBase
+import org.jetbrains.kotlin.codegen.optimization.fixStack.FastStackAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -747,7 +747,7 @@ class MethodInliner(
             ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
         }
 
-        val frames = HackedFixStackMethodAnalyzerBase("<fake>", node, FixStackInterpreter()).analyze()
+        val frames = FastStackAnalyzer("<fake>", node, FixStackInterpreter()).analyze()
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
 
