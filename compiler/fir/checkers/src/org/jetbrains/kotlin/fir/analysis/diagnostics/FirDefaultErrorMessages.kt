@@ -230,6 +230,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_INSID
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
@@ -938,6 +939,12 @@ class FirDefaultErrorMessages {
             map.put(REIFIED_TYPE_PARAMETER_IN_OVERRIDE, "Override by a function with reified type parameter")
             map.put(INLINE_PROPERTY_WITH_BACKING_FIELD, "Inline property cannot have backing field")
             map.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable for internal declaration")
+            map.put(
+                INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
+                "Invalid default value for inline parameter: ''{0}''. Only lambdas, anonymous functions, and callable references are supported",
+                FIR,
+                DECLARATION_NAME
+            )
             map.put(RESERVED_MEMBER_INSIDE_INLINE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
             map.put(
                 SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS,

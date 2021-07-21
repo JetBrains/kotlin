@@ -28,7 +28,7 @@ val a = Foo()
 inline fun default8(s : () -> String = a::test) {}
 inline fun default9(s : () -> String = a::prop) {}
 
-inline fun default10(s : () -> String = object : Function0<String> {
+inline fun default10(s : () -> String = <!INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE!>object<!> : Function0<String> {
     override fun invoke(): String {
         return "FAIL"
     }

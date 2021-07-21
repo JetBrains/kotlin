@@ -3185,6 +3185,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE) { firDiagnostic ->
+        InvalidDefaultFunctionalParameterForInlineImpl(
+            firDiagnostic.a.source!!.psi as KtExpression,
+            firSymbolBuilder.buildSymbol(firDiagnostic.b.fir),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE) { firDiagnostic ->
         ReifiedTypeParameterInOverrideImpl(
             firDiagnostic as FirPsiDiagnostic,

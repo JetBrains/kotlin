@@ -2222,6 +2222,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonInternalPublishedApi::class
     }
 
+    abstract class InvalidDefaultFunctionalParameterForInline : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = InvalidDefaultFunctionalParameterForInline::class
+        abstract val defaultValue: KtExpression
+        abstract val parameter: KtSymbol
+    }
+
     abstract class ReifiedTypeParameterInOverride : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = ReifiedTypeParameterInOverride::class
     }

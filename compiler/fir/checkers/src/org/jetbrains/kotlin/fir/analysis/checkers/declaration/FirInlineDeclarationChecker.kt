@@ -344,7 +344,9 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             if (param.isNoinline) continue
 
             val coneType = param.returnTypeRef.coneType
-            if (function.isSuspend && param.defaultValue != null && coneType.isSuspendFunctionType(context.session)) {
+            val isFunctionalType = coneType.isFunctionalType(context.session)
+            val defaultValue = param.defaultValue
+            if (function.isSuspend && defaultValue != null && coneType.isSuspendFunctionType(context.session)) {
                 reporter.reportOn(
                     param.source,
                     FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
@@ -353,12 +355,22 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                 )
             }
 
-            if (coneType.isNullable && coneType.isFunctionalType(context.session)) {
+            if (coneType.isNullable && isFunctionalType) {
                 reporter.reportOn(
                     param.source,
                     FirErrors.NULLABLE_INLINE_PARAMETER,
                     param.symbol,
                     function.symbol,
+                    context
+                )
+            }
+
+            if (isFunctionalType && defaultValue != null && !isInlinableDefaultValue(defaultValue)) {
+                reporter.reportOn(
+                    defaultValue.source,
+                    FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
+                    defaultValue,
+                    param.symbol,
                     context
                 )
             }
@@ -431,6 +443,13 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         }
         return true
     }
+
+    private fun isInlinableDefaultValue(expression: FirExpression): Boolean =
+        expression is FirCallableReferenceAccess ||
+                expression is FirFunctionCall ||
+                expression is FirLambdaArgumentExpression ||
+                expression is FirAnonymousFunctionExpression ||
+                (expression is FirConstExpression<*> && expression.value == null) //this will be reported separately
 
     internal fun checkCallableDeclaration(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPropertyAccessor) return

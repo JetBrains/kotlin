@@ -611,6 +611,7 @@ object FirErrors {
     val DECLARATION_CANT_BE_INLINED by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val OVERRIDE_BY_INLINE by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val NON_INTERNAL_PUBLISHED_API by error0<KtElement>()
+    val INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE by error2<KtElement, FirExpression, FirValueParameterSymbol>()
     val REIFIED_TYPE_PARAMETER_IN_OVERRIDE by error0<KtElement>(SourceElementPositioningStrategies.REIFIED_MODIFIER)
     val INLINE_PROPERTY_WITH_BACKING_FIELD by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
