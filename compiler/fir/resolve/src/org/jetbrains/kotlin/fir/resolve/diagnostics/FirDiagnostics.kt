@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.Deprecation
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -150,6 +151,10 @@ class ConeUnsupportedDynamicType() : ConeDiagnostic() {
 
 class ConeDeprecated(val source: FirSourceElement?, val symbol: FirBasedSymbol<*>, val deprecation: Deprecation) : ConeDiagnostic() {
     override val reason: String get() = "Deprecated: ${deprecation.message}"
+}
+
+class ConeLocalVariableNoTypeOrInitializer(val variable: FirVariable) : ConeDiagnostic() {
+    override val reason: String get() = "Cannot infer variable type without initializer / getter / delegate"
 }
 
 private fun describeSymbol(symbol: FirBasedSymbol<*>): String {

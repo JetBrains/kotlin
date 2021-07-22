@@ -938,6 +938,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("lambda")
         }
         val WRONG_IMPLIES_CONDITION by warning<PsiElement>()
+        val VARIABLE_WITH_NO_TYPE_NO_INITIALIZER by error<KtVariableDeclaration>(PositioningStrategy.DECLARATION_NAME)
     }
 
     val NULLABILITY by object : DiagnosticGroup("Nullability") {

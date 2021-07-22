@@ -23,6 +23,6 @@ fun testVarInWhenSubject() {
 }
 
 fun testDelegatedValInWhenSubject() {
-    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y by lazy { 42 }<!>) {
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>y<!> by lazy { 42 }<!>) {
     }
 }

@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
@@ -1783,6 +1784,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class WrongImpliesCondition : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = WrongImpliesCondition::class
+    }
+
+    abstract class VariableWithNoTypeNoInitializer : KtFirDiagnostic<KtVariableDeclaration>() {
+        override val diagnosticClass get() = VariableWithNoTypeNoInitializer::class
     }
 
     abstract class UnsafeCall : KtFirDiagnostic<PsiElement>() {
