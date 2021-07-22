@@ -11,5 +11,3 @@ fun test() {
 
     <caret>Conflict
 }
-
-// REF: companion object of (test).Conflict

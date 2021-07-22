@@ -2,7 +2,7 @@ package test
 
 class Conflict
 
-fun test() {
+fun testFoo() {
     class Conflict
 
     <caret>Conflict

@@ -1,2 +1,2 @@
 Resolved to:
-0: constructor(a: kotlin.Int)
+0: (in A) constructor(a: kotlin.Int)

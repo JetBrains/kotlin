@@ -2,10 +2,8 @@ package test
 
 object Conflict
 
-fun test() {
+fun testFoo() {
     class Conflict
 
     <caret>Conflict()
 }
-
-// REF: (in test.test).Conflict

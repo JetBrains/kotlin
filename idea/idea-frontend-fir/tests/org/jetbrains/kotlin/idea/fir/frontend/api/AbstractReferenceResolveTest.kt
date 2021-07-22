@@ -13,10 +13,9 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.idea.frontend.api.components.RendererModifier
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -86,7 +85,7 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
 
     private fun KtAnalysisSession.renderResolveResult(symbol: KtSymbol): String {
         return buildString {
-            symbolFqName(symbol)?.let { fqName ->
+            symbolContainerFqName(symbol)?.let { fqName ->
                 append("(in $fqName) ")
             }
             append(symbol.render(renderingOptions))
@@ -94,12 +93,23 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
     }
 
     @Suppress("unused")// KtAnalysisSession receiver
-    private fun KtAnalysisSession.symbolFqName(symbol: KtSymbol): String? = when (symbol) {
-        is KtCallableSymbol -> symbol.callableIdIfNonLocal?.asSingleFqName()?.parent()
-        is KtClassLikeSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()?.parent()
-        is KtConstructorSymbol -> symbol.containingClassIdIfNonLocal?.asSingleFqName()
-        else -> null
-    }?.let { if (it == FqName.ROOT) "ROOT" else it.asString()}
+    private fun KtAnalysisSession.symbolContainerFqName(symbol: KtSymbol): String? {
+        if (symbol is KtPackageSymbol || symbol is KtValueParameterSymbol) return null
+        val nonLocalFqName = when (symbol) {
+            is KtConstructorSymbol -> symbol.containingClassIdIfNonLocal?.asSingleFqName()
+            is KtCallableSymbol -> symbol.callableIdIfNonLocal?.asSingleFqName()?.parent()
+            is KtClassLikeSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()?.parent()
+            else -> null
+        }
+        when (nonLocalFqName) {
+            null -> Unit
+            FqName.ROOT -> return "ROOT"
+            else -> return nonLocalFqName.asString()
+        }
+        val container = (symbol as? KtSymbolWithKind)?.getContainingSymbol() ?: return null
+        val parents = generateSequence(container) { it.getContainingSymbol() }
+        return "<local>: " + parents.joinToString(separator = ".") { (it as? KtNamedSymbol)?.name?.asString() ?: "<no name>" }
+    }
 
     private object Directives : SimpleDirectivesContainer() {
         val UNRESOLVED_REFERENCE by directive(

@@ -4,7 +4,7 @@ object Conflict {
     operator fun invoke() {}
 }
 
-fun test() {
+fun testFoo() {
     class Conflict
 
     <caret>Conflict()
