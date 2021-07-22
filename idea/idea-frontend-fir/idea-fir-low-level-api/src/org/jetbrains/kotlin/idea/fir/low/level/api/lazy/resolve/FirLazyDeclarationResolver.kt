@@ -93,6 +93,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         is FirDeclarationOrigin.Delegated,
         is FirDeclarationOrigin.Synthetic,
         is FirDeclarationOrigin.SubstitutionOverride,
+        is FirDeclarationOrigin.SamConstructor,
         is FirDeclarationOrigin.IntersectionOverride -> {
             when (this) {
                 is FirFile -> true

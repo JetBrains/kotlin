@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedB
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
 
@@ -29,9 +30,7 @@ fun FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
 ): FirDesignatedBodyResolveTransformerForReturnTypeCalculator {
 
     val designationList = mutableListOf<FirElement>()
-    for (element in designation) {
-        designationList.add(element)
-    }
+    designation.forEachRemaining(designationList::add)
     require(designationList.isNotEmpty()) { "Designation should not be empty" }
 
     return FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
@@ -64,10 +63,11 @@ private class FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
     private inline fun <D : FirCallableDeclaration> D.processCallable(body: (FirDeclarationDesignation) -> Unit) {
         if (this !== targetDeclaration) return
         ensureResolved(FirResolvePhase.TYPES)
-        if (returnTypeRef !is FirImplicitTypeRef) return
-        val declarationList = designation.filterIsInstance<FirDeclaration>()
-        check(declarationList.isNotEmpty()) { "Invalid empty declaration designation" }
-        body(FirDeclarationDesignation(declarationList.dropLast(1), this))
+        if (returnTypeRef is FirImplicitTypeRef) {
+            val declarationList = designation.filterIsInstance<FirDeclaration>()
+            check(declarationList.isNotEmpty()) { "Invalid empty declaration designation" }
+            body(FirDeclarationDesignation(declarationList.dropLast(1), this))
+        }
     }
 
     override fun transformSimpleFunction(

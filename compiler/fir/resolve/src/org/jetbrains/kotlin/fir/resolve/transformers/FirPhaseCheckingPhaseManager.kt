@@ -10,5 +10,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 
 object FirPhaseCheckingPhaseManager : FirPhaseManager() {
-    override fun ensureResolved(symbol: FirBasedSymbol<*>, requiredPhase: FirResolvePhase) = Unit
+    override fun ensureResolved(symbol: FirBasedSymbol<*>, requiredPhase: FirResolvePhase) {
+    }
 }

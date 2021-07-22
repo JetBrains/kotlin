@@ -71,7 +71,6 @@ class FirStatusResolver(
                 val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
                 scope.processPropertiesByName(property.name) {}
                 scope.processDirectOverriddenPropertiesWithBaseScope(property.symbol) { symbol, _ ->
-                    symbol.ensureResolved(FirResolvePhase.STATUS)
                     this += symbol.fir
                     ProcessorAction.NEXT
                 }

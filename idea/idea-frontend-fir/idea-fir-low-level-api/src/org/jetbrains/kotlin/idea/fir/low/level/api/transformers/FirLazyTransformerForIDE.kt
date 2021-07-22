@@ -64,43 +64,6 @@ internal interface FirLazyTransformerForIDE {
         internal var enableDeepEnsure: Boolean = false
             @TestOnly set
 
-//        private object ResolvePhaseWithForAllDeclarationsKey : FirDeclarationDataKey()
-
-//        private var FirDeclaration.resolvePhaseForDeclarationAndChildrenAttr: FirResolvePhase?
-//                by FirDeclarationDataRegistry.data(ResolvePhaseWithForAllDeclarationsKey)
-//
-//        /**
-//         * This resolve phase is used to check if current declaration and it's children were resolved for phase
-//         */
-//        var FirDeclaration.resolvePhaseForDeclarationAndChildren: FirResolvePhase
-//            get() = resolvePhaseForDeclarationAndChildrenAttr ?: FirResolvePhase.RAW_FIR
-//            set(value) {
-//                resolvePhaseForDeclarationAndChildrenAttr = value
-//            }
-//
-//        fun FirDeclaration.updateResolvedPhaseForDeclarationAndChildren(phase: FirResolvePhase) {
-//            val allDeclaration = resolvePhaseForDeclarationAndChildren
-//            if (allDeclaration < phase) {
-//                resolvePhaseForDeclarationAndChildren = phase
-//            }
-//        }
-
-//        fun FirDeclarationDesignation.resolvePhaseForAllDeclarations(includeDeclarationPhase: Boolean): FirResolvePhase {
-//            //resolvePhaseWithForAllDeclarations for these origins are derived from original declaration
-//            val includeTarget = when (declaration.origin) {
-//                is FirDeclarationOrigin.SubstitutionOverride,
-//                is FirDeclarationOrigin.IntersectionOverride,
-//                is FirDeclarationOrigin.Delegated -> false
-//                else -> true
-//            }
-//
-//            val allContaining = toSequence(includeTarget = includeTarget)
-//                .maxByOrNull { it.resolvePhase }
-//                ?.resolvePhase
-//                ?: FirResolvePhase.RAW_FIR
-//            return if (includeDeclarationPhase) minOf(declaration.resolvePhase, allContaining) else allContaining
-//        }
-
         val DUMMY = object : FirLazyTransformerForIDE {
             override fun transformDeclaration(phaseRunner: FirPhaseRunner) = Unit
             override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")

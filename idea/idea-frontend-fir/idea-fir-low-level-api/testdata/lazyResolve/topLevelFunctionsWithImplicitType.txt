@@ -82,7 +82,7 @@ FILE: topLevelFunctionsWithImplicitType.kt
     }
     public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 
@@ -104,7 +104,7 @@ FILE: topLevelFunctionsWithImplicitType.kt
     }
     public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 
@@ -115,7 +115,7 @@ FILE: topLevelFunctionsWithImplicitType.kt
     }
     public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 
@@ -148,7 +148,7 @@ FILE: topLevelFunctionsWithImplicitType.kt
     }
     public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 

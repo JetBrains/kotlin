@@ -27,9 +27,7 @@ fun FirIdeEnsureBasedTransformerForReturnTypeCalculator(
 ): FirDesignatedBodyResolveTransformerForReturnTypeCalculator {
 
     val designationList = mutableListOf<FirElement>()
-    for (element in designation) {
-        designationList.add(element)
-    }
+    designation.forEachRemaining(designationList::add)
     require(designationList.isNotEmpty()) { "Designation should not be empty" }
 
     return FirIdeEnsureBasedTransformerForReturnTypeCalculatorImpl(
@@ -60,21 +58,22 @@ private class FirIdeEnsureBasedTransformerForReturnTypeCalculatorImpl(
 ) {
     private val targetDeclaration = designation.last()
 
-    private fun <T : FirCallableDeclaration> T.ensuredReturnType() {
+    private fun <T : FirCallableDeclaration> T.ensureReturnType() {
         if (this !== targetDeclaration) return
         ensureResolved(FirResolvePhase.TYPES)
-        if (returnTypeRef !is FirImplicitTypeRef) return
-        ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        if (returnTypeRef is FirImplicitTypeRef) {
+            ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        }
     }
 
     override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ResolutionMode): FirSimpleFunction {
-        simpleFunction.ensuredReturnType()
+        simpleFunction.ensureReturnType()
         return super.transformSimpleFunction(simpleFunction, data)
     }
 
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
-        property.ensuredReturnType()
+        property.ensureReturnType()
         return super.transformProperty(property, data)
     }
 }
