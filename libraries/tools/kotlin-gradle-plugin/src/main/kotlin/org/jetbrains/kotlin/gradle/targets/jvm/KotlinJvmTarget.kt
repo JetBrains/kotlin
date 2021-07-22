@@ -9,12 +9,14 @@ import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -101,11 +103,21 @@ open class KotlinJvmTarget @Inject constructor(
         // sources are placed (i.e. src/jvmMain/java, src/jvmTest/java):
         javaSourceSet.resources.setSrcDirs(compilation.defaultSourceSet.resources.sourceDirectories)
         compilation.defaultSourceSet.resources.srcDirs(javaSourceSet.resources.sourceDirectories)
+        project.tasks.named(
+            compilation.processResourcesTaskName,
+            ProcessResources::class.java
+        ).configure {
+            // Now 'compilation' has additional resources dir from java compilation which points to the initial
+            // resources location. Because of this, ProcessResources task will copy same files twice,
+            // so we are excluding duplicates.
+            it.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
 
         // Resources processing is done with the Kotlin resource processing task:
-        val processJavaResourcesTask = project.tasks.getByName(javaSourceSet.processResourcesTaskName)
-        processJavaResourcesTask.dependsOn(project.tasks.getByName(compilation.processResourcesTaskName))
-        processJavaResourcesTask.enabled = false
+        project.tasks.named(javaSourceSet.processResourcesTaskName).configure {
+            it.dependsOn(project.tasks.named(compilation.processResourcesTaskName))
+            it.enabled = false
+        }
     }
 
     private fun disableJavaPluginTasks(javaPluginConvention: JavaPluginConvention) {

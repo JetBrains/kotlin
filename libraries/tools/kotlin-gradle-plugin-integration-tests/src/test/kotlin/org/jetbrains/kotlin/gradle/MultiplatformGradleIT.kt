@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.TestDataPath
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.internals.KOTLIN_12X_MPP_DEPRECATION_WARNING
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
@@ -308,6 +309,42 @@ class MultiplatformGradleIT : BaseGradleIT() {
         build(*customSourceSetCompileTasks.toTypedArray(), options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
             assertTasksExecuted(customSourceSetCompileTasks)
+        }
+    }
+
+    @Test
+    fun testWithJavaDuplicatedResourcesFail() = with(
+        Project(
+            projectName = "mpp-single-jvm-target",
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("7.0"),
+            minLogLevel = LogLevel.WARN
+        )
+    ) {
+        setupWorkingDir()
+
+        gradleBuildScript().modify { buildFileContent ->
+            buildFileContent
+                .lines()
+                .joinToString(separator = "\n") {
+                    if (it.contains("jvm()")) {
+                        "jvm { withJava() }"
+                    } else {
+                        it
+                    }
+                }
+        }
+
+        val resDir = projectDir.resolve("src/jvmMain/resources").also { it.mkdirs() }
+        resDir.resolve("test.properties").writeText(
+            """
+            one=true
+            two=false
+            """.trimIndent()
+        )
+
+        build("assemble") {
+            assertSuccessful()
+            assertNotContains("no duplicate handling strategy has been set")
         }
     }
 }
