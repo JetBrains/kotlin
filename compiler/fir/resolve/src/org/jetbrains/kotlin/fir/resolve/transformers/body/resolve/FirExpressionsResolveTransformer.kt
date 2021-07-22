@@ -846,6 +846,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             buildResolvedTypeRef {
                 type = StandardClassIds.KClass.constructClassLikeType(arrayOf(typeOfExpression), false)
             }
+        dataFlowAnalyzer.exitGetClassCall(transformedGetClassCall)
         return transformedGetClassCall
     }
 

@@ -128,6 +128,9 @@ fun ControlFlowGraphBuilder.createFunctionCallNode(fir: FirFunctionCall): Functi
 fun ControlFlowGraphBuilder.createCallableReferenceNode(fir: FirCallableReferenceAccess): CallableReferenceNode =
     CallableReferenceNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createGetClassCallNode(fir: FirGetClassCall): GetClassCallNode =
+    GetClassCallNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createDelegatedConstructorCallNode(fir: FirDelegatedConstructorCall): DelegatedConstructorCallNode =
     DelegatedConstructorCallNode(currentGraph, fir, levelCounter, createId())
 

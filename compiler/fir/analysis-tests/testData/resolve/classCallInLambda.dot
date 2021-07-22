@@ -1,0 +1,59 @@
+digraph classCallInLambda_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_1 {
+            color=blue
+            1 [label="Enter block"];
+            2 [label="Access variable R|<local>/x|"];
+            3 [label="Postponed enter to lambda"];
+            subgraph cluster_2 {
+                color=blue
+                11 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_3 {
+                    color=blue
+                    12 [label="Enter block"];
+                    13 [label="Access variable R|<local>/it|"];
+                    14 [label="::class call"];
+                    15 [label="Exit block"];
+                }
+                16 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            4 [label="Call arguments union" style="filled" fillcolor=yellow];
+            5 [label="Postponed exit from lambda"];
+            6 [label="Function call: R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(...)"];
+            7 [label="Jump: ^test R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/reflect/KClass<out kotlin/String>| <inline=Inline, kind=EXACTLY_ONCE>  {
+    ^ <getClass>(R|<local>/it|)
+}
+)"];
+            8 [label="Stub" style="filled" fillcolor=gray];
+            9 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        10 [label="Exit function test" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+    1 -> {2};
+    2 -> {3};
+    3 -> {11};
+    3 -> {5} [color=red];
+    3 -> {11} [style=dashed];
+    4 -> {6} [color=red];
+    5 -> {6} [color=green];
+    6 -> {7};
+    7 -> {10};
+    7 -> {8} [style=dotted];
+    8 -> {9} [style=dotted];
+    9 -> {10} [style=dotted];
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {16};
+    16 -> {4} [color=red];
+    16 -> {5} [color=green];
+
+}

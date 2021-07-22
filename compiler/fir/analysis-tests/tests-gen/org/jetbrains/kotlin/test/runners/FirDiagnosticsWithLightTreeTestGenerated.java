@@ -69,6 +69,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("classCallInLambda.kt")
+        public void testClassCallInLambda() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/classCallInLambda.kt");
+        }
+
+        @Test
         @TestMetadata("companion.kt")
         public void testCompanion() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/companion.kt");

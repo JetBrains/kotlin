@@ -64,6 +64,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/catchParameter.kt");
     }
 
+    @TestMetadata("classCallInLambda.kt")
+    public void testClassCallInLambda() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/classCallInLambda.kt");
+    }
+
     @TestMetadata("companion.kt")
     public void testCompanion() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/companion.kt");

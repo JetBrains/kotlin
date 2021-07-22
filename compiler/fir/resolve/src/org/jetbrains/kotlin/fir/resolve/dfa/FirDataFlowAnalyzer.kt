@@ -1342,6 +1342,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitCallableReference(callableReferenceAccess).mergeIncomingFlow()
     }
 
+    fun exitGetClassCall(getClassCall: FirGetClassCall) {
+        graphBuilder.exitGetClassCall(getClassCall).mergeIncomingFlow()
+    }
+
     // ------------------------------------------------------ Utils ------------------------------------------------------
 
     private fun getOrCreateLocalVariableAssignmentAnalyzer(firFunction: FirFunction): FirLocalVariableAssignmentAnalyzer? {

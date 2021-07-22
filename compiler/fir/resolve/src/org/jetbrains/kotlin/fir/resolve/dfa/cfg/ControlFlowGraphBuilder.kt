@@ -1121,6 +1121,10 @@ class ControlFlowGraphBuilder {
         return createCallableReferenceNode(callableReferenceAccess).also { addNewSimpleNode(it) }
     }
 
+    fun exitGetClassCall(getClassCall: FirGetClassCall): GetClassCallNode {
+        return createGetClassCallNode(getClassCall).also { addNewSimpleNode(it) }
+    }
+
     // ----------------------------------- Block -----------------------------------
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer): Pair<InitBlockEnterNode, CFGNode<*>?> {
