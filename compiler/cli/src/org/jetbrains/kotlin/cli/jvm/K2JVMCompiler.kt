@@ -89,7 +89,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val projectEnvironment =
                 KotlinCoreEnvironment.ProjectEnvironment(
                     rootDisposable,
-                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration)
+                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration),
+                    configuration
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 

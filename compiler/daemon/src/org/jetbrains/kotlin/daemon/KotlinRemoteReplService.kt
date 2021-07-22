@@ -66,7 +66,8 @@ abstract class KotlinJvmReplServiceBase(
             val projectEnvironment =
                 KotlinCoreEnvironment.ProjectEnvironment(
                     disposable,
-                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(disposable, configuration)
+                    KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(disposable, configuration),
+                    configuration,
                 )
             ReplFactoryExtension.registerExtensionPoint(projectEnvironment.project)
             projectEnvironment.registerExtensionsFromPlugins(configuration)

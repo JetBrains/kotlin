@@ -84,12 +84,13 @@ open class CompilerConfigurationProviderImpl(
             ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
             CompilerConfiguration()
         )
-        val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment)
+        val initialConfiguration = createCompilerConfiguration(module)
+        val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, initialConfiguration)
         val project = projectEnv.project
         configurators.forEach { it.registerCompilerExtensions(project) }
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
-            createCompilerConfiguration(module),
+            initialConfiguration,
             configFiles
         )
     }

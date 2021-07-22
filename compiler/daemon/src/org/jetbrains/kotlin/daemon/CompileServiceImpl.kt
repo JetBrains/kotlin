@@ -1204,7 +1204,6 @@ class CompileServiceImpl(
     override fun clearJarCache() {
         ZipHandler.clearFileAccessorCache()
         (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
-        (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? FastJarFileSystem)?.clearHandlersCache()
     }
 
     private inline fun <R> ifAlive(

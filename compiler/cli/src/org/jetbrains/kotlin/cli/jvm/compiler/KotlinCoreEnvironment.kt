@@ -115,9 +115,46 @@ class KotlinCoreEnvironment private constructor(
 
     class ProjectEnvironment(
         disposable: Disposable,
-        applicationEnvironment: KotlinCoreApplicationEnvironment
+        applicationEnvironment: KotlinCoreApplicationEnvironment,
+        configuration: CompilerConfiguration
     ) :
         KotlinCoreProjectEnvironment(disposable, applicationEnvironment) {
+
+        internal val jarFileSystem: VirtualFileSystem
+
+        init {
+            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+            if (configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)) {
+                messageCollector?.report(
+                    STRONG_WARNING,
+                    "Using new faster version of JAR FS: it should make your build faster, but the new implementation is experimental"
+                )
+            }
+
+            jarFileSystem = when {
+                configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM) || configuration.getBoolean(CommonConfigurationKeys.USE_FIR) -> {
+                    val fastJarFs = FastJarFileSystem.createIfUnmappingPossible()
+
+                    if (fastJarFs == null) {
+                        messageCollector?.report(
+                            STRONG_WARNING,
+                            "Your JDK doesn't seem to support mapped buffer unmapping, so the slower (old) version of JAR FS will be used"
+                        )
+                        applicationEnvironment.jarFileSystem
+                    } else {
+
+                        Disposer.register(disposable) {
+                            fastJarFs.clearHandlersCache()
+                        }
+
+                        fastJarFs
+                    }
+                }
+
+                else -> applicationEnvironment.jarFileSystem
+            }
+        }
 
         private var extensionRegistered = false
 
@@ -159,7 +196,8 @@ class KotlinCoreEnvironment private constructor(
 
     val configuration: CompilerConfiguration = initialConfiguration.apply { setupJdkClasspathRoots(configFiles) }.copy()
 
-    private val jarFileSystem: VirtualFileSystem
+    private val jarFileSystem: VirtualFileSystem =
+        (projectEnvironment as? ProjectEnvironment)?.jarFileSystem ?: applicationEnvironment.jarFileSystem
 
     init {
         PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
@@ -175,24 +213,6 @@ class KotlinCoreEnvironment private constructor(
                 STRONG_WARNING,
                 "Using new faster version of JAR FS: it should make your build faster, but the new implementation is experimental"
             )
-        }
-
-        jarFileSystem = when {
-            configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM) || configuration.getBoolean(CommonConfigurationKeys.USE_FIR) -> {
-                val fastJarFs = FastJarFileSystem.createIfUnmappingPossible()
-
-                if (fastJarFs == null) {
-                    messageCollector?.report(
-                        STRONG_WARNING,
-                        "Your JDK doesn't seem to support mapped buffer unmapping, so the slower (old) version of JAR FS will be used"
-                    )
-                    applicationEnvironment.jarFileSystem
-                } else {
-                    fastJarFs
-                }
-            }
-
-            else -> applicationEnvironment.jarFileSystem
         }
 
         (projectEnvironment as? ProjectEnvironment)?.registerExtensionsFromPlugins(configuration)
@@ -455,7 +475,7 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreEnvironment {
             setupIdeaStandaloneExecution()
             val appEnv = getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
-            val projectEnv = ProjectEnvironment(parentDisposable, appEnv)
+            val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
             val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
 
             synchronized(APPLICATION_LOCK) {
@@ -487,7 +507,7 @@ class KotlinCoreEnvironment private constructor(
             val configuration = initialConfiguration.copy()
             // Tests are supposed to create a single project and dispose it right after use
             val appEnv = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
-            val projectEnv = ProjectEnvironment(parentDisposable, appEnv)
+            val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
             return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
         }
 
@@ -502,7 +522,7 @@ class KotlinCoreEnvironment private constructor(
         @TestOnly
         fun createProjectEnvironmentForTests(parentDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
             val appEnv = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
-            return ProjectEnvironment(parentDisposable, appEnv)
+            return ProjectEnvironment(parentDisposable, appEnv, configuration)
         }
 
         // used in the daemon for jar cache cleanup
@@ -557,7 +577,6 @@ class KotlinCoreEnvironment private constructor(
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
                 ZipHandler.clearFileAccessorCache()
-                (environment.jarFileSystem as? FastJarFileSystem)?.clearHandlersCache()
             }
         }
 
