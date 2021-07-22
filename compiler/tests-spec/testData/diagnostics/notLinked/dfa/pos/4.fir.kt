@@ -19,14 +19,14 @@ import otherpackage.*
 // TESTCASE NUMBER: 1
 fun case_1(x: Any) {
     if (x === null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Nothing) {
     if (x == null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
     }
 }
 
@@ -41,7 +41,7 @@ fun case_3() {
 // TESTCASE NUMBER: 4
 fun case_4(x: Char) {
     if (x == null && true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Nothing")!>x<!>
     }
 }
 
@@ -49,7 +49,7 @@ fun case_4(x: Char) {
 fun case_5() {
     val x: Unit = kotlin.Unit
 
-    if (x == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit")!>x<!>
+    if (x == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Nothing")!>x<!>
 }
 
 // TESTCASE NUMBER: 6
@@ -57,7 +57,7 @@ fun case_6(x: EmptyClass) {
     val y = true
 
     if (x == null && !y) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass & EmptyClass")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass & kotlin.Nothing")!>x<!>
     }
 }
 
@@ -70,7 +70,7 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasString) {
-    if (x == null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!> == null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>
+    if (x == null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!> == null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>
 }
 
 // TESTCASE NUMBER: 9
@@ -78,7 +78,7 @@ fun case_9(x: TypealiasString) {
     if (x != null) {
 
     } else if (false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
     }
 }
 
@@ -103,7 +103,7 @@ fun case_11(x: TypealiasString, y: TypealiasString) {
         if (y == null) {
             if (stringProperty != null) {
                 if (false || false || false || z == null || false) {
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>
+                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
                 }
             }
         }
@@ -112,14 +112,14 @@ fun case_11(x: TypealiasString, y: TypealiasString) {
 
 // TESTCASE NUMBER: 12
 fun case_12(x: TypealiasString, y: TypealiasString) = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>if (x != null) "1"
-    else if (y !== null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>
+    else if (y !== null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
     else "-1"<!>
 
 // TESTCASE NUMBER: 13
 fun case_13(x: otherpackage.EmptyClass13) =
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>if (x != null) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>if (x != null) {
         1
-    } else <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.EmptyClass13 & otherpackage.EmptyClass13")!>x<!><!>
+    } else <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.EmptyClass13 & kotlin.Nothing")!>x<!><!>
 
 // TESTCASE NUMBER: 14
 class A14 {
@@ -179,7 +179,7 @@ fun case_16() {
     val x: TypealiasNothing = return
 
     if (x == null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNothing & TypealiasNothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNothing")!>x<!>
     }
 }
 
@@ -195,7 +195,7 @@ val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>if (true && true && in
 //TESTCASE NUMBER: 18
 fun case_18(a: DeepObject.A.B.C.D.E.F.G.J) {
     if (a == null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J & DeepObject.A.B.C.D.E.F.G.J")!>a<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J & kotlin.Nothing")!>a<!>
     }
 }
 
@@ -256,7 +256,7 @@ fun case_22(a: (() -> Unit)) {
 // TESTCASE NUMBER: 23
 fun case_23(a: ((Float) -> Int), b: Float) {
     if (a == null && b == null) {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Nothing")!>b<!>)<!>
         if (x !== null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
         }
@@ -276,13 +276,13 @@ fun case_24(a: ((() -> Unit) -> Unit), b: (() -> Unit)) {
 }
 
 // TESTCASE NUMBER: 25
-fun case_25(a: (() -> Unit) -> Unit, b: (() -> Unit) -> Unit = if (a == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit> & kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>")!>a<!> else {{}}) {
+fun case_25(a: (() -> Unit) -> Unit, b: (() -> Unit) -> Unit = if (a == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit> & kotlin.Nothing")!>a<!> else {{}}) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>")!>b<!>
 }
 
 // TESTCASE NUMBER: 26
-fun case_26(a: Int, b: Int = if (a === null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>a<!> else 0) {
+fun case_26(a: Int, b: Int = if (a === null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Nothing")!>a<!> else 0) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>
 }

@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
@@ -20,12 +21,14 @@ fun case_1(value_1: Any?) {
 fun case_2(value_1: Int?) {
     funWithReturnsAndInvertCondition(value_1 != null)
     println(value_1<!UNSAFE_CALL!>.<!>inc())
+    println(value_1<!UNSAFE_CALL!>.<!>unaryPlus())
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?) {
     funWithReturns(value_1 == null)
     println(value_1<!UNSAFE_CALL!>.<!>inc())
+    println(value_1<!UNSAFE_CALL!>.<!>unaryPlus())
 }
 
 // TESTCASE NUMBER: 4

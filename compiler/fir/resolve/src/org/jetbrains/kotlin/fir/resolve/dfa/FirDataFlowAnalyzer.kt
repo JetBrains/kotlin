@@ -1124,14 +1124,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         if (isAssignment) {
-            if (initializer is FirConstExpression<*> && initializer.kind == ConstantValueKind.Null) {
-                flow.addTypeStatement(
-                    propertyVariable typeEq
-                            property.returnTypeRef.coneType.withNullability(ConeNullability.NULLABLE, components.session.typeContext)
-                )
-            } else {
-                flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
-            }
+            flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
         }
     }
 

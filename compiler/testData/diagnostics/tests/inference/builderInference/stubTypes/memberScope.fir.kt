@@ -173,15 +173,15 @@ fun test() {
         if (get() === null) {}
 
         if (x == null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x?.hashCode()
         }
 
         if (x == null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
+            x?.<!NONE_APPLICABLE!>equals<!>(1)
         }
 
         if (x == null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            x?.test2()
         }
 
         if (x == null) {
@@ -189,15 +189,15 @@ fun test() {
         }
 
         if (x === null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x?.hashCode()
         }
 
         if (x === null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
+            x?.<!NONE_APPLICABLE!>equals<!>(1)
         }
 
         if (x === null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            x?.test2()
         }
 
         if (x === null) {
@@ -303,9 +303,9 @@ fun test() {
         if (get() === null) {}
 
         if (x == null) {
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
-            x<!UNNECESSARY_SAFE_CALL!>?.<!><!NONE_APPLICABLE!>equals<!>(1)
-            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            x?.hashCode()
+            x?.<!NONE_APPLICABLE!>equals<!>(1)
+            x?.test2()
             x.test2()
         }
 

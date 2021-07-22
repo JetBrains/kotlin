@@ -1,3 +1,6 @@
 package
 
-public fun foo(/*0*/ n: kotlin.Nothing, /*1*/ nn: kotlin.Nothing?): kotlin.Unit
+public fun test1(/*0*/ n: kotlin.Nothing): kotlin.Unit
+public fun test2(/*0*/ n: kotlin.Nothing?): kotlin.Unit
+public fun test3(/*0*/ n: kotlin.Nothing?): kotlin.Unit
+

@@ -10,7 +10,7 @@ fun case_1() {
         inner@ do {
             x = null
         } while (x == null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>x<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing")!>x<!>.length
     }
 }

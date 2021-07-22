@@ -17,9 +17,17 @@ class FirExpressionWithSmartcastToNullBuilder {
     lateinit var smartcastType: FirTypeRef
     lateinit var typesFromSmartCast: Collection<ConeKotlinType>
     lateinit var smartcastStability: SmartcastStability
+    lateinit var smartcastTypeWithoutNullableNothing: FirTypeRef
 
     fun build(): FirExpressionWithSmartcastToNull {
-        return FirExpressionWithSmartcastToNullImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability, listOf())
+        return FirExpressionWithSmartcastToNullImpl(
+            originalExpression,
+            smartcastType,
+            typesFromSmartCast,
+            smartcastStability,
+            smartcastTypeWithoutNullableNothing,
+            listOf()
+        )
     }
 }
 

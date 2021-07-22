@@ -133,10 +133,10 @@ fun case_13(x: Any?) {
  */
 fun case_14(x: Any?) {
     if (x == null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>?.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x!!<!>.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.equals(10)
     }
 }
 
@@ -147,10 +147,10 @@ fun case_14(x: Any?) {
  */
 fun case_15(x: Any?) {
     if (x !== null) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>?.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x!!<!>.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>?.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.equals(10)
     }
 }
 

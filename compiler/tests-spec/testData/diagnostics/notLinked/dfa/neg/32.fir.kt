@@ -12,8 +12,8 @@ fun stringArg(number: String) {}
  */
 fun case_1(x: Int?) {
     if (x == null) {
-        stringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x!!<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
     }
 }
 
@@ -37,8 +37,8 @@ fun case_2(x: Int?, y: Nothing?) {
 fun case_3(x: Int?) {
     if (x == null) {
         x as Int
-        stringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
     }
 }
 
@@ -50,8 +50,8 @@ fun case_3(x: Int?) {
 fun case_4(x: Int?) {
     if (x == null) {
         x!!
-        stringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
     }
 }
 
@@ -64,7 +64,7 @@ fun case_5(x: Int?) {
     if (x == null) {
         var y = x
         y!!
-        stringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>y<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>y<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>y<!>
     }
 }

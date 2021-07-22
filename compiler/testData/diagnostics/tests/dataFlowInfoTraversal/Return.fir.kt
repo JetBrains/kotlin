@@ -8,7 +8,7 @@ fun foo(): Int {
     if (x != null) return x
 
     val y: Int? = null
-    if (y == null) return if (y != null) y else y
+    if (y == null) return <!RETURN_TYPE_MISMATCH!>if (y != null) y else y<!>
 
     val z: Int? = null
     if (z != null) return if (z == null) z else z

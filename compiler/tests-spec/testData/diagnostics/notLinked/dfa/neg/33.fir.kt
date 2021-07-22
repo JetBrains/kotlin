@@ -12,7 +12,7 @@ fun nullableStringArg(number: String?) {}
  */
 fun case_1(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -34,7 +34,7 @@ fun case_2(x: Int?, y: Nothing?) {
  */
 fun case_3(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -45,7 +45,7 @@ fun case_3(x: Int?) {
  */
 fun case_4(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -57,6 +57,6 @@ fun case_4(x: Int?) {
 fun case_5(x: Int?) {
     if (x == null) {
         var y = x
-        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>y<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>y<!>)
     }
 }

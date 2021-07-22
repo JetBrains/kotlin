@@ -20,7 +20,7 @@ fun case_2() {
     var x: Int? = 10
     var y = { x = null }
     if (x != null) {
-        val z = case_2(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>)
+        val z = case_2(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>z<!>
     }
 }

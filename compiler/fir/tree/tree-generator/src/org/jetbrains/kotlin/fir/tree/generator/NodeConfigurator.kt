@@ -466,6 +466,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
             +field("originalType", typeRef)
             +field("smartcastType", typeRef)
+            +field("smartcastTypeWithoutNullableNothing", typeRef)
             +smartcastStability
         }
 

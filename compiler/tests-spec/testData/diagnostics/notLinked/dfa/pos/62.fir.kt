@@ -154,7 +154,7 @@ fun case_10(x: Any): String {
  */
 fun case_11(x: Any?): String? {
     if (x is Nothing?) {
-        return <!NO_ELSE_IN_WHEN!>when<!>(x) {
+        return when(x) {
             null -> null
         }
     }
@@ -168,7 +168,7 @@ fun case_11(x: Any?): String? {
  */
 fun case_12(x: Any?): String? {
     if (x == null) {
-        return <!NO_ELSE_IN_WHEN!>when<!>(x) {
+        return when(x) {
             null -> null
         }
     }
@@ -182,7 +182,7 @@ fun case_12(x: Any?): String? {
  */
 fun case_13(x: Any?): String? {
     if (x === null) {
-        return <!NO_ELSE_IN_WHEN!>when<!>(x) {
+        return when(x) {
             null -> null
         }
     }
@@ -196,7 +196,7 @@ fun case_13(x: Any?): String? {
  */
 fun case_14(x: Any?): String? {
     x as Nothing?
-    return <!NO_ELSE_IN_WHEN!>when<!>(x) {
+    return when(x) {
         null -> null
     }
 }
