@@ -30,6 +30,15 @@ Some examples:
   means that LLVM will build itself by using distribution from the previous step.
 * `--stage0` allows using existing LLVM toolchain for bootstrapping.
 
+### Docker
+
+You can use Docker to build LLVM for Linux:
+```shell
+docker build -t kotlin-llvm-builder .
+docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --archive-path /output/llvm-11.1.0-linux-x64
+
+```
+
 ### Known problems
 1. Bootstrap build is not working on macOS for default git branch.
 2. `libcxx` and `compiler-rt` are built as projects, not runtimes.
