@@ -559,24 +559,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 spelling = clang_getTypeSpelling(type).convertAndDispose().dropConstQualifier()
         )
 
-        CXType_Unexposed -> {
-            // FIXME  Remove this cludge for libclang version >= 9 (CINDEX_VERSION > 55)
-            if (clang_isExtVectorType(type) != 0) {
-                val size = clang_Type_getSizeOf(type)
-                if (size == 16L) {
-                    //  ExtVector elementType and elementCount are ignored for now but stubs are still needed for
-                    //  CXType_Vector compatibility. Incoming clang v9 provide CXType_ExtVector compatible with CXType_Vector
-                    val spelling = "__attribute__((__vector_size__($size))) float"
-                    VectorType(FloatingType(4, "float"), 4, spelling)
-                } else {
-                    UnsupportedType
-                }
-            } else {
-                UnsupportedType
-            }
-        }
-
-        CXType_Vector -> {
+        CXType_Vector, CXType_ExtVector -> {
             val elementCXType = clang_getElementType(type)
             val elementType = convertType(elementCXType)
             val size = clang_Type_getSizeOf(type)
