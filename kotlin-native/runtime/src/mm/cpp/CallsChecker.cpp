@@ -129,6 +129,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "tanh",
         "tanhf",
         "vsnprintf",
+        "bcmp",
 
         "dispatch_once",
         "\x01_pthread_cond_init",
@@ -246,6 +247,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.va_start",
         "llvm.x86.avx2.*",
         "llvm.x86.ssse3.*",
+        "llvm.uadd.sat.*",
 
         "SetConsoleOutputCP",
         "SetConsoleCP",
