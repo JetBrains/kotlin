@@ -238,9 +238,9 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.TYPE_PARAMETERS_LIST
     )
 
-    val RESERVED_UNDERSCORE = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.RESERVED_UNDERSCORE,
-        PositioningStrategies.RESERVED_UNDERSCORE
+    val NAME_IDENTIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.NAME_IDENTIFIER,
+        PositioningStrategies.NAME_IDENTIFIER
     )
 
     val QUESTION_MARK_BY_TYPE = SourceElementPositioningStrategy(

@@ -3239,6 +3239,14 @@ internal class UnderscoreUsageWithoutBackticksImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class InvalidCharactersImpl(
+    override val message: String,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InvalidCharacters(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class EqualityNotApplicableImpl(
     override val operator: String,
     override val leftType: KtType,

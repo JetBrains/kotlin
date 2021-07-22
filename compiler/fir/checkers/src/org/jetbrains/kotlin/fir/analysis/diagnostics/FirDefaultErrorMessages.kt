@@ -228,6 +228,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_INSID
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
@@ -1397,6 +1398,11 @@ class FirDefaultErrorMessages {
             map.put(
                 UNDERSCORE_USAGE_WITHOUT_BACKTICKS,
                 "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
+            )
+            map.put(
+                INVALID_CHARACTERS,
+                "Name {0}",
+                STRING
             )
             map.put(
                 EQUALITY_NOT_APPLICABLE,

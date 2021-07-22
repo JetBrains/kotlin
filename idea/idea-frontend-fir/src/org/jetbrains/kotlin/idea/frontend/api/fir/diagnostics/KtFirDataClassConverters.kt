@@ -2876,6 +2876,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INVALID_CHARACTERS) { firDiagnostic ->
+        InvalidCharactersImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EQUALITY_NOT_APPLICABLE) { firDiagnostic ->
         EqualityNotApplicableImpl(
             firDiagnostic.a,

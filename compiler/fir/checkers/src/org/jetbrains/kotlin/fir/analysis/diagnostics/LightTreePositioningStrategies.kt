@@ -708,7 +708,7 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val RESERVED_UNDERSCORE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+    val NAME_IDENTIFIER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
