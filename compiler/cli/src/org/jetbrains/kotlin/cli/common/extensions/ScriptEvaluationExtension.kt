@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.cli.common.extensions
 
-import com.intellij.core.JavaCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
@@ -22,6 +22,6 @@ interface ScriptEvaluationExtension {
     fun eval(
         arguments: CommonCompilerArguments,
         configuration: CompilerConfiguration,
-        projectEnvironment: JavaCoreProjectEnvironment
+        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
     ): ExitCode
 }

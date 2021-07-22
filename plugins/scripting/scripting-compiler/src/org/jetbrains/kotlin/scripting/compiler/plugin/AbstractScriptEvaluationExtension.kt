@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import com.intellij.core.JavaCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -31,7 +30,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
     abstract fun setupScriptConfiguration(configuration: CompilerConfiguration)
 
     abstract fun createEnvironment(
-        projectEnvironment: JavaCoreProjectEnvironment,
+        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
         configuration: CompilerConfiguration
     ): KotlinCoreEnvironment
 
@@ -43,7 +42,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
     override fun eval(
         arguments: CommonCompilerArguments,
         configuration: CompilerConfiguration,
-        projectEnvironment: JavaCoreProjectEnvironment
+        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(projectEnvironment.project)

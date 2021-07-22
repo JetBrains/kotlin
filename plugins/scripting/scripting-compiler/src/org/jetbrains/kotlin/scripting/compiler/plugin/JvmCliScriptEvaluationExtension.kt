@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import com.intellij.core.JavaCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -32,7 +31,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
     }
 
     override fun createEnvironment(
-        projectEnvironment: JavaCoreProjectEnvironment,
+        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
         configuration: CompilerConfiguration
     ): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)

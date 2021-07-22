@@ -108,7 +108,7 @@ import java.nio.file.FileSystems
 import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
-    val projectEnvironment: JavaCoreProjectEnvironment,
+    val projectEnvironment: ProjectEnvironment,
     private val initialConfiguration: CompilerConfiguration,
     configFiles: EnvironmentConfigFiles
 ) {
@@ -195,9 +195,6 @@ class KotlinCoreEnvironment private constructor(
     private val initialRoots = ArrayList<JavaRoot>()
 
     val configuration: CompilerConfiguration = initialConfiguration.apply { setupJdkClasspathRoots(configFiles) }.copy()
-
-    private val jarFileSystem: VirtualFileSystem =
-        (projectEnvironment as? ProjectEnvironment)?.jarFileSystem ?: applicationEnvironment.jarFileSystem
 
     init {
         PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
@@ -439,7 +436,7 @@ class KotlinCoreEnvironment private constructor(
     }
 
     private fun findJarRoot(file: File): VirtualFile? =
-        jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
+        projectEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
     private fun getSourceRootsCheckingForDuplicates(): List<KotlinSourceRoot> {
         val uniqueSourceRoots = hashSetOf<String>()
@@ -486,7 +483,7 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         fun createForProduction(
-            projectEnvironment: JavaCoreProjectEnvironment, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
+            projectEnvironment: ProjectEnvironment, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             val environment = KotlinCoreEnvironment(projectEnvironment, configuration, configFiles)
 
