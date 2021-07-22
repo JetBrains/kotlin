@@ -3618,6 +3618,13 @@ internal class IllegalInlineParameterModifierImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class InlineSuspendFunctionTypeUnsupportedImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InlineSuspendFunctionTypeUnsupported(), KtAbstractFirDiagnostic<KtParameter> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     firDiagnostic: FirPsiDiagnostic,

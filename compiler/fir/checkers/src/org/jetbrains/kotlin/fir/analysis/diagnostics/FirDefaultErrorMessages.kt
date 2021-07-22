@@ -227,6 +227,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_HAS_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_NOT_FINAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_NOT_TOP_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL
@@ -1517,6 +1518,11 @@ class FirDefaultErrorMessages {
             map.put(SUPER_CALL_FROM_PUBLIC_INLINE, "Accessing super members from public-API inline function is deprecated", SYMBOL)
 
             map.put(ILLEGAL_INLINE_PARAMETER_MODIFIER, "Modifier is allowed only for function parameters of an inline function")
+
+            map.put(
+                INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED,
+                "Suspend inline lambda parameters of non-suspend function type are not supported. Add 'noinline' or 'crossinline' modifier."
+            )
 
             //imports
             map.put(

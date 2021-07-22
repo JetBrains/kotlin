@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.util.checkChildrenWithCustomVisitor
@@ -363,6 +362,10 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                     "Suspend functional parameters with default values",
                     context
                 )
+            }
+
+            if (!function.isSuspend && isSuspendFunctionalType && !param.isCrossinline) {
+                reporter.reportOn(param.source, FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, context)
             }
 
             if (coneType.isNullable && isFunctionalType) {
