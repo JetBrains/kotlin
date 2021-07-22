@@ -186,6 +186,7 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
                     typeParameter,
                     recursionDepth + 1
             );
+            if (substitution.isStarProjection()) return substitution;
 
             KotlinType substitutedEnhancement = substitute(enhancement, originalProjection.getProjectionKind());
             KotlinType resultingType = TypeWithEnhancementKt.wrapEnhancement(
