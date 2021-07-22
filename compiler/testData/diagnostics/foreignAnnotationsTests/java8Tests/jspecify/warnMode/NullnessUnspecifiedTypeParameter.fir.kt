@@ -13,8 +13,7 @@ public class NullnessUnspecifiedTypeParameter<T> {
 public class Test {}
 
 // FILE: main.kt
-// jspecify_nullness_mismatch
-fun main(a1: NullnessUnspecifiedTypeParameter<Any>, a2: NullnessUnspecifiedTypeParameter<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>Any?<!>>, x: Test): Unit {
+fun main(a1: NullnessUnspecifiedTypeParameter<Any>, a2: NullnessUnspecifiedTypeParameter<Any?>, x: Test): Unit {
     // jspecify_nullness_mismatch
     a1.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     a1.foo(1)
