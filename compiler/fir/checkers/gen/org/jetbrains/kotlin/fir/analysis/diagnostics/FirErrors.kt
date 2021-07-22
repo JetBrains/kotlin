@@ -333,6 +333,7 @@ object FirErrors {
     val NO_TYPE_ARGUMENTS_ON_RHS by error2<PsiElement, Int, FirClassLikeSymbol<*>>()
     val OUTER_CLASS_ARGUMENTS_REQUIRED by error1<PsiElement, FirRegularClassSymbol>()
     val TYPE_PARAMETERS_IN_OBJECT by error0<PsiElement>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
+    val TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT by error0<PsiElement>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val ILLEGAL_PROJECTION_USAGE by error0<PsiElement>()
     val TYPE_PARAMETERS_IN_ENUM by error0<PsiElement>()
     val CONFLICTING_PROJECTION by error1<KtTypeProjection, ConeKotlinType>(SourceElementPositioningStrategies.VARIANCE_MODIFIER)

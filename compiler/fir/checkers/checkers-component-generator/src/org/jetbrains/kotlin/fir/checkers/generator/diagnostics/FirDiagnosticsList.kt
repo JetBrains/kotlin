@@ -500,6 +500,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirRegularClassSymbol>("outer")
         }
         val TYPE_PARAMETERS_IN_OBJECT by error<PsiElement>(PositioningStrategy.TYPE_PARAMETERS_LIST)
+        val TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT by error<PsiElement>(PositioningStrategy.TYPE_PARAMETERS_LIST)
         val ILLEGAL_PROJECTION_USAGE by error<PsiElement>()
         val TYPE_PARAMETERS_IN_ENUM by error<PsiElement>()
         val CONFLICTING_PROJECTION by error<KtTypeProjection>(PositioningStrategy.VARIANCE_MODIFIER) {

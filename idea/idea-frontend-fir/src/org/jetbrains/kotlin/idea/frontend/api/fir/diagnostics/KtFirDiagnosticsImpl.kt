@@ -1691,6 +1691,13 @@ internal class TypeParametersInObjectImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class TypeParametersInAnonymousObjectImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.TypeParametersInAnonymousObject(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class IllegalProjectionUsageImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

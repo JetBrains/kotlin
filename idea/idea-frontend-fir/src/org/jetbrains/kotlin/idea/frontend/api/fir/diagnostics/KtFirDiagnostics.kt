@@ -1057,6 +1057,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = TypeParametersInObject::class
     }
 
+    abstract class TypeParametersInAnonymousObject : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeParametersInAnonymousObject::class
+    }
+
     abstract class IllegalProjectionUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = IllegalProjectionUsage::class
     }
