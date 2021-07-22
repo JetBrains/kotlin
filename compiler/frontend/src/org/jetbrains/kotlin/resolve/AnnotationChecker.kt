@@ -158,6 +158,15 @@ class AnnotationChecker(
         val shouldRunCheck = isSuperType || shouldCheckReferenceItself
         if (shouldRunCheck) {
             for (entry in reference.annotationEntries) {
+                val descriptor = trace.get(BindingContext.ANNOTATION, entry)
+                if (descriptor is LazyAnnotationDescriptor) {
+                    /*
+                     * There are no users of type annotations until backend, so if there are errors
+                     *  in annotation call then we should force resolve of it to detect and
+                     *  report them
+                     */
+                    descriptor.forceResolveAllContents()
+                }
                 val actualTargets = getActualTargetList(reference, null, trace.bindingContext)
                 if (entry.useSiteTarget != null && isSuperType) {
                     val reportError = languageVersionSettings.supportsFeature(ProhibitUseSiteTargetAnnotationsOnSuperTypes)

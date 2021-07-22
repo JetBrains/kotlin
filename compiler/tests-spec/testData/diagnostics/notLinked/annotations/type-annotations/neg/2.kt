@@ -14,4 +14,4 @@
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)
 
-abstract class Foo : @<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) Any()
+abstract class Foo : @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Any()
