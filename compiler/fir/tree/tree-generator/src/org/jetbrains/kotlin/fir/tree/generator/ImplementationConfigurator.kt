@@ -168,7 +168,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("origin", "FirFunctionCallOrigin.Operator")
         }
 
-        impl(qualifiedAccessExpression)
+        impl(qualifiedAccessExpression) {
+            publicImplementation()
+        }
 
         noImpl(expressionWithSmartcast)
         noImpl(expressionWithSmartcastToNull)

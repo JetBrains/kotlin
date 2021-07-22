@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
+import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -268,7 +269,8 @@ class FirCallResolver(
                     nonFatalDiagnostics = extractNonFatalDiagnostics(
                         nameReference.source,
                         qualifiedAccess.explicitReceiver,
-                        referencedSymbol
+                        referencedSymbol,
+                        (qualifiedAccess as? FirQualifiedAccessExpressionImpl)?.nonFatalDiagnostics
                     )
                 )
             }
@@ -294,12 +296,27 @@ class FirCallResolver(
     private fun extractNonFatalDiagnostics(
         source: FirSourceElement?,
         explicitReceiver: FirExpression?,
-        symbol: FirClassLikeSymbol<*>
+        symbol: FirClassLikeSymbol<*>,
+        extraNotFatalDiagnostics: List<ConeDiagnostic>?
     ): List<ConeDiagnostic> {
         val prevDiagnostics = (explicitReceiver as? FirResolvedQualifier)?.nonFatalDiagnostics ?: emptyList()
-        return symbol.fir.deprecation?.forUseSite()?.let {
-            prevDiagnostics + ConeDeprecated(source, symbol, it)
-        } ?: prevDiagnostics
+        var result: MutableList<ConeDiagnostic>? = null
+
+        val deprecation = symbol.fir.deprecation?.forUseSite()
+        if (deprecation != null) {
+            result = mutableListOf()
+            result.addAll(prevDiagnostics)
+            result.add(ConeDeprecated(source, symbol, deprecation))
+        }
+        if (extraNotFatalDiagnostics != null && extraNotFatalDiagnostics.isNotEmpty()) {
+            if (result == null) {
+                result = mutableListOf()
+                result.addAll(prevDiagnostics)
+            }
+            result.addAll(extraNotFatalDiagnostics)
+        }
+
+        return result?.toList() ?: prevDiagnostics
     }
 
     fun resolveCallableReference(

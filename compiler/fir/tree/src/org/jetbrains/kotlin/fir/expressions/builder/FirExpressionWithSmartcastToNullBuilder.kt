@@ -19,7 +19,7 @@ class FirExpressionWithSmartcastToNullBuilder {
     lateinit var smartcastStability: SmartcastStability
 
     fun build(): FirExpressionWithSmartcastToNull {
-        return FirExpressionWithSmartcastToNullImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability)
+        return FirExpressionWithSmartcastToNullImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability, listOf())
     }
 }
 

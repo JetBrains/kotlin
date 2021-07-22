@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -29,6 +30,7 @@ internal class FirCallableReferenceAccessImpl(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
 ) : FirCallableReferenceAccess() {

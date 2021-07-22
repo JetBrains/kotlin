@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
@@ -25,7 +26,8 @@ class FirExpressionWithSmartcastToNullImpl(
     override var originalExpression: FirQualifiedAccessExpression,
     override val smartcastType: FirTypeRef,
     override val typesFromSmartCast: Collection<ConeKotlinType>,
-    override val smartcastStability: SmartcastStability
+    override val smartcastStability: SmartcastStability,
+    override val nonFatalDiagnostics: List<ConeDiagnostic>
 ) : FirExpressionWithSmartcastToNull() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)

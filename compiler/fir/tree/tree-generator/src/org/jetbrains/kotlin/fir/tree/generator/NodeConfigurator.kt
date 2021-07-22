@@ -192,6 +192,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("source", sourceElementType, nullable = true, withReplace = true)
         }
 
+        qualifiedAccessExpression.configure {
+            +fieldList("nonFatalDiagnostics", coneDiagnosticType)
+        }
+
         constExpression.configure {
             withArg("T")
             +field("kind", constKindType.withArgs("T"), withReplace = true)

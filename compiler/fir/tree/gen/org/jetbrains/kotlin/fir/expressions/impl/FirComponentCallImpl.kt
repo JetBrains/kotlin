@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
@@ -33,6 +34,7 @@ internal class FirComponentCallImpl(
     override val typeArguments: MutableList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,

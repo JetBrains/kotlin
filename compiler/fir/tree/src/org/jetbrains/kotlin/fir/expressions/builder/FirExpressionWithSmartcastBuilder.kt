@@ -19,7 +19,7 @@ class FirExpressionWithSmartcastBuilder {
     lateinit var smartcastStability: SmartcastStability
 
     fun build(): FirExpressionWithSmartcast {
-        return FirExpressionWithSmartcastImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability)
+        return FirExpressionWithSmartcastImpl(originalExpression, smartcastType, typesFromSmartCast, smartcastStability, listOf())
     }
 }
 

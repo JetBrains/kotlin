@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -27,6 +28,7 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
+    abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
