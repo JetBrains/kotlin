@@ -141,6 +141,7 @@ static llvm::GlobalVariable* emitCoverageGlobal(
     // Create the deferred function records array
     auto functionRecordsTy = llvm::ArrayType::get(functionRecordTy, FunctionRecords.size());
     auto functionRecordsVal = llvm::ConstantArray::get(functionRecordsTy, FunctionRecords);
+    const unsigned NRecords = 0;
 
     llvm::Type *CovDataHeaderTypes[] = {
 #define COVMAP_HEADER(Type, LLVMType, Name, Init) LLVMType,
@@ -203,7 +204,7 @@ LLVMValueRef LLVMCoverageEmit(LLVMModuleRef moduleRef,
 
     const std::string &section = getInstrProfSectionName(IPSK_covmap, Triple(module.getTargetTriple()).getObjectFormat());
     coverageGlobal->setSection(section);
-    coverageGlobal->setAlignment(8);
+    coverageGlobal->setAlignment(llvm::Align(8));
     return wrap(coverageGlobal);
 }
 
