@@ -286,4 +286,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT,
         PositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT
     )
+
+    val INLINE_PARAMETER_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.INLINE_PARAMETER_MODIFIER,
+        PositioningStrategies.INLINE_PARAMETER_MODIFIER
+    )
 }

@@ -99,6 +99,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     INCOMPATIBLE_DECLARATION,
     ACTUAL_DECLARATION_NAME,
     UNREACHABLE_CODE,
+    INLINE_PARAMETER_MODIFIER,
 
     ;
 

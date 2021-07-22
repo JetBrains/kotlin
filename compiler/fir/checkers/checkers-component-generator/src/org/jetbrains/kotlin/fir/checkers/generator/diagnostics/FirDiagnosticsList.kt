@@ -1188,6 +1188,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REIFIED_TYPE_PARAMETER_IN_OVERRIDE by error<KtElement>(PositioningStrategy.REIFIED_MODIFIER)
 
         val INLINE_PROPERTY_WITH_BACKING_FIELD by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+
+        val ILLEGAL_INLINE_PARAMETER_MODIFIER by error<KtElement>(PositioningStrategy.INLINE_PARAMETER_MODIFIER)
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {

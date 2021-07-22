@@ -2236,6 +2236,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InlinePropertyWithBackingField::class
     }
 
+    abstract class IllegalInlineParameterModifier : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = IllegalInlineParameterModifier::class
+    }
+
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         abstract val objectName: Name

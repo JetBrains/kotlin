@@ -497,6 +497,10 @@ object PositioningStrategies {
         ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.INNER_KEYWORD))
 
     @JvmField
+    val INLINE_PARAMETER_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD))
+
+    @JvmField
     val VARIANCE_IN_PROJECTION: PositioningStrategy<KtTypeProjection> = object : PositioningStrategy<KtTypeProjection>() {
         override fun mark(element: KtTypeProjection): List<TextRange> {
             return markElement(element.projectionToken!!)

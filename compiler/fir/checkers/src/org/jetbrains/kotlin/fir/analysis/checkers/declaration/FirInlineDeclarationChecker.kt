@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.util.checkChildrenWithCustomVisitor
@@ -38,7 +39,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirInlineDeclarationChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!declaration.isInline) return
+        if (!declaration.isInline) {
+            checkParametersInNotInline(declaration, context, reporter)
+            return
+        }
         // local inline functions are prohibited
         if (declaration.isLocalMember) {
             reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local inline functions", context)
@@ -341,12 +345,18 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         reporter: DiagnosticReporter
     ) {
         for (param in function.valueParameters) {
-            if (param.isNoinline) continue
-
             val coneType = param.returnTypeRef.coneType
             val isFunctionalType = coneType.isFunctionalType(context.session)
+            val isSuspendFunctionalType = coneType.isSuspendFunctionType(context.session)
             val defaultValue = param.defaultValue
-            if (function.isSuspend && defaultValue != null && coneType.isSuspendFunctionType(context.session)) {
+
+            if (!(isFunctionalType || isSuspendFunctionalType) && (param.isNoinline || param.isCrossinline)) {
+                reporter.reportOn(param.source, FirErrors.ILLEGAL_INLINE_PARAMETER_MODIFIER, context)
+            }
+
+            if (param.isNoinline) continue
+
+            if (function.isSuspend && defaultValue != null && isSuspendFunctionalType) {
                 reporter.reportOn(
                     param.source,
                     FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
@@ -399,6 +409,14 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                     "Functional parameters with inherited default values",
                     context
                 )
+            }
+        }
+    }
+
+    private fun checkParametersInNotInline(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        for (param in function.valueParameters) {
+            if (param.isNoinline || param.isCrossinline) {
+                reporter.reportOn(param.source, FirErrors.ILLEGAL_INLINE_PARAMETER_MODIFIER, context)
             }
         }
     }
