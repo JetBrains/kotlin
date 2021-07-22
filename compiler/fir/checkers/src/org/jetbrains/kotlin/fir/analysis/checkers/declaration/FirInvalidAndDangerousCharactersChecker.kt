@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -15,8 +14,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.name.Name
 
-object FirInvalidCharactersChecker : FirBasicDeclarationChecker() {
+object FirInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker() {
+    // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
     private val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
+
+    // These characters can cause problems on Windows. '?*"|' are not allowed in file names, and % leads to unexpected env var expansion.
+    private val DANGEROUS_CHARS = setOf('?', '*', '"', '|', '%')
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = declaration.source
@@ -32,19 +35,26 @@ object FirInvalidCharactersChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkNameAndReport(name: Name, source: FirSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
-        val nameString = name.asString()
         if (source != null &&
             source.kind !is FirFakeSourceElementKind &&
-            source.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION &&
-            !name.isSpecial &&
-            nameString.any { it in INVALID_CHARS }
+            !name.isSpecial
         ) {
-            reporter.reportOn(
-                source,
-                FirErrors.INVALID_CHARACTERS,
-                "contains illegal characters: ${INVALID_CHARS.intersect(nameString.toSet()).joinToString("")}",
-                context
-            )
+            val nameString = name.asString()
+            if (nameString.any { it in INVALID_CHARS }) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.INVALID_CHARACTERS,
+                    "contains illegal characters: ${INVALID_CHARS.intersect(nameString.toSet()).joinToString("")}",
+                    context
+                )
+            } else if (nameString.any { it in DANGEROUS_CHARS }) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.DANGEROUS_CHARACTERS,
+                    DANGEROUS_CHARS.intersect(nameString.toSet()).joinToString(""),
+                    context
+                )
+            }
         }
     }
 }

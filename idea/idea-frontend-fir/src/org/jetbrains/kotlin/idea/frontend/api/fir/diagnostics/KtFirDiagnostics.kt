@@ -2016,6 +2016,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val message: String
     }
 
+    abstract class DangerousCharacters : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = DangerousCharacters::class
+        abstract val characters: String
+    }
+
     abstract class EqualityNotApplicable : KtFirDiagnostic<KtBinaryExpression>() {
         override val diagnosticClass get() = EqualityNotApplicable::class
         abstract val operator: String

@@ -1073,6 +1073,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INVALID_CHARACTERS by error<KtNamedDeclaration>(PositioningStrategy.NAME_IDENTIFIER) {
             parameter<String>("message")
         }
+        val DANGEROUS_CHARACTERS by warning<KtNamedDeclaration>(PositioningStrategy.NAME_IDENTIFIER) {
+            parameter<String>("characters")
+        }
 
         val EQUALITY_NOT_APPLICABLE by error<KtBinaryExpression> {
             parameter<String>("operator")
