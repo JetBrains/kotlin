@@ -20,7 +20,7 @@ fun first(arg: Int) = when (arg) {
     <!DUPLICATE_LABEL_IN_WHEN!>1<!> -> 6
     <!DUPLICATE_LABEL_IN_WHEN!>2<!> -> 7
     // Error should be here: see KT-11971
-    four -> 8
+    <!DUPLICATE_LABEL_IN_WHEN!>four<!> -> 8
     else -> 0
 }
 
