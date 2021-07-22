@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -126,6 +127,10 @@ class DefinitelyNotNullType private constructor(
             if (!type.canHaveUndefinedNullability()) return false
 
             if (type is StubTypeForBuilderInference) return TypeUtils.isNullableType(type)
+
+            if ((type.constructor.declarationDescriptor as? TypeParameterDescriptorImpl)?.isInitialized == false) {
+                return true
+            }
 
             // Replacing `useCorrectedNullabilityForFlexibleTypeParameters` with true for all call-sites seems to be correct
             // But it seems that it should be a new feature: KT-28785 would be automatically fixed then
