@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
@@ -13,6 +14,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -59,17 +63,11 @@ private object XcodeEnvironment {
     val sign: String? get() = System.getenv("EXPANDED_CODE_SIGN_IDENTITY")
 }
 
-private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): TaskProvider<Copy>? {
+private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): TaskProvider<out Task>? {
     if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHost) return null
 
     val envTargets = XcodeEnvironment.targets
-    if (envTargets.size > 1) {
-        logger.debug(
-            "Unable to register assemble Apple framework task because " +
-                    "'ARCHS' contains more than one value."
-        )
-        return null
-    }
+    val needFatFramework = envTargets.size > 1
 
     val frameworkBuildType = framework.buildType
     val frameworkTarget = framework.target
@@ -78,16 +76,15 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
         framework.namePrefix,
         frameworkBuildType.getName(),
         "AppleFrameworkForXcode",
-        frameworkTarget.name
+        if (!needFatFramework) frameworkTarget.name else null
     )
 
     val envBuildType = XcodeEnvironment.buildType
-    val envTarget = envTargets.firstOrNull()
     val envFrameworkSearchDir = XcodeEnvironment.frameworkSearchDir
 
-    if (envBuildType == null || envTarget == null || envFrameworkSearchDir == null) {
+    if (envBuildType == null || envTargets.isEmpty() || envFrameworkSearchDir == null) {
         val envConfiguration = System.getenv("CONFIGURATION")
-        if (envTarget != null && envConfiguration != null) {
+        if (envTargets.isNotEmpty() && envConfiguration != null) {
             logger.warn(
                 "Unable to detect Kotlin framework build type for CONFIGURATION=$envConfiguration automatically. " +
                         "Specify 'KOTLIN_FRAMEWORK_BUILD_TYPE' to 'debug' or 'release'"
@@ -101,14 +98,25 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
         return null
     }
 
-    if (frameworkBuildType != envBuildType || frameworkTarget.konanTarget != envTarget) return null
+    if (frameworkBuildType != envBuildType || !envTargets.contains(frameworkTarget.konanTarget)) return null
 
-    return registerTask(frameworkTaskName) { task ->
-        task.group = BasePlugin.BUILD_GROUP
-        task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
-        task.dependsOn(framework.linkTaskName)
-        task.from(framework.outputDirectory)
-        task.into(appleFrameworkDir(envFrameworkSearchDir))
+    return if (needFatFramework) {
+        locateOrRegisterTask<FatFrameworkTask>(frameworkTaskName) { task ->
+            task.group = BasePlugin.BUILD_GROUP
+            task.description = "Packs $frameworkBuildType fat framework for Xcode"
+            task.baseName = framework.baseName
+            task.destinationDir = appleFrameworkDir(envFrameworkSearchDir)
+        }.also {
+            it.configure { task -> task.from(framework) }
+        }
+    } else {
+        registerTask<Copy>(frameworkTaskName) { task ->
+            task.group = BasePlugin.BUILD_GROUP
+            task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
+            task.dependsOn(framework.linkTaskName)
+            task.from(framework.outputDirectory)
+            task.into(appleFrameworkDir(envFrameworkSearchDir))
+        }
     }
 }
 
@@ -132,6 +140,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     }
 
     if (framework.buildType != envBuildType || !envTargets.contains(framework.konanTarget)) return
+    if (locateTask<Copy>(frameworkTaskName) != null) return
 
     registerTask<Copy>(frameworkTaskName) { task ->
         task.group = "build"
