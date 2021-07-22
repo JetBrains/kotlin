@@ -51,10 +51,28 @@ val ldflags = mutableListOf("$llvmDir/$libclang", "-L${libclangextDir.absolutePa
 
 if (libclangextIsEnabled) {
     assert(HostManager.hostIsMac)
-    ldflags.addAll(listOf("-Wl,--no-demangle", "-Wl,-search_paths_first", "-Wl,-headerpad_max_install_names", "-Wl,-U,_futimens",
-                       "-Wl,-U,__ZN4llvm7remarks11parseFormatENS_9StringRefE",
-                       "-Wl,-U,__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE",
-                       "-Wl,-U,__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE"))
+    // Let some symbols be undefined to avoid linking unnecessary parts.
+    val unnecessarySymbols = setOf(
+            "__ZN4llvm7remarks11parseFormatENS_9StringRefE",
+            "__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE",
+            "__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE",
+            "__ZN4llvm3omp22getOpenMPDirectiveNameENS0_9DirectiveE",
+            "__ZN4llvm7remarks14RemarkStreamer13matchesFilterENS_9StringRefE",
+            "__ZN4llvm7remarks14RemarkStreamer9setFilterENS_9StringRefE",
+            "__ZN4llvm7remarks14RemarkStreamerC1ENSt3__110unique_ptrINS0_16RemarkSerializerENS2_14default_deleteIS4_EEEENS_8OptionalINS_9StringRefEEE",
+            "__ZN4llvm3omp19getOpenMPClauseNameENS0_6ClauseE",
+            "__ZN4llvm3omp28getOpenMPContextTraitSetNameENS0_8TraitSetE",
+            "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
+            "__ZN4llvm3omp31isValidTraitSelectorForTraitSetENS0_13TraitSelectorENS0_8TraitSetERbS3_",
+            "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyE",
+            "__ZN4llvm3omp33getOpenMPContextTraitSelectorNameENS0_13TraitSelectorE",
+            "__ZN4llvm3omp35getOpenMPContextTraitSetForPropertyENS0_13TraitPropertyE",
+            "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS_9StringRefE"
+    )
+    ldflags.addAll(
+            listOf("-Wl,--no-demangle", "-Wl,-search_paths_first", "-Wl,-headerpad_max_install_names", "-Wl,-U,_futimens") +
+                    unnecessarySymbols.map { "-Wl,-U,$it" }
+    )
 
     val llvmLibs = listOf(
             "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
