@@ -54,6 +54,27 @@ class AppleFrameworkIT : BaseGradleIT() {
     }
 
     @Test
+    fun `assemble fat AppleFrameworkForXcode tasks for Arm64 and X64 simulators`() {
+        with(Project("sharedAppleFramework")) {
+            val options: BuildOptions = defaultBuildOptions().copy(
+                customEnvironmentVariables = mapOf(
+                    "CONFIGURATION" to "Release",
+                    "SDK_NAME" to "iphonesimulator",
+                    "ARCHS" to "arm64 x86_64"
+                )
+            )
+            build("assembleReleaseAppleFrameworkForXcode", options = options) {
+                assertSuccessful()
+                assertTasksExecuted(":shared:linkReleaseFrameworkIosSimulatorArm64")
+                assertTasksExecuted(":shared:linkReleaseFrameworkIosX64")
+                assertTasksExecuted(":shared:assembleReleaseAppleFrameworkForXcode")
+                assertFileExists("/shared/build/xcode-frameworks/Release/iphonesimulator/sdk.framework")
+                assertFileExists("/shared/build/xcode-frameworks/Release/iphonesimulator/sdk.framework.dSYM")
+            }
+        }
+    }
+
+    @Test
     fun `check there aren't Xcode tasks without Xcode environment`() {
         with(Project("sharedAppleFramework")) {
             build("tasks") {
