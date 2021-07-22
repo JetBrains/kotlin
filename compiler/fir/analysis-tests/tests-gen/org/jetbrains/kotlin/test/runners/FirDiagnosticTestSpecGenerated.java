@@ -27,7 +27,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
     @Nested
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked")
     @TestDataPath("$PROJECT_ROOT")
-    public class Linked extends AbstractFirDiagnosticTestSpec {
+    public class Linked {
         @Test
         public void testAllFilesPresentInLinked() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "annotations", "built-in-types-and-their-semantics", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/class-declaration/nested-and-inner-classifiers", "declarations/classifier-declaration/classifier-initialization", "declarations/classifier-declaration/data-class-declaration", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "declarations/type-alias", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping/subtyping-for-nullable-types", "type-system/type-kinds/type-parameters");
@@ -36,7 +36,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis")
         @TestDataPath("$PROJECT_ROOT")
-        public class Control__and_data_flow_analysis extends AbstractFirDiagnosticTestSpec {
+        public class Control__and_data_flow_analysis {
             @Test
             public void testAllFilesPresentInControl__and_data_flow_analysis() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "performing-analysis-on-the-control-flow-graph");
@@ -45,7 +45,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph")
             @TestDataPath("$PROJECT_ROOT")
-            public class Control_flow_graph extends AbstractFirDiagnosticTestSpec {
+            public class Control_flow_graph {
                 @Test
                 public void testAllFilesPresentInControl_flow_graph() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -54,7 +54,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Expressions_1 extends AbstractFirDiagnosticTestSpec {
+                public class Expressions_1 {
                     @Test
                     public void testAllFilesPresentInExpressions_1() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -63,7 +63,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Conditional_expressions extends AbstractFirDiagnosticTestSpec {
+                    public class Conditional_expressions {
                         @Test
                         public void testAllFilesPresentInConditional_expressions() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -72,7 +72,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_1 extends AbstractFirDiagnosticTestSpec {
+                        public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -81,7 +81,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -121,7 +121,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -154,7 +154,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations")
         @TestDataPath("$PROJECT_ROOT")
-        public class Declarations extends AbstractFirDiagnosticTestSpec {
+        public class Declarations {
             @Test
             public void testAllFilesPresentInDeclarations() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "classifier-declaration/class-declaration/nested-and-inner-classifiers", "classifier-declaration/classifier-initialization", "classifier-declaration/data-class-declaration", "function-declaration", "property-declaration/property-initialization", "type-alias");
@@ -163,7 +163,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration")
             @TestDataPath("$PROJECT_ROOT")
-            public class Classifier_declaration extends AbstractFirDiagnosticTestSpec {
+            public class Classifier_declaration {
                 @Test
                 public void testAllFilesPresentInClassifier_declaration() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "class-declaration/nested-and-inner-classifiers", "classifier-initialization", "data-class-declaration");
@@ -172,7 +172,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Class_declaration extends AbstractFirDiagnosticTestSpec {
+                public class Class_declaration {
                     @Test
                     public void testAllFilesPresentInClass_declaration() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "nested-and-inner-classifiers");
@@ -181,7 +181,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Abstract_classes extends AbstractFirDiagnosticTestSpec {
+                    public class Abstract_classes {
                         @Test
                         public void testAllFilesPresentInAbstract_classes() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -190,7 +190,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_1 extends AbstractFirDiagnosticTestSpec {
+                        public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -199,7 +199,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -221,7 +221,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-1/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("2.1.kt")
                                 public void test2_1() throws Exception {
@@ -238,7 +238,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_2 extends AbstractFirDiagnosticTestSpec {
+                        public class P_2 {
                             @Test
                             public void testAllFilesPresentInP_2() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -247,7 +247,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -317,7 +317,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -353,7 +353,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Constructor_declaration extends AbstractFirDiagnosticTestSpec {
+                    public class Constructor_declaration {
                         @Test
                         public void testAllFilesPresentInConstructor_declaration() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -362,7 +362,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_4 extends AbstractFirDiagnosticTestSpec {
+                        public class P_4 {
                             @Test
                             public void testAllFilesPresentInP_4() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -371,7 +371,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -388,7 +388,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_5 extends AbstractFirDiagnosticTestSpec {
+                        public class P_5 {
                             @Test
                             public void testAllFilesPresentInP_5() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -397,7 +397,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -431,7 +431,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -523,7 +523,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration")
             @TestDataPath("$PROJECT_ROOT")
-            public class Property_declaration extends AbstractFirDiagnosticTestSpec {
+            public class Property_declaration {
                 @Test
                 public void testAllFilesPresentInProperty_declaration() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "property-initialization");
@@ -532,7 +532,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Local_property_declaration extends AbstractFirDiagnosticTestSpec {
+                public class Local_property_declaration {
                     @Test
                     public void testAllFilesPresentInLocal_property_declaration() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -541,7 +541,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -550,7 +550,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -570,7 +570,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions")
         @TestDataPath("$PROJECT_ROOT")
-        public class Expressions extends AbstractFirDiagnosticTestSpec {
+        public class Expressions {
             @Test
             public void testAllFilesPresentInExpressions() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "call-and-property-access-expressions", "function-literals");
@@ -579,7 +579,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Additive_expression extends AbstractFirDiagnosticTestSpec {
+            public class Additive_expression {
                 @Test
                 public void testAllFilesPresentInAdditive_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -588,7 +588,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_4 extends AbstractFirDiagnosticTestSpec {
+                public class P_4 {
                     @Test
                     public void testAllFilesPresentInP_4() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -597,7 +597,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -615,7 +615,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics")
             @TestDataPath("$PROJECT_ROOT")
-            public class Built_in_types_and_their_semantics extends AbstractFirDiagnosticTestSpec {
+            public class Built_in_types_and_their_semantics {
                 @Test
                 public void testAllFilesPresentInBuilt_in_types_and_their_semantics() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -624,7 +624,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Kotlin_nothing_1 extends AbstractFirDiagnosticTestSpec {
+                public class Kotlin_nothing_1 {
                     @Test
                     public void testAllFilesPresentInKotlin_nothing_1() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -633,7 +633,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -642,7 +642,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -660,7 +660,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Kotlin_unit extends AbstractFirDiagnosticTestSpec {
+                public class Kotlin_unit {
                     @Test
                     public void testAllFilesPresentInKotlin_unit() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -669,7 +669,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -678,7 +678,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -697,7 +697,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions")
             @TestDataPath("$PROJECT_ROOT")
-            public class Comparison_expressions extends AbstractFirDiagnosticTestSpec {
+            public class Comparison_expressions {
                 @Test
                 public void testAllFilesPresentInComparison_expressions() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -706,7 +706,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_1 extends AbstractFirDiagnosticTestSpec {
+                public class P_1 {
                     @Test
                     public void testAllFilesPresentInP_1() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -715,7 +715,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
@@ -732,7 +732,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_4 extends AbstractFirDiagnosticTestSpec {
+                public class P_4 {
                     @Test
                     public void testAllFilesPresentInP_4() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -741,7 +741,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -758,7 +758,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_5 extends AbstractFirDiagnosticTestSpec {
+                public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -767,7 +767,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -785,7 +785,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Conditional_expression extends AbstractFirDiagnosticTestSpec {
+            public class Conditional_expression {
                 @Test
                 public void testAllFilesPresentInConditional_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -794,7 +794,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_6 extends AbstractFirDiagnosticTestSpec {
+                public class P_6 {
                     @Test
                     public void testAllFilesPresentInP_6() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -803,7 +803,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -819,7 +819,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression/p-6/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -837,7 +837,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals")
             @TestDataPath("$PROJECT_ROOT")
-            public class Constant_literals extends AbstractFirDiagnosticTestSpec {
+            public class Constant_literals {
                 @Test
                 public void testAllFilesPresentInConstant_literals() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -846,7 +846,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Boolean_literals extends AbstractFirDiagnosticTestSpec {
+                public class Boolean_literals {
                     @Test
                     public void testAllFilesPresentInBoolean_literals() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -855,7 +855,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -864,7 +864,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -886,7 +886,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -916,7 +916,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Character_literals extends AbstractFirDiagnosticTestSpec {
+                public class Character_literals {
                     @Test
                     public void testAllFilesPresentInCharacter_literals() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -925,7 +925,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -934,7 +934,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -950,7 +950,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -967,7 +967,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_4 extends AbstractFirDiagnosticTestSpec {
+                    public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -976,7 +976,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -992,7 +992,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/character-literals/p-4/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1016,7 +1016,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Integer_literals extends AbstractFirDiagnosticTestSpec {
+                public class Integer_literals {
                     @Test
                     public void testAllFilesPresentInInteger_literals() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1025,7 +1025,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Binary_integer_literals extends AbstractFirDiagnosticTestSpec {
+                    public class Binary_integer_literals {
                         @Test
                         public void testAllFilesPresentInBinary_integer_literals() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1034,7 +1034,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_1 extends AbstractFirDiagnosticTestSpec {
+                        public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1043,7 +1043,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -1079,7 +1079,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Decimal_integer_literals extends AbstractFirDiagnosticTestSpec {
+                    public class Decimal_integer_literals {
                         @Test
                         public void testAllFilesPresentInDecimal_integer_literals() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1088,7 +1088,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_1 extends AbstractFirDiagnosticTestSpec {
+                        public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1097,7 +1097,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("2.1.kt")
                                 public void test2_1() throws Exception {
@@ -1127,7 +1127,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Hexadecimal_integer_literals extends AbstractFirDiagnosticTestSpec {
+                    public class Hexadecimal_integer_literals {
                         @Test
                         public void testAllFilesPresentInHexadecimal_integer_literals() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1136,7 +1136,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_1 extends AbstractFirDiagnosticTestSpec {
+                        public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1145,7 +1145,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -1188,7 +1188,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Real_literals extends AbstractFirDiagnosticTestSpec {
+                public class Real_literals {
                     @Test
                     public void testAllFilesPresentInReal_literals() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1197,7 +1197,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1206,7 +1206,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1228,7 +1228,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1263,7 +1263,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1272,7 +1272,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1306,7 +1306,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1329,7 +1329,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1338,7 +1338,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1366,7 +1366,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-3/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1425,7 +1425,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_4 extends AbstractFirDiagnosticTestSpec {
+                    public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1434,7 +1434,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1474,7 +1474,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-4/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1515,7 +1515,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_5 extends AbstractFirDiagnosticTestSpec {
+                    public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1524,7 +1524,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1566,7 +1566,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals")
                 @TestDataPath("$PROJECT_ROOT")
-                public class The_types_for_integer_literals extends AbstractFirDiagnosticTestSpec {
+                public class The_types_for_integer_literals {
                     @Test
                     public void testAllFilesPresentInThe_types_for_integer_literals() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1575,7 +1575,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1584,7 +1584,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1642,7 +1642,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -1685,7 +1685,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Elvis_operator_expression extends AbstractFirDiagnosticTestSpec {
+            public class Elvis_operator_expression {
                 @Test
                 public void testAllFilesPresentInElvis_operator_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1694,7 +1694,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_3 extends AbstractFirDiagnosticTestSpec {
+                public class P_3 {
                     @Test
                     public void testAllFilesPresentInP_3() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1703,7 +1703,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/elvis-operator-expression/p-3/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -1721,7 +1721,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions")
             @TestDataPath("$PROJECT_ROOT")
-            public class Equality_expressions extends AbstractFirDiagnosticTestSpec {
+            public class Equality_expressions {
                 @Test
                 public void testAllFilesPresentInEquality_expressions() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1730,7 +1730,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Value_equality_expressions extends AbstractFirDiagnosticTestSpec {
+                public class Value_equality_expressions {
                     @Test
                     public void testAllFilesPresentInValue_equality_expressions() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1739,7 +1739,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1748,7 +1748,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/equality-expressions/value-equality-expressions/p-3/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1767,7 +1767,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions")
             @TestDataPath("$PROJECT_ROOT")
-            public class Jump_expressions extends AbstractFirDiagnosticTestSpec {
+            public class Jump_expressions {
                 @Test
                 public void testAllFilesPresentInJump_expressions() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1776,7 +1776,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Break_expression extends AbstractFirDiagnosticTestSpec {
+                public class Break_expression {
                     @Test
                     public void testAllFilesPresentInBreak_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1785,7 +1785,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1794,7 +1794,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/break-expression/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1812,7 +1812,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Continue_expression extends AbstractFirDiagnosticTestSpec {
+                public class Continue_expression {
                     @Test
                     public void testAllFilesPresentInContinue_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1821,7 +1821,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1830,7 +1830,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1848,7 +1848,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1857,7 +1857,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/p-2/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -1874,7 +1874,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Return_expressions extends AbstractFirDiagnosticTestSpec {
+                public class Return_expressions {
                     @Test
                     public void testAllFilesPresentInReturn_expressions() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1883,7 +1883,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1892,7 +1892,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1909,7 +1909,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_4 extends AbstractFirDiagnosticTestSpec {
+                    public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1918,7 +1918,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -1937,7 +1937,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Logical_conjunction_expression extends AbstractFirDiagnosticTestSpec {
+            public class Logical_conjunction_expression {
                 @Test
                 public void testAllFilesPresentInLogical_conjunction_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1946,7 +1946,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1955,7 +1955,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -1971,7 +1971,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -1989,7 +1989,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Logical_disjunction_expression extends AbstractFirDiagnosticTestSpec {
+            public class Logical_disjunction_expression {
                 @Test
                 public void testAllFilesPresentInLogical_disjunction_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -1998,7 +1998,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2007,7 +2007,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2023,7 +2023,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/logical-disjunction-expression/p-2/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2041,7 +2041,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Multiplicative_expression extends AbstractFirDiagnosticTestSpec {
+            public class Multiplicative_expression {
                 @Test
                 public void testAllFilesPresentInMultiplicative_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2050,7 +2050,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_5 extends AbstractFirDiagnosticTestSpec {
+                public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2059,7 +2059,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/multiplicative-expression/p-5/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2077,7 +2077,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Not_null_assertion_expression extends AbstractFirDiagnosticTestSpec {
+            public class Not_null_assertion_expression {
                 @Test
                 public void testAllFilesPresentInNot_null_assertion_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2086,7 +2086,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2095,7 +2095,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2112,7 +2112,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_3 extends AbstractFirDiagnosticTestSpec {
+                public class P_3 {
                     @Test
                     public void testAllFilesPresentInP_3() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2121,7 +2121,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2139,7 +2139,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions")
             @TestDataPath("$PROJECT_ROOT")
-            public class Prefix_expressions extends AbstractFirDiagnosticTestSpec {
+            public class Prefix_expressions {
                 @Test
                 public void testAllFilesPresentInPrefix_expressions() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2148,7 +2148,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Logical_not_expression extends AbstractFirDiagnosticTestSpec {
+                public class Logical_not_expression {
                     @Test
                     public void testAllFilesPresentInLogical_not_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2157,7 +2157,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2166,7 +2166,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/logical-not-expression/p-3/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -2184,7 +2184,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Prefix_decrement_expression extends AbstractFirDiagnosticTestSpec {
+                public class Prefix_decrement_expression {
                     @Test
                     public void testAllFilesPresentInPrefix_decrement_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2193,7 +2193,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_4 extends AbstractFirDiagnosticTestSpec {
+                    public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2202,7 +2202,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -2219,7 +2219,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_5 extends AbstractFirDiagnosticTestSpec {
+                    public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2228,7 +2228,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -2246,7 +2246,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Prefix_increment_expression extends AbstractFirDiagnosticTestSpec {
+                public class Prefix_increment_expression {
                     @Test
                     public void testAllFilesPresentInPrefix_increment_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2255,7 +2255,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_4 extends AbstractFirDiagnosticTestSpec {
+                    public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2264,7 +2264,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -2281,7 +2281,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_5 extends AbstractFirDiagnosticTestSpec {
+                    public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2290,7 +2290,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -2308,7 +2308,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Unary_minus_expression extends AbstractFirDiagnosticTestSpec {
+                public class Unary_minus_expression {
                     @Test
                     public void testAllFilesPresentInUnary_minus_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2317,7 +2317,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2326,7 +2326,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-minus-expression/p-3/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -2344,7 +2344,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Unary_plus_expression extends AbstractFirDiagnosticTestSpec {
+                public class Unary_plus_expression {
                     @Test
                     public void testAllFilesPresentInUnary_plus_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2353,7 +2353,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2362,7 +2362,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/unary-plus-expression/p-3/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -2381,7 +2381,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Range_expression extends AbstractFirDiagnosticTestSpec {
+            public class Range_expression {
                 @Test
                 public void testAllFilesPresentInRange_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2390,7 +2390,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_4 extends AbstractFirDiagnosticTestSpec {
+                public class P_4 {
                     @Test
                     public void testAllFilesPresentInP_4() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2399,7 +2399,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/range-expression/p-4/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2417,7 +2417,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class Try_expression extends AbstractFirDiagnosticTestSpec {
+            public class Try_expression {
                 @Test
                 public void testAllFilesPresentInTry_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2426,7 +2426,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_1 extends AbstractFirDiagnosticTestSpec {
+                public class P_1 {
                     @Test
                     public void testAllFilesPresentInP_1() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2435,7 +2435,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2469,7 +2469,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2510,7 +2510,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2519,7 +2519,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-2/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
@@ -2536,7 +2536,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_5 extends AbstractFirDiagnosticTestSpec {
+                public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2545,7 +2545,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-5/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2568,7 +2568,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_8 extends AbstractFirDiagnosticTestSpec {
+                public class P_8 {
                     @Test
                     public void testAllFilesPresentInP_8() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2577,7 +2577,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2593,7 +2593,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2611,7 +2611,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions")
             @TestDataPath("$PROJECT_ROOT")
-            public class Type_checking_and_containment_checking_expressions extends AbstractFirDiagnosticTestSpec {
+            public class Type_checking_and_containment_checking_expressions {
                 @Test
                 public void testAllFilesPresentInType_checking_and_containment_checking_expressions() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2620,7 +2620,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Containment_checking_expression extends AbstractFirDiagnosticTestSpec {
+                public class Containment_checking_expression {
                     @Test
                     public void testAllFilesPresentInContainment_checking_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2629,7 +2629,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_5 extends AbstractFirDiagnosticTestSpec {
+                    public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2638,7 +2638,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -2656,7 +2656,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Type_checking_expression extends AbstractFirDiagnosticTestSpec {
+                public class Type_checking_expression {
                     @Test
                     public void testAllFilesPresentInType_checking_expression() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2665,7 +2665,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_4 extends AbstractFirDiagnosticTestSpec {
+                    public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2674,7 +2674,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -2693,7 +2693,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression")
             @TestDataPath("$PROJECT_ROOT")
-            public class When_expression extends AbstractFirDiagnosticTestSpec {
+            public class When_expression {
                 @Test
                 public void testAllFilesPresentInWhen_expression() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2702,7 +2702,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Exhaustive_when_expressions extends AbstractFirDiagnosticTestSpec {
+                public class Exhaustive_when_expressions {
                     @Test
                     public void testAllFilesPresentInExhaustive_when_expressions() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2711,7 +2711,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2720,7 +2720,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("11.1.kt")
                             public void test11_1() throws Exception {
@@ -2772,7 +2772,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("10.1.kt")
                             public void test10_1() throws Exception {
@@ -2838,7 +2838,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_1 extends AbstractFirDiagnosticTestSpec {
+                public class P_1 {
                     @Test
                     public void testAllFilesPresentInP_1() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2847,7 +2847,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-1/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("3.1.kt")
                         public void test3_1() throws Exception {
@@ -2870,7 +2870,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2879,7 +2879,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
@@ -2901,7 +2901,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2942,7 +2942,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_3 extends AbstractFirDiagnosticTestSpec {
+                public class P_3 {
                     @Test
                     public void testAllFilesPresentInP_3() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2951,7 +2951,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-3/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
@@ -2968,7 +2968,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_4 extends AbstractFirDiagnosticTestSpec {
+                public class P_4 {
                     @Test
                     public void testAllFilesPresentInP_4() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -2977,7 +2977,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -2993,7 +2993,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -3010,7 +3010,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_5 extends AbstractFirDiagnosticTestSpec {
+                public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3019,7 +3019,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -3042,7 +3042,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_6 extends AbstractFirDiagnosticTestSpec {
+                public class P_6 {
                     @Test
                     public void testAllFilesPresentInP_6() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3051,7 +3051,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -3097,7 +3097,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -3176,7 +3176,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution")
         @TestDataPath("$PROJECT_ROOT")
-        public class Overload_resolution extends AbstractFirDiagnosticTestSpec {
+        public class Overload_resolution {
             @Test
             public void testAllFilesPresentInOverload_resolution() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "c-level-partition", "determining-function-applicability-for-a-specific-call/rationale");
@@ -3185,7 +3185,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs")
             @TestDataPath("$PROJECT_ROOT")
-            public class Building_the_overload_candidate_set_ocs extends AbstractFirDiagnosticTestSpec {
+            public class Building_the_overload_candidate_set_ocs {
                 @Test
                 public void testAllFilesPresentInBuilding_the_overload_candidate_set_ocs() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3194,7 +3194,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Call_with_an_explicit_receiver extends AbstractFirDiagnosticTestSpec {
+                public class Call_with_an_explicit_receiver {
                     @Test
                     public void testAllFilesPresentInCall_with_an_explicit_receiver() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3203,7 +3203,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Call_with_an_explicit_type_receiver extends AbstractFirDiagnosticTestSpec {
+                    public class Call_with_an_explicit_type_receiver {
                         @Test
                         public void testAllFilesPresentInCall_with_an_explicit_type_receiver() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3212,7 +3212,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_3 extends AbstractFirDiagnosticTestSpec {
+                        public class P_3 {
                             @Test
                             public void testAllFilesPresentInP_3() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3221,7 +3221,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("2.1.kt")
                                 public void test2_1() throws Exception {
@@ -3239,7 +3239,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_6 extends AbstractFirDiagnosticTestSpec {
+                    public class P_6 {
                         @Test
                         public void testAllFilesPresentInP_6() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3248,7 +3248,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -3356,7 +3356,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Call_with_named_parameters extends AbstractFirDiagnosticTestSpec {
+                public class Call_with_named_parameters {
                     @Test
                     public void testAllFilesPresentInCall_with_named_parameters() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3365,7 +3365,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3374,7 +3374,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -3481,7 +3481,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_5 extends AbstractFirDiagnosticTestSpec {
+                    public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3490,7 +3490,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             public void testAllFilesPresentInPos() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3502,7 +3502,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Call_with_specified_type_parameters extends AbstractFirDiagnosticTestSpec {
+                public class Call_with_specified_type_parameters {
                     @Test
                     public void testAllFilesPresentInCall_with_specified_type_parameters() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3511,7 +3511,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3520,7 +3520,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-specified-type-parameters/p-2/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -3538,7 +3538,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Call_with_trailing_lambda_expressions extends AbstractFirDiagnosticTestSpec {
+                public class Call_with_trailing_lambda_expressions {
                     @Test
                     public void testAllFilesPresentInCall_with_trailing_lambda_expressions() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3547,7 +3547,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3556,7 +3556,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -3694,7 +3694,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Call_without_an_explicit_receiver extends AbstractFirDiagnosticTestSpec {
+                public class Call_without_an_explicit_receiver {
                     @Test
                     public void testAllFilesPresentInCall_without_an_explicit_receiver() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3703,7 +3703,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_5 extends AbstractFirDiagnosticTestSpec {
+                    public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3712,7 +3712,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("2.3.kt")
                             public void test2_3() throws Exception {
@@ -3764,7 +3764,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -3872,7 +3872,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Infix_function_call extends AbstractFirDiagnosticTestSpec {
+                public class Infix_function_call {
                     @Test
                     public void testAllFilesPresentInInfix_function_call() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3881,7 +3881,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3890,7 +3890,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -3930,7 +3930,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("4.1.kt")
                             public void test4_1() throws Exception {
@@ -3972,7 +3972,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Operator_call extends AbstractFirDiagnosticTestSpec {
+                public class Operator_call {
                     @Test
                     public void testAllFilesPresentInOperator_call() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3981,7 +3981,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -3990,11 +3990,17 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
                                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("2.10.kt")
+                            public void test2_10() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.10.kt");
                             }
 
                             @Test
@@ -4048,7 +4054,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -4071,7 +4077,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4080,7 +4086,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("3.1.kt")
                             public void test3_1() throws Exception {
@@ -4127,7 +4133,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_4 extends AbstractFirDiagnosticTestSpec {
+                    public class P_4 {
                         @Test
                         public void testAllFilesPresentInP_4() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4136,7 +4142,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4152,7 +4158,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-4/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4171,7 +4177,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention")
             @TestDataPath("$PROJECT_ROOT")
-            public class Callables_and_invoke_convention extends AbstractFirDiagnosticTestSpec {
+            public class Callables_and_invoke_convention {
                 @Test
                 public void testAllFilesPresentInCallables_and_invoke_convention() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4180,7 +4186,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4189,7 +4195,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("10.1.kt")
                         public void test10_1() throws Exception {
@@ -4219,7 +4225,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set")
             @TestDataPath("$PROJECT_ROOT")
-            public class Choosing_the_most_specific_candidate_from_the_overload_candidate_set extends AbstractFirDiagnosticTestSpec {
+            public class Choosing_the_most_specific_candidate_from_the_overload_candidate_set {
                 @Test
                 public void testAllFilesPresentInChoosing_the_most_specific_candidate_from_the_overload_candidate_set() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4228,7 +4234,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Algorithm_of_msc_selection extends AbstractFirDiagnosticTestSpec {
+                public class Algorithm_of_msc_selection {
                     @Test
                     public void testAllFilesPresentInAlgorithm_of_msc_selection() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4237,7 +4243,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_11 extends AbstractFirDiagnosticTestSpec {
+                    public class P_11 {
                         @Test
                         public void testAllFilesPresentInP_11() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4246,7 +4252,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4305,7 +4311,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_12 extends AbstractFirDiagnosticTestSpec {
+                    public class P_12 {
                         @Test
                         public void testAllFilesPresentInP_12() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4314,7 +4320,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -4367,7 +4373,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_14 extends AbstractFirDiagnosticTestSpec {
+                    public class P_14 {
                         @Test
                         public void testAllFilesPresentInP_14() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4376,7 +4382,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4429,7 +4435,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_17 extends AbstractFirDiagnosticTestSpec {
+                    public class P_17 {
                         @Test
                         public void testAllFilesPresentInP_17() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4438,7 +4444,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -4461,7 +4467,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4470,7 +4476,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4505,7 +4511,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_9 extends AbstractFirDiagnosticTestSpec {
+                    public class P_9 {
                         @Test
                         public void testAllFilesPresentInP_9() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4514,7 +4520,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -4542,7 +4548,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4560,7 +4566,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Rationale_1 extends AbstractFirDiagnosticTestSpec {
+                public class Rationale_1 {
                     @Test
                     public void testAllFilesPresentInRationale_1() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4569,7 +4575,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4578,7 +4584,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4595,7 +4601,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4604,7 +4610,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4623,7 +4629,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call")
             @TestDataPath("$PROJECT_ROOT")
-            public class Determining_function_applicability_for_a_specific_call extends AbstractFirDiagnosticTestSpec {
+            public class Determining_function_applicability_for_a_specific_call {
                 @Test
                 public void testAllFilesPresentInDetermining_function_applicability_for_a_specific_call() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "rationale");
@@ -4632,7 +4638,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Description extends AbstractFirDiagnosticTestSpec {
+                public class Description {
                     @Test
                     public void testAllFilesPresentInDescription() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4641,7 +4647,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4650,7 +4656,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("2.1.kt")
                             public void test2_1() throws Exception {
@@ -4669,7 +4675,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers")
             @TestDataPath("$PROJECT_ROOT")
-            public class Receivers extends AbstractFirDiagnosticTestSpec {
+            public class Receivers {
                 @Test
                 public void testAllFilesPresentInReceivers() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4678,7 +4684,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_5 extends AbstractFirDiagnosticTestSpec {
+                public class P_5 {
                     @Test
                     public void testAllFilesPresentInP_5() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4687,7 +4693,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
@@ -4717,7 +4723,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references")
             @TestDataPath("$PROJECT_ROOT")
-            public class Resolving_callable_references extends AbstractFirDiagnosticTestSpec {
+            public class Resolving_callable_references {
                 @Test
                 public void testAllFilesPresentInResolving_callable_references() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4726,7 +4732,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Bidirectional_resolution_for_callable_calls extends AbstractFirDiagnosticTestSpec {
+                public class Bidirectional_resolution_for_callable_calls {
                     @Test
                     public void testAllFilesPresentInBidirectional_resolution_for_callable_calls() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4735,7 +4741,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4744,7 +4750,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4761,7 +4767,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4770,7 +4776,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4786,7 +4792,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4822,7 +4828,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4831,7 +4837,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/p-2/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
@@ -4848,7 +4854,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Resolving_callable_references_not_used_as_arguments_to_a_call extends AbstractFirDiagnosticTestSpec {
+                public class Resolving_callable_references_not_used_as_arguments_to_a_call {
                     @Test
                     public void testAllFilesPresentInResolving_callable_references_not_used_as_arguments_to_a_call() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4857,7 +4863,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4866,7 +4872,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4906,7 +4912,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4938,7 +4944,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements")
         @TestDataPath("$PROJECT_ROOT")
-        public class Statements extends AbstractFirDiagnosticTestSpec {
+        public class Statements {
             @Test
             public void testAllFilesPresentInStatements() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "assignments/simple-assignments");
@@ -4947,7 +4953,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments")
             @TestDataPath("$PROJECT_ROOT")
-            public class Assignments extends AbstractFirDiagnosticTestSpec {
+            public class Assignments {
                 @Test
                 public void testAllFilesPresentInAssignments() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "simple-assignments");
@@ -4956,7 +4962,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Operator_assignments extends AbstractFirDiagnosticTestSpec {
+                public class Operator_assignments {
                     @Test
                     public void testAllFilesPresentInOperator_assignments() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4965,7 +4971,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -4974,7 +4980,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -4990,7 +4996,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5008,7 +5014,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_1 extends AbstractFirDiagnosticTestSpec {
+                public class P_1 {
                     @Test
                     public void testAllFilesPresentInP_1() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5017,7 +5023,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-1/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
@@ -5034,7 +5040,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_2 extends AbstractFirDiagnosticTestSpec {
+                public class P_2 {
                     @Test
                     public void testAllFilesPresentInP_2() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5043,7 +5049,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -5067,7 +5073,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements")
             @TestDataPath("$PROJECT_ROOT")
-            public class Loop_statements extends AbstractFirDiagnosticTestSpec {
+            public class Loop_statements {
                 @Test
                 public void testAllFilesPresentInLoop_statements() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5076,7 +5082,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Do_while_loop_statement extends AbstractFirDiagnosticTestSpec {
+                public class Do_while_loop_statement {
                     @Test
                     public void testAllFilesPresentInDo_while_loop_statement() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5085,7 +5091,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5094,7 +5100,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5111,7 +5117,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5120,7 +5126,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/do-while-loop-statement/p-3/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5138,7 +5144,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement")
                 @TestDataPath("$PROJECT_ROOT")
-                public class While_loop_statement extends AbstractFirDiagnosticTestSpec {
+                public class While_loop_statement {
                     @Test
                     public void testAllFilesPresentInWhile_loop_statement() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5147,7 +5153,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5156,7 +5162,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5173,7 +5179,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_3 extends AbstractFirDiagnosticTestSpec {
+                    public class P_3 {
                         @Test
                         public void testAllFilesPresentInP_3() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5182,7 +5188,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5202,7 +5208,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference")
         @TestDataPath("$PROJECT_ROOT")
-        public class Type_inference extends AbstractFirDiagnosticTestSpec {
+        public class Type_inference {
             @Test
             public void testAllFilesPresentInType_inference() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "local-type-inference", "smart-casts/smart-cast-types");
@@ -5211,7 +5217,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts")
             @TestDataPath("$PROJECT_ROOT")
-            public class Smart_casts extends AbstractFirDiagnosticTestSpec {
+            public class Smart_casts {
                 @Test
                 public void testAllFilesPresentInSmart_casts() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "smart-cast-types");
@@ -5220,7 +5226,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Smart_cast_sink_stability extends AbstractFirDiagnosticTestSpec {
+                public class Smart_cast_sink_stability {
                     @Test
                     public void testAllFilesPresentInSmart_cast_sink_stability() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5229,7 +5235,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_5 extends AbstractFirDiagnosticTestSpec {
+                    public class P_5 {
                         @Test
                         public void testAllFilesPresentInP_5() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5238,7 +5244,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5254,7 +5260,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5274,7 +5280,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system")
         @TestDataPath("$PROJECT_ROOT")
-        public class Type_system extends AbstractFirDiagnosticTestSpec {
+        public class Type_system {
             @Test
             public void testAllFilesPresentInType_system() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "subtyping/subtyping-for-nullable-types", "type-kinds/type-parameters");
@@ -5283,7 +5289,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1")
             @TestDataPath("$PROJECT_ROOT")
-            public class Introduction_1 extends AbstractFirDiagnosticTestSpec {
+            public class Introduction_1 {
                 @Test
                 public void testAllFilesPresentInIntroduction_1() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5292,7 +5298,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_6 extends AbstractFirDiagnosticTestSpec {
+                public class P_6 {
                     @Test
                     public void testAllFilesPresentInP_6() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5301,7 +5307,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-6/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
@@ -5330,7 +5336,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8")
                 @TestDataPath("$PROJECT_ROOT")
-                public class P_8 extends AbstractFirDiagnosticTestSpec {
+                public class P_8 {
                     @Test
                     public void testAllFilesPresentInP_8() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5339,7 +5345,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
@@ -5363,7 +5369,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping")
             @TestDataPath("$PROJECT_ROOT")
-            public class Subtyping extends AbstractFirDiagnosticTestSpec {
+            public class Subtyping {
                 @Test
                 public void testAllFilesPresentInSubtyping() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "subtyping-for-nullable-types");
@@ -5372,7 +5378,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Subtyping_for_intersection_types extends AbstractFirDiagnosticTestSpec {
+                public class Subtyping_for_intersection_types {
                     @Test
                     public void testAllFilesPresentInSubtyping_for_intersection_types() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5381,7 +5387,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5390,7 +5396,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5420,7 +5426,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Subtyping_rules extends AbstractFirDiagnosticTestSpec {
+                public class Subtyping_rules {
                     @Test
                     public void testAllFilesPresentInSubtyping_rules() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5429,7 +5435,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_2 extends AbstractFirDiagnosticTestSpec {
+                    public class P_2 {
                         @Test
                         public void testAllFilesPresentInP_2() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5438,7 +5444,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5457,7 +5463,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes")
             @TestDataPath("$PROJECT_ROOT")
-            public class Type_contexts_and_scopes extends AbstractFirDiagnosticTestSpec {
+            public class Type_contexts_and_scopes {
                 @Test
                 public void testAllFilesPresentInType_contexts_and_scopes() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5466,7 +5472,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Inner_and_nested_type_contexts extends AbstractFirDiagnosticTestSpec {
+                public class Inner_and_nested_type_contexts {
                     @Test
                     public void testAllFilesPresentInInner_and_nested_type_contexts() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5475,7 +5481,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class P_1 extends AbstractFirDiagnosticTestSpec {
+                    public class P_1 {
                         @Test
                         public void testAllFilesPresentInP_1() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5484,7 +5490,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5512,7 +5518,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
@@ -5537,7 +5543,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds")
             @TestDataPath("$PROJECT_ROOT")
-            public class Type_kinds extends AbstractFirDiagnosticTestSpec {
+            public class Type_kinds {
                 @Test
                 public void testAllFilesPresentInType_kinds() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "type-parameters");
@@ -5546,7 +5552,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Built_in_types extends AbstractFirDiagnosticTestSpec {
+                public class Built_in_types {
                     @Test
                     public void testAllFilesPresentInBuilt_in_types() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5555,7 +5561,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Kotlin_any extends AbstractFirDiagnosticTestSpec {
+                    public class Kotlin_any {
                         @Test
                         public void testAllFilesPresentInKotlin_any() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5564,7 +5570,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_1 extends AbstractFirDiagnosticTestSpec {
+                        public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5573,7 +5579,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -5597,7 +5603,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Kotlin_nothing extends AbstractFirDiagnosticTestSpec {
+                    public class Kotlin_nothing {
                         @Test
                         public void testAllFilesPresentInKotlin_nothing() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5606,7 +5612,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class P_1 extends AbstractFirDiagnosticTestSpec {
+                        public class P_1 {
                             @Test
                             public void testAllFilesPresentInP_1() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5615,7 +5621,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("2.1.kt")
                                 public void test2_1() throws Exception {
@@ -5631,7 +5637,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
@@ -5659,7 +5665,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
     @Nested
     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked")
     @TestDataPath("$PROJECT_ROOT")
-    public class NotLinked extends AbstractFirDiagnosticTestSpec {
+    public class NotLinked {
         @Test
         public void testAllFilesPresentInNotLinked() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5668,7 +5674,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations")
         @TestDataPath("$PROJECT_ROOT")
-        public class Annotations extends AbstractFirDiagnosticTestSpec {
+        public class Annotations {
             @Test
             public void testAllFilesPresentInAnnotations() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5677,7 +5683,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes")
             @TestDataPath("$PROJECT_ROOT")
-            public class Annotation_classes extends AbstractFirDiagnosticTestSpec {
+            public class Annotation_classes {
                 @Test
                 public void testAllFilesPresentInAnnotation_classes() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5686,7 +5692,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Neg extends AbstractFirDiagnosticTestSpec {
+                public class Neg {
                     @Test
                     @TestMetadata("1.kt")
                     public void test1() throws Exception {
@@ -5703,7 +5709,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations")
             @TestDataPath("$PROJECT_ROOT")
-            public class Type_annotations extends AbstractFirDiagnosticTestSpec {
+            public class Type_annotations {
                 @Test
                 public void testAllFilesPresentInType_annotations() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5712,7 +5718,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Neg extends AbstractFirDiagnosticTestSpec {
+                public class Neg {
                     @Test
                     @TestMetadata("1.kt")
                     public void test1() throws Exception {
@@ -5790,7 +5796,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit")
         @TestDataPath("$PROJECT_ROOT")
-        public class Coercion_to_unit extends AbstractFirDiagnosticTestSpec {
+        public class Coercion_to_unit {
             @Test
             public void testAllFilesPresentInCoercion_to_unit() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5799,7 +5805,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/coercion-to-unit/neg")
             @TestDataPath("$PROJECT_ROOT")
-            public class Neg extends AbstractFirDiagnosticTestSpec {
+            public class Neg {
                 @Test
                 @TestMetadata("1.kt")
                 public void test1() throws Exception {
@@ -5816,7 +5822,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts")
         @TestDataPath("$PROJECT_ROOT")
-        public class Contracts extends AbstractFirDiagnosticTestSpec {
+        public class Contracts {
             @Test
             public void testAllFilesPresentInContracts() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5825,7 +5831,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis")
             @TestDataPath("$PROJECT_ROOT")
-            public class Analysis extends AbstractFirDiagnosticTestSpec {
+            public class Analysis {
                 @Test
                 public void testAllFilesPresentInAnalysis() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5834,7 +5840,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Common extends AbstractFirDiagnosticTestSpec {
+                public class Common {
                     @Test
                     public void testAllFilesPresentInCommon() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5843,7 +5849,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.kt")
                         public void test1() throws Exception {
@@ -5859,7 +5865,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/common/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.kt")
                         public void test1() throws Exception {
@@ -5882,7 +5888,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow")
                 @TestDataPath("$PROJECT_ROOT")
-                public class ControlFlow extends AbstractFirDiagnosticTestSpec {
+                public class ControlFlow {
                     @Test
                     public void testAllFilesPresentInControlFlow() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5891,7 +5897,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Initialization extends AbstractFirDiagnosticTestSpec {
+                    public class Initialization {
                         @Test
                         public void testAllFilesPresentInInitialization() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -5900,7 +5906,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.kt")
                             public void test1() throws Exception {
@@ -5940,7 +5946,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.kt")
                             public void test1() throws Exception {
@@ -5993,7 +5999,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class UnreachableCode extends AbstractFirDiagnosticTestSpec {
+                    public class UnreachableCode {
                         @Test
                         public void testAllFilesPresentInUnreachableCode() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6002,7 +6008,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.kt")
                             public void test1() throws Exception {
@@ -6018,7 +6024,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/unreachableCode/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.kt")
                             public void test1() throws Exception {
@@ -6072,7 +6078,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Smartcasts extends AbstractFirDiagnosticTestSpec {
+                public class Smartcasts {
                     @Test
                     public void testAllFilesPresentInSmartcasts() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6081,7 +6087,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.kt")
                         public void test1() throws Exception {
@@ -6181,7 +6187,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.kt")
                         public void test1() throws Exception {
@@ -6277,7 +6283,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations")
             @TestDataPath("$PROJECT_ROOT")
-            public class Declarations extends AbstractFirDiagnosticTestSpec {
+            public class Declarations {
                 @Test
                 public void testAllFilesPresentInDeclarations() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6286,7 +6292,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder")
                 @TestDataPath("$PROJECT_ROOT")
-                public class ContractBuilder extends AbstractFirDiagnosticTestSpec {
+                public class ContractBuilder {
                     @Test
                     public void testAllFilesPresentInContractBuilder() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6295,7 +6301,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Common extends AbstractFirDiagnosticTestSpec {
+                    public class Common {
                         @Test
                         public void testAllFilesPresentInCommon() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6304,7 +6310,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Neg extends AbstractFirDiagnosticTestSpec {
+                        public class Neg {
                             @Test
                             @TestMetadata("1.kt")
                             public void test1() throws Exception {
@@ -6422,7 +6428,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Pos extends AbstractFirDiagnosticTestSpec {
+                        public class Pos {
                             @Test
                             @TestMetadata("1.kt")
                             public void test1() throws Exception {
@@ -6445,7 +6451,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Effects extends AbstractFirDiagnosticTestSpec {
+                    public class Effects {
                         @Test
                         public void testAllFilesPresentInEffects() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6454,7 +6460,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class CallsInPlace extends AbstractFirDiagnosticTestSpec {
+                        public class CallsInPlace {
                             @Test
                             public void testAllFilesPresentInCallsInPlace() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6463,7 +6469,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.kt")
                                 public void test1() throws Exception {
@@ -6485,7 +6491,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("1.kt")
                                 public void test1() throws Exception {
@@ -6514,7 +6520,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Common extends AbstractFirDiagnosticTestSpec {
+                        public class Common {
                             @Test
                             public void testAllFilesPresentInCommon() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6523,7 +6529,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/common/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.kt")
                                 public void test1() throws Exception {
@@ -6540,7 +6546,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                         @Nested
                         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns")
                         @TestDataPath("$PROJECT_ROOT")
-                        public class Returns extends AbstractFirDiagnosticTestSpec {
+                        public class Returns {
                             @Test
                             public void testAllFilesPresentInReturns() throws Exception {
                                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6549,7 +6555,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/neg")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Neg extends AbstractFirDiagnosticTestSpec {
+                            public class Neg {
                                 @Test
                                 @TestMetadata("1.kt")
                                 public void test1() throws Exception {
@@ -6601,7 +6607,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                             @Nested
                             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/returns/pos")
                             @TestDataPath("$PROJECT_ROOT")
-                            public class Pos extends AbstractFirDiagnosticTestSpec {
+                            public class Pos {
                                 @Test
                                 @TestMetadata("1.kt")
                                 public void test1() throws Exception {
@@ -6638,7 +6644,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction")
                 @TestDataPath("$PROJECT_ROOT")
-                public class ContractFunction extends AbstractFirDiagnosticTestSpec {
+                public class ContractFunction {
                     @Test
                     public void testAllFilesPresentInContractFunction() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6647,7 +6653,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Neg extends AbstractFirDiagnosticTestSpec {
+                    public class Neg {
                         @Test
                         @TestMetadata("1.kt")
                         public void test1() throws Exception {
@@ -6681,7 +6687,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.kt")
                         public void test1() throws Exception {
@@ -6706,7 +6712,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa")
         @TestDataPath("$PROJECT_ROOT")
-        public class Dfa extends AbstractFirDiagnosticTestSpec {
+        public class Dfa {
             @Test
             public void testAllFilesPresentInDfa() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -6715,7 +6721,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg")
             @TestDataPath("$PROJECT_ROOT")
-            public class Neg extends AbstractFirDiagnosticTestSpec {
+            public class Neg {
                 @Test
                 @TestMetadata("1.kt")
                 public void test1() throws Exception {
@@ -6995,7 +7001,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos")
             @TestDataPath("$PROJECT_ROOT")
-            public class Pos extends AbstractFirDiagnosticTestSpec {
+            public class Pos {
                 @Test
                 @TestMetadata("1.kt")
                 public void test1() throws Exception {
@@ -7444,7 +7450,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables")
         @TestDataPath("$PROJECT_ROOT")
-        public class Local_variables extends AbstractFirDiagnosticTestSpec {
+        public class Local_variables {
             @Test
             public void testAllFilesPresentInLocal_variables() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -7453,7 +7459,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters")
             @TestDataPath("$PROJECT_ROOT")
-            public class Type_parameters extends AbstractFirDiagnosticTestSpec {
+            public class Type_parameters {
                 @Test
                 public void testAllFilesPresentInType_parameters() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -7462,7 +7468,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Neg extends AbstractFirDiagnosticTestSpec {
+                public class Neg {
                     @Test
                     @TestMetadata("1.kt")
                     public void test1() throws Exception {
@@ -7480,7 +7486,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution")
         @TestDataPath("$PROJECT_ROOT")
-        public class Overload_resolution extends AbstractFirDiagnosticTestSpec {
+        public class Overload_resolution {
             @Test
             public void testAllFilesPresentInOverload_resolution() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -7489,7 +7495,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
             @Nested
             @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs")
             @TestDataPath("$PROJECT_ROOT")
-            public class Building_the_overload_candidate_set_ocs extends AbstractFirDiagnosticTestSpec {
+            public class Building_the_overload_candidate_set_ocs {
                 @Test
                 public void testAllFilesPresentInBuilding_the_overload_candidate_set_ocs() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -7498,7 +7504,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                 @Nested
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call")
                 @TestDataPath("$PROJECT_ROOT")
-                public class Infix_function_call extends AbstractFirDiagnosticTestSpec {
+                public class Infix_function_call {
                     @Test
                     public void testAllFilesPresentInInfix_function_call() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -7507,7 +7513,7 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
                     @Nested
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/pos")
                     @TestDataPath("$PROJECT_ROOT")
-                    public class Pos extends AbstractFirDiagnosticTestSpec {
+                    public class Pos {
                         @Test
                         @TestMetadata("1.kt")
                         public void test1() throws Exception {

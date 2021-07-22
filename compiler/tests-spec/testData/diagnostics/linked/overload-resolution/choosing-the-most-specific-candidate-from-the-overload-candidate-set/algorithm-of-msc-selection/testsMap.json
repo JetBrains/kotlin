@@ -648,7 +648,7 @@
           "specVersion": "0.1-448",
           "casesNumber": 1,
           "description": "plusAssign as inline function",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
         },

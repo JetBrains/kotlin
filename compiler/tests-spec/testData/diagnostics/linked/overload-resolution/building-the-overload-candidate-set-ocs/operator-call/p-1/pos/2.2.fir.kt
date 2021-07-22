@@ -1,36 +1,99 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNNECESSARY_SAFE_CALL -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-448
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, operator-call -> paragraph 1 -> sentence 2
+ * SECONDARY LINKS: statements, assignments, operator-assignments -> paragraph 2 -> sentence 1
+ * statements, assignments, operator-assignments -> paragraph 2 -> sentence 2
+ * statements, assignments, operator-assignments -> paragraph 2 -> sentence 3
+ * NUMBER: 2
+ * DESCRIPTION: Non-extension member callables
+ */
 
-// FILE: LibCase1b.kt
+
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
-package LibPackCase1.b
+package testPackCase2
 
-import testPackCase1.B
-import LibPackCase1.a.*
+fun case2(a: A?, c: C) {
 
-inline operator fun B?.plusAssign( c: ()->C) { //(2)
-    val x = {1}
-    <!DEBUG_INFO_CALL("fqName: LibPackCase1.a.plusAssign; typeCall: inline operator extension function")!>this += x<!> //to (1)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>this += x<!>
+    <!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>a?.b <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> c<!>
+    a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>plusAssign(c)<!>
+
+    val x = {
+        <!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>a?.b <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> c<!>
+        a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>plusAssign(c)<!>
+    }()
+
+    <!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>a?.b <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> { c }()<!>
+
+    a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>plusAssign({ c }())<!>
+
+}
+
+class A(val b: B)
+
+class B {
+    operator fun plusAssign(c: C) {
+        print("1")
+    }
+
+    operator fun plus(c: C): C {
+        print("2")
+        return c
+    }
+}
+
+operator fun B?.plusAssign(c: C) {
+    print("3")
 }
 
 class C
 
-// FILE: TestCase1.kt
-package testPackCase1
+// FILE: TestCase2.kt
+// TESTCASE NUMBER: 2
+package testPackCase3
 
-import LibPackCase1.a.*
-import LibPackCase1.b.*
+fun case3(a: A?, c: C) {
 
-class B {
-    private inline operator fun plusAssign(crossinline c: ()->C) {}
-    private inline operator fun plus(crossinline c: ()->C): C =C()
+    <!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>a?.b <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> c<!>
+    a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>plusAssign(c)<!>
+
+    val x = {
+        <!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>a?.b <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> c<!>
+        a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>plusAssign(c)<!>
+    }()
+
+    <!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>a?.b <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> { c }()<!>
+
+    a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>plusAssign({ c }())<!>
+
 }
 
-// FILE: LibCase1a.kt
-package LibPackCase1.a
-import testPackCase1.B
+class A(val b: B)
 
-inline operator fun B?.plusAssign( c: ()->Int) { } //(1)
+class B {
+    operator fun plusAssign(c: C) {
+        print("1")
+    }
+
+    operator fun plus(c: C): C {
+        print("2")
+        return c
+    }
+}
+
+operator fun B?.plusAssign(c: C) {
+    print("3")
+}
+
+operator fun B?.plusAssign(c: Any) {
+    print("4")
+}
+
+
+class C

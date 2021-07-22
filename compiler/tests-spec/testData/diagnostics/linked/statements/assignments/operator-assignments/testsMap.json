@@ -9,6 +9,14 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.10.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         }
       ],
       "2": [
@@ -19,6 +27,14 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.10.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         }
       ],
       "3": [
@@ -29,6 +45,14 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/operator-assignments/p-2/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.10.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         }
       ]
     },
@@ -44,9 +68,9 @@
         },
         {
           "specVersion": "0.1-448",
-          "casesNumber": 3,
+          "casesNumber": 2,
           "description": "Non-extension member callables",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "secondary"
         }
@@ -62,9 +86,9 @@
         },
         {
           "specVersion": "0.1-448",
-          "casesNumber": 3,
+          "casesNumber": 2,
           "description": "Non-extension member callables",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "secondary"
         }
@@ -80,9 +104,9 @@
         },
         {
           "specVersion": "0.1-448",
-          "casesNumber": 3,
+          "casesNumber": 2,
           "description": "Non-extension member callables",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "secondary"
         }
