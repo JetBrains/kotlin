@@ -423,7 +423,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
     : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
 
     private val ar = "$absoluteTargetToolchain/bin/ar"
-    private val linker = "$absoluteTargetToolchain/bin/clang++"
+    private val linker = "$absoluteLlvmHome/bin/clang++"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
@@ -464,6 +464,8 @@ class MingwLinker(targetProperties: MingwConfigurables)
                 additionalArguments: List<String> = listOf(),
                 skipDefaultArguments: List<String> = listOf()
         ): Command = apply {
+            +listOf("--sysroot", absoluteTargetSysRoot)
+            +listOf("-target", targetTriple.toString())
             +listOf("-o", executable)
             +objectFiles
             // --gc-sections flag may affect profiling.
@@ -501,7 +503,9 @@ class MingwLinker(targetProperties: MingwConfigurables)
         return listOf(when {
             HostManager.hostIsMingw -> Command(linker)
             else -> Command("wine64", "$linker.exe")
-        }.constructLinkerArguments())
+        }.constructLinkerArguments(
+                additionalArguments = listOf("-fuse-ld=${absoluteTargetToolchain}/bin/ld.exe")
+        ))
     }
 }
 
