@@ -3217,6 +3217,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE) { firDiagnostic ->
+        RedundantInlineSuspendFunctionTypeImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON) { firDiagnostic ->
         CannotAllUnderImportFromSingletonImpl(
             firDiagnostic.a,

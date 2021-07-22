@@ -3625,6 +3625,13 @@ internal class InlineSuspendFunctionTypeUnsupportedImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class RedundantInlineSuspendFunctionTypeImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RedundantInlineSuspendFunctionType(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     firDiagnostic: FirPsiDiagnostic,

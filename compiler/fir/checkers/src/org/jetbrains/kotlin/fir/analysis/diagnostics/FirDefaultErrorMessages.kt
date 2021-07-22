@@ -333,6 +333,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_EXPLICIT_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_OPEN_IN_INTERFACE
@@ -1522,6 +1523,11 @@ class FirDefaultErrorMessages {
             map.put(
                 INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED,
                 "Suspend inline lambda parameters of non-suspend function type are not supported. Add 'noinline' or 'crossinline' modifier."
+            )
+
+            map.put(
+                REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE,
+                "Redundant 'suspend' modifier: lambda parameters of suspend function type uses existing continuation."
             )
 
             //imports

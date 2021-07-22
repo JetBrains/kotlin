@@ -364,8 +364,12 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                 )
             }
 
-            if (!function.isSuspend && isSuspendFunctionalType && !param.isCrossinline) {
-                reporter.reportOn(param.source, FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, context)
+            if (isSuspendFunctionalType && !param.isCrossinline) {
+                if (function.isSuspend) {
+                    reporter.reportOn(param.returnTypeRef.source, FirErrors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE, context)
+                } else {
+                    reporter.reportOn(param.source, FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, context)
+                }
             }
 
             if (coneType.isNullable && isFunctionalType) {
