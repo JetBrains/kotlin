@@ -234,7 +234,7 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination):
     Downloads a single commit from the given repository.
     """
     if host_is_darwin():
-        default_repo, default_branch = "https://github.com/apple/llvm-project", "apple/stable/20200108"
+        default_repo, default_branch = "https://github.com/apple/llvm-project", "apple/stable/20200714"
     else:
         default_repo, default_branch = "https://github.com/llvm/llvm-project", "release/11.x"
     repo = default_repo if repo is None else repo
@@ -245,12 +245,8 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination):
 
 
 def default_num_stages():
-    if host_is_darwin():
-        # Bootstrap build is not working for https://github.com/apple/llvm-project + apple/stable/20200108.
-        # So use single phase for now.
-        return 1
-    else:
-        return 2
+    # Perform bootstrap build
+    return 2
 
 
 def build_parser() -> argparse.ArgumentParser:
