@@ -21,7 +21,6 @@ kotlin {
         mingwX64()
         mingwX86()
     }
-    linuxArm32Hfp()
 
     targets.withType<KotlinNativeTarget> {
         sourceSets["${targetName}Main"].apply {
@@ -86,7 +85,6 @@ kotlin {
                         "-lsetupapi",
                         "-mwindows"
                     )
-                    presets["linuxArm32Hfp"] -> linkerOpts(kotlinNativeDataPath.resolve("dependencies/target-sysroot-2-raspberrypi/usr/lib/libSDL2.so").absolutePath)
                 }
 
                 val distTaskName = linkTaskName.replaceFirst("link", "dist")
@@ -112,7 +110,6 @@ kotlin {
                     presets["linuxX64"] -> includeDirs("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/SDL2")
                     presets["mingwX64"] -> includeDirs(mingw64Path.resolve("include/SDL2"))
                     presets["mingwX86"] -> includeDirs(mingw32Path.resolve("include/SDL2"))
-                    presets["linuxArm32Hfp"] -> includeDirs(kotlinNativeDataPath.resolve("dependencies/target-sysroot-2-raspberrypi/usr/include/SDL2"))
                 }
             }
         }
