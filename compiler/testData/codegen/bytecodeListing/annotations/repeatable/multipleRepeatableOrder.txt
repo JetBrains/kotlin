@@ -8,6 +8,7 @@ public annotation class test/A$Container {
 
 @kotlin.annotation.Repeatable
 @java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Repeatable(value=test.A$Container::class)
 @kotlin.Metadata
 public annotation class test/A {
     // source: 'multipleRepeatableOrder.kt'
@@ -25,6 +26,7 @@ public annotation class test/B$Container {
 
 @kotlin.annotation.Repeatable
 @java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Repeatable(value=test.B$Container::class)
 @kotlin.Metadata
 public annotation class test/B {
     // source: 'multipleRepeatableOrder.kt'
@@ -42,6 +44,7 @@ public annotation class test/C$Container {
 
 @kotlin.annotation.Repeatable
 @java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Repeatable(value=test.C$Container::class)
 @kotlin.Metadata
 public annotation class test/C {
     // source: 'multipleRepeatableOrder.kt'

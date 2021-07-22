@@ -524,6 +524,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("kotlinAnnotationInJava.kt")
+            public void testKotlinAnnotationInJava() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/repeatable/kotlinAnnotationInJava.kt");
+            }
+
+            @Test
             @TestMetadata("kotlinAnnotationWithBothRepeatables.kt")
             public void testKotlinAnnotationWithBothRepeatables() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/repeatable/kotlinAnnotationWithBothRepeatables.kt");

@@ -12,6 +12,7 @@ public annotation class test/A$Container {
 @kotlin.annotation.Target(allowedTargets=[FILE, TYPEALIAS])
 @java.lang.annotation.Retention(value=RUNTIME)
 @java.lang.annotation.Target(value=[])
+@java.lang.annotation.Repeatable(value=test.A$Container::class)
 @kotlin.Metadata
 public annotation class test/A {
     // source: 'kotlinSpecificTargets.kt'
