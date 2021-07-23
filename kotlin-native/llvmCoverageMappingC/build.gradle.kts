@@ -45,7 +45,7 @@ native {
     }
     suffixes {
         (".cpp" to ".$obj") {
-            tool(*platformManager.hostPlatform.clang.clangCXX("").toTypedArray())
+            tool(*platformManager.hostPlatform.clangForJni.clangCXX("").toTypedArray())
             flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
 
@@ -58,7 +58,7 @@ native {
     val objSet = sourceSets["main"]!!.transform(".cpp" to ".$obj")
 
     target(lib("coverageMapping"), objSet) {
-        tool(*platformManager.hostPlatform.clang.llvmAr("").toTypedArray())
+        tool(*platformManager.hostPlatform.clangForJni.llvmAr("").toTypedArray())
         flags("-qv", ruleOut(), *ruleInAll())
     }
 }
