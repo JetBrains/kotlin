@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @SuppressWarnings("PointlessBitwiseExpression")
 public final class JvmAnnotationNames {
@@ -49,10 +47,12 @@ public final class JvmAnnotationNames {
 
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 
-    public static final FqName TARGET_ANNOTATION = new FqName(Target.class.getCanonicalName());
-    public static final FqName RETENTION_ANNOTATION = new FqName(Retention.class.getCanonicalName());
-    public static final FqName DEPRECATED_ANNOTATION = new FqName(Deprecated.class.getCanonicalName());
-    public static final FqName DOCUMENTED_ANNOTATION = new FqName(Documented.class.getCanonicalName());
+    public static final FqName TARGET_ANNOTATION = new FqName(Target.class.getName());
+    public static final FqName ELEMENT_TYPE_ENUM = new FqName(ElementType.class.getName());
+    public static final FqName RETENTION_ANNOTATION = new FqName(Retention.class.getName());
+    public static final FqName RETENTION_POLICY_ENUM = new FqName(RetentionPolicy.class.getName());
+    public static final FqName DEPRECATED_ANNOTATION = new FqName(Deprecated.class.getName());
+    public static final FqName DOCUMENTED_ANNOTATION = new FqName(Documented.class.getName());
     public static final FqName REPEATABLE_ANNOTATION = new FqName("java.lang.annotation.Repeatable");
 
     public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = new FqName("org.jetbrains.annotations.NotNull");

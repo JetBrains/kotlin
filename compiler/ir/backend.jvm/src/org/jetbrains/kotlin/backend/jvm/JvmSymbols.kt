@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -15,23 +16,27 @@ import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CREATE_METHOD_NAME
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
@@ -941,6 +946,92 @@ class JvmSymbols(
 
     val runSuspendFunction: IrSimpleFunctionSymbol =
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
+
+    val javaAnnotations = JavaAnnotations()
+
+    inner class JavaAnnotations {
+        private val javaLangAnnotation: FqName = FqName("java.lang.annotation")
+
+        private val javaLangAnnotationPackage: IrPackageFragment =
+            IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(context.state.module, javaLangAnnotation)
+
+        private fun buildClass(
+            fqName: FqName,
+            classKind: ClassKind = ClassKind.ANNOTATION_CLASS,
+        ): IrClass = context.irFactory.buildClass {
+            check(fqName.parent() == javaLangAnnotation) { fqName }
+            name = fqName.shortName()
+            kind = classKind
+        }.apply {
+            val irClass = this
+            parent = javaLangAnnotationPackage
+            javaLangAnnotationPackage.addChild(this)
+            thisReceiver = buildValueParameter(this) {
+                name = Name.identifier("\$this")
+                type = IrSimpleTypeImpl(irClass.symbol, false, emptyList(), emptyList())
+            }
+        }
+
+        private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor =
+            annotationClass.addConstructor { isPrimary = true }
+
+        private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry {
+            return IrEnumEntryImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
+                IrEnumEntrySymbolImpl(),
+                Name.identifier(entryName)
+            ).apply {
+                parent = enumClass
+                enumClass.addChild(this)
+            }
+        }
+
+        val documentedConstructor = buildAnnotationConstructor(buildClass(JvmAnnotationNames.DOCUMENTED_ANNOTATION))
+
+        val retentionPolicyEnum = buildClass(JvmAnnotationNames.RETENTION_POLICY_ENUM, classKind = ClassKind.ENUM_CLASS)
+        val rpRuntime = buildEnumEntry(retentionPolicyEnum, "RUNTIME")
+
+        val retentionConstructor = buildAnnotationConstructor(buildClass(JvmAnnotationNames.RETENTION_ANNOTATION)).apply {
+            addValueParameter("value", retentionPolicyEnum.defaultType, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
+        }
+
+        val elementTypeEnum = buildClass(JvmAnnotationNames.ELEMENT_TYPE_ENUM, classKind = ClassKind.ENUM_CLASS)
+        private val etMethod = buildEnumEntry(elementTypeEnum, "METHOD")
+
+        val targetConstructor = buildAnnotationConstructor(buildClass(JvmAnnotationNames.TARGET_ANNOTATION)).apply {
+            addValueParameter("value", elementTypeEnum.defaultType, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
+        }
+
+        val repeatableConstructor = buildAnnotationConstructor(buildClass(JvmAnnotationNames.REPEATABLE_ANNOTATION)).apply {
+            addValueParameter("value", irBuiltIns.kClassClass.starProjectedType, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
+        }
+
+        val annotationRetentionMap = mapOf(
+            KotlinRetention.SOURCE to buildEnumEntry(retentionPolicyEnum, "SOURCE"),
+            KotlinRetention.BINARY to buildEnumEntry(retentionPolicyEnum, "CLASS"),
+            KotlinRetention.RUNTIME to rpRuntime
+        )
+
+        private val jvm6TargetMap = mutableMapOf(
+            KotlinTarget.CLASS to buildEnumEntry(elementTypeEnum, "TYPE"),
+            KotlinTarget.ANNOTATION_CLASS to buildEnumEntry(elementTypeEnum, "ANNOTATION_TYPE"),
+            KotlinTarget.CONSTRUCTOR to buildEnumEntry(elementTypeEnum, "CONSTRUCTOR"),
+            KotlinTarget.LOCAL_VARIABLE to buildEnumEntry(elementTypeEnum, "LOCAL_VARIABLE"),
+            KotlinTarget.FUNCTION to etMethod,
+            KotlinTarget.PROPERTY_GETTER to etMethod,
+            KotlinTarget.PROPERTY_SETTER to etMethod,
+            KotlinTarget.FIELD to buildEnumEntry(elementTypeEnum, "FIELD"),
+            KotlinTarget.VALUE_PARAMETER to buildEnumEntry(elementTypeEnum, "PARAMETER")
+        )
+
+        private val jvm8TargetMap = jvm6TargetMap + mutableMapOf(
+            KotlinTarget.TYPE_PARAMETER to buildEnumEntry(elementTypeEnum, "TYPE_PARAMETER"),
+            KotlinTarget.TYPE to buildEnumEntry(elementTypeEnum, "TYPE_USE")
+        )
+
+        fun getAnnotationTargetMap(target: JvmTarget): Map<KotlinTarget, IrEnumEntry> =
+            if (target == JvmTarget.JVM_1_6) jvm6TargetMap else jvm8TargetMap
+    }
 
     companion object {
         val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
