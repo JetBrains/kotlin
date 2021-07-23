@@ -104,7 +104,7 @@ interface JvmSignatureUtils {
         }
         is EnumValue -> link(a.enumName, a.enumDri)
         is ClassValue -> link(a.className + classExtension, a.classDRI)
-        is StringValue -> group(styles = setOf(TextStyle.Breakable)) { text(a.value) }
+        is LiteralValue -> group(styles = setOf(TextStyle.Breakable)) { text(a.text()) }
     }
 
     fun PageContentBuilder.DocumentableContentBuilder.annotationsBlockWithIgnored(
