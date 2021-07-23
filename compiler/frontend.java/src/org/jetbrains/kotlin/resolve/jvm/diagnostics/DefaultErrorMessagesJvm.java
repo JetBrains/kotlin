@@ -73,6 +73,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''@{0}'' instead", TO_STRING);
         MAP.put(NON_SOURCE_REPEATED_ANNOTATION, "Repeatable annotations with non-SOURCE retention are only supported starting from Kotlin 1.6");
         MAP.put(REPEATED_ANNOTATION_TARGET6, "Repeatable annotations with non-SOURCE retention are not supported with JVM target 1.6. Use -jvm-target 1.8");
+        MAP.put(REPEATED_ANNOTATION_WITH_CONTAINER, "Repeated annotation ''@{0}'' cannot be used on a declaration which is annotated with its container annotation ''@{1}''", TO_STRING, TO_STRING);
         MAP.put(ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES, "Annotation ''@{0}'' is not applicable to the multi-file classes", TO_STRING);
 
         MAP.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "''@JvmPackageName'' annotation value cannot be empty");

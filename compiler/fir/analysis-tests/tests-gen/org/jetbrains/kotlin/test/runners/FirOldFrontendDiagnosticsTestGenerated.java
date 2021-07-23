@@ -2095,6 +2095,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("containerAndAnnotationAreBothApplied_1_5.kt")
+                public void testContainerAndAnnotationAreBothApplied_1_5() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerAndAnnotationAreBothApplied_1_5.kt");
+                }
+
+                @Test
+                @TestMetadata("containerAndAnnotationAreBothApplied_1_6.kt")
+                public void testContainerAndAnnotationAreBothApplied_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerAndAnnotationAreBothApplied_1_6.kt");
+                }
+
+                @Test
                 @TestMetadata("javaRepeatableJvmTarget6.kt")
                 public void testJavaRepeatableJvmTarget6() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatableJvmTarget6.kt");

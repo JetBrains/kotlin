@@ -71,6 +71,7 @@ public interface ErrorsJvm {
     DiagnosticFactory1<KtAnnotationEntry, FqName> DEPRECATED_JAVA_ANNOTATION = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> NON_SOURCE_REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> REPEATED_ANNOTATION_TARGET6 = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATED_ANNOTATION_WITH_CONTAINER = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtAnnotationEntry> JVM_PACKAGE_NAME_CANNOT_BE_EMPTY = DiagnosticFactory0.create(ERROR);
