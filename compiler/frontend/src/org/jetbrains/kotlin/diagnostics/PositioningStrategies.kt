@@ -838,12 +838,17 @@ object PositioningStrategies {
     }
 
     val NAME_IDENTIFIER: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
-    private fun KtTypeElement.getReferencedTypeExpression(): KtElement? {
-        return when (this) {
-            is KtUserType -> referenceExpression
-            is KtNullableType -> innerType?.getReferencedTypeExpression()
-            is KtDefinitelyNotNullType -> innerType?.getReferencedTypeExpression()
-            else -> null
+        override fun mark(element: PsiElement): List<TextRange> {
+            if (element is PsiNameIdentifierOwner) {
+                val nameIdentifier = element.nameIdentifier
+                if (nameIdentifier != null) {
+                    return super.mark(nameIdentifier)
+                }
+            } else if (element is KtLabelReferenceExpression) {
+                return super.mark(element.getReferencedNameElement())
+            }
+
+            return DEFAULT.mark(element)
         }
     }
 

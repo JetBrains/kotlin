@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnonymousFunctionParametersChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirReservedUnderscoreDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirAnonymousFunctionSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDelegationInInterfaceSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirFunctionTypeParametersSyntaxChecker

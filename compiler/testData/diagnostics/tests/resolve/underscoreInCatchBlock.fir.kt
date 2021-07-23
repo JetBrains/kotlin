@@ -6,7 +6,7 @@ fun foo() {
     try {
         TODO()
     } catch (_: Exception) {
-        `_`.stackTrace
+        <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>.stackTrace
     }
     try {
         TODO()
@@ -17,20 +17,20 @@ fun foo() {
                     val x4 = { _: Int ->
                         `_`
                     }
-                    `_`
+                    <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>
                 }
-                `_`
+                <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>
                 10
             }
-            fun bar(x: Exception = `_`) {}
+            fun bar(x: Exception = <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>) {}
             class Bar(`_`: Exception = <!UNINITIALIZED_PARAMETER!>`_`<!>) {
-                inner class Bar2(x: Exception = `_`) { }
+                inner class Bar2(x: Exception = <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>) { }
             }
         }
     } catch (_: Exception) {
-        `_`.stackTrace
-        val y1 = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
-        val y2 = (`_`)
+        <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>.stackTrace
+        val y1 = <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER, UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
+        val y2 = (<!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>)
     }
     try {
         TODO()
@@ -38,7 +38,7 @@ fun foo() {
         try {
             TODO()
         } catch (x: Exception) {
-            `_`.stackTrace
+            <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>.stackTrace
         }
     }
     val boo1 = { `_`: Exception ->
