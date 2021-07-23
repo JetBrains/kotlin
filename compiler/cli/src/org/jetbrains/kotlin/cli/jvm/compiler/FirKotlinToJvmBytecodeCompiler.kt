@@ -235,6 +235,7 @@ object FirKotlinToJvmBytecodeCompiler {
             if (commonSession != null) {
                 sourceDependsOnDependencies(listOf(commonSession.moduleData))
             }
+            friendDependencies(module.getFriendPaths())
         }
 
         val commonAnalyzerFacade = commonSession?.let { FirAnalyzerFacade(it, languageVersionSettings, commonKtFiles) }
