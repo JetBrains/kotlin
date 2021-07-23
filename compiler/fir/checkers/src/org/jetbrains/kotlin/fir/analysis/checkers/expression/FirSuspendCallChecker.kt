@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_2_20_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_2_30_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_3_FQ_NAME
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
     private val SUSPEND_PROPERTIES_FQ_NAMES = setOf(
@@ -48,6 +49,10 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
                 else -> {
                 }
             }
+        } else {
+            if (!checkNonLocalReturnUsage(enclosingSuspendFunction, context)) {
+                reporter.reportOn(expression.source, FirErrors.NON_LOCAL_SUSPENSION_POINT, context)
+            }
         }
     }
 
@@ -59,5 +64,14 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
                 else -> false
             }
         } as? FirFunction
+    }
+
+    private fun checkNonLocalReturnUsage(enclosingSuspendFunction: FirFunction, context: CheckerContext): Boolean {
+        val containingFunction = context.containingDeclarations.lastIsInstanceOrNull<FirFunction>() ?: return false
+        return if (containingFunction is FirAnonymousFunction && enclosingSuspendFunction !== containingFunction) {
+            containingFunction.inlineStatus.returnAllowed
+        } else {
+            enclosingSuspendFunction === containingFunction
+        }
     }
 }
