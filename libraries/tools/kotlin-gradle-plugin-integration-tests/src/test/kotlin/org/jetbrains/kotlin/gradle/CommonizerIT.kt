@@ -365,6 +365,7 @@ class CommonizerIT : BaseGradleIT() {
                 assertTasksRegisteredRegex(":p2.*compile.*")
 
                 /* CInterops *shall not* require any compilation */
+                assertTasksNotExecuted(":p0.*compile.*")
                 assertTasksNotExecuted(":p1.*compile.*")
                 assertTasksNotExecuted(":p2.*compile.*")
             }

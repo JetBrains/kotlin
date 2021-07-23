@@ -17,6 +17,7 @@ kotlin {
 
     commonMain.dependencies {
         implementation(project(":p1"))
+        implementation(project(":p0"))
     }
 
     targets.withType<KotlinNativeTarget>().forEach { target ->
