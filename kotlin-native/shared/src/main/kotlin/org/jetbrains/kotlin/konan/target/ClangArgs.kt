@@ -31,7 +31,10 @@ internal object Android {
             "android-${API}/arch-${architectureMap.getValue(target)}"
 }
 
-class ClangArgs(private val configurables: Configurables) {
+sealed class ClangArgs(
+        private val configurables: Configurables,
+        private val forJni: Boolean
+) {
 
     private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
     private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
@@ -152,16 +155,6 @@ class ClangArgs(private val configurables: Configurables) {
 
     val clangPaths = listOf("$absoluteLlvmHome/bin", binDir)
 
-    private val jdkDir by lazy {
-        val home = File.javaHome.absoluteFile
-        if (home.child("include").exists)
-            home.absolutePath
-        else
-            home.parentFile.absolutePath
-    }
-
-    val hostCompilerArgsForJni = listOf("", HostManager.jniHostPlatformIncludeDir).map { "-I$jdkDir/include/$it" }.toTypedArray()
-
     /**
      * Clang args for Objectice-C and plain C compilation.
      */
@@ -224,5 +217,31 @@ class ClangArgs(private val configurables: Configurables) {
     fun clangCXX(vararg userArgs: String) = targetClangXXCmd + userArgs.asList()
 
     fun llvmAr(vararg userArgs: String) = targetArCmd + userArgs.asList()
+
+    /**
+     * Should be used when compiling library for JNI.
+     * For example, it is used for Kotlin/Native's Clang and LLVM libraries.
+     */
+    class Jni(configurables: Configurables) : ClangArgs(configurables, forJni = true) {
+        private val jdkDir by lazy {
+            val home = File.javaHome.absoluteFile
+            if (home.child("include").exists)
+                home.absolutePath
+            else
+                home.parentFile.absolutePath
+        }
+
+        val hostCompilerArgsForJni: Array<String> by lazy {
+            listOf("", HostManager.jniHostPlatformIncludeDir)
+                    .map { "-I$jdkDir/include/$it" }
+                    .toTypedArray()
+        }
+    }
+
+    /**
+     * Used for compiling native code that meant to be run on end-user's hardware.
+     * E.g., Kotlin/Native runtime and interop stubs.
+     */
+    class Native(configurables: Configurables) : ClangArgs(configurables, forJni = false)
 }
 

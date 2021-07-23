@@ -21,10 +21,15 @@ import org.jetbrains.kotlin.konan.util.DependencyProcessor
 class Platform(val configurables: Configurables) 
     : Configurables by configurables {
 
-    val clang by lazy {
-        ClangArgs(configurables)
+    val clang: ClangArgs.Native by lazy {
+        ClangArgs.Native(configurables)
     }
-    val linker by lazy {
+
+    val clangForJni: ClangArgs.Jni by lazy {
+        ClangArgs.Jni(configurables)
+    }
+
+    val linker: LinkerFlags by lazy {
         linker(configurables)
     }
 }
