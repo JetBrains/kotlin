@@ -73,7 +73,7 @@ class IrSymbolDeserializer(
     }
 
     fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
-        deserializedSymbols.putIfAbsent(signature, symbol)
+        deserializedSymbols.put(signature, symbol)
     }
 
     fun referenceSimpleFunctionByLocalSignature(idSignature: IdSignature) : IrSimpleFunctionSymbol =

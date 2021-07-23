@@ -286,7 +286,7 @@ class IrDeclarationDeserializer(
 
         // make sure this symbol is known to linker
         symbolDeserializer.referenceLocalIrSymbol(result.symbol, sig)
-        result.annotations += deserializeAnnotations(proto.base.annotationList)
+        result.annotations = deserializeAnnotations(proto.base.annotationList)
         result.parent = currentParent
         return result
     }
