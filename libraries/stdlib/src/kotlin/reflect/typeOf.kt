@@ -8,7 +8,7 @@ package kotlin.reflect
 /**
  * Returns a runtime representation of the given reified type [T] as an instance of [KType].
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <reified T> typeOf(): KType =
     throw UnsupportedOperationException("This function is implemented as an intrinsic on all supported platforms.")

@@ -1,5 +1,3 @@
-// !API_VERSION: LATEST
-// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FILE: box.kt
