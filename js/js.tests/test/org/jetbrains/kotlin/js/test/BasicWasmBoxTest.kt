@@ -149,9 +149,9 @@ abstract class BasicWasmBoxTest(
         val testRunner = """
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
-            const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
+            wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
 
-            const actualResult = runtime.importStringToJs(wasmInstance.exports.$testFunction(), wasmInstance.exports.memory);
+            const actualResult = importStringToJs(wasmInstance.exports.$testFunction());
             if (actualResult !== "OK")
                 throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
         """.trimIndent()
