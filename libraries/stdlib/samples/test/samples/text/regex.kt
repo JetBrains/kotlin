@@ -52,4 +52,16 @@ class Regexps {
         val names = matches.map { it.groupValues[1] }.joinToString()
         assertPrints(names, "Alice, Bob, Eve")
     }
+
+    @Sample
+    fun splitToSequence() {
+        val colors = "green, red , brown&blue, orange, pink&green"
+        val regex = "[,\\s]+".toRegex()
+
+        val mixedColor = regex.splitToSequence(colors)
+            .onEach { println(it) }
+            .firstOrNull { it.contains('&') }
+
+        assertPrints(mixedColor, "brown&blue")
+    }
 }

@@ -52,6 +52,7 @@ actual class Regex {
      *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     * @sample samples.text.Regexps.splitToSequence
      */
     public actual fun splitToSequence(input: CharSequence, limit: Int): Sequence<String> = TODO("Wasm stdlib: Text")
 

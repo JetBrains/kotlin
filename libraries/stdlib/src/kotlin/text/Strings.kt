@@ -1379,6 +1379,7 @@ public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String>
  *
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
+ * @sample samples.text.Strings.splitToSequence
  */
 @SinceKotlin("1.5")
 @ExperimentalStdlibApi
