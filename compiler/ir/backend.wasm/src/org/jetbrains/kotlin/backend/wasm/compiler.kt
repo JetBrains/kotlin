@@ -133,11 +133,11 @@ fun WasmCompiledModuleFragment.generateJs(): String {
         },
 
         println(valueAddr) {
-            console.log(">>>  " + importStringToJs(valueAddr));
+            console.log(">>>  " + importStringFromWasm(valueAddr));
         }
     };
     
-    function importStringToJs(addr) {
+    function importStringFromWasm(addr) {
         const mem16 = new Uint16Array(wasmInstance.exports.memory.buffer);
         const mem32 = new Int32Array(wasmInstance.exports.memory.buffer);
         const len = mem32[addr / 4];

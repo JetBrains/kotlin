@@ -371,7 +371,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         if (context.irFunction.isExported(context.backendContext) &&
             expression.value.type == irBuiltIns.stringType) {
 
-            body.buildCall(context.referenceFunction(wasmSymbols.exportStringRet))
+            body.buildCall(context.referenceFunction(wasmSymbols.exportString))
         }
 
         body.buildInstr(WasmOp.RETURN)
