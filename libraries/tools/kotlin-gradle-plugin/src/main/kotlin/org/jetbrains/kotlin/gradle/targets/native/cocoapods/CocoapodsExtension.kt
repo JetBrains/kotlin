@@ -251,26 +251,27 @@ open class CocoapodsExtension(private val project: Project) {
     }
 
     internal fun configureLinkingOptions(binary: NativeBinary, setRPath: Boolean = false) {
-        project.findProperty(KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
-            binary.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
-        }
         pods.all { pod ->
             binary.linkerOpts("-framework", pod.moduleName)
-            if (project.shouldUseSyntheticProjectSettings &&
-                KotlinCocoapodsPlugin.isAvailableToProduceSynthetic
-            ) {
-                binary.linkTaskProvider.configure { task ->
 
-                    val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
-                    task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
-                    task.dependsOn(podBuildTaskProvider)
+            check(KotlinCocoapodsPlugin.isAvailableToProduceSynthetic) {
+                """
+                    Dependency on pods requires cocoapods-generate plugin to be installed.
+                    Please install it by executing 'gem install cocoapods-generate' in terminal.
+                """.trimMargin()
+            }
 
-                    task.doFirst { _ ->
-                        val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)
-                        binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
-                        if (setRPath) {
-                            binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.flatMap { listOf("-rpath", it) })
-                        }
+            binary.linkTaskProvider.configure { task ->
+
+                val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
+                task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
+                task.dependsOn(podBuildTaskProvider)
+
+                task.doFirst { _ ->
+                    val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)
+                    binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
+                    if (setRPath) {
+                        binary.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.flatMap { listOf("-rpath", it) })
                     }
                 }
             }

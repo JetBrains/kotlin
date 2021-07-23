@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.ARCHS_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.CONFIGURATION_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.PLATFORM_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
@@ -91,11 +88,6 @@ private val CocoapodsDependency.toPodDownloadTaskName: String
         KotlinCocoapodsPlugin.POD_DOWNLOAD_TASK_NAME,
         name.asValidTaskName()
     )
-
-internal val Project.shouldUseSyntheticProjectSettings: Boolean
-    get() = (project.findProperty(PLATFORM_PROPERTY) == null &&
-            project.findProperty(ARCHS_PROPERTY) == null &&
-            project.findProperty(CONFIGURATION_PROPERTY) == null)
 
 private val KotlinNativeTarget.toValidSDK: String
     get() = when (konanTarget) {
@@ -231,6 +223,21 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         val platforms = project.findProperty(PLATFORM_PROPERTY)?.toString()?.split(",", " ")?.filter { it.isNotBlank() }
         val archs = project.findProperty(ARCHS_PROPERTY)?.toString()?.split(",", " ")?.filter { it.isNotBlank() }
 
+        if (
+            project.findProperty(CFLAGS_PROPERTY) != null ||
+            project.findProperty(FRAMEWORK_PATHS_PROPERTY) != null ||
+            project.findProperty(HEADER_PATHS_PROPERTY) != null
+        ) {
+            logger.warn(
+                """
+                Properties 
+                    kotlin.native.cocoapods.cflags
+                    kotlin.native.cocoapods.paths.frameworks
+                    kotlin.native.cocoapods.paths.headers
+                are not supported and will be ignored since Cocoapods plugin generates all required properties automatically.
+                """.trimIndent())
+        }
+
         if (platforms == null || archs == null) {
             check(project.findProperty(TARGET_PROPERTY) == null) {
                 """
@@ -292,6 +299,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 // to avoid showing it in the `tasks` output.
             }
 
+            check(isAvailableToProduceSynthetic) {
+                """
+                    Dependency on pods requires cocoapods-generate plugin to be installed.
+                    Please install it by executing 'gem install cocoapods-generate' in terminal.
+                """.trimMargin()
+            }
+
             kotlinExtension.supportedTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.create(pod.moduleName) { interop ->
 
@@ -305,46 +319,27 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         _extraOptsProp.addAll(project.provider { pod.extraOpts })
                     }
 
-                    if (project.shouldUseSyntheticProjectSettings &&
-                        isAvailableToProduceSynthetic
-                    ) {
-                        val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)
-                        interopTask.inputs.file(podBuildTaskProvider.map {it.buildSettingsFile })
-                        interopTask.dependsOn(podBuildTaskProvider)
-                    }
-
-                    project.findProperty(CFLAGS_PROPERTY)?.toString()?.let { args ->
-                        // Xcode quotes around paths with spaces.
-                        // Here and below we need to split such paths taking this into account.
-                        interop.compilerOpts.addAll(args.splitQuotedArgs())
-                    }
-                    project.findProperty(HEADER_PATHS_PROPERTY)?.toString()?.let { args ->
-                        interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
-                    }
-                    project.findProperty(FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
-                        interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
-                    }
+                    val podBuildTaskProvider = project.getPodBuildTaskProvider(target, pod)
+                    interopTask.inputs.file(podBuildTaskProvider.map {it.buildSettingsFile })
+                    interopTask.dependsOn(podBuildTaskProvider)
 
                     interopTask.doFirst { _ ->
                         // Since we cannot expand the configuration phase of interop tasks
                         // receiving the required environment variables happens on execution phase.
                         // TODO This needs to be fixed to improve UP-TO-DATE checks.
-                        if (project.shouldUseSyntheticProjectSettings &&
-                            isAvailableToProduceSynthetic
-                        ) {
-                            val podBuildSettings = project.getPodBuildSettingsProperties(target, pod)
+                        val podBuildSettings = project.getPodBuildSettingsProperties(target, pod)
 
-                            podBuildSettings.cflags?.let { args ->
-                                // Xcode quotes around paths with spaces.
-                                // Here and below we need to split such paths taking this into account.
-                                interop.compilerOpts.addAll(args.splitQuotedArgs())
-                            }
-                            podBuildSettings.headerPaths?.let { args ->
-                                interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
-                            }
-
-                            interop.compilerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
+                        podBuildSettings.cflags?.let { args ->
+                            // Xcode quotes around paths with spaces.
+                            // Here and below we need to split such paths taking this into account.
+                            interop.compilerOpts.addAll(args.splitQuotedArgs())
                         }
+                        podBuildSettings.headerPaths?.let { args ->
+                            interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
+                        }
+
+                        interop.compilerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
+
                     }
                 }
             }
@@ -589,12 +584,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             if (HostManager.hostIsMac && !isAvailableToProduceSynthetic) {
                 logger.quiet(
                     """
-                    To take advantage of the new functionality for Cocoapods Integration like synchronizing with the Xcode project 
-                    and supporting dependencies on pods, please install the `cocoapods-generate` plugin for CocoaPods 
-                    by calling `gem install cocoapods-generate` in terminal. 
-                    
-                    More details are available by https://github.com/square/cocoapods-generate
-                """.trimIndent()
+                        Dependency on pods requires cocoapods-generate plugin to be installed.
+                        If you plan to add dependencies on third party pods, don't forget to install it by executing 'gem install cocoapods-generate' in terminal.
+                    """.trimIndent()
                 )
             }
             createInterops(project, kotlinExtension, cocoapodsExtension)

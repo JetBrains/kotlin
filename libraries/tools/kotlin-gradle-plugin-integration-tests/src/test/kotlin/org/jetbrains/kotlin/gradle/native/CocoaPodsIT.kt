@@ -885,6 +885,24 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testPodDependencyInUnitTests() =
         getProjectByName(cocoapodsTestsProjectName).testWithWrapper(":iosX64Test")
 
+    @Test
+    fun testCinteropUpToDate() {
+        project.gradleBuildScript().addPod(defaultPodName, produceGitBlock(defaultPodRepo))
+        project.testImport()
+        hooks.addHook {
+            assertTasksUpToDate(
+                defaultCinteropTaskName
+            )
+        }
+        project.test(
+            "syncFramework",
+            "-Pkotlin.native.cocoapods.platform=iphonesimulator",
+            "-Pkotlin.native.cocoapods.archs=x86_64",
+            "-Pkotlin.native.cocoapods.configuration=Debug",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true"
+        )
+    }
+
     // paths
 
     private fun CompiledProject.url() = externalSources().resolve("url")
