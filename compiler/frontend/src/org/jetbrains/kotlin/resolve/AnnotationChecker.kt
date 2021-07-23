@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
-import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedWithKotlinRepeatable
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
@@ -132,7 +132,7 @@ class AnnotationChecker(
 
             val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget() ?: property.getDefaultUseSiteTarget(descriptor)
             val existingAnnotations = propertyAnnotations[useSiteTarget] ?: continue
-            if (classDescriptor in existingAnnotations && !classDescriptor.isRepeatableAnnotation()) {
+            if (classDescriptor in existingAnnotations && !classDescriptor.isAnnotatedWithKotlinRepeatable()) {
                 if (reportError) {
                     trace.reportDiagnosticOnce(Errors.REPEATED_ANNOTATION.on(entry))
                 } else {
@@ -222,7 +222,7 @@ class AnnotationChecker(
             val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
                     || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
 
-            if (duplicateAnnotation && !classDescriptor.isRepeatableAnnotation()) {
+            if (duplicateAnnotation && !classDescriptor.isAnnotatedWithKotlinRepeatable()) {
                 trace.report(Errors.REPEATED_ANNOTATION.on(entry))
             }
 

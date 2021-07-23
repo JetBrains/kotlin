@@ -1861,6 +1861,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("javaRepeatableJvmTarget6.kt")
+                public void testJavaRepeatableJvmTarget6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatableJvmTarget6.kt");
+                }
+
+                @Test
                 @TestMetadata("javaUnrepeatable.kt")
                 public void testJavaUnrepeatable() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaUnrepeatable.kt");

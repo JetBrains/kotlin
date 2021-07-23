@@ -200,7 +200,9 @@ fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
     )
 }
 
-fun Annotated.isRepeatableAnnotation(): Boolean =
+// Note that on JVM, an annotation class is also considered repeatable if it's annotated with java.lang.annotation.Repeatable.
+// See JvmPlatformAnnotationFeaturesSupport.
+fun Annotated.isAnnotatedWithKotlinRepeatable(): Boolean =
     annotations.findAnnotation(StandardNames.FqNames.repeatable) != null
 
 fun Annotated.isDocumentedAnnotation(): Boolean =

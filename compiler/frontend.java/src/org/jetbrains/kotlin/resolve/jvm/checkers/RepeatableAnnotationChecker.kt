@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
@@ -16,10 +17,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
-import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedWithKotlinRepeatable
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-object RepeatableAnnotationChecker : AdditionalAnnotationChecker {
+class RepeatableAnnotationChecker(private val jvmTarget: JvmTarget) : AdditionalAnnotationChecker {
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
@@ -39,10 +40,16 @@ object RepeatableAnnotationChecker : AdditionalAnnotationChecker {
                     || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
 
             if (duplicateAnnotation
-                && classDescriptor.isRepeatableAnnotation()
+                && classDescriptor.isAnnotatedWithKotlinRepeatable()
                 && classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE
             ) {
-                trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry))
+                val error = when {
+                    jvmTarget == JvmTarget.JVM_1_6 -> ErrorsJvm.REPEATED_ANNOTATION_TARGET6
+                    else -> ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION
+                }
+                if (error != null) {
+                    trace.report(error.on(entry))
+                }
             }
 
             existingTargetsForAnnotation.add(useSiteTarget)
