@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -123,6 +124,9 @@ object KotlinToJVMBytecodeCompiler {
         val modules = Element("modules").apply {
             for (module in chunk) {
                 addContent(Element("module").apply {
+                    attributes.add(
+                        Attribute("timestamp", System.currentTimeMillis().toString())
+                    )
 
                     attributes.add(
                         Attribute("name", module.getModuleName())
@@ -143,14 +147,14 @@ object KotlinToJVMBytecodeCompiler {
                     for (javaSourceRoots in module.getJavaSourceRoots()) {
                         addContent(Element("javaSourceRoots").setAttribute("path", javaSourceRoots.path))
                     }
-                    for (classpath in module.getClasspathRoots()) {
-                        addContent(Element("classpath").setAttribute("path", classpath))
+                    for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
+                        if (classpath is JvmClasspathRoot) {
+                            addContent(Element("classpath").setAttribute("path", classpath.file.absolutePath))
+                        }
                     }
                     for (commonSources in module.getCommonSourceFiles()) {
                         addContent(Element("commonSources").setAttribute("path", commonSources))
                     }
-                    addContent(Element("jdkHome").setAttribute("path", configuration.get(JVMConfigurationKeys.JDK_HOME)?.toString()))
-
                 })
             }
         }
