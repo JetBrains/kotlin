@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedB
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 fun FirIdeEnsureBasedTransformerForReturnTypeCalculator(
     designation: Iterator<FirElement>,
@@ -60,6 +61,7 @@ private class FirIdeEnsureBasedTransformerForReturnTypeCalculatorImpl(
 
     private fun <T : FirCallableDeclaration> T.ensureReturnType() {
         if (this !== targetDeclaration) return
+        if (resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
         ensureResolved(FirResolvePhase.TYPES)
         if (returnTypeRef is FirImplicitTypeRef) {
             ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)

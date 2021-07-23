@@ -62,6 +62,7 @@ private class FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
 
     private inline fun <D : FirCallableDeclaration> D.processCallable(body: (FirDeclarationDesignation) -> Unit) {
         if (this !== targetDeclaration) return
+        if (resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
         ensureResolved(FirResolvePhase.TYPES)
         if (returnTypeRef is FirImplicitTypeRef) {
             val declarationList = designation.filterIsInstance<FirDeclaration>()

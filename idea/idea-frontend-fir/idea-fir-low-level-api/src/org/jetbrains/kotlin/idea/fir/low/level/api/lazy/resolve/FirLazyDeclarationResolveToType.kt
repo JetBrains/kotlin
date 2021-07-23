@@ -43,6 +43,7 @@ internal fun FirLazyDeclarationResolver.lazyResolveDeclaration(
             }
 
             if (firDeclaration.resolvePhase < FirResolvePhase.TYPES) {
+                if (firDeclaration.returnTypeRef is FirResolvedTypeRef) return
                 lazyResolveDeclaration(
                     firDeclarationToResolve = firDeclaration,
                     moduleFileCache = moduleFileCache,
