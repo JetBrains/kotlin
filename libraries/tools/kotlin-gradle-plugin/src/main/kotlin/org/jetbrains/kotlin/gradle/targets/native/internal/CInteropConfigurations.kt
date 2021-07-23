@@ -25,7 +25,8 @@ internal fun createCInteropApiElementsKlibArtifact(
     interopTask: TaskProvider<out CInteropProcess>
 ) {
     val project = settings.compilation.project
-    val configuration = project.locateOrCreateCInteropApiElementsConfiguration(settings.target ?: return)
+    val configurationName = cInteropApiElementsConfigurationName(settings.target ?: return)
+    val configuration = project.configurations.getByName(configurationName)
     project.artifacts.add(configuration.name, interopTask.map { it.outputFile }) { artifact ->
         artifact.extension = "klib"
         artifact.type = "klib"
@@ -55,8 +56,8 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
     }
 }
 
-private fun Project.locateOrCreateCInteropApiElementsConfiguration(target: KotlinTarget): Configuration {
-    val configurationName = target.name + "CInteropApiElements"
+internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: KotlinTarget): Configuration {
+    val configurationName = cInteropApiElementsConfigurationName(target)
     configurations.findByName(configurationName)?.let { return it }
 
     return configurations.create(configurationName).apply {
@@ -70,6 +71,9 @@ private fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotli
     }
 }
 
+private fun cInteropApiElementsConfigurationName(target: KotlinTarget): String {
+    return target.name + "CInteropApiElements"
+}
 
 internal object CInteropKlibLibraryElements {
     const val CINTEROP_KLIB = "cinterop-klib"

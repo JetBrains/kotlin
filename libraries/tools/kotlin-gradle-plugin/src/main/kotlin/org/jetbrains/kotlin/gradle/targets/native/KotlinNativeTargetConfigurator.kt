@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnab
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
+import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropApiElementsConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -278,6 +279,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     }
 
     protected fun configureCInterops(target: KotlinNativeTarget): Unit = with(target.project) {
+        locateOrCreateCInteropApiElementsConfiguration(target)
         target.compilations.all { compilation ->
             createCInteropTasks(compilation, compilation.cinterops)
             compilation.cinterops.all { cinterop ->
