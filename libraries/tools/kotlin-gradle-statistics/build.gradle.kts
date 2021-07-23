@@ -12,15 +12,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        if (kotlinBuildProperties.isJpsBuildEnabled || kotlinBuildProperties.useFir) {
-            none()
-        } else {
-            none()
-
-//            projectDefault()
-        }
-    }
+    "test" { projectDefault() }
 }
 
 projectTest {

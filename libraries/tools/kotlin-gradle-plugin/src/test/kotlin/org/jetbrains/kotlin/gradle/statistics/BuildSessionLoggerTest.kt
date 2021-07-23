@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.statistics
+package org.jetbrains.kotlin.gradle.statistics
 
-import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FILE_NAME_PATTERN
-import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.listProfileFiles
+import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -59,8 +58,8 @@ class BuildSessionLoggerTest {
 
         rootFolder.listFiles().first().listFiles().forEach { file ->
             assertTrue(
-                file.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()),
-                "Check that file name ${file.name} matches pattern $STATISTICS_FILE_NAME_PATTERN"
+                file.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()),
+                "Check that file name ${file.name} matches pattern ${BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN}"
             )
         }
     }
@@ -118,18 +117,18 @@ class BuildSessionLoggerTest {
         // files not matching the pattern should not be affected
         assertEquals(
             200,
-            statsFolder.listFiles().filter { !it.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()) }.count(),
+            statsFolder.listFiles().filter { !it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) }.count(),
             "Some files which should not be affected, were removed"
         )
 
         assertEquals(
             maxFiles,
-            statsFolder.listFiles().filter { it.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()) }.count(),
+            statsFolder.listFiles().filter { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) }.count(),
             "Some files which should not be affected, were removed"
         )
         assertEquals(
-            statsFolder.listFiles().filter { it.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()) }.sorted(),
-            listProfileFiles(statsFolder)
+            statsFolder.listFiles().filter { it.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN.toRegex()) }.sorted(),
+            BuildSessionLogger.listProfileFiles(statsFolder)
         )
     }
 
