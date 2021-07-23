@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
@@ -612,7 +613,9 @@ class BodyResolveContext(
         valueParameter: FirValueParameter,
         f: () -> T
     ): T {
-        storeVariable(valueParameter)
+        if (!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) {
+            storeVariable(valueParameter)
+        }
         return withContainer(valueParameter, f)
     }
 

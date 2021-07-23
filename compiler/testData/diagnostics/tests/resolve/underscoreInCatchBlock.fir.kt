@@ -15,7 +15,7 @@ fun foo() {
             val x2 = {
                 val x3 = { y: Int ->
                     val x4 = { _: Int ->
-                        `_`
+                        <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>
                     }
                     <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>
                 }
@@ -52,7 +52,7 @@ fun foo() {
         try {
             TODO()
         } catch (x: Exception) {
-            `_`.stackTrace
+            <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
         }
     }
 }

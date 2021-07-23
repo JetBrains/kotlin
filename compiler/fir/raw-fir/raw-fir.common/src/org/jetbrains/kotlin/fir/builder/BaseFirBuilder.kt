@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -1234,9 +1236,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return if (valueParameterDeclaration == ValueParameterDeclaration.LAMBDA && rawName == "_"
             ||
             valueParameterDeclaration == ValueParameterDeclaration.CATCH &&
-            baseSession.sessionProvider != null &&
-            baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ForbidReferencingToUnderscoreNamedParameterOfCatchBlock) &&
-            safeName.asString() == "_"
+            safeName.asString() == "_" &&
+            baseSession.safeLanguageVersionSettings?.supportsFeature(LanguageFeature.ForbidReferencingToUnderscoreNamedParameterOfCatchBlock) == true
         ) {
             SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
         } else {
@@ -1251,5 +1252,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         val DESTRUCTURING_NAME = Name.special("<destruct>")
 
         val ITERATOR_NAME = Name.special("<iterator>")
+    }
+
+    enum class ValueParameterDeclaration {
+        OTHER,
+        LAMBDA,
+        CATCH
     }
 }

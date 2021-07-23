@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 public class SpecialNames {
     public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
     public static final Name ROOT_PACKAGE = Name.special("<root package>");
+    public static final Name UNDERSCORE_FOR_UNUSED_VAR = Name.special("<unused var>");
 
     public static final Name DEFAULT_NAME_FOR_COMPANION_OBJECT = Name.identifier("Companion");
 

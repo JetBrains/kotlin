@@ -125,7 +125,7 @@ class ExpressionsConverter(
         var block: LighterASTNode? = null
         lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it)
+                VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it, ValueParameterDeclaration.LAMBDA)
                 BLOCK -> block = it
             }
         }
@@ -1174,7 +1174,8 @@ class ExpressionsConverter(
         var blockNode: LighterASTNode? = null
         catchClause.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it).firstOrNull() ?: return null
+                VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it, ValueParameterDeclaration.CATCH)
+                    .firstOrNull() ?: return null
                 BLOCK -> blockNode = it
             }
         }

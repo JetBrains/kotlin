@@ -5,35 +5,35 @@ fun foobar(block: (Double) -> Unit) { }
 
 fun bar() {
     foo { _, b ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     foo { a, _ ->
         a checkType { _<Int>() }
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { _, _ ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { _: Int, b: String ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     foo { a: Int, _: String ->
         a checkType { _<Int>() }
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { _: Int, _: String ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { `_`, _ ->
-        _ checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+        _ checkType { _<Int>() }
     }
 
     foo { _, `_` ->

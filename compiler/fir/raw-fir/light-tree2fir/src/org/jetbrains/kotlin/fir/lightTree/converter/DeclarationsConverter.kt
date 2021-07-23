@@ -2009,10 +2009,13 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameterList
      */
-    fun convertValueParameters(valueParameters: LighterASTNode): List<ValueParameter> {
+    fun convertValueParameters(
+        valueParameters: LighterASTNode,
+        valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER
+    ): List<ValueParameter> {
         return valueParameters.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
-                VALUE_PARAMETER -> container += convertValueParameter(node)
+                VALUE_PARAMETER -> container += convertValueParameter(node, valueParameterDeclaration)
             }
         }
     }
@@ -2020,7 +2023,10 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameter
      */
-    fun convertValueParameter(valueParameter: LighterASTNode): ValueParameter {
+    fun convertValueParameter(
+        valueParameter: LighterASTNode,
+        valueParameterDeclaration: ValueParameterDeclaration = ValueParameterDeclaration.OTHER
+    ): ValueParameter {
         var modifiers = Modifier()
         var isVal = false
         var isVar = false
@@ -2040,7 +2046,7 @@ class DeclarationsConverter(
             }
         }
 
-        val name = identifier.nameAsSafeName()
+        val name = convertValueParameterName(identifier.nameAsSafeName(), identifier, valueParameterDeclaration)
         val firValueParameter = buildValueParameter {
             source = valueParameter.toFirSourceElement()
             moduleData = baseModuleData
