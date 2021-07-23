@@ -23,6 +23,7 @@ expect class Regex {
      *
      * @return An instance of [MatchResult] if the input matches this [Regex] at the specified [index] or `null` otherwise.
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of the [input] char sequence.
+     * @sample samples.text.Regexps.matchAt
      */
     @SinceKotlin("1.5")
     @ExperimentalStdlibApi
@@ -35,6 +36,7 @@ expect class Regex {
      * Unlike [matches] function, it doesn't require the match to span to the end of [input].
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of the [input] char sequence.
+     * @sample samples.text.Regexps.matchesAt
      */
     @SinceKotlin("1.5")
     @ExperimentalStdlibApi
