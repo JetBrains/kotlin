@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.idea.frontend.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
@@ -67,7 +67,11 @@ internal class KtFirTypeProvider(
     }
 
     override fun getKtType(ktTypeReference: KtTypeReference): KtType = withValidityAssertion {
-        ktTypeReference.getOrBuildFirOfType<FirResolvedTypeRef>(firResolveState).coneType.asKtType()
+        when (val fir = ktTypeReference.getOrBuildFir(firResolveState)) {
+            is FirResolvedTypeRef -> fir.coneType.asKtType()
+            is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKtType()
+            else -> throwUnexpectedFirElementError(fir, ktTypeReference)
+        }
     }
 
     override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? = withValidityAssertion {
