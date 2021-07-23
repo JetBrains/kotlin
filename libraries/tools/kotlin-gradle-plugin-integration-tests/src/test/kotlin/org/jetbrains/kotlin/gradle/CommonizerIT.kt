@@ -355,14 +355,31 @@ class CommonizerIT : BaseGradleIT() {
     }
 
     @Test
+    fun `test multiple cinterops with test source sets and compilations - test source sets depending on main`() {
+        `test multiple cinterops with test source sets and compilations`(true)
+    }
+
+    @Test
     fun `test multiple cinterops with test source sets and compilations`() {
+        `test multiple cinterops with test source sets and compilations`(false)
+    }
+
+    private fun `test multiple cinterops with test source sets and compilations`(testSourceSetsDependingOnMain: Boolean) {
         with(Project("commonizeMultipleCInteropsWithTests", minLogLevel = INFO)) {
 
             val isUnix = HostManager.hostIsMac || HostManager.hostIsLinux
             val isMac = HostManager.hostIsMac
             val isWindows = HostManager.hostIsMingw
 
-            reportSourceSetCommonizerDependencies(this) {
+            val testSourceSetsDependingOnMainParameter = "-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain"
+
+            fun CompiledProject.assertTestSourceSetsDependingOnMainParameter() {
+                val message = "testSourceSetsDependingOnMain is set"
+                if (testSourceSetsDependingOnMain) assertContains(message) else assertNotContains(message)
+            }
+
+            reportSourceSetCommonizerDependencies(this, testSourceSetsDependingOnMainParameter) {
+                it.assertTestSourceSetsDependingOnMainParameter()
                 getCommonizerDependencies("nativeMain").onlyCInterops().apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper".takeIf { isUnix })
                     assertTargetOnAllDependencies(
@@ -453,38 +470,45 @@ class CommonizerIT : BaseGradleIT() {
                 }
             }
 
-            build(":assemble") {
+            build(":assemble", testSourceSetsDependingOnMainParameter) {
+                assertTestSourceSetsDependingOnMainParameter()
                 assertSuccessful()
                 assertTasksUpToDate(":commonizeNativeDistribution")
                 assertTasksUpToDate(":commonizeCInterop")
             }
 
-            build(":compileNativeMainKotlinMetadata") {
+            build(":compileNativeMainKotlinMetadata", testSourceSetsDependingOnMainParameter) {
+                assertTestSourceSetsDependingOnMainParameter()
                 assertSuccessful()
             }
 
             if (isUnix) {
-                build(":compileUnixMainKotlinMetadata") {
+                build(":compileUnixMainKotlinMetadata", testSourceSetsDependingOnMainParameter) {
+                    assertTestSourceSetsDependingOnMainParameter()
                     assertSuccessful()
                 }
 
-                build(":compileLinuxMainKotlinMetadata") {
+                build(":compileLinuxMainKotlinMetadata", testSourceSetsDependingOnMainParameter) {
+                    assertTestSourceSetsDependingOnMainParameter()
                     assertSuccessful()
                 }
             }
 
             if (isMac) {
-                build(":compileAppleMainKotlinMetadata") {
+                build(":compileAppleMainKotlinMetadata", testSourceSetsDependingOnMainParameter) {
+                    assertTestSourceSetsDependingOnMainParameter()
                     assertSuccessful()
                 }
 
-                build(":compileIosMainKotlinMetadata") {
+                build(":compileIosMainKotlinMetadata", testSourceSetsDependingOnMainParameter) {
+                    assertTestSourceSetsDependingOnMainParameter()
                     assertSuccessful()
                 }
             }
 
             if (isWindows) {
-                build(":compileWindowsMainKotlinMetadata") {
+                build(":compileWindowsMainKotlinMetadata", testSourceSetsDependingOnMainParameter) {
+                    assertTestSourceSetsDependingOnMainParameter()
                     assertSuccessful()
                 }
             }

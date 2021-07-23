@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTargetOrNull
 import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.BaseGradleIT.CompiledProject
 import java.io.File
 import javax.annotation.RegEx
 import kotlin.test.fail
@@ -88,7 +89,8 @@ fun interface WithSourceSetCommonizerDependencies {
 
 fun BaseGradleIT.reportSourceSetCommonizerDependencies(
     project: BaseGradleIT.Project,
-    test: WithSourceSetCommonizerDependencies.() -> Unit
+    vararg additionalBuildParameters: String,
+    test: WithSourceSetCommonizerDependencies.(compiledProject: CompiledProject) -> Unit
 ) = with(project) {
 
     if (!projectDir.exists()) {
@@ -102,8 +104,7 @@ fun BaseGradleIT.reportSourceSetCommonizerDependencies(
     }
 
     build(
-        ":reportCommonizerSourceSetDependencies",
-        options = defaultBuildOptions().copy(forceOutputToStdout = true)
+        *(listOf(":reportCommonizerSourceSetDependencies") + additionalBuildParameters).toTypedArray(),
     ) {
         assertSuccessful()
 
@@ -126,7 +127,7 @@ fun BaseGradleIT.reportSourceSetCommonizerDependencies(
             SourceSetCommonizerDependencies(sourceSetName, dependencies.toSet())
         }
 
-        withSourceSetCommonizerDependencies.test()
+        withSourceSetCommonizerDependencies.test(this)
     }
 }
 

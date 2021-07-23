@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
 
-// TODO NOW: Integration tests!
-
 internal fun Project.setupCInteropCommonizerDependencies() {
     val kotlin = this.multiplatformExtensionOrNull ?: return
 
