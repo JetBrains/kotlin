@@ -32,6 +32,9 @@ class WasmSymbols(
         context.module.getPackage(FqName("kotlin.wasm.internal"))
     private val collectionsPackage: PackageViewDescriptor =
         context.module.getPackage(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
+    private val builtInsPackage: PackageViewDescriptor =
+        context.module.getPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
+
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
@@ -77,7 +80,7 @@ class WasmSymbols(
         context.irBuiltIns.charType to getInternalFunction("wasm_i32_eq"),
         context.irBuiltIns.intType to getInternalFunction("wasm_i32_eq"),
         context.irBuiltIns.longType to getInternalFunction("wasm_i64_eq"),
-        context.irBuiltIns.stringType to getInternalFunction("wasm_string_eq")
+        context.irBuiltIns.stringType to getFunction("wasm_string_eq", builtInsPackage)
     )
 
     val floatEqualityFunctions = mapOf(
@@ -121,7 +124,7 @@ class WasmSymbols(
     val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
-    val stringGetLiteral = getInternalFunction("stringLiteral")
+    val stringGetLiteral = getFunction("stringLiteral", builtInsPackage)
 
     val wasmClassId = getInternalFunction("wasmClassId")
     val wasmInterfaceId = getInternalFunction("wasmInterfaceId")
@@ -139,6 +142,9 @@ class WasmSymbols(
     val nullableDoubleIeee754Equals = getInternalFunction("nullableDoubleIeee754Equals")
 
     val wasmThrow = getInternalFunction("wasmThrow")
+
+    val exportStringRet = getInternalFunction("exportStringRet")
+    val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
 
     private val functionNInterfaces = (0..22).map { arity ->
         getIrClass(FqName("kotlin.wasm.internal.Function$arity"))
@@ -173,10 +179,12 @@ class WasmSymbols(
     internal fun getProperty(fqName: FqName): PropertyDescriptor =
         findProperty(context.module.getPackage(fqName.parent()).memberScope, fqName.shortName()).single()
 
-    private fun getInternalFunction(name: String): IrSimpleFunctionSymbol {
-        val tmp = findFunctions(wasmInternalPackage.memberScope, Name.identifier(name)).single()
+    private fun getFunction(name: String, ownerPackage: PackageViewDescriptor): IrSimpleFunctionSymbol {
+        val tmp = findFunctions(ownerPackage.memberScope, Name.identifier(name)).single()
         return symbolTable.referenceSimpleFunction(tmp)
     }
+
+    private fun getInternalFunction(name: String) = getFunction(name, wasmInternalPackage)
 
     private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
 }

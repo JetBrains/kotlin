@@ -132,6 +132,15 @@ fun WasmCompiledModuleFragment.generateJs(): String {
 
         println(value) {
             console.log(">>>  " + value)
+        },
+
+        importStringToJs(addr, wasmMem) {
+            const mem16 = new Uint16Array(wasmMem.buffer);
+            const mem32 = new Int32Array(wasmMem.buffer);
+            const len = mem32[addr / 4];
+            const str_start_addr = (addr + 4) / 2
+            const slice = mem16.slice(str_start_addr, str_start_addr + len);
+            return String.fromCharCode.apply(null, slice);
         }
     };
     """.trimIndent()
@@ -139,5 +148,5 @@ fun WasmCompiledModuleFragment.generateJs(): String {
     val jsCode =
         "\nconst js_code = {${jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }}};"
 
-    return runtime + generateStringLiteralsSupport(stringLiterals) + jsCode
+    return runtime + jsCode
 }

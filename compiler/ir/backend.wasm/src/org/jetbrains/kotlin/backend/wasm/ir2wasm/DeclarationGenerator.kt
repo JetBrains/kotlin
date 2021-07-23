@@ -66,6 +66,12 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         // Generate function type
         val watName = declaration.fqNameWhenAvailable.toString()
         val irParameters = declaration.getEffectiveValueParameters()
+        // TODO: Exported types should be transformed in a separate lowering by creating shim functions for each export.
+        val resultType =
+            if (declaration.isExported(context.backendContext))
+                context.transformExportedResultType(declaration.returnType)
+            else
+                context.transformResultType(declaration.returnType)
         val wasmFunctionType =
             WasmFunctionType(
                 name = watName,
@@ -78,7 +84,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                     }
                 },
                 resultTypes = listOfNotNull(
-                    context.transformResultType(declaration.returnType).let {
+                    resultType.let {
                         if (importedName != null && it is WasmRefNullType) WasmEqRef else it
                     }
                 )

@@ -309,3 +309,12 @@ public external fun wasm_i64_trunc_sat_f64_s(a: Double): Long
 
 @WasmOp(WasmOp.I32_LOAD)
 public external fun wasm_i32_load(x: Int): Int
+
+@WasmOp(WasmOp.I32_LOAD16_U)
+public external fun wasm_i32_load16_u(x: Int): Int
+
+@WasmOp(WasmOp.I32_STORE)
+public external fun wasm_i32_store(addr: Int, i: Int): Unit
+
+@WasmOp(WasmOp.I32_STORE16)
+public external fun wasm_i32_store16(addr: Int, c: Char): Unit

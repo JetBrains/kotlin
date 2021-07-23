@@ -82,9 +82,6 @@ class WasmTypeTransformer(
             builtIns.doubleType ->
                 WasmF64
 
-            builtIns.stringType ->
-                WasmExternRef
-
             builtIns.nothingNType ->
                 WasmExternRef
 
@@ -92,6 +89,7 @@ class WasmTypeTransformer(
             builtIns.nothingType ->
                 WasmExternRef
 
+            // this also handles builtIns.stringType
             else -> {
                 val klass = this.getClass()
                 val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
