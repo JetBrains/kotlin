@@ -42,6 +42,9 @@ sealed class ClangArgs(
     private val target = configurables.target
     private val targetTriple = configurables.targetTriple
 
+    // TODO: Should be dropped in favor of real MSVC target.
+    private val argsForWindowsJni = forJni && target == KonanTarget.MINGW_X64
+
     private val clangArgsSpecificForKonanSources
         get() = configurables.runtimeDefinitions.map { "-D$it" }
 
@@ -54,34 +57,50 @@ sealed class ClangArgs(
     }
     // TODO: Use buildList
     private val commonClangArgs: List<String> = mutableListOf<List<String>>().apply {
-        add(listOf("-B$binDir", "-fno-stack-protector"))
+        // Currently, MinGW toolchain contains old LLVM 8, and -fuse-ld=lld picks linker from there.
+        // And, unfortunately, `-fuse-ld=<absolute path>` doesn't work correctly for MSVC toolchain.
+        // That's why we just don't add $absoluteTargetToolchain/bin to binary search path in case of JNI compilation.
+        // TODO: Can be removed after MinGW sysroot update.
+        if (!argsForWindowsJni) {
+            add(listOf("-B$binDir"))
+        } else {
+            require(configurables is MingwConfigurables)
+            add(configurables.msvc.compilerFlags())
+            add(configurables.windowsKit.compilerFlags())
+            // Do not depend on link.exe from Visual Studio.
+            add(listOf("-fuse-ld=lld"))
+        }
+        add(listOf("-fno-stack-protector"))
         if (configurables is GccConfigurables) {
             add(listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}"))
         }
-        if (configurables is AppleConfigurables) {
-            val osVersionMin = when (target) {
-                // Here we workaround Clang 8 limitation: macOS major version should be 10.
-                // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
-                // TODO: Fix with LLVM Update.
-                KonanTarget.MACOS_ARM64 -> "10.16"
-                else -> configurables.osVersionMin
+        val targetString: String = when {
+            argsForWindowsJni -> "x86_64-pc-windows-msvc"
+            configurables is AppleConfigurables -> {
+                val osVersionMin = when (target) {
+                    // Here we workaround Clang 8 limitation: macOS major version should be 10.
+                    // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
+                    // TODO: Fix with LLVM Update.
+                    KonanTarget.MACOS_ARM64 -> "10.16"
+                    else -> configurables.osVersionMin
+                }
+                targetTriple.copy(
+                        architecture = when (targetTriple.architecture) {
+                            // TODO: LLVM 8 doesn't support arm64_32.
+                            //  We can use armv7k because they are compatible at bitcode level.
+                            "arm64_32" -> "armv7k"
+                            else -> targetTriple.architecture
+                        },
+                        os = "${targetTriple.os}$osVersionMin"
+                ).toString()
             }
-            val targetArg = targetTriple.copy(
-                    architecture = when (targetTriple.architecture) {
-                        // TODO: LLVM 8 doesn't support arm64_32.
-                        //  We can use armv7k because they are compatible at bitcode level.
-                        "arm64_32" -> "armv7k"
-                        else -> targetTriple.architecture
-                    },
-                    os = "${targetTriple.os}$osVersionMin"
-            )
-            add(listOf("-target", targetArg.toString()))
-        } else {
-            add(listOf("-target", configurables.targetTriple.toString()))
+            else -> configurables.targetTriple.toString()
         }
+        add(listOf("-target", targetString))
         val hasCustomSysroot = configurables is ZephyrConfigurables
                 || configurables is WasmConfigurables
                 || configurables is AndroidConfigurables
+                || argsForWindowsJni
         if (!hasCustomSysroot) {
             when (configurables) {
                 // isysroot and sysroot on darwin are _almost_ synonyms.
@@ -89,7 +108,6 @@ sealed class ClangArgs(
                 is AppleConfigurables -> add(listOf("-isysroot", absoluteTargetSysRoot))
                 else -> add(listOf("--sysroot=$absoluteTargetSysRoot"))
             }
-
         }
         // PIC is not required on Windows (and Clang will fail with `error: unsupported option '-fPIC'`)
         if (configurables !is MingwConfigurables) {

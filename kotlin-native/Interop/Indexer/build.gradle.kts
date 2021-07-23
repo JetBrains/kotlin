@@ -38,7 +38,7 @@ val llvmDir = project.findProperty("llvmDir")
 
 val libclang =
     if (HostManager.hostIsMingw) {
-        "bin/libclang.dll"
+        "lib/libclang.lib"
     } else {
         "lib/${System.mapLibraryName("clang")}"
     }
