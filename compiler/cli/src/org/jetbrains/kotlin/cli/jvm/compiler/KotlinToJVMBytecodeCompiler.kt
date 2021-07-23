@@ -118,10 +118,9 @@ object KotlinToJVMBytecodeCompiler {
     }
 
 
-    private fun dumpModel(dir: String, chunk: List<Module>) {
+    fun dumpModel(dir: String, chunk: List<Module>, configuration: CompilerConfiguration) {
 
         val modules = Element("modules").apply {
-
             for (module in chunk) {
                 addContent(Element("module").apply {
 
@@ -150,6 +149,7 @@ object KotlinToJVMBytecodeCompiler {
                     for (commonSources in module.getCommonSourceFiles()) {
                         addContent(Element("commonSources").setAttribute("path", commonSources))
                     }
+                    addContent(Element("jdkHome").setAttribute("path", configuration.get(JVMConfigurationKeys.JDK_HOME)?.toString()))
 
                 })
             }
@@ -243,11 +243,6 @@ object KotlinToJVMBytecodeCompiler {
         val friendPaths = environment.configuration.getList(JVMConfigurationKeys.FRIEND_PATHS)
         for (path in friendPaths) {
             moduleVisibilityManager.addFriendPath(path)
-        }
-
-        val dumpModelDir = environment.configuration.get(CommonConfigurationKeys.DUMP_MODEL)
-        if (dumpModelDir != null) {
-            dumpModel(dumpModelDir, chunk)
         }
 
         val projectConfiguration = environment.configuration
