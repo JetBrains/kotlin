@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.getOuterClass
 import org.jetbrains.kotlin.fir.scopes.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -21,9 +27,13 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.utils.SmartSet
 
 object FirConflictsChecker : FirBasicDeclarationChecker() {
@@ -197,7 +207,8 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                             }
                     }
                 }
-                else -> {}
+                else -> {
+                }
             }
             if (declarationName != null) {
                 session.lookupTracker?.recordLookup(
@@ -216,14 +227,25 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             else -> return
         }
 
-        inspector.declarationConflictingSymbols.forEach { (declaration, symbols) ->
-            when {
-                symbols.isEmpty() -> {}
-                declaration is FirSimpleFunction || declaration is FirConstructor -> {
-                    reporter.reportOn(declaration.source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
-                }
-                else -> {
-                    reporter.reportOn(declaration.source, FirErrors.REDECLARATION, symbols, context)
+        inspector.declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
+            val source = conflictingDeclaration.source
+            if (source != null && symbols.isNotEmpty()) {
+                when (conflictingDeclaration) {
+                    is FirSimpleFunction,
+                    is FirConstructor -> {
+                        reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
+                    }
+                    else -> {
+                        val factory = if (conflictingDeclaration is FirClassLikeDeclaration &&
+                            getOuterClass(conflictingDeclaration, context.session) == null &&
+                            symbols.any { it is FirClassLikeSymbol<*> }
+                        ) {
+                            FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
+                        } else {
+                            FirErrors.REDECLARATION
+                        }
+                        reporter.reportOn(source, factory, symbols, context)
+                    }
                 }
             }
         }

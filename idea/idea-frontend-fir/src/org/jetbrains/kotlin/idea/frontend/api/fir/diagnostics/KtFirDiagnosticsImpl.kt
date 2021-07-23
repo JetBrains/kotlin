@@ -2187,7 +2187,15 @@ internal class RedeclarationImpl(
     override val conflictingDeclarations: List<KtSymbol>,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.Redeclaration(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.Redeclaration(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class PackageOrClassifierRedeclarationImpl(
+    override val conflictingDeclarations: List<KtSymbol>,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.PackageOrClassifierRedeclaration(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 

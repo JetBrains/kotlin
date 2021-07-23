@@ -39,7 +39,7 @@ actual class C {
     actual inner class I
 }
 
-<!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>actual class D<!>
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!>
 
 actual class E {
     class N

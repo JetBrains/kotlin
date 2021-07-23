@@ -1369,8 +1369,13 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val conflictingOverloads: List<KtSymbol>
     }
 
-    abstract class Redeclaration : KtFirDiagnostic<PsiElement>() {
+    abstract class Redeclaration : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = Redeclaration::class
+        abstract val conflictingDeclarations: List<KtSymbol>
+    }
+
+    abstract class PackageOrClassifierRedeclaration : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = PackageOrClassifierRedeclaration::class
         abstract val conflictingDeclarations: List<KtSymbol>
     }
 

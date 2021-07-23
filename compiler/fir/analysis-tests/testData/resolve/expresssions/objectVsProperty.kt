@@ -1,6 +1,6 @@
-<!REDECLARATION!>object A<!>
+object <!REDECLARATION!>A<!>
 
-<!REDECLARATION!>val A = 10<!>
+val <!REDECLARATION!>A<!> = 10
 
 
 fun foo() = A

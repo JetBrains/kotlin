@@ -278,8 +278,12 @@ object SourceElementPositioningStrategies {
         FirPsiPositioningStrategies.UNREACHABLE_CODE
     )
 
+    val ACTUAL_DECLARATION_NAME = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ACTUAL_DECLARATION_NAME,
+        PositioningStrategies.ACTUAL_DECLARATION_NAME
+    )
+
     // TODO
-    val ACTUAL_DECLARATION_NAME = DEFAULT
     val INCOMPATIBLE_DECLARATION = DEFAULT
 
     val NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT = SourceElementPositioningStrategy(

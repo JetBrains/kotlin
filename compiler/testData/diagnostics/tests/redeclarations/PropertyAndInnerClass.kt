@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public class A() {
     public val <!REDECLARATION!>FOO<!>: String = "test"
 

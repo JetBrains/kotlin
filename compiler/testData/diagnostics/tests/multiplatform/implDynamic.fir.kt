@@ -18,7 +18,7 @@ expect class Foo {
 
 // TODO: do not suppress UNSUPPORTED once JS files in multi-platform tests are analyzed with JS analyzer facade
 
-<!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>actual class Foo {
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> {
     <!ACTUAL_WITHOUT_EXPECT!>actual constructor(p: dynamic) {}<!>
 
     <!ACTUAL_WITHOUT_EXPECT!>actual fun f1(s: dynamic): dynamic = null!!<!>
@@ -26,4 +26,4 @@ expect class Foo {
     <!ACTUAL_WITHOUT_EXPECT!>actual fun f2(s: dynamic): MutableMap<Boolean?, Foo> = null!!<!>
 
     <!ACTUAL_WITHOUT_EXPECT!>actual fun <T : Set<Number>> f3(t: T): dynamic = null!!<!>
-}<!>
+}

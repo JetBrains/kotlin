@@ -502,7 +502,7 @@ fun getOuterClassAndActualTypeParametersCount(klass: FirRegularClass, session: F
     return Pair(outerClass, result)
 }
 
-fun getOuterClass(klass: FirRegularClass, session: FirSession): FirRegularClass? {
+fun getOuterClass(klass: FirClassLikeDeclaration, session: FirSession): FirRegularClass? {
     val classId = klass.symbol.classId
     val parentId = classId.relativeClassName.parent()
     if (!parentId.isRoot) {

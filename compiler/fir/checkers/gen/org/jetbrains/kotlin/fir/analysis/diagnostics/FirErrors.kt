@@ -394,7 +394,8 @@ object FirErrors {
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<KtObjectDeclaration>(SourceElementPositioningStrategies.COMPANION_OBJECT)
     val CONFLICTING_OVERLOADS by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
-    val REDECLARATION by error1<PsiElement, Collection<FirBasedSymbol<*>>>()
+    val REDECLARATION by error1<KtNamedDeclaration, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val PACKAGE_OR_CLASSIFIER_REDECLARATION by error1<KtNamedDeclaration, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
     val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE by error0<PsiElement>()
 
     // Invalid local declarations

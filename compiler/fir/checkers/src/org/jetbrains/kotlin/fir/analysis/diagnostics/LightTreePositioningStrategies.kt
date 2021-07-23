@@ -187,6 +187,21 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val ACTUAL_DECLARATION_NAME: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val nameIdentifier = tree.nameIdentifier(node)
+            if (nameIdentifier != null) {
+                return markElement(nameIdentifier, startOffset, endOffset, tree, node)
+            }
+            return DEFAULT.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
     val DECLARATION_SIGNATURE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -725,7 +740,7 @@ object LightTreePositioningStrategies {
             if (node.tokenType == KtNodeTypes.LABEL_QUALIFIER) {
                 return super.mark(node, startOffset, endOffset - 1, tree)
             }
-            return super.mark(node, startOffset, endOffset, tree)
+            return DEFAULT.mark(node, startOffset, endOffset, tree)
         }
     }
 

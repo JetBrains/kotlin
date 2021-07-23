@@ -8,17 +8,17 @@ fun test() {}
 
 fun test(z: Int, c: Char) {}
 
-<!REDECLARATION!>open class A {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     open fun rest(s: String) {}
 
     open val u = 20
-}<!>
+}
 
-<!REDECLARATION!>class A {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
 
-}<!>
+}
 
-<!REDECLARATION!>class B : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>A<!> {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>A<!> {
     <!CONFLICTING_OVERLOADS!><!NOTHING_TO_OVERRIDE!>override<!> fun rest(s: String)<!> {}
 
     <!CONFLICTING_OVERLOADS!>fun rest(s: String)<!> {}
@@ -26,17 +26,17 @@ fun test(z: Int, c: Char) {}
     fun rest(l: Long) {}
 
     <!NOTHING_TO_OVERRIDE!>override<!> val u = 310
-}<!>
+}
 
-<!REDECLARATION!>interface B<!>
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 
-<!REDECLARATION!>enum class B<!>
+enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 
-<!REDECLARATION!>val u = 10<!>
-<!REDECLARATION!>val u = 20<!>
+val <!REDECLARATION!>u<!> = 10
+val <!REDECLARATION!>u<!> = 20
 
-<!REDECLARATION!>typealias TA = A<!>
-<!REDECLARATION!>typealias TA = B<!>
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = A
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = B
 
 typealias BA = A
 
@@ -52,7 +52,7 @@ fun lol(a: Array<Boolean>) {}
 
 class M {
     companion <!REDECLARATION!>object<!> {}
-    <!REDECLARATION!>val Companion = object : Any {}<!>
+    val <!REDECLARATION!>Companion<!> = object : Any {}
 }
 
 fun B.foo() {}
