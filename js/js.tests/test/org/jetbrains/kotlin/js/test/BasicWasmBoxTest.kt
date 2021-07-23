@@ -151,7 +151,7 @@ abstract class BasicWasmBoxTest(
             const wasmModule = new WebAssembly.Module(wasmBinary);
             wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
 
-            const actualResult = importStringToJs(wasmInstance.exports.$testFunction());
+            const actualResult = importStringFromWasm(wasmInstance.exports.$testFunction());
             if (actualResult !== "OK")
                 throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
         """.trimIndent()

@@ -142,7 +142,7 @@ class WasmSymbols(
 
     val wasmThrow = getInternalFunction("wasmThrow")
 
-    val exportStringRet = getInternalFunction("exportStringRet")
+    val exportString = getInternalFunction("exportString")
     val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
 
     private val functionNInterfaces = (0..22).map { arity ->

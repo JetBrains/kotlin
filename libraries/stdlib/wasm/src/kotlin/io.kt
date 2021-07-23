@@ -14,7 +14,7 @@ public actual fun println() {
 
 /** Prints the given [message] and the line separator to the standard output stream. */
 public actual fun println(message: Any?) {
-    printlnImpl(exportStringRet(message.toString()))
+    printlnImpl(exportString(message.toString()))
 }
 
 /** Prints the given [message] to the standard output stream. */
