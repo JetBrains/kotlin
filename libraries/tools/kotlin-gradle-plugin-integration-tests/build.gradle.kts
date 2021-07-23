@@ -24,6 +24,7 @@ dependencies {
     testImplementation(project(":kotlin-sam-with-receiver"))
     testImplementation(project(":kotlin-test:kotlin-test-jvm"))
     testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
     testImplementation(projectRuntimeJar(":kotlin-compiler-embeddable"))
     testImplementation(intellijCoreDep()) { includeJars("jdom") }

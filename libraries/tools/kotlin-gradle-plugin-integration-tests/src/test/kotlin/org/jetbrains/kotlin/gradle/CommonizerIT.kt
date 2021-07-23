@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel.INFO
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
+import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -345,6 +350,143 @@ class CommonizerIT : BaseGradleIT() {
         with(Project("commonize-kt-46856-all-targets")) {
             build(":commonize", options = BuildOptions(forceOutputToStdout = true)) {
                 assertSuccessful()
+            }
+        }
+    }
+
+    @Test
+    fun `test multiple cinterops with test source sets and compilations`() {
+        with(Project("commonizeMultipleCInteropsWithTests", minLogLevel = INFO)) {
+
+            val isUnix = HostManager.hostIsMac || HostManager.hostIsLinux
+            val isMac = HostManager.hostIsMac
+            val isWindows = HostManager.hostIsMingw
+
+            reportSourceSetCommonizerDependencies(this) {
+                getCommonizerDependencies("nativeMain").onlyCInterops().apply {
+                    assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper".takeIf { isUnix })
+                    assertTargetOnAllDependencies(
+                        CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64, MINGW_X86)
+                    )
+                }
+
+                getCommonizerDependencies("nativeTest").onlyCInterops().apply {
+                    assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper".takeIf { isUnix }, ".*nativeTestHelper")
+                    assertTargetOnAllDependencies(
+                        CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64, MINGW_X86)
+                    )
+                }
+
+                if (isUnix) {
+                    getCommonizerDependencies("unixMain").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                    }
+
+                    getCommonizerDependencies("unixTest").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64))
+                    }
+
+                    getCommonizerDependencies("linuxMain").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
+                    }
+
+                    getCommonizerDependencies("linuxTest").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*nativeTestHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
+                    }
+
+                    getCommonizerDependencies("linuxX64Main").assertEmpty()
+                    getCommonizerDependencies("linuxArm64Main").assertEmpty()
+                    getCommonizerDependencies("linuxX64Test").assertEmpty()
+                    getCommonizerDependencies("linuxArm64Test").assertEmpty()
+                }
+
+                if (isMac) {
+                    getCommonizerDependencies("appleMain").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64))
+                    }
+
+                    getCommonizerDependencies("appleTest").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper", ".*nativeTestHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64))
+                    }
+
+                    getCommonizerDependencies("iosMain").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64))
+                    }
+
+                    getCommonizerDependencies("iosTest").onlyCInterops().apply {
+                        assertDependencyFilesMatches(
+                            ".*nativeHelper", ".*unixHelper", ".*appleHelper", ".*nativeTestHelper", ".*iosTestHelper"
+                        )
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64))
+                    }
+
+                    getCommonizerDependencies("macosMain").assertEmpty()
+                    getCommonizerDependencies("macosTest").assertEmpty()
+                    getCommonizerDependencies("iosX64Main").assertEmpty()
+                    getCommonizerDependencies("iosX64Test").assertEmpty()
+                    getCommonizerDependencies("iosArm64Main").assertEmpty()
+                    getCommonizerDependencies("iosArm64Test").assertEmpty()
+                }
+
+                if (isWindows) {
+                    getCommonizerDependencies("windowsMain").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*windowsHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(MINGW_X86, MINGW_X64))
+                    }
+
+                    getCommonizerDependencies("windowsTest").onlyCInterops().apply {
+                        assertDependencyFilesMatches(".*nativeHelper", ".*windowsHelper", ".*nativeTestHelper")
+                        assertTargetOnAllDependencies(CommonizerTarget(MINGW_X86, MINGW_X64))
+                    }
+
+                    getCommonizerDependencies("windowsX64Main").assertEmpty()
+                    getCommonizerDependencies("windowsX64Test").assertEmpty()
+                    getCommonizerDependencies("windowsX86Main").assertEmpty()
+                    getCommonizerDependencies("windowsX86Test").assertEmpty()
+                }
+            }
+
+            build(":assemble") {
+                assertSuccessful()
+                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertTasksUpToDate(":commonizeCInterop")
+            }
+
+            build(":compileNativeMainKotlinMetadata") {
+                assertSuccessful()
+            }
+
+            if (isUnix) {
+                build(":compileUnixMainKotlinMetadata") {
+                    assertSuccessful()
+                }
+
+                build(":compileLinuxMainKotlinMetadata") {
+                    assertSuccessful()
+                }
+            }
+
+            if (isMac) {
+                build(":compileAppleMainKotlinMetadata") {
+                    assertSuccessful()
+                }
+
+                build(":compileIosMainKotlinMetadata") {
+                    assertSuccessful()
+                }
+            }
+
+            if (isWindows) {
+                build(":compileWindowsMainKotlinMetadata") {
+                    assertSuccessful()
+                }
             }
         }
     }
