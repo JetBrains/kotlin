@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -34,7 +37,8 @@ import org.jetbrains.kotlin.load.kotlin.signature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -303,7 +307,7 @@ class SignatureEnhancement(
                     mapper.isMutable(upper) -> MutabilityQualifier.MUTABLE
                     else -> null
                 },
-                isNotNullTypeParameter = unwrap() is NotNullTypeParameter
+                isNotNullTypeParameter = unwrap() is NotNullTypeParameter || unwrap() is DefinitelyNotNullType
             )
         }
 
