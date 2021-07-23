@@ -31,10 +31,16 @@ internal object Android {
             "android-${API}/arch-${architectureMap.getValue(target)}"
 }
 
-class ClangArgs(private val configurables: Configurables) : Configurables by configurables {
+class ClangArgs(private val configurables: Configurables) {
+
+    private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
+    private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
+    private val absoluteLlvmHome = configurables.absoluteLlvmHome
+    private val target = configurables.target
+    private val targetTriple = configurables.targetTriple
 
     private val clangArgsSpecificForKonanSources
-        get() = runtimeDefinitions.map { "-D$it" }
+        get() = configurables.runtimeDefinitions.map { "-D$it" }
 
     private val binDir = when (HostManager.host) {
         KonanTarget.LINUX_X64 -> "$absoluteTargetToolchain/bin"
@@ -135,8 +141,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 "-nostdinc",
                 // TODO: make it a libGcc property?
                 // We need to get rid of wasm sysroot first.
-                "-isystem $targetToolchain/../lib/gcc/arm-none-eabi/7.2.1/include",
-                "-isystem $targetToolchain/../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
+                "-isystem ${configurables.targetToolchain}/../lib/gcc/arm-none-eabi/7.2.1/include",
+                "-isystem ${configurables.targetToolchain}/../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
                 "-isystem$absoluteTargetSysRoot/include/libcxx",
                 "-isystem$absoluteTargetSysRoot/include/libc"
         ) + (configurables as ZephyrConfigurables).constructClangArgs()
@@ -185,7 +191,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
             // We workaround the problem with -isystem flag below.
             // TODO: Revise after update to LLVM 10.
-            listOf("-isystem", "$absoluteLlvmHome/lib/clang/$llvmVersion/include")
+            listOf("-isystem", "$absoluteLlvmHome/lib/clang/${configurables.llvmVersion}/include")
 
     /**
      * libclang args for plain C and Objective-C.
