@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -63,8 +63,8 @@ internal class KtFirScopeProvider(
         is KtFirAnonymousObjectSymbol -> firRef.withFir(FirResolvePhase.TYPES, body)
         is KtFirEnumEntrySymbol -> firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
             val initializer = it.initializer
-            check(initializer is FirAnonymousObject)
-            body(initializer)
+            check(initializer is FirAnonymousObjectExpression) { "Unexpected enum entry initializer: ${initializer?.javaClass}" }
+            body(initializer.anonymousObject)
         }
         else -> error { "Unknown KtSymbolWithDeclarations implementation ${this::class.qualifiedName}" }
     }

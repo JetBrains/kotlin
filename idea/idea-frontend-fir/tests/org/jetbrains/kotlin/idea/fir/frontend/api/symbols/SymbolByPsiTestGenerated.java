@@ -73,6 +73,12 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("enumValueMember.kt")
+    public void testEnumValueMember() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/enumValueMember.kt");
+    }
+
+    @Test
     @TestMetadata("extensionFunction.kt")
     public void testExtensionFunction() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/extensionFunction.kt");
