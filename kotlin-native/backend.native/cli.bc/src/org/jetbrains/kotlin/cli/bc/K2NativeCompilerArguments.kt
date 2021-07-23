@@ -317,13 +317,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-property-lazy-initialization", description = "Initialize top level properties lazily per file")
     var propertyLazyInitialization: Boolean = false
 
-    @Argument(
-            value = "-Xcheck-compatibility-with-lld",
-            valueDescription = "{disable|enable}",
-            description = "Check that linker flags are compatible with LLD."
-    )
-    var checkLldCompatibility: String? = null
-
     @Argument(value="-Xruntime-asserts-mode", valueDescription = "<mode>", description = "Enable asserts in runtime. Possible values: 'ignore', 'log', 'panic'")
     var runtimeAssertsMode: String? = "ignore"
 
