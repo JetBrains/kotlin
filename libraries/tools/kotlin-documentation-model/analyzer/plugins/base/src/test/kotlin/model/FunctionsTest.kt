@@ -324,7 +324,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                     with(this.first()) {
                         dri.classNames equals "Fancy"
                         params.entries counts 1
-                        (params["size"] as StringValue).value equals "1"
+                        (params["size"] as IntValue).value equals 1
                     }
                 }
             }
