@@ -1200,24 +1200,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("javaRepeatable.kt")
-            public void testJavaRepeatable() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/javaRepeatable.kt");
-            }
-
-            @Test
-            @TestMetadata("javaRepeatableRetention.kt")
-            public void testJavaRepeatableRetention() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/javaRepeatableRetention.kt");
-            }
-
-            @Test
-            @TestMetadata("javaUnrepeatable.kt")
-            public void testJavaUnrepeatable() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/javaUnrepeatable.kt");
-            }
-
-            @Test
             @TestMetadata("kt1860-negative.kt")
             public void testKt1860_negative() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/kt1860-negative.kt");
@@ -1598,12 +1580,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("prefix.kt")
                 public void testPrefix() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/options/prefix.kt");
-                }
-
-                @Test
-                @TestMetadata("repeatable.kt")
-                public void testRepeatable() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/options/repeatable.kt");
                 }
 
                 @Test
@@ -2112,6 +2088,34 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("unusedValue.kt")
                 public void testUnusedValue() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/rendering/unusedValue.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/repeatable")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Repeatable {
+                @Test
+                public void testAllFilesPresentInRepeatable() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/repeatable"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("javaRepeatable.kt")
+                public void testJavaRepeatable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatable.kt");
+                }
+
+                @Test
+                @TestMetadata("javaUnrepeatable.kt")
+                public void testJavaUnrepeatable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaUnrepeatable.kt");
+                }
+
+                @Test
+                @TestMetadata("kotlinRepeatable.kt")
+                public void testKotlinRepeatable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/kotlinRepeatable.kt");
                 }
             }
 
