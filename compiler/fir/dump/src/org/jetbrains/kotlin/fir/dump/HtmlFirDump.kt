@@ -1512,6 +1512,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(expression: FirExpression) {
         exprType(expression.typeRef) {
             when (expression) {
+                is FirBlock -> generateBlockIfAny(expression)
                 is FirGetClassCall -> generate(expression)
                 is FirContinueExpression -> generate(expression)
                 is FirBreakExpression -> generate(expression)
