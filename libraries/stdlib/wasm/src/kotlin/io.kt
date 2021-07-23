@@ -14,7 +14,7 @@ public actual fun println() {
 
 /** Prints the given [message] and the line separator to the standard output stream. */
 public actual fun println(message: Any?) {
-    printlnImpl(message.toString())
+    printlnImpl(exportStringRet(message.toString()))
 }
 
 /** Prints the given [message] to the standard output stream. */
@@ -27,5 +27,5 @@ public actual fun print(message: Any?) {
 internal actual interface Serializable
 
 @WasmImport("runtime", "println")
-private fun printlnImpl(message: String): Unit =
+private fun printlnImpl(messageAddr: Int): Unit =
     implementedAsIntrinsic

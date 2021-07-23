@@ -95,6 +95,8 @@ fun compileWasm(
 
 fun WasmCompiledModuleFragment.generateJs(): String {
     val runtime = """
+    var wasmInstance = null;
+    
     const runtime = {
         String_getChar(str, index) {
             return str.charCodeAt(index);
@@ -130,19 +132,19 @@ fun WasmCompiledModuleFragment.generateJs(): String {
             return x;
         },
 
-        println(value) {
-            console.log(">>>  " + value)
-        },
-
-        importStringToJs(addr, wasmMem) {
-            const mem16 = new Uint16Array(wasmMem.buffer);
-            const mem32 = new Int32Array(wasmMem.buffer);
-            const len = mem32[addr / 4];
-            const str_start_addr = (addr + 4) / 2
-            const slice = mem16.slice(str_start_addr, str_start_addr + len);
-            return String.fromCharCode.apply(null, slice);
+        println(valueAddr) {
+            console.log(">>>  " + importStringToJs(valueAddr));
         }
     };
+    
+    function importStringToJs(addr) {
+        const mem16 = new Uint16Array(wasmInstance.exports.memory.buffer);
+        const mem32 = new Int32Array(wasmInstance.exports.memory.buffer);
+        const len = mem32[addr / 4];
+        const str_start_addr = (addr + 4) / 2;
+        const slice = mem16.slice(str_start_addr, str_start_addr + len);
+        return String.fromCharCode.apply(null, slice);
+    }
     """.trimIndent()
 
     val jsCode =
