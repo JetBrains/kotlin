@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -17,10 +19,15 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
-import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedWithKotlinRepeatable
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformAnnotationFeaturesSupport
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class RepeatableAnnotationChecker(languageVersionSettings: LanguageVersionSettings) : AdditionalAnnotationChecker {
+class RepeatableAnnotationChecker(
+    languageVersionSettings: LanguageVersionSettings,
+    private val jvmTarget: JvmTarget,
+    private val platformAnnotationFeaturesSupport: JvmPlatformAnnotationFeaturesSupport,
+) : AdditionalAnnotationChecker {
     private val nonSourceDisallowed = !languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations)
 
     override fun checkEntries(
@@ -44,15 +51,23 @@ class RepeatableAnnotationChecker(languageVersionSettings: LanguageVersionSettin
                     || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
 
             if (duplicateAnnotation
-                && classDescriptor.isRepeatableAnnotation()
+                && isRepeatableAnnotation(classDescriptor)
                 && classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE
             ) {
-                if (nonSourceDisallowed) {
-                    trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry))
+                val error = when {
+                    jvmTarget == JvmTarget.JVM_1_6 -> ErrorsJvm.REPEATED_ANNOTATION_TARGET6
+                    nonSourceDisallowed -> ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION
+                    else -> null
+                }
+                if (error != null) {
+                    trace.report(error.on(entry))
                 }
             }
 
             existingTargetsForAnnotation.add(useSiteTarget)
         }
     }
+
+    private fun isRepeatableAnnotation(classDescriptor: ClassDescriptor): Boolean =
+        classDescriptor.isAnnotatedWithKotlinRepeatable() || platformAnnotationFeaturesSupport.isRepeatableAnnotationClass(classDescriptor)
 }

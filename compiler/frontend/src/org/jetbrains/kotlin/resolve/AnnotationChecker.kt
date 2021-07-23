@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
-import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedWithKotlinRepeatable
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
@@ -294,7 +294,7 @@ class AnnotationChecker(
     }
 
     private fun isRepeatableAnnotation(descriptor: ClassDescriptor): Boolean =
-        descriptor.isRepeatableAnnotation() || platformAnnotationFeaturesSupport.isRepeatableAnnotationClass(descriptor)
+        descriptor.isAnnotatedWithKotlinRepeatable() || platformAnnotationFeaturesSupport.isRepeatableAnnotationClass(descriptor)
 
     companion object {
         private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")

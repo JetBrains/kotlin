@@ -2095,6 +2095,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("javaRepeatableJvmTarget6.kt")
+                public void testJavaRepeatableJvmTarget6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatableJvmTarget6.kt");
+                }
+
+                @Test
                 @TestMetadata("javaRepeatable_1_5.kt")
                 public void testJavaRepeatable_1_5() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatable_1_5.kt");
