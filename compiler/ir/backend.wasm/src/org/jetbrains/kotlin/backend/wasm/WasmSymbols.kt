@@ -79,8 +79,7 @@ class WasmSymbols(
         context.irBuiltIns.shortType to getInternalFunction("wasm_i32_eq"),
         context.irBuiltIns.charType to getInternalFunction("wasm_i32_eq"),
         context.irBuiltIns.intType to getInternalFunction("wasm_i32_eq"),
-        context.irBuiltIns.longType to getInternalFunction("wasm_i64_eq"),
-        context.irBuiltIns.stringType to getFunction("wasm_string_eq", builtInsPackage)
+        context.irBuiltIns.longType to getInternalFunction("wasm_i64_eq")
     )
 
     val floatEqualityFunctions = mapOf(

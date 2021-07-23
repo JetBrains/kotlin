@@ -54,8 +54,6 @@ internal fun stringLiteral(startAddr: Int, length: Int) = String(unsafeRawMemory
 
 internal fun charToString(c: Char): String = String(charArrayOf(c))
 
-internal fun wasm_string_eq(x: String, y: String): Boolean = x.equals(y)
-
 //@JsFun("(it, other) => it + String(other)")
 //private fun stringPlusImpl(it: String, other: String): String =
 //    implementedAsIntrinsic
