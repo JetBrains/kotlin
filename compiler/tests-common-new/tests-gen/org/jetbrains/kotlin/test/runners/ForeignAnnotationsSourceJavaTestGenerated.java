@@ -974,6 +974,18 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             }
 
             @Test
+            @TestMetadata("enhancedRecursiveStarProjection.kt")
+            public void testEnhancedRecursiveStarProjection() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.kt");
+            }
+
+            @Test
+            @TestMetadata("enhancedRecursiveStarProjection.fir.kt")
+            public void testEnhancedRecursiveStarProjection_fir() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/enhancedRecursiveStarProjection.fir.kt");
+            }
+
+            @Test
             @TestMetadata("methodWithTypeParameter.kt")
             public void testMethodWithTypeParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/methodWithTypeParameter.kt");
