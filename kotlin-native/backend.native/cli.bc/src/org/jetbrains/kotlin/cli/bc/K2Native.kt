@@ -318,15 +318,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     configuration.report(ERROR, "-Xgc-aggressive is only supported for -memory-model experimental")
                 }
                 put(GARBAGE_COLLECTOR_AGRESSIVE, arguments.gcAggressive)
-                put(CHECK_LLD_COMPATIBILITY, when (val it = arguments.checkLldCompatibility) {
-                    "enable" -> true
-                    "disable" -> false
-                    null -> true
-                    else -> {
-                        configuration.report(ERROR, "Unsupported '-Xcheck-compatibility-with-lld' value: $it. Possible values are 'enable'/'disable'")
-                        true
-                    }
-                })
                 put(RUNTIME_ASSERTS_MODE, when (arguments.runtimeAssertsMode) {
                     "ignore" -> RuntimeAssertsMode.IGNORE
                     "log" -> RuntimeAssertsMode.LOG
