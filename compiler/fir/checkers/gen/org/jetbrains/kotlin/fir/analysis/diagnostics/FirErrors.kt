@@ -611,5 +611,6 @@ object FirErrors {
     val ILLEGAL_SUSPEND_FUNCTION_CALL by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val ILLEGAL_SUSPEND_PROPERTY_ACCESS by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val NON_LOCAL_SUSPENSION_POINT by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
 }

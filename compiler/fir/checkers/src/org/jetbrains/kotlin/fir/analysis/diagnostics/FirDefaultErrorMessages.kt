@@ -190,6 +190,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SELECTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_FUNCTION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS
@@ -1492,6 +1493,10 @@ class FirDefaultErrorMessages {
                 SYMBOL
             )
             map.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can be called only within coroutine body")
+            map.put(
+                ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL,
+                "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope"
+            )
 
             // Extended checkers group
             map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")

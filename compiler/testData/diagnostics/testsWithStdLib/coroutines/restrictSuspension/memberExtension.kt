@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 @kotlin.coroutines.RestrictsSuspension
 class RestrictedController {

@@ -3568,6 +3568,13 @@ internal class NonLocalSuspensionPointImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class IllegalRestrictedSuspendingFunctionCallImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.IllegalRestrictedSuspendingFunctionCall(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ConflictingJvmDeclarationsImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

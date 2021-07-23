@@ -1191,6 +1191,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("suspendCallable")
         }
         val NON_LOCAL_SUSPENSION_POINT by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
     }
 }
 

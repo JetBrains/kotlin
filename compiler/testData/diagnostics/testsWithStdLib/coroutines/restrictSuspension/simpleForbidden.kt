@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @kotlin.coroutines.RestrictsSuspension
 class RestrictedController
 
