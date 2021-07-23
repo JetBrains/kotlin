@@ -60,7 +60,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
         }
     }
 
-    @WasmReinterpret
+    @WasmNoOpCast
     internal fun toInt(): Int =
         implementedAsIntrinsic
 

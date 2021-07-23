@@ -346,7 +346,7 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
     public override inline fun hashCode(): Int =
         this.toInt()
 
-    @WasmReinterpret
+    @WasmNoOpCast
     @PublishedApi
     internal fun reinterpretAsInt(): Int =
         implementedAsIntrinsic
@@ -686,7 +686,7 @@ public class Short private constructor(public val value: Short) : Number(), Comp
     public override inline fun hashCode(): Int =
         this.toInt()
 
-    @WasmReinterpret
+    @WasmNoOpCast
     @PublishedApi
     internal fun reinterpretAsInt(): Int =
         implementedAsIntrinsic
@@ -1065,23 +1065,23 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
     public override inline fun hashCode(): Int =
         this
 
-    @WasmReinterpret
+    @WasmNoOpCast
     @PublishedApi
     internal fun reinterpretAsBoolean(): Boolean =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmReinterpret
+    @WasmNoOpCast
     internal fun reinterpretAsByte(): Byte =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmReinterpret
+    @WasmNoOpCast
     internal fun reinterpretAsShort(): Short =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmReinterpret
+    @WasmNoOpCast
     internal fun reinterpretAsChar(): Char =
         implementedAsIntrinsic
 }

@@ -23,8 +23,8 @@ fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
 fun IrAnnotationContainer.getWasmOpAnnotation(): String? =
     getAnnotation(FqName("kotlin.wasm.internal.WasmOp"))?.getSingleConstStringArgument()
 
-fun IrAnnotationContainer.hasWasmReinterpretAnnotation(): Boolean =
-    hasAnnotation(FqName("kotlin.wasm.internal.WasmReinterpret"))
+fun IrAnnotationContainer.hasWasmNoOpCastAnnotation(): Boolean =
+    hasAnnotation(FqName("kotlin.wasm.internal.WasmNoOpCast"))
 
 fun IrAnnotationContainer.hasWasmForeignAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.WasmForeign"))
