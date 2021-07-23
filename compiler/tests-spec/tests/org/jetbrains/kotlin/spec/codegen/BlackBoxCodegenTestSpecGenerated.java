@@ -4429,41 +4429,6 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/12.kt");
                     }
 
-                    @TestMetadata("13.kt")
-                    public void test13() throws Exception {
-                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/13.kt");
-                    }
-
-                    @TestMetadata("14.kt")
-                    public void test14() throws Exception {
-                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/14.kt");
-                    }
-
-                    @TestMetadata("15.kt")
-                    public void test15() throws Exception {
-                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/15.kt");
-                    }
-
-                    @TestMetadata("16.kt")
-                    public void test16() throws Exception {
-                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/16.kt");
-                    }
-
-                    @TestMetadata("17.kt")
-                    public void test17() throws Exception {
-                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/17.kt");
-                    }
-
-                    @TestMetadata("18.kt")
-                    public void test18() throws Exception {
-                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/18.kt");
-                    }
-
-                    @TestMetadata("19.kt")
-                    public void test19() throws Exception {
-                        runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/19.kt");
-                    }
-
                     @TestMetadata("2.kt")
                     public void test2() throws Exception {
                         runTest("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg/2.kt");

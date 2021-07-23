@@ -1,14 +1,13 @@
 /*
- * KOTLIN CODEGEN BOX NOT LINKED SPEC TEST (NEGATIVE)
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
  *
  * SECTIONS: objects, inheritance
- * NUMBER: 16
+ * NUMBER: 4
  * DESCRIPTION: Access to class members in the super constructor call of an object.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-25289
- * EXCEPTION: runtime
  */
 
+// TESTCASE NUMBER: 4
 open class Foo(val prop: Int) {
     companion object : Foo(prop)
 }

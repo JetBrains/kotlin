@@ -1,20 +1,19 @@
 /*
- * KOTLIN CODEGEN BOX NOT LINKED SPEC TEST (NEGATIVE)
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
  *
  * SECTIONS: objects, inheritance
- * NUMBER: 19
+ * NUMBER: 2
  * DESCRIPTION: Access to class members in the super constructor call of an object.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-25289
- * EXCEPTION: runtime
  */
 
+// TESTCASE NUMBER: 2
 open class Foo(val prop: Int) {
-    object MyObject : Foo(MyObject.prop)
+    companion object MyCompanion : Foo(Foo.prop)
 }
 
 fun box(): String? {
-    if (Foo.MyObject == null) return null
+    if (Foo(42) == null) return null
 
     return "OK"
 }

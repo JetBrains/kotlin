@@ -7962,6 +7962,80 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
             }
         }
 
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Objects extends AbstractDiagnosticsTestSpec {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInObjects() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Inheritance extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInheritance() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Neg extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/1.kt");
+                    }
+
+                    @TestMetadata("2.kt")
+                    public void test2() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/2.kt");
+                    }
+
+                    @TestMetadata("3.kt")
+                    public void test3() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/3.kt");
+                    }
+
+                    @TestMetadata("4.kt")
+                    public void test4() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/4.kt");
+                    }
+
+                    @TestMetadata("5.kt")
+                    public void test5() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/5.kt");
+                    }
+
+                    @TestMetadata("6.kt")
+                    public void test6() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/6.kt");
+                    }
+
+                    @TestMetadata("7.kt")
+                    public void test7() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/7.kt");
+                    }
+
+                    public void testAllFilesPresentInNeg() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+            }
+        }
+
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

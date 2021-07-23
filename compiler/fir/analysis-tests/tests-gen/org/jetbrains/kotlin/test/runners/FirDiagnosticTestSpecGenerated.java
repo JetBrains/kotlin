@@ -7484,6 +7484,78 @@ public class FirDiagnosticTestSpecGenerated extends AbstractFirDiagnosticTestSpe
         }
 
         @Nested
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Objects {
+            @Test
+            public void testAllFilesPresentInObjects() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Inheritance {
+                @Test
+                public void testAllFilesPresentInInheritance() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Neg {
+                    @Test
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/1.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("2.kt")
+                    public void test2() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/2.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("3.kt")
+                    public void test3() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/3.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("4.kt")
+                    public void test4() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/4.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("5.kt")
+                    public void test5() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/5.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("6.kt")
+                    public void test6() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/6.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("7.kt")
+                    public void test7() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg/7.kt");
+                    }
+
+                    @Test
+                    public void testAllFilesPresentInNeg() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/objects/inheritance/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/overload-resolution")
         @TestDataPath("$PROJECT_ROOT")
         public class Overload_resolution {
