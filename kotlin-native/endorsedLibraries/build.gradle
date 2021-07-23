@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.EndorsedLibraryInfo
 import org.jetbrains.kotlin.UtilsKt
 
+apply plugin: 'java'
+
 buildscript {
     repositories {
         if (UtilsKt.getCacheRedirectorEnabled(project))
@@ -20,7 +22,7 @@ ext {
 
 Collection<EndorsedLibraryInfo> endorsedLibrariesList = ext.endorsedLibraries.values()
 
-task clean {
+tasks.named("clean") {
     doFirst {
         delete buildDir
     }
