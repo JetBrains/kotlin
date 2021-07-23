@@ -505,7 +505,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     // Return true if function is recognized as intrinsic.
     fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
-        if (function.hasWasmReinterpretAnnotation()) {
+        if (function.hasWasmNoOpCastAnnotation()) {
             return true
         }
 

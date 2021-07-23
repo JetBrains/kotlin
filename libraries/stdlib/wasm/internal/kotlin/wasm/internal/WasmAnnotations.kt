@@ -28,9 +28,12 @@ internal annotation class WasmArrayOf(
     val isNullable: Boolean,
 )
 
+// When applied to a function it forces codegen to not generate any code for it.
+// In other words the annotated function will pass it's arguments unchanged.
+// This is used in order to implement type casts when we know that underlying wasm types don't change.
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-internal annotation class WasmReinterpret
+internal annotation class WasmNoOpCast
 
 // This tells backend to insert box/unbox intrinsics around the annotated class. It's used to represent built-in types without making them
 // explicitly "inline" (or "value" in the newest terminology).

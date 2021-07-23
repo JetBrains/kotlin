@@ -33,7 +33,7 @@ internal fun unsafeCharArrayToRawMemory(src: CharArray, dstAddr: Int) {
     }
 }
 
-@WasmReinterpret
+@WasmNoOpCast
 internal fun unsafeNotNull(x: Any?): Any =
     implementedAsIntrinsic
 

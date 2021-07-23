@@ -55,7 +55,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             declaration.getWasmImportAnnotation()
         }
 
-        val isIntrinsic = declaration.hasWasmReinterpretAnnotation() || declaration.getWasmOpAnnotation() != null
+        val isIntrinsic = declaration.hasWasmNoOpCastAnnotation() || declaration.getWasmOpAnnotation() != null
         if (isIntrinsic) {
             return
         }

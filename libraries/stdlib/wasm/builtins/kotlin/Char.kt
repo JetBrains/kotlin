@@ -76,7 +76,7 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         this.toInt().toShort()
 
     /** Returns the value of this character as a `Int`. */
-    @WasmReinterpret
+    @WasmNoOpCast
     public fun toInt(): Int =
         implementedAsIntrinsic
 
