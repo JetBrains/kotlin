@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
+import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.util.zip.Inflater
@@ -35,7 +36,7 @@ fun MappedByteBuffer.contentsToByteArray(
 ): ByteArray {
     order(ByteOrder.LITTLE_ENDIAN)
     val extraSize =
-        getShort(zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_EXTRA_OFFSET)
+        getUnsignedShort(zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_EXTRA_OFFSET)
 
     position(
         zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_SIZE + zipEntryDescription.fileNameSize + extraSize
@@ -66,7 +67,7 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
         getInt(offset) == 0x06054b50
     }
 
-    val entriesNumber = getShort(endOfCentralDirectoryOffset + 10)
+    val entriesNumber = getUnsignedShort(endOfCentralDirectoryOffset + 10)
     val offsetOfCentralDirectory = getInt(endOfCentralDirectoryOffset + 16)
 
     var currentOffset = offsetOfCentralDirectory
@@ -85,9 +86,9 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
 
         val compressedSize = getInt(currentOffset + 20)
         val uncompressedSize = getInt(currentOffset + 24)
-        val fileNameLength = getShort(currentOffset + 28).toInt()
-        val extraLength = getShort(currentOffset + 30).toInt()
-        val fileCommentLength = getShort(currentOffset + 32).toInt()
+        val fileNameLength = getUnsignedShort(currentOffset + 28).toInt()
+        val extraLength = getUnsignedShort(currentOffset + 30).toInt()
+        val fileCommentLength = getUnsignedShort(currentOffset + 32).toInt()
 
         val offsetOfFileData = getInt(currentOffset + 42)
 
@@ -118,3 +119,5 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
 
     return result
 }
+
+private fun ByteBuffer.getUnsignedShort(offset: Int): Int = java.lang.Short.toUnsignedInt(getShort(offset))
