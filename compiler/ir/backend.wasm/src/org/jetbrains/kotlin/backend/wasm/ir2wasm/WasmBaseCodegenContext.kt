@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.wasm.ir.*
 interface WasmBaseCodegenContext {
     val backendContext: WasmBackendContext
 
+    val scratchMemAddr: WasmSymbol<Int>
+
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction>
     fun referenceGlobal(irField: IrFieldSymbol): WasmSymbol<WasmGlobal>
     fun referenceGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration>
@@ -41,6 +43,7 @@ interface WasmBaseCodegenContext {
     fun transformBoxedType(irType: IrType): WasmType
     fun transformValueParameterType(irValueParameter: IrValueParameter): WasmType
     fun transformResultType(irType: IrType): WasmType?
+    fun transformExportedResultType(irType: IrType): WasmType?
     fun transformBlockResultType(irType: IrType): WasmType?
 
 

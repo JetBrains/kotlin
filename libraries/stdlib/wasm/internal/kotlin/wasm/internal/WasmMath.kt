@@ -12,7 +12,3 @@ fun wasm_i32_compareTo(x: Int, y: Int): Int =
 
 fun wasm_i64_compareTo(x: Long, y: Long): Int =
     wasm_i64_ge_s(x, y).toInt() - wasm_i64_le_s(x, y).toInt()
-
-@WasmImport("runtime", "String_equals")
-fun wasm_string_eq(x: String, y: String): Boolean =
-    implementedAsIntrinsic

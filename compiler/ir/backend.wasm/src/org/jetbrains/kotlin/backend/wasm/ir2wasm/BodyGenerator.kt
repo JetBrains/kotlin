@@ -58,6 +58,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
             is IrConstKind.String -> {
                 body.buildConstI32Symbol(context.referenceStringLiteral(kind.valueOf(expression)))
+                body.buildConstI32(kind.valueOf(expression).length)
                 body.buildCall(context.referenceFunction(wasmSymbols.stringGetLiteral))
             }
             else -> error("Unknown constant kind")
@@ -313,6 +314,13 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 body.buildRefCast()
                 generateInstanceFieldAccess(field)
             }
+
+            wasmSymbols.unsafeGetScratchRawMemory -> {
+                // TODO: This drops size of the allocated segment. Instead we can check that it's in bounds for better error messages.
+                body.buildDrop()
+                body.buildConstI32Symbol(context.scratchMemAddr)
+            }
+
             else -> {
                 return false
             }
@@ -356,6 +364,14 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             if (irReturnType != irBuiltIns.unitType) {
                 generateDefaultInitializerForType(context.transformType(irReturnType), body)
             }
+        }
+
+        // Handle complex exported parameters.
+        // TODO: This should live as a separate lowering which creates separate shims for each exported function.
+        if (context.irFunction.isExported(context.backendContext) &&
+            expression.value.type == irBuiltIns.stringType) {
+
+            body.buildCall(context.referenceFunction(wasmSymbols.exportStringRet))
         }
 
         body.buildInstr(WasmOp.RETURN)

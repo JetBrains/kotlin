@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
@@ -40,7 +41,6 @@ class WasmCompiledModuleFragment {
     val interfaces = mutableListOf<IrClassSymbol>()
     val virtualFunctions = mutableListOf<IrSimpleFunctionSymbol>()
     val signatures = LinkedHashSet<WasmSignature>()
-    val stringLiterals = mutableListOf<String>()
 
     val typeInfo =
         ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
@@ -72,6 +72,9 @@ class WasmCompiledModuleFragment {
     val jsFuns = mutableListOf<JsCodeSnippet>()
 
     var startFunction: WasmFunction? = null
+
+    val scratchMemAddr = WasmSymbol<Int>()
+    val scratchMemSizeInBytes = 65_536
 
     open class ReferencableElements<Ir, Wasm : Any> {
         val unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()
@@ -127,12 +130,28 @@ class WasmCompiledModuleFragment {
             currentDataSectionAddress += typeInfoElement.sizeInBytes
         }
 
+        val stringDataSectionStart = currentDataSectionAddress
+        val stringDataSectionBytes = mutableListOf<Byte>()
+        val stringAddrs = mutableMapOf<String, Int>()
+        for (str in stringLiteralId.unbound.keys) {
+            val constData = ConstantDataCharArray("string_literal", str.toCharArray())
+            stringDataSectionBytes += constData.toBytes().toList()
+            stringAddrs[str] = currentDataSectionAddress
+            currentDataSectionAddress += constData.sizeInBytes
+        }
+
+        // Reserve some memory to pass complex exported types (like strings). It's going to be accessible through 'unsafeGetScratchRawMemory'
+        // runtime call from stdlib.
+        currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
+        scratchMemAddr.bind(currentDataSectionAddress)
+        currentDataSectionAddress += scratchMemSizeInBytes
+
         bind(classIds.unbound, klassIds)
         bind(referencedClassITableAddresses.unbound, interfaceTableAddresses)
+        bind(stringLiteralId.unbound, stringAddrs)
         bindIndices(virtualFunctionId.unbound, virtualFunctions)
         bindIndices(signatureId.unbound, signatures.toList())
         bindIndices(interfaceId.unbound, interfaces)
-        bindIndices(stringLiteralId.unbound, stringLiterals)
 
         val interfaceImplementationIds = mutableMapOf<InterfaceImplementation, Int>()
         val numberOfInterfaceImpls = mutableMapOf<IrClassSymbol, Int>()
@@ -145,9 +164,9 @@ class WasmCompiledModuleFragment {
         bind(referencedInterfaceImplementationId.unbound, interfaceImplementationIds)
         bind(interfaceMethodTables.unbound, interfaceMethodTables.defined)
 
-        val data =
-            typeInfo.buildData(address = { klassIds.getValue(it) }) +
-                    definedClassITableData.buildData(address = { interfaceTableAddresses.getValue(it) })
+        val data = typeInfo.buildData(address = { klassIds.getValue(it) }) +
+                definedClassITableData.buildData(address = { interfaceTableAddresses.getValue(it) }) +
+                WasmData(WasmDataMode.Active(0, stringDataSectionStart), stringDataSectionBytes.toByteArray())
 
         val logTypeInfo = false
         if (logTypeInfo) {
@@ -222,6 +241,9 @@ class WasmCompiledModuleFragment {
         val memorySizeInPages = (typeInfoSize / 65_536) + 1
         val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), memorySizeInPages.toUInt()))
 
+        // Need to export the memory in order to pass complex objects to the host language.
+        exports += WasmExport.Memory("memory", memory)
+
         val importedFunctions = functions.elements.filterIsInstance<WasmFunction.Imported>()
 
         // Sorting by depth for a valid init order
@@ -285,8 +307,12 @@ inline fun WasmCompiledModuleFragment.ReferencableAndDefinable<IrClassSymbol, Co
     }
 }
 
-
 data class InterfaceImplementation(
     val irInterface: IrClassSymbol,
     val irClass: IrClassSymbol
 )
+
+fun alignUp(x: Int, alignment: Int): Int {
+    assert(alignment and (alignment - 1) == 0) { "power of 2 expected" }
+    return (x + alignment - 1) and (alignment - 1).inv()
+}

@@ -11,18 +11,17 @@ import kotlin.wasm.internal.*
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
  * implemented as instances of this class.
  */
-@WasmAutoboxed
-public class String constructor(public val string: String) : Comparable<String>, CharSequence {
+public class String internal constructor(internal val chars: CharArray) : Comparable<String>, CharSequence {
     public companion object;
 
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
     public operator fun plus(other: Any?): String =
-        stringPlusImpl(this, other.toString())
+        String(chars + other.toString().chars)
 
     public override val length: Int
-        get() = stringLengthImpl(this)
+        get() = chars.size
 
     /**
      * Returns the character of this string at the specified [index].
@@ -30,43 +29,49 @@ public class String constructor(public val string: String) : Comparable<String>,
      * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
      * where the behavior is unspecified.
      */
-    public override fun get(index: Int): Char =
-        stringGetCharImpl(this, index)
+    public override fun get(index: Int): Char = chars[index]
 
     public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
-        stringSubSequenceImpl(this, startIndex, endIndex)
+        TODO("todo")
 
     public override fun compareTo(other: String): Int =
-        stringCompareToImpl(this, other)
+        TODO("todo")
 
     public override fun equals(other: Any?): Boolean {
         if (other is String)
-            return this.compareTo(other) == 0
+            return chars.contentEquals(other.chars)
+            //return this.compareTo(other) == 0
         return false
     }
 
     public override fun toString(): String = this
 
-    // TODO: Implement
+    // TODO: this is not nice
     public override fun hashCode(): Int = 10
 }
 
-@JsFun("(it, other) => it + String(other)")
-private fun stringPlusImpl(it: String, other: String): String =
-    implementedAsIntrinsic
+internal fun stringLiteral(startAddr: Int, length: Int) = String(unsafeRawMemoryToCharArray(startAddr, length))
 
-@JsFun("(it) => it.length")
-private fun stringLengthImpl(it: String): Int =
-    implementedAsIntrinsic
+internal fun charToString(c: Char): String = String(charArrayOf(c))
 
-@WasmImport("runtime", "String_getChar")
-private fun stringGetCharImpl(it: String, index: Int): Char =
-    implementedAsIntrinsic
+internal fun wasm_string_eq(x: String, y: String): Boolean = x.equals(y)
 
-@WasmImport("runtime", "String_compareTo")
-private fun stringCompareToImpl(it: String, other: String): Int =
-    implementedAsIntrinsic
-
-@WasmImport("runtime", "String_subsequence")
-private fun stringSubSequenceImpl(string: String, startIndex: Int, endIndex: Int): String =
-    implementedAsIntrinsic
+//@JsFun("(it, other) => it + String(other)")
+//private fun stringPlusImpl(it: String, other: String): String =
+//    implementedAsIntrinsic
+//
+//@JsFun("(it) => it.length")
+//private fun stringLengthImpl(it: String): Int =
+//    implementedAsIntrinsic
+//
+//@WasmImport("runtime", "String_getChar")
+//private fun stringGetCharImpl(it: String, index: Int): Char =
+//    implementedAsIntrinsic
+//
+//@WasmImport("runtime", "String_compareTo")
+//private fun stringCompareToImpl(it: String, other: String): Int =
+//    implementedAsIntrinsic
+//
+//@WasmImport("runtime", "String_subsequence")
+//private fun stringSubSequenceImpl(string: String, startIndex: Int, endIndex: Int): String =
+//    implementedAsIntrinsic

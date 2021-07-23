@@ -154,7 +154,3 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
         public const val SIZE_BITS: Int = 16
     }
 }
-
-@WasmImport("runtime", "Char_toString")
-private fun charToString(c: Char): String = implementedAsIntrinsic
-

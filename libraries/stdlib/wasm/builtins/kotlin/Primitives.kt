@@ -341,7 +341,7 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
         wasm_i32_eq(this.toInt(), other.toInt())
 
     public override fun toString(): String =
-        byteToStringImpl(this)
+        TODO("Wasm: string coercion")
 
     public override inline fun hashCode(): Int =
         this.toInt()
@@ -351,10 +351,6 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
     internal fun reinterpretAsInt(): Int =
         implementedAsIntrinsic
 }
-
-@WasmImport("runtime", "coerceToString")
-private fun byteToStringImpl(byte: Byte): String =
-    implementedAsIntrinsic
 
 /**
  * Represents a 16-bit signed integer.
@@ -684,7 +680,8 @@ public class Short private constructor(public val value: Short) : Number(), Comp
     public override fun equals(other: Any?): Boolean =
         other is Short && wasm_i32_eq(this.toInt(), other.toInt())
 
-    public override fun toString(): String = shortToStringImpl(this)
+    public override fun toString(): String =
+        TODO("Wasm: string coercion")
 
     public override inline fun hashCode(): Int =
         this.toInt()
@@ -694,9 +691,6 @@ public class Short private constructor(public val value: Short) : Number(), Comp
     internal fun reinterpretAsInt(): Int =
         implementedAsIntrinsic
 }
-
-@WasmImport("runtime", "coerceToString")
-private fun shortToStringImpl(x: Short): String = implementedAsIntrinsic
 
 /**
  * Represents a 32-bit signed integer.
@@ -1066,7 +1060,7 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
         other is Int && wasm_i32_eq(this, other)
 
     public override fun toString(): String =
-        intToStringImpl(this)
+        TODO("Wasm: string coercion")
 
     public override inline fun hashCode(): Int =
         this
@@ -1091,10 +1085,6 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
     internal fun reinterpretAsChar(): Char =
         implementedAsIntrinsic
 }
-
-@WasmImport("runtime", "coerceToString")
-private fun intToStringImpl(x: Int): String =
-    implementedAsIntrinsic
 
 /**
  * Represents a 64-bit signed integer.
@@ -1462,9 +1452,8 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
     public override fun equals(other: Any?): Boolean =
         other is Long && wasm_i64_eq(this, other)
 
-    // TODO: Implement proper Long.toString
     public override fun toString(): String =
-        toDouble().toString()
+        TODO("Wasm: string coercion")
 
     public override fun hashCode(): Int =
         ((this ushr 32) xor this).toInt()
@@ -1769,7 +1758,7 @@ public class Float private constructor(public val value: Float) : Number(), Comp
         other is Float && this.equals(other)
 
     public override fun toString(): String =
-        floatToStringImpl(this)
+        TODO("Wasm: string coercion")
 
     public override inline fun hashCode(): Int =
         bits()
@@ -1778,10 +1767,6 @@ public class Float private constructor(public val value: Float) : Number(), Comp
     @WasmOp(WasmOp.I32_REINTERPRET_F32)
     internal fun bits(): Int = implementedAsIntrinsic
 }
-
-@WasmImport("runtime", "coerceToString")
-private fun floatToStringImpl(x: Float): String =
-    implementedAsIntrinsic
 
 /**
  * Represents a double-precision 64-bit IEEE 754 floating point number.
@@ -2086,7 +2071,7 @@ public class Double private constructor(public val value: Double) : Number(), Co
         other is Double && this.bits() == other.bits()
 
     public override fun toString(): String =
-        doubleToStringImpl(this)
+        TODO("Wasm: string coercion")
 
     public override inline fun hashCode(): Int = bits().hashCode()
 
@@ -2095,7 +2080,3 @@ public class Double private constructor(public val value: Double) : Number(), Co
     internal fun bits(): Long =
         implementedAsIntrinsic
 }
-
-@WasmImport("runtime", "coerceToString")
-private fun doubleToStringImpl(x: Double): String =
-    implementedAsIntrinsic

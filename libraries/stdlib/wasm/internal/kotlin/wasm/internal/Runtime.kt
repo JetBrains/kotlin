@@ -5,9 +5,33 @@
 
 package kotlin.wasm.internal
 
-@WasmImport("runtime", "String_getLiteral")
-internal fun stringLiteral(index: Int): String =
+internal const val CHAR_SIZE_BYTES = 2
+internal const val INT_SIZE_BYTES = 4
+
+internal fun unsafeRawMemoryToChar(addr: Int) = wasm_i32_load16_u(addr).toChar()
+
+internal fun unsafeRawMemoryToCharArray(startAddr: Int, length: Int): CharArray {
+    val ret = CharArray(length)
+    for (i in 0 until length) {
+        ret[i] = unsafeRawMemoryToChar(startAddr + i * CHAR_SIZE_BYTES)
+    }
+    return ret
+}
+
+// Returns a pointer into a temporary scratch segment in the raw wasm memory. Aligned by 4.
+// Note: currently there is single such segment for a whole wasm module, so use with care.
+@ExcludedFromCodegen
+internal fun unsafeGetScratchRawMemory(sizeBytes: Int): Int =
     implementedAsIntrinsic
+
+// Assumes there is enough space at the destination, fails with wasm trap otherwise.
+internal fun unsafeCharArrayToRawMemory(src: CharArray, dstAddr: Int) {
+    var curAddr = dstAddr
+    for (i in src) {
+        wasm_i32_store16(curAddr, i)
+        curAddr += CHAR_SIZE_BYTES
+    }
+}
 
 @WasmReinterpret
 internal fun unsafeNotNull(x: Any?): Any =
