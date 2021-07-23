@@ -255,11 +255,15 @@ internal class StackLocalsManagerImpl(
         val bbInitStackLocals: LLVMBasicBlockRef
 ) : StackLocalsManager {
     private class StackLocal(val isArray: Boolean, val irClass: IrClass,
-                             val bodyPtr: LLVMValueRef, val objHeaderPtr: LLVMValueRef)
+                             val bodyPtr: LLVMValueRef, val objHeaderPtr: LLVMValueRef,
+                             val gcRootSetSlot: LLVMValueRef?)
 
     private val stackLocals = mutableListOf<StackLocal>()
 
     fun isEmpty() = stackLocals.isEmpty()
+
+    private fun FunctionGenerationContext.createRootSetSlot() =
+            if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr) else null
 
     override fun alloc(irClass: IrClass, cleanFieldsExplicitly: Boolean): LLVMValueRef = with(functionGenerationContext) {
         val type = context.llvmDeclarations.forClass(irClass).bodyType
@@ -271,12 +275,16 @@ internal class StackLocalsManagerImpl(
             val objectHeader = structGep(stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
             setTypeInfoForLocalObject(objectHeader, typeInfo)
-            StackLocal(false, irClass, stackSlot, objectHeader)
+            val gcRootSetSlot = createRootSetSlot()
+            StackLocal(false, irClass, stackSlot, objectHeader, gcRootSetSlot)
         }
 
         stackLocals += stackLocal
         if (cleanFieldsExplicitly)
             clean(stackLocal, false)
+        if (stackLocal.gcRootSetSlot != null) {
+            storeStackRef(stackLocal.objHeaderPtr, stackLocal.gcRootSetSlot)
+        }
         stackLocal.objHeaderPtr
     }
 
@@ -323,11 +331,16 @@ internal class StackLocalsManagerImpl(
                     0,
                     constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
             )
-            StackLocal(true, irClass, arraySlot, arrayHeaderSlot)
+            val gcRootSetSlot = createRootSetSlot()
+            StackLocal(true, irClass, arraySlot, arrayHeaderSlot, gcRootSetSlot)
         }
 
         stackLocals += stackLocal
-        bitcast(kObjHeaderPtr, stackLocal.objHeaderPtr)
+        val result = bitcast(kObjHeaderPtr, stackLocal.objHeaderPtr)
+        if (stackLocal.gcRootSetSlot != null) {
+            storeStackRef(result, stackLocal.gcRootSetSlot)
+        }
+        result
     }
 
     override fun clean(refsOnly: Boolean) = stackLocals.forEach { clean(it, refsOnly) }
@@ -359,6 +372,9 @@ internal class StackLocalsManagerImpl(
                 val bodyWithSkippedServiceInfoPtr = intToPtr(add(bodyPtr, serviceInfoSizeLlvm), kInt8Ptr)
                 memset(bodyWithSkippedServiceInfoPtr, 0, bodySize - serviceInfoSize)
             }
+        }
+        if (stackLocal.gcRootSetSlot != null) {
+            storeStackRef(kNullObjHeaderPtr, stackLocal.gcRootSetSlot)
         }
     }
 

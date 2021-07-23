@@ -24,7 +24,6 @@ void Mark(KStdVector<ObjHeader*> graySet) noexcept {
         graySet.pop_back();
 
         RuntimeAssert(!isNullOrMarker(top), "Got invalid reference %p in gray set", top);
-        RuntimeAssert(!top->local(), "TODO: Stack objects are not supported yet, top=%p", top);
 
         if (top->heap()) {
             if (!Traits::TryMark(top)) {
@@ -32,9 +31,9 @@ void Mark(KStdVector<ObjHeader*> graySet) noexcept {
             }
         }
 
-        if (!top->permanent()) {
+        if (top->heap() || top->local()) {
             traverseReferredObjects(top, [&graySet](ObjHeader* field) noexcept {
-                if (!isNullOrMarker(field) && !field->permanent() && !Traits::IsMarked(field)) {
+                if (!isNullOrMarker(field) && field->heap() && !Traits::IsMarked(field)) {
                     graySet.push_back(field);
                 }
             });

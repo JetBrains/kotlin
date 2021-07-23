@@ -38,6 +38,7 @@ class BaseObject {
 public:
     enum class Kind {
         kPermanent,
+        kStackLocal,
         kHeapLike // Treated as heap object for the purposes of the test.
     };
 
@@ -59,6 +60,11 @@ protected:
                 break;
             case Kind::kHeapLike:
                 RuntimeAssert(GetObjHeader()->heap(), "Must be heap");
+                break;
+            case Kind::kStackLocal:
+                GetObjHeader()->typeInfoOrMeta_ = setPointerBits(GetObjHeader()->typeInfoOrMeta_,
+                                                                 OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER);
+                RuntimeAssert(GetObjHeader()->local(), "Must be stack local");
                 break;
         }
     }
@@ -204,6 +210,31 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSinglePermanentCharArray) {
 
     EXPECT_MARKED();
 }
+
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleStackObject) {
+    Object object{BaseObject::Kind::kStackLocal};
+
+    Mark({object});
+
+    EXPECT_MARKED();
+}
+
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleStackObjectArray) {
+    ObjectArray array{BaseObject::Kind::kStackLocal};
+
+    Mark({array});
+
+    EXPECT_MARKED();
+}
+
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleStackCharArray) {
+    CharArray array{BaseObject::Kind::kStackLocal};
+
+    Mark({array});
+
+    EXPECT_MARKED();
+}
+
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFields) {
     Object object;
@@ -416,6 +447,28 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkTreeWithPermanentLeaf) {
     EXPECT_MARKED(root, root_field1, root_field1_field2, root_field3, root_field3_element1, root_field3_element2, root_field3_element3);
 }
 
+TEST_F(MarkAndSweepUtilsMarkTest, MarkTreeWithStackRoot) {
+    Object root{BaseObject::Kind::kStackLocal};
+    Object root_field1{BaseObject::Kind::kPermanent};
+    Object root_field1_field1{BaseObject::Kind::kPermanent};
+    Object root_field1_field2{BaseObject::Kind::kPermanent};
+    ObjectArray root_field3{BaseObject::Kind::kStackLocal};
+    Object root_field3_element1{BaseObject::Kind::kHeapLike};
+    ObjectArray root_field3_element2{BaseObject::Kind::kHeapLike};
+    CharArray root_field3_element3{BaseObject::Kind::kPermanent};
+    root->field1 = root_field1.header();
+    root_field1->field1 = root_field1_field1.header();
+    root_field1->field2 = root_field1_field2.header();
+    root->field3 = root_field3.header();
+    root_field3.elements()[0] = root_field3_element1.header();
+    root_field3.elements()[1] = root_field3_element2.header();
+    root_field3.elements()[2] = root_field3_element3.header();
+
+    Mark({root, root_field3});
+
+    EXPECT_MARKED(root_field3_element1, root_field3_element2);
+}
+
 TEST_F(MarkAndSweepUtilsMarkTest, MarkRecursiveTree) {
     Object root;
     Object inner1;
@@ -441,6 +494,25 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkRecursiveTreeWithPermanentRoot) {
 
     EXPECT_MARKED();
 }
+
+TEST_F(MarkAndSweepUtilsMarkTest, MarkRecursiveTreeWithStackRoot) {
+    Object root{BaseObject::Kind::kStackLocal};
+    Object inner1{BaseObject::Kind::kStackLocal};
+    ObjectArray inner2{BaseObject::Kind::kStackLocal};
+    Object inner3{BaseObject::Kind::kHeapLike};
+    Object inner2_element1{BaseObject::Kind::kHeapLike};
+    root->field1 = inner1.header();
+    inner1->field1 = inner2.header();
+    inner2.elements()[0] = root.header();
+    inner2.elements()[1] = inner2_element1.header();
+    root->field2 = inner3.header();
+    inner3->field1 = inner2.header();
+
+    Mark({root, inner1, inner2});
+
+    EXPECT_MARKED(inner3, inner2_element1);
+}
+
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkForest) {
     Object root1;
