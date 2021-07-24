@@ -77,6 +77,18 @@ public fun <T> emptyList(): List<T> = EmptyList
 public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
 
 /**
+ * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
+ * @sample samples.collections.Collections.Lists.readOnlyList
+ */
+public fun <T> listOf(elements: Collection<T>): List<T> = if (elements.size > 0) listOf(arrayOf(elements)) else emptyList()
+
+/**
+ * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
+ * @sample samples.collections.Collections.Lists.readOnlyList
+ */
+public fun <T> listOf(elements: Array<T>): List<T> = if (elements.size > 0) listOf(elements) else emptyList()
+
+/**
  * Returns an empty read-only list.  The returned list is serializable (JVM).
  * @sample samples.collections.Collections.Lists.emptyReadOnlyList
  */
@@ -107,11 +119,40 @@ public fun <T> mutableListOf(vararg elements: T): MutableList<T> =
     if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
 /**
+ * Returns a new [MutableList] with elements from the given collection.
+ * @sample samples.collections.Collections.Lists.mutableList
+ */
+public fun <T> mutableListOf(elements: Collection<T>): MutableList<T> =
+    if (elements.size == 0) ArrayList() else ArrayList(elements.size).apply { addAll(elements) }
+
+/**
+ * Returns a new [MutableList] with elements from the given array.
+ * @sample samples.collections.Collections.Lists.mutableList
+ */
+public fun <T> mutableListOf(elements: Array<T>): MutableList<T> =
+    if (elements.size == 0) ArrayList() else ArrayList(elements.size).apply { addAll(elements) }
+
+
+/**
  * Returns a new [ArrayList] with the given elements.
  * @sample samples.collections.Collections.Lists.arrayList
  */
 public fun <T> arrayListOf(vararg elements: T): ArrayList<T> =
     if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+
+/**
+ * Returns a new [ArrayList] with elements from the given collection.
+ * @sample samples.collections.Collections.Lists.arrayList
+ */
+public fun <T> arrayListOf(elements: Collection<T>): ArrayList<T> =
+    if (elements.size == 0) ArrayList() else ArrayList(elements.size).apply { addAll(elements) }
+
+/**
+ * Returns a new [ArrayList] with elements from the given array.
+ * @sample samples.collections.Collections.Lists.arrayList
+ */
+public fun <T> arrayListOf(elements: Array<T>): ArrayList<T> =
+    if (elements.size == 0) ArrayList() else ArrayList(elements.size).apply { addAll(elements) }
 
 /**
  * Returns a new read-only list either of single given element, if it is not null, or empty list if the element is null. The returned list is serializable (JVM).
