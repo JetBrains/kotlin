@@ -40,7 +40,7 @@ fun bar() {
         _ checkType { _<String>() }
     }
 
-    foo { `_`, `_` ->
+    foo { <!REDECLARATION!>`_`<!>, <!REDECLARATION!>`_`<!> ->
         _ checkType { _<String>() }
     }
 

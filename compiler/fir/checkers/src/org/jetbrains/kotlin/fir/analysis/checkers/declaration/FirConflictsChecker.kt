@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.getOuterClass
 import org.jetbrains.kotlin.fir.scopes.PACKAGE_MEMBER
@@ -27,8 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -224,6 +217,10 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         when (declaration) {
             is FirFile -> checkFile(declaration, inspector, context)
             is FirRegularClass -> checkRegularClass(declaration, inspector)
+            is FirFunction -> {
+                checkConflictingValueParameters(declaration, context, reporter)
+                return
+            }
             else -> return
         }
 
@@ -246,6 +243,29 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                         }
                         reporter.reportOn(source, factory, symbols, context)
                     }
+                }
+            }
+        }
+    }
+
+    private fun checkConflictingValueParameters(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        val multimap = ListMultimap<Name, FirValueParameter>()
+        for (parameter in function.valueParameters) {
+            if (!parameter.name.isSpecial) {
+                multimap.put(parameter.name, parameter)
+            }
+        }
+        for (key in multimap.keys) {
+            val parameters = multimap[key]
+            if (parameters.size > 1) {
+                val symbols = parameters.map { it.symbol }
+                for (parameter in parameters) {
+                    reporter.reportOn(
+                        parameter.source,
+                        FirErrors.REDECLARATION,
+                        symbols,
+                        context
+                    )
                 }
             }
         }
