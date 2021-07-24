@@ -327,6 +327,9 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
                     baseDir  "$testOutputLocal/$name"
                     extraOpts task.flags
                     extraOpts project.globalTestArgs
+                    if (targetName == "mingw_x64" || targetName == "mingw_x86") {
+                        extraOpts "-linker-option", "-Wl,--out-implib,$testOutputLocal/$name/$targetName/${name}.dll.a"
+                    }
                 }
             }
             def buildTask = UtilsKt.findKonanBuildTask(project, name, target)
