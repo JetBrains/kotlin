@@ -35120,6 +35120,40 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/differentPositions.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/annotations/repeatable")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Repeatable {
+                @Test
+                public void testAllFilesPresentInRepeatable() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("javaAnnotation.kt")
+                public void testJavaAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/javaAnnotation.kt");
+                }
+
+                @Test
+                @TestMetadata("jvmRepeatableKotlinAnnotation.kt")
+                public void testJvmRepeatableKotlinAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/jvmRepeatableKotlinAnnotation.kt");
+                }
+
+                @Test
+                @TestMetadata("kotlinAnnotation.kt")
+                public void testKotlinAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/kotlinAnnotation.kt");
+                }
+
+                @Test
+                @TestMetadata("nonRepeatedAnnotationWithItsContainer.kt")
+                public void testNonRepeatedAnnotationWithItsContainer() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/nonRepeatedAnnotationWithItsContainer.kt");
+                }
+            }
         }
 
         @Nested

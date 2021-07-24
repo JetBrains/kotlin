@@ -1,4 +1,5 @@
 @kotlin.annotation.Target(allowedTargets=[FILE, TYPEALIAS])
+@kotlin.jvm.internal.RepeatableContainer
 @java.lang.annotation.Retention(value=RUNTIME)
 @java.lang.annotation.Target(value=[])
 @kotlin.Metadata

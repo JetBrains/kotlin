@@ -947,6 +947,11 @@ class JvmSymbols(
     val runSuspendFunction: IrSimpleFunctionSymbol =
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
 
+    val repeatableContainer: IrClassSymbol =
+        createClass(FqName("kotlin.jvm.internal.RepeatableContainer"), ClassKind.ANNOTATION_CLASS).apply {
+            owner.addConstructor { isPrimary = true }
+        }
+
     val javaAnnotations = JavaAnnotations()
 
     inner class JavaAnnotations {

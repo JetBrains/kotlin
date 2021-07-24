@@ -4037,6 +4037,9 @@ public class kotlin/jvm/internal/ReflectionFactory {
 	public fun typeParameter (Ljava/lang/Object;Ljava/lang/String;Lkotlin/reflect/KVariance;Z)Lkotlin/reflect/KTypeParameter;
 }
 
+public abstract interface annotation class kotlin/jvm/internal/RepeatableContainer : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/jvm/internal/ShortCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ShortCompanionObject;
 	public static final field MAX_VALUE S

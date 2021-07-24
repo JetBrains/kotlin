@@ -1,3 +1,4 @@
+@kotlin.jvm.internal.RepeatableContainer
 @java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class test/A$Container {
