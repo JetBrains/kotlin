@@ -25,7 +25,6 @@ configureJavadocJar()
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
-            "-Xnormalize-constructor-calls=enable",
     ]
     kotlinOptions.moduleName = project.name
 }

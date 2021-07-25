@@ -96,7 +96,7 @@ targetList.each { target ->
                 '-produce', 'library', '-module-name', moduleName,
                 '-Xmulti-platform', '-Xopt-in=kotlinx.cli.ExperimentalCli',
                 '-Xopt-in=kotlin.ExperimentalMultiplatform',
-                '-Xallow-result-return-type',  '-Werror', '-Xopt-in=kotlin.RequiresOptIn',
+                '-Werror', '-Xopt-in=kotlin.RequiresOptIn',
                 commonSrc.absolutePath,
                 "-Xcommon-sources=${commonSrc.absolutePath}",
                 nativeSrc]

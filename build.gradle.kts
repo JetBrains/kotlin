@@ -151,8 +151,6 @@ if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = "1.6.0-dev-248"
 }
 
-val effectSystemEnabled by extra(project.getBooleanProperty("kotlin.compiler.effectSystemEnabled") ?: false)
-val newInferenceEnabled by extra(project.getBooleanProperty("kotlin.compiler.newInferenceEnabled") ?: false)
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
 
 val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
@@ -447,7 +445,6 @@ allprojects {
 
     val commonCompilerArgs = listOfNotNull(
         "-Xopt-in=kotlin.RequiresOptIn",
-        "-Xread-deserialized-contracts",
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
@@ -462,8 +459,7 @@ allprojects {
     val jvmCompilerArgs = listOf(
         "-Xjvm-default=compatibility",
         "-Xno-optimized-callable-references",
-        "-Xno-kotlin-nothing-value-exception",
-        "-Xnormalize-constructor-calls=enable"
+        "-Xno-kotlin-nothing-value-exception"
     )
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {

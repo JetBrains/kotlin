@@ -72,10 +72,11 @@ sourceSets.main.get().java.srcDir("src/jvm/kotlin")
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-                                  "-Xopt-in=kotlin.RequiresOptIn",
-                                  "-Xinline-classes",
-                                  "-Xskip-prerelease-check")
+        freeCompilerArgs = listOf(
+            "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xskip-prerelease-check"
+        )
         allWarningsAsErrors = true
     }
 }

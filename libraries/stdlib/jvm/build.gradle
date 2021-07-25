@@ -115,15 +115,11 @@ DexMethodCountKt.dexMethodCount(project) { task ->
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = [
-                "-version",
                 "-Xallow-kotlin-package",
-                "-Xallow-result-return-type",
                 "-Xmultifile-parts-inherit",
-                "-Xnormalize-constructor-calls=enable",
                 "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xopt-in=kotlin.ExperimentalMultiplatform",
                 "-Xopt-in=kotlin.contracts.ExperimentalContracts",
-                "-Xinline-classes",
                 "-Xuse-14-inline-classes-mangling-scheme",
                 "-Xsuppress-deprecated-jvm-target-warning",
         ]

@@ -28,12 +28,6 @@ sourceSets {
     }
 }
 
-compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ["-Xnormalize-constructor-calls=enable"]
-    }
-}
-
 test {
     dependsOn configurations.testArtifacts
 

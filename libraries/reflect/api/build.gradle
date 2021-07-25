@@ -44,13 +44,13 @@ if (includeJava9) {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-version",
-                            "-Xallow-kotlin-package",
-                            "-Xnormalize-constructor-calls=enable",
-                            "-Xno-optimized-callable-references",
-                            "-Xno-kotlin-nothing-value-exception",
-                            "-Xsuppress-deprecated-jvm-target-warning",
-                            "-Xopt-in=kotlin.RequiresOptIn"]
+        freeCompilerArgs = [
+                "-Xallow-kotlin-package",
+                "-Xno-optimized-callable-references",
+                "-Xno-kotlin-nothing-value-exception",
+                "-Xsuppress-deprecated-jvm-target-warning",
+                "-Xopt-in=kotlin.RequiresOptIn",
+        ]
         moduleName = "kotlin-reflection"
     }
 }

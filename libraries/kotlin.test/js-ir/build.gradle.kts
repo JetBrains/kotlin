@@ -49,10 +49,8 @@ kotlin {
 tasks.withType<KotlinCompile<*>>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
-        "-Xallow-result-return-type",
         "-Xopt-in=kotlin.ExperimentalMultiplatform",
-        "-Xopt-in=kotlin.contracts.ExperimentalContracts",
-        "-Xinline-classes"
+        "-Xopt-in=kotlin.contracts.ExperimentalContracts"
     )
 }
 

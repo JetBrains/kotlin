@@ -43,7 +43,6 @@ configureJavadocJar()
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
         "-Xallow-kotlin-package",
-        "-Xnormalize-constructor-calls=enable",
         "-Xopt-in=kotlin.contracts.ExperimentalContracts",
         "-Xsuppress-deprecated-jvm-target-warning",
         "-Xopt-in=kotlin.RequiresOptIn",

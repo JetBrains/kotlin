@@ -13,6 +13,6 @@
     </option>
   </component>
   <component name="KotlinCompilerSettings">
-    <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check -Xread-deserialized-contracts" />
+    <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
   </component>
 </project>

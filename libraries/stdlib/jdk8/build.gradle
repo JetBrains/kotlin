@@ -59,7 +59,6 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
-            "-Xnormalize-constructor-calls=enable",
     ]
     kotlinOptions.moduleName = project.name
 }

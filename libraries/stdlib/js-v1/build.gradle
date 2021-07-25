@@ -117,9 +117,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile) {
         main = "noCall"
         moduleKind = "commonjs"
         freeCompilerArgs = [
-                "-version",
                 "-Xallow-kotlin-package",
-                "-Xallow-result-return-type"
         ]
     }
 }
@@ -143,7 +141,6 @@ compileKotlin2Js {
             "-Xopt-in=kotlin.RequiresOptIn",
             "-Xopt-in=kotlin.ExperimentalMultiplatform",
             "-Xopt-in=kotlin.contracts.ExperimentalContracts",
-            "-Xinline-classes"
         ]
     }
 }
