@@ -171,7 +171,9 @@ class FloorDivModTest {
         }
 
         check(Long.MAX_VALUE, 2, Long.MAX_VALUE / 2, 1)
+        @Suppress("INTEGER_OPERATOR_RESOLVE_WILL_CHANGE") // KT-47729
         check(Long.MAX_VALUE, 1.shl(30), expectedMod = 1.shl(30) - 1)
+        @Suppress("INTEGER_OPERATOR_RESOLVE_WILL_CHANGE") // KT-47729
         check(-1L, 1.shl(30), expectedMod = 1.shl(30) - 1)
         check(Long.MAX_VALUE, Int.MAX_VALUE, expectedMod = 1)
         check(Long.MAX_VALUE, Int.MIN_VALUE, expectedMod = -1)
@@ -197,6 +199,7 @@ class FloorDivModTest {
 
         check(Short.MAX_VALUE, Int.MAX_VALUE, 0, Short.MAX_VALUE.toInt())
         check(Short.MAX_VALUE, Int.MIN_VALUE, -1, Int.MIN_VALUE + Short.MAX_VALUE)
+        @Suppress("INTEGER_OPERATOR_RESOLVE_WILL_CHANGE") // KT-47729
         check((-1).toShort(), 1.shl(30), -1, 1.shl(30) - 1)
     }
 

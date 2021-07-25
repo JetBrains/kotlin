@@ -48,7 +48,7 @@ class NumbersTest {
         // overflow behavior
         expect(Int.MIN_VALUE) { Int.MAX_VALUE + one }
         expect(Int.MAX_VALUE) { Int.MIN_VALUE - one }
-        expect(Int.MIN_VALUE) { Int.MIN_VALUE / -1 }
+        expect(Int.MIN_VALUE) { Int.MIN_VALUE / -one }
         expect(0) { (Int.MIN_VALUE % -1) + 0 } // +0 is a workaround for KT-45620
     }
 
@@ -62,7 +62,7 @@ class NumbersTest {
         // overflow behavior
         expect(Long.MIN_VALUE) { Long.MAX_VALUE + one }
         expect(Long.MAX_VALUE) { Long.MIN_VALUE - one }
-        expect(Long.MIN_VALUE) { Long.MIN_VALUE / -1L }
+        expect(Long.MIN_VALUE) { Long.MIN_VALUE / -one }
         expect(0L) { Long.MIN_VALUE % -1L }
     }
 

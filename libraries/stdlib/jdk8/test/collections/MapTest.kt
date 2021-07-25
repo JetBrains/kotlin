@@ -123,6 +123,7 @@ class MapTest {
         assertEquals("1null", map.compute(1) { k, v -> k.toString() + v })
     }
 
+    @Suppress("USELESS_CAST")
     @Test fun merge() {
         val map = mutableMapOf(2 to "x")
         assertEquals("y", map.merge(3, "y") { _, _ -> null })
@@ -136,8 +137,8 @@ class MapTest {
         // fails due to KT-12144
         val map2 = mutableMapOf<Int, String?>(1 to null)
         // new value must be V&Any
-        assertEquals("e", map2.merge(1, "e") { old, new -> (old.length + new.length).toString() ?: null })
-        assertEquals("3", map2.merge(1, "fg") { old, new -> (old.length + new.length).toString() ?: null })
+        assertEquals("e", map2.merge(1, "e") { old, new -> (old.length + new.length).toString() as String? })
+        assertEquals("3", map2.merge(1, "fg") { old, new -> (old.length + new.length).toString() as String? })
         assertEquals(null, map2.merge(1, "3") { _, _ -> null })
         assertFalse(1 in map)
     }
