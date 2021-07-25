@@ -73,7 +73,7 @@ private fun periodPatternCategory(categoryIds: Array<String>): Int {
     return pattern
 }
 
-private fun gapPatternCategory(start: Int, end: Int, gaps: List<GapRangePattern.Companion.Gap>): Int {
+private fun gapPatternCategory(start: Int, @Suppress("UNUSED_PARAMETER") end: Int, gaps: List<GapRangePattern.Companion.Gap>): Int {
     var pattern = 0
     var shift = 2
     for (i in gaps.indices) {

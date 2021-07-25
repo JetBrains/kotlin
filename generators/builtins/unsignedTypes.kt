@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.generators.builtins.unsigned
 
-
-import org.jetbrains.kotlin.generators.builtins.*
+import org.jetbrains.kotlin.generators.builtins.PrimitiveType
+import org.jetbrains.kotlin.generators.builtins.UnsignedType
+import org.jetbrains.kotlin.generators.builtins.convert
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
 import org.jetbrains.kotlin.generators.builtins.numbers.GeneratePrimitives
+import org.jetbrains.kotlin.generators.builtins.printDoc
 import java.io.File
 import java.io.PrintWriter
-
 
 fun generateUnsignedTypes(
     targetDir: File,
@@ -134,7 +135,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             if (otherType == type) out.print("override ")
             out.print("inline operator fun compareTo(other: ${otherType.capitalized}): Int = ")
             if (otherType == type && maxByDomainCapacity(type, UnsignedType.UINT) == type) {
-                out.println("${className.toLowerCase()}Compare(this.data, other.data)")
+                out.println("${className.lowercase()}Compare(this.data, other.data)")
             } else {
                 if (maxOf(type, otherType) < UnsignedType.UINT) {
                     out.println("this.toInt().compareTo(other.toInt())")
@@ -165,8 +166,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             if (type == otherType && type == returnType) {
                 when (name) {
                     "plus", "minus", "times" -> out.println("$className(this.data.$name(other.data))")
-                    "div" -> out.println("${type.capitalized.toLowerCase()}Divide(this, other)")
-                    "rem" -> out.println("${type.capitalized.toLowerCase()}Remainder(this, other)")
+                    "div" -> out.println("${type.capitalized.lowercase()}Divide(this, other)")
+                    "rem" -> out.println("${type.capitalized.lowercase()}Remainder(this, other)")
                     else -> error(name)
                 }
             } else {
@@ -348,7 +349,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.print("    public inline fun to$otherName(): $otherName = ")
             when (type) {
                 UnsignedType.UINT, UnsignedType.ULONG ->
-                    out.println(if (otherType == PrimitiveType.FLOAT) "this.toDouble().toFloat()" else className.toLowerCase() + "ToDouble(data)")
+                    out.println(if (otherType == PrimitiveType.FLOAT) "this.toDouble().toFloat()" else className.lowercase() + "ToDouble(data)")
                 else ->
                     out.println("this.toInt().to$otherName()")
             }
@@ -466,7 +467,7 @@ class UnsignedIteratorsGenerator(out: PrintWriter) : BuiltInsSourceGenerator(out
 class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
     val elementType = type.capitalized
     val arrayType = elementType + "Array"
-    val arrayTypeOf = elementType.toLowerCase() + "ArrayOf"
+    val arrayTypeOf = elementType.lowercase() + "ArrayOf"
     val storageElementType = type.asSigned.capitalized
     val storageArrayType = storageElementType + "Array"
     override fun generateBody() {

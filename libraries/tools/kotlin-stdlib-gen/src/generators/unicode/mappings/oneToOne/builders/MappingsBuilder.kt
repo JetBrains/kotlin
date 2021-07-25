@@ -24,7 +24,7 @@ internal abstract class MappingsBuilder {
         val equivalent = mappingEquivalent(line)?.hexToInt() ?: return
         val mapping = equivalent - charCode
 
-        check((charCode > Char.MAX_VALUE.toInt()) == (equivalent > Char.MAX_VALUE.toInt())) { "Handle when equivalent mapping is out of BMP." }
+        check((charCode > Char.MAX_VALUE.code) == (equivalent > Char.MAX_VALUE.code)) { "Handle when equivalent mapping is out of BMP." }
 
         if (patterns.isEmpty()) {
             patterns.add(createPattern(charCode, line.categoryCode, mapping))

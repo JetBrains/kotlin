@@ -35,7 +35,8 @@ fun main(args: Array<String>) {
         ComparableOps
     )
 
-    COPYRIGHT_NOTICE = readCopyrightNoticeFromProfile { Thread.currentThread().contextClassLoader.getResourceAsStream("apache.xml").reader() }
+    COPYRIGHT_NOTICE =
+        readCopyrightNoticeFromProfile { Thread.currentThread().contextClassLoader.getResourceAsStream("apache.xml")!!.reader() }
 
     val targetBaseDirs = mutableMapOf<KotlinTarget, File>()
 
@@ -62,7 +63,7 @@ fun main(args: Array<String>) {
         val platformSuffix = when (val platform = target.platform) {
             Platform.Common -> ""
             Platform.Native -> if (target.backend == Backend.Wasm) "Wasm" else "Native"
-            else -> platform.name.toLowerCase().capitalize()
+            else -> platform.name.lowercase().capitalize()
         }
         targetDir.resolve("_${source.name.capitalize()}$platformSuffix.kt")
     }
@@ -71,5 +72,5 @@ fun main(args: Array<String>) {
 fun File.resolveExistingDir(subpath: String) = resolve(subpath).also { it.requireExistingDir() }
 
 fun File.requireExistingDir() {
-    require(isDirectory) { "Directory $this doesn't exist"}
+    require(isDirectory) { "Directory $this doesn't exist" }
 }

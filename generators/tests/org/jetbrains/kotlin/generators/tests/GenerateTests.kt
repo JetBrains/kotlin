@@ -44,8 +44,6 @@ import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnostic
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
-        val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
-
         testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
             fun incrementalJvmTestData(targetBackend: TargetBackend): TestGroup.TestClass.() -> Unit = {
                 model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = targetBackend)

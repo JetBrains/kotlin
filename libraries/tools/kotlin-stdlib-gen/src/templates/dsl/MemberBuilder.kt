@@ -361,6 +361,7 @@ class MemberBuilder(
         when (inline) {
             Inline.Only -> builder.append("@kotlin.internal.InlineOnly").append('\n')
             Inline.YesSuppressWarning -> suppressions.add("NOTHING_TO_INLINE")
+            else -> {}
         }
 
         if (suppressions.isNotEmpty()) {
