@@ -181,6 +181,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
          *
          * @throws IllegalArgumentException if the string doesn't represent a duration in any of the supported formats.
+         * @sample samples.time.Durations.parse
          */
         @SinceKotlin("1.5")
         public fun parse(value: String): Duration = try {
@@ -193,6 +194,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * Parses a string that represents a duration in ISO-8601 format and returns the parsed [Duration] value.
          *
          * @throws IllegalArgumentException if the string doesn't represent a duration in ISO-8601 format.
+         * @sample samples.time.Durations.parseIsoString
          */
         @SinceKotlin("1.5")
         public fun parseIsoString(value: String): Duration = try {
@@ -210,6 +212,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * - ISO-8601 Duration format, e.g. `P1DT2H3M4.058S`, see [toIsoString] and [parseIsoString].
          * - The format of string returned by the default [Duration.toString] and `toString` in a specific unit,
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
+         *   @sample samples.time.Durations.parse
          */
         @SinceKotlin("1.5")
         public fun parseOrNull(value: String): Duration? = try {
@@ -221,6 +224,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         /**
          * Parses a string that represents a duration in ISO-8601 format and returns the parsed [Duration] value,
          * or `null` if the string doesn't represent a duration in ISO-8601 format.
+         * @sample samples.time.Durations.parseIsoString
          */
         @SinceKotlin("1.5")
         public fun parseIsoStringOrNull(value: String): Duration? = try {
