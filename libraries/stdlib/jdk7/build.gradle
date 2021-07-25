@@ -4,7 +4,6 @@ apply plugin: 'kotlin'
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_7)
 JvmToolchain.updateJvmTarget(project, "1.6")
-LibrariesCommon.disableDeprecatedJvmTargetWarning(project)
 
 configurePublishing(project)
 configureSourcesJar()

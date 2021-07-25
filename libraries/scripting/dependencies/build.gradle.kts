@@ -19,7 +19,7 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions.freeCompilerArgs += listOf(
-        "-Xallow-kotlin-package", "-Xsuppress-deprecated-jvm-target-warning"
+        "-Xallow-kotlin-package"
     )
 }
 

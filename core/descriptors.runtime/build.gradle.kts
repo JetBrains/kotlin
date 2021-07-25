@@ -5,8 +5,6 @@ plugins {
     id("jps-compatible")
 }
 
-// Only compilation tasks should use JDK 1.6
-project.disableDeprecatedJvmTargetWarning()
 tasks
     .matching { it.name == "compileKotlin" && it is KotlinCompile }
     .configureEach {

@@ -3,7 +3,6 @@ description = 'Kotlin annotations for JVM'
 apply plugin: 'kotlin'
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
-LibrariesCommon.disableDeprecatedJvmTargetWarning(project)
 
 configurePublishing(project)
 

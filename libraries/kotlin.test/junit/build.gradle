@@ -3,7 +3,6 @@ description = 'Kotlin Test JUnit'
 apply plugin: 'kotlin-platform-jvm'
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
-LibrariesCommon.disableDeprecatedJvmTargetWarning(project)
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 

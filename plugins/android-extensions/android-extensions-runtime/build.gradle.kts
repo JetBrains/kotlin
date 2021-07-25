@@ -22,9 +22,3 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
-    }
-}

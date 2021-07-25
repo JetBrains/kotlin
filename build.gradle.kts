@@ -459,7 +459,8 @@ allprojects {
     val jvmCompilerArgs = listOf(
         "-Xjvm-default=compatibility",
         "-Xno-optimized-callable-references",
-        "-Xno-kotlin-nothing-value-exception"
+        "-Xno-kotlin-nothing-value-exception",
+        "-Xsuppress-deprecated-jvm-target-warning" // Remove as soon as there are no modules for JDK 1.6 & 1.7
     )
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {

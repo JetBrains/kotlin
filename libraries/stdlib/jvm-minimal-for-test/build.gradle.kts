@@ -59,7 +59,6 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs += listOf(
             "-Xallow-kotlin-package",
             "-Xmulti-platform",
-            "-Xsuppress-deprecated-jvm-target-warning",
             "-Xopt-in=kotlin.RequiresOptIn",
             "-Xopt-in=kotlin.contracts.ExperimentalContracts"
         )

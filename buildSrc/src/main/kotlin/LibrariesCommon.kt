@@ -9,12 +9,8 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.withType
 import org.gradle.process.CommandLineArgumentProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @JvmOverloads
 fun Project.configureJava9Compilation(
@@ -58,18 +54,4 @@ private class Java9AdditionalArgumentsProvider(
         "--patch-module", "$moduleName=${moduleFiles.asPath}",
         "-Xlint:-requires-transitive-automatic" // suppress automatic module transitive dependencies in kotlin.test
     )
-}
-
-fun Project.disableDeprecatedJvmTargetWarning() {
-    if (!kotlinBuildProperties.disableWerror) {
-        val tasksWithWarnings: List<String> by rootProject.extra
-        tasks.withType<KotlinCompile>().configureEach {
-            if (!tasksWithWarnings.contains(path)) {
-                kotlinOptions {
-                    allWarningsAsErrors = true
-                    freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
-                }
-            }
-        }
-    }
 }
