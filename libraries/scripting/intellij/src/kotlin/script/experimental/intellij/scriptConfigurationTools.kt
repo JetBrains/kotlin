@@ -6,7 +6,6 @@
 package kotlin.script.experimental.intellij
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.psi.PsiFile
 
 /**
@@ -16,7 +15,7 @@ import com.intellij.psi.PsiFile
  * based on the reloaded definition should be reloaded automatically or using notification and explicit reload action
  */
 fun reloadScriptConfiguration(scriptFile: PsiFile, updateEditorWithoutNotification: Boolean = false) {
-    val extensions = Extensions.getArea(scriptFile.project).getExtensionPoint(IdeScriptConfigurationControlFacade.EP_NAME).extensions
+    val extensions = scriptFile.project.extensionArea.getExtensionPoint(IdeScriptConfigurationControlFacade.EP_NAME).extensions
     for (extension in extensions) {
         extension.reloadScriptConfiguration(scriptFile, updateEditorWithoutNotification)
     }
