@@ -21827,6 +21827,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("interdependentTypeParameters.kt")
+                public void testInterdependentTypeParameters() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/interdependentTypeParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("interdependentTypeParametersFromKotlin.kt")
+                public void testInterdependentTypeParametersFromKotlin() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/interdependentTypeParametersFromKotlin.kt");
+                }
+
+                @Test
                 @TestMetadata("intermediateRecursion.kt")
                 public void testIntermediateRecursion() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/intermediateRecursion.kt");

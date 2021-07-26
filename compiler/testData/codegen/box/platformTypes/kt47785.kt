@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// TARGET_BACKEND: JVM
 // FULL_JDK
 
 // FILE: AbstractAssert.java
@@ -61,11 +61,9 @@ extends AbstractAssertWithOriginWithColumnsAndRows<S, A, D, A, C, CV, R, RV> imp
 }
 
 // FILE: AbstractValueAssert.java
-import java.time.LocalDateTime;
-
 public abstract class AbstractValueAssert<D extends AbstractDbData<D>, A extends AbstractDbAssert<D, A, C, CV, R, RV>, S extends AbstractSubAssert<D, A, S, V, C, CV, R, RV>, V extends AbstractValueAssert<D, A, S, V, C, CV, R, RV>, C extends AbstractColumnAssert<D, A, C, CV, R, RV>, CV extends AbstractColumnValueAssert<D, A, C, CV, R, RV>, R extends AbstractRowAssert<D, A, C, CV, R, RV>, RV extends AbstractRowValueAssert<D, A, C, CV, R, RV>>
 extends AbstractAssertWithOriginWithColumnsAndRows<V, S, D, A, C, CV, R, RV> {
-    public V isEqualTo(LocalDateTime expected) {
+    public V isEqualTo(String expected) {
         return (V) new RequestRowValueAssert();
     }
 }
@@ -115,10 +113,9 @@ public interface RowElement {}
 import java.time.LocalDateTime
 
 fun test(x: RequestAssert) {
-    val timestamp = LocalDateTime.now()
     x.hasNumberOfRows(1)
         .row()
-        .value("message_time").isEqualTo(timestamp)
+        .value("message_time").isEqualTo("")
 }
 
 fun box(): String {

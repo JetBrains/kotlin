@@ -41,7 +41,8 @@ class JavaTypeResolver(
     private val c: LazyJavaResolverContext,
     private val typeParameterResolver: TypeParameterResolver
 ) {
-    val typeParameterUpperBoundEraser = TypeParameterUpperBoundEraser()
+    private val typeParameterUpperBoundEraser = TypeParameterUpperBoundEraser()
+    private val rawSubstitution = RawSubstitution(typeParameterUpperBoundEraser)
 
     fun transformJavaType(javaType: JavaType?, attr: JavaTypeAttributes): KotlinType {
         return when (javaType) {
@@ -237,7 +238,7 @@ class JavaTypeResolver(
                     )
                 }
 
-                RawSubstitution.computeProjection(
+                rawSubstitution.computeProjection(
                     parameter,
                     // if erasure happens due to invalid arguments number, use star projections instead
                     if (isRaw) attr else attr.withFlexibility(INFLEXIBLE),

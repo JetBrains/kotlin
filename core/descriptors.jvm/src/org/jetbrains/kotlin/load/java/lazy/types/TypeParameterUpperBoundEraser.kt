@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.types.typeUtil.extractTypeParametersFromUpperBounds
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjectionOrMapped
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
-class TypeParameterUpperBoundEraser {
+internal class TypeParameterUpperBoundEraser(rawSubstitution: RawSubstitution? = null) {
     private val storage = LockBasedStorageManager("Type parameter upper bound erasion results")
     private val erroneousErasedBound by lazy {
         ErrorUtils.createErrorType("Can't compute erased upper bound of type parameter `$this`")
     }
+    private val rawSubstitution = rawSubstitution ?: RawSubstitution(this)
 
     private data class DataToEraseUpperBound(
         val typeParameter: TypeParameterDescriptor,
@@ -83,7 +84,7 @@ class TypeParameterUpperBoundEraser {
          */
         val erasedUpperBounds = typeParameter.defaultType.extractTypeParametersFromUpperBounds(visitedTypeParameters).associate {
             val boundProjection = if (visitedTypeParameters == null || it !in visitedTypeParameters) {
-                RawSubstitution.computeProjection(
+                rawSubstitution.computeProjection(
                     it,
                     // if erasure happens due to invalid arguments number, use star projections instead
                     if (isRaw) typeAttr else typeAttr.withFlexibility(JavaTypeFlexibility.INFLEXIBLE),

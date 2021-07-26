@@ -51,7 +51,7 @@ class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: Simple
         get() {
             val classDescriptor = constructor.declarationDescriptor as? ClassDescriptor
                 ?: error("Incorrect classifier: ${constructor.declarationDescriptor}")
-            return classDescriptor.getMemberScope(RawSubstitution)
+            return classDescriptor.getMemberScope(RawSubstitution())
         }
 
     override fun replaceAnnotations(newAnnotations: Annotations) =
@@ -101,13 +101,10 @@ class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: Simple
     }
 }
 
-internal object RawSubstitution : TypeSubstitution() {
+internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpperBoundEraser? = null) : TypeSubstitution() {
+    private val typeParameterUpperBoundEraser = typeParameterUpperBoundEraser ?: TypeParameterUpperBoundEraser(this)
+
     override fun get(key: KotlinType) = TypeProjectionImpl(eraseType(key))
-
-    private val typeParameterUpperBoundEraser = TypeParameterUpperBoundEraser()
-
-    private val lowerTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)
-    private val upperTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND)
 
     private fun eraseType(type: KotlinType, attr: JavaTypeAttributes = JavaTypeAttributes(TypeUsage.COMMON)): KotlinType {
         return when (val declaration = type.constructor.declarationDescriptor) {
@@ -153,7 +150,7 @@ internal object RawSubstitution : TypeSubstitution() {
 
         if (type.isError) return ErrorUtils.createErrorType("Raw error type: ${type.constructor}") to false
 
-        val memberScope = declaration.getMemberScope(RawSubstitution)
+        val memberScope = declaration.getMemberScope(this)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             type.annotations, declaration.typeConstructor,
             declaration.typeConstructor.parameters.map { parameter ->
@@ -199,4 +196,9 @@ internal object RawSubstitution : TypeSubstitution() {
     }
 
     override fun isEmpty() = false
+
+    companion object {
+        private val lowerTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)
+        private val upperTypeAttr = TypeUsage.COMMON.toAttributes().withFlexibility(JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND)
+    }
 }
