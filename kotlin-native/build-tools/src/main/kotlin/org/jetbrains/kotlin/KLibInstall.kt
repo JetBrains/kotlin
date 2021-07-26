@@ -6,6 +6,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -16,8 +17,12 @@ open class KlibInstall: Exec() {
     @Input
     lateinit var klib: Provider<File>
 
-    @Input
+    @Internal
     var repo: File = project.rootDir
+
+    @get:Input
+    val repoPath
+        get() = repo.absolutePath
 
     val installDir: Provider<File>
         @OutputDirectory

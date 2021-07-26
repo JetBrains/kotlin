@@ -30,8 +30,10 @@ buildscript {
 class NativeDep extends DefaultTask {
     static final String baseUrl = "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native"
 
+    @Internal
     KonanPropertiesLoader konanPropertiesLoader = null
 
+    @Internal
     final File getBaseOutDir() {
         final File res = project.rootProject.project(":kotlin-native").ext.dependenciesDir
         res.mkdirs()

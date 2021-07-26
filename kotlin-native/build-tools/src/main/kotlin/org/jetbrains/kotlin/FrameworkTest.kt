@@ -6,6 +6,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -42,6 +43,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     @Input
     var codesign: Boolean = true
 
+    @Input
     val testOutput: String = project.testOutputFramework
 
     @Input @Optional
@@ -100,13 +102,17 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             this.map { language.filesFrom(it) }
                     .flatMap { it.files }
 
+    @get:Internal
     override val executable: String
         get() = Paths.get(testOutput, name, "swiftTestExecutable").toString()
 
+    @Internal
     override var doBeforeRun: Action<in Task>? = null
 
+    @Internal
     override var doBeforeBuild: Action<in Task>? = null
 
+    @get:Internal
     override val buildTasks: List<Task>
         get() = frameworks.map { project.tasks.getByName("compileKonan${it.name}") }
 

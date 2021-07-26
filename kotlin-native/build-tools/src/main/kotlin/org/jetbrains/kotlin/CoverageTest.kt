@@ -10,6 +10,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 
 /**
@@ -49,6 +50,7 @@ open class CoverageTest : DefaultTask() {
     @Input
     var numberOfCoveredLines: Int? = null
 
+    @get:Internal
     val profrawFile: String by lazy {
         "${project.buildDir.absolutePath}/$binaryName.profraw"
     }

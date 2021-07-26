@@ -29,7 +29,6 @@ open class CompileNativeTest @Inject constructor(
     @Input @Optional
     var sanitizer: SanitizerKind? = null
 
-    @Input
     private val sanitizerFlags = when (sanitizer) {
         null -> listOf()
         SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
@@ -55,14 +54,14 @@ open class CompileNativeTest @Inject constructor(
 }
 
 open class LlvmLinkNativeTest @Inject constructor(
-        val baseName: String,
+        baseName: String,
         @Input val target: String,
         @InputFile val mainFile: File
 ) : DefaultTask() {
 
     @SkipWhenEmpty
     @InputFiles
-    var inputFiles: ConfigurableFileCollection = project.files()
+    val inputFiles: ConfigurableFileCollection = project.files()
 
     @OutputFile
     var outputFile: File = project.buildDir.resolve("bitcode/test/$target/$baseName.bc")
@@ -265,7 +264,7 @@ private fun createTestTask(
             testName, target, testSupportTask.outFile
     ).apply {
         val tasksToLink = (compileToBitcodeTasks + testedTasks + testFrameworkTasks)
-        inputFiles = project.files(tasksToLink.map { it.outFile })
+        inputFiles.setFrom(tasksToLink.map { it.outFile })
         dependsOn(testSupportTask)
         dependsOn(tasksToLink)
     }

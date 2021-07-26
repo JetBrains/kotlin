@@ -13,7 +13,7 @@ open class CopyCommonSources : DefaultTask() {
     var zipSources: Boolean = false
 
     @InputFiles
-    var sourcePaths: ConfigurableFileCollection = project.files()
+    val sourcePaths: ConfigurableFileCollection = project.files()
 
     @OutputDirectory
     var outputDir: File = project.buildDir.resolve("sources")
@@ -27,7 +27,7 @@ open class CopyCommonSources : DefaultTask() {
     }
 
     fun sourcePaths(paths: Any) {
-        sourcePaths = project.files(paths)
+        sourcePaths.setFrom(paths)
     }
 
     @TaskAction
