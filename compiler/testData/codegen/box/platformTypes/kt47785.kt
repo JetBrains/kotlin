@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// TARGET_BACKEND: JVM
 // FULL_JDK
 
 // FILE: AbstractAssert.java

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: Boo.java
 public class Boo<N> {}
 
@@ -10,5 +9,5 @@ public class Foo<T extends Boo<K>, K extends Boo<X>, X extends Boo<K>> {
 
 // FILE: main.kt
 fun main() {
-    val x = Foo.test1().test2()
+    val x = <!DEBUG_INFO_EXPRESSION_TYPE("raw (Foo<(Boo<(Boo<(Boo<*>..Boo<*>?)>..Boo<(Boo<*>..Boo<*>?)>?)>..Boo<(Boo<(Boo<*>..Boo<*>?)>..Boo<(Boo<*>..Boo<*>?)>?)>?), (Boo<(Boo<*>..Boo<*>?)>..Boo<(Boo<*>..Boo<*>?)>?), (Boo<*>..Boo<*>?)>..Foo<out (Boo<out (Boo<out (Boo<*>..Boo<*>?)>..Boo<out (Boo<*>..Boo<*>?)>?)>..Boo<out (Boo<out (Boo<*>..Boo<*>?)>..Boo<out (Boo<*>..Boo<*>?)>?)>?), out (Boo<out (Boo<*>..Boo<*>?)>..Boo<out (Boo<*>..Boo<*>?)>?), out (Boo<*>..Boo<*>?)>?)")!>Foo.test1()<!>.test2()
 }
