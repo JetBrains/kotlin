@@ -288,6 +288,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 )
             }.apply {
                 metadata = DescriptorMetadataSource.Function(it.descriptor)
+                contextReceiverParametersCount = ktContextReceiversElements.size
             }
         }.buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null, ktContextReceiversElements)
