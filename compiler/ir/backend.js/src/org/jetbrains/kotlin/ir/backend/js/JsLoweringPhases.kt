@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendArityStoreLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
@@ -728,6 +729,12 @@ private val cleanupLoweringPhase = makeBodyLoweringPhase(
     description = "Clean up IR before codegen"
 )
 
+private val jsSuspendArityStorePhase = makeDeclarationTransformerPhase(
+    ::JsSuspendArityStoreLowering,
+    name = "JsSuspendArityStoreLowering",
+    description = "Store arity for suspend functions to not remove it during DCE"
+)
+
 private val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
@@ -818,7 +825,8 @@ private val loweringList = listOf<Lowering>(
     captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
     cleanupLoweringPhase,
-    validateIrAfterLowering
+    validateIrAfterLowering,
+    jsSuspendArityStorePhase
 )
 
 // TODO comment? Eliminate ModuleLowering's? Don't filter them here?

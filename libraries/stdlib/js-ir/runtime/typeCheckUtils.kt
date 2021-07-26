@@ -7,7 +7,7 @@ package kotlin.js
 
 private external interface Metadata {
     val interfaces: Array<Ctor>
-    val suspendArity: Int?
+    val suspendArity: Array<Int>?
 }
 
 private external interface Ctor {
@@ -80,6 +80,25 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
         return obj.`$arity`.unsafeCast<Int>() === arity
     }
 
+    if (jsTypeOf(obj) == "object" && jsIn("${'$'}metadata${'$'}", obj.constructor)) {
+        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
+        return obj.constructor.unsafeCast<Ctor>().`$metadata$`?.suspendArity?.let {
+            val result = js("{result: false}")
+            js(
+                """
+                for (var i = 0; i < it.length; i++) {
+                    if (arity === it[i]) {
+                       result.result = true;
+                       break;
+                    }
+                    result.result = false;
+                }
+                """
+            )
+            return result.result
+        } ?: false
+    }
+
     return false
 }
 
@@ -99,11 +118,11 @@ private fun isJsArray(obj: Any): Boolean {
     return js("Array").isArray(obj).unsafeCast<Boolean>()
 }
 
-internal  fun isArray(obj: Any): Boolean {
+internal fun isArray(obj: Any): Boolean {
     return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
 
-internal  fun isArrayish(o: dynamic) =
+internal fun isArrayish(o: dynamic) =
     isJsArray(o) || js("ArrayBuffer").isView(o).unsafeCast<Boolean>()
 
 
@@ -166,9 +185,9 @@ internal fun isComparable(value: dynamic): Boolean {
     var type = jsTypeOf(value)
 
     return type == "string" ||
-           type == "boolean" ||
-           isNumber(value) ||
-           isInterface(value, Comparable::class.js)
+            type == "boolean" ||
+            isNumber(value) ||
+            isInterface(value, Comparable::class.js)
 }
 
 internal fun isCharSequence(value: dynamic): Boolean =
