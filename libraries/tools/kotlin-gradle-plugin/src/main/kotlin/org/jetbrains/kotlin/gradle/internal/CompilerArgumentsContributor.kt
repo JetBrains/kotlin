@@ -110,7 +110,10 @@ internal open class KotlinJvmCompilerArgumentsContributor(
 
     private fun warnJdkHomeNotUsed(kotlinOptions: List<KotlinJvmOptionsImpl>) {
         kotlinOptions
-            .firstOrNull { it.jdkHome != null }
+            .firstOrNull {
+                @Suppress("DEPRECATION")
+                it.jdkHome != null
+            }
             ?.run {
                 logger.warn(
                     """

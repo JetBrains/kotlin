@@ -73,6 +73,7 @@ object ClasspathChangesComputer {
         return Success
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun collectClassChanges(
         current: ClassSnapshot,
         previous: ClassSnapshot,

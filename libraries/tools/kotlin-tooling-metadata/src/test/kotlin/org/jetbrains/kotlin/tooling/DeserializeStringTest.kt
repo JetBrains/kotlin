@@ -5,21 +5,11 @@
 
 package org.jetbrains.kotlin.tooling
 
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
 import org.intellij.lang.annotations.Language
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-
-/*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
+import kotlin.test.*
 
 class DeserializeStringTest {
-
     @Test
     fun `schemaVersion 1 0 0`() {
         @Language("JSON") val json = """
@@ -135,4 +125,3 @@ class DeserializeStringTest {
         assertNull(commonTarget.extras.native)
     }
 }
-

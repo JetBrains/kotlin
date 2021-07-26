@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.internal.testing
 
 import org.gradle.api.internal.tasks.testing.*
@@ -9,7 +14,7 @@ class RecordingTestResultProcessor : TestResultProcessor {
 
     fun line(line: String) {
         repeat(indent) { output.append("  ") }
-        output.appendln(line)
+        output.append(line).append("\n")
     }
 
     override fun started(test: TestDescriptorInternal, event: TestStartEvent) {

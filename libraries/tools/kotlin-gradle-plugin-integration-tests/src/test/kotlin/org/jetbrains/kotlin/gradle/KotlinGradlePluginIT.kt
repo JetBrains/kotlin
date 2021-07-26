@@ -75,7 +75,7 @@ class KotlinGradleIT : BaseGradleIT() {
         wd1.deleteRecursively()
         if (wd1.exists()) {
             val files = buildString {
-                wd1.walk().forEach { appendln("  " + it.relativeTo(wd1).path) }
+                wd1.walk().forEach { appendLine("  " + it.relativeTo(wd1).path) }
             }
             error("Some files in $wd1 were not removed:\n$files")
         }

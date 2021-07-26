@@ -250,6 +250,7 @@ private fun Printer.generateDeclaration(
         println("package ${type.parent()}")
         println()
     }
+    println("@Suppress(\"DEPRECATION\")")
     print("$modifiers ${type.shortName()} ")
     afterType?.let { print("$afterType ") }
     println("{")

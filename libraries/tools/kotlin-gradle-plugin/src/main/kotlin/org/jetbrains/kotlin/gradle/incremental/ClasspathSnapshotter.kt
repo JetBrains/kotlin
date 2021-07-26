@@ -30,6 +30,7 @@ object ClasspathEntrySnapshotter {
 @Suppress("SpellCheckingInspection")
 object ClassSnapshotter {
 
+    @Suppress("UNUSED_PARAMETER")
     fun snapshot(invariantSeparatorsRelativePath: String, classContents: ByteArray): ClassSnapshot {
         // TODO WORK-IN-PROGRESS
         return ClassSnapshot()

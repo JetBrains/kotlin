@@ -406,8 +406,8 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
                     iosX64.testCinteropIdentifier("iosX64TestHelper")
         )
 
-        val mainGroup = groups.maxBy { it.targets.size }!!
-        val testGroup = groups.minBy { it.targets.size }!!
+        val mainGroup = groups.maxByOrNull { it.targets.size }!!
+        val testGroup = groups.minByOrNull { it.targets.size }!!
 
         assertEquals(
             expectedMainGroup, mainGroup,

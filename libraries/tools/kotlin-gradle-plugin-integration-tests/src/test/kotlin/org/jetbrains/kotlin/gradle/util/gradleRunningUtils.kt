@@ -1,6 +1,12 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.util
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.SYSTEM_LINE_SEPARATOR
 import java.io.File
 
 class ProcessRunResult(
@@ -39,7 +45,7 @@ fun runProcess(
         if (options?.forceOutputToStdout ?: false) {
             println(it)
         }
-        sb.appendln(it)
+        sb.append(it).append(SYSTEM_LINE_SEPARATOR)
     }
     val exitCode = process.waitFor()
 

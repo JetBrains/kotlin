@@ -167,11 +167,11 @@ private abstract class NpmDependencyExtensionDelegate(
         return when (val arg = args[0]) {
             is String -> withName(
                 name = arg,
-                args = *args
+                args = args
             )
             is GString -> withName(
                 name = arg.toString(),
-                args = *args
+                args = args
             )
             else -> processNonStringFirstArgument(arg, *args)
         }
