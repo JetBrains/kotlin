@@ -837,13 +837,14 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
 
     private fun ensureCompilerProvidedLibsPrecached() {
         val distribution = Distribution(project.konanHome)
-        val platformLibs = (listOf(File(distribution.stdlib)) + File(distribution.platformLibs(konanTarget))
-            .listFiles()).associateBy { it.name }
+        val platformLibs = mutableListOf<File>().apply {
+            this += File(distribution.stdlib)
+            this += File(distribution.platformLibs(konanTarget)).listFiles().orEmpty()
+        }.associateBy { it.name }
         val visitedLibs = mutableSetOf<String>()
         for (platformLibName in platformLibs.keys)
             ensureCompilerProvidedLibPrecached(platformLibName, platformLibs, visitedLibs)
     }
-
 
     fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
         if (konanCacheKind != NativeCacheKind.NONE && !optimized && cacheWorksFor(konanTarget, project)) {
