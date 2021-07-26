@@ -7,5 +7,5 @@ context(T)
 fun <T> T.f(t: B<T>) {}
 
 fun Int.main(a: A, b: B<String>) {
-    a.<!INAPPLICABLE_CANDIDATE!>f<!>(b)
+    a.f(<!ARGUMENT_TYPE_MISMATCH!>b<!>)
 }

@@ -17,9 +17,9 @@ fun supertypeContextual() {}
 
 context(C1, C2)
 fun test() {
-    supertypeMember()
-    member()
-    supertypeExtension()
-    supertypeExtensionGeneric()
+    <!UNRESOLVED_REFERENCE!>supertypeMember<!>()
+    <!UNRESOLVED_REFERENCE!>member<!>()
+    <!UNRESOLVED_REFERENCE!>supertypeExtension<!>()
+    <!UNRESOLVED_REFERENCE!>supertypeExtensionGeneric<!>()
     supertypeContextual()
 }
