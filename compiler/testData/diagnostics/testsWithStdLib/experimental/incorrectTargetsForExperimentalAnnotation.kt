@@ -1,4 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !LANGUAGE: +OptInOnOverrideForbidden
 // FILE: api.kt
 
 package api

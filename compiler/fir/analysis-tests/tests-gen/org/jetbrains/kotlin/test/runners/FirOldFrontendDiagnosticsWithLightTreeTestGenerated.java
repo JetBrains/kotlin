@@ -34600,6 +34600,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("experimentalOnOverrideWarning.kt")
+            public void testExperimentalOnOverrideWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalOnOverrideWarning.kt");
+            }
+
+            @Test
             @TestMetadata("experimentalOnWholeModule.kt")
             public void testExperimentalOnWholeModule() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalOnWholeModule.kt");

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
@@ -35,7 +36,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
-    override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+    override fun checkEntries(
+        entries: List<KtAnnotationEntry>,
+        actualTargets: List<KotlinTarget>,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
+    ) {
         val entryTypesWithAnnotations = hashMapOf<FqName, MutableList<AnnotationUseSiteTarget?>>()
 
         for (entry in entries) {
@@ -63,7 +69,12 @@ object FileClassAnnotationsChecker: AdditionalAnnotationChecker {
     // JvmName & JvmMultifileClass annotations are applicable to multi-file class parts regardless of their retention.
     private val alwaysApplicable = hashSetOf(JvmFileClassUtil.JVM_NAME, JvmFileClassUtil.JVM_MULTIFILE_CLASS)
 
-    override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+    override fun checkEntries(
+        entries: List<KtAnnotationEntry>,
+        actualTargets: List<KotlinTarget>,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
+    ) {
         val fileAnnotationsToCheck = arrayListOf<Pair<KtAnnotationEntry, ClassDescriptor>>()
         for (entry in entries) {
             if (entry.useSiteTarget?.getAnnotationUseSiteTarget() != AnnotationUseSiteTarget.FILE) continue
