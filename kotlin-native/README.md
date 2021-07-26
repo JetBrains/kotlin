@@ -35,9 +35,11 @@ Prerequisites:
 *   configure Kotlin build as [specified in main readme](../ReadMe.md#build-environment-requirements)
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
-*   on macOS install Xcode 12.5 or newer
-*   on Fedora 26+ ```yum install ncurses-compat-libs``` may be needed
-*   on recent Ubuntu ```apt install libncurses5``` is needed
+*   macOS: Xcode 12.5 or newer
+*   Linux: glibc 2.23 or newer
+*   Windows:
+    * Microsoft C++ build tools for Visual Studio 2019 14.29 or newer
+    * Windows SDK 10.0.18362.0 or newer
 
 The commands below should be run from either repository root or this (`kotlin-native/`) directory.
 For the latter, `:kotlin-native:` task name prefix can be omitted.
