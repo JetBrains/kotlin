@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.Closeable
 import java.io.File
-import java.lang.Boolean.getBoolean
 
 private val wasmRuntimeKlib =
     loadKlib(System.getProperty("kotlin.wasm.stdlib.path"))
@@ -46,6 +45,7 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
+    @Suppress("UNUSED_PARAMETER")
     fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
         TODO("TestWithCoroutinesPackageReplacement are not supported")
     }

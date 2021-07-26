@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.serialization.js
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -238,7 +235,7 @@ object KotlinJavascriptSerializationUtil {
     }
 
     fun serializeHeader(
-        module: ModuleDescriptor, packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings
+        @Suppress("UNUSED_PARAMETER") module: ModuleDescriptor, packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings
     ): JsProtoBuf.Header {
         val header = JsProtoBuf.Header.newBuilder()
 

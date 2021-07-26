@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 import java.io.File
-import javax.script.ScriptException
 
 private val testGroupDir = "multiModuleOrder/"
 private val pathToTestGroupDir = BasicBoxTest.TEST_DATA_DIR_PATH + testGroupDir
@@ -33,9 +32,8 @@ class MultiModuleOrderTest : BasicBoxTest(pathToTestGroupDir, testGroupDir) {
         val libJsFile = File(parentDir, "$name-lib_v5.js").path
         try {
             testChecker.run(listOf(mainJsFile, libJsFile))
-        }
-        catch (e: RuntimeException) {
-            assertTrue(e is ScriptException || e is IllegalStateException)
+        } catch (e: RuntimeException) {
+            assertTrue(e is IllegalStateException)
             val message = e.message!!
             assertTrue("Exception message should contain reference to dependency (lib)", "'lib'" in message)
             assertTrue("Exception message should contain reference to module that failed to load (main)", "'main'" in message)
