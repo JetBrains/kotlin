@@ -126,7 +126,7 @@ open class LookupStorage(
                     countersFile.createNewFile()
                 }
 
-                countersFile.writeText("$size\n")
+                countersFile.writeText("$size\n0")
             }
         } finally {
             super.flush(memoryCachesOnly)
