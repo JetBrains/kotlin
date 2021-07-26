@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -23,12 +25,14 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleData(
     val name: String,
+    val timestamp: Long,
     val rawOutputDir: String,
     val qualifier: String,
     val rawClasspath: List<String>,
     val rawSources: List<String>,
     val rawJavaSourceRoots: List<String>,
     val rawFriendDirs: List<String>,
+    val rawModularJdkRoot: String?,
     val isCommon: Boolean
 ) {
     val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
@@ -38,6 +42,7 @@ data class ModuleData(
     val sources = rawSources.map { it.fixPath() }
     val javaSourceRoots = rawJavaSourceRoots.map { it.fixPath() }
     val friendDirs = rawFriendDirs.map { it.fixPath() }
+    val modularJdkRoot = rawModularJdkRoot?.fixPath()
 }
 
 private fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
@@ -90,6 +95,12 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         configuration.addJavaSourceRoots(moduleData.javaSourceRoots)
         configuration.addJvmClasspathRoots(moduleData.classpath)
 
+        // ignored for modular jdks
+        configuration.put(JVMConfigurationKeys.NO_JDK, true)
+
+        // in case of modular jdk only
+        configuration.putIfNotNull(JVMConfigurationKeys.JDK_HOME, moduleData.modularJdkRoot)
+
         configuration.addAll(
             CLIConfigurationKeys.CONTENT_ROOTS,
             moduleData.sources.filter { it.extension == "kt" || it.isDirectory }.map { KotlinSourceRoot(it.absolutePath, false) })
@@ -111,6 +122,8 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val classpath = mutableListOf<String>()
         val sources = mutableListOf<String>()
         val friendDirs = mutableListOf<String>()
+        val timestamp = moduleElement.attributes.getNamedItem("timestamp")?.nodeValue?.toLong() ?: 0
+        var modularJdkRoot: String? = null
         var isCommon = false
 
         for (index in 0 until moduleElement.childNodes.length) {
@@ -130,10 +143,22 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
                 "javaSourceRoots" -> javaSourceRoots += item.attributes.getNamedItem("path").nodeValue
                 "sources" -> sources += item.attributes.getNamedItem("path").nodeValue
                 "commonSources" -> isCommon = true
+                "modularJdkRoot" -> modularJdkRoot = item.attributes.getNamedItem("path").nodeValue
             }
         }
 
-        return ModuleData(moduleName, outputDir, moduleNameQualifier, classpath, sources, javaSourceRoots, friendDirs, isCommon)
+        return ModuleData(
+            moduleName,
+            timestamp,
+            outputDir,
+            moduleNameQualifier,
+            classpath,
+            sources,
+            javaSourceRoots,
+            friendDirs,
+            modularJdkRoot,
+            isCommon
+        )
     }
 
 
@@ -152,7 +177,9 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val filterRegex = (System.getProperty("fir.bench.filter") ?: ".*").toRegex()
         val files = root.listFiles() ?: emptyArray()
         val modules = files.filter { it.extension == "xml" }
-            .sortedBy { it.lastModified() }.map { loadModule(it) }
+            .sortedBy { it.lastModified() }
+            .map { loadModule(it) }
+            .sortedBy { it.timestamp }
             .filter { it.rawOutputDir.matches(filterRegex) }
             .filter { !it.isCommon }
 
