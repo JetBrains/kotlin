@@ -51,6 +51,11 @@ tasks.register("runGavra0", JavaExec::class) {
     main = "RunGavra0BenchmarksKt"
 }
 
+tasks.register("runAbiSnapshot", JavaExec::class) {
+    classpath = sourceSets.main.get().runtimeClasspath
+    main = "RunAbiSnapshotsBenchmarksKt"
+}
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
     kotlinOptions {
         freeCompilerArgs += listOf(
