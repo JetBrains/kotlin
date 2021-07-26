@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.FqName
 
 data class Experimentality(val annotationFqName: FqName, val severity: Severity, val message: String?) {
-    enum class Severity { WARNING, ERROR }
+    enum class Severity { WARNING, ERROR, FUTURE_ERROR }
 
     companion object {
         val DEFAULT_SEVERITY = Severity.ERROR
