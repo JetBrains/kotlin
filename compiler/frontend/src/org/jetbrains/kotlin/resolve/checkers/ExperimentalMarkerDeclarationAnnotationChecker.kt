@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -37,7 +39,8 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
-        trace: BindingTrace
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ) {
         var isAnnotatedWithExperimental = false
 
@@ -88,7 +91,11 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                     if (descriptor is CallableMemberDescriptor &&
                         !descriptor.hasExperimentalOverriddenDescriptors(annotationClass.fqNameSafe)
                     ) {
-                        trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_OVERRIDE.on(entry))
+                        if (languageVersionSettings.supportsFeature(LanguageFeature.OptInOnOverrideForbidden)) {
+                            trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_OVERRIDE.on(entry))
+                        } else {
+                            trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_OVERRIDE_WARNING.on(entry))
+                        }
                     }
                 }
             }
