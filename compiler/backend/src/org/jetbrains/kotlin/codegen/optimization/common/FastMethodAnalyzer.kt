@@ -56,34 +56,9 @@ open class FastMethodAnalyzer<V : Value>(
     private val insnsArray = method.instructions.toArray()
     private val nInsns = method.instructions.size()
 
-    // Single Predecessor Block (SPB) is a continuous sequence of instructions { I1, ... In } such that
-    //  if I=insns[i] and J=insns[i+1] both belong to SPB,
-    //  then I is a single immediate predecessor of J in a complete method control flow graph
-    //  (including exception edges).
-    //
-    // Note that classic basic blocks are SPBs, but the opposite is not true:
-    // SPBs have single entry point, but can have multiple exit points
-    // (which lead to instructions not belonging to the given SPB).
-    // Example:
-    //      aload 1
-    //      dup
-    //      ifnull LA
-    //      invokevirtual foo()
-    //      dup
-    //      ifnull LB
-    //      invokevirtual bar()
-    //      goto LC
-    // is SPB (but not a basic block).
-    //
-    // For each J=insns[i+1] such that I=insns[i] belongs to the same SPB,
-    // data flow transfer function
-    //      Execute( J, Merge( { Out(K) | K <- Pred(J) } ) )
-    // is effectively
-    //      Execute( J, Out(I) ) )
-    // so, we don't need to merge frames for such I->J edges.
-    private val singlePredBlock = IntArray(nInsns)
+    private val isMergeNode = BooleanArray(nInsns)
 
-    val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
+    private val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
     private val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
     private val queued = BooleanArray(nInsns)
@@ -97,14 +72,13 @@ open class FastMethodAnalyzer<V : Value>(
         if (nInsns == 0) return frames
 
         checkAssertions()
-
         computeExceptionHandlersForEachInsn(method)
-
-        initSinglePredBlocks()
+        initMergeNodes()
 
         val current = newFrame(method.maxLocals, method.maxStack)
         val handler = newFrame(method.maxLocals, method.maxStack)
-        initControlFlowAnalysis(current, method, owner)
+        initLocals(current)
+        mergeControlFlowEdge(0, current)
 
         while (top > 0) {
             val insn = queue[--top]
@@ -117,16 +91,16 @@ open class FastMethodAnalyzer<V : Value>(
                 val insnType = insnNode.type
 
                 if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
-                    visitNopInsn(f, insn)
+                    mergeControlFlowEdge(insn + 1, f)
                 } else {
                     current.init(f).execute(insnNode, interpreter)
                     when {
-                        insnNode is JumpInsnNode ->
-                            visitJumpInsnNode(insnNode, current, insn, insnOpcode)
-                        insnNode is LookupSwitchInsnNode ->
-                            visitLookupSwitchInsnNode(insnNode, current, insn)
-                        insnNode is TableSwitchInsnNode ->
-                            visitTableSwitchInsnNode(insnNode, current, insn)
+                        insnType == AbstractInsnNode.JUMP_INSN ->
+                            visitJumpInsnNode(insnNode as JumpInsnNode, current, insn, insnOpcode)
+                        insnType == AbstractInsnNode.LOOKUPSWITCH_INSN ->
+                            visitLookupSwitchInsnNode(insnNode as LookupSwitchInsnNode, current)
+                        insnType == AbstractInsnNode.TABLESWITCH_INSN ->
+                            visitTableSwitchInsnNode(insnNode as TableSwitchInsnNode, current)
                         insnOpcode != Opcodes.ATHROW && (insnOpcode < Opcodes.IRETURN || insnOpcode > Opcodes.RETURN) ->
                             visitOpInsn(current, insn)
                         else -> {
@@ -141,7 +115,7 @@ open class FastMethodAnalyzer<V : Value>(
                     handler.init(f)
                     handler.clearStack()
                     handler.push(interpreter.newValue(exnType))
-                    mergeControlFlowEdge(insn, jump, handler)
+                    mergeControlFlowEdge(jump, handler)
                 }
 
             } catch (e: AnalyzerException) {
@@ -155,87 +129,57 @@ open class FastMethodAnalyzer<V : Value>(
         return frames
     }
 
+    internal fun initLocals(current: Frame<V>) {
+        current.setReturn(interpreter.newValue(Type.getReturnType(method.desc)))
+        val args = Type.getArgumentTypes(method.desc)
+        var local = 0
+        if ((method.access and Opcodes.ACC_STATIC) == 0) {
+            val ctype = Type.getObjectType(owner)
+            current.setLocal(local++, interpreter.newValue(ctype))
+        }
+        for (arg in args) {
+            current.setLocal(local++, interpreter.newValue(arg))
+            if (arg.size == 2) {
+                current.setLocal(local++, interpreter.newValue(null))
+            }
+        }
+        while (local < method.maxLocals) {
+            current.setLocal(local++, interpreter.newValue(null))
+        }
+    }
+
     private fun AbstractInsnNode.indexOf() =
         method.instructions.indexOf(this)
 
-    private fun initSinglePredBlocks() {
-        markSinglePredBlockEntries()
-        markSinglePredBlockBodies()
-    }
-
-    private fun markSinglePredBlockEntries() {
-        // Method entry point is SPB entry point.
-        var blockId = 0
-        singlePredBlock[0] = ++blockId
-
-        // Every jump target is SPB entry point.
+    private fun initMergeNodes() {
         for (insn in insnsArray) {
-            when (insn) {
-                is JumpInsnNode -> {
-                    val labelIndex = insn.label.indexOf()
-                    if (singlePredBlock[labelIndex] == 0) {
-                        singlePredBlock[labelIndex] = ++blockId
+            when (insn.type) {
+                AbstractInsnNode.JUMP_INSN -> {
+                    val jumpInsn = insn as JumpInsnNode
+                    isMergeNode[jumpInsn.label.indexOf()] = true
+                }
+                AbstractInsnNode.LOOKUPSWITCH_INSN -> {
+                    val switchInsn = insn as LookupSwitchInsnNode
+                    isMergeNode[switchInsn.dflt.indexOf()] = true
+                    for (label in switchInsn.labels) {
+                        isMergeNode[label.indexOf()] = true
                     }
                 }
-                is LookupSwitchInsnNode -> {
-                    insn.dflt?.let { dfltLabel ->
-                        val dfltIndex = dfltLabel.indexOf()
-                        if (singlePredBlock[dfltIndex] == 0) {
-                            singlePredBlock[dfltIndex] = ++blockId
-                        }
-                    }
-                    for (label in insn.labels) {
-                        val labelIndex = label.indexOf()
-                        if (singlePredBlock[labelIndex] == 0) {
-                            singlePredBlock[labelIndex] = ++blockId
-                        }
-                    }
-                }
-                is TableSwitchInsnNode -> {
-                    insn.dflt?.let { dfltLabel ->
-                        val dfltIndex = dfltLabel.indexOf()
-                        if (singlePredBlock[dfltIndex] == 0) {
-                            singlePredBlock[dfltIndex] = ++blockId
-                        }
-                    }
-                    for (label in insn.labels) {
-                        val labelIndex = label.indexOf()
-                        if (singlePredBlock[labelIndex] == 0) {
-                            singlePredBlock[labelIndex] = ++blockId
-                        }
+                AbstractInsnNode.TABLESWITCH_INSN -> {
+                    val switchInsn = insn as TableSwitchInsnNode
+                    isMergeNode[switchInsn.dflt.indexOf()] = true
+                    for (label in switchInsn.labels) {
+                        isMergeNode[label.indexOf()] = true
                     }
                 }
             }
         }
-
         // Every try-catch block handler entry point is SPB entry point
         for (tcb in method.tryCatchBlocks) {
-            val handlerIndex = tcb.handler.indexOf()
-            if (singlePredBlock[handlerIndex] == 0) {
-                singlePredBlock[handlerIndex] = ++blockId
-            }
+            isMergeNode[tcb.handler.indexOf()] = true
         }
     }
 
-    private fun markSinglePredBlockBodies() {
-        var current = 0
-        for ((i, insn) in insnsArray.withIndex()) {
-            if (singlePredBlock[i] == 0) {
-                singlePredBlock[i] = current
-            } else {
-                // Entered a new SPB.
-                current = singlePredBlock[i]
-            }
-
-            // GOTO, ATHROW, *RETURN instructions terminate current SPB.
-            when (insn.opcode) {
-                Opcodes.GOTO,
-                Opcodes.ATHROW,
-                in Opcodes.IRETURN..Opcodes.RETURN ->
-                    current = 0
-            }
-        }
-    }
 
     fun getFrame(insn: AbstractInsnNode): Frame<V>? =
         frames[insn.indexOf()]
@@ -246,62 +190,33 @@ open class FastMethodAnalyzer<V : Value>(
     }
 
     private fun visitOpInsn(current: Frame<V>, insn: Int) {
-        mergeControlFlowEdge(insn, insn + 1, current)
+        mergeControlFlowEdge(insn + 1, current)
     }
 
-    private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>, insn: Int) {
-        var jump = insnNode.dflt.indexOf()
-        mergeControlFlowEdge(insn, jump, current)
+    private fun visitTableSwitchInsnNode(insnNode: TableSwitchInsnNode, current: Frame<V>) {
+        mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
         // In most cases order of visiting switch labels should not matter
         // The only one is a tableswitch being added in the beginning of coroutine method, these switch' labels may lead
         // in the middle of try/catch block, and FixStackAnalyzer is not ready for this (trying to restore stack before it was saved)
         // So we just fix the order of labels being traversed: the first one should be one at the method beginning
         // Using 'reversed' is because nodes are processed in LIFO order
-        for (label in insnNode.labels.reversed()) {
-            jump = label.indexOf()
-            mergeControlFlowEdge(insn, jump, current)
+        for (label in insnNode.labels.asReversed()) {
+            mergeControlFlowEdge(label.indexOf(), current)
         }
     }
 
-    private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>, insn: Int) {
-        var jump = insnNode.dflt.indexOf()
-        mergeControlFlowEdge(insn, jump, current)
+    private fun visitLookupSwitchInsnNode(insnNode: LookupSwitchInsnNode, current: Frame<V>) {
+        mergeControlFlowEdge(insnNode.dflt.indexOf(), current)
         for (label in insnNode.labels) {
-            jump = label.indexOf()
-            mergeControlFlowEdge(insn, jump, current)
+            mergeControlFlowEdge(label.indexOf(), current)
         }
     }
 
     private fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
         if (insnOpcode != Opcodes.GOTO) {
-            mergeControlFlowEdge(insn, insn + 1, current)
+            mergeControlFlowEdge(insn + 1, current)
         }
-        val jump = insnNode.label.indexOf()
-        mergeControlFlowEdge(insn, jump, current)
-    }
-
-    private fun visitNopInsn(f: Frame<V>, insn: Int) {
-        mergeControlFlowEdge(insn, insn + 1, f)
-    }
-
-    private fun initControlFlowAnalysis(current: Frame<V>, m: MethodNode, owner: String) {
-        current.setReturn(interpreter.newValue(Type.getReturnType(m.desc)))
-        val args = Type.getArgumentTypes(m.desc)
-        var local = 0
-        if ((m.access and Opcodes.ACC_STATIC) == 0) {
-            val ctype = Type.getObjectType(owner)
-            current.setLocal(local++, interpreter.newValue(ctype))
-        }
-        for (arg in args) {
-            current.setLocal(local++, interpreter.newValue(arg))
-            if (arg.size == 2) {
-                current.setLocal(local++, interpreter.newValue(null))
-            }
-        }
-        while (local < m.maxLocals) {
-            current.setLocal(local++, interpreter.newValue(null))
-        }
-        mergeControlFlowEdge(0, 0, current)
+        mergeControlFlowEdge(insnNode.label.indexOf(), current)
     }
 
     private fun computeExceptionHandlersForEachInsn(m: MethodNode) {
@@ -320,15 +235,14 @@ open class FastMethodAnalyzer<V : Value>(
         }
     }
 
-    private fun mergeControlFlowEdge(src: Int, dest: Int, frame: Frame<V>) {
+    private fun mergeControlFlowEdge(dest: Int, frame: Frame<V>) {
         val oldFrame = frames[dest]
         val changes = when {
             oldFrame == null -> {
                 frames[dest] = newFrame(frame.locals, frame.maxStackSize).apply { init(frame) }
                 true
             }
-            dest == src + 1 && singlePredBlock[src] == singlePredBlock[dest] -> {
-                // Forward jump within a single predecessor block, no need to merge.
+            !isMergeNode[dest] -> {
                 oldFrame.init(frame)
                 true
             }
@@ -359,12 +273,12 @@ open class FastMethodAnalyzer<V : Value>(
                             "dflt:${insn.dflt.labelText()}"
                 is LookupSwitchInsnNode ->
                     "${insn.insnOpcodeText} \n\t\t\t" +
-                            "[${insn.keys.zip(insn.labels).joinToString { (key, label) -> "$key: ${label.labelText()}"}}] \n\t\t\t" +
+                            "[${insn.keys.zip(insn.labels).joinToString { (key, label) -> "$key: ${label.labelText()}" }}] \n\t\t\t" +
                             "dflt:${insn.dflt.labelText()}"
                 else ->
                     insn.insnText
             }
-            println("$i\t${singlePredBlock[i]}\t$insnText")
+            println("$i\t$insnText")
         }
         for (tcb in method.tryCatchBlocks) {
             println("\tTCB start:${tcb.start.labelText()} end:${tcb.end.labelText()} handler:${tcb.handler.labelText()}")

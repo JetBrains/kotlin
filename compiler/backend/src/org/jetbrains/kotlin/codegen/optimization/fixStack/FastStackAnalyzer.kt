@@ -101,12 +101,12 @@ internal open class FastStackAnalyzer<V : Value>(
                     }
 
                     when {
-                        insnNode is JumpInsnNode ->
-                            visitJumpInsnNode(insnNode, current, insn, insnOpcode)
-                        insnNode is LookupSwitchInsnNode ->
-                            visitLookupSwitchInsnNode(insnNode, current, insn)
-                        insnNode is TableSwitchInsnNode ->
-                            visitTableSwitchInsnNode(insnNode, current, insn)
+                        insnType == AbstractInsnNode.JUMP_INSN ->
+                            visitJumpInsnNode(insnNode as JumpInsnNode, current, insn, insnOpcode)
+                        insnType == AbstractInsnNode.LOOKUPSWITCH_INSN ->
+                            visitLookupSwitchInsnNode(insnNode as LookupSwitchInsnNode, current, insn)
+                        insnType == AbstractInsnNode.TABLESWITCH_INSN ->
+                            visitTableSwitchInsnNode(insnNode as TableSwitchInsnNode, current, insn)
                         insnOpcode != Opcodes.ATHROW && (insnOpcode < Opcodes.IRETURN || insnOpcode > Opcodes.RETURN) ->
                             visitOpInsn(current, insn)
                         else -> {
