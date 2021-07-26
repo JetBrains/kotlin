@@ -129,8 +129,9 @@ private object NoOpBuildReporter : BuildReporter(NoOpICReporter, NoOpBuildMetric
     }
 
     object NoOpBuildMetricsReporter : BuildMetricsReporter {
-        override fun startMeasure(metric: BuildTime, startNs: Long) {}
-        override fun endMeasure(metric: BuildTime, endNs: Long) {}
+        override fun startMeasure(time: BuildTime, startNs: Long) {}
+        override fun endMeasure(time: BuildTime, endNs: Long) {}
+        override fun addMetric(metric: BuildTime, value: Long) {}
         override fun addAttribute(attribute: BuildAttribute) {}
         override fun getMetrics(): BuildMetrics = BuildMetrics()
         override fun addMetrics(metrics: BuildMetrics?) {}

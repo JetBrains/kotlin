@@ -16,6 +16,7 @@ enum class BuildTime(val parent: BuildTime? = null, val readableString: String) 
         RESTORE_OUTPUT_FROM_BACKUP(GRADLE_TASK, "Restore output"),
         CONNECT_TO_DAEMON(GRADLE_TASK, "Connect to Kotlin daemon"),
         CLEAR_JAR_CACHE(GRADLE_TASK, "Clear jar cache"),
+        CALCULATE_OUTPUT_SIZE(GRADLE_TASK, "Calculate output size"),
         RUN_COMPILER(GRADLE_TASK, "Run compiler"),
             NON_INCREMENTAL_COMPILATION_IN_PROCESS(RUN_COMPILER, "Inprocess compilation"),
             NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS(RUN_COMPILER, "Out of process compilation"),
@@ -36,7 +37,11 @@ enum class BuildTime(val parent: BuildTime? = null, val readableString: String) 
                 IC_UPDATE_CACHES(INCREMENTAL_COMPILATION, "Update caches"),
                 INCREMENTAL_ITERATION(INCREMENTAL_COMPILATION, "Incremental iteration"),
                 NON_INCREMENTAL_ITERATION(INCREMENTAL_COMPILATION, "Non-incremental iteration"),
-                IC_WRITE_HISTORY_FILE(INCREMENTAL_COMPILATION, "Write history file");
+                IC_WRITE_HISTORY_FILE(INCREMENTAL_COMPILATION, "Write history file"),
+    OUTPUT_SIZE(readableString = "Total output size"),
+        LOOKUP_SIZE(OUTPUT_SIZE, "Lookups size"),
+        SNAPSHOT_SIZE(OUTPUT_SIZE, "ABI snapshot size")
+    ;
 
     companion object {
         const val serialVersionUID = 0L
