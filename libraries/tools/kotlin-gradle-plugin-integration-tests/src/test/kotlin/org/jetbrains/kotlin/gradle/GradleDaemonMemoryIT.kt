@@ -5,48 +5,57 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.junit.Test
+import org.gradle.api.logging.LogLevel
+import org.gradle.tooling.internal.consumer.ConnectorServices
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertTrue
 
-class GradleDaemonMemoryIT : BaseGradleIT() {
+@DisplayName("Gradle daemon memory leak")
+@DaemonsGradlePluginTests
+class GradleDaemonMemoryIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+
+    @AfterEach
+    fun tearDown() {
+        // Stops Gradle and Kotlin daemons, so new run will start them again
+        ConnectorServices.reset()
+    }
+
     // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
     // Setting user.variant to different value implies a new daemon process will be created.
     // In order to stop daemon process, special exit task is used ( System.exit(0) ).
-    @Test
-    fun testGradleDaemonMemory() {
-        val project = Project("gradleDaemonMemory")
-        val userVariantArg = "-Duser.variant=ForTest"
-        val memoryMaxGrowthLimitKB = 5000
-        val buildCount = 10
-        val reportMemoryUsage = "-Dkotlin.gradle.test.report.memory.usage=true"
-        val options = BuildOptions(withDaemon = true)
+    @DisplayName("No small memory leak in plugin")
+    @GradleTest
+    fun testGradleDaemonMemory(gradleVersion: GradleVersion) {
+        project("gradleDaemonMemory", gradleVersion) {
+            val userVariantArg = "-Duser.variant=ForTest"
+            val memoryMaxGrowthLimitKB = 5000
+            val buildCount = 10
+            val reportMemoryUsage = "-Dkotlin.gradle.test.report.memory.usage=true"
+            val reportRegex = "\\[KOTLIN]\\[PERF] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
+                .toRegex()
 
-        fun exitTestDaemon() {
-            project.build(userVariantArg, reportMemoryUsage, "exit", options = options) {
-                assertFailed()
-                assertContains("The daemon has exited normally or was terminated in response to a user interrupt.")
+            val usedMemory: List<Int> = (1..buildCount).map {
+                var reportedMemory = 0
+                build(userVariantArg, reportMemoryUsage, "clean", "assemble") {
+                    val matches = output
+                        .lineSequence()
+                        .filter { it.contains("[KOTLIN][PERF]") }
+                        .joinToString(separator = "\n")
+                        .run { reportRegex.find(this) }
+                    assertTasksExecuted(":compileKotlin")
+                    assert(matches != null && matches.groups.size == 3) {
+                        printBuildOutput()
+                        "Used memory after build is not reported by plugin"
+                    }
+                    reportedMemory = matches!!.groupValues[1].toInt()
+                }
+                reportedMemory
             }
-        }
-
-        fun buildAndGetMemoryAfterBuild(): Int {
-            var reportedMemory: Int? = null
-
-            project.build(userVariantArg, reportMemoryUsage, "clean", "assemble", options = options) {
-                assertSuccessful()
-                val matches = "\\[KOTLIN]\\[PERF] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
-                    .toRegex().find(output)
-                assertTasksExecuted(":compileKotlin")
-                assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
-                reportedMemory = matches!!.groupValues[1].toInt()
-            }
-
-            return reportedMemory!!
-        }
-
-        exitTestDaemon()
-
-        try {
-            val usedMemory: List<Int> = (1..buildCount).map { buildAndGetMemoryAfterBuild() }
 
             // ensure that the maximum of the used memory established after several first builds doesn't raise significantly in the subsequent builds
             val establishedMaximum = usedMemory.take(buildCount / 2).maxOrNull()!!
@@ -61,11 +70,7 @@ class GradleDaemonMemoryIT : BaseGradleIT() {
             )
 
             // testing that nothing remains locked by daemon, see KT-9440
-            project.build(userVariantArg, "clean", options = BuildOptions(withDaemon = true)) {
-                assertSuccessful()
-            }
-        } finally {
-            exitTestDaemon()
+            build(userVariantArg, "clean")
         }
     }
 }
