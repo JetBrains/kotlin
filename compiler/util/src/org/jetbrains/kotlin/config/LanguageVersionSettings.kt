@@ -216,6 +216,7 @@ enum class LanguageFeature(
     TypeInferenceOnCallsWithSelfTypes(KOTLIN_1_6),
     WarnAboutNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_6, kind = BUG_FIX),
     InstantiationOfAnnotationClasses(KOTLIN_1_6),
+    OptInOnOverrideForbidden(KOTLIN_1_6, kind = BUG_FIX),
 
     // 1.7
 

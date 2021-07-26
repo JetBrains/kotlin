@@ -174,6 +174,7 @@ public class DefaultErrorMessages {
 
         MAP.put(EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET, "Opt-in requirement marker annotation cannot be used on {0}", STRING);
         MAP.put(EXPERIMENTAL_ANNOTATION_ON_OVERRIDE, "Opt-in requirement marker annotation on override requires the same marker on base declaration");
+        MAP.put(EXPERIMENTAL_ANNOTATION_ON_OVERRIDE_WARNING, "Opt-in requirement marker annotation on override requires the same marker on base declaration (will be an error in 1.6)");
 
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "{0}", STRING);
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "{0}", STRING);

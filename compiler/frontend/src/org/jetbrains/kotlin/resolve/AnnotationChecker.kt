@@ -230,7 +230,7 @@ class AnnotationChecker(
         }
 
         for (checker in additionalCheckers) {
-            checker.checkEntries(entries, actualTargets.defaultTargets, trace)
+            checker.checkEntries(entries, actualTargets.defaultTargets, trace, languageVersionSettings)
         }
     }
 
@@ -381,5 +381,10 @@ private typealias TargetLists = AnnotationTargetLists
 private typealias TargetList = AnnotationTargetList
 
 interface AdditionalAnnotationChecker {
-    fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace)
+    fun checkEntries(
+        entries: List<KtAnnotationEntry>,
+        actualTargets: List<KotlinTarget>,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
+    )
 }

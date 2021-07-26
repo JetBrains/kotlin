@@ -34964,6 +34964,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("experimentalOnOverrideWarning.kt")
+            public void testExperimentalOnOverrideWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalOnOverrideWarning.kt");
+            }
+
+            @Test
             @TestMetadata("experimentalSetter.kt")
             public void testExperimentalSetter() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalSetter.kt");

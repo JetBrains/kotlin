@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -19,7 +20,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 object RepeatableAnnotationChecker : AdditionalAnnotationChecker {
-    override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+    override fun checkEntries(
+        entries: List<KtAnnotationEntry>,
+        actualTargets: List<KotlinTarget>,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
+    ) {
         val entryTypesWithAnnotations = hashMapOf<FqName, MutableList<AnnotationUseSiteTarget?>>()
 
         for (entry in entries) {

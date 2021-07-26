@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -24,7 +25,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 
 object JsQualifierChecker : AdditionalAnnotationChecker {
-    override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+    override fun checkEntries(
+        entries: List<KtAnnotationEntry>,
+        actualTargets: List<KotlinTarget>,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
+    ) {
         val bindingContext = trace.bindingContext
         for (entry in entries) {
             val annotation = bindingContext[BindingContext.ANNOTATION, entry] ?: continue
