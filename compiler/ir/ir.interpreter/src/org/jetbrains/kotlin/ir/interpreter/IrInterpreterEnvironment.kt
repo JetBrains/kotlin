@@ -23,8 +23,7 @@ class IrInterpreterEnvironment(
     internal val irExceptions = mutableListOf<IrClass>()
     internal var mapOfEnums = mutableMapOf<IrSymbol, Complex>()
     internal var mapOfObjects = mutableMapOf<IrSymbol, Complex>()
-    internal var cachedFunctionsWithDefaults = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
-    internal var cachedLambdasAndReferences = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    internal var createdFunctionsCache = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
 
     init {
         mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)

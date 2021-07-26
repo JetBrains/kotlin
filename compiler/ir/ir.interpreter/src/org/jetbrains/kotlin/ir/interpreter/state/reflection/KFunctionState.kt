@@ -39,7 +39,7 @@ internal class KFunctionState(
     private var _returnType: KType? = null
     private var _typeParameters: List<KTypeParameter>? = null
 
-    val invokeSymbol: IrFunctionSymbol = environment.cachedLambdasAndReferences
+    val invokeSymbol: IrFunctionSymbol = environment.createdFunctionsCache
         .getOrDefault(
             irFunction.symbol,
             createInvokeFunction(
