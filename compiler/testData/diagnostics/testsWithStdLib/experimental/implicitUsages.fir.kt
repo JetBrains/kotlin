@@ -1,4 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// LANGUAGE: +OptInContagiousSignatures
 
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)

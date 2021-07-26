@@ -217,6 +217,7 @@ enum class LanguageFeature(
     WarnAboutNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_6, kind = BUG_FIX),
     InstantiationOfAnnotationClasses(KOTLIN_1_6),
     OptInOnOverrideForbidden(KOTLIN_1_6, kind = BUG_FIX),
+    OptInContagiousSignatures(KOTLIN_1_6, kind = BUG_FIX),
 
     // 1.7
 

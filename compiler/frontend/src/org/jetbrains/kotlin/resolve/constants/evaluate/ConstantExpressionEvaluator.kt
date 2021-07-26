@@ -342,7 +342,8 @@ class ConstantExpressionEvaluator(
 
         private val EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS = ExperimentalUsageChecker.ExperimentalityDiagnostics(
             warning = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS, "should"),
-            error = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must")
+            error = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must"),
+            futureError = ExperimentalityDiagnostic1(Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "must"),
         )
 
         @JvmStatic

@@ -1,6 +1,6 @@
 import kotlin.contracts.*
 
-@Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+@Suppress("EXPERIMENTAL_API_USAGE_ERROR", "EXPERIMENTAL_API_USAGE_FUTURE_ERROR")
 fun foo(f1: () -> Unit, f2: () -> Unit) {
     contract {
         callsInPlace(f1, InvocationKind.EXACTLY_ONCE)

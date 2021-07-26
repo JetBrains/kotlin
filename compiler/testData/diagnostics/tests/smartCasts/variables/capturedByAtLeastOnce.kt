@@ -1,6 +1,6 @@
 import kotlin.contracts.*
 
-@Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+@Suppress("EXPERIMENTAL_API_USAGE_ERROR", "EXPERIMENTAL_API_USAGE_FUTURE_ERROR")
 inline fun atLeastOnce(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.AT_LEAST_ONCE)
@@ -8,7 +8,7 @@ inline fun atLeastOnce(block: () -> Unit) {
     block()
 }
 
-@Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+@Suppress("EXPERIMENTAL_API_USAGE_ERROR", "EXPERIMENTAL_API_USAGE_FUTURE_ERROR")
 inline fun atMostOnce(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
@@ -16,7 +16,7 @@ inline fun atMostOnce(block: () -> Unit) {
     block()
 }
 
-@Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+@Suppress("EXPERIMENTAL_API_USAGE_ERROR", "EXPERIMENTAL_API_USAGE_FUTURE_ERROR")
 inline fun exactlyOnce(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

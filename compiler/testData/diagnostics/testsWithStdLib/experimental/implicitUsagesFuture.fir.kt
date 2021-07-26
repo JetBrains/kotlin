@@ -1,5 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
-// LANGUAGE: +OptInContagiousSignatures
+// LANGUAGE: -OptInContagiousSignatures
 
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
@@ -27,7 +27,7 @@ data class DataClass(@property:Marker val x: Int)
 fun useDataClass(d: DataClass) {
     // Should have error in both
     d.<!EXPERIMENTAL_API_USAGE_ERROR!>x<!>
-    val (<!EXPERIMENTAL_API_USAGE_ERROR!>x<!>) = d
+    val (x) = d
 }
 
 typealias My = <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>
@@ -69,9 +69,9 @@ typealias YourList = ArrayList<String>
 
 fun main() {
     val x = <!EXPERIMENTAL_API_USAGE_ERROR!>listOf<!>(A(), B())
-    val y = <!EXPERIMENTAL_API_USAGE_ERROR!>MyList<!>()
-    val z = <!EXPERIMENTAL_API_USAGE_ERROR!>YourList<!>()
-    <!EXPERIMENTAL_API_USAGE_ERROR!>YourList<!>().add("")
+    val y = MyList()
+    val z = YourList()
+    YourList().add("")
 }
 
 @Marker
@@ -120,5 +120,5 @@ fun operatorContainerUsage(s: String, a: AnotherContainer) {
     val res1 = s <!EXPERIMENTAL_API_USAGE_ERROR!>-<!> s
     val res2 = <!EXPERIMENTAL_API_USAGE_ERROR!>s<!>()
     val res3 = <!EXPERIMENTAL_API_USAGE_ERROR!>res1<!> <!EXPERIMENTAL_API_USAGE_ERROR!>><!> <!EXPERIMENTAL_API_USAGE_ERROR!>res2<!>
-    for (c in <!EXPERIMENTAL_API_USAGE_ERROR!>a<!>) {}
+    <!EXPERIMENTAL_API_USAGE_ERROR, EXPERIMENTAL_API_USAGE_ERROR, EXPERIMENTAL_API_USAGE_ERROR, EXPERIMENTAL_API_USAGE_ERROR!>for (c in a) {}<!>
 }

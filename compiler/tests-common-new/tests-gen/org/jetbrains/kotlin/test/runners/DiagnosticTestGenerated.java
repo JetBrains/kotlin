@@ -34988,6 +34988,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("implicitUsagesFuture.kt")
+            public void testImplicitUsagesFuture() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/implicitUsagesFuture.kt");
+            }
+
+            @Test
             @TestMetadata("importStatement.kt")
             public void testImportStatement() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/importStatement.kt");

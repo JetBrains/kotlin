@@ -79,7 +79,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
     data class ExperimentalityDiagnostics(
         val warning: ExperimentalityDiagnostic,
-        val error: ExperimentalityDiagnostic
+        val error: ExperimentalityDiagnostic,
+        val futureError: ExperimentalityDiagnostic
     )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -131,7 +132,11 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             error = ExperimentalityDiagnostic2(
                 Errors.EXPERIMENTAL_API_USAGE_ERROR,
                 getDefaultDiagnosticMessage("This declaration is experimental and its usage must be marked")
-            )
+            ),
+            futureError = ExperimentalityDiagnostic2(
+                Errors.EXPERIMENTAL_API_USAGE_FUTURE_ERROR,
+                getDefaultDiagnosticMessage("This declaration is experimental due to signature types and its usage must be marked (will become an error in 1.6)")
+            ),
         )
 
         fun reportNotAcceptedExperimentalities(
@@ -154,6 +159,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     val diagnostic = when (severity) {
                         Experimentality.Severity.WARNING -> diagnostics.warning
                         Experimentality.Severity.ERROR -> diagnostics.error
+                        Experimentality.Severity.FUTURE_ERROR -> diagnostics.futureError
                     }
                     diagnostic.report(trace, element, annotationFqName, message)
                 }
@@ -163,19 +169,20 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         fun DeclarationDescriptor.loadExperimentalities(
             moduleAnnotationsResolver: ModuleAnnotationsResolver,
             languageVersionSettings: LanguageVersionSettings,
-            visited: MutableSet<DeclarationDescriptor> = mutableSetOf()
+            visited: MutableSet<DeclarationDescriptor> = mutableSetOf(),
+            useFutureError: Boolean = false
         ): Set<Experimentality> {
             if (!visited.add(this)) return emptySet()
             val result = SmartSet.create<Experimentality>()
             if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 for (overridden in overriddenDescriptors) {
-                    result.addAll(overridden.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited))
+                    result.addAll(overridden.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
                 }
                 return result
             }
 
             for (annotation in annotations) {
-                result.addIfNotNull(annotation.annotationClass?.loadExperimentalityForMarkerAnnotation())
+                result.addIfNotNull(annotation.annotationClass?.loadExperimentalityForMarkerAnnotation(useFutureError))
             }
 
             if (this is CallableDescriptor && this !is ClassConstructorDescriptor) {
@@ -211,7 +218,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
             val container = containingDeclaration
             if (container is ClassDescriptor && this !is ConstructorDescriptor) {
-                result.addAll(container.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited))
+                result.addAll(container.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
             }
 
             for (moduleAnnotationClassId in moduleAnnotationsResolver.getAnnotationsOnContainingModule(this)) {
@@ -230,19 +237,21 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             when {
                 this?.isError != false -> emptySet()
                 this is AbbreviatedType -> abbreviation.constructor.declarationDescriptor?.loadExperimentalities(
-                    moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers
+                    moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers,
+                    useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + expandedType.loadExperimentalities(
                     moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers
                 )
                 else -> constructor.declarationDescriptor?.loadExperimentalities(
-                    moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers
+                    moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers,
+                    useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + arguments.flatMap {
                     if (it.isStarProjection) emptySet()
                     else it.type.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers)
                 }
             }
 
-        internal fun ClassDescriptor.loadExperimentalityForMarkerAnnotation(): Experimentality? {
+        internal fun ClassDescriptor.loadExperimentalityForMarkerAnnotation(useFutureError: Boolean = false): Experimentality? {
             val experimental =
                 annotations.findAnnotation(REQUIRES_OPT_IN_FQ_NAME)
                     ?: annotations.findAnnotation(OLD_EXPERIMENTAL_FQ_NAME)
@@ -251,8 +260,12 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val arguments = experimental.allValueArguments
             val severity = when ((arguments[LEVEL] as? EnumValue)?.enumEntryName) {
                 WARNING_LEVEL -> Experimentality.Severity.WARNING
-                ERROR_LEVEL -> Experimentality.Severity.ERROR
-                else -> Experimentality.DEFAULT_SEVERITY
+                ERROR_LEVEL -> if (useFutureError) Experimentality.Severity.FUTURE_ERROR else Experimentality.Severity.ERROR
+                else -> if (Experimentality.DEFAULT_SEVERITY == Experimentality.Severity.ERROR && useFutureError) {
+                    Experimentality.Severity.FUTURE_ERROR
+                } else {
+                    Experimentality.DEFAULT_SEVERITY
+                }
             }
 
             val message = (arguments[MESSAGE] as? StringValue)?.value
@@ -457,6 +470,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     val (diagnostic, defaultMessageVerb) = when (experimentality.severity) {
                         Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_OVERRIDE to "should"
                         Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_OVERRIDE_ERROR to "must"
+                        Experimentality.Severity.FUTURE_ERROR -> Errors.EXPERIMENTAL_OVERRIDE_ERROR to "must"
                     }
                     val message = experimentality.message
                         ?: "This declaration overrides experimental member of supertype " +
