@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class FirBuilderInferenceSession(
+    private val lambda: FirAnonymousFunction,
     resolutionContext: ResolutionContext,
     private val stubsForPostponedVariables: Map<ConeTypeVariable, ConeStubType>,
 ) : AbstractManyCandidatesInferenceSession(resolutionContext) {
@@ -225,19 +227,16 @@ class FirBuilderInferenceSession(
         return introducedConstraint
     }
 
-    // TODO: besides calls, perhaps use the stub type substitutor for all top-level expressions inside the lambda
     private fun updateCalls(commonSystem: NewConstraintSystemImpl) {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
         val nonFixedTypesToResultSubstitutor = ConeComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
-        val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(nonFixedTypesToResultSubstitutor)
 
         val stubTypeSubstitutor = FirStubTypeTransformer(nonFixedTypesToResultSubstitutor)
-        for ((completedCall, _) in commonCalls) {
-            completedCall.transformSingle(stubTypeSubstitutor, null)
-            // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
-        }
+        lambda.transformSingle(stubTypeSubstitutor, null)
+        // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
 
+        val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(nonFixedTypesToResultSubstitutor)
         for ((call, _) in partiallyResolvedCalls) {
             call.transformSingle(completionResultsWriter, null)
             // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]

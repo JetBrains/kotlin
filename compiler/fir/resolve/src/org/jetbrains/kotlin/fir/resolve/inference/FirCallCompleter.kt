@@ -272,7 +272,11 @@ class FirCallCompleter(
 
             val builderInferenceSession = runIf(stubsForPostponedVariables.isNotEmpty()) {
                 @Suppress("UNCHECKED_CAST")
-                FirBuilderInferenceSession(transformer.resolutionContext, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
+                FirBuilderInferenceSession(
+                    lambdaArgument,
+                    transformer.resolutionContext,
+                    stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>
+                )
             }
 
             transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {

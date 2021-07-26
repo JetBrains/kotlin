@@ -10,7 +10,7 @@ fun main() {
     buildList {
         add(3)
         object : A {
-            override fun foo(): MutableList<String> = this@buildList
+            override fun foo(): MutableList<String> = <!RETURN_TYPE_MISMATCH!>this@buildList<!>
         }
     }
     buildList {
@@ -19,12 +19,12 @@ fun main() {
     }
     buildList {
         add("3")
-        val x: MutableList<Int> = this@buildList
+        val x: MutableList<Int> = <!INITIALIZER_TYPE_MISMATCH!>this@buildList<!>
     }
     buildList {
         val y: CharSequence = ""
         add(y)
-        val x: MutableList<String> = this@buildList
+        val x: MutableList<String> = <!INITIALIZER_TYPE_MISMATCH!>this@buildList<!>
     }
     buildList {
         add("")
