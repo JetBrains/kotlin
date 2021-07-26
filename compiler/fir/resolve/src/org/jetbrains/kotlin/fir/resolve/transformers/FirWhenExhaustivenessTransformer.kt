@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.utils.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
@@ -33,7 +35,8 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         private val exhaustivenessCheckers = listOf(
             WhenOnBooleanExhaustivenessChecker,
             WhenOnEnumExhaustivenessChecker,
-            WhenOnSealedClassExhaustivenessChecker
+            WhenOnSealedClassExhaustivenessChecker,
+            WhenOnNothingExhaustivenessChecker
         )
 
         @OptIn(ExperimentalStdlibApi::class)
@@ -387,5 +390,20 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             fir.classKind == ClassKind.ENUM_CLASS -> fir.collectEnumEntries().mapTo(destination) { it.symbol }
             else -> destination.add(this)
         }
+    }
+}
+
+private object WhenOnNothingExhaustivenessChecker : WhenExhaustivenessChecker() {
+    override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
+        return subjectType.isNullableNothing || subjectType.isNothing
+    }
+
+    override fun computeMissingCases(
+        whenExpression: FirWhenExpression,
+        subjectType: ConeKotlinType,
+        session: FirSession,
+        destination: MutableCollection<WhenMissingCase>
+    ) {
+        // Nothing has no branches. The null case for `Nothing?` is handled by WhenOnNullableExhaustivenessChecker
     }
 }
