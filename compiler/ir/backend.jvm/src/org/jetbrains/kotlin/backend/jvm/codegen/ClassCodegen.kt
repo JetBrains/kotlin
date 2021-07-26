@@ -176,6 +176,9 @@ class ClassCodegen private constructor(
         addReifiedParametersFromSignature()
 
         visitor.done()
+
+        // After each file is compiled, clear the data used to optimize CHECKCAST to free up memory
+        AsmTypeInfo.clear()
         jvmSignatureClashDetector.reportErrors(classOrigin)
     }
 

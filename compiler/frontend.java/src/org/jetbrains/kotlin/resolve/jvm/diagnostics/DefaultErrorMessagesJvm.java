@@ -221,6 +221,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(TYPEOF_EXTENSION_FUNCTION_TYPE, "Extension function types are not supported in typeOf");
         MAP.put(TYPEOF_ANNOTATED_TYPE, "Annotated types are not supported in typeOf");
         MAP.put(TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, "Non-reified type parameters with recursive bounds are not supported yet: {0}", STRING);
+
+        MAP.put(IMPLICIT_CAST_TO_NON_ACCESSIBLE_CLASS, "Implicit cast to non-accessible class ''{0}''", STRING);
     }
 
     @NotNull

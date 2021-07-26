@@ -62,6 +62,34 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/checkcast")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Checkcast {
+        @Test
+        public void testAllFilesPresentInCheckcast() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/checkcast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("kt11700.kt")
+        public void testKt11700() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/checkcast/kt11700.kt");
+        }
+
+        @Test
+        @TestMetadata("kt11700_intersectionTypeApproximation1.kt")
+        public void testKt11700_intersectionTypeApproximation1() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/checkcast/kt11700_intersectionTypeApproximation1.kt");
+        }
+
+        @Test
+        @TestMetadata("kt11700_intersectionTypeApproximation2.kt")
+        public void testKt11700_intersectionTypeApproximation2() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/checkcast/kt11700_intersectionTypeApproximation2.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     public class DuplicateJvmSignature {

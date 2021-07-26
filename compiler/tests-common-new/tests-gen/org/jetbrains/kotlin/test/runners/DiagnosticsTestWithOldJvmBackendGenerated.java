@@ -62,6 +62,16 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/checkcast")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Checkcast {
+        @Test
+        public void testAllFilesPresentInCheckcast() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/checkcast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     public class DuplicateJvmSignature {

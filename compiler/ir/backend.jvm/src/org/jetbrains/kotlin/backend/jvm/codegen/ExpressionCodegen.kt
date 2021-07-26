@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
+import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
@@ -52,6 +54,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.IMPLICIT_CAST_TO_NON_ACCESSIBLE_CLASS
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -130,6 +133,10 @@ class Gap(val start: Label, val end: Label)
 
 class VariableInfo(val declaration: IrVariable, val index: Int, val type: Type, val startLabel: Label) {
     val gaps = mutableListOf<Gap>()
+}
+
+class CastToNonAccessibleClassException : RuntimeException() {
+    override fun fillInStackTrace(): Throwable = this
 }
 
 class ExpressionCodegen(
@@ -215,10 +222,22 @@ class ExpressionCodegen(
         if (expression.attributeOwnerId === context.fakeContinuation) {
             addFakeContinuationMarker(mv)
         } else {
-            expression.accept(this, data).materializeAt(type, irType)
+            val promisedValue = expression.accept(this, data)
+            try {
+                promisedValue.materializeAt(type, irType)
+            } catch (e: CastToNonAccessibleClassException) {
+                reportNonAccessible(expression, irType.classFqName!!.asString())
+            }
         }
         return StackValue.onStack(type, irType.toIrBasedKotlinType())
     }
+
+    private fun reportNonAccessible(expression: IrExpression, to: String) {
+        val psiElement = expression.findPsiElement()
+        classCodegen.context.psiErrorBuilder.at(psiElement).report(IMPLICIT_CAST_TO_NON_ACCESSIBLE_CLASS, to)
+    }
+
+    private fun IrExpression.findPsiElement(): PsiElement = PsiSourceManager.findPsiElement(this, classCodegen.irClass.file)!!
 
     fun generate() {
         mv.visitCode()

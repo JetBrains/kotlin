@@ -135,9 +135,13 @@ public class ClassBuilderFactories {
             // This method is needed to generate StackFrameMap: bytecode metadata for JVM verification. For bytecode version 50.0 (JDK 6)
             // these maps can be invalid: in this case, JVM would generate them itself (potentially slowing class loading),
             // for bytecode 51.0+ (JDK 7+) JVM would crash with VerifyError.
-            // It seems that for bytecode emitted by Kotlin compiler, it is safe to return "Object" here, because there will
-            // be "checkcast" generated before making a call, anyway.
 
+            if (AsmTypeInfo.INSTANCE.isSubType(type1, type2)) {
+                return type2;
+            }
+            if (AsmTypeInfo.INSTANCE.isSubType(type2, type1)) {
+                return type1;
+            }
             return "java/lang/Object";
         }
     }

@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isTypeParameter
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -59,7 +60,17 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         }
 
         if (type != target || (castForReified && irType.anyTypeArgument { it.isReified })) {
-            StackValue.coerce(type, target, mv, type == target)
+            if (codegen.typeMapper.mapType(erasedSourceType) == type && codegen.typeMapper.mapType(erasedTargetType) == target) {
+                // what we really want to know here is if `type` is subType of `target` and if `target` is from Java. Before we find
+                // a better way to do this, in order to avoid introduce unexpected breaking changes, it is important to determine whether
+                // `erasedSourceType` and `erasedTargetType` are appropriate for the calculation of `isSubType` and `isFromJava`
+                val isSubType = erasedSourceType.isSubtypeOfClass(erasedTargetType.classOrNull!!)
+                val isFromJava = (erasedTargetType.classifierOrFail.owner as IrDeclaration).isFromJava()
+
+                // we might need to cast to the correct upper bound when irType is multiple upper bounds type parameter
+                val coerceTarget = computeCoerceTarget(isSubType, erasedTargetType, default = target)
+                StackValue.coerce(type, coerceTarget, mv, type == coerceTarget, isSubType && isFromJava)
+            } else StackValue.coerce(type, target, mv, type == target, false)
         }
     }
 
@@ -70,8 +81,28 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
 
     val typeMapper: IrTypeMapper
         get() = codegen.typeMapper
-}
 
+    private fun IrType.isPackagePrivate(): Boolean =
+        getClass()?.visibility?.delegate == JavaVisibilities.PackageVisibility
+
+    private fun IrType.inDifferentPackage(): Boolean =
+        getClass()!!.getPackageFragment()?.fqName != codegen.irFunction.getPackageFragment()?.fqName
+
+    private fun computeCoerceTarget(
+        isSubType: Boolean,
+        erasedTargetType: IrType,
+        default: Type
+    ): Type {
+        if (!isSubType && erasedTargetType.isPackagePrivate() && erasedTargetType.inDifferentPackage()) {
+            val computed = irType.superTypes().firstOrNull {
+                it.isSubtypeOfClass(erasedTargetType.classOrNull!!)
+            }
+            if (computed != null) return codegen.typeMapper.mapType(computed)
+            else throw CastToNonAccessibleClassException()
+        }
+        return default
+    }
+}
 
 fun IrType.anyTypeArgument(check: (IrTypeParameter) -> Boolean): Boolean {
     when {
