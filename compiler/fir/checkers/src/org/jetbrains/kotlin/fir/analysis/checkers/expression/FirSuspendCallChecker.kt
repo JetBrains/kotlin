@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_2_20_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_2_30_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_3_FQ_NAME
+import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
@@ -44,13 +45,20 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
     private val RESTRICTS_SUSPENSION_CLASS_ID =
         ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier("RestrictsSuspension"))
 
+    private val BUILTIN_SUSPEND_NAME = KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME.shortName()
+
     @OptIn(SymbolInternals::class)
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
-        if (reference is FirResolvedCallableReference) return
         val symbol = reference.resolvedSymbol as? FirCallableSymbol ?: return
         symbol.ensureResolved(FirResolvePhase.STATUS)
         val fir = symbol.fir as? FirCallableDeclaration ?: return
+        if (reference.name == BUILTIN_SUSPEND_NAME ||
+            fir is FirSimpleFunction && fir.name == BUILTIN_SUSPEND_NAME
+        ) {
+            checkSuspendModifierForm(expression, reference, symbol, context, reporter)
+        }
+        if (reference is FirResolvedCallableReference) return
         when (fir) {
             is FirSimpleFunction -> if (!fir.isSuspend) return
             is FirProperty -> if (symbol.callableId.asSingleFqName() !in SUSPEND_PROPERTIES_FQ_NAMES) return
@@ -72,6 +80,50 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
                 reporter.reportOn(expression.source, FirErrors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, context)
             }
         }
+    }
+
+    private fun checkSuspendModifierForm(
+        expression: FirQualifiedAccessExpression,
+        reference: FirResolvedNamedReference,
+        symbol: FirCallableSymbol<*>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (symbol.callableId.asSingleFqName() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
+            if (reference.name != BUILTIN_SUSPEND_NAME ||
+                expression.explicitReceiver != null ||
+                !expression.hasFormOfSuspendModifierForLambda()
+            ) {
+                reporter.reportOn(expression.source, FirErrors.NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND, context)
+            }
+        } else {
+            if (reference.name == BUILTIN_SUSPEND_NAME && expression.hasFormOfSuspendModifierForLambda()) {
+                reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, context)
+            }
+        }
+    }
+
+    private fun FirQualifiedAccessExpression.hasFormOfSuspendModifierForLambda(): Boolean {
+        if (this !is FirFunctionCall) return false
+        val reference = this.calleeReference
+        if (reference is FirResolvedCallableReference) return false
+        if (typeArguments.any { it.source != null }) return false
+        if (arguments.singleOrNull() is FirLambdaArgumentExpression) {
+            // No brackets should be in a selector call
+            val callExpressionSource =
+                if (explicitReceiver == null) source
+                else source?.getChild(KtNodeTypes.CALL_EXPRESSION, index = 1, depth = 1)
+            if (callExpressionSource?.getChild(KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 1) == null) {
+                return true
+            }
+        }
+        if (source?.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+            val lastArgument = arguments.lastOrNull()
+            if (lastArgument is FirAnonymousFunctionExpression && source?.getChild(KtNodeTypes.PARENTHESIZED, depth = 1) == null) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun findEnclosingSuspendFunction(context: CheckerContext): FirFunction? {

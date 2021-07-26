@@ -2215,6 +2215,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IllegalRestrictedSuspendingFunctionCall::class
     }
 
+    abstract class NonModifierFormForBuiltInSuspend : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = NonModifierFormForBuiltInSuspend::class
+    }
+
+    abstract class ModifierFormForNonBuiltInSuspend : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ModifierFormForNonBuiltInSuspend::class
+    }
+
     abstract class ConflictingJvmDeclarations : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ConflictingJvmDeclarations::class
     }
