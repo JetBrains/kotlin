@@ -61,6 +61,34 @@ import kotlin.math.min
 fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
     receiver?.let { generateReceiver(ktDefaultElement, receiver) }
 
+fun StatementGenerator.generateContextReceiverForDelegatingConstructorCall(
+    ktDefaultElement: KtElement,
+    receiver: ContextClassReceiver?
+): IntermediateValue? =
+    receiver?.let {
+        generateContextReceiverForDelegatingConstructorCall(
+            ktDefaultElement.startOffsetSkippingComments,
+            ktDefaultElement.endOffset,
+            receiver
+        )
+    }
+
+fun StatementGenerator.generateContextReceiverForDelegatingConstructorCall(
+    defaultStartOffset: Int,
+    defaultEndOffset: Int,
+    receiver: ContextClassReceiver
+): IntermediateValue {
+    val irReceiverType = receiver.type.toIrType()
+    val contextReceivers = receiver.classDescriptor.contextReceivers
+    val receiverParameter = contextReceivers.single { it.value == receiver }
+    return object : ExpressionValue(irReceiverType) {
+        override fun load(): IrExpression = IrGetValueImpl(
+            defaultStartOffset, defaultEndOffset, irReceiverType,
+            context.symbolTable.referenceValueParameter(receiverParameter)
+        )
+    }
+}
+
 fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue =
     generateReceiver(ktDefaultElement.startOffsetSkippingComments, ktDefaultElement.endOffset, receiver)
 
@@ -226,7 +254,7 @@ fun StatementGenerator.generateCallReceiver(
             dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, dispatchReceiver)
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
             contextReceiverValues = if (ktDefaultElement is KtConstructorDelegationCall) contextReceivers.mapNotNull {
-                generateReceiverOrNull(ktDefaultElement, it as ContextClassReceiver)
+                generateContextReceiverForDelegatingConstructorCall(ktDefaultElement, it as ContextClassReceiver)
             }
             else contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
         }
