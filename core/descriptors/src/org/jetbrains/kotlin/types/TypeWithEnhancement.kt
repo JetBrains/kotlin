@@ -51,6 +51,9 @@ class SimpleTypeWithEnhancement(
             kotlinTypeRefiner.refineType(delegate) as SimpleType,
             kotlinTypeRefiner.refineType(enhancement)
         )
+
+    override fun toString(): String =
+        "[@EnhancedForWarnings($enhancement)] $origin"
 }
 
 class FlexibleTypeWithEnhancement(
@@ -81,6 +84,9 @@ class FlexibleTypeWithEnhancement(
             kotlinTypeRefiner.refineType(origin) as FlexibleType,
             kotlinTypeRefiner.refineType(enhancement)
         )
+
+    override fun toString(): String =
+        "[@EnhancedForWarnings($enhancement)] $origin"
 }
 
 fun KotlinType.getEnhancement(): KotlinType? = when (this) {
@@ -150,10 +156,12 @@ fun UnwrappedType.inheritEnhancement(origin: KotlinType, transform: (KotlinType)
 fun UnwrappedType.inheritEnhancement(origin: KotlinType): UnwrappedType = wrapEnhancement(origin.getEnhancement())
 
 fun UnwrappedType.wrapEnhancement(enhancement: KotlinType?): UnwrappedType {
+    if (this is TypeWithEnhancement) {
+        return origin.wrapEnhancement(enhancement)
+    }
     if (enhancement == null) {
         return this
     }
-
     return when (this) {
         is SimpleType -> SimpleTypeWithEnhancement(this, enhancement)
         is FlexibleType -> FlexibleTypeWithEnhancement(this, enhancement)
