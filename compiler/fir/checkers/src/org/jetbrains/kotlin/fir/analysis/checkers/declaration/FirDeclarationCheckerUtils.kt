@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.containingClassAttr
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -207,7 +207,7 @@ internal fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
 internal val FirDeclaration.isEnumEntryInitializer: Boolean
     get() {
         if (this !is FirConstructor || !this.isPrimary) return false
-        return (containingClassAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.classKind == ClassKind.ENUM_ENTRY
+        return (containingClassForStaticMemberAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.classKind == ClassKind.ENUM_ENTRY
     }
 
 // contract: returns(true) implies (this is FirMemberDeclaration<*>)

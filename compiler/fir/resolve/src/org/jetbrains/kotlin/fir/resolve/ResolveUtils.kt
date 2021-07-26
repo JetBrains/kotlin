@@ -407,7 +407,7 @@ private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTyp
     return candidate.substitutor.substituteOrSelf(typeRef.type)
 }
 
-fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? = this.containingClassAttr?.let { lookupTag ->
+fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? = this.containingClassForStaticMemberAttr?.let { lookupTag ->
     session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
 }
 

@@ -60,7 +60,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
             it.replaceTypeRef(returnTypeRef)
         }
     }.apply {
-        containingClassAttr = this@generateValuesFunction.symbol.toLookupTag()
+        containingClassForStaticMemberAttr = this@generateValuesFunction.symbol.toLookupTag()
     }
 }
 
@@ -104,7 +104,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             it.replaceTypeRef(returnTypeRef)
         }
     }.apply {
-        containingClassAttr = this@generateValueOfFunction.symbol.toLookupTag()
+        containingClassForStaticMemberAttr = this@generateValueOfFunction.symbol.toLookupTag()
     }
 }
 

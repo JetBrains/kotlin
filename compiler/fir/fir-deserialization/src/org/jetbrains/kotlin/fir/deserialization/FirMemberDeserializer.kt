@@ -501,7 +501,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             containerSource = c.containerSource
             deprecation = annotations.getDeprecationInfosFromAnnotations(c.session.languageVersionSettings.apiVersion, false)
         }.build().apply {
-            containingClassAttr = c.dispatchReceiver!!.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             versionRequirementsTable = c.versionRequirementTable
         }
     }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassAttr
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -217,7 +217,7 @@ class FirSamResolverImpl(
 
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }.apply {
-            containingClassAttr = outerClassManager?.outerClass(firRegularClass.symbol)?.toLookupTag()
+            containingClassForStaticMemberAttr = outerClassManager?.outerClass(firRegularClass.symbol)?.toLookupTag()
         }
     }
 
