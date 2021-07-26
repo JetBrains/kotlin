@@ -573,7 +573,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretFunctionExpression(expression: IrFunctionExpression) {
-        val function = KFunctionState(expression.function, expression.type.classOrNull!!.owner)
+        val function = KFunctionState(expression.function, expression.type.classOrNull!!.owner, environment)
         if (expression.function.isLocal) callStack.storeUpValues(function)
         callStack.pushState(function)
     }
@@ -586,6 +586,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         val function = KFunctionState(
             reference,
+            environment,
             dispatchReceiver?.let { Variable(irFunction.getDispatchReceiver()!!, it) },
             extensionReceiver?.let { Variable(irFunction.getExtensionReceiver()!!, it) }
         )

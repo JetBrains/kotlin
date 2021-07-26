@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -14,10 +13,6 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.interpreter.*
-import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
-import org.jetbrains.kotlin.ir.interpreter.TEMP_FUNCTION_FOR_INTERPRETER
-import org.jetbrains.kotlin.ir.interpreter.createTempClass
-import org.jetbrains.kotlin.ir.interpreter.createTempFunction
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
@@ -34,71 +29,90 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 
 internal class KFunctionState(
-    val irFunction: IrFunction, override val irClass: IrClass, override val fields: MutableList<Variable>,
+    val irFunction: IrFunction,
+    override val irClass: IrClass,
+    environment: IrInterpreterEnvironment,
+    override val fields: MutableList<Variable> = mutableListOf()
 ) : ReflectionState(), StateWithClosure {
     override val upValues: MutableList<Variable> = mutableListOf()
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
     private var _typeParameters: List<KTypeParameter>? = null
 
-    private val functionClass: IrClass
-    val invokeSymbol: IrFunctionSymbol
+    val invokeSymbol: IrFunctionSymbol = environment.cachedLambdasAndReferences
+        .getOrDefault(
+            irFunction.symbol,
+            createInvokeFunction(
+                irFunction,
+                irClass,
+                irFunction.dispatchReceiverParameter?.let { getField(it.symbol) } != null,
+                irFunction.extensionReceiverParameter?.let { getField(it.symbol) } != null
+            ).symbol
+        )
 
-    init {
-        val invokeFunction = irClass.declarations.filterIsInstance<IrSimpleFunction>().single { it.name == OperatorNameConventions.INVOKE }
-        // TODO do we need new class here? if yes, do we need different names for temp classes?
-        functionClass = createTempClass(Name.identifier("Function\$0")).apply { parent = irFunction.parent }
+    companion object {
+        fun createInvokeFunction(
+            irFunction: IrFunction, irClass: IrClass, hasDispatchReceiver: Boolean, hasExtensionReceiver: Boolean
+        ): IrSimpleFunction {
+            val invokeFunction = irClass.declarations
+                .filterIsInstance<IrSimpleFunction>()
+                .single { it.name == OperatorNameConventions.INVOKE }
+            // TODO do we need new class here? if yes, do we need different names for temp classes?
+            val functionClass = createTempClass(Name.identifier("Function\$0")).apply { parent = irFunction.parent }
 
-        functionClass.superTypes += irClass.defaultType
-        functionClass.declarations += createTempFunction(
-            OperatorNameConventions.INVOKE, irFunction.returnType, TEMP_FUNCTION_FOR_INTERPRETER
-        ).apply impl@{
-            parent = functionClass
-            overriddenSymbols = listOf(invokeFunction.symbol)
+            functionClass.superTypes += irClass.defaultType
+            val newFunctionToInvoke = createTempFunction(
+                OperatorNameConventions.INVOKE, irFunction.returnType, TEMP_FUNCTION_FOR_INTERPRETER
+            ).apply impl@{
+                parent = functionClass
+                overriddenSymbols = listOf(invokeFunction.symbol)
 
-            dispatchReceiverParameter = invokeFunction.dispatchReceiverParameter?.deepCopyWithSymbols(initialParent = this)
-            valueParameters = mutableListOf()
+                dispatchReceiverParameter = invokeFunction.dispatchReceiverParameter?.deepCopyWithSymbols(initialParent = this)
+                valueParameters = mutableListOf()
 
-            val call = when (irFunction) {
-                is IrSimpleFunction -> irFunction.createCall()
-                is IrConstructor -> irFunction.createConstructorCall()
-                else -> TODO("Unsupported symbol $symbol for invoke")
-            }.apply {
-                val dispatchParameter = irFunction.dispatchReceiverParameter
-                val extensionParameter = irFunction.extensionReceiverParameter
+                val call = when (irFunction) {
+                    is IrSimpleFunction -> irFunction.createCall()
+                    is IrConstructor -> irFunction.createConstructorCall()
+                    else -> TODO("Unsupported symbol $symbol for invoke")
+                }.apply {
+                    val dispatchParameter = irFunction.dispatchReceiverParameter
+                    val extensionParameter = irFunction.extensionReceiverParameter
 
-                if (dispatchParameter != null) {
-                    dispatchReceiver = dispatchParameter.createGetValue()
-                    if (getField(dispatchParameter.symbol) == null) (this@impl.valueParameters as MutableList) += dispatchParameter
+                    if (dispatchParameter != null) {
+                        dispatchReceiver = dispatchParameter.createGetValue()
+                        if (!hasDispatchReceiver) (this@impl.valueParameters as MutableList) += dispatchParameter
+                    }
+                    if (extensionParameter != null) {
+                        extensionReceiver = extensionParameter.createGetValue()
+                        if (!hasExtensionReceiver) (this@impl.valueParameters as MutableList) += extensionParameter
+                    }
+                    irFunction.valueParameters.forEach {
+                        putArgument(it, it.createGetValue())
+                        (this@impl.valueParameters as MutableList) += it
+                    }
                 }
-                if (extensionParameter != null) {
-                    extensionReceiver = extensionParameter.createGetValue()
-                    if (getField(extensionParameter.symbol) == null) (this@impl.valueParameters as MutableList) += extensionParameter
-                }
-                irFunction.valueParameters.forEach {
-                    putArgument(it, it.createGetValue())
-                    (this@impl.valueParameters as MutableList) += it
-                }
+
+                body = listOf(this.createReturn(call)).wrapWithBlockBody()
             }
-
-            body = listOf(this.createReturn(call)).wrapWithBlockBody()
-            invokeSymbol = this.symbol
+            functionClass.declarations += newFunctionToInvoke
+            return newFunctionToInvoke
         }
     }
 
-    constructor(irFunction: IrFunction, irClass: IrClass) : this(irFunction, irClass, mutableListOf())
-
-    constructor(functionReference: IrFunctionReference, dispatchReceiver: Variable?, extensionReceiver: Variable?) : this(
+    constructor(
+        functionReference: IrFunctionReference,
+        environment: IrInterpreterEnvironment,
+        dispatchReceiver: Variable?,
+        extensionReceiver: Variable?
+    ) : this(
         functionReference.symbol.owner,
         functionReference.type.classOrNull!!.owner,
+        environment,
         listOfNotNull(dispatchReceiver, extensionReceiver).toMutableList()
     ) {
         // receivers are used in comparison of two functions in KFunctionProxy
         upValues += fields
     }
-
-    constructor(irFunction: IrFunction, irBuiltIns: IrBuiltIns) :
-            this(irFunction, irBuiltIns.kFunctionN(irFunction.valueParameters.size), mutableListOf())
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         if (expression.symbol.owner.name == OperatorNameConventions.INVOKE) return invokeSymbol.owner

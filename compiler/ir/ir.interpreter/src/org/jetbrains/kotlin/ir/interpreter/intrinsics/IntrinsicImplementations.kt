@@ -222,7 +222,7 @@ internal object ArrayConstructor : IntrinsicBase() {
 
         val initSymbol = irFunction.valueParameters[1].symbol
         val state = callStack.getState(initSymbol).let {
-            (it as? KFunctionState) ?: (it as KPropertyState).convertGetterToKFunctionState()
+            (it as? KFunctionState) ?: (it as KPropertyState).convertGetterToKFunctionState(environment)
         }
         // if property was converted, then we must replace symbol in memory to get correct receiver later
         callStack.setState(initSymbol, state)
