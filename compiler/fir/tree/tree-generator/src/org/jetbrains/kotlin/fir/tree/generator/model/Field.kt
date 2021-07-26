@@ -28,6 +28,8 @@ sealed class Field : Importable {
     open val overridenTypes: MutableSet<Importable> = mutableSetOf()
     open var useNullableForReplace: Boolean = false
 
+    var withBindThis = true
+
     fun copy(): Field = internalCopy().also {
         updateFieldsInCopy(it)
     }
@@ -137,7 +139,9 @@ class SimpleField(
             customType,
             nullable,
             withReplace
-        )
+        ).apply {
+            withBindThis = this@SimpleField.withBindThis
+        }
     }
 
     fun replaceType(newType: Type) = SimpleField(
@@ -148,6 +152,7 @@ class SimpleField(
         nullable,
         withReplace
     ).also {
+        it.withBindThis = withBindThis
         updateFieldsInCopy(it)
     }
 }
@@ -176,7 +181,9 @@ class FirField(
             element,
             nullable,
             withReplace
-        )
+        ).apply {
+            withBindThis = this@FirField.withBindThis
+        }
     }
 }
 
