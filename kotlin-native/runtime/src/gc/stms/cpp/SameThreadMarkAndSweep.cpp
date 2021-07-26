@@ -112,9 +112,8 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noe
 
 gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep() noexcept {
     if (Kotlin_getGcAggressive()) {
-        // TODO: Make it even more aggressive and run on a subset of backend.native tests.
         threshold_ = 1000;
-        allocationThresholdBytes_ = 10000;
+        allocationThresholdBytes_ = 0; // Run GC on every allocation.
         cooldownThresholdUs_ = 0;
     }
 }
