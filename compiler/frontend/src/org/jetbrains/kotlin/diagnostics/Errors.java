@@ -276,6 +276,7 @@ public interface Errors {
 
     DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_API_USAGE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_API_USAGE_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_API_USAGE_FUTURE_ERROR = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_OVERRIDE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, FqName, String> EXPERIMENTAL_OVERRIDE_ERROR = DiagnosticFactory2.create(ERROR);

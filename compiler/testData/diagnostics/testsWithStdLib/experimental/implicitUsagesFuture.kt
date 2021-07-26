@@ -1,5 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.RequiresOptIn
-// LANGUAGE: +OptInContagiousSignatures
+// LANGUAGE: -OptInContagiousSignatures
 
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
@@ -15,10 +15,10 @@ abstract class User {
     fun withSome(some: <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>? = null) {}
 
     fun use() {
-        val something = <!EXPERIMENTAL_API_USAGE_ERROR!>createSome<!>()
-        val somethingOther: <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!> = <!EXPERIMENTAL_API_USAGE_ERROR!>createSome<!>()
-        null.<!EXPERIMENTAL_API_USAGE_ERROR!>onSome<!>()
-        <!EXPERIMENTAL_API_USAGE_ERROR!>withSome<!>()
+        val something = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>createSome<!>()
+        val somethingOther: <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!> = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>createSome<!>()
+        null.<!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>onSome<!>()
+        <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>withSome<!>()
     }
 }
 
@@ -32,7 +32,7 @@ fun useDataClass(d: DataClass) {
 
 typealias My = <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>
 
-fun my(my: <!EXPERIMENTAL_API_USAGE_ERROR!>My<!>) {}
+fun my(my: <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>My<!>) {}
 
 fun your(my: <!EXPERIMENTAL_API_USAGE_ERROR!>Some<!>) {}
 
@@ -68,10 +68,10 @@ typealias MyList = ArrayList<I>
 typealias YourList = ArrayList<String>
 
 fun main() {
-    val x = <!EXPERIMENTAL_API_USAGE_ERROR!>listOf<!>(A(), B())
-    val y = <!EXPERIMENTAL_API_USAGE_ERROR!>MyList<!>()
-    val z = <!EXPERIMENTAL_API_USAGE_ERROR!>YourList<!>()
-    <!EXPERIMENTAL_API_USAGE_ERROR!>YourList<!>().add("")
+    val x = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>listOf<!>(A(), B())
+    val y = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>MyList<!>()
+    val z = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>YourList<!>()
+    <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>YourList<!>().add("")
 }
 
 @Marker
@@ -84,7 +84,7 @@ object O {
     operator fun provideDelegate(x: Any?, y: Any?): C = C()
 }
 
-val x: String by <!EXPERIMENTAL_API_USAGE_ERROR!>O<!>
+val x: String by <!EXPERIMENTAL_API_USAGE_ERROR, EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>O<!>
 
 @Marker
 class OperatorContainer : Comparable<OperatorContainer> {
@@ -117,8 +117,8 @@ operator fun String.minus(s: String) = OperatorContainer()
 operator fun String.invoke() = OperatorContainer()
 
 fun operatorContainerUsage(s: String, a: AnotherContainer) {
-    val res1 = s <!EXPERIMENTAL_API_USAGE_ERROR!>-<!> s
-    val res2 = <!EXPERIMENTAL_API_USAGE_ERROR!>s<!>()
-    val res3 = <!EXPERIMENTAL_API_USAGE_ERROR!>res1<!> <!EXPERIMENTAL_API_USAGE_ERROR!>><!> <!EXPERIMENTAL_API_USAGE_ERROR!>res2<!>
-    for (c in <!EXPERIMENTAL_API_USAGE_ERROR!>a<!>) {}
+    val res1 = s <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>-<!> s
+    val res2 = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>s<!>()
+    val res3 = <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>res1<!> <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>><!> <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>res2<!>
+    for (c in <!EXPERIMENTAL_API_USAGE_FUTURE_ERROR!>a<!>) {}
 }
