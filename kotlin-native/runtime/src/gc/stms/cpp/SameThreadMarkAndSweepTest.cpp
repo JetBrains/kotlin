@@ -73,7 +73,7 @@ public:
     test_support::Object<Payload>& operator->() { return test_support::Object<Payload>::FromObjHeader(location_); }
 
 private:
-    ObjHeader* location_;
+    ObjHeader* location_ = nullptr;
 };
 
 // TODO: Clean GlobalPermanentObjectHolder after it's gone.
@@ -111,7 +111,7 @@ public:
     ObjHeader*& operator[](size_t index) noexcept { return (**this).elements()[index]; }
 
 private:
-    ObjHeader* location_;
+    ObjHeader* location_ = nullptr;
 };
 
 // TODO: Clean GlobalCharArrayHolder after it's gone.
@@ -128,7 +128,7 @@ public:
     test_support::CharArray<3>& operator->() { return test_support::CharArray<3>::FromArrayHeader(location_->array()); }
 
 private:
-    ObjHeader* location_;
+    ObjHeader* location_ = nullptr;
 };
 
 class StackObjectHolder : private Pinned {
@@ -215,7 +215,24 @@ WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader
 
 class SameThreadMarkAndSweepTest : public testing::Test {
 public:
+    SameThreadMarkAndSweepTest() {
+        // These tests rely on GC being called only when asked. Setting the thresholds unreachably high for this.
+        // TODO: Alternatively need to mark "safe" zones, where GC cannot happen.
+        auto& gc = mm::GlobalData::Instance().gc();
+        threshold_ = gc.GetThreshold();
+        gc.SetThreshold(std::numeric_limits<size_t>::max());
+        allocationThresholdBytes_ = gc.GetAllocationThresholdBytes();
+        gc.SetAllocationThresholdBytes(std::numeric_limits<size_t>::max());
+        cooldownThresholdUs_ = gc.GetCooldownThresholdUs();
+        gc.SetCooldownThresholdUs(std::numeric_limits<uint64_t>::max());
+    }
+
     ~SameThreadMarkAndSweepTest() {
+        auto& gc = mm::GlobalData::Instance().gc();
+        gc.SetThreshold(threshold_);
+        gc.SetAllocationThresholdBytes(allocationThresholdBytes_);
+        gc.SetCooldownThresholdUs(cooldownThresholdUs_);
+
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::GlobalData::Instance().objectFactory().ClearForTests();
     }
@@ -224,6 +241,9 @@ public:
 
 private:
     FinalizerHooksTestSupport finalizerHooks_;
+    size_t threshold_;
+    size_t allocationThresholdBytes_;
+    uint64_t cooldownThresholdUs_;
 };
 
 } // namespace
