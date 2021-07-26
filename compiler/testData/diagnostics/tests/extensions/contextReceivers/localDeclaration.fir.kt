@@ -6,7 +6,7 @@ class B : A
 fun testLocalFunction() {
     context(A)
     fun local() {
-        f()
+        <!UNRESOLVED_REFERENCE!>f<!>()
     }
     with(B()) {
         local()
@@ -18,7 +18,7 @@ fun testLocalClass() {
     context(A)
     class Local {
         fun local() {
-            f()
+            <!UNRESOLVED_REFERENCE!>f<!>()
         }
     }
     with(B()) {

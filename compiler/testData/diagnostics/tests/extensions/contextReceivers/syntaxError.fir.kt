@@ -1,3 +1,0 @@
-context(
-<!SYNTAX!><!>fun foo() {
-}
