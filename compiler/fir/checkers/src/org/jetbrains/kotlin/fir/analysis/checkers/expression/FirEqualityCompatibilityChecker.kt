@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.areCompatible
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.render
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     override fun check(expression: FirEqualityOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -30,13 +30,12 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         // type `Nothing?`
         if (lType.isNullableNothing || rType.isNullableNothing) return
         val inferenceContext = context.session.inferenceComponents.ctx
-        val intersectionType = inferenceContext.intersectTypesOrNull(listOf(lType, rType)) as? ConeIntersectionType ?: return
 
         val compatibility = try {
-            intersectionType.intersectedTypes.areCompatible(inferenceContext)
+            inferenceContext.isCompatible(lType, rType)
         } catch (e: Throwable) {
             throw IllegalStateException(
-                "Exception while determining type compatibility: type ${intersectionType.render()}, " +
+                "Exception while determining type compatibility: lType: $lType, rType: $rType, " +
                         "equality ${expression.render()}, " +
                         "file ${context.containingDeclarations.filterIsInstance<FirFile>().firstOrNull()?.name}",
                 e
