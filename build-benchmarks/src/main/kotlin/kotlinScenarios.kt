@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.build.benchmarks.dsl.*
 fun abiSnapshotBenchmarks() = kotlinBenchmarks(arrayOf("-Dkotlin.incremental.classpath.snapshot.enabled=true"))
 fun artifactTransformBenchmarks() = kotlinBenchmarks(arrayOf("-Dkotlin.incremental.useClasspathSnapshot=true"))
 
-fun kotlinBenchmarks(val additionalDefaultProperties: Array<String> = emptyArray()) =
+fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) =
     suite {
         val coreUtilStrings = changeableFile("coreUtil/StringsKt")
         val coreUtilCoreLib = changeableFile("coreUtil/CoreLibKt")
