@@ -19,6 +19,8 @@ val KotlinBuildProperties.jarCompression: Boolean get() = getBoolean("kotlin.bui
 
 val KotlinBuildProperties.ignoreTestFailures: Boolean get() = getBoolean("ignoreTestFailures", isTeamcityBuild)
 
-val KotlinBuildProperties.disableWerror: Boolean get() = getBoolean("kotlin.build.disable.werror", false)
+val KotlinBuildProperties.disableWerror: Boolean
+    get() = getBoolean("kotlin.build.disable.werror") || useFir || isInJpsBuildIdeaSync || getBoolean("test.progressive.mode")
 
-val KotlinBuildProperties.suppressJdkHomeWarning: Boolean get() = getBoolean("kotlin.suppress.jdkHome.warning", false)
+val KotlinBuildProperties.isObsoleteJdkOverrideEnabled: Boolean
+    get() = getBoolean("kotlin.build.isObsoleteJdkOverrideEnabled", false)
