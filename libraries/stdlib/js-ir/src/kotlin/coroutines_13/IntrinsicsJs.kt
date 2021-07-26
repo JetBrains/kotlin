@@ -27,7 +27,9 @@ import kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
 ): Any? {
-    return this.asDynamic()(completion)
+    val a = this.asDynamic()
+    return if (jsTypeOf(a) == "function") a(completion)
+    else ::invoke.asDynamic()(completion)
 }
 
 /**
@@ -47,8 +49,10 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
-): Any?  {
-    return this.asDynamic()(receiver, completion)
+): Any? {
+    val a = this.asDynamic()
+    return if (jsTypeOf(a) == "function") a(receiver, completion)
+    else ::invoke.asDynamic()(receiver, completion)
 }
 
 @InlineOnly
@@ -56,7 +60,11 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = this.asDynamic()(receiver, param, completion)
+): Any? {
+    val a = this.asDynamic()
+    return if (jsTypeOf(a) == "function") a(receiver, param, completion)
+    else ::invoke.asDynamic()(receiver, param, completion)
+}
 
 /**
  * Creates unintercepted coroutine without receiver and with result type [T].
@@ -79,7 +87,9 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
     createCoroutineFromSuspendFunction(completion) {
-        this.asDynamic()(completion)
+        val a = this.asDynamic()
+        if (jsTypeOf(a) == "function") a(completion)
+        else ::invoke.asDynamic()(completion)
     }
 
 /**
@@ -104,7 +114,9 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
     createCoroutineFromSuspendFunction(completion) {
-        this.asDynamic()(receiver, completion)
+        val a = this.asDynamic()
+        if (jsTypeOf(a) == "function") a(receiver, completion)
+        else ::invoke.asDynamic()(receiver, completion)
     }
 
 /**
