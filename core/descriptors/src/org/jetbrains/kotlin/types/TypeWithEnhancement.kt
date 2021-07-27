@@ -156,7 +156,7 @@ fun UnwrappedType.wrapEnhancement(enhancement: KotlinType?): UnwrappedType {
     if (this is TypeWithEnhancement) {
         return origin.wrapEnhancement(enhancement)
     }
-    if (enhancement == null) {
+    if (enhancement == null || enhancement == this) {
         return this
     }
     return when (this) {
