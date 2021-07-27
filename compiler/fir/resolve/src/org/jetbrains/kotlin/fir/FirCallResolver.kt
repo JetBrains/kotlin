@@ -72,13 +72,22 @@ class FirCallResolver(
     @OptIn(PrivateForInline::class)
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
         qualifiedResolver.reset()
+
+        @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE") var hasCollectionLiteral = false
+
         @Suppress("NAME_SHADOWING")
         val functionCall = if (needTransformArguments) {
-            functionCall.transformExplicitReceiver()
-                .also {
-                    components.dataFlowAnalyzer.enterQualifiedAccessExpression()
-                    functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
-                }
+            if (functionCall.argumentList.arguments.any { it is FirCollectionLiteral }) {
+                @Suppress("UNUSED_VALUE")
+                hasCollectionLiteral = true
+                functionCall
+            } else {
+                functionCall.transformExplicitReceiver()
+                    .also {
+                        components.dataFlowAnalyzer.enterQualifiedAccessExpression()
+                        functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+                    }
+            }
         } else {
             functionCall
         }
@@ -107,6 +116,14 @@ class FirCallResolver(
 
         val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
+
+        if (hasCollectionLiteral) {
+            functionCall.argumentList.transformArguments(
+                transformer,
+                ResolutionMode.WithExpectedArgumentsType(candidate?.argumentMapping ?: emptyMap())
+            )
+        }
+
         val resolvedReceiver = functionCall.explicitReceiver
         if (candidate != null && resolvedReceiver is FirResolvedQualifier) {
             resolvedReceiver.replaceResolvedToCompanionObject(candidate.isFromCompanionObjectTypeScope)

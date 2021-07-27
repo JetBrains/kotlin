@@ -749,8 +749,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 )
                 lambda.addReturn()
             }
-            is ResolutionMode.WithStatus, is ResolutionMode.WithExpectedTypeFromCast -> {
-                throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
+            is ResolutionMode.WithStatus, is ResolutionMode.WithExpectedTypeFromCast, is ResolutionMode.WithExpectedArgumentsType -> {
+                throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast/WithExpectedArgumentsType mode")
             }
         }
     }

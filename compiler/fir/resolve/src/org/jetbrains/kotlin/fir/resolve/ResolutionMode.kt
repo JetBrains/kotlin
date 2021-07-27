@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -21,6 +23,10 @@ sealed class ResolutionMode {
         val expectedTypeRef: FirTypeRef,
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
+    ) : ResolutionMode()
+
+    class WithExpectedArgumentsType(
+        val argumentMapping: Map<FirExpression, FirValueParameter>
     ) : ResolutionMode()
 
     class WithStatus(val status: FirDeclarationStatus) : ResolutionMode()

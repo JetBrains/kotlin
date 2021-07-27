@@ -186,6 +186,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("rhs", expression).withTransform()
         }
 
+        collectionLiteral.configure {
+            +field("kind", collectionLiteralKindType)
+            +fieldList("expressions", expression).withTransform()
+        }
+
         qualifiedAccess.configure {
             +typeArguments.withTransform()
             +receivers

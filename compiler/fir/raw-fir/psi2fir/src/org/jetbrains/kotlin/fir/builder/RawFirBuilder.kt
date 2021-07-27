@@ -2321,13 +2321,12 @@ open class RawFirBuilder(
         }
 
         override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression, data: Unit): FirElement {
-            return buildArrayOfCall {
-                source = expression.toFirSourceElement()
-                argumentList = buildArgumentList {
-                    for (innerExpression in expression.getInnerExpressions()) {
-                        arguments += innerExpression.toFirExpression("Incorrect collection literal argument")
-                    }
-                }
+            return buildCollectionLiteral {
+                source = expression.toFirPsiSourceElement()
+                kind = CollectionLiteralKind.LIST_LITERAL // TODO
+                expressions.addAll(
+                    expression.getInnerExpressions().map { it.toFirExpression("Incorrect collection literal argument") }
+                )
             }
         }
 

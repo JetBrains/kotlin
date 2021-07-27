@@ -1296,6 +1296,17 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitCall(arrayOfCall)
     }
 
+    override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral) {
+        print("CollectionLiteral ")
+        collectionLiteral.typeRef.accept(this)
+        print(" [")
+        collectionLiteral.expressions.forEach {
+            it.accept(this)
+            print(", ")
+        }
+        print("] ")
+    }
+
     override fun visitThrowExpression(throwExpression: FirThrowExpression) {
         throwExpression.annotations.renderAnnotations()
         print("throw ")

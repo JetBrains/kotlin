@@ -313,6 +313,37 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return completeInference
     }
 
+    override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
+        return when (data) {
+            is ResolutionMode.WithExpectedType -> {
+                collectionLiteral.transformChildren(transformer, data)
+                if (data.expectedTypeRef is FirImplicitTypeRef) {
+                    collectionLiteral.resultType = buildResolvedTypeRef {
+                        type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
+                    }
+                }
+                collectionLiteral
+            }
+            is ResolutionMode.WithExpectedArgumentsType -> {
+                collectionLiteral.transformChildren(transformer, data)
+                collectionLiteral.resultType = data.argumentMapping[collectionLiteral]?.returnTypeRef ?: buildResolvedTypeRef {
+                    type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
+                }
+
+                collectionLiteral
+            }
+            ResolutionMode.ContextDependent,
+            ResolutionMode.ContextDependentDelegate,
+            ResolutionMode.ContextIndependent,
+            is ResolutionMode.LambdaResolution,
+            is ResolutionMode.WithExpectedTypeFromCast,
+            is ResolutionMode.WithStatus -> {
+                collectionLiteral.transformChildren(transformer, data)
+                return collectionLiteral
+            }
+        }
+    }
+
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
         context.forBlock {
             transformBlockInCurrentScope(block, data)

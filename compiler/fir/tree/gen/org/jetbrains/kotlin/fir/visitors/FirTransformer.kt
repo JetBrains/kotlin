@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
@@ -433,6 +434,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformElvisExpression(elvisExpression: FirElvisExpression, data: D): FirStatement {
         return transformElement(elvisExpression, data)
+    }
+
+    open fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: D): FirStatement {
+        return transformElement(collectionLiteral, data)
     }
 
     open fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): FirStatement {
@@ -945,6 +950,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: D): FirStatement {
         return transformElvisExpression(elvisExpression, data)
+    }
+
+    final override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: D): FirStatement {
+        return transformCollectionLiteral(collectionLiteral, data)
     }
 
     final override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): FirStatement {

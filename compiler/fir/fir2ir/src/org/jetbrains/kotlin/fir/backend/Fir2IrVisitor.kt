@@ -291,6 +291,17 @@ class Fir2IrVisitor(
 
     // ==================================================================================
 
+    override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: Any?): IrElement {
+        return collectionLiteral.convertWithOffsets { startOffset, endOffset ->
+            IrCollectionLiteralImpl(
+                startOffset, endOffset,
+                collectionLiteral.typeRef.toIrType(),
+                collectionLiteral.kind == CollectionLiteralKind.LIST_LITERAL,
+                collectionLiteral.expressions.map { it.accept(this, data) as IrExpression }
+            )
+        }
+    }
+
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: Any?): IrElement {
         val irTarget = conversionScope.returnTarget(returnExpression, declarationStorage)
         return returnExpression.convertWithOffsets { startOffset, endOffset ->
