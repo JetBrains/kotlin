@@ -81,6 +81,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
+        @TestMetadata("kt47920.kt")
+        public void testKt47920() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47920.kt");
+        }
+
+        @Test
         @TestMetadata("lombokSimple.kt")
         public void testLombokSimple() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/lombokSimple.kt");

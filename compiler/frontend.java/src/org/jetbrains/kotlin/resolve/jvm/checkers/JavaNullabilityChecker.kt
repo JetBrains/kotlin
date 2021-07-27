@@ -128,13 +128,16 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
             upperBoundChecker.checkBoundsOfExpandedTypeAlias(expressionType.expandedType, expression, c.trace)
         }
 
-        if (c !is BasicCallResolutionContext || upperBoundChecker !is WarningAwareUpperBoundChecker) return
+        if (upperBoundChecker !is WarningAwareUpperBoundChecker) return
 
-        val resolvedCall = c.trace.bindingContext[BindingContext.RESOLVED_CALL, c.call] ?: return
+        val call = (c as? BasicCallResolutionContext)?.call
+            ?: c.trace.bindingContext[BindingContext.CALL, (expression as? KtCallExpression)?.calleeExpression]
+            ?: return
+        val resolvedCall = c.trace.bindingContext[BindingContext.RESOLVED_CALL, call] ?: return
 
         for ((typeParameter, typeArgument) in resolvedCall.typeArguments) {
             // continue if we don't have explicit type arguments
-            val typeReference = c.call.typeArguments.getOrNull(typeParameter.index)?.typeReference ?: continue
+            val typeReference = call.typeArguments.getOrNull(typeParameter.index)?.typeReference ?: continue
 
             upperBoundChecker.checkBounds(
                 typeReference, typeArgument, typeParameter, TypeSubstitutor.create(typeArgument), c.trace, withOnlyCheckForWarning = true
