@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -135,9 +136,17 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
             ?: return
         val resolvedCall = c.trace.bindingContext[BindingContext.RESOLVED_CALL, call] ?: return
 
-        for ((typeParameter, typeArgument) in resolvedCall.typeArguments) {
+        val typeArguments = if (resolvedCall is NewResolvedCallImpl<*>) {
+            resolvedCall.resolvedCallAtom.typeArgumentMappingByOriginal
+        } else {
+            resolvedCall.typeArguments.entries
+        }
+
+        for ((typeParameter, typeArgument) in typeArguments) {
             // continue if we don't have explicit type arguments
             val typeReference = call.typeArguments.getOrNull(typeParameter.index)?.typeReference ?: continue
+
+            if (typeArgument == null) continue
 
             upperBoundChecker.checkBounds(
                 typeReference, typeArgument, typeParameter, TypeSubstitutor.create(typeArgument), c.trace, withOnlyCheckForWarning = true
