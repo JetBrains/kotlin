@@ -1,0 +1,53 @@
+FILE: overriddenGetterTypeChange.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open var p1: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected open var p2: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Any|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected open var p3: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Any|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        private open var p4: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        private open var p5: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        protected final override var p1: R|kotlin/Int| = this@R|/B|.super<R|A|>.R|/A.p1|.R|kotlin/Int.times|(Int(2))
+            public get(): R|kotlin/Any|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected final override var p2: R|kotlin/Int| = this@R|/B|.super<R|A|>.R|/A.p2|.R|kotlin/Int.times|(Int(2))
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final override var p3: R|kotlin/Number| = Int(20)
+            public get(): R|kotlin/Number|
+            public set(value: R|kotlin/Number|): R|kotlin/Unit|
+
+        protected final override var p4: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        private final override var p5: R|kotlin/Int| = Int(20)
+            public get(): R|kotlin/Number|
+            private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }

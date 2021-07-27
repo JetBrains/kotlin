@@ -1,0 +1,83 @@
+FILE: superDelegation.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open var p1: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected open var p2: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected open var p3: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected open var p4: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected open var p5: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected open val p6: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+
+        protected open val p7: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+
+        protected open val p8: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final override var p1: R|kotlin/Int| = this@R|/B|.super<R|A|>.R|/A.p1|.R|kotlin/Int.times|(Int(2))
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        protected final override var p2: R|kotlin/Int| = this@R|/B|.super<R|A|>.R|/A.p2|.R|kotlin/Int.times|(Int(2))
+            public get(): R|kotlin/Number|
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final override var p3: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/B|.super<R|A|>.R|/A.p3|.R|kotlin/Int.times|(Int(2))
+            }
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final override var p4: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(2)
+            }
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final override var p5: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/B|.super<R|A|>.R|/A.p5|
+            }
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final override val p6: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/B|.super<R|A|>.R|/A.p6|.R|kotlin/Int.times|(Int(2))
+            }
+
+        public final override val p7: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(2)
+            }
+
+        public final override val p8: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/B|.super<R|A|>.R|/A.p8|
+            }
+
+    }

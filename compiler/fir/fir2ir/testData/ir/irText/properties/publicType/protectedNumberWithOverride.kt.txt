@@ -1,0 +1,57 @@
+open class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  protected open val number: Int
+    field = 4
+    open get(): Number {
+      return <this>.#number
+    }
+
+}
+
+class B : A {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  override val number: Int
+    field = 10
+    override get
+
+}
+
+class C : A {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  override val number: Int
+    override get(): Int {
+      return 10
+    }
+
+}
+
+class D : A {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  protected override val number: Int
+    field = 10
+    override get(): Number {
+      return <this>.#number
+    }
+
+}
+

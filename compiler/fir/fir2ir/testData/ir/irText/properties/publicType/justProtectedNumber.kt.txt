@@ -1,0 +1,15 @@
+open class Simple {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  protected open val number: Int
+    field = 4
+    open get(): Number {
+      return <this>.#number
+    }
+
+}
+

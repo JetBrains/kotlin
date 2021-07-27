@@ -26,8 +26,6 @@ KtFile: IncompleteAccessor2.kt
           PsiElement(get)('get')
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
-          PsiErrorElement:Expecting function body
-            <empty list>
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

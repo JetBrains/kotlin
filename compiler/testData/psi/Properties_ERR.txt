@@ -217,8 +217,6 @@ KtFile: Properties_ERR.kt
       PsiElement(get)('get')
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
-      PsiErrorElement:Expecting function body
-        <empty list>
     PsiWhiteSpace(' ')
     PsiErrorElement:Property getter or setter expected
       PsiElement(MINUS)('-')

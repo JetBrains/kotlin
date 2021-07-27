@@ -1,0 +1,46 @@
+FILE: Test.kt
+    private final val thing: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(x), String(y)))
+        public get(): R|kotlin/collections/List<kotlin/String>|
+FILE: Fest.kt
+    private final val thing: R|kotlin/Int| = Int(4)
+        public get(): R|kotlin/Number|
+FILE: Main.kt
+    public final fun main(): R|kotlin/Unit| {
+        <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(<Ambiguity: thing, [special/accessor, special/accessor]>#.<Unresolved name: size>#)
+        <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(<Ambiguity: thing, [special/accessor, special/accessor]>#.<Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]>#(Int(1)))
+        <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(<Ambiguity: thing, [special/accessor, special/accessor]>#)
+        R|kotlin/io/println|(<Ambiguity: thing, [special/accessor, special/accessor]>#.R|kotlin/toString|())
+    }
+    public open class C1 : R|kotlin/Any| {
+        public constructor(): R|c/C1| {
+            super<R|kotlin/Any|>()
+        }
+
+        private open val number: R|kotlin/Int| = Int(4)
+            public get(): R|kotlin/Number|
+
+    }
+    public final class C2 : R|c/C1| {
+        public constructor(): R|c/C2| {
+            super<R|c/C1|>()
+        }
+
+        private final override val number: R|kotlin/Int| = Int(3)
+            public get(): R|kotlin/Number|
+
+    }
+    public final fun lol(): R|kotlin/Unit| {
+        <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(R|c/C2.C2|().R|special/accessor|.<Unresolved name: times>#(Int(2)))
+    }
+    public final val testA: R|kotlin/Int| = Int(10)
+        public get(): R|kotlin/Int|
+    public final val testA: R|kotlin/String| = String(test)
+        public get(): R|kotlin/String|
+    public final fun test(): R|kotlin/Unit| {
+        R|kotlin/io/println|(R|c/testA|)
+    }
+    public final fun fest(): R|kotlin/Unit| {
+        lval festA: R|kotlin/Int| = Int(10)
+        lval festA: R|kotlin/String| = String(test)
+        R|kotlin/io/println|(R|<local>/festA|)
+    }

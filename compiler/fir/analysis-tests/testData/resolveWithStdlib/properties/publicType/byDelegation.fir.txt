@@ -1,0 +1,121 @@
+FILE: byDelegation.kt
+    public final class Delegate : R|kotlin/Any| {
+        public constructor(): R|Delegate| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun getValue(self: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+            ^getValue Int(42)
+        }
+
+        public final operator fun setValue(self: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, value: R|kotlin/Int|): R|kotlin/Unit| {
+            R|kotlin/io/println|(<strcat>(String(Setting the value ), R|<local>/value|))
+        }
+
+    }
+    public final class NormalDelegatedProperty : R|kotlin/Any| {
+        public constructor(): R|NormalDelegatedProperty| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final var p6: R|kotlin/Int|by R|/Delegate.Delegate|()
+            protected get(): R|kotlin/Int| {
+                ^ this@R|/NormalDelegatedProperty|.D|/NormalDelegatedProperty.p6|.R|/Delegate.getValue|(this@R|/NormalDelegatedProperty|, ::R|/NormalDelegatedProperty.p6|)
+            }
+            protected set(<set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+                this@R|/NormalDelegatedProperty|.D|/NormalDelegatedProperty.p6|.R|/Delegate.setValue|(this@R|/NormalDelegatedProperty|, ::R|/NormalDelegatedProperty.p6|, R|<local>/p6|)
+            }
+
+    }
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open var p1: R|kotlin/Number|by R|/Delegate.Delegate|()
+            public get(): R|kotlin/Number|
+            protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
+                this@R|/A|.D|/A.p1|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p1|, R|<local>/p1|)
+            }
+
+        protected open var p2: R|kotlin/Number|by R|/Delegate.Delegate|()
+            public get(): R|kotlin/Number|
+            protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
+                this@R|/A|.D|/A.p2|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p2|, R|<local>/p2|)
+            }
+
+        protected open var p3: R|kotlin/Number|by R|/Delegate.Delegate|()
+            public get(): R|kotlin/Number|
+            protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
+                this@R|/A|.D|/A.p3|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p3|, R|<local>/p3|)
+            }
+
+        protected open var p4: R|kotlin/Number|by R|/Delegate.Delegate|()
+            public get(): R|kotlin/Number|
+            protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
+                this@R|/A|.D|/A.p4|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p4|, R|<local>/p4|)
+            }
+
+        protected open var p5: R|kotlin/Number|by R|/Delegate.Delegate|()
+            public get(): R|kotlin/Number|
+            protected set(<set-?>: R|kotlin/Number|): R|kotlin/Unit| {
+                this@R|/A|.D|/A.p5|.<Inapplicable(INAPPLICABLE): /Delegate.setValue>#(this@R|/A|, ::R|/A.p5|, R|<local>/p5|)
+            }
+
+        protected open val p6: R|kotlin/Number|by R|/Delegate.Delegate|()
+            public get(): R|kotlin/Number|
+
+        protected open val p7: R|kotlin/Number|by R|/Delegate.Delegate|()
+            public get(): R|kotlin/Number|
+
+        protected open val p8: R|kotlin/Number|by R|/Delegate.Delegate|()
+            public get(): R|kotlin/Number|
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final override var p1: <ERROR TYPE REF: Unresolved name: times> = this@R|/B|.super<R|A|>.R|/A.p1|.<Unresolved name: times>#(Int(2))
+            public get(): <ERROR TYPE REF: Unresolved name: times>
+            public set(value: <ERROR TYPE REF: Unresolved name: times>): R|kotlin/Unit|
+
+        protected final override var p2: <ERROR TYPE REF: Unresolved name: times> = this@R|/B|.super<R|A|>.R|/A.p2|.<Unresolved name: times>#(Int(2))
+            public get(): R|kotlin/Number|
+            protected set(value: <ERROR TYPE REF: Unresolved name: times>): R|kotlin/Unit|
+
+        public final override var p3: <ERROR TYPE REF: Unresolved name: times>
+            public get(): <ERROR TYPE REF: Unresolved name: times> {
+                ^ this@R|/B|.super<R|A|>.R|/A.p3|.<Unresolved name: times>#(Int(2))
+            }
+            public set(value: <ERROR TYPE REF: Unresolved name: times>): R|kotlin/Unit|
+
+        public final override var p4: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(2)
+            }
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final override var p5: R|kotlin/Number|
+            public get(): R|kotlin/Number| {
+                ^ this@R|/B|.super<R|A|>.R|/A.p5|
+            }
+            public set(value: R|kotlin/Number|): R|kotlin/Unit|
+
+        public final override val p6: <ERROR TYPE REF: Unresolved name: times>
+            public get(): <ERROR TYPE REF: Unresolved name: times> {
+                ^ this@R|/B|.super<R|A|>.R|/A.p6|.<Unresolved name: times>#(Int(2))
+            }
+
+        public final override val p7: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(2)
+            }
+
+        public final override val p8: R|kotlin/Number|
+            public get(): R|kotlin/Number| {
+                ^ this@R|/B|.super<R|A|>.R|/A.p8|
+            }
+
+    }

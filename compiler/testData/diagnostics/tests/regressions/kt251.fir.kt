@@ -16,7 +16,7 @@ class A() {
             field = v
         }
     val b: Int
-        get(): <!WRONG_GETTER_RETURN_TYPE!>Any<!> = "s"
+        get(): <!REDUNDANT_GETTER_TYPE_CHANGE!>Any<!> = "s"
     val c: Int
         get() {
             return 1

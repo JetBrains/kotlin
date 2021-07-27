@@ -5427,6 +5427,146 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Properties {
+            @Test
+            public void testAllFilesPresentInProperties() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType")
+            @TestDataPath("$PROJECT_ROOT")
+            public class PublicType {
+                @Test
+                @TestMetadata("abstractOverrides.kt")
+                public void testAbstractOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/abstractOverrides.kt");
+                }
+
+                @Test
+                public void testAllFilesPresentInPublicType() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("byDelegation.kt")
+                public void testByDelegation() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/byDelegation.kt");
+                }
+
+                @Test
+                @TestMetadata("constructorOverrides.kt")
+                public void testConstructorOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/constructorOverrides.kt");
+                }
+
+                @Test
+                @TestMetadata("explicitType.kt")
+                public void testExplicitType() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/explicitType.kt");
+                }
+
+                @Test
+                @TestMetadata("getterOverrides.kt")
+                public void testGetterOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/getterOverrides.kt");
+                }
+
+                @Test
+                @TestMetadata("junk.kt")
+                public void testJunk() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/junk.kt");
+                }
+
+                @Test
+                @TestMetadata("longPropertyChain.kt")
+                public void testLongPropertyChain() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/longPropertyChain.kt");
+                }
+
+                @Test
+                @TestMetadata("moreIncompletenessChecks.kt")
+                public void testMoreIncompletenessChecks() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/moreIncompletenessChecks.kt");
+                }
+
+                @Test
+                @TestMetadata("moreOverridingCases.kt")
+                public void testMoreOverridingCases() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/moreOverridingCases.kt");
+                }
+
+                @Test
+                @TestMetadata("multiPackage.kt")
+                public void testMultiPackage() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/multiPackage.kt");
+                }
+
+                @Test
+                @TestMetadata("normalOverride.kt")
+                public void testNormalOverride() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/normalOverride.kt");
+                }
+
+                @Test
+                @TestMetadata("overriddenGetterTypeChange.kt")
+                public void testOverriddenGetterTypeChange() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/overriddenGetterTypeChange.kt");
+                }
+
+                @Test
+                @TestMetadata("overridesChain.kt")
+                public void testOverridesChain() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/overridesChain.kt");
+                }
+
+                @Test
+                @TestMetadata("protectedImposter.kt")
+                public void testProtectedImposter() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/protectedImposter.kt");
+                }
+
+                @Test
+                @TestMetadata("protectedInternal.kt")
+                public void testProtectedInternal() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/protectedInternal.kt");
+                }
+
+                @Test
+                @TestMetadata("protectedOverrides.kt")
+                public void testProtectedOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/protectedOverrides.kt");
+                }
+
+                @Test
+                @TestMetadata("publicOverrides.kt")
+                public void testPublicOverrides() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/publicOverrides.kt");
+                }
+
+                @Test
+                @TestMetadata("publicTypeImposter.kt")
+                public void testPublicTypeImposter() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/publicTypeImposter.kt");
+                }
+
+                @Test
+                @TestMetadata("simpleGetters.kt")
+                public void testSimpleGetters() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/simpleGetters.kt");
+                }
+
+                @Test
+                @TestMetadata("superDelegation.kt")
+                public void testSuperDelegation() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/superDelegation.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations")
         @TestDataPath("$PROJECT_ROOT")
         public class Reinitializations {

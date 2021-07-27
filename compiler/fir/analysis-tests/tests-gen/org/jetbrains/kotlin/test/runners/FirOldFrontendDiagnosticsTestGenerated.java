@@ -22118,6 +22118,22 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                     runTest("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/vars.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/properties/publicType")
+            @TestDataPath("$PROJECT_ROOT")
+            public class PublicType {
+                @Test
+                public void testAllFilesPresentInPublicType() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/publicType"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("trivialExposingGetter.kt")
+                public void testTrivialExposingGetter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/properties/publicType/trivialExposingGetter.kt");
+                }
+            }
         }
 
         @Nested

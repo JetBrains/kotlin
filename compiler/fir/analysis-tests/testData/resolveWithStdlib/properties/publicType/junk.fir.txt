@@ -1,0 +1,34 @@
+FILE: junk.kt
+    public final class Something : R|kotlin/Any| {
+        public constructor(): R|Something| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val junk1: R|kotlin/String| = String(some junk)
+            public get(): R|kotlin/String|
+
+        public final val junk2: R|kotlin/String| = String(some junk)
+            public get(): R|kotlin/Any?|
+
+        public final val junk3: R|kotlin/String| = String(some junk)
+            public get(): R|kotlin/Any?| {
+                ^ this@R|/Something|.F|/Something.junk3|
+            }
+
+        public final val junk4: R|kotlin/String| = String(some junk)
+            public get(): R|kotlin/String| {
+                ^ this@R|/Something|.F|/Something.junk4|
+            }
+
+        protected final val junk5: R|kotlin/String| = String(some junk)
+            private get(): R|kotlin/String|
+
+        protected final val junk6: R|kotlin/String| = String(some junk)
+            private get(): R|kotlin/String|
+
+        protected final val junk7: R|kotlin/String| = String(some junk)
+            private get(): R|kotlin/Any?| {
+                ^ this@R|/Something|.F|/Something.junk7|
+            }
+
+    }

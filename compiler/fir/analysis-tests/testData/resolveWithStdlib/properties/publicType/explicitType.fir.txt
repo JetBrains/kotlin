@@ -1,0 +1,79 @@
+FILE: explicitType.kt
+    public final class Something : R|kotlin/Any| {
+        public constructor(): R|Something| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val junk1: R|kotlin/String| = String(some junk)
+            public get(): R|kotlin/String|
+
+        public final val junk2: R|kotlin/String|
+            public get(): R|kotlin/Any?|
+
+        public final val junk25: R|kotlin/String|
+            public get(): R|kotlin/Any?| {
+                ^ String(Test)
+            }
+
+        public final val junk3: R|kotlin/String| = String(some junk)
+            public get(): R|kotlin/Int| {
+                ^ this@R|/Something|.F|/Something.junk3|
+            }
+
+        public final val junk4: R|kotlin/String| = String(some junk)
+            public get(): R|kotlin/String| {
+                ^ this@R|/Something|.F|/Something.junk4|
+            }
+
+        protected final val junk5: R|kotlin/Any| = String(some junk)
+            private get(): R|kotlin/String|
+
+        protected final val junk6: R|kotlin/Any| = String(some junk)
+            private get(): R|kotlin/Any|
+
+        protected final val junk7: R|kotlin/String| = String(some junk)
+            private get(): R|kotlin/Any?| {
+                ^ this@R|/Something|.F|/Something.junk7|
+            }
+
+        public open class A : R|kotlin/Any| {
+            public constructor(): R|Something.A| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class B : R|Something.A| {
+            public constructor(): R|Something.B| {
+                super<R|Something.A|>()
+            }
+
+        }
+
+        public final class OutTester<out T> : R|kotlin/Any| {
+            public constructor<out T>(): R|Something.OutTester<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class InTester<in T> : R|kotlin/Any| {
+            public constructor<in T>(): R|Something.InTester<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        private final val junkOutBA: R|Something.OutTester<Something.A>| = R|SubstitutionOverride</Something.OutTester.OutTester>|<R|Something.A|>()
+            public get(): R|Something.OutTester<Something.B>|
+
+        private final val junkOutAB: R|Something.OutTester<Something.B>| = R|SubstitutionOverride</Something.OutTester.OutTester>|<R|Something.B|>()
+            public get(): R|Something.OutTester<Something.A>|
+
+        private final val junkInBA: R|Something.InTester<Something.A>| = R|SubstitutionOverride</Something.InTester.InTester>|<R|Something.A|>()
+            public get(): R|Something.InTester<Something.B>|
+
+        private final val junkInAB: R|Something.InTester<Something.B>| = R|SubstitutionOverride</Something.InTester.InTester>|<R|Something.B|>()
+            public get(): R|Something.InTester<Something.A>|
+
+    }

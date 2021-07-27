@@ -1,0 +1,13 @@
+FILE: protectedInternal.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final val number: R|kotlin/Int| = Int(4)
+            internal get(): R|kotlin/Number|
+
+        internal final val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(-), String(+)))
+            protected get(): R|kotlin/Number|
+
+    }

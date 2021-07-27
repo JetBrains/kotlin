@@ -30,4 +30,54 @@ public class Fir2IrSpecificTextTestGenerated extends AbstractFir2IrTextTest {
     public void testSample() throws Exception {
         runTest("compiler/fir/fir2ir/testData/ir/irText/sample.kt");
     }
+
+    @Nested
+    @TestMetadata("compiler/fir/fir2ir/testData/ir/irText/properties")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Properties {
+        @Test
+        public void testAllFilesPresentInProperties() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/ir/irText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/fir2ir/testData/ir/irText/properties/publicType")
+        @TestDataPath("$PROJECT_ROOT")
+        public class PublicType {
+            @Test
+            public void testAllFilesPresentInPublicType() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/ir/irText/properties/publicType"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("justPrivateNumber.kt")
+            public void testJustPrivateNumber() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/ir/irText/properties/publicType/justPrivateNumber.kt");
+            }
+
+            @Test
+            @TestMetadata("justProtectedNumber.kt")
+            public void testJustProtectedNumber() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/ir/irText/properties/publicType/justProtectedNumber.kt");
+            }
+
+            @Test
+            @TestMetadata("overridingUsualProperties.kt")
+            public void testOverridingUsualProperties() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/ir/irText/properties/publicType/overridingUsualProperties.kt");
+            }
+
+            @Test
+            @TestMetadata("privateNumberWithOverride.kt")
+            public void testPrivateNumberWithOverride() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/ir/irText/properties/publicType/privateNumberWithOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("protectedNumberWithOverride.kt")
+            public void testProtectedNumberWithOverride() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/ir/irText/properties/publicType/protectedNumberWithOverride.kt");
+            }
+        }
+    }
 }

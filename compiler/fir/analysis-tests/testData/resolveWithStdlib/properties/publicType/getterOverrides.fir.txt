@@ -1,0 +1,57 @@
+FILE: getterOverrides.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open val foo: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Number|
+
+    }
+    public final class Derived1 : R|Base| {
+        public constructor(): R|Derived1| {
+            super<R|Base|>()
+        }
+
+        public final override val foo: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(4)
+            }
+
+    }
+    public final class Derived2 : R|Base| {
+        public constructor(): R|Derived2| {
+            super<R|Base|>()
+        }
+
+        protected final override val foo: R|kotlin/Int|
+            protected get(): R|kotlin/Int| {
+                ^ Int(4)
+            }
+
+    }
+    public final class Derived3 : R|Base| {
+        public constructor(): R|Derived3| {
+            super<R|Base|>()
+        }
+
+        public final override val foo: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(Test)
+            }
+
+    }
+    public abstract interface Fooer : R|kotlin/Any| {
+        public abstract val foo: R|kotlin/Number|
+            public get(): R|kotlin/Number|
+
+    }
+    public final class SimpleFooer : R|Fooer| {
+        public constructor(): R|SimpleFooer| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final override val foo: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Number|
+
+    }

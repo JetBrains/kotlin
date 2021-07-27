@@ -1,0 +1,115 @@
+FILE: publicTypeImposter.kt
+    public open class SomeType1 : R|kotlin/Any| {
+        public constructor(): R|SomeType1| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open var items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/List<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final class Imposter1 : R|SomeType1| {
+        public constructor(): R|Imposter1| {
+            super<R|SomeType1|>()
+        }
+
+        private final val realItems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>| = this@R|/Imposter1|.R|/Imposter1.realItems|
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final class Imposter2 : R|SomeType1| {
+        public constructor(): R|Imposter2| {
+            super<R|SomeType1|>()
+        }
+
+        private final val realItems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>| = this@R|/Imposter2|.R|/Imposter2.realItems|
+            public get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final fun testSomeType1(): R|kotlin/Unit| {
+        lval SomeType1: R|SomeType1| = R|/SomeType1.SomeType1|()
+        R|<local>/SomeType1|.R|special/accessor|.<Unresolved name: add>#(String(Test))
+        lval imposter1: R|Imposter1| = R|/Imposter1.Imposter1|()
+        R|<local>/imposter1|.<HIDDEN: /Imposter1.items is invisible>#.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Rest))
+        lval imposter2: R|Imposter2| = R|/Imposter2.Imposter2|()
+        R|<local>/imposter2|.R|special/accessor|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Rest))
+    }
+    public open class SomeType2 : R|kotlin/Any| {
+        public constructor(): R|SomeType2| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open var items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final class Imposter3 : R|SomeType2| {
+        public constructor(): R|Imposter3| {
+            super<R|SomeType2|>()
+        }
+
+        private final val realItems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>| = this@R|/Imposter3|.R|/Imposter3.realItems|
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final class Imposter4 : R|SomeType2| {
+        public constructor(): R|Imposter4| {
+            super<R|SomeType2|>()
+        }
+
+        private final val realItems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            private get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>| = this@R|/Imposter4|.R|/Imposter4.realItems|
+            public get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final class Imposter5 : R|SomeType2| {
+        public constructor(): R|Imposter5| {
+            super<R|SomeType2|>()
+        }
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>|
+            protected get(): R|kotlin/collections/MutableList<kotlin/String>| {
+                ^ R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(Test)))
+            }
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final class Imposter6 : R|SomeType2| {
+        public constructor(): R|Imposter6| {
+            super<R|SomeType2|>()
+        }
+
+        protected final override var items: R|kotlin/collections/MutableList<kotlin/String>|
+            public get(): R|kotlin/collections/MutableList<kotlin/String>|
+            protected set(value: R|kotlin/collections/MutableList<kotlin/String>|): R|kotlin/Unit|
+
+    }
+    public final fun testSomeType2(): R|kotlin/Unit| {
+        lval SomeType2: R|SomeType2| = R|/SomeType2.SomeType2|()
+        R|<local>/SomeType2|.<HIDDEN: /SomeType2.items is invisible>#.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Test))
+        lval imposter3: R|Imposter3| = R|/Imposter3.Imposter3|()
+        R|<local>/imposter3|.<HIDDEN: /Imposter3.items is invisible>#.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Rest))
+        lval imposter4: R|Imposter4| = R|/Imposter4.Imposter4|()
+        R|<local>/imposter4|.R|special/accessor|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Rest))
+        lval imposter5: R|Imposter5| = R|/Imposter5.Imposter5|()
+        R|<local>/imposter5|.<HIDDEN: /Imposter5.items is invisible>#.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Rest))
+        lval imposter6: R|Imposter6| = R|/Imposter6.Imposter6|()
+        R|<local>/imposter6|.R|special/accessor|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Rest))
+    }

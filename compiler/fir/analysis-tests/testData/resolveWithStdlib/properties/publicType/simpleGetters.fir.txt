@@ -1,0 +1,50 @@
+FILE: simpleGetters.kt
+    public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val items: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+        public final fun addItem(item: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/SomeClass|.R|/SomeClass.items|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/item|)
+        }
+
+        private final val shmitems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            protected get(): R|kotlin/collections/List<kotlin/String>| {
+                ^ this@R|/SomeClass|.F|/SomeClass.shmitems|
+            }
+
+        public final val balalitems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            protected get(): R|kotlin/collections/List<kotlin/String>| {
+                ^ this@R|/SomeClass|.F|/SomeClass.balalitems|
+            }
+
+        public final val rhymetems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/List<kotlin/String>| {
+                ^ this@R|/SomeClass|.F|/SomeClass.rhymetems|
+            }
+
+        protected final val a: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number|
+
+        protected final val c: R|kotlin/Int| = Int(11)
+            public get(): R|kotlin/Int|
+
+        private final val otditems: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/List<kotlin/String>| {
+                R|kotlin/io/println|(String(strelyai, ne otdam))
+                ^ this@R|/SomeClass|.F|/SomeClass.otditems|
+            }
+
+    }
+    public final fun doSomething(): R|kotlin/Unit| {
+        lval it: R|SomeClass| = R|/SomeClass.SomeClass|()
+        R|<local>/it|.R|/SomeClass.addItem|(String(Test))
+        R|<local>/it|.R|special/accessor|.<Unresolved name: add>#(String(Fest))
+        lval itemsSize: R|kotlin/Int| = R|<local>/it|.R|special/accessor|.R|kotlin/collections/List.size|
+        lval shmitemsSize: <ERROR TYPE REF: Unresolved name: size> = R|<local>/it|.<Ambiguity: shmitems, [/SomeClass.shmitems, special/accessor]>#.<Unresolved name: size>#
+        lval balalitemsSize: R|kotlin/Int| = R|<local>/it|.R|/SomeClass.balalitems|.R|kotlin/collections/List.size|
+        lval rhymetemsSize: R|kotlin/Int| = R|<local>/it|.R|/SomeClass.rhymetems|.R|kotlin/collections/List.size|
+    }
