@@ -14,7 +14,7 @@ public class ClassTypeParameterBoundWithWarnings <T extends @NotNull String> {
 
 // FILE: main.kt
 fun main(x: ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>String?<!>>, y: ClassTypeParameterBoundWithWarnings<String>, a: String?, b: String) {
-    val x2 = ClassTypeParameterBoundWithWarnings<String?>()
+    val x2 = ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>String?<!>>()
     val y2 = ClassTypeParameterBoundWithWarnings<String>()
 
     val x3 = ClassTypeParameterBoundWithWarnings(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a<!>)
