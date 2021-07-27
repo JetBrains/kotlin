@@ -148,6 +148,7 @@ class JavaSymbolProvider(
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
         return try {
+            if (!hasTopLevelClassOf(classId)) return null
             getFirJavaClass(classId)
         } catch (e: ProcessCanceledException) {
             null
@@ -155,7 +156,9 @@ class JavaSymbolProvider(
     }
 
     fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirRegularClassSymbol? {
-        if (!hasTopLevelClassOf(classId)) return null
+        // Enforce loading of outer class first
+        classId.outerClassId?.let { getFirJavaClass(it) }
+
         return classCache.getValue(classId, content)
     }
 

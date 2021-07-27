@@ -5004,6 +5004,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("AnnotationWithEnum.kt")
+            public void testAnnotationWithEnum() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/AnnotationWithEnum.kt");
+            }
+
+            @Test
             @TestMetadata("BasicWithAnnotatedJava.kt")
             public void testBasicWithAnnotatedJava() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithAnnotatedJava.kt");
