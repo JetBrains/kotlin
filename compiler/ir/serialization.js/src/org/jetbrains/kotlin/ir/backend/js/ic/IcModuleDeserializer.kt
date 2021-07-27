@@ -124,8 +124,6 @@ class IcModuleDeserializer(
         it.file.path
     }
 
-    private val publicSignatureToIcFileDeserializer = mutableMapOf<IdSignature, IcFileDeserializer>()
-
     private fun deserializeIrFile(
         fileProto: ProtoFile,
         fileIndex: Int,
@@ -152,7 +150,6 @@ class IcModuleDeserializer(
             { fileDeserializer -> originalEnqueue(fileDeserializer) },
             icFileData,
             mapping.state,
-            publicSignatureToIcFileDeserializer,
             { fileDeserializer -> enqueue(fileDeserializer) },
         )
 
@@ -167,14 +164,15 @@ class IcModuleDeserializer(
             moduleReversedFileIndex.putIfAbsent(it, icDeserializer) // TODO Why not simple put?
         }
 
-        icDeserializer.init()
         icDeserializer.reversedSignatureIndex.keys.forEach {
-            if (it in icModuleReversedFileIndex) {
-                val existed = icModuleReversedFileIndex[it]!!
-                error("Duplicate signature $it in both ${existed.originalFileDeserializer.file.path} and in ${file.path}")
-            }
+            if (it.isPubliclyVisible) {
+                if (it in icModuleReversedFileIndex) {
+                    val existed = icModuleReversedFileIndex[it]!!
+                    error("Duplicate signature $it in both ${existed.originalFileDeserializer.file.path} and in ${file.path}")
+                }
 
-            icModuleReversedFileIndex[it] = icDeserializer
+                icModuleReversedFileIndex[it] = icDeserializer
+            }
         }
 
         if (strategy.theWholeWorld) {
