@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -21,6 +22,7 @@ object ExplicitMetadataChecker : AdditionalAnnotationChecker {
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
         trace: BindingTrace,
+        annotated: KtAnnotated?,
         languageVersionSettings: LanguageVersionSettings
     ) {
         for (entry in entries) {

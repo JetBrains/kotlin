@@ -219,6 +219,7 @@ enum class LanguageFeature(
     OptInOnOverrideForbidden(KOTLIN_1_6, kind = BUG_FIX),
     OptInContagiousSignatures(KOTLIN_1_6, kind = BUG_FIX),
     RepeatableAnnotations(KOTLIN_1_6),
+    RepeatableAnnotationContainerConstraints(KOTLIN_1_6, kind = BUG_FIX),
 
     // 1.7
 

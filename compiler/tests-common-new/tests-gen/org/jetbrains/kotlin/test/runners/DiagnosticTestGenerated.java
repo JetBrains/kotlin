@@ -2113,6 +2113,36 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("containerArguments_1_5.kt")
+                public void testContainerArguments_1_5() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerArguments_1_5.kt");
+                }
+
+                @Test
+                @TestMetadata("containerArguments_1_6.kt")
+                public void testContainerArguments_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerArguments_1_6.kt");
+                }
+
+                @Test
+                @TestMetadata("containerRetention_1_5.kt")
+                public void testContainerRetention_1_5() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerRetention_1_5.kt");
+                }
+
+                @Test
+                @TestMetadata("containerRetention_1_6.kt")
+                public void testContainerRetention_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerRetention_1_6.kt");
+                }
+
+                @Test
+                @TestMetadata("containerTarget_1_6.kt")
+                public void testContainerTarget_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/containerTarget_1_6.kt");
+                }
+
+                @Test
                 @TestMetadata("javaRepeatableJvmTarget6.kt")
                 public void testJavaRepeatableJvmTarget6() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatableJvmTarget6.kt");
