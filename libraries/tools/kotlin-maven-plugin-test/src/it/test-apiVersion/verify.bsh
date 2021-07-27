@@ -1,7 +1,4 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:");
-assertBuildLogHasLineThatContains("public fun <T> Iterable<TypeVariable(T)>.shuffled(): List<TypeVariable(T)> defined in kotlin.collections");
-assertBuildLogHasLineThatContains("public fun <T> Iterable<TypeVariable(T)>.shuffled(random: java.util.Random): List<TypeVariable(T)> defined in kotlin.collections");
-assertBuildLogHasLineThatContains("public fun <T> Iterable<TypeVariable(T)>.shuffled(random: kotlin.random.Random): List<TypeVariable(T)> defined in kotlin.collections");
+assertBuildLogHasLineThatContains("Unresolved reference: uppercase");

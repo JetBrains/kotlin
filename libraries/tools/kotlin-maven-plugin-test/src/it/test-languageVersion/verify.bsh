@@ -1,4 +1,4 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("'break' and 'continue' are not allowed in 'when' statements");
+assertBuildLogHasLineThatContains("The feature \"definitely not null type parameters\" is only available since language version 1.6");
