@@ -5,7 +5,7 @@ fun foo() {
     val y = x
     x = null
     if (y != null) {
-        x.hashCode()
+        x<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
 

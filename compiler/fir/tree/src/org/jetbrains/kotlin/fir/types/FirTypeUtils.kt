@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -50,6 +51,14 @@ val FirExpression.isNullLiteral: Boolean
             this.kind == ConstantValueKind.Null &&
             this.value == null &&
             this.source != null
+
+@OptIn(ExperimentalContracts::class)
+fun FirExpression.isStableSmartcast(): Boolean {
+    contract {
+        returns(true) implies (this@isStableSmartcast is FirExpressionWithSmartcast)
+    }
+    return this is FirExpressionWithSmartcast && this.isStable
+}
 
 private val FirTypeRef.classLikeTypeOrNull: ConeClassLikeType?
     get() = when (this) {

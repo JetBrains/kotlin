@@ -28308,6 +28308,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("aliasing.kt")
+                public void testAliasing() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/aliasing.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInVariables() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/variables"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }

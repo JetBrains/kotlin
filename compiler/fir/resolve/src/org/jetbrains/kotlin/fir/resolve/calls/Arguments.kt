@@ -396,7 +396,7 @@ private fun checkApplicabilityForArgumentType(
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         val smartcastExpression = argument as? FirExpressionWithSmartcast
-        if (smartcastExpression != null && smartcastExpression.smartcastStability != SmartcastStability.STABLE_VALUE) {
+        if (smartcastExpression != null && !smartcastExpression.isStable) {
             val unstableType = smartcastExpression.smartcastType.coneType
             if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
                 sink.reportDiagnostic(UnstableSmartCast(smartcastExpression, expectedType))

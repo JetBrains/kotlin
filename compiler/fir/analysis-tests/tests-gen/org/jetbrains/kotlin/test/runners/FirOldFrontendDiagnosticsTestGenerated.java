@@ -28218,6 +28218,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("aliasing.kt")
+                public void testAliasing() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/aliasing.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInVariables() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/variables"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }

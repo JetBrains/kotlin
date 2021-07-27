@@ -882,4 +882,5 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private val FirFunction.bodyResolved: Boolean
         get() = body !is FirLazyBlock && body?.typeRef is FirResolvedTypeRef
+
 }
