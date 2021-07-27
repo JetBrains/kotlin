@@ -1,0 +1,18 @@
+package
+
+private fun J2<*>.bar(): @org.jspecify.nullness.Nullable kotlin.Any?
+
+public interface J1</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    @org.jetbrains.annotations.Nullable public open fun </*0*/ T : kotlin.Any!> foo(/*0*/ x: J1<T!>!): @org.jetbrains.annotations.Nullable T?
+}
+
+public interface J2</*0*/ V> : J1<V> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
