@@ -230,7 +230,7 @@ class AnnotationChecker(
         }
 
         for (checker in additionalCheckers) {
-            checker.checkEntries(entries, actualTargets.defaultTargets, trace, languageVersionSettings)
+            checker.checkEntries(entries, actualTargets.defaultTargets, trace, annotated, languageVersionSettings)
         }
     }
 
@@ -385,6 +385,7 @@ interface AdditionalAnnotationChecker {
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
         trace: BindingTrace,
+        annotated: KtAnnotated?,
         languageVersionSettings: LanguageVersionSettings
     )
 }

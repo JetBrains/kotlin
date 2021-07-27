@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -40,6 +39,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
         trace: BindingTrace,
+        annotated: KtAnnotated?,
         languageVersionSettings: LanguageVersionSettings
     ) {
         var isAnnotatedWithExperimental = false
@@ -81,7 +81,6 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                 ) {
                     trace.report(Errors.EXPERIMENTAL_ANNOTATION_ON_WRONG_TARGET.on(entry, "field"))
                 }
-                val annotated = entry.getStrictParentOfType<KtAnnotated>() ?: continue
                 if (annotated is KtCallableDeclaration &&
                     annotated !is KtPropertyAccessor &&
                     annotationUseSiteTarget == null &&

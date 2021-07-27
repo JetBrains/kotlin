@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.util.List;
 
 import static kotlin.collections.CollectionsKt.*;
-import static org.jetbrains.kotlin.diagnostics.Errors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*;
 
@@ -73,6 +72,15 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(NON_SOURCE_REPEATED_ANNOTATION, "Repeatable annotations with non-SOURCE retention are not yet supported");
         MAP.put(REPEATED_ANNOTATION_TARGET6, "Repeatable annotations with non-SOURCE retention are not supported with JVM target 1.6. Use -jvm-target 1.8");
         MAP.put(ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES, "Annotation ''@{0}'' is not applicable to the multi-file classes", TO_STRING);
+
+        MAP.put(REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY, "Container annotation ''{0}'' must have a property ''value'' of type ''Array<{1}>''. This code will be prohibited in Kotlin 1.6", TO_STRING, TO_STRING);
+        MAP.put(REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR, "Container annotation ''{0}'' must have a property ''value'' of type ''Array<{1}>''", TO_STRING, TO_STRING);
+        MAP.put(REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER, "Container annotation ''{0}'' does not have a default value for ''{1}''. This code will be prohibited in Kotlin 1.6", TO_STRING, NAME);
+        MAP.put(REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR, "Container annotation ''{0}'' does not have a default value for ''{1}''", TO_STRING, NAME);
+        MAP.put(REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION, "Container annotation ''{0}'' has shorter retention (''{1}'') than the repeatable annotation ''{2}'' (''{3}''). This code will be prohibited in Kotlin 1.6", TO_STRING, TO_STRING, TO_STRING, TO_STRING);
+        MAP.put(REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR, "Container annotation ''{0}'' has shorter retention (''{1}'') than the repeatable annotation ''{2}'' (''{3}'')", TO_STRING, TO_STRING, TO_STRING, TO_STRING);
+        MAP.put(REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET, "Target set of container annotation ''{0}'' must be a subset of the target set of contained annotation ''{1}''. This code will be prohibited in Kotlin 1.6", TO_STRING, TO_STRING);
+        MAP.put(REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR, "Target set of container annotation ''{0}'' must be a subset of the target set of contained annotation ''{1}''", TO_STRING, TO_STRING);
 
         MAP.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "''@JvmPackageName'' annotation value cannot be empty");
         MAP.put(JVM_PACKAGE_NAME_MUST_BE_VALID_NAME, "''@JvmPackageName'' annotation value must be a valid dot-qualified name of a package");

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.Named;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
@@ -67,8 +68,19 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtExpression> POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, FqName> DEPRECATED_JAVA_ANNOTATION = DiagnosticFactory1.create(WARNING);
+
     DiagnosticFactory0<KtAnnotationEntry> NON_SOURCE_REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> REPEATED_ANNOTATION_TARGET6 = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtAnnotationEntry, FqName, Named> REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<KtAnnotationEntry, FqName, Named> REPEATABLE_CONTAINER_HAS_NON_DEFAULT_PARAMETER_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory4<KtAnnotationEntry, FqName, String, FqName, String> REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION = DiagnosticFactory4.create(WARNING);
+    DiagnosticFactory4<KtAnnotationEntry, FqName, String, FqName, String> REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR = DiagnosticFactory4.create(ERROR);
+    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR = DiagnosticFactory2.create(ERROR);
+
     DiagnosticFactory1<KtAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtAnnotationEntry> JVM_PACKAGE_NAME_CANNOT_BE_EMPTY = DiagnosticFactory0.create(ERROR);

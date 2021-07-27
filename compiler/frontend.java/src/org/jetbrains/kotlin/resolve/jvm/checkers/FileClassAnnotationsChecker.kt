@@ -41,6 +41,7 @@ object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
         trace: BindingTrace,
+        annotated: KtAnnotated?,
         languageVersionSettings: LanguageVersionSettings
     ) {
         val fileAnnotationsToCheck = arrayListOf<Pair<KtAnnotationEntry, ClassDescriptor>>()

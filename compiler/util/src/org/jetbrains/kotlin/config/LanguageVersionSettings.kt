@@ -218,6 +218,7 @@ enum class LanguageFeature(
     InstantiationOfAnnotationClasses(KOTLIN_1_6),
     OptInOnOverrideForbidden(KOTLIN_1_6, kind = BUG_FIX),
     OptInContagiousSignatures(KOTLIN_1_6, kind = BUG_FIX),
+    RepeatableAnnotationContainerConstraints(KOTLIN_1_6, kind = BUG_FIX),
 
     // 1.7
 
