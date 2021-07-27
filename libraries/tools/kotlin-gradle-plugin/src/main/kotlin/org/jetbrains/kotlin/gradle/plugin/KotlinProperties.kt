@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
@@ -112,8 +114,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
             // The feature should be controlled by a Gradle property.
             // Currently, we also allow it to be controlled by a system property to make it easier to test the feature during development.
             // TODO: Remove the system property later.
-            val gradleProperty = booleanProperty("kotlin.incremental.useClasspathSnapshot") ?: false
-            val systemProperty = project.getSystemProperty("kotlin.incremental.useClasspathSnapshot")?.toBoolean() ?: false
+            val gradleProperty = booleanProperty(CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property) ?: false
+            val systemProperty = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value.toBooleanLenient() ?: false
             return gradleProperty || systemProperty
         }
 
