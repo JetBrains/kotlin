@@ -1,3 +1,4 @@
+// LANGUAGE: -SafeCallsAreAlwaysNullable
 // WITH_RUNTIME
 
 /*

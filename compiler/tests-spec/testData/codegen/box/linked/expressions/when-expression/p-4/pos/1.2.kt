@@ -15,6 +15,7 @@ fun box(): String {
         false -> { "NOK" }
         !false -> { "OK" }
         !false -> { "NOK" }
+        else -> { "NOK" }
     }
     return  when2
 }
