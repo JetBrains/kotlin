@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.ic.IcSymbolTable
 import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
@@ -273,7 +272,7 @@ fun loadIr(
     val allDependencies = depsDescriptors.allDependencies
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val symbolTable = if (loweringsCacheProvider == null) SymbolTable(signaturer, irFactory) else IcSymbolTable(signaturer, irFactory)
+    val symbolTable = SymbolTable(signaturer, irFactory)
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
