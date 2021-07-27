@@ -1790,6 +1790,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = VariableWithNoTypeNoInitializer::class
     }
 
+    abstract class InitializationBeforeDeclaration : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = InitializationBeforeDeclaration::class
+        abstract val property: KtSymbol
+    }
+
     abstract class UnsafeCall : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = UnsafeCall::class
         abstract val receiverType: KtType

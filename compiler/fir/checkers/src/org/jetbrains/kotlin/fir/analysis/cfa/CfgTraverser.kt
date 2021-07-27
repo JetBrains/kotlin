@@ -33,10 +33,11 @@ fun ControlFlowGraph.traverse(
 
 // ---------------------- Path-sensitive data collection -----------------------
 
-fun <I : ControlFlowInfo<I, K, V>, K : Any, V : Any> ControlFlowGraph.collectDataForNode(
+fun <I> ControlFlowGraph.collectDataForNode(
     direction: TraverseDirection,
     initialInfo: I,
-    visitor: ControlFlowGraphVisitor<I, Collection<Pair<EdgeLabel, I>>>
+    visitor: ControlFlowGraphVisitor<I, Collection<Pair<EdgeLabel, I>>>,
+    visitSubGraphs: Boolean = true
 ): Map<CFGNode<*>, I> {
     val nodeMap = LinkedHashMap<CFGNode<*>, I>()
     val startNode = getEnterNode(direction)
@@ -44,22 +45,23 @@ fun <I : ControlFlowInfo<I, K, V>, K : Any, V : Any> ControlFlowGraph.collectDat
 
     val changed = mutableMapOf<CFGNode<*>, Boolean>()
     do {
-        collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed)
+        collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed, visitSubGraphs)
     } while (changed.any { it.value })
 
     return nodeMap
 }
 
-private fun <I : ControlFlowInfo<I, K, V>, K : Any, V : Any> ControlFlowGraph.collectDataForNodeInternal(
+private fun <I> ControlFlowGraph.collectDataForNodeInternal(
     direction: TraverseDirection,
     initialInfo: I,
     visitor: ControlFlowGraphVisitor<I, Collection<Pair<EdgeLabel, I>>>,
     nodeMap: MutableMap<CFGNode<*>, I>,
-    changed: MutableMap<CFGNode<*>, Boolean>
+    changed: MutableMap<CFGNode<*>, Boolean>,
+    visitSubGraphs: Boolean = true
 ) {
     val nodes = getNodesInOrder(direction)
     for (node in nodes) {
-        if (direction == TraverseDirection.Backward && node is CFGNodeWithCfgOwner<*>) {
+        if (visitSubGraphs && direction == TraverseDirection.Backward && node is CFGNodeWithCfgOwner<*>) {
             node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
         }
         val previousNodes = when (direction) {
@@ -83,7 +85,7 @@ private fun <I : ControlFlowInfo<I, K, V>, K : Any, V : Any> ControlFlowGraph.co
         if (hasChanged) {
             nodeMap[node] = newData
         }
-        if (direction == TraverseDirection.Forward && node is CFGNodeWithCfgOwner<*>) {
+        if (visitSubGraphs && direction == TraverseDirection.Forward && node is CFGNodeWithCfgOwner<*>) {
             node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
         }
     }
