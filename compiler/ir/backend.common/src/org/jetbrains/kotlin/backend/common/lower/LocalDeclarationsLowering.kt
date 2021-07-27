@@ -59,7 +59,7 @@ val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
     get() = generateSequence(this as? IrDeclarationParent) { (it as? IrDeclaration)?.parent }
 
 val IrDeclaration.parents: Sequence<IrDeclarationParent>
-    get() = parentsWithSelf.drop(1)
+    get() = generateSequence(parent) { (it as? IrDeclaration)?.parent }
 
 object BOUND_VALUE_PARAMETER : IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
 

@@ -10775,6 +10775,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnotherWithSideEffects.kt");
         }
 
+        @TestMetadata("delegateToConstructorParameter.kt")
+        public void testDelegateToConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstructorParameter.kt");
+        }
+
         @TestMetadata("delegateToGenericJavaProperty.kt")
         public void testDelegateToGenericJavaProperty() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToGenericJavaProperty.kt");

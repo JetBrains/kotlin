@@ -13317,6 +13317,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("delegateToConstructorParameter.kt")
+        public void testDelegateToConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstructorParameter.kt");
+        }
+
+        @Test
         @TestMetadata("delegateToGenericJavaProperty.kt")
         public void testDelegateToGenericJavaProperty() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToGenericJavaProperty.kt");
