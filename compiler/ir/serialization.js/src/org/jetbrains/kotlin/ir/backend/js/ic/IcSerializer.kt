@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrFileSerializer
@@ -26,9 +25,6 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryLongArrayWriter
 
@@ -162,24 +158,14 @@ class IdSignatureSerializerWithForIC(
     table: DeclarationTable,
     localIndexOffset: Long = 0,
     scopeIndexOffset: Int = 0,
-) : IdSignatureSerializer(
-    publicSignatureBuilder,
-    table
-) {
+) : IdSignatureSerializer(publicSignatureBuilder, table) {
     init {
         localIndex = localIndexOffset
         scopeIndex = scopeIndexOffset
     }
 
     override fun IrDeclaration.createFileLocalSignature(parentSignature: IdSignature, localIndex: Long, description: String?): IdSignature {
-        if (this is IrTypeParameter) {
-            return IdSignature.GlobalFileLocalSignature(parentSignature, 1000_000_000_000L + index, fileOrNull?.path ?: "")
-        }
         return IdSignature.GlobalFileLocalSignature(parentSignature, localIndex, fileOrNull?.path ?: "")
-    }
-
-    override fun IrDeclaration.createScopeLocalSignature(scopeIndex: Int, description: String): IdSignature {
-        return IdSignature.GlobalScopeLocalDeclaration(scopeIndex, description, fileOrNull?.path ?: "")
     }
 }
 
