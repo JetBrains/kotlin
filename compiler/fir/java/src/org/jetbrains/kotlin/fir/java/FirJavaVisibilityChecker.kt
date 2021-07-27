@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
@@ -29,7 +30,13 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                     true
                 } else {
                     val ownerId = symbol.getOwnerId()
-                    ownerId != null && canSeeProtectedMemberOf(containingDeclarations, dispatchReceiver, ownerId, session)
+                    ownerId != null && canSeeProtectedMemberOf(
+                        containingDeclarations,
+                        dispatchReceiver,
+                        ownerId,
+                        symbol.fir is FirSyntheticPropertyAccessor,
+                        session
+                    )
                 }
             }
 

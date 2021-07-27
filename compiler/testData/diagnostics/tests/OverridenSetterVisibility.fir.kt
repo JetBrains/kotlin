@@ -22,7 +22,7 @@ class Test: ATest(), ITest {
 
 fun main() {
     val test = Test()
-    test.prop = 12
+    <!INVISIBLE_SETTER!>test.prop<!> = 12
 
     val itest: ITest = test
     itest.prop = 12 // No error here

@@ -72,7 +72,7 @@ class E : C() {
 
 class F : C() {
     fun test8(c: C) {
-        doSmth(c.i)
+        doSmth(c.<!INVISIBLE_REFERENCE!>i<!>)
     }
 }
 

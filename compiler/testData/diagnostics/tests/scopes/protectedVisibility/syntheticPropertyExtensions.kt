@@ -22,7 +22,6 @@ class B : A() {
         b.bar = b.bar + ""
 
         a.<!INVISIBLE_MEMBER!>foo<!>
-        // TODO: should be INVISIBLE_SETTER
         a.<!INVISIBLE_SETTER!>bar<!> = a.bar + ""
 
         if (a is B) {
@@ -33,7 +32,6 @@ class B : A() {
         if (d.x is B) {
             d.x.abc // Ok
             d.x.<!INVISIBLE_MEMBER!>foo<!>
-            // TODO: should be INVISIBLE_SETTER
             d.x.<!INVISIBLE_SETTER!>bar<!> = d.x.bar + ""
         }
     }

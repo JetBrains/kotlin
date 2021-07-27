@@ -50,8 +50,19 @@ fun lookupSuperTypes(
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
     substituteTypes: Boolean = false
 ): List<ConeClassLikeType> {
+    return lookupSuperTypes(klass.symbol, lookupInterfaces, deep, useSiteSession, supertypeSupplier, substituteTypes)
+}
+
+fun lookupSuperTypes(
+    classSymbol: FirClassSymbol<*>,
+    lookupInterfaces: Boolean,
+    deep: Boolean,
+    useSiteSession: FirSession,
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+    substituteTypes: Boolean = false
+): List<ConeClassLikeType> {
     return SmartList<ConeClassLikeType>().also {
-        klass.symbol.collectSuperTypes(it, SmartSet.create(), deep, lookupInterfaces, substituteTypes, useSiteSession, supertypeSupplier)
+        classSymbol.collectSuperTypes(it, SmartSet.create(), deep, lookupInterfaces, substituteTypes, useSiteSession, supertypeSupplier)
     }
 }
 
