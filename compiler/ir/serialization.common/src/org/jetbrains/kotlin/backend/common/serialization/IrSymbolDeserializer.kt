@@ -56,7 +56,7 @@ class IrSymbolDeserializer(
             BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> if (useGlobalSignatures) IrAnonymousInitializerPublicSymbolImpl(idSig) else IrAnonymousInitializerSymbolImpl()
             BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClassFromLinker(idSig)
             BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructorFromLinker(idSig)
-            BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameterFromLinker(idSig)
+            BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceGlobalTypeParameterFromLinker(idSig)
             BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntryFromLinker(idSig)
             BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> referenceFieldFromLinker(idSig)
             BinarySymbolData.SymbolKind.FIELD_SYMBOL -> referenceFieldFromLinker(idSig)
@@ -86,7 +86,7 @@ class IrSymbolDeserializer(
         deserializeIrSymbolData(idSignature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
     private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        if (idSignature.isLocal) {
+        if (!idSignature.isPubliclyVisible) {
             return deserializedSymbols.getOrPut(idSignature) {
                 if (enqueueAllDeclarations) {
                     enqueueLocalTopLevelDeclaration(idSignature)
