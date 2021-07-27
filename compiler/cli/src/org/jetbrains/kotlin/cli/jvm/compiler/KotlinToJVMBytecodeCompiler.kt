@@ -157,6 +157,9 @@ object KotlinToJVMBytecodeCompiler {
                     for (commonSources in module.getCommonSourceFiles()) {
                         addContent(Element("commonSources").setAttribute("path", commonSources))
                     }
+                    module.modularJdkRoot?.let {
+                        addContent(Element("modularJdkRoot").setAttribute("path", module.modularJdkRoot))
+                    }
                 })
             }
         }
