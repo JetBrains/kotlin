@@ -63,13 +63,8 @@ message LoweredIdSignature {
   required int32 index = 3;
 }
 
-message ScopeLocalIdSignature {
-  required int32 id = 1;
-  optional int32 file = 2;
-}
-
 message IdSignature {
-  oneof idsig {
+  oneof idSig {
     CommonIdSignature public_sig = 1;
     FileLocalIdSignature private_sig = 2;
     AccessorIdSignature accessor_sig = 3;
@@ -79,8 +74,7 @@ message IdSignature {
     FileSignature file_sig = 7;
 
     // JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-    LoweredIdSignature ic_sig = 105;
-    ScopeLocalIdSignature external_scoped_local_sig = 107;
+    LoweredIdSignature ic_sig = 101;
   }
 }
 

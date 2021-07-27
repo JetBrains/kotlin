@@ -71,7 +71,7 @@ public interface IdSignatureOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature getFileSig();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 105;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
    *
    * <pre>
    * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
@@ -79,20 +79,11 @@ public interface IdSignatureOrBuilder extends
    */
   boolean hasIcSig();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 105;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
    *
    * <pre>
    * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
    * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature getIcSig();
-
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature external_scoped_local_sig = 107;</code>
-   */
-  boolean hasExternalScopedLocalSig();
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature external_scoped_local_sig = 107;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature getExternalScopedLocalSig();
 }
