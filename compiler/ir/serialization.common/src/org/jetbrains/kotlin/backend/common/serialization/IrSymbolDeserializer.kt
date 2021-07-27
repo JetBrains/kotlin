@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdSigCase.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.*
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature as ProtoLoweredIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature as ProtoScopeLocalIdSignature
 
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
@@ -164,19 +162,7 @@ class IrSymbolDeserializer(
     }
 
     private fun deserializeScopeLocalIdSignature(proto: Int): IdSignature {
-        if (useGlobalSignatures) {
-            return IdSignature.GlobalScopeLocalDeclaration(proto, filePath = fileSymbol.owner.path)
-        } else {
-            return IdSignature.ScopeLocalDeclaration(proto)
-        }
-    }
-
-    private fun deserializeExternalScopeLocalIdSignature(proto: ProtoScopeLocalIdSignature): IdSignature {
-        if (useGlobalSignatures) {
-            return IdSignature.GlobalScopeLocalDeclaration(proto.id, filePath = fileReader.deserializeString(proto.file))
-        } else {
-            return IdSignature.ScopeLocalDeclaration(proto.id)
-        }
+        return IdSignature.ScopeLocalDeclaration(proto)
     }
 
     private fun deserializeLoweredDeclarationSignature(proto: ProtoLoweredIdSignature): IdSignature.LoweredDeclarationSignature {
@@ -200,7 +186,7 @@ class IrSymbolDeserializer(
     private fun deserializeFileIdSignature(proto: ProtoFileSignature): IdSignature.FileSignature = fileSignature
 
     fun deserializeSignatureData(proto: ProtoIdSignature): IdSignature {
-        return when (proto.idsigCase) {
+        return when (proto.idSigCase) {
             PUBLIC_SIG -> deserializePublicIdSignature(proto.publicSig)
             ACCESSOR_SIG -> deserializeAccessorIdSignature(proto.accessorSig)
             PRIVATE_SIG -> deserializeFileLocalIdSignature(proto.privateSig)
@@ -210,8 +196,7 @@ class IrSymbolDeserializer(
             FILE_SIG -> deserializeFileIdSignature(proto.fileSig)
             // IR IC part
             IC_SIG -> deserializeLoweredDeclarationSignature(proto.icSig)
-            EXTERNAL_SCOPED_LOCAL_SIG -> deserializeExternalScopeLocalIdSignature(proto.externalScopedLocalSig)
-            else -> error("Unexpected IdSignature kind: ${proto.idsigCase}")
+            else -> error("Unexpected IdSignature kind: ${proto.idSigCase}")
         }
     }
 }

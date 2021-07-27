@@ -115,7 +115,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature as ProtoLoweredIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature as ProtoScopeLocalIdSignature
 
 open class IrFileSerializer(
     val messageLogger: IrMessageLogger,
@@ -277,15 +276,6 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeScopeLocalSignature(signature: IdSignature.GlobalScopeLocalDeclaration): ProtoScopeLocalIdSignature {
-        val proto = ProtoScopeLocalIdSignature.newBuilder()
-
-        proto.id = signature.id
-        proto.file = serializeString(signature.filePath)
-
-        return proto.build()
-    }
-
     private fun serializeLoweredDeclarationSignature(signature: IdSignature.LoweredDeclarationSignature): ProtoLoweredIdSignature {
         val proto = ProtoLoweredIdSignature.newBuilder()
 
@@ -308,7 +298,6 @@ open class IrFileSerializer(
             is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature(idSignature)
             // IR IC part
             is IdSignature.LoweredDeclarationSignature -> proto.icSig = serializeLoweredDeclarationSignature(idSignature)
-            is IdSignature.GlobalScopeLocalDeclaration -> proto.externalScopedLocalSig = serializeScopeLocalSignature(idSignature)
             is IdSignature.SpecialFakeOverrideSignature -> {}
         }
         return proto.build()

@@ -338,30 +338,8 @@ sealed class IdSignature {
         override fun hashCode(): Int = id
     }
 
-    // Used to reference local variable and value parameters in function
-    class GlobalScopeLocalDeclaration(val id: Int, val description: String = "<no description>", val filePath: String) : IdSignature() {
-        override val isPubliclyVisible: Boolean get() = false
-
-        override val hasTopLevel: Boolean get() = false
-
-        override fun topLevelSignature(): IdSignature = error("Is not supported for Local ID")
-
-        override fun nearestPublicSig(): IdSignature = error("Is not supported for Local ID")
-
-        override fun packageFqName(): FqName = error("Is not supported for Local ID")
-
-        override fun render(): String = "#$id from ${filePath.split('/').last()}"
-
-        override fun equals(other: Any?): Boolean =
-            other is GlobalScopeLocalDeclaration && id == other.id && filePath == other.filePath
-
-        private val hashCode = id * 31 + filePath.hashCode()
-
-        override fun hashCode(): Int = hashCode
-    }
-
     class LoweredDeclarationSignature(val original: IdSignature, val stage: Int, val index: Int) : IdSignature() {
-        override val isPubliclyVisible: Boolean get() = true
+        override val isPubliclyVisible: Boolean get() = original.isPubliclyVisible
 
         override val hasTopLevel: Boolean get() = true
 
