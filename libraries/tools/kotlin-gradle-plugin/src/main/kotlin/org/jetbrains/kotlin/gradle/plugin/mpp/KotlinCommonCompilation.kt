@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
 interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
@@ -28,7 +29,7 @@ class KotlinCommonCompilation(
         get() = super.compileKotlinTask as KotlinCompileCommon
 
     internal val isKlibCompilation: Boolean
-        get() = PropertiesProvider(target.project).enableGranularSourceSetsMetadata == true && !forceCompilationToKotlinMetadata
+        get() = target.project.isKotlinGranularMetadataEnabled && !forceCompilationToKotlinMetadata
 
     internal var forceCompilationToKotlinMetadata: Boolean = false
 

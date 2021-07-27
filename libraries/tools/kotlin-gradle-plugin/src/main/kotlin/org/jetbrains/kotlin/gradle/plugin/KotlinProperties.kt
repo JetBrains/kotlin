@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPlugin.Companion.NOWARN_2JS_FLAG
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
@@ -146,10 +149,23 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.android.buildTypeAttribute.keep") ?: false
 
     val enableGranularSourceSetsMetadata: Boolean?
-        get() = booleanProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
+        get() = booleanProperty(KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA)
+
+    val hierarchicalStructureSupport: Boolean
+        get() = booleanProperty(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT) ?: mppHierarchicalStructureByDefault
+
+    val nativeDependencyPropagation: Boolean?
+        get() = booleanProperty(KOTLIN_NATIVE_DEPENDENCY_PROPAGATION)
+
+    var mpp13XFlagsSetByPlugin: Boolean
+        get() = booleanProperty("kotlin.internal.mpp.13X.flags.setByPlugin") ?: false
+        set(value) { project.extensions.extraProperties.set("kotlin.internal.mpp.13X.flags.setByPlugin") { "$value" } }
+
+    val mppHierarchicalStructureByDefault: Boolean
+        get() = booleanProperty("kotlin.internal.mpp.hierarchicalStructureByDefault") ?: false
 
     val enableCompatibilityMetadataVariant: Boolean
-        get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: true
+        get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: !mppHierarchicalStructureByDefault
 
     val enableKotlinToolingMetadataArtifact: Boolean
         get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
@@ -380,6 +396,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         } else {
             localProperties.getProperty(propName)
         }
+
+    internal object PropertyNames {
+        internal const val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = "kotlin.mpp.enableGranularSourceSetsMetadata"
+        internal const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT = "kotlin.mpp.hierarchicalStructureSupport"
+        internal const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
+    }
 
     companion object {
         internal const val KOTLIN_NATIVE_HOME = "kotlin.native.home"

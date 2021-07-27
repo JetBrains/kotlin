@@ -11,7 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.SourceTask
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -58,8 +58,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.0"))
 
-        project.plugins.apply(JavaBasePlugin::class.java)
-
         if (PropertiesProvider(project).mppStabilityNoWarn != true) {
             SingleWarningPerBuild.show(
                 project,
@@ -68,6 +66,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                         "To hide this message, add '$STABILITY_NOWARN_FLAG=true' to the Gradle properties.\n"
             )
         }
+
+        handleHierarchicalStructureFlagsMigration(project)
+
+        project.plugins.apply(JavaBasePlugin::class.java)
 
         val targetsContainer = project.container(KotlinTarget::class.java)
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)

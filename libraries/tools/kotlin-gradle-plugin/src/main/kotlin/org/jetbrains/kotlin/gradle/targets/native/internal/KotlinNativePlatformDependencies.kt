@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.compareVersionNumbers
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
@@ -76,7 +75,7 @@ private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
 
 
 private val Project.isNativeDependencyPropagationEnabled: Boolean
-    get() = (findProperty("kotlin.native.enableDependencyPropagation") as? String)?.toBoolean() ?: true
+    get() = PropertiesProvider(this).nativeDependencyPropagation ?: true
 
 //for reflection call from KotlinCommonizerModelBuilder
 // DO NOT REFACTOR THIS FUNCTION!

@@ -41,8 +41,19 @@ internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompi
 internal const val ALL_RUNTIME_METADATA_CONFIGURATION_NAME = "allSourceSetsRuntimeDependenciesMetadata"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
-    get() = project.topLevelExtension is KotlinPm20ProjectExtension ||
-            PropertiesProvider(rootProject).enableGranularSourceSetsMetadata == true
+    get() = project.topLevelExtension is KotlinPm20ProjectExtension || with(PropertiesProvider(rootProject)) {
+        mppHierarchicalStructureByDefault || // then we want to use KLIB granular compilation & artifacts even if it's just commonMain
+                hierarchicalStructureSupport ||
+                enableGranularSourceSetsMetadata == true
+    }
+
+internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
+    get() = project.topLevelExtension is KotlinPm20ProjectExtension || with(PropertiesProvider(rootProject)) {
+        when {
+            !hierarchicalStructureSupport && mppHierarchicalStructureByDefault -> false
+            else -> true
+        }
+    }
 
 internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
     get() = PropertiesProvider(this).enableCompatibilityMetadataVariant == true
@@ -569,6 +580,9 @@ internal fun dependsOnClosureWithInterCompilationDependencies(project: Project, 
  * Those compilations will be created but the corresponding tasks will be disabled.
  */
 internal fun getCommonSourceSetsForMetadataCompilation(project: Project): Set<KotlinSourceSet> {
+    if (!project.shouldCompileIntermediateSourceSetsToMetadata)
+        return setOf(project.multiplatformExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
+
     val compilationsBySourceSet: Map<KotlinSourceSet, Set<KotlinCompilation<*>>> =
         compilationsBySourceSets(project)
 
