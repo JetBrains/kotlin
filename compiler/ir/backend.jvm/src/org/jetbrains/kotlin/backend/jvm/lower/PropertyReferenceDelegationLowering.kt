@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
@@ -85,14 +86,16 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     private val IrStatement.isStdlibCall: Boolean
         get() = this is IrCall && symbol.owner.getPackageFragment()?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 
-    // Constants, object accesses, reads of immutable variables, and reads of immutable properties in the same file
-    // don't need to be cached in a field; reads of mutable properties have to be as we should ignore further assignments
-    // to those, and immutable properties in other files might become mutable without breaking ABI.
-    private fun IrExpression.canInline(currentFile: IrFile): Boolean = when (this) {
-        is IrGetValue -> !symbol.owner.let { it is IrVariable && it.isVar }
-        is IrGetField -> symbol.owner.let { it.isFinal && it.fileParent == currentFile } && receiver?.canInline(currentFile) != false
-        is IrCall -> symbol.owner.let { it.isFinalDefaultValGetter && it.fileParent == currentFile } &&
-                dispatchReceiver?.canInline(currentFile) != false && extensionReceiver?.canInline(currentFile) != false
+    // Some receivers don't need to be stored in fields and can be reevaluated every time an accessor is called:
+    private fun IrExpression.canInline(visibleScopes: Set<IrDeclarationParent>): Boolean = when (this) {
+        // Reads of immutable variables are stable, but value parameters of the constructor are not in scope:
+        is IrGetValue -> symbol.owner.let { !(it is IrVariable && it.isVar) && it.parent in visibleScopes }
+        // Reads of final fields of stable values are stable, but fields in other files can become non-final:
+        is IrGetField -> symbol.owner.let { it.isFinal && it.fileParent in visibleScopes } && receiver?.canInline(visibleScopes) != false
+        // Same applies to reads of properties with default getters, but non-final properties may be overridden by `var`s:
+        is IrCall -> symbol.owner.let { it.isFinalDefaultValGetter && it.fileParent in visibleScopes } &&
+                dispatchReceiver?.canInline(visibleScopes) != false && extensionReceiver?.canInline(visibleScopes) != false
+        // Constants and singleton object accesses are always stable:
         else -> isTrivial()
     }
 
@@ -134,7 +137,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
 
         val receiver = (delegate.dispatchReceiver ?: delegate.extensionReceiver)
             ?.transform(this@PropertyReferenceDelegationTransformer, null)
-        backingField = receiver?.takeIf { !it.canInline(fileParent) }?.let {
+        backingField = receiver?.takeIf { !it.canInline(parents.toSet()) }?.let {
             context.irFactory.buildField {
                 updateFrom(oldField)
                 name = Name.identifier("${this@transform.name}\$receiver")

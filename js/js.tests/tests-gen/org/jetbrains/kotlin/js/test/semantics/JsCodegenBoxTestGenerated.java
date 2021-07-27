@@ -8990,6 +8990,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnotherWithSideEffects.kt");
         }
 
+        @TestMetadata("delegateToConstructorParameter.kt")
+        public void testDelegateToConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConstructorParameter.kt");
+        }
+
         @TestMetadata("delegateToOpenProperty.kt")
         public void testDelegateToOpenProperty() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateToOpenProperty.kt");
