@@ -177,7 +177,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 it.replace(Regex("""\.version\(.*\)"""), "")
             }
             gradleBuildScript(subproject = libProject.projectDir.name).modify {
-                it.lines().dropLast(4).joinToString(separator = "\n")
+                it.lines().dropLast(2).joinToString(separator = "\n")
             }
 
             build(
@@ -386,7 +386,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 it.replace(Regex("""\.version\(.*\)"""), "")
             }
             gradleBuildScript(subproject = libProject.projectDir.name).modify {
-                it.lines().dropLast(4).joinToString(separator = "\n")
+                it.lines().dropLast(2).joinToString(separator = "\n")
             }
 
             build(
@@ -989,7 +989,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             libProject.projectDir.copyRecursively(projectDir.resolve(libProject.projectDir.name))
             gradleBuildScript(libProject.projectDir.name).modify {
-                it.lines().dropLast(4).joinToString(separator = "\n")
+                it.lines().dropLast(2).joinToString(separator = "\n")
             }
             projectDir.resolve("settings.gradle").appendText("\ninclude '${libProject.projectDir.name}'")
             gradleBuildScript().modify {
@@ -1199,7 +1199,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             appProject.setupWorkingDir(false)
             appProject.projectDir.copyRecursively(projectDir.resolve("sample-app"))
             gradleBuildScript("sample-app").modify {
-                it.lines().dropLast(4).joinToString(separator = "\n")
+                it.lines().dropLast(2).joinToString(separator = "\n")
             }
 
             gradleSettingsScript().writeText("include 'sample-app'") // disables feature preview 'GRADLE_METADATA', resets rootProject name

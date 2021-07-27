@@ -361,10 +361,12 @@ internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, rena
     }
     if (projectName == other.projectName) {
         val embeddedModuleDir = projectDir.resolve(embeddedModuleName)
-        val buildFile = embeddedModuleDir.resolve("build.gradle").takeIf { it.exists() }
-            ?: embeddedModuleDir.resolve("build.gradle.kts")
-        buildFile.modify {
-            it.lines().dropLast(4).joinToString(separator = "\n")
+        embeddedModuleDir.walk().forEach {
+            if (it.name.contains("build.gradle")) {
+                it.modify { string ->
+                    string.lines().dropLast(2).joinToString(separator = "\n")
+                }
+            }
         }
     }
     testCase.apply {

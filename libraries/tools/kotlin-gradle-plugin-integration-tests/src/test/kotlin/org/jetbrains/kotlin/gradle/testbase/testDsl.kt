@@ -233,30 +233,28 @@ internal fun Path.enableCacheRedirector() {
         )
 
     val projectDir = toFile()
-    projectDir.walk()
-        .filterNot { it.parentFile == projectDir } // ignore build.gradle for root project
-        .forEach {
-            when (it.name) {
-                "build.gradle" -> {
-                    it.appendText(
-                        """
+    projectDir.walk().forEach {
+        when (it.name) {
+            "build.gradle" -> {
+                it.appendText(
+                    """
 
-                            apply from: "$cacheRedirectFile"
+                        apply from: "$cacheRedirectFile"
 
-                        """.trimIndent()
-                    )
-                }
-                "build.gradle.kts" -> {
-                    it.appendText(
-                        """
+                    """.trimIndent()
+                )
+            }
+            "build.gradle.kts" -> {
+                it.appendText(
+                    """
 
-                            apply(from = "$cacheRedirectFile")
+                        apply(from = "$cacheRedirectFile")
 
-                        """.trimIndent()
-                    )
-                }
+                    """.trimIndent()
+                )
             }
         }
+    }
 }
 
 @OptIn(ExperimentalPathApi::class)
