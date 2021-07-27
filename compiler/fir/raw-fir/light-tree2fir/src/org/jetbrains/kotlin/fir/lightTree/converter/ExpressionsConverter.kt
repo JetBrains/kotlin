@@ -143,7 +143,10 @@ class ExpressionsConverter(
             symbol = FirAnonymousFunctionSymbol()
             isLambda = true
             label = context.firLabels.pop() ?: context.calleeNamesForLambda.lastOrNull()?.let {
-                buildLabel { name = it.asString() }
+                buildLabel {
+                    source = expressionSource.fakeElement(FirFakeSourceElementKind.GeneratedLambdaLabel)
+                    name = it.asString()
+                }
             }
             target = FirFunctionTarget(labelName = label?.name, isLambda = true)
             context.firFunctionTargets += target
@@ -332,7 +335,10 @@ class ExpressionsConverter(
         var firExpression: FirElement? = null
         labeledExpression.forEachChildren {
             when (it.tokenType) {
-                LABEL_QUALIFIER -> context.firLabels += buildLabel { name = it.toString().replace("@", "") }
+                LABEL_QUALIFIER -> context.firLabels += buildLabel {
+                    source = labeledExpression.toFirLightSourceElement(tree)
+                    name = it.toString().replace("@", "")
+                }
                 BLOCK -> firExpression = declarationsConverter.convertBlock(it)
                 PROPERTY -> firExpression = declarationsConverter.convertPropertyDeclaration(it)
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it)

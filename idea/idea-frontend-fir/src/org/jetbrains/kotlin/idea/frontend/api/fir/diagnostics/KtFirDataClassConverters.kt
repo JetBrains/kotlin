@@ -3180,6 +3180,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.RETURN_FOR_BUILT_IN_SUSPEND) { firDiagnostic ->
+        ReturnForBuiltInSuspendImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.CONFLICTING_JVM_DECLARATIONS) { firDiagnostic ->
         ConflictingJvmDeclarationsImpl(
             firDiagnostic as FirPsiDiagnostic,

@@ -2223,6 +2223,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ModifierFormForNonBuiltInSuspend::class
     }
 
+    abstract class ReturnForBuiltInSuspend : KtFirDiagnostic<KtReturnExpression>() {
+        override val diagnosticClass get() = ReturnForBuiltInSuspend::class
+    }
+
     abstract class ConflictingJvmDeclarations : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ConflictingJvmDeclarations::class
     }

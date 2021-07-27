@@ -3589,6 +3589,13 @@ internal class ModifierFormForNonBuiltInSuspendImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class ReturnForBuiltInSuspendImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ReturnForBuiltInSuspend(), KtAbstractFirDiagnostic<KtReturnExpression> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ConflictingJvmDeclarationsImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

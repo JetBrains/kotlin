@@ -29,8 +29,10 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_2_20_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_2_30_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_3_FQ_NAME
@@ -46,6 +48,8 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier("RestrictsSuspension"))
 
     private val BUILTIN_SUSPEND_NAME = KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME.shortName()
+
+    internal val KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, BUILTIN_SUSPEND_NAME)
 
     @OptIn(SymbolInternals::class)
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -89,7 +93,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (symbol.callableId.asSingleFqName() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
+        if (symbol.callableId == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID) {
             if (reference.name != BUILTIN_SUSPEND_NAME ||
                 expression.explicitReceiver != null ||
                 !expression.hasFormOfSuspendModifierForLambda()
