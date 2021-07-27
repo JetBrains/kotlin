@@ -1290,8 +1290,8 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     fun nextLabel(node: AbstractInsnNode?): LabelNode? {
         var current = node
         while (current != null) {
-            if (current is LabelNode) return current
-            current = current.next
+            if (current is LabelNode) return current as LabelNode
+            current = current!!.next
         }
         return null
     }
@@ -1304,6 +1304,8 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
         oldLvt += record
     }
     method.localVariables.clear()
+
+    val oldLvtNodeToLatestNewLvtNode = mutableMapOf<LocalVariableNode, LocalVariableNode>()
     // Skip `this` for suspend lambda
     val start = if (isForNamedFunction) 0 else 1
     for (variableIndex in start until method.maxLocals) {
@@ -1343,32 +1345,40 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 val endLabel = nextLabel(insn.next)?.let { min(lvtRecord.end, it) } ?: lvtRecord.end
                 // startLabel can be null in case of parameters
                 @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
-                val node = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
-                method.localVariables.add(node)
+
+                // Attempt to extend existing local variable node corresponding to the record in
+                // the original local variable table, if there is no back-edge
+                val recordToExtend: LocalVariableNode? = oldLvtNodeToLatestNewLvtNode[lvtRecord]
+                var recordExtended = false
+                if (recordToExtend != null) {
+                    var hasBackEdgeOrStore = false
+                    var current: AbstractInsnNode? = recordToExtend.end
+                    while (current != null && current != endLabel) {
+                        if (current is JumpInsnNode) {
+                            if (method.instructions.indexOf((current as JumpInsnNode).label) < method.instructions.indexOf(current)) {
+                                hasBackEdgeOrStore = true
+                                break
+                            }
+                        }
+                        if (current!!.isStoreOperation() && (current as VarInsnNode).`var` == recordToExtend.index) {
+                            hasBackEdgeOrStore = true
+                            break
+                        }
+                        current = current!!.next
+                    }
+                    if (!hasBackEdgeOrStore) {
+                        recordToExtend.end = endLabel
+                        recordExtended = true
+                    }
+                }
+                if (!recordExtended) {
+                    val node = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
+                    method.localVariables.add(node)
+                    oldLvtNodeToLatestNewLvtNode[lvtRecord] = node
+                }
             }
         }
     }
-
-    // Merge consequent LVT records, otherwise, atomicfu goes crazy (KT-47749)
-    val toRemove = arrayListOf<LocalVariableNode>()
-    val sortedLVT = method.localVariables.sortedBy { method.instructions.indexOf(it.start) }
-    for (i in sortedLVT.indices) {
-        var endIndex = method.instructions.indexOf(sortedLVT[i].end)
-        for (j in (i + 1) until sortedLVT.size) {
-            val startIndex = method.instructions.indexOf(sortedLVT[j].start)
-            if (endIndex < startIndex) break
-            if (endIndex != startIndex ||
-                sortedLVT[i].index != sortedLVT[j].index ||
-                sortedLVT[i].name != sortedLVT[j].name ||
-                sortedLVT[i].desc != sortedLVT[j].desc
-            ) continue
-            sortedLVT[i].end = sortedLVT[j].end
-            endIndex = method.instructions.indexOf(sortedLVT[j].end)
-            toRemove += sortedLVT[j]
-        }
-    }
-
-    method.localVariables.removeAll(toRemove)
 
     for (variable in oldLvt) {
         // $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
