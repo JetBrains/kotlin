@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.getExposingGetter
+import org.jetbrains.kotlin.fir.resolve.hasExposingGetter
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -111,26 +114,128 @@ object FirOverrideChecker : FirClassChecker() {
         return overriddenSymbols.find { (it as? FirPropertySymbol)?.isVar == true }
     }
 
+    private inline fun Boolean.onTrue(callback: () -> Unit) {
+        if (this) {
+            callback()
+        }
+    }
+
+    /**
+     * Simplifies passing around visibility
+     * data.
+     */
+    private data class VisibilityInfo(
+        val symbol: FirCallableSymbol<*>,
+        /**
+         * There is no guarantee whether this visibility
+         * is the symbol.visibility or a property getter's one.
+         */
+        val visibility: Visibility,
+    )
+
+    /**
+     * Prepares visibility information for
+     * further use.
+     */
+    private class VisibilityInfoProvider(val symbol: FirCallableSymbol<*>) {
+        val exposingGetter = symbol.getExposingGetter()
+
+        val hasExposingGetter: Boolean
+            get() = exposingGetter != null
+
+        val actualVisibility: Visibility
+            get() = exposingGetter?.visibility ?: symbol.visibility
+
+        val actualInfo: VisibilityInfo
+            get() = VisibilityInfo(symbol, actualVisibility)
+
+        val formalInfo: VisibilityInfo
+            get() = VisibilityInfo(symbol, symbol.visibility)
+    }
+
+    /**
+     * Returns true if some diagnostic has been
+     * reported.
+     */
+    private fun VisibilityInfo.checkAccessPrivilegeOrOnWeaker(
+        other: VisibilityInfo,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+        onWeaker: () -> Unit
+    ): Boolean {
+        val compare = Visibilities.compare(visibility, other.visibility)
+
+        if (compare == null) {
+            reporter.reportCannotChangeAccessPrivilege(symbol, other.symbol, context)
+            return true
+        } else if (compare < 0) {
+            onWeaker()
+            return true
+        }
+
+        return false
+    }
+
+    /**
+     * Returns true if some diagnostic has been
+     * reported.
+     */
+    private fun VisibilityInfoProvider.compareWith(
+        other: VisibilityInfoProvider,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ): Boolean {
+        actualInfo.checkAccessPrivilegeOrOnWeaker(other.actualInfo, reporter, context) {
+            if (!hasExposingGetter && other.hasExposingGetter) {
+                reporter.reportIncompletePropertyOverride(other.actualVisibility, symbol, context)
+            } else {
+                reporter.reportCannotWeakenAccessPrivilege(symbol, other.symbol, context)
+            }
+        }.onTrue {
+            return true
+        }
+
+        // This particular case means we are
+        // overriding a property with an exposing
+        // getter with a new property with some new
+        // exposing getter. Previous check resulted
+        // in comparing the visibilities of the getters
+        // and now we'll check the visibilities of the
+        // properties themselves to make sure that
+        // the overridden one has a greater visibility.
+
+        if (hasExposingGetter && other.hasExposingGetter) {
+            formalInfo.checkAccessPrivilegeOrOnWeaker(other.formalInfo, reporter, context) {
+                reporter.reportCannotWeakenAccessPrivilege(symbol, other.symbol, context)
+            }.onTrue {
+                return true
+            }
+        }
+
+        return false
+    }
+
     private fun FirCallableSymbol<*>.checkVisibility(
         containingClass: FirClass,
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
+        val selfInfo = VisibilityInfoProvider(this)
+
         val visibilities = overriddenSymbols.map {
-            it to it.visibility
-        }.sortedBy { pair ->
+            VisibilityInfoProvider(it)
+        }.sortedBy {
             // Regard `null` compare as Int.MIN so that we can report CANNOT_CHANGE_... first deterministically
-            Visibilities.compare(visibility, pair.second) ?: Int.MIN_VALUE
+            Visibilities.compare(selfInfo.actualVisibility, it.actualVisibility) ?: Int.MIN_VALUE
         }
 
-        for ((overridden, overriddenVisibility) in visibilities) {
-            val compare = Visibilities.compare(visibility, overriddenVisibility)
-            if (compare == null) {
-                reporter.reportCannotChangeAccessPrivilege(this, overridden, context)
-                return
-            } else if (compare < 0) {
-                reporter.reportCannotWeakenAccessPrivilege(this, overridden, context)
+        for (overriddenInfo in visibilities) {
+            selfInfo.compareWith(
+                overriddenInfo,
+                reporter,
+                context
+            ).onTrue {
                 return
             }
         }
@@ -142,11 +247,17 @@ object FirOverrideChecker : FirClassChecker() {
             it.ensureResolved(FirResolvePhase.STATUS)
             @OptIn(SymbolInternals::class)
             val fir = it.fir
-            visibilityChecker.isVisible(fir, context.session, file, containingDeclarations, null)
+            val firExposingGetter = fir.getExposingGetter()
+            if (firExposingGetter != null) {
+                visibilityChecker.isVisible(firExposingGetter, context.session, file, containingDeclarations, null)
+            } else {
+                visibilityChecker.isVisible(fir, context.session, file, containingDeclarations, null)
+            }
         }
         if (!hasVisibleBase) {
             //NB: Old FE reports this in an attempt to override private member,
             //while the new FE doesn't treat super's private members as overridable, so you won't get them here
+            //(except for properties with exposing getters)
             //instead you will get NOTHING_TO_OVERRIDE, which seems acceptable
             reporter.reportOn(source, FirErrors.CANNOT_OVERRIDE_INVISIBLE_MEMBER, this, overriddenSymbols.first(), context)
         }
@@ -165,7 +276,23 @@ object FirOverrideChecker : FirClassChecker() {
             return null
         }
 
-        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it).coneType.upperBoundIfFlexible() }
+        val isVar = this is FirPropertySymbol && this.isVar
+        val bounds = if (isVar || this.hasExposingGetter() || visibility != Visibilities.Private) {
+            // We should check the property's own type against parent
+            // properties' own types, and their exposing getters will
+            // be checked by `checkPermissiveGetter()`.
+            // For a var we must require the properties' own types
+            // match exactly to support setters.
+            overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it).coneType.upperBoundIfFlexible() }
+        } else {
+            // We are working with a usual property, so its
+            // type must be consistent either with the parent property's
+            // own type or its exposing getter if present.
+            overriddenSymbols.map {
+                val typeHolder = it.getExposingGetter() ?: it
+                context.returnTypeCalculator.tryCalculateReturnType(typeHolder).coneType.upperBoundIfFlexible()
+            }
+        }
 
         for (it in bounds.indices) {
             val overriddenDeclaration = overriddenSymbols[it]
@@ -186,13 +313,56 @@ object FirOverrideChecker : FirClassChecker() {
         return null
     }
 
+    private fun FirCallableSymbol<*>.checkExposingGetter(
+        overriddenSymbols: List<FirCallableSymbol<*>>,
+        typeCheckerContext: AbstractTypeCheckerContext,
+        context: CheckerContext,
+    ): Triple<FirPropertyAccessorSymbol, ConeKotlinType, ConeKotlinType>? {
+        val exposingGetter = this.getExposingGetter()
+            ?: return null
+
+        val exposingGetterReturnType = exposingGetter.resolvedReturnTypeRef.coneType
+
+        // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
+        if (exposingGetterReturnType is ConeKotlinErrorType) {
+            return null
+        }
+
+        val superExposingGetters = overriddenSymbols.mapNotNull {
+            it.getExposingGetter()
+        }
+
+        for (getter in superExposingGetters) {
+            val superExposingGetterReturnType = context.returnTypeCalculator.tryCalculateReturnType(getter)
+                .coneType
+                .upperBoundIfFlexible()
+                .substituteAllTypeParameters(this, getter, context)
+
+            if (superExposingGetterReturnType is ConeKotlinErrorType) {
+                continue
+            }
+
+            val isReturnTypeOkForOverride = AbstractTypeChecker.isSubtypeOf(
+                typeCheckerContext,
+                exposingGetterReturnType,
+                superExposingGetterReturnType
+            )
+
+            if (!isReturnTypeOkForOverride) {
+                return Triple(exposingGetter, exposingGetterReturnType, superExposingGetterReturnType)
+            }
+        }
+
+        return null
+    }
+
     private fun checkMember(
         member: FirCallableSymbol<*>,
         containingClass: FirClass,
         reporter: DiagnosticReporter,
         typeCheckerContext: AbstractTypeCheckerContext,
         firTypeScope: FirTypeScope,
-        context: CheckerContext
+        context: CheckerContext,
     ) {
         val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
 
@@ -249,20 +419,29 @@ object FirOverrideChecker : FirClassChecker() {
 
         member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
 
-        val restriction = member.checkReturnType(
+        member.checkReturnType(
             overriddenSymbols = overriddenMemberSymbols,
             typeCheckerContext = typeCheckerContext,
             context = context,
-        ) ?: return
-        when (member) {
-            is FirNamedFunctionSymbol -> reporter.reportReturnTypeMismatchOnFunction(member, restriction, context)
-            is FirPropertySymbol -> {
-                if (member.isVar) {
-                    reporter.reportTypeMismatchOnVariable(member, restriction, context)
-                } else {
-                    reporter.reportTypeMismatchOnProperty(member, restriction, context)
+        )?.let { restriction ->
+            when (member) {
+                is FirNamedFunctionSymbol -> reporter.reportReturnTypeMismatchOnFunction(member, restriction, context)
+                is FirPropertySymbol -> {
+                    if (member.isVar) {
+                        reporter.reportTypeMismatchOnVariable(member, restriction, context)
+                    } else {
+                        reporter.reportTypeMismatchOnProperty(member, restriction, context)
+                    }
                 }
             }
+        }
+
+        member.checkExposingGetter(
+            overriddenSymbols = overriddenMemberSymbols,
+            typeCheckerContext = typeCheckerContext,
+            context = context,
+        )?.let { (getter, actualType, requiredType) ->
+            reporter.reportTypeMismatchOnPropertyGetter(getter, actualType, requiredType, context)
         }
     }
 
@@ -286,6 +465,20 @@ object FirOverrideChecker : FirClassChecker() {
         context: CheckerContext
     ) {
         reportOn(overriding.source, FirErrors.VAR_OVERRIDDEN_BY_VAL, overriding, overridden, context)
+    }
+
+    private fun DiagnosticReporter.reportIncompletePropertyOverride(
+        requiredVisibility: Visibility,
+        overriding: FirCallableSymbol<*>,
+        context: CheckerContext
+    ) {
+        reportOn(
+            overriding.source,
+            FirErrors.INCOMPLETE_PROPERTY_OVERRIDE,
+            requiredVisibility,
+            overriding.visibility,
+            context
+        )
     }
 
     private fun DiagnosticReporter.reportCannotWeakenAccessPrivilege(
@@ -334,6 +527,15 @@ object FirOverrideChecker : FirClassChecker() {
         context: CheckerContext
     ) {
         reportOn(overriding.source, FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, overriding, overridden, context)
+    }
+
+    private fun DiagnosticReporter.reportTypeMismatchOnPropertyGetter(
+        getter: FirCallableSymbol<*>,
+        actual: ConeKotlinType,
+        required: ConeKotlinType,
+        context: CheckerContext
+    ) {
+        reportOn(getter.source, FirErrors.PROPERTY_GETTER_TYPE_MISMATCH_ON_OVERRIDE, actual, required, context)
     }
 
     private fun DiagnosticReporter.reportTypeMismatchOnVariable(

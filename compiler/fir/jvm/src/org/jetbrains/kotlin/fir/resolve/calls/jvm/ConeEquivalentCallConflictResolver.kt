@@ -54,7 +54,11 @@ class ConeEquivalentCallConflictResolver(
         second: FirCallableDeclaration,
         secondCandidate: Candidate
     ): Boolean {
-        if (first.symbol.callableId != second.symbol.callableId) return false
+        if (first is FirPropertyAccessor && second is FirPropertyAccessor) {
+            if (first.propertySymbol?.callableId != second.propertySymbol?.callableId) return false
+        } else {
+            if (first.symbol.callableId != second.symbol.callableId) return false
+        }
         if (first.isExpect != second.isExpect) return false
         if (first.receiverTypeRef?.coneType != second.receiverTypeRef?.coneType) {
             return false
@@ -70,6 +74,8 @@ class ConeEquivalentCallConflictResolver(
             is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
             is FirVariable -> createFlatSignature(call, declaration)
+            // It's an exposing getter
+            is FirPropertyAccessor -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
         }
     }

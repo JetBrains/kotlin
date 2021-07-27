@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
@@ -503,6 +507,70 @@ fun getOuterClass(klass: FirRegularClass, session: FirSession): FirRegularClass?
         val outerClassId = ClassId(classId.packageFqName, parentId, false)
         val parentSymbol = session.symbolProvider.getClassLikeSymbolByFqName(outerClassId)
         return (parentSymbol as? FirRegularClassSymbol)?.fir
+    }
+
+    return null
+}
+
+/**
+ * Returns true if this is a more permissive
+ * visibility, and false otherwise (including
+ * cases when visibilities are incomparable).
+ */
+fun Visibility.exposes(other: Visibility): Boolean {
+    val difference = this.compareTo(other)
+    return difference != null && difference > 0
+}
+
+/**
+ * If this is a property with a getter
+ * whose visibility is more permissive than
+ * the visibility of this, returns that getter symbol.
+ * Returns null otherwise.
+ */
+fun FirBasedSymbol<*>.getExposingGetter(): FirPropertyAccessorSymbol? {
+    if (this !is FirPropertySymbol) {
+        return null
+    }
+
+    if (getterSymbol?.visibility?.exposes(visibility) == true) {
+        return getterSymbol
+    }
+
+    return null
+}
+
+/**
+ * Returns true if this is a property with a getter
+ * whose visibility is more permissive than
+ * the visibility of this. Returns false otherwise.
+ */
+fun FirBasedSymbol<*>.hasExposingGetter(): Boolean {
+    return getExposingGetter() != null
+}
+
+/**
+ * Returns true if this is a property with a getter
+ * whose visibility is more permissive than
+ * the visibility of this. Returns false otherwise.
+ */
+fun FirDeclaration.hasExposingGetter(): Boolean {
+    return symbol.hasExposingGetter()
+}
+
+/**
+ * If this is a property with a getter
+ * whose visibility is more permissive than
+ * the visibility of this, returns that getter.
+ * Returns null otherwise.
+ */
+fun FirDeclaration.getExposingGetter(): FirPropertyAccessor? {
+    if (this !is FirProperty) {
+        return null
+    }
+
+    if (getter?.visibility?.exposes(visibility) == true) {
+        return getter
     }
 
     return null

@@ -1833,6 +1833,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PROPERTY_GETTER_TYPE_MISMATCH_ON_OVERRIDE) { firDiagnostic ->
+        PropertyGetterTypeMismatchOnOverrideImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE) { firDiagnostic ->
         VarTypeMismatchOnOverrideImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a.fir),
@@ -2203,8 +2211,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY) { firDiagnostic ->
-        GetterVisibilityDiffersFromPropertyVisibilityImpl(
+    add(FirErrors.GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY) { firDiagnostic ->
+        GetterVisibilityLessOrInconsistentWithPropertyVisibilityImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
@@ -2225,6 +2233,40 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
         WrongGetterReturnTypeImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.REDUNDANT_GETTER_TYPE_CHANGE) { firDiagnostic ->
+        RedundantGetterTypeChangeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.REDUNDANT_GETTER_VISIBILITY_CHANGE) { firDiagnostic ->
+        RedundantGetterVisibilityChangeImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPOSING_GETTER_WITH_BODY) { firDiagnostic ->
+        ExposingGetterWithBodyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INCOMPLETE_PROPERTY_OVERRIDE) { firDiagnostic ->
+        IncompletePropertyOverrideImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER) { firDiagnostic ->
+        PropertyWithDelegateAndExposingGetterImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

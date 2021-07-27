@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getExposingGetter
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -236,7 +237,8 @@ internal class ClassMemberGenerator(
         conversionScope.withFunction(this) {
             applyParentFromStackTo(this)
             convertFunctionContent(this, propertyAccessor, containingClass = null)
-            if (isDefault) {
+            val exposingGetter = property.getExposingGetter()
+            if (isDefault || exposingGetter != null) {
                 conversionScope.withParent(this) {
                     declarationStorage.enterScope(this)
                     val backingField = correspondingProperty.backingField
@@ -252,9 +254,10 @@ internal class ClassMemberGenerator(
                                         value = IrGetValueImpl(startOffset, endOffset, propertyType, valueParameters.first().symbol)
                                     }
                                 } else {
+                                    val selfOrExposingType = exposingGetter?.receiverTypeRef?.toIrType() ?: propertyType
                                     IrReturnImpl(
                                         startOffset, endOffset, irBuiltIns.nothingType, symbol,
-                                        IrGetFieldImpl(startOffset, endOffset, fieldSymbol, propertyType).setReceiver(declaration)
+                                        IrGetFieldImpl(startOffset, endOffset, fieldSymbol, selfOrExposingType).setReceiver(declaration)
                                     )
                                 }
                             )

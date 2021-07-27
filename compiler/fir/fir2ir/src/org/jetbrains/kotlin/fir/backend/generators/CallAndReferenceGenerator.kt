@@ -17,17 +17,15 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
-import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isKMutableProperty
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -45,6 +43,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -234,6 +233,7 @@ class CallAndReferenceGenerator(
                 declarationStorage,
                 conversionScope
             )
+
             return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
                 val dispatchReceiver = qualifiedAccess.dispatchReceiver
                 if (qualifiedAccess.calleeReference is FirSuperReference) {
@@ -264,6 +264,13 @@ class CallAndReferenceGenerator(
                     is IrPropertySymbol -> {
                         val getter = symbol.owner.getter
                         val backingField = symbol.owner.backingField
+                        // In case of accessing a property
+                        // with an exposing getter we still resolve
+                        // into the getter, but now we simply swap
+                        // to type with a more concrete one. This ensures
+                        // the proper instance is returned upon property
+                        // overrides, and fir diagnostics guarantee us
+                        // the types are compatible
                         when {
                             getter != null -> IrCallImpl(
                                 startOffset, endOffset, type, getter.symbol,

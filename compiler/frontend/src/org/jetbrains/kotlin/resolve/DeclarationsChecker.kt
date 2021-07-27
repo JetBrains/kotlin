@@ -903,7 +903,10 @@ class DeclarationsChecker(
             setOf(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD, KtTokens.INTERNAL_KEYWORD)
         )
         if (accessor.isGetter) {
-            if (accessorDescriptor.visibility != propertyDescriptor.visibility) {
+            val difference = accessorDescriptor.visibility.compareTo(propertyDescriptor.visibility)
+            if (difference != null && difference > 0) {
+                reportVisibilityModifierDiagnostics(tokens.values, Errors.EXPOSING_GETTERS_UNSUPPORTED)
+            } else if (accessorDescriptor.visibility != propertyDescriptor.visibility) {
                 reportVisibilityModifierDiagnostics(tokens.values, Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY)
             } else {
                 reportVisibilityModifierDiagnostics(tokens.values, Errors.REDUNDANT_MODIFIER_IN_GETTER)

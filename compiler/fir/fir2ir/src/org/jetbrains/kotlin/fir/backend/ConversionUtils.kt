@@ -182,6 +182,8 @@ fun FirReference.toSymbolForCall(
 
 private fun FirCallableSymbol<*>.toSymbolForCall(declarationStorage: Fir2IrDeclarationStorage, preferGetter: Boolean): IrSymbol? =
     when (this) {
+        // This branch is only called for exposing getters
+        is FirPropertyAccessorSymbol -> declarationStorage.getIrPropertyAccessorSymbol(this)
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
         is FirSyntheticPropertySymbol -> {
             (fir as? FirSyntheticProperty)?.let { syntheticProperty ->

@@ -1309,6 +1309,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val superProperty: KtCallableSymbol
     }
 
+    abstract class PropertyGetterTypeMismatchOnOverride : KtFirDiagnostic<KtPropertyAccessor>() {
+        override val diagnosticClass get() = PropertyGetterTypeMismatchOnOverride::class
+        abstract val actual: KtType
+        abstract val required: KtType
+    }
+
     abstract class VarTypeMismatchOnOverride : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = VarTypeMismatchOnOverride::class
         abstract val variable: KtCallableSymbol
@@ -1561,8 +1567,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualType: KtType
     }
 
-    abstract class GetterVisibilityDiffersFromPropertyVisibility : KtFirDiagnostic<KtModifierListOwner>() {
-        override val diagnosticClass get() = GetterVisibilityDiffersFromPropertyVisibility::class
+    abstract class GetterVisibilityLessOrInconsistentWithPropertyVisibility : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = GetterVisibilityLessOrInconsistentWithPropertyVisibility::class
     }
 
     abstract class SetterVisibilityInconsistentWithPropertyVisibility : KtFirDiagnostic<KtModifierListOwner>() {
@@ -1577,6 +1583,30 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = WrongGetterReturnType::class
         abstract val expectedType: KtType
         abstract val actualType: KtType
+    }
+
+    abstract class RedundantGetterTypeChange : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = RedundantGetterTypeChange::class
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
+    }
+
+    abstract class RedundantGetterVisibilityChange : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = RedundantGetterVisibilityChange::class
+    }
+
+    abstract class ExposingGetterWithBody : KtFirDiagnostic<KtPropertyAccessor>() {
+        override val diagnosticClass get() = ExposingGetterWithBody::class
+    }
+
+    abstract class IncompletePropertyOverride : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = IncompletePropertyOverride::class
+        abstract val requiredVisibility: Visibility
+        abstract val actualVisibility: Visibility
+    }
+
+    abstract class PropertyWithDelegateAndExposingGetter : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = PropertyWithDelegateAndExposingGetter::class
     }
 
     abstract class AccessorForDelegatedProperty : KtFirDiagnostic<KtPropertyAccessor>() {

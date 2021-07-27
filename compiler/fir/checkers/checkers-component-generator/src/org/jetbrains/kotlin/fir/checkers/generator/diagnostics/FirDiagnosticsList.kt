@@ -689,6 +689,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("property")
             parameter<FirCallableSymbol<*>>("superProperty")
         }
+        val PROPERTY_GETTER_TYPE_MISMATCH_ON_OVERRIDE by error<KtPropertyAccessor>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
+            parameter<ConeKotlinType>("actual")
+            parameter<ConeKotlinType>("required")
+        }
         val VAR_TYPE_MISMATCH_ON_OVERRIDE by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
             parameter<FirCallableSymbol<*>>("variable")
             parameter<FirCallableSymbol<*>>("superVariable")
@@ -814,13 +818,24 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
-        val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
+        val GETTER_VISIBILITY_LESS_OR_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val WRONG_SETTER_RETURN_TYPE by error<KtTypeReference>()
         val WRONG_GETTER_RETURN_TYPE by error<KtTypeReference> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
+        val REDUNDANT_GETTER_TYPE_CHANGE by warning<KtTypeReference> {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+        }
+        val REDUNDANT_GETTER_VISIBILITY_CHANGE by warning<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
+        val EXPOSING_GETTER_WITH_BODY by error<KtPropertyAccessor>()
+        val INCOMPLETE_PROPERTY_OVERRIDE by error<KtDeclaration> {
+            parameter<Visibility>("requiredVisibility")
+            parameter<Visibility>("actualVisibility")
+        }
+        val PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER by error<KtProperty>()
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
     }
 

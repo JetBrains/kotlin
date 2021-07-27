@@ -16,50 +16,104 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.resolve.hasExposingGetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 
-object FirModifierChecker : FirBasicDeclarationChecker() {
+private fun <T> List<T>.forPairs(action: (Pair<T, T>) -> Unit) {
+    for (it in this.indices) {
+        for (that in it + 1 until this.size) {
+            action(this[it] to this[that])
+        }
+    }
+}
 
-    private enum class CompatibilityType {
-        COMPATIBLE,
-        COMPATIBLE_FOR_CLASSES, // for functions and properties: error
-        REDUNDANT_1_TO_2,       // first is redundant to second: warning
-        REDUNDANT_2_TO_1,       // second is redundant to first: warning
-        DEPRECATED,             // pair is deprecated and will soon become incompatible: warning
-        REPEATED,               // first and second are the same: error
-        INCOMPATIBLE,           // pair is incompatible: error
+private fun <T> Array<T>.forPairs(action: (Pair<T, T>) -> Unit) {
+    return this.asList().forPairs(action)
+}
+
+private fun <T> Pair<T, T>.reverse() = second to first
+
+private fun mixtureOf(vararg integers: Int) = integers.reduce { accumulator, next -> accumulator or next }
+
+private infix fun Int.includes(mode: Int): Boolean {
+    // this == 0 is also some state,
+    // but it's not denoted by its
+    // own flag and so can't be detected
+    // via bitwise and
+    return if (mode == 0) {
+        this == 0
+    } else {
+        this and mode != 0
+    }
+}
+
+@Suppress("PropertyName")
+private open class FlagProvider {
+    private var nextFlag = 1
+
+    protected fun generateFlag(): Int {
+        val flag = nextFlag
+        nextFlag = nextFlag shl 1
+        return flag
     }
 
-    // first modifier in pair should also be first in spelling order and declaration's modifier list
-    private val compatibilityTypeMap = hashMapOf<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, CompatibilityType>()
+    val NONE = 0
 
-    private fun recordCompatibilityType(compatibilityType: CompatibilityType, vararg list: KtModifierKeywordToken) {
-        for (firstKeyword in list) {
-            for (secondKeyword in list) {
-                if (firstKeyword != secondKeyword) {
-                    compatibilityTypeMap[Pair(firstKeyword, secondKeyword)] = compatibilityType
-                }
-            }
+    val ALL_AT_ONCE: Int
+        get() = nextFlag - 1
+}
+
+private object CompatibleEntities : FlagProvider() {
+    val CLASSES = generateFlag()
+    val PROPERTIES_WITH_EXPOSING_GETTERS = generateFlag()
+    val OTHER = generateFlag()
+}
+
+private object IncompatibilityReasons : FlagProvider() {
+    val REDUNDANT_1_TO_2 = generateFlag() // first is redundant to second: warning
+    val REDUNDANT_2_TO_1 = generateFlag() // second is redundant to first: warning
+    val DEPRECATED = generateFlag()       // pair is deprecated and will soon become incompatible: warning
+    val REPEATED = generateFlag()         // first and second are the same: error
+}
+
+private class CompatibilityInfo {
+    var compatibleEntities = CompatibleEntities.ALL_AT_ONCE
+    var incompatibilityReasons = IncompatibilityReasons.NONE
+}
+
+object FirModifierChecker : FirBasicDeclarationChecker() {
+    // first modifier in pair should also be first in spelling order and declaration's modifier list
+    private val compatibilityTypeMap = hashMapOf<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, CompatibilityInfo>()
+
+    private fun makeModifiersPairs(
+        vararg array: KtModifierKeywordToken,
+        configure: CompatibilityInfo.() -> Unit
+    ) {
+        array.forPairs { pair ->
+            // must be symmetric
+            val compatibility = CompatibilityInfo().apply(configure)
+            val reversePair = pair.reverse()
+
+            compatibilityTypeMap[pair] = compatibility
+            compatibilityTypeMap[reversePair] = compatibility
         }
     }
 
-    private fun recordPairsCompatibleForClasses(vararg list: KtModifierKeywordToken) {
-        recordCompatibilityType(CompatibilityType.COMPATIBLE_FOR_CLASSES, *list)
-    }
-
-    private fun recordDeprecatedPairs(vararg list: KtModifierKeywordToken) {
-        recordCompatibilityType(CompatibilityType.DEPRECATED, *list)
-    }
-
     private fun recordIncompatiblePairs(vararg list: KtModifierKeywordToken) {
-        recordCompatibilityType(CompatibilityType.INCOMPATIBLE, *list)
+        makeModifiersPairs(*list) {
+            compatibleEntities = CompatibleEntities.NONE
+        }
     }
 
     // note that order matters: the first argument is redundant to the second, not the other way around
     private fun recordRedundantPairs(redundantKeyword: KtModifierKeywordToken, sufficientKeyword: KtModifierKeywordToken) {
-        compatibilityTypeMap[Pair(redundantKeyword, sufficientKeyword)] = CompatibilityType.REDUNDANT_1_TO_2
-        compatibilityTypeMap[Pair(sufficientKeyword, redundantKeyword)] = CompatibilityType.REDUNDANT_2_TO_1
+        compatibilityTypeMap[Pair(redundantKeyword, sufficientKeyword)] = CompatibilityInfo().apply {
+            incompatibilityReasons = IncompatibilityReasons.REDUNDANT_1_TO_2
+        }
+        compatibilityTypeMap[Pair(sufficientKeyword, redundantKeyword)] = CompatibilityInfo().apply {
+            incompatibilityReasons = IncompatibilityReasons.REDUNDANT_2_TO_1
+        }
     }
 
     // building the compatibility type mapping
@@ -81,9 +135,21 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         recordIncompatiblePairs(CONST_KEYWORD, OPEN_KEYWORD)
         recordIncompatiblePairs(CONST_KEYWORD, OVERRIDE_KEYWORD)
 
-        recordIncompatiblePairs(PRIVATE_KEYWORD, OVERRIDE_KEYWORD)
-        recordPairsCompatibleForClasses(PRIVATE_KEYWORD, OPEN_KEYWORD)
-        recordPairsCompatibleForClasses(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
+        makeModifiersPairs(PRIVATE_KEYWORD, OVERRIDE_KEYWORD) {
+            compatibleEntities = CompatibleEntities.PROPERTIES_WITH_EXPOSING_GETTERS
+        }
+        makeModifiersPairs(PRIVATE_KEYWORD, OPEN_KEYWORD) {
+            compatibleEntities = mixtureOf(
+                CompatibleEntities.CLASSES,
+                CompatibleEntities.PROPERTIES_WITH_EXPOSING_GETTERS,
+            )
+        }
+        makeModifiersPairs(PRIVATE_KEYWORD, ABSTRACT_KEYWORD) {
+            compatibleEntities = mixtureOf(
+                CompatibleEntities.CLASSES,
+                CompatibleEntities.PROPERTIES_WITH_EXPOSING_GETTERS,
+            )
+        }
 
         // 1. subclasses contained inside a sealed class can not be instantiated, because their constructors needs
         // an instance of an outer sealed (effectively abstract) class
@@ -95,12 +161,18 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         recordRedundantPairs(ABSTRACT_KEYWORD, SEALED_KEYWORD)
     }
 
-    private fun deduceCompatibilityType(firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken): CompatibilityType =
-        if (firstKeyword == secondKeyword) {
-            CompatibilityType.REPEATED
+    private fun deduceCompatibilityType(
+        firstKeyword: KtModifierKeywordToken,
+        secondKeyword: KtModifierKeywordToken
+    ): CompatibilityInfo {
+        return if (firstKeyword == secondKeyword) {
+            CompatibilityInfo().apply {
+                incompatibilityReasons = IncompatibilityReasons.REPEATED
+            }
         } else {
-            compatibilityTypeMap[Pair(firstKeyword, secondKeyword)] ?: CompatibilityType.COMPATIBLE
+            compatibilityTypeMap[Pair(firstKeyword, secondKeyword)] ?: CompatibilityInfo()
         }
+    }
 
     private fun checkCompatibilityType(
         firstModifier: FirModifier<*>,
@@ -112,26 +184,65 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
     ) {
         val firstToken = firstModifier.token
         val secondToken = secondModifier.token
-        when (val compatibilityType = deduceCompatibilityType(firstToken, secondToken)) {
-            CompatibilityType.COMPATIBLE -> {
+        val compatibilityType = deduceCompatibilityType(firstToken, secondToken)
+        when {
+            compatibilityType.compatibleEntities == CompatibleEntities.NONE -> {
+                reportIncompatiblePair(firstModifier, secondModifier, reporter, reportedNodes, context)
             }
-            CompatibilityType.REPEATED ->
-                if (reportedNodes.add(secondModifier)) reporter.reportRepeatedModifier(secondModifier, secondToken, context)
-            CompatibilityType.REDUNDANT_2_TO_1 ->
+            owner?.isAppropriateFor(compatibilityType) == true -> {
+                reportIncompatiblePair(firstModifier, secondModifier, reporter, reportedNodes, context)
+            }
+            compatibilityType.incompatibilityReasons includes IncompatibilityReasons.REPEATED -> {
+                if (reportedNodes.add(secondModifier)) {
+                    reporter.reportRepeatedModifier(secondModifier, secondToken, context)
+                }
+            }
+            compatibilityType.incompatibilityReasons includes IncompatibilityReasons.REDUNDANT_2_TO_1 -> {
                 reporter.reportRedundantModifier(secondModifier, secondToken, firstToken, context)
-            CompatibilityType.REDUNDANT_1_TO_2 ->
+            }
+            compatibilityType.incompatibilityReasons includes IncompatibilityReasons.REDUNDANT_1_TO_2 -> {
                 reporter.reportRedundantModifier(firstModifier, firstToken, secondToken, context)
-            CompatibilityType.DEPRECATED -> {
+            }
+            compatibilityType.incompatibilityReasons includes IncompatibilityReasons.DEPRECATED -> {
                 reporter.reportDeprecatedModifierPair(firstModifier, firstToken, secondToken, context)
                 reporter.reportDeprecatedModifierPair(secondModifier, secondToken, firstToken, context)
             }
-            CompatibilityType.INCOMPATIBLE, CompatibilityType.COMPATIBLE_FOR_CLASSES -> {
-                if (compatibilityType == CompatibilityType.COMPATIBLE_FOR_CLASSES && owner is FirClass) {
-                    return
-                }
-                if (reportedNodes.add(firstModifier)) reporter.reportIncompatibleModifiers(firstModifier, firstToken, secondToken, context)
-                if (reportedNodes.add(secondModifier)) reporter.reportIncompatibleModifiers(secondModifier, secondToken, firstToken, context)
-            }
+        }
+    }
+
+    private fun FirDeclaration.isAppropriateFor(compatibilityType: CompatibilityInfo): Boolean {
+        return when (this) {
+            is FirClass -> hasIssuesAsClass(compatibilityType)
+            is FirProperty -> this.hasIssuesWithExposingGetter(compatibilityType)
+            else -> !(compatibilityType.compatibleEntities includes CompatibleEntities.OTHER)
+        }
+    }
+
+    private fun hasIssuesAsClass(compatibilityType: CompatibilityInfo): Boolean {
+        return !(compatibilityType.compatibleEntities includes CompatibleEntities.CLASSES)
+    }
+
+    private fun FirDeclaration.hasIssuesWithExposingGetter(compatibilityType: CompatibilityInfo): Boolean {
+        val allIsOk = if (hasExposingGetter()) {
+            compatibilityType.compatibleEntities includes CompatibleEntities.PROPERTIES_WITH_EXPOSING_GETTERS
+        } else {
+            compatibilityType.compatibleEntities includes CompatibleEntities.OTHER
+        }
+        return !allIsOk
+    }
+
+    private fun reportIncompatiblePair(
+        firstModifier: FirModifier<*>,
+        secondModifier: FirModifier<*>,
+        reporter: DiagnosticReporter,
+        reportedNodes: MutableSet<FirModifier<*>>,
+        context: CheckerContext,
+    ) {
+        if (reportedNodes.add(firstModifier)) {
+            reporter.reportIncompatibleModifiers(firstModifier, firstModifier.token, secondModifier.token, context)
+        }
+        if (reportedNodes.add(secondModifier)) {
+            reporter.reportIncompatibleModifiers(secondModifier, secondModifier.token, firstModifier.token, context)
         }
     }
 
@@ -145,14 +256,8 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         // therefore, a track of nodes with already reported errors should be kept
         val reportedNodes = hashSetOf<FirModifier<*>>()
 
-        val modifiers = list.modifiers
-        for (secondModifier in modifiers) {
-            for (firstModifier in modifiers) {
-                if (firstModifier == secondModifier) {
-                    break
-                }
-                checkCompatibilityType(firstModifier, secondModifier, reporter, reportedNodes, owner, context)
-            }
+        list.modifiers.forPairs {
+            checkCompatibilityType(it.first, it.second, reporter, reportedNodes, owner, context)
         }
     }
 
