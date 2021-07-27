@@ -72,6 +72,16 @@ class KotlinGradleIT : BaseGradleIT() {
 
         val wd2 = createTempDir("testRunningInDifferentDir")
         wd1.copyRecursively(wd2)
+        wd2.resolve("kotlinJavaProject/build.gradle").modify {
+            it.lines().map { line ->
+                if (line.contains("subdir/kotlinJavaProject/gradle/cacheRedirector.gradle.kts")) {
+                    line.replace("subdir", "testRunningInDifferentDir")
+                } else {
+                    line
+                }
+            }.joinToString(separator = "\n")
+        }
+
         wd1.deleteRecursively()
         if (wd1.exists()) {
             val files = buildString {
