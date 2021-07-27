@@ -160,12 +160,7 @@ class IrSymbolDeserializer(
     }
 
     private fun deserializeFileLocalIdSignature(proto: ProtoFileLocalIdSignature): IdSignature {
-        if (useGlobalSignatures) {
-            val fp = if (proto.hasFile()) fileReader.deserializeString(proto.file) else fileSymbol.owner.path
-            return IdSignature.GlobalFileLocalSignature(deserializeIdSignature(proto.container), proto.localId, fp)
-        } else {
-            return IdSignature.FileLocalSignature(deserializeIdSignature(proto.container), proto.localId)
-        }
+        return IdSignature.FileLocalSignature(deserializeIdSignature(proto.container), proto.localId)
     }
 
     private fun deserializeScopeLocalIdSignature(proto: Int): IdSignature {

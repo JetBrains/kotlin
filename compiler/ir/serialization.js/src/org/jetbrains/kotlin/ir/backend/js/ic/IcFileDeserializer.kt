@@ -40,7 +40,6 @@ class IcFileDeserializer(
     val originalEnqueue: IdSignature.(IcFileDeserializer) -> Unit,
     val icFileData: SerializedIcDataForFile,
     val mappingState: JsMappingState,
-    val publicSignatureToIcFileDeserializer: MutableMap<IdSignature, IcFileDeserializer>,
     val enqueue: IdSignature.(IcFileDeserializer) -> Unit,
 ) {
 
@@ -149,7 +148,7 @@ class IcFileDeserializer(
         icFileReader,
         file.symbol,
         emptyList(),
-        { idSig -> enqueueLocalTopLevelDeclaration(idSig) },
+        { idSig -> idSig.enqueue(this) },
         { _, s -> s },
         enqueueAllDeclarations = true,
         useGlobalSignatures = true,
@@ -194,12 +193,6 @@ class IcFileDeserializer(
         }
     }
 
-    fun init() {
-        reversedSignatureIndex.keys.forEach {
-            publicSignatureToIcFileDeserializer[it] = this
-        }
-    }
-
     private val containerSigToOrder by lazy {
         mutableMapOf<IdSignature, ByteArray>().also { map ->
             val containerIds = IrLongArrayMemoryReader(icFileData.order.containerSignatures).array
@@ -234,12 +227,6 @@ class IcFileDeserializer(
             )
 
         return actualModuleDeserializer.deserializeIrSymbol(idSig, kind)
-    }
-
-    private fun enqueueLocalTopLevelDeclaration(idSig: IdSignature) {
-        // We only care about declarations from IC cache. They all are in the map.
-        val deser = publicSignatureToIcFileDeserializer[idSig] ?: return
-        idSig.enqueue(deser)
     }
 
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration? {

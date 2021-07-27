@@ -338,34 +338,6 @@ sealed class IdSignature {
         override fun hashCode(): Int = id
     }
 
-    class GlobalFileLocalSignature(val container: IdSignature, val id: Long, val filePath: String) : IdSignature() {
-        override val isPubliclyVisible: Boolean get() = true
-
-        override fun packageFqName(): FqName = container.packageFqName()
-
-        override fun topLevelSignature(): IdSignature {
-            val topLevelContainer = container.topLevelSignature()
-            if (topLevelContainer === container) {
-                if (topLevelContainer is CommonSignature && topLevelContainer.declarationFqName.isEmpty()) {
-                    // private top level
-                    return this
-                }
-            }
-            return topLevelContainer
-        }
-
-        override fun nearestPublicSig(): IdSignature = container.nearestPublicSig()
-
-        override fun render(): String = "${container.render()}:$id from ${filePath.split('/').last()}"
-
-        override fun equals(other: Any?): Boolean =
-            other is GlobalFileLocalSignature && id == other.id && container == other.container && filePath == other.filePath
-
-        private val hashCode = (container.hashCode() * 31 + id.hashCode()) * 31 + filePath.hashCode()
-
-        override fun hashCode(): Int = hashCode
-    }
-
     // Used to reference local variable and value parameters in function
     class GlobalScopeLocalDeclaration(val id: Int, val description: String = "<no description>", val filePath: String) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = false

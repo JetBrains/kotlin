@@ -163,10 +163,6 @@ class IdSignatureSerializerWithForIC(
         localIndex = localIndexOffset
         scopeIndex = scopeIndexOffset
     }
-
-    override fun IrDeclaration.createFileLocalSignature(parentSignature: IdSignature, localIndex: Long, description: String?): IdSignature {
-        return IdSignature.GlobalFileLocalSignature(parentSignature, localIndex, fileOrNull?.path ?: "")
-    }
 }
 
 fun storeOrder(file: IrFile, fileDeclarations: Iterable<IrDeclaration>, idSigToLong: (IrSymbol) -> Long): SerializedOrder {
