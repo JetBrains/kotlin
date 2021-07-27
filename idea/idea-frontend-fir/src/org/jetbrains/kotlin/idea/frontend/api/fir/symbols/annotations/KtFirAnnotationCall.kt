@@ -27,7 +27,7 @@ internal class KtFirAnnotationCall(
     override val token: ValidityToken get() = containingDeclaration.token
 
     override val psi: KtCallElement? by containingDeclaration.withFirAndCache { fir ->
-        fir.findPsi(fir.moduleData.session) as? KtCallElement
+        annotationCallRef.findPsi(fir.moduleData.session) as? KtCallElement
     }
 
     override val classId: ClassId? by cached {

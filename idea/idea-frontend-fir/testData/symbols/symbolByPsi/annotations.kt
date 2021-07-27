@@ -84,7 +84,7 @@ KtFirFunctionSymbol:
   ]
   annotations: [
     Anno(param1 = funparam, param2 = 3)
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /X.x
   dispatchType: X
@@ -112,7 +112,7 @@ KtFirNamedClassOrObjectSymbol:
   ]
   annotations: [
     Anno(param1 = param, param2 = 2)
-      psi: null
+      psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: X
   classKind: CLASS

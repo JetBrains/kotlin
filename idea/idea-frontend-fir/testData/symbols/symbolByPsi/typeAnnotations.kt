@@ -22,7 +22,7 @@ KtFirNamedClassOrObjectSymbol:
   ]
   annotations: [
     kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)
-      psi: null
+      psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno1
   classKind: ANNOTATION_CLASS
@@ -48,7 +48,7 @@ KtFirNamedClassOrObjectSymbol:
   ]
   annotations: [
     kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)
-      psi: null
+      psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno2
   classKind: ANNOTATION_CLASS
@@ -74,7 +74,7 @@ KtFirNamedClassOrObjectSymbol:
   ]
   annotations: [
     kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)
-      psi: null
+      psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno3
   classKind: ANNOTATION_CLASS
@@ -100,7 +100,7 @@ KtFirNamedClassOrObjectSymbol:
   ]
   annotations: [
     kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)
-      psi: null
+      psi: KtAnnotationEntry
   ]
   classIdIfNonLocal: Anno4
   classKind: ANNOTATION_CLASS
@@ -144,7 +144,7 @@ KtFirNamedClassOrObjectSymbol:
 KtFirValueParameterSymbol:
   annotatedType: [
     Anno2()
-      psi: null
+      psi: KtAnnotationEntry
   ] @R|Anno2|()  I
   annotationClassIds: []
   annotations: []
@@ -231,7 +231,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [
     [
       Anno1()
-        psi: null
+        psi: KtAnnotationEntry
     ] @R|Anno2|()  I
   ]
   symbolKind: TOP_LEVEL
