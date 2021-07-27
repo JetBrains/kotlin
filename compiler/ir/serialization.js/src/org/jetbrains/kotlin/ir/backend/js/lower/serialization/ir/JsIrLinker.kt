@@ -78,11 +78,7 @@ class JsIrLinker(
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer {
         return if (isBuiltInModule(moduleDescriptor)) {
-            if (useGlobalSignatures) {
-                IrIcModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer)
-            } else {
-                IrModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer)
-            }
+            IrModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer)
         } else moduleDeserializer
     }
 
