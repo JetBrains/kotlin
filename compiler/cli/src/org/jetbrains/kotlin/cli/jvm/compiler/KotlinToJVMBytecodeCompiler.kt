@@ -150,6 +150,8 @@ object KotlinToJVMBytecodeCompiler {
                     for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
                         if (classpath is JvmClasspathRoot) {
                             addContent(Element("classpath").setAttribute("path", classpath.file.absolutePath))
+                        } else if (classpath is JvmModulePathRoot) {
+                            addContent(Element("modulepath").setAttribute("path", classpath.file.absolutePath))
                         }
                     }
                     for (commonSources in module.getCommonSourceFiles()) {
