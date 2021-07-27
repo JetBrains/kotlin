@@ -11,7 +11,7 @@ fun kotlinBenchmarks(additionalDefaultProperties: Array<String> = emptyArray()) 
         val kotlinGradlePluginConfigurationPhaseAware = changeableFile("kotlinGradlePlugin/ConfigurationPhaseAware")
         val buildSrc = changeableFile("buildSrc/BuildPropertiesExtKt")
 
-        defaultTasks(Tasks.DIST, Tasks.COMPILER_TEST_CLASSES, Tasks.IDEA_TEST_CLASSES, Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
+        defaultTasks(Tasks.DIST, Tasks.COMPILER_TEST_CLASSES, Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
         defaultJdk = System.getenv("JDK_8")
 
         val noArgs = arrayOf<String>()
@@ -198,7 +198,7 @@ fun gavra0Benchmarks() =
         scenario("abi change to core.descriptors") {
             step {
                 changeFile(coreDescriptorsClassDescriptorsBase, TypeOfChange.ADD_PUBLIC_FUNCTION)
-                runTasks(Tasks.DIST, Tasks.IDEA_PLUGIN)
+                runTasks(Tasks.DIST)
             }
             repeat = 10U
         }
