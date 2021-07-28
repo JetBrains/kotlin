@@ -206,6 +206,13 @@ abstract class GradleCompileTaskProvider @Inject constructor(
     val projectName: Provider<String> = objectFactory
         .property(project.rootProject.name.normalizeForFlagFile())
 
+    /**
+     * Returns different value rather than [rootDir] in case of composite builds or buildSrc module
+     */
+    @get:Internal
+    val rootBuildDir: Provider<File> = objectFactory
+        .property(project.gradle.rootBuild.rootProject.projectDir)
+
     @get:Internal
     val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = objectFactory.property(
         /**
@@ -342,10 +349,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     protected open val taskOutputsBackupExcludes: List<File> = emptyList()
 
+    @get:Internal
+    internal abstract val daemonStatisticsService: Property<BuildService<*>>
+
     @TaskAction
     fun execute(inputChanges: InputChanges) {
         val buildMetrics = metrics.get()
         buildMetrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+            daemonStatisticsService.orNull // trigger service instantiation if it was not instantiated yet
             KotlinBuildStatsService.applyIfInitialised {
                 if (name.contains("Test"))
                     it.report(BooleanMetrics.TESTS_EXECUTED, true)

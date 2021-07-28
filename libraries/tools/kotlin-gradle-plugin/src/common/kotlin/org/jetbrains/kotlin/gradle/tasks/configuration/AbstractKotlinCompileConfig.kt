@@ -11,7 +11,9 @@ import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.services.BuildService
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.compilerRunner.KotlinDaemonStatisticsService
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinO
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.gradle.utils.rootBuild
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
 /**
@@ -71,6 +74,19 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
             task.incremental = false
             task.useModuleDetection.convention(false)
+            try {
+                val rootProject = project.gradle.rootBuild.rootProject
+                if (PropertiesProvider(rootProject).writeKotlinDaemonsReport) {
+                    task.daemonStatisticsService.set(rootProject.gradle.sharedServices.registerIfAbsent(
+                        "daemon-statistics-service",
+                        KotlinDaemonStatisticsService::class.java
+                    ) {
+                        it.parameters.rootBuildDir.set(rootProject.layout.projectDirectory)
+                    } as Provider<BuildService<*>>)
+                }
+            } catch (e: Exception) {
+                // noop
+            }
         }
     }
 

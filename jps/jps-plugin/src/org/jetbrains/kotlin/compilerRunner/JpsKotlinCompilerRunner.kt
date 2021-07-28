@@ -368,6 +368,7 @@ class JpsKotlinCompilerRunner {
                     sessionFlagFile,
                     environment.messageCollector,
                     log.isDebugEnabled,
+                    environment.kotlinPaths.homePath, // just to fix compilation, this is not correct
                     daemonOptions,
                     additionalJvmParams.toTypedArray()
                 )

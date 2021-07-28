@@ -36,6 +36,10 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         server.getUsedMemory()
     }
 
+    override fun getTotalGcTime(): CompileService.CallResult<Long> {
+        TODO("Not yet implemented")
+    }
+
     override fun getDaemonOptions() = runBlocking {
         server.getDaemonOptions()
     }

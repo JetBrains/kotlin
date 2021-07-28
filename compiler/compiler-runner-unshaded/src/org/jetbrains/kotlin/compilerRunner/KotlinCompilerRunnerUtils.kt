@@ -45,6 +45,7 @@ object KotlinCompilerRunnerUtils {
         sessionAliveFlagFile: File,
         messageCollector: MessageCollector,
         isDebugEnabled: Boolean,
+        rootBuildDir: File,
         daemonOptions: DaemonOptions = configureDaemonOptions(),
         additionalJvmParams: Array<String> = arrayOf()
     ): CompileServiceSession? = newDaemonConnection(
@@ -53,6 +54,7 @@ object KotlinCompilerRunnerUtils {
         sessionAliveFlagFile,
         messageCollector,
         isDebugEnabled,
+        rootBuildDir,
         daemonOptions,
         configureDaemonJVMOptions(
             *additionalJvmParams,
@@ -70,9 +72,12 @@ object KotlinCompilerRunnerUtils {
         sessionAliveFlagFile: File,
         messageCollector: MessageCollector,
         isDebugEnabled: Boolean,
+        rootBuildDir: File,
         daemonOptions: DaemonOptions = configureDaemonOptions(),
         daemonJVMOptions: DaemonJVMOptions
     ): CompileServiceSession? {
+        daemonOptions.rootBuildDir = rootBuildDir
+
         val daemonReportMessages = ArrayList<DaemonReportMessage>()
         val daemonReportingTargets = DaemonReportingTargets(messages = daemonReportMessages)
 
