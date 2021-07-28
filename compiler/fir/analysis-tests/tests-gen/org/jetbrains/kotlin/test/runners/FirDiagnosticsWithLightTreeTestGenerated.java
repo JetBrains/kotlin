@@ -2926,6 +2926,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("anonymousInAnonymous.kt")
+            public void testAnonymousInAnonymous() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/anonymousInAnonymous.kt");
+            }
+
+            @Test
             @TestMetadata("implicitInAnonymous.kt")
             public void testImplicitInAnonymous() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/implicitInAnonymous.kt");
