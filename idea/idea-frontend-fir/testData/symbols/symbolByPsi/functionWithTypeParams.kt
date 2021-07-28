@@ -6,7 +6,9 @@ KtFirTypeParameterSymbol:
   isReified: false
   name: X
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirValueParameterSymbol:
@@ -28,6 +30,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: /foo
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -41,7 +44,11 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(X)]
-  valueParameters: [KtFirValueParameterSymbol(x)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(X)
+  ]
+  valueParameters: [
+    KtFirValueParameterSymbol(x)
+  ]
   visibility: Public
 */

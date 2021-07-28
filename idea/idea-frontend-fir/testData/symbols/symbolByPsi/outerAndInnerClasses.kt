@@ -16,14 +16,18 @@ KtFirTypeParameterSymbol:
   isReified: false
   name: T
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: T1
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirNamedClassOrObjectSymbol:
@@ -40,16 +44,22 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: Y
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: MEMBER
-  typeParameters: [KtFirTypeParameterSymbol(T1)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T1)
+  ]
   visibility: Public
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: T2
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirNamedClassOrObjectSymbol:
@@ -66,30 +76,40 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: Z
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: MEMBER
-  typeParameters: [KtFirTypeParameterSymbol(T2)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T2)
+  ]
   visibility: Public
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: T3
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: T4
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: T5
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirNamedClassOrObjectSymbol:
@@ -106,16 +126,22 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: K
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: LOCAL
-  typeParameters: [KtFirTypeParameterSymbol(T5)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T5)
+  ]
   visibility: Local
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: T6
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirNamedClassOrObjectSymbol:
@@ -132,9 +158,13 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: C
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: LOCAL
-  typeParameters: [KtFirTypeParameterSymbol(T6)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T6)
+  ]
   visibility: Local
 
 KtFirNamedClassOrObjectSymbol:
@@ -151,9 +181,13 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: U
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: LOCAL
-  typeParameters: [KtFirTypeParameterSymbol(T4)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T4)
+  ]
   visibility: Local
 
 KtFirFunctionSymbol:
@@ -162,6 +196,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: /X.foo
   dispatchType: X<T>
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -175,7 +210,9 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: MEMBER
-  typeParameters: [KtFirTypeParameterSymbol(T3)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T3)
+  ]
   valueParameters: []
   visibility: Public
 
@@ -193,8 +230,12 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(T)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T)
+  ]
   visibility: Public
 */

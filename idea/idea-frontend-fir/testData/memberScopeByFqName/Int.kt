@@ -11,6 +11,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.and
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: true
@@ -25,7 +26,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -34,6 +37,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -48,7 +52,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -57,6 +63,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -71,7 +78,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -80,6 +89,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -94,7 +104,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -103,6 +115,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -117,7 +130,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -126,6 +141,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -140,7 +156,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -149,6 +167,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.compareTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -163,7 +182,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -172,6 +193,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.dec
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -195,6 +217,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.div
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -209,7 +232,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -218,6 +243,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.div
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -232,7 +258,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -241,6 +269,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.div
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -255,7 +284,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -264,6 +295,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.div
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -278,7 +310,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -287,6 +321,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.div
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -301,7 +336,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -310,6 +347,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.div
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -324,7 +362,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -333,6 +373,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.inc
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -356,6 +397,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.inv
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -379,6 +421,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.minus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -393,7 +436,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -402,6 +447,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.minus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -416,7 +462,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -425,6 +473,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.minus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -439,7 +488,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -448,6 +499,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.minus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -462,7 +514,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -471,6 +525,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.minus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -485,7 +540,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -494,6 +551,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.minus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -508,7 +566,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -517,6 +577,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.or
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: true
@@ -531,7 +592,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -540,6 +603,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.plus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -554,7 +618,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -563,6 +629,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.plus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -577,7 +644,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -586,6 +655,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.plus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -600,7 +670,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -609,6 +681,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.plus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -623,7 +696,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -632,6 +707,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.plus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -646,7 +722,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -655,6 +733,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.plus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -669,7 +748,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -678,6 +759,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -692,7 +774,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -701,6 +785,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -715,7 +800,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -724,6 +811,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -738,7 +826,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -747,6 +837,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -761,15 +852,23 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
-  annotationClassIds: [kotlin/SinceKotlin]
-  annotations: [kotlin/SinceKotlin(version = 1.1)]
+  annotationClassIds: [
+    kotlin/SinceKotlin
+  ]
+  annotations: [
+    kotlin/SinceKotlin(version = 1.1)
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.rem
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -784,15 +883,23 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
-  annotationClassIds: [kotlin/SinceKotlin]
-  annotations: [kotlin/SinceKotlin(version = 1.1)]
+  annotationClassIds: [
+    kotlin/SinceKotlin
+  ]
+  annotations: [
+    kotlin/SinceKotlin(version = 1.1)
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.rem
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -807,15 +914,23 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
-  annotationClassIds: [kotlin/SinceKotlin]
-  annotations: [kotlin/SinceKotlin(version = 1.1)]
+  annotationClassIds: [
+    kotlin/SinceKotlin
+  ]
+  annotations: [
+    kotlin/SinceKotlin(version = 1.1)
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.rem
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -830,15 +945,23 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
-  annotationClassIds: [kotlin/SinceKotlin]
-  annotations: [kotlin/SinceKotlin(version = 1.1)]
+  annotationClassIds: [
+    kotlin/SinceKotlin
+  ]
+  annotations: [
+    kotlin/SinceKotlin(version = 1.1)
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.rem
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -853,15 +976,23 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
-  annotationClassIds: [kotlin/SinceKotlin]
-  annotations: [kotlin/SinceKotlin(version = 1.1)]
+  annotationClassIds: [
+    kotlin/SinceKotlin
+  ]
+  annotations: [
+    kotlin/SinceKotlin(version = 1.1)
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.rem
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -876,15 +1007,23 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
-  annotationClassIds: [kotlin/SinceKotlin]
-  annotations: [kotlin/SinceKotlin(version = 1.1)]
+  annotationClassIds: [
+    kotlin/SinceKotlin
+  ]
+  annotations: [
+    kotlin/SinceKotlin(version = 1.1)
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/Int.rem
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -899,7 +1038,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -908,6 +1049,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.shl
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: true
@@ -922,7 +1064,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bitCount)]
+  valueParameters: [
+    KtFirValueParameterSymbol(bitCount)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -931,6 +1075,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.shr
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: true
@@ -945,7 +1090,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bitCount)]
+  valueParameters: [
+    KtFirValueParameterSymbol(bitCount)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -954,6 +1101,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.times
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -968,7 +1116,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -977,6 +1127,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.times
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -991,7 +1142,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1000,6 +1153,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.times
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1014,7 +1168,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1023,6 +1179,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.times
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1037,7 +1194,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1046,6 +1205,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.times
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1060,7 +1220,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1069,6 +1231,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.times
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1083,7 +1246,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1092,6 +1257,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.toByte
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1115,6 +1281,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.toChar
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1138,6 +1305,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.toDouble
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1161,6 +1329,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.toFloat
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1184,6 +1353,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.toInt
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1207,6 +1377,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.toLong
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1230,6 +1401,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.toShort
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1253,6 +1425,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.unaryMinus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1276,6 +1449,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.unaryPlus
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1299,6 +1473,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.ushr
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: true
@@ -1313,7 +1488,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bitCount)]
+  valueParameters: [
+    KtFirValueParameterSymbol(bitCount)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1322,6 +1499,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Int.xor
   dispatchType: kotlin/Int
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: true
@@ -1336,7 +1514,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1345,6 +1525,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Any.equals
   dispatchType: kotlin/Any
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1359,7 +1540,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(other)]
+  valueParameters: [
+    KtFirValueParameterSymbol(other)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1368,6 +1551,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   dispatchType: kotlin/Any
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1391,6 +1575,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/Any.toString
   dispatchType: kotlin/Any
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1422,7 +1607,9 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: Companion
   origin: LIBRARY
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: MEMBER
   typeParameters: []
   visibility: Public
@@ -1434,13 +1621,16 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/Integer
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(value)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1450,6 +1640,7 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: kotlin/Int
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isPrimary: true
   origin: LIBRARY

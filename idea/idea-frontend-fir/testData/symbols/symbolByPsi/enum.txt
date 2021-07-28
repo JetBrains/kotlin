@@ -32,7 +32,9 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  superTypes: [[] kotlin/Enum<X>]
+  superTypes: [
+    [] kotlin/Enum<X>
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public

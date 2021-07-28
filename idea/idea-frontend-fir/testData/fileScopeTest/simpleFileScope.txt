@@ -75,7 +75,9 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: C
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -94,7 +96,9 @@ KtFirNamedClassOrObjectSymbol:
   modality: ABSTRACT
   name: I
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public

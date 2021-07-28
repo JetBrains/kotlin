@@ -21,6 +21,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: /foo
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -35,6 +36,8 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: TOP_LEVEL
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(x)]
+  valueParameters: [
+    KtFirValueParameterSymbol(x)
+  ]
   visibility: Public
 */

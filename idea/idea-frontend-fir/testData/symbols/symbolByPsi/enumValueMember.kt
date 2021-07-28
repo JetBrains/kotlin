@@ -36,7 +36,9 @@ origin: SOURCE
 receiverType: null
 symbolKind: MEMBER
 typeParameters: []
-valueParameters: [KtFirValueParameterSymbol(value)]
+valueParameters: [
+    KtFirValueParameterSymbol(value)
+  ]
 visibility: Private
 
 KtFirPropertyGetterSymbol:
@@ -130,7 +132,9 @@ isInner: false
 modality: FINAL
 name: Style
 origin: SOURCE
-superTypes: [[] kotlin/Enum<Style>]
+superTypes: [
+    [] kotlin/Enum<Style>
+  ]
 symbolKind: TOP_LEVEL
 typeParameters: []
 visibility: Public

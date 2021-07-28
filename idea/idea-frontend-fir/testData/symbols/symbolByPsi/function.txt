@@ -32,5 +32,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: TOP_LEVEL
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(x)]
+  valueParameters: [
+    KtFirValueParameterSymbol(x)
+  ]
   visibility: Public

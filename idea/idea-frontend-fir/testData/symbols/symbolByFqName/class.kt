@@ -18,8 +18,12 @@ KtFirNamedClassOrObjectSymbol:
   modality: ABSTRACT
   name: Lazy
   origin: LIBRARY
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(T)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T)
+  ]
   visibility: Public
 */

@@ -10,6 +10,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -23,16 +24,26 @@ KtFirFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(T)]
-  valueParameters: [KtFirValueParameterSymbol(element)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T)
+  ]
+  valueParameters: [
+    KtFirValueParameterSymbol(element)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
-  annotationClassIds: [kotlin/internal/InlineOnly]
-  annotations: [kotlin/internal/InlineOnly()]
+  annotationClassIds: [
+    kotlin/internal/InlineOnly
+  ]
+  annotations: [
+    kotlin/internal/InlineOnly()
+      psi: null
+  ]
   callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -46,7 +57,9 @@ KtFirFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(T)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T)
+  ]
   valueParameters: []
   visibility: Public
 
@@ -56,6 +69,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -69,7 +83,11 @@ KtFirFunctionSymbol:
   origin: LIBRARY
   receiverType: null
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(T)]
-  valueParameters: [KtFirValueParameterSymbol(elements)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T)
+  ]
+  valueParameters: [
+    KtFirValueParameterSymbol(elements)
+  ]
   visibility: Public
 */

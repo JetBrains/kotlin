@@ -8,6 +8,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   dispatchType: kotlin/collections/List<E>
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -31,6 +32,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   dispatchType: kotlin/collections/List<E>
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -45,6 +47,8 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(index)]
+  valueParameters: [
+    KtFirValueParameterSymbol(index)
+  ]
   visibility: Public
 */

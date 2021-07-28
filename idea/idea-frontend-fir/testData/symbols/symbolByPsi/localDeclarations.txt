@@ -46,7 +46,9 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: F
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local

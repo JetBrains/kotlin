@@ -12,6 +12,7 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isPrimary: true
   origin: SOURCE
@@ -41,13 +42,16 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isPrimary: false
   origin: SOURCE
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(x)]
+  valueParameters: [
+    KtFirValueParameterSymbol(x)
+  ]
   visibility: Public
 
 KtFirValueParameterSymbol:
@@ -83,13 +87,17 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isPrimary: false
   origin: SOURCE
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(y), KtFirValueParameterSymbol(z)]
+  valueParameters: [
+    KtFirValueParameterSymbol(y)
+    KtFirValueParameterSymbol(z)
+  ]
   visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
@@ -106,7 +114,9 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public

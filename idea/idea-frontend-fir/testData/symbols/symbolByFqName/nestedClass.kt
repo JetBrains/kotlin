@@ -16,8 +16,13 @@ KtFirNamedClassOrObjectSymbol:
   modality: ABSTRACT
   name: MutableEntry
   origin: LIBRARY
-  superTypes: [[] kotlin/collections/Map.Entry<K, V>]
+  superTypes: [
+    [] kotlin/collections/Map.Entry<K, V>
+  ]
   symbolKind: MEMBER
-  typeParameters: [KtFirTypeParameterSymbol(K), KtFirTypeParameterSymbol(V)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(K)
+    KtFirTypeParameterSymbol(V)
+  ]
   visibility: Public
 */

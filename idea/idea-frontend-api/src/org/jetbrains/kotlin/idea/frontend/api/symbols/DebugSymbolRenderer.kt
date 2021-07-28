@@ -16,6 +16,14 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.javaGetter
 
 public object DebugSymbolRenderer {
+    private fun StringBuilder.appendLine(indent: Int, line: String) {
+        appendLine(line.prependIndent(" ".repeat(indent)))
+    }
+
+    private fun StringBuilder.append(indent: Int, value: String) {
+        append(value.prependIndent(" ".repeat(indent)))
+    }
+
     public fun render(symbol: KtSymbol): String = buildString {
         val klass = symbol::class
         appendLine("${klass.simpleName}:")
@@ -28,7 +36,7 @@ public object DebugSymbolRenderer {
                 "Could not render due to ${e.cause}"
             }
             val stringValue = renderValue(value)
-            appendLine("  ${property.name}: $stringValue")
+            appendLine(INDENT, "${property.name}: $stringValue")
         }
     }
 
@@ -42,9 +50,11 @@ public object DebugSymbolRenderer {
         is ClassId -> value.asString()
         is CallableId -> value.toString()
         is Enum<*> -> value.name
-        is List<*> -> buildString {
-            append("[")
-            value.joinTo(this) { renderValue(it) }
+        is List<*> -> if (value.isEmpty()) "[]" else buildString {
+            appendLine("[")
+            value.forEach {
+                appendLine(INDENT, renderValue(it))
+            }
             append("]")
         }
         is KtType -> value.asStringForDebugging()
@@ -62,11 +72,17 @@ public object DebugSymbolRenderer {
         }
         is KtSimpleConstantValue<*> -> renderValue(value.value)
         is KtNamedConstantValue -> "${renderValue(value.name)} = ${renderValue(value.expression)}"
-        is KtAnnotationCall ->
-            "${renderValue(value.classId)}${value.arguments.joinToString(prefix = "(", postfix = ")") { renderValue(it) }}"
+        is KtAnnotationCall -> buildString {
+            append(renderValue(value.classId))
+            appendLine(value.arguments.joinToString(prefix = "(", postfix = ")") { renderValue(it) })
+            // TODO: perhaps we want to render `psi` for all other cases as well.
+            append(INDENT, "psi: ${renderValue(value.psi)}")
+        }
         is KtTypeAndAnnotations -> "${renderValue(value.annotations)} ${renderValue(value.type)}"
         else -> value::class.simpleName!!
     }
 
     private val ignoredPropertyNames = setOf("firRef", "psi", "token", "builder")
+
+    private const val INDENT = 2
 }

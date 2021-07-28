@@ -15,6 +15,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: null
   dispatchType: <anonymous>
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -64,7 +65,9 @@ KtFirAnonymousObjectSymbol:
   classKind: ANONYMOUS_OBJECT
   name: null
   origin: SOURCE
-  superTypes: [[] java/lang/Runnable]
+  superTypes: [
+    [] java/lang/Runnable
+  ]
   symbolKind: LOCAL
 
 KtFirKotlinPropertySymbol:
@@ -106,7 +109,9 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: AnonymousContainer
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public

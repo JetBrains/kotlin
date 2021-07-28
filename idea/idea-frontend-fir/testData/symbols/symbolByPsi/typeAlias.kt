@@ -8,7 +8,9 @@ KtFirTypeParameterSymbol:
   isReified: false
   name: T
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirNamedClassOrObjectSymbol:
@@ -25,16 +27,22 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(T)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T)
+  ]
   visibility: Public
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: Z
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirTypeAliasSymbol:

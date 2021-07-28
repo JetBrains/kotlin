@@ -23,6 +23,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: null
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -54,7 +55,9 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: F
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local
@@ -65,6 +68,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: /yyy
   dispatchType: null
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false

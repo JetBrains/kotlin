@@ -36,6 +36,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.hash32
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -97,6 +98,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.isEmpty
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -120,6 +122,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.charAt
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -134,7 +137,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(index)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -143,6 +148,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.codePointAt
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -157,7 +163,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(index)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -166,6 +174,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.codePointBefore
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -180,7 +189,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(index)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -189,6 +200,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.codePointCount
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -203,7 +215,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(beginIndex), KtFirValueParameterSymbol(endIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -212,6 +227,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.offsetByCodePoints
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -226,7 +242,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(index), KtFirValueParameterSymbol(codePointOffset)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -235,6 +254,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.getChars
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -249,7 +269,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(dst), KtFirValueParameterSymbol(dstBegin)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: PackageVisibility
 
 KtFirFunctionSymbol:
@@ -258,6 +281,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.getChars
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -272,15 +296,26 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(srcBegin), KtFirValueParameterSymbol(srcEnd), KtFirValueParameterSymbol(dst), KtFirValueParameterSymbol(dstBegin)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
-  annotationClassIds: [kotlin/Deprecated]
-  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = Deprecated in Java)
+      psi: null
+  ]
   callableIdIfNonLocal: java/lang/String.getBytes
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -295,15 +330,21 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(srcBegin), KtFirValueParameterSymbol(srcEnd), KtFirValueParameterSymbol(dst), KtFirValueParameterSymbol(dstBegin)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/ByteArray
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.getBytes
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -318,15 +359,18 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(charsetName)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/ByteArray
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.getBytes
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -341,15 +385,18 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(charset)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/ByteArray
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.getBytes
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -373,6 +420,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.equals
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -387,7 +435,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(anObject)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -396,6 +446,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.contentEquals
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -410,7 +461,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(sb)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -419,6 +472,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.contentEquals
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -433,7 +487,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(cs)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -442,6 +498,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.equalsIgnoreCase
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -456,7 +513,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(anotherString)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -465,6 +524,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.compareTo
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -479,7 +539,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(anotherString)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -488,6 +550,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.compareToIgnoreCase
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -502,7 +565,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(str)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -511,6 +576,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.regionMatches
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -525,7 +591,12 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(toffset), KtFirValueParameterSymbol(other), KtFirValueParameterSymbol(ooffset), KtFirValueParameterSymbol(len)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -534,6 +605,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.regionMatches
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -548,7 +620,13 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ignoreCase), KtFirValueParameterSymbol(toffset), KtFirValueParameterSymbol(other), KtFirValueParameterSymbol(ooffset), KtFirValueParameterSymbol(len)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+    KtFirValueParameterSymbol(p4)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -557,6 +635,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.startsWith
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -571,7 +650,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(prefix), KtFirValueParameterSymbol(toffset)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -580,6 +662,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.startsWith
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -594,7 +677,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(prefix)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -603,6 +688,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.endsWith
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -617,7 +703,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(suffix)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -626,6 +714,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.hashCode
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -649,6 +738,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.indexOf
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -663,7 +753,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ch)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -672,6 +764,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.indexOf
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -686,7 +779,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ch), KtFirValueParameterSymbol(fromIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -695,6 +791,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.indexOf
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -709,7 +806,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(str)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -718,6 +817,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.indexOf
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -732,7 +832,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(str), KtFirValueParameterSymbol(fromIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -741,6 +844,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.indexOfSupplementary
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -755,7 +859,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ch), KtFirValueParameterSymbol(fromIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Private
 
 KtFirFunctionSymbol:
@@ -764,6 +871,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -778,7 +886,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ch)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -787,6 +897,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -801,7 +912,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ch), KtFirValueParameterSymbol(fromIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -810,6 +924,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -824,7 +939,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(str)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -833,6 +950,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -847,7 +965,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(str), KtFirValueParameterSymbol(fromIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -856,6 +977,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.lastIndexOfSupplementary
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -870,15 +992,19 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ch), KtFirValueParameterSymbol(fromIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Private
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.substring
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -893,15 +1019,18 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(beginIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.substring
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -916,15 +1045,19 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(beginIndex), KtFirValueParameterSymbol(endIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/CharSequence
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.subSequence
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -939,15 +1072,19 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(beginIndex), KtFirValueParameterSymbol(endIndex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.concat
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -962,15 +1099,18 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(str)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.replace
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -985,15 +1125,19 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(oldChar), KtFirValueParameterSymbol(newChar)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.replace
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1008,7 +1152,10 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(target), KtFirValueParameterSymbol(replacement)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1017,6 +1164,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.matches
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1031,7 +1179,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(regex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
@@ -1040,6 +1190,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.contains
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1054,15 +1205,18 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(s)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.replaceFirst
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1077,15 +1231,19 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(regex), KtFirValueParameterSymbol(replacement)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.replaceAll
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1100,15 +1258,19 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(regex), KtFirValueParameterSymbol(replacement)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>>, @EnhancedNullability kotlin/Array<out ft<kotlin/String, kotlin/String?>>>
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.split
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1123,15 +1285,19 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(regex), KtFirValueParameterSymbol(limit)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>>, @EnhancedNullability kotlin/Array<out ft<kotlin/String, kotlin/String?>>>
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.split
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1146,15 +1312,18 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(regex)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1169,15 +1338,18 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(locale)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1196,11 +1368,12 @@ KtFirFunctionSymbol:
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1215,15 +1388,18 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(locale)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1242,11 +1418,12 @@ KtFirFunctionSymbol:
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.trim
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1270,6 +1447,7 @@ KtFirFunctionSymbol:
   annotations: []
   callableIdIfNonLocal: java/lang/String.toString
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1288,11 +1466,12 @@ KtFirFunctionSymbol:
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/CharArray
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/CharArray, kotlin/CharArray?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.toCharArray
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1311,11 +1490,12 @@ KtFirFunctionSymbol:
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] @EnhancedNullability kotlin/String
-  annotationClassIds: [org/jetbrains/annotations/NotNull]
-  annotations: [org/jetbrains/annotations/NotNull()]
+  annotatedType: [] ft<kotlin/String, kotlin/String?>
+  annotationClassIds: []
+  annotations: []
   callableIdIfNonLocal: java/lang/String.intern
   dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1338,7 +1518,8 @@ KtFirFunctionSymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/CharSequence.get
-  dispatchType: kotlin/CharSequence
+  dispatchType: @EnhancedNullability kotlin/CharSequence
+  hasStableParameterNames: true
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1353,7 +1534,9 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(index)]
+  valueParameters: [
+    KtFirValueParameterSymbol(index)
+  ]
   visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
@@ -1370,7 +1553,11 @@ KtFirNamedClassOrObjectSymbol:
   modality: OPEN
   name: CaseInsensitiveComparator
   origin: JAVA
-  superTypes: [[] kotlin/Any, [] java/util/Comparator<ft<kotlin/String, kotlin/String?>>, [] java/io/Serializable]
+  superTypes: [
+    [] kotlin/Any
+    [] java/util/Comparator<ft<kotlin/String, kotlin/String?>>
+    [] java/io/Serializable
+  ]
   symbolKind: MEMBER
   typeParameters: []
   visibility: Private
@@ -1382,6 +1569,7 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
@@ -1398,13 +1586,16 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(original)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1414,13 +1605,16 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(value)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1430,13 +1624,18 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(value), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1446,77 +1645,70 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(codePoints), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
-  annotationClassIds: [kotlin/Deprecated]
-  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = Deprecated in Java)
+      psi: null
+  ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ascii), KtFirValueParameterSymbol(hibyte), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
-  annotationClassIds: [kotlin/Deprecated]
-  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = Deprecated in Java)
+      psi: null
+  ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(ascii), KtFirValueParameterSymbol(hibyte)]
-  visibility: Public
-
-KtFirConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: java/lang/String
-  dispatchType: null
-  isExtension: false
-  isPrimary: false
-  origin: JAVA
-  receiverType: null
-  symbolKind: MEMBER
-  typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length), KtFirValueParameterSymbol(charsetName)]
-  visibility: Public
-
-KtFirConstructorSymbol:
-  annotatedType: [] java/lang/String
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: java/lang/String
-  dispatchType: null
-  isExtension: false
-  isPrimary: false
-  origin: JAVA
-  receiverType: null
-  symbolKind: MEMBER
-  typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length), KtFirValueParameterSymbol(charset)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1526,13 +1718,19 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(charsetName)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1542,13 +1740,19 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(charset)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+    KtFirValueParameterSymbol(p3)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1558,13 +1762,17 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1574,13 +1782,17 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(bytes)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1590,13 +1802,18 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(buffer)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1606,13 +1823,16 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(builder)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
   visibility: Public
 
 KtFirConstructorSymbol:
@@ -1622,28 +1842,80 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(value), KtFirValueParameterSymbol(share)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
+  visibility: Public
+
+KtFirConstructorSymbol:
+  annotatedType: [] java/lang/String
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: java/lang/String
+  dispatchType: null
+  hasStableParameterNames: false
+  isExtension: false
+  isPrimary: false
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+  ]
+  visibility: Public
+
+KtFirConstructorSymbol:
+  annotatedType: [] java/lang/String
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: java/lang/String
+  dispatchType: null
+  hasStableParameterNames: false
+  isExtension: false
+  isPrimary: false
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+  ]
   visibility: PackageVisibility
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
-  annotationClassIds: [kotlin/Deprecated]
-  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = Deprecated in Java)
+      psi: null
+  ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  hasStableParameterNames: false
   isExtension: false
   isPrimary: false
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count), KtFirValueParameterSymbol(value)]
+  valueParameters: [
+    KtFirValueParameterSymbol(p0)
+    KtFirValueParameterSymbol(p1)
+    KtFirValueParameterSymbol(p2)
+  ]
   visibility: PackageVisibility
 */

@@ -7,14 +7,18 @@ KtFirTypeParameterSymbol:
   isReified: false
   name: T
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirTypeParameterSymbol:
   isReified: false
   name: R
   origin: SOURCE
-  upperBounds: [kotlin/Any?]
+  upperBounds: [
+    kotlin/Any?
+  ]
   variance: INVARIANT
 
 KtFirNamedClassOrObjectSymbol:
@@ -31,8 +35,13 @@ KtFirNamedClassOrObjectSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  superTypes: [[] kotlin/Any]
+  superTypes: [
+    [] kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
-  typeParameters: [KtFirTypeParameterSymbol(T), KtFirTypeParameterSymbol(R)]
+  typeParameters: [
+    KtFirTypeParameterSymbol(T)
+    KtFirTypeParameterSymbol(R)
+  ]
   visibility: Public
 */
