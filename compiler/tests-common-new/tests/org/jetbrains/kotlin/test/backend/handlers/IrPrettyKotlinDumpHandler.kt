@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumperImpl
+import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 
 class IrPrettyKotlinDumpHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
@@ -28,7 +28,7 @@ class IrPrettyKotlinDumpHandler(testServices: TestServices) : AbstractIrHandler(
         const val DUMP_EXTENSION = "kt.txt"
     }
 
-    private val dumper = MultiModuleInfoDumperImpl("// MODULE: %s")
+    private val dumper = MultiModuleInfoDumper("// MODULE: %s")
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)

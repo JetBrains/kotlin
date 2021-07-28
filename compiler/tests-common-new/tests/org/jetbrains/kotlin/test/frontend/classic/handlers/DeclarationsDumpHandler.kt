@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.test.util.DescriptorValidator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumperImpl
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.function.Predicate
 import java.util.regex.Pattern
@@ -45,7 +44,7 @@ class DeclarationsDumpHandler(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(DiagnosticsDirectives)
 
-    private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumperImpl(moduleHeaderTemplate = "// -- Module: <%s> --")
+    private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (dumper.isEmpty()) return
