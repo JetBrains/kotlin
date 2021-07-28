@@ -948,7 +948,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Set<FirSourceElement>>("reachable")
             parameter<Set<FirSourceElement>>("unreachable")
         }
-        val SENSELESS_COMPARISON by warning<KtBinaryExpression> {
+        val SENSELESS_COMPARISON by warning<KtExpression> {
             parameter<FirExpression>("expression")
             parameter<Boolean>("compareResult")
         }

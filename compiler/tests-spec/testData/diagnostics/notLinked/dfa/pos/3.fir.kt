@@ -67,7 +67,7 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasNullableString) {
-    if (<!SENSELESS_COMPARISON!>x == null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Nothing?")!>x<!> == null<!>)
+    if (x == null && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Nothing?")!>x<!> == null<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Nothing?")!>x<!>
 }
 
@@ -102,9 +102,9 @@ fun case_11(x: TypealiasNullableString?, y: TypealiasNullableString) {
     if (x != null) {
 
     } else {
-        if (<!SENSELESS_COMPARISON!>y == null<!>) {
+        if (y == null) {
             if (nullableStringProperty != null) {
-                if (<!SENSELESS_COMPARISON!>z == null<!>) {
+                if (z == null) {
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString? & kotlin.Nothing?")!>x<!>
                 }
             }
@@ -113,8 +113,8 @@ fun case_11(x: TypealiasNullableString?, y: TypealiasNullableString) {
 }
 
 // TESTCASE NUMBER: 12
-fun case_12(x: TypealiasNullableString, y: TypealiasNullableString) = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>if (<!SENSELESS_COMPARISON!>x != null<!> && true && true && true) "1"
-    else if (<!SENSELESS_COMPARISON!>y != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>
+fun case_12(x: TypealiasNullableString, y: TypealiasNullableString) = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>if (x != null && true && true && true) "1"
+    else if (y != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>
     else "-1"<!>
 
 // TESTCASE NUMBER: 13
@@ -171,7 +171,7 @@ fun case_14() {
 
 // TESTCASE NUMBER: 15
 fun case_15(x: TypealiasNullableString) {
-    val t = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>if (<!SENSELESS_COMPARISON!>x != null<!>) "" else {
+    val t = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>if (x != null) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.Nothing?")!>x<!>
     }<!>
 }
@@ -180,7 +180,7 @@ fun case_15(x: TypealiasNullableString) {
 fun case_16() {
     val x: TypealiasNullableNothing = null
 
-    if (<!SENSELESS_COMPARISON!>x == null<!> || false || false || false) {
+    if (x == null || false || false || false) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
     }
 }

@@ -23,8 +23,8 @@ fun case_3(value_1: String?, value_2: Boolean): Boolean {
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Nothing?, value_2: Boolean?): Boolean? {
-    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies (<!SENSELESS_COMPARISON!>value_1 == null<!> || value_2 != null || value_2 == false)<!> }
-    return if (<!SENSELESS_COMPARISON!>value_1 == null<!> || value_2 != null || value_2 == false) null else true
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies (<!SENSELESS_COMPARISON!>value_1 == null<!> || value_2 != null || <!SENSELESS_COMPARISON!>value_2 == false<!>)<!> }
+    return if (<!SENSELESS_COMPARISON!>value_1 == null<!> || value_2 != null || <!SENSELESS_COMPARISON!>value_2 == false<!>) null else true
 }
 
 // TESTCASE NUMBER: 5

@@ -1825,7 +1825,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val unreachable: List<PsiElement>
     }
 
-    abstract class SenselessComparison : KtFirDiagnostic<KtBinaryExpression>() {
+    abstract class SenselessComparison : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = SenselessComparison::class
         abstract val expression: KtExpression
         abstract val compareResult: Boolean

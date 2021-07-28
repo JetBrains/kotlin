@@ -2944,7 +2944,7 @@ internal class SenselessComparisonImpl(
     override val compareResult: Boolean,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SenselessComparison(), KtAbstractFirDiagnostic<KtBinaryExpression> {
+) : KtFirDiagnostic.SenselessComparison(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
