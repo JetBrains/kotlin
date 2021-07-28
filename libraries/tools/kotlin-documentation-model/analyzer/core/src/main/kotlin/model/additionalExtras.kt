@@ -88,6 +88,12 @@ data class FloatValue(val value: Float) : LiteralValue() {
 data class DoubleValue(val value: Double) : LiteralValue() {
     override fun text(): String = value.toString()
 }
+object NullValue : LiteralValue() {
+    override fun text(): String = "null"
+}
+data class BooleanValue(val value: Boolean) : LiteralValue() {
+    override fun text(): String = value.toString()
+}
 data class StringValue(val value: String) : LiteralValue() {
     override fun text(): String = value
     override fun toString(): String = value
