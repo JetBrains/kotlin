@@ -59,6 +59,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment?,
     val incrementalModuleInfo: IncrementalModuleInfo?,
     val outputFiles: List<File>,
+    val rootBuildDir: File,
     val taskPath: String,
     val reportingSettings: ReportingSettings,
     val kotlinScriptExtensions: Array<String>,
@@ -101,6 +102,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private var icLogLines: List<String> = emptyList()
     private val daemonJvmArgs = config.daemonJvmArgs
     private val compilerExecutionStrategy = config.compilerExecutionStrategy
+    private val rootBuildDir = config.rootBuildDir
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -177,7 +179,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                         compilerFullClasspath,
                         daemonMessageCollector,
                         isDebugEnabled = isDebugEnabled,
-                        daemonJvmArgs = daemonJvmArgs
+                        daemonJvmArgs = daemonJvmArgs,
+                        rootBuildDir = rootBuildDir,
                     )
                 } catch (e: Throwable) {
                     log.error("Caught an exception trying to connect to Kotlin Daemon:")

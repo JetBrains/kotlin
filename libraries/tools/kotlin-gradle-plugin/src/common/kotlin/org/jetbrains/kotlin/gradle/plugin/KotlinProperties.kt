@@ -418,6 +418,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
             return KotlinCompilerExecutionStrategy.fromProperty(value?.toLowerCase())
         }
 
+    val writeKotlinDaemonsReport: Boolean
+        get() = booleanProperty("kotlin.daemon.report.enabled") ?: false
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
         if (deprecatedProperty != null) {

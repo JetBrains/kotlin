@@ -57,9 +57,11 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.lang.management.ManagementFactory
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -719,6 +721,11 @@ class CompileServiceImpl(
 
     override fun getUsedMemory(): CompileService.CallResult<Long> =
         ifAlive { CompileService.CallResult.Good(usedMemory(withGC = true)) }
+
+    override fun getTotalGcTime(): CompileService.CallResult<Long> = ifAlive {
+        val totalGcTime = ManagementFactory.getGarbageCollectorMXBeans().sumByLong { it.collectionTime }
+        CompileService.CallResult.Good(totalGcTime)
+    }
 
     override fun shutdown(): CompileService.CallResult<Nothing> = ifAliveExclusive(minAliveness = Aliveness.LastSession) {
         shutdownWithDelay()

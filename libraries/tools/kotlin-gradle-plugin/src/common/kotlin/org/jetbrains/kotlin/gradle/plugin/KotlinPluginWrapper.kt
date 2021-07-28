@@ -24,6 +24,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.compilerRunner.KotlinDaemonStatisticsService
 import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.gradle.utils.addGradlePluginMetadataAttributes
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
+import org.jetbrains.kotlin.gradle.utils.rootBuild
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -91,6 +93,22 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         KotlinGradleBuildServices.registerIfAbsent(project, kotlinPluginVersion).get()
         KotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
+
+        try {
+            val rootProject = project.gradle.rootBuild.rootProject
+            if (PropertiesProvider(rootProject).writeKotlinDaemonsReport) {
+                rootProject.gradle.sharedServices.registerIfAbsent(
+                    "daemon-statistics-service",
+                    KotlinDaemonStatisticsService::class.java
+                ) {
+                    it.parameters.rootBuildDir.set(rootProject.layout.projectDirectory)
+                }.also {
+                    BuildEventsListenerRegistryHolder.getInstance(rootProject).listenerRegistry.onTaskCompletion(it)
+                }
+            }
+        } catch (e: Exception) {
+            // noop
+        }
 
         BuildMetricsReporterService.registerIfAbsent(project)?.also {
             BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
