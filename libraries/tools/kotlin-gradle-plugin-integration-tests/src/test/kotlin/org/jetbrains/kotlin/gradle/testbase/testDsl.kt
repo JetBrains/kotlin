@@ -23,6 +23,7 @@ import kotlin.test.assertTrue
  *
  * @param [projectName] test project name in 'src/test/resources/testProject` directory.
  * @param [buildOptions] common Gradle build options
+ * @param [buildJdk] path to JDK build should run with. *Note*: providing it disables debug!
  */
 fun KGPBaseTest.project(
     projectName: String,
@@ -32,6 +33,7 @@ fun KGPBaseTest.project(
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: Boolean = false,
     projectPathAdditionalSuffix: String = "",
+    buildJdk: String? = null,
     test: TestProject.() -> Unit
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -53,6 +55,7 @@ fun KGPBaseTest.project(
         .withGradleVersion(gradleVersion.version)
         .also {
             if (forceOutput) it.forwardOutput()
+            if (buildJdk != null) it.withEnvironment(mapOf("JAVA_HOME" to buildJdk))
         }
 
     val testProject = TestProject(
