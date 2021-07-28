@@ -26,17 +26,18 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // `last = array.size - 1` (last is inclusive) for the loop `for (i in array.indices)`.
-            val last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter).apply {
-                dispatchReceiver = expression.extensionReceiver!!
-            }.decrement()
+            val last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter)
+                .apply { dispatchReceiver = expression.extensionReceiver!! }
 
             ProgressionHeaderInfo(
                 data,
                 first = irInt(0),
                 last = last,
                 step = irInt(1),
+                isLastInclusive = false,
                 canOverflow = false,
-                direction = ProgressionDirection.INCREASING
+                direction = ProgressionDirection.INCREASING,
+                originalLastInclusive = last.decrement()
             )
         }
 

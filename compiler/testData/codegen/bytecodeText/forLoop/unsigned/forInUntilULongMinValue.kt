@@ -25,4 +25,4 @@ fun f(a: ULong): Int {
 // 1 IF
 
 // JVM_IR_TEMPLATES
-// 2 IF
+// 1 IF

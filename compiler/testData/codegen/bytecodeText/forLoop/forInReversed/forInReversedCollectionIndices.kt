@@ -11,9 +11,6 @@ fun box(): String {
     return "OK"
 }
 
-// JVM non-IR uses while.
-// JVM IR uses if + do-while.
-
 // 0 reversed
 // 0 iterator
 // 0 getStart

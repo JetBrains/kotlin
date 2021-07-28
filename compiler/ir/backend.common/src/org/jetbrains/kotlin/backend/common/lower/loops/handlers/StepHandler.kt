@@ -43,7 +43,7 @@ internal class StepHandler(
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Retrieve the HeaderInfo from the underlying progression (if any).
-            val nestedInfo = expression.extensionReceiver!!.accept(visitor, null) as? ProgressionHeaderInfo
+            var nestedInfo = expression.extensionReceiver!!.accept(visitor, null) as? ProgressionHeaderInfo
                 ?: return null
 
             if (!nestedInfo.isLastInclusive) {
@@ -51,7 +51,8 @@ internal class StepHandler(
                 // underlying progression is last-exclusive, we must decrement the nested "last" by the step. However, this can cause
                 // underflow if "last" is MIN_VALUE. We will not support fully optimizing this scenario (e.g., `for (i in A until B step C`)
                 // for now. It will be partly optimized via DefaultProgressionHandler.
-                return null
+                nestedInfo = nestedInfo.revertToLastInclusive()
+                    ?: return null
             }
 
             val stepArg = expression.getValueArgument(0)!!

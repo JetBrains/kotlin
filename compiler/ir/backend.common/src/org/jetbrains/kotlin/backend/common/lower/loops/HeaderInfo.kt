@@ -80,13 +80,30 @@ class ProgressionHeaderInfo(
     isReversed: Boolean = false,
     canOverflow: Boolean? = null,
     direction: ProgressionDirection,
-    val additionalStatements: List<IrStatement> = listOf()
+    val additionalStatements: List<IrStatement> = listOf(),
+    val originalLastInclusive: IrExpression? = null
 ) : NumericHeaderInfo(
     progressionType, first, last, step, isLastInclusive,
     canCacheLast = true,
     isReversed = isReversed,
     direction = direction
 ) {
+
+    fun revertToLastInclusive(): ProgressionHeaderInfo? =
+        originalLastInclusive?.let {
+            ProgressionHeaderInfo(
+                progressionType = progressionType,
+                first = first,
+                last = originalLastInclusive,
+                step = step,
+                isLastInclusive = true,
+                isReversed = isReversed,
+                canOverflow = canOverflow,
+                direction = direction,
+                additionalStatements = additionalStatements,
+                originalLastInclusive = null
+            )
+        }
 
     val canOverflow: Boolean by lazy {
         if (canOverflow != null) return@lazy canOverflow
@@ -148,21 +165,23 @@ class ProgressionHeaderInfo(
         }
     }
 
-    override fun asReversed() = if (isLastInclusive) {
-        ProgressionHeaderInfo(
-            progressionType = progressionType,
-            first = last,
-            last = first,
-            step = step.negate(),
-            isReversed = !isReversed,
-            direction = direction.asReversed(),
-            additionalStatements = additionalStatements
-        )
-    } else {
-        // If reversed, we would have a "first-exclusive" loop. We are currently not supporting this since it would add more complexity
-        // due to possible overflow when pre-incrementing the loop variable (see KT-42533).
-        null
-    }
+    override fun asReversed(): HeaderInfo? =
+        if (isLastInclusive) {
+            ProgressionHeaderInfo(
+                progressionType = progressionType,
+                first = last,
+                last = first,
+                step = step.negate(),
+                isReversed = !isReversed,
+                direction = direction.asReversed(),
+                additionalStatements = additionalStatements
+            )
+        } else {
+            // If reversed, we would have a "first-exclusive" loop. We are currently not supporting this since it would add more complexity
+            // due to possible overflow when pre-incrementing the loop variable (see KT-42533).
+            revertToLastInclusive()?.asReversed()
+        }
+
 }
 
 /**

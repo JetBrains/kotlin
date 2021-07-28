@@ -304,7 +304,7 @@ class ProgressionLoopHeader(
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
         with(builder) {
-            val newLoop = if (headerInfo.canOverflow) {
+            if (headerInfo.canOverflow) {
                 // If the induction variable CAN overflow, we cannot use it in the loop condition. Loop is lowered into something like:
                 //
                 //   if (inductionVar <= last) {
@@ -315,7 +315,7 @@ class ProgressionLoopHeader(
                 //       // Loop body
                 //     } while (loopVar != last)
                 //   }
-                IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
+                val newLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
                     val loopVariableExpression = irGet(loopVariable!!).let {
                         headerInfo.progressionType.run {
                             if (this is UnsignedProgressionType) {
@@ -328,8 +328,30 @@ class ProgressionLoopHeader(
                     condition = irNotEquals(loopVariableExpression, lastExpression)
                     body = newBody
                 }
+
+                val loopCondition = buildLoopCondition(this@with)
+                LoopReplacement(newLoop, irIfThen(loopCondition, newLoop))
+            } else if (!headerInfo.isLastInclusive) {
+                // It is critically important for loop code performance on JVM to "look like" a simple counter loop in Java when possible
+                // (`for (int i = first; i < lastExclusive; ++i) { ... }`).
+                // Otherwise loop-related optimizations will not kick in, resulting in significant performance degradation.
+                //
+                // Use a simple while loop:
+                //
+                //   while (inductionVar < last) {
+                //     val loopVar = inductionVar
+                //     inductionVar += step
+                //     // Loop body
+                //   }
+                //
+                val newLoop = IrWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
+                    label = oldLoop.label
+                    condition = buildLoopCondition(this@with)
+                    body = newBody
+                }
+                LoopReplacement(newLoop, newLoop)
             } else {
-                // If the induction variable can NOT overflow, use a do-while loop. Loop is lowered into something like:
+                // Use an if-guarded do-while loop (note the difference in loop condition):
                 //
                 //   if (inductionVar <= last) {
                 //     do {
@@ -339,17 +361,14 @@ class ProgressionLoopHeader(
                 //     } while (inductionVar <= last)
                 //   }
                 //
-                // Even though this can be simplified into a simpler while loop, using if + do-while (i.e., doing a loop inversion)
-                // performs better in benchmarks. In cases where `last` is a constant, the `if` may be optimized away.
-                IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
+                val newLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
                     label = oldLoop.label
                     condition = buildLoopCondition(this@with)
                     body = newBody
                 }
+                val loopCondition = buildLoopCondition(this@with)
+                LoopReplacement(newLoop, irIfThen(loopCondition, newLoop))
             }
-
-            val loopCondition = buildLoopCondition(this@with)
-            LoopReplacement(newLoop, irIfThen(loopCondition, newLoop))
         }
 }
 
