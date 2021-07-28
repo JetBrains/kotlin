@@ -69,20 +69,19 @@ interface JvmSignatureUtils {
             is Never -> Unit
         }
         link(a.dri.classNames!!, a.dri)
-        text("(")
-        a.params.entries.forEachIndexed { i, it ->
-            group(styles = setOf(TextStyle.BreakableAfter)) {
-                text(it.key + " = ")
-                when (renderAtStrategy) {
-                    is All -> All
-                    is Never, is OnlyOnce -> Never
-                }.let { strategy ->
-                    valueToSignature(it.value, strategy, listBrackets, classExtension)
-                }
-                if (i != a.params.entries.size - 1) text(", ")
+        val isNoWrappedBrackets = a.params.entries.isEmpty() && renderAtStrategy is OnlyOnce
+        listParams(
+            a.params.entries,
+            if (isNoWrappedBrackets) null else Pair('(', ')')
+        ) {
+            text(it.key + " = ")
+            when (renderAtStrategy) {
+                is All -> All
+                is Never, is OnlyOnce -> Never
+            }.let { strategy ->
+                valueToSignature(it.value, strategy, listBrackets, classExtension)
             }
         }
-        text(")")
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.valueToSignature(
@@ -93,18 +92,27 @@ interface JvmSignatureUtils {
     ): Unit = when (a) {
         is AnnotationValue -> toSignatureString(a.annotation, renderAtStrategy, listBrackets, classExtension)
         is ArrayValue -> {
-            text(listBrackets.first.toString())
-            a.value.forEachIndexed { i, it ->
-                group(styles = setOf(TextStyle.BreakableAfter)) {
-                    valueToSignature(it, renderAtStrategy, listBrackets, classExtension)
-                    if (i != a.value.size - 1) text(", ")
-                }
-            }
-            text(listBrackets.second.toString())
+            listParams(a.value, listBrackets) { valueToSignature(it, renderAtStrategy, listBrackets, classExtension) }
         }
         is EnumValue -> link(a.enumName, a.enumDri)
         is ClassValue -> link(a.className + classExtension, a.classDRI)
+        is StringValue -> group(styles = setOf(TextStyle.Breakable)) { text( "\"${a.text()}\"") }
         is LiteralValue -> group(styles = setOf(TextStyle.Breakable)) { text(a.text()) }
+    }
+
+    private fun<T> PageContentBuilder.DocumentableContentBuilder.listParams(
+        params: Collection<T>,
+        listBrackets: Pair<Char, Char>?,
+        outFn: PageContentBuilder.DocumentableContentBuilder.(T) -> Unit
+    ) {
+        listBrackets?.let{ text(it.first.toString()) }
+        params.forEachIndexed { i, it ->
+            group(styles = setOf(TextStyle.BreakableAfter)) {
+                this.outFn(it)
+                if (i != params.size - 1) text(", ")
+            }
+        }
+        listBrackets?.let{ text(it.second.toString()) }
     }
 
     fun PageContentBuilder.DocumentableContentBuilder.annotationsBlockWithIgnored(
