@@ -73,6 +73,8 @@ internal open class GradleCompilerRunner(
     internal val sessionDirProvider = taskProvider.sessionsDir.get()
     internal val projectNameProvider = taskProvider.projectName.get()
     internal val incrementalModuleInfoProvider = taskProvider.buildModulesInfo
+    private val rootBuildDir
+        get() = taskProvider.rootBuildDir.get()
 
     /**
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
@@ -188,6 +190,7 @@ internal open class GradleCompilerRunner(
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
             incrementalModuleInfo = modulesInfo,
             outputFiles = environment.outputFiles.toList(),
+            rootBuildDir = rootBuildDir,
             taskPath = pathProvider,
             reportingSettings = environment.reportingSettings,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
@@ -223,7 +226,8 @@ internal open class GradleCompilerRunner(
             compilerFullClasspath: List<File>,
             messageCollector: MessageCollector,
             daemonJvmArgs: List<String>?,
-            isDebugEnabled: Boolean
+            isDebugEnabled: Boolean,
+            rootBuildDir: File
         ): CompileServiceSession? {
             val compilerId = CompilerId.makeCompilerId(compilerFullClasspath)
             val daemonJvmOptions = configureDaemonJVMOptions(
@@ -242,7 +246,8 @@ internal open class GradleCompilerRunner(
                 compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile,
                 messageCollector = messageCollector,
                 isDebugEnabled = isDebugEnabled,
-                daemonJVMOptions = daemonJvmOptions
+                daemonJVMOptions = daemonJvmOptions,
+                rootBuildDir = rootBuildDir
             )
         }
 

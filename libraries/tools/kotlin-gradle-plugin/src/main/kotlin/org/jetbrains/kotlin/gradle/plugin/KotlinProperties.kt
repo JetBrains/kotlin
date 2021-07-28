@@ -368,6 +368,9 @@ internal fun PropertiesProvider.mapKotlinDaemonProperties(task: CompileUsingKotl
     val kotlinDaemonJvmArgs: String?
         get() = property("kotlin.daemon.jvmargs")
 
+    val writeKotlinDaemonsReport: Boolean
+        get() = booleanProperty("kotlin.daemon.report.enabled") ?: false
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
         if (deprecatedProperty != null) {

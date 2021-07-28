@@ -22,6 +22,8 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.build.event.BuildEventsListenerRegistry
+import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -146,6 +148,13 @@ abstract class GradleCompileTaskProvider @Inject constructor(
     val projectName: Provider<String> = objectFactory
         .property(project.rootProject.name.normalizeForFlagFile())
 
+    /**
+     * Returns different value rather than [rootDir] in case of composite builds or buildSrc module
+     */
+    @get:Internal
+    val rootBuildDir: Provider<File> = objectFactory
+        .property(project.gradle.rootBuild.rootProject.projectDir)
+
     @get:Internal
     val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = objectFactory.property(
         /**
@@ -173,6 +182,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     open class Configurator<T : AbstractKotlinCompile<*>>(protected val compilation: KotlinCompilationData<*>) : TaskConfigurator<T> {
         override fun configure(task: T) {
             val project = task.project
+            val propertiesProvider = PropertiesProvider(project)
             task.friendPaths.from(project.provider { compilation.friendPaths })
 
             if (compilation is KotlinCompilation<*>) {
@@ -185,7 +195,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             task.coroutines.value(
                 project.provider {
                     project.extensions.findByType(KotlinTopLevelExtension::class.java)!!.experimental.coroutines
-                        ?: PropertiesProvider(project).coroutines
+                        ?: propertiesProvider.coroutines
                         ?: Coroutines.DEFAULT
                 }
             ).disallowChanges()
@@ -197,7 +207,21 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             task.taskBuildDirectory.value(getKotlinBuildDir(task)).disallowChanges()
             task.localStateDirectories.from(task.taskBuildDirectory).disallowChanges()
 
-            PropertiesProvider(task.project).mapKotlinDaemonProperties(task)
+            propertiesProvider.mapKotlinDaemonProperties(task)
+
+            try {
+                val rootProject = project.gradle.rootBuild.rootProject
+                if (PropertiesProvider(rootProject).writeKotlinDaemonsReport) {
+                    task.daemonStatisticsService.set(rootProject.gradle.sharedServices.registerIfAbsent(
+                        "daemon-statistics-service",
+                        KotlinDaemonStatisticsService::class.java
+                    ) {
+                        it.parameters.rootBuildDir.set(rootProject.layout.projectDirectory)
+                    } as Provider<BuildService<*>>)
+                }
+            } catch (e: Exception) {
+                // noop
+            }
         }
 
         private fun getKotlinBuildDir(task: T): Provider<Directory> =
@@ -324,9 +348,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
 
+    @get:Internal
+    internal abstract val daemonStatisticsService: Property<BuildService<*>>
+
     @TaskAction
     fun execute(inputChanges: InputChanges) {
         metrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+            daemonStatisticsService.orNull // trigger service instantiation if it was not instantiated yet
             systemPropertiesService.get().startIntercept()
             CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
 
