@@ -111,6 +111,17 @@ fun loadKonanLibrary(name: String) {
         try {
             System.load("$dir/$fullLibraryName")
         } catch (e: UnsatisfiedLinkError) {
+            if (fullLibraryName.endsWith(".dylib") && e.message?.contains("library load disallowed by system policy") == true) {
+                throw UnsatisfiedLinkError("""
+                        |Library $dir/$fullLibraryName can't be loaded. 
+                        |${'\t'}This can happen because library file is marked as untrusted (e.g because it was downloaded from browser).
+                        |${'\t'}You can trust libraries in distribution by running 
+                        |${'\t'}${'\t'}xattr -d com.apple.quarantine '$dir'/*
+                        |${'\t'}command in terminal
+                        |${'\t'}Original exception message: 
+                        |${'\t'}${e.message}
+                        """.trimMargin())
+            }
             val tempDir = Files.createTempDirectory(Paths.get(dir), null).toAbsolutePath().toString()
             Files.createLink(Paths.get(tempDir, fullLibraryName), Paths.get(dir, fullLibraryName))
             // TODO: Does not work on Windows. May be use FILE_FLAG_DELETE_ON_CLOSE?
