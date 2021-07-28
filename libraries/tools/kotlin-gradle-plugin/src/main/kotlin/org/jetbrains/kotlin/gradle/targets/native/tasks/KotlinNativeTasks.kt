@@ -118,10 +118,9 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
  *      for it (NO-SOURCE check). So we need to take this case into account
  *      and skip libraries that were not compiled. See also: GH-2617 (K/N repo).
  */
-private val File.isKlibPassedToCompiler: Boolean
-    get() = (extension == "klib" || isDirectory) && exists()
-
-private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter { it.isKlibPassedToCompiler }
+private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter {
+    (it.extension == "klib" || it.isDirectory) && it.exists()
+}
 
 // endregion
 abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : KotlinNativeCompilationData<*>> : AbstractCompile() {
@@ -690,8 +689,7 @@ constructor(
     }
 }
 
-@Suppress("FunctionName")
-internal class ExternalDependenciesBuilder(val project: Project, val binary: NativeBinary) {
+private class ExternalDependenciesBuilder(val project: Project, val binary: NativeBinary) {
     private val compilation: KotlinNativeCompilation
         get() = binary.compilation
 
@@ -702,16 +700,13 @@ internal class ExternalDependenciesBuilder(val project: Project, val binary: Nat
         val konanVersion = Distribution(project.konanHome).compilerVersion?.let(CompilerVersion.Companion::fromString)
             ?: project.konanVersion
 
-        if (!konanVersion.isAtLeast(1, 6, 0)) return emptyList()
+        if (konanVersion.isAtLeast(1, 6, 0)) {
+            val dependenciesFile = writeDependenciesFile(buildDependencies(), deleteOnExit = true)
+            if (dependenciesFile != null)
+                return listOf("-Xexternal-dependencies=${dependenciesFile.path}")
+        }
 
-        val modules = buildDependencies()
-        if (modules.isEmpty()) return emptyList()
-
-        val dependenciesFile = Files.createTempFile("kotlin-native-external-dependencies", ".deps").toAbsolutePath().toFile()
-        dependenciesFile.deleteOnExit()
-        dependenciesFile.writeText(KResolvedDependenciesSupport.serialize(modules))
-
-        return listOf("-Xexternal-dependencies=${dependenciesFile.path}")
+        return emptyList()
     }
 
     private fun buildDependencies(): Collection<KResolvedDependency> {
@@ -828,6 +823,34 @@ internal class ExternalDependenciesBuilder(val project: Project, val binary: Nat
 
     private val ModuleComponentIdentifier.uniqueName: String
         get() = "$group:$module"
+
+    companion object {
+        @Suppress("unused") // Used for tests only. Accessed via reflection.
+        @JvmStatic
+        fun buildExternalDependenciesFileForTests(project: Project): File? {
+            val executable = project.tasks.asSequence()
+                .filterIsInstance<KotlinNativeLink>()
+                .map { it.binary }
+                .filterIsInstance<Executable>() // Not TestExecutable or any other kind of NativeBinary. Strictly Executable!
+                .firstOrNull()
+                ?: return null
+
+            val dependencies = ExternalDependenciesBuilder(project, executable)
+                .buildDependencies()
+                .sortedBy { it.id.toString() }
+
+            return writeDependenciesFile(dependencies, deleteOnExit = false)
+        }
+
+        private fun writeDependenciesFile(dependencies: Collection<KResolvedDependency>, deleteOnExit: Boolean): File? {
+            if (dependencies.isEmpty()) return null
+
+            val dependenciesFile = Files.createTempFile("kotlin-native-external-dependencies", ".deps").toAbsolutePath().toFile()
+            if (deleteOnExit) dependenciesFile.deleteOnExit()
+            dependenciesFile.writeText(KResolvedDependenciesSupport.serialize(dependencies))
+            return dependenciesFile
+        }
+    }
 }
 
 internal class CacheBuilder(
