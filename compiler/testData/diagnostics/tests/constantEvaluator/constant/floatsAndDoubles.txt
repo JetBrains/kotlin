@@ -1,0 +1,20 @@
+package
+
+package test {
+    public val prop1: kotlin.Float = 3.4028235E38.toFloat()
+    public val prop10: kotlin.Float = Infinity.toFloat()
+    public val prop11: kotlin.Float = 0.0.toFloat()
+    public val prop12: kotlin.Float = Infinity.toFloat()
+    public val prop13: kotlin.Float = 0.0.toFloat()
+    public val prop14: kotlin.Float = 1.0E-39.toFloat()
+    public val prop15: kotlin.Double = Infinity.toDouble()
+    public val prop16: kotlin.Double = 0.0.toDouble()
+    public val prop2: kotlin.Double = 3.4028234663852886E38.toDouble()
+    public val prop3: kotlin.Float = 3.4028235E38.toFloat()
+    public val prop4: kotlin.Float = 3.4028235E38.toFloat()
+    public val prop5: kotlin.Int = 3.4028235E38.toFloat()
+    public val prop6: kotlin.Float = 2.0.toFloat()
+    public val prop7: kotlin.Double = 2.0.toDouble()
+    public val prop8: kotlin.Float = 2.0.toDouble()
+    public val prop9: kotlin.Double = -2.0.toDouble()
+}

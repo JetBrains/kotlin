@@ -1,0 +1,10 @@
+package
+
+package test {
+    public val prop1: kotlin.Boolean = false
+    public val prop2: kotlin.Boolean = true
+    public val prop3: kotlin.Boolean = true
+    public val prop4: kotlin.Boolean = false
+    public val prop5: kotlin.Int = -1
+    public val prop6: kotlin.Boolean = false
+}

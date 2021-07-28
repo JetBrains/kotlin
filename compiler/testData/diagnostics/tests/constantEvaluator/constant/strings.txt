@@ -1,0 +1,34 @@
+package
+
+package test {
+    public val prop1: kotlin.String = "2"
+    public val prop10: kotlin.String = "abb"
+    public val prop11: kotlin.Int = 6
+    public val prop2: kotlin.String
+    public val prop3: kotlin.String = "1"
+    public val prop4: kotlin.String = "null"
+    public val prop5: kotlin.String = "1.0"
+    public val prop6: kotlin.String = "1.0"
+    public val prop7: kotlin.String
+    public val prop8: kotlin.String = "a1.0"
+    public val prop9: kotlin.String = "ab"
+
+    public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
+        enum entry A
+
+        private constructor MyEnum()
+        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.MyEnum): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.MyEnum!>!
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.MyEnum
+        public final /*synthesized*/ fun values(): kotlin.Array<test.MyEnum>
+    }
+}

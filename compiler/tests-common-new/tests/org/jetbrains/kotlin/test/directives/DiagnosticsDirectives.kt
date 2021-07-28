@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.backend.handlers.JvmBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_JAVAC
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Any
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ConstantValuesHandler
 
 object DiagnosticsDirectives : SimpleDirectivesContainer() {
     val WITH_NEW_INFERENCE by directive(
@@ -75,6 +73,15 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
         description = """
             If this directive enabled then `DEBUG_INFO_...` diagnostics will be reported
               only if they are defined in testdata.
+        """.trimIndent()
+    )
+
+    val CHECK_COMPILE_TIME_VALUES by enumDirective<ConstantValuesHandler.Mode>(
+        description = """
+            Enables ${ConstantValuesHandler::class} which renders values from constant
+              evaluator in <!DEBUG_INFO_CONSTANT_VALUE!> meta infos.
+              
+            Value determines which context slice should be checked
         """.trimIndent()
     )
 }

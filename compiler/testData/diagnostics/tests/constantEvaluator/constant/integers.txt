@@ -1,0 +1,8 @@
+package
+
+package test {
+    public val prop1: kotlin.Int = 513105426295.toLong()
+    public val prop2: kotlin.Long = 513105426295.toLong()
+    public val prop3: kotlin.Long = 513105426295.toLong()
+    public const val prop4: kotlin.Int = 10
+}

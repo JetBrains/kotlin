@@ -1,0 +1,13 @@
+package
+
+package test {
+    public val x1: kotlin.Int = 3
+    public val x2: kotlin.Long = 3.toLong()
+    public val x3: kotlin.Int = 3
+    public val x4: kotlin.Int = 3
+    public val x5: kotlin.Int = 4656
+    public val x6: kotlin.Int
+    public val x7: kotlin.Long = 4656.toLong()
+    public val x8: kotlin.Int = -123457
+    public val x9: kotlin.Int = 79
+}

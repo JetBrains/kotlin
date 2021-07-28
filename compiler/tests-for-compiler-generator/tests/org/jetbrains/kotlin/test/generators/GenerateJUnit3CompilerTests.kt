@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
-import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -302,12 +301,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("cfgWithStdLib", testMethod = "doTestWithStdLib")
                 model("cfg-variables")
                 model("cfgVariablesWithStdLib", testMethod = "doTestWithStdLib")
-            }
-
-            testClass<AbstractCompileTimeConstantEvaluatorTest> {
-                model("evaluate/constant", testMethod = "doConstantTest")
-                model("evaluate/isPure", testMethod = "doIsPureTest")
-                model("evaluate/usesVariableAsConstant", testMethod = "doUsesVariableAsConstantTest")
             }
 
             testClass<AbstractCompilerLightClassTest> {

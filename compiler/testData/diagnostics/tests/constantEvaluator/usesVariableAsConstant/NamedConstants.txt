@@ -1,0 +1,8 @@
+package
+
+package test {
+    public val prop1: kotlin.Int = 1
+    public val prop2: kotlin.String = "a"
+    public val x: kotlin.Int = 1
+    public val y: kotlin.String = "a"
+}

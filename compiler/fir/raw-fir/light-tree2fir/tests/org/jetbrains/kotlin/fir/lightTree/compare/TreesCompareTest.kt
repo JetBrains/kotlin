@@ -87,6 +87,10 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             if (file.name.endsWith(".fir.kt")) {
                 return@compareBase true
             }
+            if (file.path.replace("\\", "/") == "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt") {
+                // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
+                return@compareBase true
+            }
             val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             val text = notEditedText.replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "").replaceAfter(".java", "")
 

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.CHECK_COMPILE_TIME_VALUES
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_EXPERIMENTAL
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
+import org.jetbrains.kotlin.test.frontend.classic.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -76,6 +74,7 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         useFrontendHandlers(
             ::DeclarationsDumpHandler,
             ::ClassicDiagnosticsHandler,
+            ::ConstantValuesHandler
         )
 
         useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
@@ -110,6 +109,31 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
                 JDK_KIND with TestJdkKind.FULL_JDK_15
                 +WITH_STDLIB
                 +WITH_REFLECT
+            }
+        }
+
+        // ----------------------- constant evaluation tests -----------------------
+        forTestsMatching("compiler/testData/diagnostics/tests/constantEvaluator/*") {
+            defaultDirectives {
+                LANGUAGE with "-ApproximateIntegerLiteralTypesInReceiverPosition"
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/tests/constantEvaluator/constant/*") {
+            defaultDirectives {
+                CHECK_COMPILE_TIME_VALUES with ConstantValuesHandler.Mode.Constant
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/tests/constantEvaluator/isPure/*") {
+            defaultDirectives {
+                CHECK_COMPILE_TIME_VALUES with ConstantValuesHandler.Mode.IsPure
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant/*") {
+            defaultDirectives {
+                CHECK_COMPILE_TIME_VALUES with ConstantValuesHandler.Mode.UsesVariableAsConstant
             }
         }
     }

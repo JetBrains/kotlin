@@ -4733,6 +4733,226 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/constantEvaluator")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ConstantEvaluator {
+            @Test
+            public void testAllFilesPresentInConstantEvaluator() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/constantEvaluator/constant")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Constant {
+                @Test
+                public void testAllFilesPresentInConstant() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/constant"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("classObjectProperty.kt")
+                public void testClassObjectProperty() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/classObjectProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("compareTo.kt")
+                public void testCompareTo() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/compareTo.kt");
+                }
+
+                @Test
+                @TestMetadata("differentTypes.kt")
+                public void testDifferentTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/differentTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("divideByZero.kt")
+                public void testDivideByZero() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/divideByZero.kt");
+                }
+
+                @Test
+                @TestMetadata("equals.kt")
+                public void testEquals() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/equals.kt");
+                }
+
+                @Test
+                @TestMetadata("exceptionWhenEvaluate.kt")
+                public void testExceptionWhenEvaluate() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/exceptionWhenEvaluate.kt");
+                }
+
+                @Test
+                @TestMetadata("finalProperty.kt")
+                public void testFinalProperty() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/finalProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("float.kt")
+                public void testFloat() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/float.kt");
+                }
+
+                @Test
+                @TestMetadata("floatsAndDoubles.kt")
+                public void testFloatsAndDoubles() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/floatsAndDoubles.kt");
+                }
+
+                @Test
+                @TestMetadata("integer.kt")
+                public void testInteger() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/integer.kt");
+                }
+
+                @Test
+                @TestMetadata("integerOperations.kt")
+                public void testIntegerOperations() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/integerOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("integers.kt")
+                public void testIntegers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/integers.kt");
+                }
+
+                @Test
+                @TestMetadata("localVal.kt")
+                public void testLocalVal() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/localVal.kt");
+                }
+
+                @Test
+                @TestMetadata("localVar.kt")
+                public void testLocalVar() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/localVar.kt");
+                }
+
+                @Test
+                @TestMetadata("nonFinalProperty.kt")
+                public void testNonFinalProperty() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/nonFinalProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("objectProperty.kt")
+                public void testObjectProperty() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/objectProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("strings.kt")
+                public void testStrings() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt");
+                }
+
+                @Test
+                @TestMetadata("topLevelVal.kt")
+                public void testTopLevelVal() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/topLevelVal.kt");
+                }
+
+                @Test
+                @TestMetadata("topLevelVar.kt")
+                public void testTopLevelVar() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/topLevelVar.kt");
+                }
+
+                @Test
+                @TestMetadata("unaryMinusIndepWoExpType.kt")
+                public void testUnaryMinusIndepWoExpType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/unaryMinusIndepWoExpType.kt");
+                }
+
+                @Test
+                @TestMetadata("unaryMinusIndependentExpType.kt")
+                public void testUnaryMinusIndependentExpType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/unaryMinusIndependentExpType.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/constantEvaluator/isPure")
+            @TestDataPath("$PROJECT_ROOT")
+            public class IsPure {
+                @Test
+                public void testAllFilesPresentInIsPure() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/isPure"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("innerToType.kt")
+                public void testInnerToType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/isPure/innerToType.kt");
+                }
+
+                @Test
+                @TestMetadata("namedConstants.kt")
+                public void testNamedConstants() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/isPure/namedConstants.kt");
+                }
+
+                @Test
+                @TestMetadata("toType.kt")
+                public void testToType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/isPure/toType.kt");
+                }
+
+                @Test
+                @TestMetadata("unaryMinusIndepWoExpType.kt")
+                public void testUnaryMinusIndepWoExpType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/isPure/unaryMinusIndepWoExpType.kt");
+                }
+
+                @Test
+                @TestMetadata("unaryMinusIndependentExpType.kt")
+                public void testUnaryMinusIndependentExpType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/isPure/unaryMinusIndependentExpType.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant")
+            @TestDataPath("$PROJECT_ROOT")
+            public class UsesVariableAsConstant {
+                @Test
+                public void testAllFilesPresentInUsesVariableAsConstant() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("binaryTypes.kt")
+                public void testBinaryTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant/binaryTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("NamedConstants.kt")
+                public void testNamedConstants() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant/NamedConstants.kt");
+                }
+
+                @Test
+                @TestMetadata("OtherTypes.kt")
+                public void testOtherTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant/OtherTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("simpleTypes.kt")
+                public void testSimpleTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant/simpleTypes.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/constructorConsistency")
         @TestDataPath("$PROJECT_ROOT")
         public class ConstructorConsistency {

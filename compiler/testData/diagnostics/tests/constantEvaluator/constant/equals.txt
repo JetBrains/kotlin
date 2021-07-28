@@ -1,0 +1,5 @@
+package
+
+package test {
+    public val prop4: kotlin.Boolean = true
+}
