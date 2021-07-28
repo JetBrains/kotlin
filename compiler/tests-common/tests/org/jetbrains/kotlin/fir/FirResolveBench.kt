@@ -155,10 +155,10 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
         }
     }
 
-    private fun recordTime(stageClass: KClass<*>, diff: VMCounters, time: Long) {
+    private fun recordTime(stageClass: KClass<*>, diff: VMCounters, time: Long, files: Int = 1) {
         timePerTransformer.computeIfAbsent(stageClass) { Measure() }.apply {
             this.time += time
-            this.files += 1
+            this.files += files
             this.user += diff.userTime
             this.cpu += diff.cpuTime
             this.gcCollections += diff.gcInfo.values.sumOf { it.collections.toInt() }
@@ -197,7 +197,8 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
     private fun runStage(processor: FirGlobalResolveProcessor, firFiles: List<FirFile>) {
         processWithTimeMeasure(
             processor::class,
-            { processor.process(firFiles) }
+            { processor.process(firFiles) },
+            files = firFiles.size
         ) { e ->
             val message = "Fail on stage ${processor::class}"
             println(message)
@@ -208,6 +209,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
     private inline fun processWithTimeMeasure(
         kClass: KClass<*>,
         block: () -> Unit,
+        files: Int = 1,
         catchBlock: (Throwable) -> FailureInfo
     ) {
         var fail = false
@@ -223,7 +225,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
         if (!fail) {
             val after = vmStateSnapshot()
             val diff = after - before
-            recordTime(kClass, diff, time)
+            recordTime(kClass, diff, time, files)
         }
     }
 
