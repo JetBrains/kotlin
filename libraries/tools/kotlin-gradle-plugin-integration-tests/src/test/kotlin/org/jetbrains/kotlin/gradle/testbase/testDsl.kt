@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
  *
  * @param [projectName] test project name in 'src/test/resources/testProject` directory.
  * @param [buildOptions] common Gradle build options
- * @param [buildJdk] path to JDK build should run with. *Note*: providing it disables debug!
+ * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
  */
 fun KGPBaseTest.project(
     projectName: String,
@@ -33,7 +33,7 @@ fun KGPBaseTest.project(
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: Boolean = false,
     projectPathAdditionalSuffix: String = "",
-    buildJdk: String? = null,
+    buildJdk: File? = null,
     test: TestProject.() -> Unit
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -55,7 +55,6 @@ fun KGPBaseTest.project(
         .withGradleVersion(gradleVersion.version)
         .also {
             if (forceOutput) it.forwardOutput()
-            if (buildJdk != null) it.withEnvironment(mapOf("JAVA_HOME" to buildJdk))
         }
 
     val testProject = TestProject(
@@ -65,6 +64,9 @@ fun KGPBaseTest.project(
         projectPath,
         gradleVersion
     )
+
+    if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
+
     testProject.test()
     return testProject
 }
@@ -211,6 +213,16 @@ private fun Path.addDefaultBuildFiles() {
     }
 }
 
+private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
+    gradleProperties.modify {
+        """
+        |org.gradle.java.home=${pathToJdk.absolutePath.replace('\\', '/')}
+        |
+        |$it        
+        """.trimMargin()
+    }
+}
+
 @OptIn(ExperimentalPathApi::class)
 internal fun Path.enableAndroidSdk() {
     val androidSdk = KtTestUtil.findAndroidSdk()
@@ -296,11 +308,11 @@ private fun Path.addHeapDumpOptions() {
     if (existingJvmArgsLine.isEmpty()) {
         propertiesFile.writeText(
             """
-            # modified in addHeapDumpOptions
-            org.gradle.jvmargs=$heapDumpOutOfErrorStr $heapDumpPathStr
-             
-            $propertiesContent
-            """.trimIndent()
+            |# modified in addHeapDumpOptions
+            |org.gradle.jvmargs=$heapDumpOutOfErrorStr $heapDumpPathStr
+            | 
+            |$propertiesContent
+            """.trimMargin()
         )
     } else {
         val argsLine = existingJvmArgsLine.first()

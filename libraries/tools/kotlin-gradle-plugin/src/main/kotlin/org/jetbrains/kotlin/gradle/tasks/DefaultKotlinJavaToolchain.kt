@@ -75,14 +75,17 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         )
         .chainedFinalizeValueOnRead()
 
-    private fun getToolsJarFromJvm(jvmProvider: Provider<Jvm>): Provider<File?> {
+    private fun getToolsJarFromJvm(
+        jvmProvider: Provider<Jvm>,
+        javaVersionProvider: Provider<JavaVersion>
+    ): Provider<File?> {
         return objects
             .propertyWithConvention(
                 jvmProvider.flatMap { jvm ->
                     objects.propertyWithConvention(jvm.toolsJar)
                 }
             )
-            .orElse(javaVersion.flatMap {
+            .orElse(javaVersionProvider.flatMap {
                 if (it < JavaVersion.VERSION_1_9) {
                     throw GradleException(
                         "Kotlin could not find the required JDK tools in the Java installation. " +
@@ -95,10 +98,16 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     }
 
     @get:Internal
-    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(providedJvm)
+    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(providedJvm, javaVersion)
 
     @get:Internal
-    internal val currentJvmJdkToolsJar: Provider<File?> = getToolsJarFromJvm(currentJvm)
+    internal val currentJvmJdkToolsJar: Provider<File?> = getToolsJarFromJvm(
+        currentJvm,
+        currentJvm.map {
+            // Current JVM should always have java version
+            it.javaVersion!!
+        }
+    )
 
     final override val jdk: KotlinJavaToolchain.JdkSetter = DefaultJdkSetter(
         providedJvm,
