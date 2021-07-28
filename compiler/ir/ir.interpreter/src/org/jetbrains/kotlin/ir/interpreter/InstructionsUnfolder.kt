@@ -178,7 +178,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
 
 private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceInitializerCall, callStack: CallStack) {
     val irClass = instanceInitializerCall.classSymbol.owner
-    val toInitialize = irClass.declarations.filter { it is IrProperty || (it is IrAnonymousInitializer && !it.isStatic) }
+    val toInitialize = irClass.declarations.filter { it is IrProperty || it is IrAnonymousInitializer }
 
     toInitialize.reversed().forEach {
         when {
