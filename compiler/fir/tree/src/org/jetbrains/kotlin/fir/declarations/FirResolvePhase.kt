@@ -13,7 +13,7 @@ enum class FirResolvePhase(val pluginPhase: Boolean = false, val noProcessor: Bo
     SUPER_TYPES,
     SEALED_CLASS_INHERITORS,
     TYPES,
-    ARGUMENTS_OF_PLUGIN_ANNOTATIONS(pluginPhase = true),
+    ARGUMENTS_OF_ANNOTATIONS,
     EXTENSION_STATUS_UPDATE(pluginPhase = true),
     STATUS,
     CONTRACTS,

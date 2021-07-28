@@ -27,6 +27,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("annotationOnDeclarationWithDifferentArguments.kt")
+        public void testAnnotationOnDeclarationWithDifferentArguments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/annotationOnDeclarationWithDifferentArguments.kt");
+        }
+
+        @Test
         @TestMetadata("annotationUsedAsAnnotationArgument.kt")
         public void testAnnotationUsedAsAnnotationArgument() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/annotationUsedAsAnnotationArgument.kt");

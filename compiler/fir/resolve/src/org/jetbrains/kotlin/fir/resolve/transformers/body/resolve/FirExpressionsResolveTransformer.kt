@@ -121,7 +121,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 qualifiedAccessExpression
             }
             else -> {
-                val transformedCallee = callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression)
+                val transformedCallee = resolveQualifiedAccessAndSelectCandidate(qualifiedAccessExpression)
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
                 if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
@@ -145,6 +145,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
         }
         return result
+    }
+
+    protected open fun resolveQualifiedAccessAndSelectCandidate(qualifiedAccessExpression: FirQualifiedAccessExpression): FirStatement {
+        return callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression)
     }
 
     fun transformSuperReceiver(
@@ -833,6 +837,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 symbol.constructType(emptyArray(), isNullable = false)
             }
             else -> {
+                if (!shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall)) return transformedGetClassCall
                 val resultType = lhs.resultType
                 if (resultType is FirErrorTypeRef) {
                     resultType.coneType
@@ -848,6 +853,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
         dataFlowAnalyzer.exitGetClassCall(transformedGetClassCall)
         return transformedGetClassCall
+    }
+
+    protected open fun shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall: FirGetClassCall): Boolean {
+        return true
     }
 
     override fun <T> transformConstExpression(

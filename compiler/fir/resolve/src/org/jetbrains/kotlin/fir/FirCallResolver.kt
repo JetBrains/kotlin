@@ -200,6 +200,20 @@ class FirCallResolver(
     }
 
     fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T): FirStatement {
+        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess) { true }
+    }
+
+    fun resolveOnlyEnumOrQualifierAccessAndSelectCandidate(qualifiedAccess: FirQualifiedAccessExpression): FirStatement {
+        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess) accept@{ candidates ->
+            val symbol = candidates.singleOrNull()?.symbol ?: return@accept false
+            symbol is FirEnumEntrySymbol || symbol is FirRegularClassSymbol
+        }
+    }
+
+    private fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidateImpl(
+        qualifiedAccess: T,
+        acceptCandidates: (Collection<Candidate>) -> Boolean
+    ): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         qualifiedResolver.initProcessingQualifiedAccess(callee, qualifiedAccess.typeArguments)
@@ -233,6 +247,8 @@ class FirCallResolver(
         }
 
         val reducedCandidates = result.candidates
+        if (!acceptCandidates(reducedCandidates)) return qualifiedAccess
+
         val nameReference = createResolvedNamedReference(
             callee,
             callee.name,
