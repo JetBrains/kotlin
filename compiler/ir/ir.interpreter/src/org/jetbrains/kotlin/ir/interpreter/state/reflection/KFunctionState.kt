@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.putArgument
@@ -68,7 +65,7 @@ internal class KFunctionState(
                 overriddenSymbols = listOf(invokeFunction.symbol)
 
                 dispatchReceiverParameter = invokeFunction.dispatchReceiverParameter?.deepCopyWithSymbols(initialParent = this)
-                valueParameters = mutableListOf()
+                val newValueParameters = mutableListOf<IrValueParameter>()
 
                 val call = when (irFunction) {
                     is IrSimpleFunction -> irFunction.createCall()
@@ -80,16 +77,17 @@ internal class KFunctionState(
 
                     if (dispatchParameter != null) {
                         dispatchReceiver = dispatchParameter.createGetValue()
-                        if (!hasDispatchReceiver) (this@impl.valueParameters as MutableList) += dispatchParameter
+                        if (!hasDispatchReceiver) newValueParameters += dispatchParameter
                     }
                     if (extensionParameter != null) {
                         extensionReceiver = extensionParameter.createGetValue()
-                        if (!hasExtensionReceiver) (this@impl.valueParameters as MutableList) += extensionParameter
+                        if (!hasExtensionReceiver) newValueParameters += extensionParameter
                     }
                     irFunction.valueParameters.forEach {
                         putArgument(it, it.createGetValue())
-                        (this@impl.valueParameters as MutableList) += it
+                        newValueParameters += it
                     }
+                    this@impl.valueParameters = newValueParameters
                 }
 
                 body = listOf(this.createReturn(call)).wrapWithBlockBody()
