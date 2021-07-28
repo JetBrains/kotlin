@@ -86,10 +86,8 @@ private object Java8RepeatableContainerLoader {
     }
 
     fun loadRepeatableContainer(klass: Class<out Annotation>): Class<out Annotation>? {
-        var cache = cache
-        if (cache == null) {
-            cache = buildCache()
-            this.cache = cache
+        val cache = cache ?: synchronized(this) {
+            cache ?: buildCache().also { cache = it }
         }
 
         val repeatableClass = cache.repeatableClass ?: return null
