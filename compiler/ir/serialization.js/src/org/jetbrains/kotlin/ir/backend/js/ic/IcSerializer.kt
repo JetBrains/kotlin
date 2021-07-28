@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
@@ -79,7 +78,7 @@ class IcSerializer(
 
             val symbolToSignature = fileDeserializer.symbolDeserializer.deserializedSymbols.entries.associate { (idSig, symbol) -> symbol to idSig }.toMutableMap()
 
-            val icDeclarationTable = IcDeclarationTable(globalDeclarationTable, irFactory, 1000000, 1000000, symbolToSignature)
+            val icDeclarationTable = IcDeclarationTable(globalDeclarationTable, irFactory, 1000000, symbolToSignature)
             val fileSerializer = JsIrFileSerializer(
                 linker.messageLogger,
                 icDeclarationTable,
@@ -138,30 +137,18 @@ class IcSerializer(
     class IcDeclarationTable(
         globalDeclarationTable: JsGlobalDeclarationTable,
         val irFactory: PersistentIrFactory,
-        newLocalIndex: Long,
-        newScopeIndex: Int,
+        startIndex: Int,
         val existingMappings: MutableMap<IrSymbol, IdSignature>
     ) : DeclarationTable(globalDeclarationTable) {
 
-        override val signaturer: IdSignatureSerializer = IdSignatureSerializerWithForIC(globalDeclarationTable.publicIdSignatureComputer, this, newLocalIndex, newScopeIndex)
+        override val signaturer: IdSignatureSerializer =
+            IdSignatureSerializer(globalDeclarationTable.publicIdSignatureComputer, this, startIndex)
 
         override fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
             return existingMappings.getOrPut(declaration.symbol) {
                 irFactory.declarationSignature(declaration) ?: super.signatureByDeclaration(declaration, compatibleMode)
             }
         }
-    }
-}
-
-class IdSignatureSerializerWithForIC(
-    publicSignatureBuilder: PublicIdSignatureComputer,
-    table: DeclarationTable,
-    localIndexOffset: Long = 0,
-    scopeIndexOffset: Int = 0,
-) : IdSignatureSerializer(publicSignatureBuilder, table) {
-    init {
-        localIndex = localIndexOffset
-        scopeIndex = scopeIndexOffset
     }
 }
 
