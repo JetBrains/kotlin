@@ -18,8 +18,5 @@ fun f(a: Int): Int {
 // 0 getLast
 // 0 getStep
 
-// JVM_TEMPLATES
+// 1 IF_ICMPGE
 // 1 IF
-
-// JVM_IR_TEMPLATES
-// 2 IF

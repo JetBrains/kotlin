@@ -22,9 +22,6 @@ fun box(): String {
     return "OK"
 }
 
-// JVM non-IR uses while.
-// JVM IR uses if + do-while. The surrounding "if" gets optimized in this test (constant condition), except for Long.
-
 // 0 reversed
 // 0 iterator
 // 0 getStart

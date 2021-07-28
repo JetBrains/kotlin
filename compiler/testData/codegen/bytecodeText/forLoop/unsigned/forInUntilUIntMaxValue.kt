@@ -9,9 +9,6 @@ fun f(a: UInt): Int {
     return n
 }
 
-// JVM non-IR uses while.
-// JVM IR uses if + do-while.
-
 // 0 iterator
 // 0 getStart
 // 0 getEnd
@@ -27,7 +24,6 @@ fun f(a: UInt): Int {
 // 1 IF
 
 // JVM_IR_TEMPLATES
-// 2 INVOKESTATIC kotlin/UnsignedKt.uintCompare
+// 1 INVOKESTATIC kotlin/UnsignedKt.uintCompare
 // 1 IFGE
-// 1 IFLT
-// 2 IF
+// 1 IF

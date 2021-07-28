@@ -12,14 +12,7 @@ fun <T : Collection<*>> test(c: T) {
 // 0 getLast
 // 1 INVOKEINTERFACE java/util/Collection\.size \(\)I
 
-// JVM non-IR uses while.
-// JVM IR uses if + do-while.
-
-// JVM_TEMPLATES
 // 1 IF_ICMPGE
+// 0 IF_ICMPGT
+// 0 IF_ICMPLE
 // 1 IF
-
-// JVM_IR_TEMPLATES
-// 1 IF_ICMPGT
-// 1 IF_ICMPLE
-// 2 IF
