@@ -461,6 +461,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     fun jsKarmaBrowsers(target: KotlinTarget? = null): String? =
         target?.name?.prefixIfNot("$KOTLIN_JS_KARMA_BROWSERS.")?.let(::property) ?: property(KOTLIN_JS_KARMA_BROWSERS)
 
+    val writeKotlinDaemonsReport: Boolean
+        get() = booleanProperty("kotlin.daemon.report.enabled") ?: false
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = this.property(deprecatedPropName)
         if (deprecatedProperty != null) {

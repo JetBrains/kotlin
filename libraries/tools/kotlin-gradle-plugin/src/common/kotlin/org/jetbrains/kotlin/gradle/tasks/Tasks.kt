@@ -214,6 +214,13 @@ abstract class GradleCompileTaskProvider @Inject constructor(
     val projectName: Provider<String> = objectFactory
         .property(project.rootProject.name.normalizeForFlagFile())
 
+    /**
+     * Returns different value rather than [rootDir] in case of composite builds or buildSrc module
+     */
+    @get:Internal
+    val rootBuildDir: Provider<File> = objectFactory
+        .property(project.gradle.rootBuild.startParameter.projectDir ?: project.gradle.rootBuild.startParameter.currentDir)
+
     @get:Internal
     val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = objectFactory.property(
         /**

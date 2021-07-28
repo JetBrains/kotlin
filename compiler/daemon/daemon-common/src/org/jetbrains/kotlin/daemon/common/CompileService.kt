@@ -84,6 +84,9 @@ interface CompileService : Remote {
     fun getUsedMemory(): CallResult<Long>
 
     @Throws(RemoteException::class)
+    fun getTotalGcTime(): CallResult<Long>
+
+    @Throws(RemoteException::class)
     fun getDaemonOptions(): CallResult<DaemonOptions>
 
     @Throws(RemoteException::class)

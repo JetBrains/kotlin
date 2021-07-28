@@ -60,6 +60,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment?,
     val incrementalModuleInfo: IncrementalModuleInfo?,
     val outputFiles: List<File>,
+    val rootBuildDir: File,
     val taskPath: String,
     val reportingSettings: ReportingSettings,
     val kotlinScriptExtensions: Array<String>,
@@ -100,6 +101,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val metrics = if (reportingSettings.buildReportOutputs.isNotEmpty()) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
     private var icLogLines: List<String> = emptyList()
     private val compilerExecutionSettings = config.compilerExecutionSettings
+    private val rootBuildDir = config.rootBuildDir
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -187,7 +189,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     compilerFullClasspath,
                     daemonMessageCollector,
                     isDebugEnabled = isDebugEnabled,
-                    daemonJvmArgs = compilerExecutionSettings.daemonJvmArgs
+                    daemonJvmArgs = compilerExecutionSettings.daemonJvmArgs,
+                    rootBuildDir = rootBuildDir,
                 )
             } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 
