@@ -12,11 +12,13 @@ object StandardClassIds {
     val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
     val BASE_COLLECTIONS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("collections"))
+    val BASE_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
     private fun String.baseId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
     private fun ClassId.unsignedId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier("U" + shortClassName.identifier))
     private fun String.reflectId() = ClassId(BASE_REFLECT_PACKAGE, Name.identifier(this))
     private fun Name.primitiveArrayId() = ClassId(Array.packageFqName, Name.identifier(identifier + Array.shortClassName.identifier))
     private fun String.collectionsId() = ClassId(BASE_COLLECTIONS_PACKAGE, Name.identifier(this))
+    private fun String.jvmId() = ClassId(BASE_JVM_PACKAGE, Name.identifier(this))
 
     val Nothing = "Nothing".baseId()
     val Unit = "Unit".baseId()
@@ -114,6 +116,10 @@ object StandardClassIds {
 
     val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
     val suspend = CallableId(BASE_KOTLIN_PACKAGE, Name.identifier("suspend"))
+
+    val JvmName = "JvmName".jvmId()
+
+    val Result = "Result".baseId()
 }
 
 private fun <K, V> Map<K, V>.inverseMap() = entries.associate { (k, v) -> v to k }

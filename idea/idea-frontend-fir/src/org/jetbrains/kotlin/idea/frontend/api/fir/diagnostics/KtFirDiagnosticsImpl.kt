@@ -4138,6 +4138,13 @@ internal class IllegalJavaLangRecordSupertypeImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class InapplicableJvmNameImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InapplicableJvmName(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class IllegalJvmNameImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

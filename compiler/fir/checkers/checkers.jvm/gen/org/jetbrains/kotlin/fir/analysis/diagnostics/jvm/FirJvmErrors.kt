@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 object FirJvmErrors {
     // Declarations
     val CONFLICTING_JVM_DECLARATIONS by error0<PsiElement>()
+    val INAPPLICABLE_JVM_NAME by error0<PsiElement>()
     val ILLEGAL_JVM_NAME by error0<PsiElement>()
 
     // Types

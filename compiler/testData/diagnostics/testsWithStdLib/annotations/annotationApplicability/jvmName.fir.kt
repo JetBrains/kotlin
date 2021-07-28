@@ -58,7 +58,7 @@ class C <!WRONG_ANNOTATION_TARGET!>@JvmName("primary")<!> constructor() {
 }
 
 fun foo1() {
-    @JvmName("a")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("a")<!>
     fun foo() {}
 
     <!WRONG_ANNOTATION_TARGET!>@JvmName("a")<!>
@@ -71,17 +71,17 @@ abstract class AB {
 
     abstract fun absFun2()
 
-    @JvmName("AB_openFun")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_openFun")<!>
     open fun openFun() {}
 }
 
 class D: AB() {
     override fun absFun1() {}
 
-    @JvmName("D_absFun2")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("D_absFun2")<!>
     override fun absFun2() {}
 
-    @JvmName("D_openFun")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("D_openFun")<!>
     final override fun openFun() {}
 
     @JvmName("D_finalFun")

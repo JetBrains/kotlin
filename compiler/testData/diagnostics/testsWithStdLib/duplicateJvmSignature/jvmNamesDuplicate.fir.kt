@@ -17,7 +17,7 @@ class C {
 // A1 -> B1 with accidental override
 
 open class A1 {
-    @JvmName("bar")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("bar")<!>
     open fun foo() {}
 }
 
@@ -28,7 +28,7 @@ class B1 : A1() {
 // A2 -> B2 with intended override and conflicting JVM declarations
 
 open class A2 {
-    @JvmName("bar")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("bar")<!>
     open fun foo() {}
 }
 
@@ -41,7 +41,7 @@ class B2 : A2() {
 // A3 -> B3 -> C3 with accidental override
 
 open class A3 {
-    @JvmName("bar")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("bar")<!>
     open fun foo() {}
 }
 
