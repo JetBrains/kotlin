@@ -28,7 +28,7 @@ class DeserializeStringTest {
             "buildSystem": "Gradle",
             "buildSystemVersion": "6.7",
             "buildPlugin": "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper",
-            "buildPluginVersion": "1.5.255-SNAPSHOT",
+            "buildPluginVersion": "1.6.255-SNAPSHOT",
             "projectSettings": {
               "isHmppEnabled": false,
               "isCompatibilityMetadataVariantEnabled": true
@@ -88,7 +88,7 @@ class DeserializeStringTest {
         assertEquals("Gradle", metadata.buildSystem)
         assertEquals("6.7", metadata.buildSystemVersion)
         assertEquals("org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper", metadata.buildPlugin)
-        assertEquals("1.5.255-SNAPSHOT", metadata.buildPluginVersion)
+        assertEquals("1.6.255-SNAPSHOT", metadata.buildPluginVersion)
         assertFalse(metadata.projectSettings.isHmppEnabled)
         assertTrue(metadata.projectSettings.isCompatibilityMetadataVariantEnabled)
         assertEquals(5, metadata.projectTargets.size, "Expected exactly 4 targets")
