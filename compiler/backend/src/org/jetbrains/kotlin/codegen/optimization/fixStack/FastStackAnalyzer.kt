@@ -174,7 +174,7 @@ internal open class FastStackAnalyzer<V : Value>(
     }
 
     private fun visitJumpInsnNode(insnNode: JumpInsnNode, current: Frame<V>, insn: Int, insnOpcode: Int) {
-        if (insnOpcode != Opcodes.GOTO && insnOpcode != Opcodes.JSR) {
+        if (insnOpcode != Opcodes.GOTO) {
             processControlFlowEdge(current, insn, insn + 1)
         }
         val jump = insnNode.label.indexOf()

@@ -33,7 +33,6 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -174,7 +173,6 @@ open class FastMethodAnalyzer<V : Value>(
                 }
             }
         }
-        // Every try-catch block handler entry point is SPB entry point
         for (tcb in method.tryCatchBlocks) {
             isMergeNode[tcb.handler.indexOf()] = true
         }
@@ -253,36 +251,5 @@ open class FastMethodAnalyzer<V : Value>(
             queued[dest] = true
             queue[top++] = dest
         }
-    }
-
-    @Suppress("unused")
-    private fun dumpBlocksInfo() {
-        fun LabelNode?.labelText() =
-            if (this != null) "L#${indexOf()}" else "L<null>"
-
-        println("===== ${method.name} ${method.signature} ======")
-        for ((i, insn) in insnsArray.withIndex()) {
-            val insnText = when (insn) {
-                is LabelNode ->
-                    "L#$i"
-                is JumpInsnNode ->
-                    "${insn.insnOpcodeText} ${insn.label.labelText()}"
-                is TableSwitchInsnNode ->
-                    "${insn.insnOpcodeText} min=${insn.min} max=${insn.max} \n\t\t\t" +
-                            "[${insn.labels.joinToString { it.labelText() }}] \n\t\t\t" +
-                            "dflt:${insn.dflt.labelText()}"
-                is LookupSwitchInsnNode ->
-                    "${insn.insnOpcodeText} \n\t\t\t" +
-                            "[${insn.keys.zip(insn.labels).joinToString { (key, label) -> "$key: ${label.labelText()}" }}] \n\t\t\t" +
-                            "dflt:${insn.dflt.labelText()}"
-                else ->
-                    insn.insnText
-            }
-            println("$i\t$insnText")
-        }
-        for (tcb in method.tryCatchBlocks) {
-            println("\tTCB start:${tcb.start.labelText()} end:${tcb.end.labelText()} handler:${tcb.handler.labelText()}")
-        }
-        println()
     }
 }
