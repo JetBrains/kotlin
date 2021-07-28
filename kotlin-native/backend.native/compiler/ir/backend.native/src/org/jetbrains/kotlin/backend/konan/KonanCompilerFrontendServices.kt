@@ -28,7 +28,7 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
 
         useInstance(object : ObjCExportLazy.Configuration {
             override val frameworkName: String
-                get() = config.moduleId
+                get() = config.fullExportedNamePrefix
 
             override fun isIncluded(moduleInfo: ModuleInfo): Boolean = true
 

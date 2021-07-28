@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
@@ -78,13 +79,13 @@ interface ObjCExportNamer {
 }
 
 fun createNamer(moduleDescriptor: ModuleDescriptor,
-                topLevelNamePrefix: String = moduleDescriptor.namePrefix): ObjCExportNamer =
+                topLevelNamePrefix: String): ObjCExportNamer =
         createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
 
 fun createNamer(
         moduleDescriptor: ModuleDescriptor,
         exportedDependencies: List<ModuleDescriptor>,
-        topLevelNamePrefix: String = moduleDescriptor.namePrefix
+        topLevelNamePrefix: String
 ): ObjCExportNamer = ObjCExportNamerImpl(
         (exportedDependencies + moduleDescriptor).toSet(),
         moduleDescriptor.builtIns,
@@ -270,7 +271,7 @@ internal class ObjCExportNamerImpl(
                     get() = topLevelNamePrefix
 
                 override fun getAdditionalPrefix(module: ModuleDescriptor): String? =
-                        if (module in moduleDescriptors) null else module.namePrefix
+                        if (module in moduleDescriptors) null else module.objCExportAdditionalNamePrefix
 
                 override val objcGenerics: Boolean
                     get() = objcGenerics
@@ -900,11 +901,13 @@ private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: 
     return bridgePropertyType(first) == bridgePropertyType(second)
 }
 
-internal val ModuleDescriptor.namePrefix: String get() {
+internal val ModuleDescriptor.objCExportAdditionalNamePrefix: String get() {
     if (this.isNativeStdlib()) return "Kotlin"
 
     val fullPrefix = when(val module = this.klibModuleOrigin) {
-        CurrentKlibModuleOrigin, SyntheticModulesOrigin ->
+        CurrentKlibModuleOrigin ->
+            error("expected deserialized module, got $this (origin = $module)")
+        SyntheticModulesOrigin ->
             this.name.asString().let { it.substring(1, it.lastIndex) }
         is DeserializedKlibModuleOrigin ->
             module.library.let { it.shortName ?: it.uniqueName }
@@ -912,6 +915,9 @@ internal val ModuleDescriptor.namePrefix: String get() {
 
     return abbreviate(fullPrefix)
 }
+
+internal val Context.objCExportTopLevelNamePrefix: String
+    get() = abbreviate(config.fullExportedNamePrefix)
 
 fun abbreviate(name: String): String {
     val normalizedName = name

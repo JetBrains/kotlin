@@ -36,6 +36,7 @@ internal class ObjCExportedInterface(
 
 internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private val target get() = context.config.target
+    private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
 
     private val exportedInterface = produceInterface()
     private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
@@ -59,7 +60,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                     moduleDescriptors.toSet(),
                     context.moduleDescriptor.builtIns,
                     mapper,
-                    context.moduleDescriptor.namePrefix,
+                    topLevelNamePrefix,
                     local = false,
                     objcGenerics = objcGenerics
             )
@@ -87,7 +88,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                 setOf(codegen.context.moduleDescriptor),
                 context.moduleDescriptor.builtIns,
                 mapper,
-                context.moduleDescriptor.namePrefix,
+                topLevelNamePrefix,
                 local = false
         )
 

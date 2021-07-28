@@ -32,6 +32,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("fully qualified main() name")
         val EXPORTED_LIBRARIES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("libraries included into produced framework API")
+        val FULL_EXPORTED_NAME_PREFIX: CompilerConfigurationKey<String?>
+                = CompilerConfigurationKey.create("prefix used when exporting Kotlin names to other languages")
         val LIBRARIES_TO_CACHE: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("paths to libraries that to be compiled to cache")
         val LIBRARY_TO_ADD_TO_CACHE: CompilerConfigurationKey<String?>

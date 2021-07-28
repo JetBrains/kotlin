@@ -106,8 +106,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val outputFile get() = outputFiles.mainFile
 
+    private val implicitModuleName: String
+        get() = File(outputFiles.outputName).name
+
+    val fullExportedNamePrefix: String
+        get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
+
     val moduleId: String
-        get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: File(outputFiles.outputName).name
+        get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: implicitModuleName
 
     val shortModuleName: String?
         get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)

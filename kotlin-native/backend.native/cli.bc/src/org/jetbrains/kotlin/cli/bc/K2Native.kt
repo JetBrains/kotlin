@@ -140,6 +140,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(LINKER_ARGS, arguments.linkerArguments.toNonNullList() +
                         arguments.singleLinkerArguments.toNonNullList())
                 arguments.moduleName?.let{ put(MODULE_NAME, it) }
+
+                // TODO: allow overriding the prefix directly.
+                arguments.moduleName?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
+
                 arguments.target?.let{ put(TARGET, it) }
 
                 put(INCLUDED_BINARY_FILES,
