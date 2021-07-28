@@ -33,10 +33,7 @@ val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
 val contractsDslAnnotation = FqName("kotlin.internal.ContractsDsl")
 
 internal val IrElement.fqName: String
-    get() = when (this) {
-        is IrExpression -> (this as? IrSymbolOwner)?.symbol?.owner?.fqName ?: ""
-        else -> (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: ""
-    }
+    get() = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: ""
 
 internal fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? = this.dispatchReceiverParameter?.symbol
 

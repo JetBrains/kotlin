@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
@@ -104,8 +104,8 @@ internal fun IrFunction.createCall(origin: IrStatementOrigin? = null): IrCall {
     return IrCallImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol, typeParameters.size, valueParameters.size, origin)
 }
 
-internal fun IrConstructor.createConstructorCall(): IrConstructorCall {
-    return IrConstructorCallImpl.fromSymbolOwner(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol)
+internal fun IrConstructor.createConstructorCall(irType: IrType = returnType): IrConstructorCall {
+    return IrConstructorCallImpl.fromSymbolOwner(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irType, symbol)
 }
 
 internal fun IrValueDeclaration.createGetValue(): IrGetValue {
@@ -165,14 +165,13 @@ internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean =
     }
 }
 
-internal fun IrFunctionAccessExpression.copyArgsInto(newCall: IrFunctionAccessExpression) {
-    val symbol = this.symbol.owner
-    newCall.dispatchReceiver = this.dispatchReceiver
-    newCall.extensionReceiver = this.extensionReceiver
-    (0 until this.valueArgumentsCount)
-        .map { this.getValueArgument(it) }
+internal fun IrBuiltIns.copyArgs(from: IrFunctionAccessExpression, into: IrFunctionAccessExpression) {
+    into.dispatchReceiver = from.dispatchReceiver
+    into.extensionReceiver = from.extensionReceiver
+    (0 until from.valueArgumentsCount)
+        .map { from.getValueArgument(it) }
         .forEachIndexed { i, arg ->
-            newCall.putValueArgument(i, arg ?: IrConstImpl.constNull(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, symbol.valueParameters[i].type))
+            into.putValueArgument(i, arg ?: IrConstImpl.constNull(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.anyNType))
         }
 }
 
@@ -186,7 +185,24 @@ internal fun IrBuiltIns.irEquals(arg1: IrExpression, arg2: IrExpression): IrCall
 internal fun IrBuiltIns.irIfNullThenElse(nullableArg: IrExpression, ifTrue: IrExpression, ifFalse: IrExpression): IrWhen {
     val nullCondition = this.irEquals(nullableArg, IrConstImpl.constNull(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.anyNType))
     val trueBranch = IrBranchImpl(nullCondition, ifTrue) // use default
-    val elseBranch = IrElseBranchImpl(IrConstImpl.constTrue(0, 0, this.booleanType), ifFalse)
+    val elseBranch = IrElseBranchImpl(IrConstImpl.constTrue(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.booleanType), ifFalse)
 
     return IrIfThenElseImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, ifTrue.type).apply { branches += listOf(trueBranch, elseBranch) }
+}
+
+internal fun IrBuiltIns.emptyArrayConstructor(arrayType: IrType): IrConstructorCall {
+    val arrayClass = arrayType.classOrNull!!.owner
+    val constructor = arrayClass.constructors.firstOrNull { it.valueParameters.size == 1 } ?: arrayClass.constructors.first()
+    val constructorCall = constructor.createConstructorCall(arrayType)
+
+    constructorCall.putValueArgument(0, 0.toIrConst(this.intType))
+    if (constructor.valueParameters.size == 2) {
+        // TODO find a way to avoid creation of empty lambda
+        val tempFunction = createTempFunction(Name.identifier("TempForVararg"), this.anyType)
+        tempFunction.parent = arrayClass // can be anything, will not be used in any case
+        val initLambda = IrFunctionExpressionImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, constructor.valueParameters[1].type, tempFunction, IrStatementOrigin.LAMBDA)
+        constructorCall.putValueArgument(1, initLambda)
+        constructorCall.putTypeArgument(0, (arrayType as IrSimpleType).arguments.singleOrNull()?.typeOrNull)
+    }
+    return constructorCall
 }

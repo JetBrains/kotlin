@@ -142,12 +142,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val irFunction = valueParameter.parent as IrFunction
         fun isReceiver() = irFunction.dispatchReceiverParameter == valueParameter || irFunction.extensionReceiverParameter == valueParameter
 
-        val result = callStack.popState()
-        val state = when {
-            // if vararg is empty
-            result.isNull() && valueParameter.isVararg -> listOf<Any?>().toPrimitiveStateArray((result as Primitive<*>).type)
-            else -> result
-        }
+        val state = callStack.popState()
 
         state.checkNullability(valueParameter.type, environment) {
             if (isReceiver()) return@checkNullability NullPointerException()

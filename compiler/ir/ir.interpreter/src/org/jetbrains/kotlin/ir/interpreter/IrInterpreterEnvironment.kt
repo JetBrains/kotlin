@@ -23,7 +23,20 @@ class IrInterpreterEnvironment(
     internal val irExceptions = mutableListOf<IrClass>()
     internal var mapOfEnums = mutableMapOf<IrSymbol, Complex>()
     internal var mapOfObjects = mutableMapOf<IrSymbol, Complex>()
-    internal var createdFunctionsCache = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+
+    private data class CacheFunctionSignature(
+        val symbol: IrFunctionSymbol,
+
+        // must create different invoke function for function expression with and without receivers
+        val hasDispatchReceiver: Boolean,
+        val hasExtensionReceiver: Boolean,
+
+        // must create different default functions for constructor call and delegating call;
+        // their symbols are the same but calls are different, so default function must return different calls
+        val fromDelegatingCall: Boolean
+    )
+
+    private var functionCache = mutableMapOf<CacheFunctionSignature, IrFunctionSymbol>()
 
     init {
         mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)
@@ -46,5 +59,25 @@ class IrInterpreterEnvironment(
 
     fun copyWithNewCallStack(): IrInterpreterEnvironment {
         return IrInterpreterEnvironment(this)
+    }
+
+    internal fun getCachedFunction(
+        symbol: IrFunctionSymbol,
+        hasDispatchReceiver: Boolean = false,
+        hasExtensionReceiver: Boolean = false,
+        fromDelegatingCall: Boolean = false
+    ): IrFunctionSymbol? {
+        return functionCache[CacheFunctionSignature(symbol, hasDispatchReceiver, hasExtensionReceiver, fromDelegatingCall)]
+    }
+
+    internal fun setCachedFunction(
+        symbol: IrFunctionSymbol,
+        hasDispatchReceiver: Boolean = false,
+        hasExtensionReceiver: Boolean = false,
+        fromDelegatingCall: Boolean = false,
+        newFunction: IrFunctionSymbol
+    ): IrFunctionSymbol {
+        functionCache[CacheFunctionSignature(symbol, hasDispatchReceiver, hasExtensionReceiver, fromDelegatingCall)] = newFunction
+        return newFunction
     }
 }

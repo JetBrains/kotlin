@@ -113,15 +113,15 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
     val callStack = environment.callStack
     val hasDefaults = (0 until expression.valueArgumentsCount).any { expression.getValueArgument(it) == null }
     if (hasDefaults) {
-        val ownerWithDefaults = expression.getFunctionThatContainsDefaults()
-        environment.createdFunctionsCache[ownerWithDefaults.symbol]?.let {
-            val callToDefault = it.owner.createCall().apply { expression.copyArgsInto(this) }
+        environment.getCachedFunction(expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall)?.let {
+            val callToDefault = it.owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
             callStack.addInstruction(CompoundInstruction(callToDefault))
             return
         }
 
         // if some arguments are not defined, then it is necessary to create temp function where defaults will be evaluated
         val actualParameters = MutableList<IrValueDeclaration?>(expression.valueArgumentsCount) { null }
+        val ownerWithDefaults = expression.getFunctionThatContainsDefaults()
         val visibility = when (expression) {
             is IrEnumConstructorCall, is IrDelegatingConstructorCall -> DescriptorVisibilities.LOCAL
             else -> ownerWithDefaults.visibility
@@ -138,14 +138,15 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
                 val originalParameter = ownerWithDefaults.valueParameters[index]
                 val copiedParameter = originalParameter.deepCopyWithSymbols(this)
                 this.valueParameters += copiedParameter
-                actualParameters[index] = if (copiedParameter.defaultValue != null) {
+                actualParameters[index] = if (copiedParameter.defaultValue != null || copiedParameter.isVararg) {
                     copiedParameter.type = copiedParameter.type.makeNullable() // make nullable type to keep consistency; parameter can be null if it is missing
                     val irGetParameter = copiedParameter.createGetValue()
+                    // if parameter is vararg and it is missing then create constructor call for empty array
                     val defaultInitializer = originalParameter.getDefaultWithActualParameters(this@apply, actualParameters)
-                        ?: expression.getVarargType(index)?.let { null.toIrConst(it) } // if parameter is vararg and it is missing
+                        ?: environment.irBuiltIns.emptyArrayConstructor(expression.getVarargType(index)!!.getTypeIfReified(callStack))
 
                     copiedParameter.createTempVariable().apply variable@{
-                        this@variable.initializer = environment.irBuiltIns.irIfNullThenElse(irGetParameter, defaultInitializer!!, irGetParameter)
+                        this@variable.initializer = environment.irBuiltIns.irIfNullThenElse(irGetParameter, defaultInitializer, irGetParameter)
                     }
                 } else {
                     copiedParameter
@@ -159,8 +160,9 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         (0 until expression.valueArgumentsCount).forEach { callWithAllArgs.putValueArgument(it, actualParameters[it]?.createGetValue()) }
         defaultFun.body = (actualParameters.filterIsInstance<IrVariable>() + defaultFun.createReturn(callWithAllArgs)).wrapWithBlockBody()
 
-        environment.createdFunctionsCache[ownerWithDefaults.symbol] = defaultFun.symbol
-        val callToDefault = defaultFun.createCall().apply { expression.copyArgsInto(this) }
+        val callToDefault = environment.setCachedFunction(
+            expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall, newFunction = defaultFun.symbol
+        ).owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
         callStack.addInstruction(CompoundInstruction(callToDefault))
     } else {
         val irFunction = expression.symbol.owner

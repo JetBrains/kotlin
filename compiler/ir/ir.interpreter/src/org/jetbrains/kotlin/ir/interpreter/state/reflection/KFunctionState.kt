@@ -36,16 +36,14 @@ internal class KFunctionState(
     private var _returnType: KType? = null
     private var _typeParameters: List<KTypeParameter>? = null
 
-    val invokeSymbol: IrFunctionSymbol = environment.createdFunctionsCache
-        .getOrDefault(
-            irFunction.symbol,
-            createInvokeFunction(
-                irFunction,
-                irClass,
-                irFunction.dispatchReceiverParameter?.let { getField(it.symbol) } != null,
-                irFunction.extensionReceiverParameter?.let { getField(it.symbol) } != null
-            ).symbol
+    val invokeSymbol: IrFunctionSymbol = run {
+        val hasDispatchReceiver = irFunction.dispatchReceiverParameter?.let { getField(it.symbol) } != null
+        val hasExtensionReceiver = irFunction.extensionReceiverParameter?.let { getField(it.symbol) } != null
+        environment.getCachedFunction(irFunction.symbol, hasDispatchReceiver, hasExtensionReceiver) ?: environment.setCachedFunction(
+            irFunction.symbol, hasDispatchReceiver, hasExtensionReceiver,
+            newFunction = createInvokeFunction(irFunction, irClass, hasDispatchReceiver, hasExtensionReceiver).symbol
         )
+    }
 
     companion object {
         fun createInvokeFunction(
