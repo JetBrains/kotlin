@@ -10,11 +10,11 @@ abstract class A {
 
 object B: A() {
 
-    @JvmStatic override fun a() {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic override fun a() {}<!>
 
-    @JvmStatic override fun b() {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic override fun b() {}<!>
 
-    @JvmStatic final override fun c() {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic final override fun c() {}<!>
 
     @JvmStatic <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> fun d() {}
 }

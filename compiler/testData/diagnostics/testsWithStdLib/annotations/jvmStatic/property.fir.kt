@@ -28,12 +28,12 @@ class A {
 
         @JvmStatic val z = 1;
 
-        @JvmStatic override val base1: Int = 0
+        <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic override val base1: Int = 0<!>
 
         @JvmStatic <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> fun f() {}
 
         override val base2: Int = 0
-            @JvmStatic get
+            <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic get<!>
     }
 
     var p:Int = 1

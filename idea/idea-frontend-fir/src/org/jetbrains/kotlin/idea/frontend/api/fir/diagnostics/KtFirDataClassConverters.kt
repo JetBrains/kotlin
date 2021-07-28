@@ -3664,6 +3664,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC) { firDiagnostic ->
+        OverrideCannotBeStaticImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.INAPPLICABLE_JVM_NAME) { firDiagnostic ->
         InapplicableJvmNameImpl(
             firDiagnostic as FirPsiDiagnostic,

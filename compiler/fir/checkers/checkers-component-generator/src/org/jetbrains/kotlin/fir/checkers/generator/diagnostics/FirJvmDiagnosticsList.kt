@@ -21,6 +21,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     val DECLARATIONS by object : DiagnosticGroup("Declarations") {
         val CONFLICTING_JVM_DECLARATIONS by error<PsiElement>()
 
+        val OVERRIDE_CANNOT_BE_STATIC by error<PsiElement>()
+
         val INAPPLICABLE_JVM_NAME by error<PsiElement>()
         val ILLEGAL_JVM_NAME by error<PsiElement>()
     }
