@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdSigCase.*
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -34,7 +36,6 @@ class IrSymbolDeserializer(
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
     private val enqueueAllDeclarations: Boolean = false,
-    private val useGlobalSignatures: Boolean = false,
     val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = mutableMapOf(), // Per-file signature cache. TODO: do we really need it?
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol,
 ) {
@@ -51,7 +52,7 @@ class IrSymbolDeserializer(
 
     private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol = symbolTable.run {
         when (symbolKind) {
-            BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> if (useGlobalSignatures) IrAnonymousInitializerPublicSymbolImpl(idSig) else IrAnonymousInitializerSymbolImpl()
+            BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> IrAnonymousInitializerSymbolImpl()
             BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClassFromLinker(idSig)
             BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructorFromLinker(idSig)
             BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceGlobalTypeParameterFromLinker(idSig)
@@ -62,8 +63,8 @@ class IrSymbolDeserializer(
             BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAliasFromLinker(idSig)
             BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referencePropertyFromLinker(idSig)
             BinarySymbolData.SymbolKind.VARIABLE_SYMBOL -> IrVariableSymbolImpl()
-            BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> if (useGlobalSignatures) IrValueParameterPublicSymbolImpl(idSig) else IrValueParameterSymbolImpl()
-            BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> if (useGlobalSignatures) IrValueParameterPublicSymbolImpl(idSig) else IrValueParameterSymbolImpl()
+            BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
+            BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
             BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
                 IrLocalDelegatedPropertySymbolImpl()
             BinarySymbolData.SymbolKind.FILE_SYMBOL -> (idSig as IdSignature.FileSignature).fileSymbol
@@ -200,12 +201,3 @@ class IrSymbolDeserializer(
         }
     }
 }
-
-// TODO: make internal and move to deserializer
-private class IrAnonymousInitializerPublicSymbolImpl(sig: IdSignature, descriptor: ClassDescriptor? = null) :
-    IrBindablePublicSymbolBase<ClassDescriptor, IrAnonymousInitializer>(sig, descriptor),
-    IrAnonymousInitializerSymbol
-
-private class IrValueParameterPublicSymbolImpl(sig: IdSignature, descriptor: ParameterDescriptor? = null) :
-    IrBindablePublicSymbolBase<ParameterDescriptor, IrValueParameter>(sig, descriptor),
-    IrValueParameterSymbol

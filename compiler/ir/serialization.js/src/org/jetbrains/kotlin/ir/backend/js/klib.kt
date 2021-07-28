@@ -290,8 +290,7 @@ fun loadIr(
                     symbolTable,
                     feContext,
                     null,
-                    depsDescriptors.loweredIcData,
-                    loweringsCacheProvider != null
+                    depsDescriptors.loweredIcData
                 )
             val deserializedModuleFragments = sortDependencies(allDependencies, depsDescriptors.descriptors).map { klib ->
                 irLinker.deserializeIrModuleHeader(
@@ -359,8 +358,7 @@ fun loadIr(
                     symbolTable,
                     null,
                     null,
-                    loweredIcData,
-                    loweringsCacheProvider != null
+                    loweredIcData
                 )
 
             val moduleFragmentToUniqueName = mutableMapOf<IrModuleFragment, String>()

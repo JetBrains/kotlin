@@ -33,7 +33,6 @@ class IcModuleDeserializer(
     override val klib: IrLibrary,
     override val strategy: DeserializationStrategy,
     private val containsErrorCode: Boolean = false,
-    private val useGlobalSignatures: Boolean = false,
 ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
@@ -145,7 +144,6 @@ class IcModuleDeserializer(
             allowErrorNodes,
             strategy.inlineBodies,
             moduleDeserializer,
-            useGlobalSignatures,
             linker::handleNoModuleDeserializerFound,
             { fileDeserializer -> originalEnqueue(fileDeserializer) },
             icFileData,

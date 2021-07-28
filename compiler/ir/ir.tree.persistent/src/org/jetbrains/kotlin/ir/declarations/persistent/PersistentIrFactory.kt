@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.persistent.PersistentIrBlockBody
 import org.jetbrains.kotlin.ir.expressions.persistent.PersistentIrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -26,9 +25,9 @@ class PersistentIrFactory : IrFactory {
 
     override var stageController = StageController()
 
-    val allDeclarations = mutableListOf<IrDeclaration>()
+    val allDeclarations = hashSetOf<IrDeclaration>()
 
-    val allBodies = mutableListOf<IrBody>()
+    val allBodies = hashSetOf<IrBody>()
 
     private fun IrDeclaration.register() {
         allDeclarations += this
@@ -36,6 +35,15 @@ class PersistentIrFactory : IrFactory {
 
     fun declarationSignature(declaration: IrDeclaration): IdSignature? {
         return (declaration as? PersistentIrDeclarationBase<*>)?.signature ?: declaration.symbol.signature
+    }
+
+    override fun unlistFunction(f: IrFunction) {
+        allDeclarations.remove(f)
+        f.dispatchReceiverParameter?.let { allDeclarations.remove(it) }
+        f.extensionReceiverParameter?.let { allDeclarations.remove(it) }
+        allDeclarations.removeAll(f.valueParameters)
+        allDeclarations.removeAll(f.typeParameters)
+        allBodies.remove(f.body)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -125,7 +133,19 @@ class PersistentIrFactory : IrFactory {
         isExternal: Boolean,
         isStatic: Boolean,
     ): IrField =
-        PersistentIrField(startOffset, endOffset, origin, symbol, name, type, visibility, isFinal, isExternal, isStatic, this).also { it.register() }
+        PersistentIrField(
+            startOffset,
+            endOffset,
+            origin,
+            symbol,
+            name,
+            type,
+            visibility,
+            isFinal,
+            isExternal,
+            isStatic,
+            this
+        ).also { it.register() }
 
     override fun createFunction(
         startOffset: Int,
@@ -268,7 +288,19 @@ class PersistentIrFactory : IrFactory {
         isAssignable: Boolean
     ): IrValueParameter =
         PersistentIrValueParameter(
-            startOffset, endOffset, origin, symbol, name, index, type, varargElementType, isCrossinline, isNoinline, isHidden, isAssignable, this
+            startOffset,
+            endOffset,
+            origin,
+            symbol,
+            name,
+            index,
+            type,
+            varargElementType,
+            isCrossinline,
+            isNoinline,
+            isHidden,
+            isAssignable,
+            this
         ).also { it.register() }
 
     override fun createExpressionBody(

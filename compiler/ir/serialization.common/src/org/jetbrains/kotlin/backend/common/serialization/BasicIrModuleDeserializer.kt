@@ -27,8 +27,7 @@ abstract class BasicIrModuleDeserializer(
     override val klib: IrLibrary,
     override val strategy: DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
-    private val containsErrorCode: Boolean = false,
-    private val useGlobalSignatures: Boolean = false,
+    private val containsErrorCode: Boolean = false
 ) :
     IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
 
@@ -119,7 +118,6 @@ abstract class BasicIrModuleDeserializer(
             allowErrorNodes,
             strategy.inlineBodies,
             moduleDeserializer,
-            useGlobalSignatures,
             linker::handleNoModuleDeserializerFound,
         )
 
