@@ -60,7 +60,9 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: L
             return;
         }
         val taskExecutionResult = TaskExecutionResults[taskPath]
-        val statData = taskExecutionResult?.buildMetrics?.buildTimes?.asMap() ?: emptyMap()
+        val timeData = taskExecutionResult?.buildMetrics?.buildTimes?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
+        val perfData = taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.mapValues { it.value / 1000 }
+            ?.filterValues { value -> value != 0L } ?: emptyMap()
         val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
             is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
             is ChangedFiles.Dependencies -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
@@ -69,7 +71,7 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: L
         }
         val compileStatData = CompileStatData(
             duration = duration, taskResult = taskResult.name, label = label,
-            statData = statData, projectName = projectName, taskName = taskPath, changes = changes,
+            timeData = timeData, perfData = perfData, projectName = projectName, taskName = taskPath, changes = changes,
             tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList(),
             nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap(),
             hostName = hostName, kotlinVersion = "1.6", buildUuid = buildUuid, timeInMillis = System.currentTimeMillis()

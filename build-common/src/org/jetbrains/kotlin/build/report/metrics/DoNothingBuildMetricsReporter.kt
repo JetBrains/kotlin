@@ -12,7 +12,10 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter {
     override fun endMeasure(time: BuildTime, endNs: Long) {
     }
 
-    override fun addMetric(time: BuildTime, value: Long) {
+    override fun addTimeMetric(time: BuildTime, durationMs: Long) {
+    }
+
+    override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
     }
 
     override fun addAttribute(attribute: BuildAttribute) {
@@ -21,6 +24,7 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter {
     override fun getMetrics(): BuildMetrics =
         BuildMetrics(
             BuildTimes(),
+            BuildPerformanceMetrics(),
             BuildAttributes()
         )
 

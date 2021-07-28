@@ -13,6 +13,7 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
             BuildTime::class.java
         )
     private val myBuildTimes = BuildTimes()
+    private val myBuildMetrics = BuildPerformanceMetrics()
     private val myBuildAttributes = BuildAttributes()
 
     override fun startMeasure(time: BuildTime, startNs: Long) {
@@ -28,8 +29,12 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
         myBuildTimes.add(time, durationMs)
     }
 
-    override fun addMetric(metric: BuildTime, value: Long) {
-        myBuildTimes.add(metric, value)
+    override fun addTimeMetric(time: BuildTime, durationMs: Long) {
+        myBuildTimes.add(time, durationMs)
+    }
+
+    override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
+        myBuildMetrics.add(metric, value)
     }
 
     override fun addAttribute(attribute: BuildAttribute) {
@@ -39,6 +44,7 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
     override fun getMetrics(): BuildMetrics =
         BuildMetrics(
             buildTimes = myBuildTimes,
+            buildPerformanceMetrics = myBuildMetrics,
             buildAttributes = myBuildAttributes
         )
 
@@ -47,5 +53,6 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
 
         myBuildAttributes.addAll(metrics.buildAttributes)
         myBuildTimes.addAll(metrics.buildTimes)
+        myBuildMetrics.addAll(metrics.buildPerformanceMetrics)
     }
 }

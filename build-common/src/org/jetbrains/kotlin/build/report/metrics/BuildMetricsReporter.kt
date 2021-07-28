@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.build.report.metrics
 interface BuildMetricsReporter {
     fun startMeasure(time: BuildTime, startNs: Long)
     fun endMeasure(time: BuildTime, endNs: Long)
-    fun addMetric(metric: BuildTime, value: Long)
+    fun addTimeMetric(time: BuildTime, durationMs: Long)
+
+    fun addMetric(metric: BuildPerformanceMetric, value: Long)
 
     fun addAttribute(attribute: BuildAttribute)
 

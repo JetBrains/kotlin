@@ -9,10 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.incremental.*
 import java.io.File
@@ -131,7 +128,8 @@ private object NoOpBuildReporter : BuildReporter(NoOpICReporter, NoOpBuildMetric
     object NoOpBuildMetricsReporter : BuildMetricsReporter {
         override fun startMeasure(time: BuildTime, startNs: Long) {}
         override fun endMeasure(time: BuildTime, endNs: Long) {}
-        override fun addMetric(metric: BuildTime, value: Long) {}
+        override fun addTimeMetric(metric: BuildTime, durationMs: Long) {}
+        override fun addMetric(metric: BuildPerformanceMetric, value: Long) {}
         override fun addAttribute(attribute: BuildAttribute) {}
         override fun getMetrics(): BuildMetrics = BuildMetrics()
         override fun addMetrics(metrics: BuildMetrics?) {}

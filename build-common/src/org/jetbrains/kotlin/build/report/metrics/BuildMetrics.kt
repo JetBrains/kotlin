@@ -9,10 +9,12 @@ import java.io.Serializable
 
 data class BuildMetrics(
     val buildTimes: BuildTimes = BuildTimes(),
+    val buildPerformanceMetrics: BuildPerformanceMetrics = BuildPerformanceMetrics(),
     val buildAttributes: BuildAttributes = BuildAttributes()
 ) : Serializable {
     fun addAll(other: BuildMetrics) {
         buildTimes.addAll(other.buildTimes)
+        buildPerformanceMetrics.addAll(other.buildPerformanceMetrics)
         buildAttributes.addAll(other.buildAttributes)
     }
 

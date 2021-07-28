@@ -329,7 +329,12 @@ abstract class CompileServiceImplBase(
                     val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
 
                     val perfString = compiler.defaultPerformanceManager.renderCompilerPerformance()
-                    (compilationResults as CompilationResults).add(CompilationResultCategory.BUILD_REPORT_LINES.code, arrayListOf(perfString))
+                    compilationResults?.also {
+                        (it as CompilationResults).add(
+                            CompilationResultCategory.BUILD_REPORT_LINES.code,
+                            arrayListOf(perfString)
+                        )
+                    }
 
                     exitCode
                 }

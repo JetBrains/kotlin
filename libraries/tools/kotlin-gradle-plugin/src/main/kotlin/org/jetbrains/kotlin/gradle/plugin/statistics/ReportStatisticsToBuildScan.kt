@@ -27,7 +27,8 @@ class ReportStatisticsToBuildScan(private val buildScan: BuildScanExtension, pri
         data.changes.joinTo(readableString, prefix = "Changes: [", postfix = "]; ") { it.substringAfterLast(File.separator) }
 
         readableString.append("Performance: [")
-        data.statData.forEach { (key, value) -> readableString.append(key.readableString).append(": ").append(value).append("ms, ") }
+        data.timeData.forEach { (key, value) -> readableString.append(key.readableString).append(": ").append(value).append("ms, ") }
+        data.perfData.forEach { (key, value) -> readableString.append(key.readableString).append(": ").append(value).append("kb, ") }
         readableString.append("]; ")
         return readableString.toString()
     }

@@ -433,7 +433,8 @@ class IncrementalJvmCompilerRunner(
         args.allowNoSourceFiles = true
         val exitCode = compiler.exec(messageCollector, services, args)
         args.freeArgs = freeArgsBackup
-        reporter.report { compiler.defaultPerformanceManager.renderCompilerPerformance() }
+//        reporter.report { compiler.defaultPerformanceManager.renderCompilerPerformance() }
+        reportPerformanceData(compiler.defaultPerformanceManager)
         return exitCode
     }
 }

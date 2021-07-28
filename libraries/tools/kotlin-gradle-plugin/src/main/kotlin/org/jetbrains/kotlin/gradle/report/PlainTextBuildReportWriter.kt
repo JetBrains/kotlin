@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.build.report.metrics.BuildAttributes
-import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.BuildTimes
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.report.data.TaskExecutionData
@@ -62,6 +59,7 @@ internal class PlainTextBuildReportWriter(
         if (!printMetrics) return
 
         printBuildTimes(buildMetrics.buildTimes)
+        printBuildPerformanceMetrics(buildMetrics.buildPerformanceMetrics)
         printBuildAttributes(buildMetrics.buildAttributes)
     }
 
@@ -87,6 +85,18 @@ internal class PlainTextBuildReportWriter(
                 if (buildTime.parent != null) continue
 
                 printBuildTime(buildTime)
+            }
+        }
+        p.println()
+    }
+
+    private fun printBuildPerformanceMetrics(buildMetrics: BuildPerformanceMetrics) {
+        val allBuildMetrics = buildMetrics.asMap()
+        if (allBuildMetrics.isEmpty()) return
+
+        p.withIndent("Build performance metrics:") {
+            for (metric in BuildPerformanceMetric.values()) {
+                p.println("${metric.name}: ${allBuildMetrics[metric]}")
             }
         }
         p.println()

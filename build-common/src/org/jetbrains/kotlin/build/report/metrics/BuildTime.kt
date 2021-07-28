@@ -38,9 +38,10 @@ enum class BuildTime(val parent: BuildTime? = null, val readableString: String) 
                 INCREMENTAL_ITERATION(INCREMENTAL_COMPILATION, "Incremental iteration"),
                 NON_INCREMENTAL_ITERATION(INCREMENTAL_COMPILATION, "Non-incremental iteration"),
                 IC_WRITE_HISTORY_FILE(INCREMENTAL_COMPILATION, "Write history file"),
-    OUTPUT_SIZE(readableString = "Total output size"),
-        LOOKUP_SIZE(OUTPUT_SIZE, "Lookups size"),
-        SNAPSHOT_SIZE(OUTPUT_SIZE, "ABI snapshot size")
+    COMPILER_PERFORMANCE(readableString = "Compiler time"),
+        COMPILER_INITIALIZATION(COMPILER_PERFORMANCE, "Compiler initialization time"),
+        CODE_ANALYSIS(COMPILER_PERFORMANCE, "Compiler code analyse"),
+        CODE_GENERATION(COMPILER_PERFORMANCE, "Compiler code generation"),
     ;
 
     companion object {
