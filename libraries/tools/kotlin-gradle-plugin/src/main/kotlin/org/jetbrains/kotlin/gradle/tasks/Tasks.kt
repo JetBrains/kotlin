@@ -776,16 +776,16 @@ internal abstract class KotlinCompileWithWorkers @Inject constructor(
     workerExecutor: WorkerExecutor
 ) : KotlinCompile(kotlinOptions) {
     override val compilerRunner: Provider<GradleCompilerRunner> =
-        objects.propertyWithConvention(
-            gradleCompileTaskProvider.map {
+        defaultKotlinJavaToolchain.flatMap { toolchain ->
+            objects.property(gradleCompileTaskProvider.map {
                 GradleCompilerRunnerWithWorkers(
                     it,
-                    null,
+                    toolchain.currentJvmJdkToolsJar.orNull,
                     normalizedKotlinDaemonJvmArguments.orNull,
                     workerExecutor
                 ) as GradleCompilerRunner
-            }
-        )
+            })
+        }
 }
 
 @CacheableTask

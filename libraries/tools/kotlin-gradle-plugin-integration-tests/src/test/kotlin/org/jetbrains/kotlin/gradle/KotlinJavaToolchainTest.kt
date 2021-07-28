@@ -671,6 +671,21 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Toolchain should not make an exception when build is running on JDK 11, but toolchain is set to JDK 1.8")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldNotRaiseErrorOnJDK11withJDK1_8Toolchain(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildJdk = getJdk11().javaHome
+        ) {
+            useToolchainExtension(8)
+
+            build("assemble", forceOutput = true)
+        }
+    }
+
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
