@@ -364,8 +364,7 @@ private class ExportedElement(val kind: ElementKind,
             appendLine("extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);")
             if (isSingletonObject) {
                 appendLine("extern \"C\" KObjHeader* ${cname}_instance(KObjHeader**);")
-                functionGenerator(listOf((declaration as ClassDescriptor).defaultType), context, declaration, "${cname}_instance_impl") {
-                    variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
+                generateFunction(listOf((declaration as ClassDescriptor).defaultType), context, declaration, "${cname}_instance_impl") {
                     val result = result(returnType).defineAndInitVariable {
                         call("${cname}_instance", resultHolder!!)
                     }
@@ -381,8 +380,7 @@ private class ExportedElement(val kind: ElementKind,
 
         return buildString {
             appendLine("extern \"C\" KObjHeader* $cname(KObjHeader**);")
-            functionGenerator(listOf(enumClass.defaultType), context, declaration, "${cname}_impl") {
-                variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
+            generateFunction(listOf(enumClass.defaultType), context, declaration, "${cname}_impl") {
                 val result = result(returnType).defineAndInitVariable {
                     call(cname, resultHolder!!)
                 }
@@ -397,14 +395,13 @@ private class ExportedElement(val kind: ElementKind,
         else
             "${cname}_impl"
 
-    private fun StringBuilder.translateBody(signature: List<KotlinType>) = functionGenerator(signature, context, declaration, cnameImpl) {
+    private fun StringBuilder.translateBody(signature: List<KotlinType>) = generateFunction(signature, context, declaration, cnameImpl) {
         val args = mutableListOf(*parameters.toTypedArray())
         val result = result(returnType)
         val isVoidReturned = result.isVoid()
         val isConstructor = declaration is ConstructorDescriptor
         val isObjectReturned = !isConstructor && result.isReference()
         val isStringReturned = result.isStringReference()
-        variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
         scope("try") {
             if (isObjectReturned || isStringReturned) {
                 args += resultHolder!!
@@ -745,7 +742,7 @@ internal class CAdapterGenerator(override val context: Context) : CCodeGenerator
             else -> null
         }
         val suffix = when (kind) {
-            DefinitionKind.C_HEADER_STRUCT -> "${name};"
+            DefinitionKind.C_HEADER_STRUCT -> " ${name};"
             DefinitionKind.C_SOURCE_STRUCT -> ","
             else -> null
         }
@@ -754,9 +751,9 @@ internal class CAdapterGenerator(override val context: Context) : CCodeGenerator
         }
     }
 
-    private fun KotlinType.typedef(indent: Int, body: (Int) -> Unit) = translateType(this).typedef(indent, body)
+    private fun KotlinType.structTypedef(indent: Int, body: (Int) -> Unit) = translateType(this).structTypedef(indent, body)
 
-    private fun String.typedef(indent: Int, body: (Int) -> Unit) = outputScope(indent, prefix = "typedef struct", suffix = "$this;", body)
+    private fun String.structTypedef(indent: Int, body: (Int) -> Unit) = outputScope(indent, prefix = "typedef struct", suffix = "$this;", body)
 
     private fun makeScopeDefinitions(scope: ExportedElementScope, kind: DefinitionKind, indent: Int) {
         if (!scope.hasNonEmptySubScopes())
@@ -780,16 +777,16 @@ internal class CAdapterGenerator(override val context: Context) : CCodeGenerator
         val set = mutableSetOf<ClassDescriptor>()
         defineUsedTypesImpl(scope, set)
         // Add nullable primitives.
-        val pinned: (Int) -> Unit = {
+        val structBody: (Int) -> Unit = {
             output("${prefix}_KNativePtr pinned;", it)
         }
         predefinedTypes.forEach {
-            it.makeNullable().typedef(indent, pinned)
+            it.makeNullable().structTypedef(indent, structBody)
         }
         set.forEach {
             val type = it.defaultType
             if (isMappedToReference(type) && !it.isInlined()) {
-                type.typedef(indent, pinned)
+                type.structTypedef(indent, structBody)
             }
         }
     }
@@ -854,7 +851,7 @@ internal class CAdapterGenerator(override val context: Context) : CCodeGenerator
 
         output("")
         val symbols = "${prefix}_ExportedSymbols"
-        symbols.typedef(0) {
+        symbols.structTypedef(0) {
             output("/* Service functions. */", it)
             output("void (*DisposeStablePointer)(${prefix}_KNativePtr ptr);", it)
             output("void (*DisposeString)(const char* string);", it)
@@ -978,12 +975,11 @@ internal class CAdapterGenerator(override val context: Context) : CCodeGenerator
             val nullableIt = it.makeNullable()
             buildString {
                 appendLine("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}(${"${translateType(it)} ,".takeIf { _ -> !it.isUnit() } ?: ""} KObjHeader**);")
-                functionGenerator(
+                generateFunction(
                         it.takeIf { !it.isUnit() }?.run { listOf(nullableIt, this) } ?: listOf(nullableIt),
                         context,
                         null,
                         "${it.createNullableNameForPredefinedType}Impl") {
-                    variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
                     val result = result(nullableIt).defineAndInitVariable {
                         call("Kotlin_box${it.shortNameForPredefinedType}", *parameters.toTypedArray(), resultHolder!!)
                     }
@@ -1065,11 +1061,11 @@ private open class FunctionAdapterVariable(
     open fun holder() = FunctionAdapterHolderVariable(context, "${name}_holder", kotlinType)
 }
 
-private inline fun StringBuilder.functionGenerator(signature: List<KotlinType>,
-                                                   context: Context,
-                                                   descriptor: DeclarationDescriptor?,
-                                                   cFunctionImplName: String,
-                                                   body: FunctionAdapterGenerator.() -> Unit) =
+private inline fun StringBuilder.generateFunction(signature: List<KotlinType>,
+                                                  context: Context,
+                                                  descriptor: DeclarationDescriptor?,
+                                                  cFunctionImplName: String,
+                                                  body: FunctionAdapterGenerator.() -> Unit) =
         FunctionAdapterGenerator(context, this, descriptor, cFunctionImplName, signature).run {
             function(body)
         }
@@ -1113,19 +1109,13 @@ private class FunctionAdapterGenerator(
         newLine = true
     }
 
-    fun variable(variableType: KotlinType? = null, name: String, cType: String? = null, init: (FunctionAdapterGenerator.() -> Unit)? = null) =
-            FunctionAdapterVariable(context, name, cType ?: "KObjHeader *", variableType).apply {
-                init?.let {
-                    defineAndInitVariable(it)
-                }
-            }
+    fun variable(variableType: KotlinType? = null, name: String, cType: String? = null) =
+            FunctionAdapterVariable(context, name, cType ?: "KObjHeader *", variableType)
 
     fun result(variableType: KotlinType) = FunctionAdapterResultVariable(context, "auto", variableType)
 
-    private fun holder(variableType: KotlinType? = null, name: String, init: (FunctionAdapterGenerator.() -> Unit)? = null) =
-            FunctionAdapterHolderVariable(context,"${name}_holder", kotlinType = variableType).apply {
-                init?.let { defineAndInitVariable(it) }
-            }
+    private fun holder(variableType: KotlinType? = null, name: String) =
+            FunctionAdapterHolderVariable(context,"${name}_holder", kotlinType = variableType)
 
     fun FunctionAdapterVariable.defineAndInitVariable(init: (FunctionAdapterGenerator.() -> Unit)? = null) = apply {
         this@FunctionAdapterGenerator.append(definition)
@@ -1172,6 +1162,7 @@ private class FunctionAdapterGenerator(
         scope(
                 "$visibility ${translateType(returnType)} $functionName ${parameters.joinToString(prefix = "(", separator = ", ", postfix = ")") { "${it.cType} ${it.name}" }}"
         ) {
+            variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
             kotlinInitRuntimeIfNeeded()
             parameters
                     .filter { isMappedToString(it.kotlinType!!) || isMappedToReference(it.kotlinType) }
