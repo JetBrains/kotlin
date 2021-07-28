@@ -35,6 +35,7 @@
 #include "KAssert.h"
 #include "Atomic.h"
 #include "Cleaner.h"
+#include "CompilerConstants.hpp"
 #if USE_CYCLIC_GC
 #include "CyclicCollector.h"
 #endif  // USE_CYCLIC_GC
@@ -220,7 +221,7 @@ class CycleDetector : private kotlin::Pinned, public KonanAllocatorAware {
   }
 
   static bool canBeACandidate(KRef object) {
-    return KonanNeedDebugInfo &&
+    return kotlin::compiler::shouldContainDebugInfo() &&
         Kotlin_memoryLeakCheckerEnabled() &&
         (object->type_info()->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0;
   }
@@ -2044,11 +2045,11 @@ MemoryState* initMemory(bool firstRuntime) {
   memoryState->tls.Init();
   memoryState->foreignRefManager = ForeignRefManager::create();
   bool firstMemoryState = atomicAdd(&aliveMemoryStatesCount, 1) == 1;
-  switch (Kotlin_getDestroyRuntimeMode()) {
-    case DESTROY_RUNTIME_LEGACY:
+  switch (kotlin::compiler::destroyRuntimeMode()) {
+    case kotlin::compiler::DestroyRuntimeMode::kLegacy:
       firstRuntime = firstMemoryState;
       break;
-    case DESTROY_RUNTIME_ON_SHUTDOWN:
+    case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
       // Nothing to do.
       break;
   }
@@ -2066,11 +2067,11 @@ void deinitMemory(MemoryState* memoryState, bool destroyRuntime) {
   atomicAdd(&pendingDeinit, 1);
 #if USE_GC
   bool lastMemoryState = atomicAdd(&aliveMemoryStatesCount, -1) == 0;
-  switch (Kotlin_getDestroyRuntimeMode()) {
-    case DESTROY_RUNTIME_LEGACY:
+  switch (kotlin::compiler::destroyRuntimeMode()) {
+    case kotlin::compiler::DestroyRuntimeMode::kLegacy:
       destroyRuntime = lastMemoryState;
       break;
-    case DESTROY_RUNTIME_ON_SHUTDOWN:
+    case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
       // Nothing to do
       break;
   }
@@ -3557,7 +3558,7 @@ KBoolean Kotlin_native_internal_GC_getTuneThreshold(KRef) {
 
 OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, KRef) {
 #if USE_CYCLE_DETECTOR
-  if (!KonanNeedDebugInfo && !Kotlin_memoryLeakCheckerEnabled()) RETURN_OBJ(nullptr);
+  if (!kotlin::compiler::shouldContainDebugInfo() && !Kotlin_memoryLeakCheckerEnabled()) RETURN_OBJ(nullptr);
   RETURN_RESULT_OF0(detectCyclicReferences);
 #else
   RETURN_OBJ(nullptr);

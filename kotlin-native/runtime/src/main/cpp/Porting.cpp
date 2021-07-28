@@ -33,6 +33,7 @@
 #include <chrono>
 
 #include "Common.h"
+#include "CompilerConstants.hpp"
 #include "Porting.h"
 #include "KAssert.h"
 
@@ -105,13 +106,13 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
     if (::ReadConsoleW(stdInHandle, buffer, bufferLength, &bufferRead, NULL)) {
       length = ::WideCharToMultiByte(CP_UTF8, 0, buffer, bufferRead, (char*) utf8,
                                      maxSizeBytes - 1, NULL, NULL);
-      if (!length && KonanNeedDebugInfo) {
+      if (!length && kotlin::compiler::shouldContainDebugInfo()) {
         char msg[512];
         auto errCode = getLastErrorMessage(msg, sizeof(msg));
         consoleErrorf("UTF-16 to UTF-8 conversion error %d: %s", errCode, msg);
       }
       ((char*) utf8)[length] = 0;
-    } else if (KonanNeedDebugInfo) {
+    } else if (kotlin::compiler::shouldContainDebugInfo()) {
       char msg[512];
       auto errCode = getLastErrorMessage(msg, sizeof(msg));
       consoleErrorf("Console read failure: %d %s", errCode, msg);

@@ -321,6 +321,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var checkLldCompatibility: String? = null
 
+    @Argument(value="-Xruntime-asserts-mode", valueDescription = "<mode>", description = "Enable asserts in runtime. Possible values: 'ignore', 'log', 'panic'")
+    var runtimeAssertsMode: String? = "ignore"
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector, languageVersion).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>

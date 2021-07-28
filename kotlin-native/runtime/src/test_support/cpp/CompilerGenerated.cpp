@@ -56,8 +56,8 @@ testing::StrictMock<testing::MockFunction<void(KInt, bool)>>* shutdownCleanerWor
 
 extern "C" {
 
-// Set to 1 to enable runtime assertions.
-extern const int KonanNeedDebugInfo = 1;
+extern const int32_t KonanNeedDebugInfo = 1;
+extern const int32_t Kotlin_runtimeAssertsMode = static_cast<int32_t>(kotlin::compiler::RuntimeAssertsMode::kPanic);
 
 extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
 extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();

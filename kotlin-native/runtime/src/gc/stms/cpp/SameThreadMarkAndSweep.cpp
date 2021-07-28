@@ -5,6 +5,7 @@
 
 #include "SameThreadMarkAndSweep.hpp"
 
+#include "CompilerConstants.hpp"
 #include "GlobalData.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
@@ -111,7 +112,7 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noe
 }
 
 gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep() noexcept {
-    if (Kotlin_getGcAggressive()) {
+    if (compiler::gcAggressive()) {
         // TODO: Make it even more aggressive and run on a subset of backend.native tests.
         threshold_ = 1000;
         allocationThresholdBytes_ = 10000;

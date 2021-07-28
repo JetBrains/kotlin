@@ -8,14 +8,14 @@
 #include "Porting.h"
 #include "StackTrace.hpp"
 
+using namespace kotlin;
+
 namespace {
 
 // TODO: Enable stacktraces for asserts when stacktrace printing is more mature.
 inline constexpr bool kEnableStacktraces = false;
 
-} // namespace
-
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* format, ...) {
+void PrintAssert(const char* location, const char* format, std::va_list args) noexcept {
     char buf[1024];
     int written = -1;
 
@@ -28,10 +28,7 @@ RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* form
 
     // Write the message.
     if (written >= 0 && static_cast<size_t>(written) < sizeof(buf)) {
-        std::va_list args;
-        va_start(args, format);
         konan::vsnprintf(buf + written, sizeof(buf) - written, format, args);
-        va_end(args);
     }
 
     konan::consoleErrorUtf8(buf, konan::strnlen(buf, sizeof(buf)));
@@ -39,18 +36,21 @@ RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* form
     if constexpr (kEnableStacktraces) {
         kotlin::PrintStackTraceStderr();
     }
-    konan::abort();
 }
 
-// TODO: this function is not used by runtime, but apparently there are
-// third-party libraries that use it (despite the fact it is not a public API).
-// Keeping the function here for now for backward compatibility, to be removed later.
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message) {
-  char buf[1024];
-  if (location != nullptr)
-      konan::snprintf(buf, sizeof(buf), "%s: runtime assert: %s\n", location, message);
-  else
-      konan::snprintf(buf, sizeof(buf), "runtime assert: %s\n", message);
-  konan::consoleErrorUtf8(buf, konan::strnlen(buf, sizeof(buf)));
-  konan::abort();
+} // namespace
+
+void internal::RuntimeAssertFailedLog(const char* location, const char* format, ...) {
+    std::va_list args;
+    va_start(args, format);
+    PrintAssert(location, format, args);
+    va_end(args);
+}
+
+RUNTIME_NORETURN void internal::RuntimeAssertFailedPanic(const char* location, const char* format, ...) {
+    std::va_list args;
+    va_start(args, format);
+    PrintAssert(location, format, args);
+    va_end(args);
+    konan::abort();
 }

@@ -117,6 +117,17 @@ if (ext.isExperimentalMM) {
     }
 }
 
+// TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
+if (project.globalTestArgs.contains("-g")) {
+    tasks.withType(KonanCompileNativeBinary.class).configureEach {
+        extraOpts "-Xruntime-asserts-mode=panic"
+    }
+
+    tasks.withType(RunExternalTestGroup.class).configureEach {
+        flags = (flags ?: []) + "-Xruntime-asserts-mode=panic"
+    }
+}
+
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
     // backend.native/tests

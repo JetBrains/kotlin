@@ -18,73 +18,69 @@
 #define RUNTIME_ASSERT_H
 
 #include "Common.h"
-
-// To avoid cluttering optimized code with asserts, they could be turned off.
-#define KONAN_ENABLE_ASSERT 1
+#include "CompilerConstants.hpp"
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-#if KONAN_ENABLE_ASSERT
 #define CURRENT_SOURCE_LOCATION __FILE__ ":" TOSTRING(__LINE__)
-#else
-// Do not generate location strings, when asserts are disabled to reduce code size.
-#define CURRENT_SOURCE_LOCATION nullptr
-#endif
 
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* format, ...) __attribute__((format(printf, 2, 3)));
-
+namespace kotlin {
 namespace internal {
 
+void RuntimeAssertFailedLog(const char* location, const char* format, ...) __attribute__((format(printf, 2, 3)));
+RUNTIME_NORETURN void RuntimeAssertFailedPanic(const char* location, const char* format, ...) __attribute__((format(printf, 2, 3)));
+
 inline RUNTIME_NORETURN void TODOImpl(const char* location) {
-    RuntimeAssertFailed(location, "Unimplemented");
+    RuntimeAssertFailedPanic(location, "Unimplemented");
 }
 
 // TODO: Support format string when `RuntimeAssertFailed` supports it.
 inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message) {
-    RuntimeAssertFailed(location, "%s", message);
+    RuntimeAssertFailedPanic(location, "%s", message);
 }
 
 } // namespace internal
+} // namespace kotlin
 
-// During codegeneration we set this constant to 1 or 0 to allow bitcode optimizer
-// to get rid of code behind condition.
-extern "C" const int KonanNeedDebugInfo;
-
-#if KONAN_ENABLE_ASSERT
 // Use RuntimeAssert() in internal state checks, which could be ignored in production.
 #define RuntimeAssert(condition, format, ...) \
     do { \
-        if (KonanNeedDebugInfo && (!(condition))) { \
-            RuntimeAssertFailed(CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
+        switch (::kotlin::compiler::runtimeAssertsMode()) { \
+            case ::kotlin::compiler::RuntimeAssertsMode::kIgnore: break; \
+            case ::kotlin::compiler::RuntimeAssertsMode::kLog: \
+                if (!(condition)) { \
+                    ::kotlin::internal::RuntimeAssertFailedLog(CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
+                } \
+                break; \
+            case ::kotlin::compiler::RuntimeAssertsMode::kPanic: \
+                if (!(condition)) { \
+                    ::kotlin::internal::RuntimeAssertFailedPanic(CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
+                } \
+                break; \
         } \
     } while (false)
-#else
-#define RuntimeAssert(condition, format, ...) \
-    do { \
-    } while (false)
-#endif
 
 // Use RuntimeCheck() in runtime checks that could fail due to external condition and shall lead
 // to program termination. Never compiled out.
-// TODO: Consider using `CURRENT_SOURCE_LOCATION` when `KonanNeedDebugInfo` is `true`.
+// TODO: Consider using `CURRENT_SOURCE_LOCATION` when `kotlin::compiler::runtimeAssertsMode()` is not `kIgnore`.
 #define RuntimeCheck(condition, format, ...) \
     do { \
         if (!(condition)) { \
-            RuntimeAssertFailed(nullptr, format, ##__VA_ARGS__); \
+            ::kotlin::internal::RuntimeAssertFailedPanic(nullptr, format, ##__VA_ARGS__); \
         } \
     } while (false)
 
 #define TODO(...) \
     do { \
-        ::internal::TODOImpl(CURRENT_SOURCE_LOCATION, ##__VA_ARGS__); \
+        ::kotlin::internal::TODOImpl(CURRENT_SOURCE_LOCATION, ##__VA_ARGS__); \
     } while (false)
 
 // Use RuntimeFail() to unconditionally fail, signifying compiler/runtime bug.
-// TODO: Consider using `CURRENT_SOURCE_LOCATION` when `KonanNeedDebugInfo` is `true`.
+// TODO: Consider using `CURRENT_SOURCE_LOCATION` when `kotlin::compiler::runtimeAssertsMode()` is not `kIgnore`.
 #define RuntimeFail(format, ...) \
     do { \
-        RuntimeAssertFailed(nullptr, format, ##__VA_ARGS__); \
+        ::kotlin::internal::RuntimeAssertFailedPanic(nullptr, format, ##__VA_ARGS__); \
     } while (false)
 
 #endif // RUNTIME_ASSERT_H

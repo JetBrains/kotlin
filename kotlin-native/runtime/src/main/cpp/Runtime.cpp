@@ -17,6 +17,7 @@
 #include "Alloc.h"
 #include "Atomic.h"
 #include "Cleaner.h"
+#include "CompilerConstants.hpp"
 #include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
@@ -30,18 +31,6 @@ struct InitNode {
   Initializer init;
   InitNode* next;
 };
-
-// These globals are overriden by the compiler.
-RUNTIME_WEAK DestroyRuntimeMode Kotlin_destroyRuntimeMode = DESTROY_RUNTIME_ON_SHUTDOWN;
-RUNTIME_WEAK KInt Kotlin_gcAggressive = 0;
-
-DestroyRuntimeMode Kotlin_getDestroyRuntimeMode() {
-    return Kotlin_destroyRuntimeMode;
-}
-
-bool Kotlin_getGcAggressive() {
-    return Kotlin_gcAggressive != 0;
-}
 
 namespace {
 
@@ -108,8 +97,8 @@ RuntimeState* initRuntime() {
   bool firstRuntime = false;
   // We set this guard in the `switch` below, after memory initialization.
   kotlin::ThreadStateGuard stateGuard;
-  switch (Kotlin_getDestroyRuntimeMode()) {
-      case DESTROY_RUNTIME_LEGACY:
+  switch (kotlin::compiler::destroyRuntimeMode()) {
+      case kotlin::compiler::DestroyRuntimeMode::kLegacy:
           compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
           result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
           // Switch thread state because worker and globals inits require the runnable state.
@@ -122,7 +111,7 @@ RuntimeState* initRuntime() {
               konan::abort();
           }
           break;
-      case DESTROY_RUNTIME_ON_SHUTDOWN:
+      case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
           // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
           // runtime shutdown, which does it the other way around.
           atomicAdd(&aliveRuntimesCount, 1);
@@ -168,11 +157,11 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   ::runtimeState = state;
   RestoreMemory(state->memoryState);
   bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
-  switch (Kotlin_getDestroyRuntimeMode()) {
-    case DESTROY_RUNTIME_LEGACY:
+  switch (kotlin::compiler::destroyRuntimeMode()) {
+    case kotlin::compiler::DestroyRuntimeMode::kLegacy:
       destroyRuntime = lastRuntime;
       break;
-    case DESTROY_RUNTIME_ON_SHUTDOWN:
+    case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
       // Nothing to do.
       break;
   }
@@ -234,11 +223,11 @@ void Kotlin_shutdownRuntime() {
     RuntimeAssert(runtime != kInvalidRuntime, "Current thread must have Kotlin runtime initialized on it");
 
     bool needsFullShutdown = false;
-    switch (Kotlin_getDestroyRuntimeMode()) {
-        case DESTROY_RUNTIME_LEGACY:
+    switch (kotlin::compiler::destroyRuntimeMode()) {
+        case kotlin::compiler::DestroyRuntimeMode::kLegacy:
             needsFullShutdown = true;
             break;
-        case DESTROY_RUNTIME_ON_SHUTDOWN:
+        case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
             needsFullShutdown = Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled();
             break;
     }
@@ -349,7 +338,7 @@ KInt Konan_Platform_getMemoryModel() {
 }
 
 KBoolean Konan_Platform_isDebugBinary() {
-  return KonanNeedDebugInfo ? true : false;
+  return kotlin::compiler::shouldContainDebugInfo();
 }
 
 bool Kotlin_memoryLeakCheckerEnabled() {
@@ -385,11 +374,11 @@ KBoolean Kotlin_Debugging_getForceCheckedShutdown() {
 }
 
 void Kotlin_Debugging_setForceCheckedShutdown(KBoolean value) {
-    switch (Kotlin_getDestroyRuntimeMode()) {
-        case DESTROY_RUNTIME_LEGACY:
+    switch (kotlin::compiler::destroyRuntimeMode()) {
+        case kotlin::compiler::DestroyRuntimeMode::kLegacy:
             // Only applicable to ON_SHUTDOWN modes.
             return;
-        case DESTROY_RUNTIME_ON_SHUTDOWN:
+        case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
             break;
     }
     g_forceCheckedShutdown = value;

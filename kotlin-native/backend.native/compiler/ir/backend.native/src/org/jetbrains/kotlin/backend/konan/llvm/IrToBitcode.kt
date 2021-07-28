@@ -358,7 +358,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             codegen.objCDataGenerator?.finishModule()
 
             context.coverage.writeRegionInfo()
-            appendDebugSelector()
+            setRuntimeConstGlobals()
             overrideRuntimeGlobals()
             appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
@@ -2417,16 +2417,23 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
     }
 
-    // TODO: Consider migrating `KonanNeedDebugInfo` to the `overrideRuntimeGlobal` mechanism from below.
-    private fun appendDebugSelector() {
-        if (!context.producedLlvmModuleContainsStdlib) return
-        val llvmDebugSelector =
-                context.llvm.staticData.placeGlobal("KonanNeedDebugInfo",
-                        Int32(if (context.shouldContainDebugInfo()) 1 else 0))
-        llvmDebugSelector.setConstant(true)
-        llvmDebugSelector.setLinkage(LLVMLinkage.LLVMExternalLinkage)
+    // Globals set this way will be const, but can only be built into runtime-containing module. Which
+    // means they are set at stdlib-cache compilation time.
+    private fun setRuntimeConstGlobal(name: String, value: ConstValue) {
+        val global = context.llvm.staticData.placeGlobal(name, value)
+        global.setConstant(true)
+        global.setLinkage(LLVMLinkage.LLVMExternalLinkage)
     }
 
+    private fun setRuntimeConstGlobals() {
+        if (!context.producedLlvmModuleContainsStdlib)
+            return
+
+        setRuntimeConstGlobal("KonanNeedDebugInfo", Int32(if (context.shouldContainDebugInfo()) 1 else 0))
+        setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", Int32(context.config.runtimeAssertsMode.value))
+    }
+
+    // Globals set this way cannot be const, but are overridable when producing final executable.
     private fun overrideRuntimeGlobal(name: String, value: ConstValue) {
         // TODO: A similar mechanism is used in `ObjCExportCodeGenerator`. Consider merging them.
         if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {

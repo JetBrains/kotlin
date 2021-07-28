@@ -25,15 +25,6 @@ struct InitNode;
 extern "C" {
 #endif
 
-// Must match DestroyRuntimeMode in DestroyRuntimeMode.kt
-enum DestroyRuntimeMode {
-    DESTROY_RUNTIME_LEGACY = 0,
-    DESTROY_RUNTIME_ON_SHUTDOWN = 1,
-};
-
-DestroyRuntimeMode Kotlin_getDestroyRuntimeMode();
-bool Kotlin_getGcAggressive();
-
 // For experimental MM, if runtime gets initialized, it will be in the native state after this.
 RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded();
 void Kotlin_deinitRuntimeIfNeeded();
