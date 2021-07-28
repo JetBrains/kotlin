@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -363,7 +364,7 @@ private class ExportedElement(val kind: ElementKind,
             appendLine("extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);")
             if (isSingletonObject) {
                 appendLine("extern \"C\" KObjHeader* ${cname}_instance(KObjHeader**);")
-                functionGenerator(listOf((declaration as ClassDescriptor).defaultType), owner, declaration, "${cname}_instance_impl") {
+                functionGenerator(listOf((declaration as ClassDescriptor).defaultType), context, declaration, "${cname}_instance_impl") {
                     variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
                     val result = result(returnType).defineAndInitVariable {
                         call("${cname}_instance", resultHolder!!)
@@ -380,10 +381,10 @@ private class ExportedElement(val kind: ElementKind,
 
         return buildString {
             appendLine("extern \"C\" KObjHeader* $cname(KObjHeader**);")
-            functionGenerator(listOf(enumClass.defaultType), owner, declaration, "${cname}_impl") {
+            functionGenerator(listOf(enumClass.defaultType), context, declaration, "${cname}_impl") {
                 variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
                 val result = result(returnType).defineAndInitVariable {
-                    call("$cname", resultHolder!!)
+                    call(cname, resultHolder!!)
                 }
                 ret(result)
             }
@@ -396,43 +397,42 @@ private class ExportedElement(val kind: ElementKind,
         else
             "${cname}_impl"
 
-    private fun StringBuilder.translateBody(signature: List<KotlinType>): String {
-        return functionGenerator(signature, owner, declaration, cnameImpl) {
-            val args = mutableListOf(*parameters.toTypedArray())
-            val result = result(returnType)
-            val isVoidReturned = result.isVoid()
-            val isConstructor = declaration is ConstructorDescriptor
-            val isObjectReturned = !isConstructor && result.isReference()
-            val isStringReturned = result.isStringReference()
-            variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
-            scope("try") {
-                if (isObjectReturned || isStringReturned) {
-                    args += resultHolder!!
-                }
+    private fun StringBuilder.translateBody(signature: List<KotlinType>) = functionGenerator(signature, context, declaration, cnameImpl) {
+        val args = mutableListOf(*parameters.toTypedArray())
+        val result = result(returnType)
+        val isVoidReturned = result.isVoid()
+        val isConstructor = declaration is ConstructorDescriptor
+        val isObjectReturned = !isConstructor && result.isReference()
+        val isStringReturned = result.isStringReference()
+        variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
+        scope("try") {
+            if (isObjectReturned || isStringReturned) {
+                args += resultHolder!!
+            }
 
-                if (isConstructor) {
-                    result.defineAndInitVariable {
-                        val clazz = scope.elements[0]
-                        assert(clazz.kind == ElementKind.TYPE)
-                        call("AllocInstance", "(const KTypeInfo*)${clazz.cname}_type()", resultHolder!!.ref)
-                    }
-                    args.add(0, result)
+            if (isConstructor) {
+                result.defineAndInitVariable {
+                    val clazz = scope.elements[0]
+                    assert(clazz.kind == ElementKind.TYPE)
+                    call("AllocInstance", "(const KTypeInfo*)${clazz.cname}_type()", resultHolder!!.ref)
                 }
+                args.add(0, result)
+            }
 
-                if (!isVoidReturned && !isConstructor) {
-                    result.defineAndInitVariable {
-                        call(cname, *args.toTypedArray())
-                    }
-                } else
+            if (!isVoidReturned && !isConstructor) {
+                result.defineAndInitVariable {
                     call(cname, *args.toTypedArray())
+                }
+            } else
+                call(cname, *args.toTypedArray())
 
-                ret(result)
-            }
-            scope("catch(ExceptionObjHolder& e)") {
-                call("TerminateWithUnhandledException", "e.GetExceptionObject()")
-            }
+            ret(result)
+        }
+        scope("catch(ExceptionObjHolder& e)") {
+            call("TerminateWithUnhandledException", "e.GetExceptionObject()")
         }
     }
+
 
     private fun addUsedType(type: KotlinType, set: MutableSet<ClassDescriptor>) {
         if (type.constructor.declarationDescriptor is TypeParameterDescriptor) return
@@ -475,10 +475,9 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
             getPackage(it).fragments.filter { it.module == this }
         }
 
-internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVisitor<Boolean, Void?> {
+internal class CAdapterGenerator(override val context: Context) : CCodeGeneratorContextUtils, DeclarationDescriptorVisitor<Boolean, Void?> {
 
     private val scopes = mutableListOf<ExportedElementScope>()
-    internal val prefix = context.config.fullExportedNamePrefix
     private lateinit var outputStreamWriter: PrintWriter
     private val paramNamesRecorded = mutableMapOf<String, Int>()
 
@@ -646,10 +645,9 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         moduleDescriptors += context.moduleDescriptor
         moduleDescriptors += context.getExportedDependencies()
 
-        currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet().sortedWith(
-                Comparator { o1, o2 ->
-                    o1.fqName.toString().compareTo(o2.fqName.toString())
-                })
+        currentPackageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }.toSet().sortedWith { o1, o2 ->
+            o1.fqName.toString().compareTo(o2.fqName.toString())
+        }
 
         context.moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
     }
@@ -982,7 +980,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
                 appendLine("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}(${"${translateType(it)} ,".takeIf { _ -> !it.isUnit() } ?: ""} KObjHeader**);")
                 functionGenerator(
                         it.takeIf { !it.isUnit() }?.run { listOf(nullableIt, this) } ?: listOf(nullableIt),
-                        this@CAdapterGenerator,
+                        context,
                         null,
                         "${it.createNullableNameForPredefinedType}Impl") {
                     variable(name = "stateGuard", cType = "ScopedRunnableState").defineAndInitVariable()
@@ -1018,100 +1016,6 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         }
     }
 
-    private val simpleNameMapping = mapOf(
-            "<this>" to "thiz",
-            "<set-?>" to "set"
-    )
-
-    private val primitiveTypeMapping = KonanPrimitiveType.values().associate {
-        it to when (it) {
-            KonanPrimitiveType.BOOLEAN -> "${prefix}_KBoolean"
-            KonanPrimitiveType.CHAR -> "${prefix}_KChar"
-            KonanPrimitiveType.BYTE -> "${prefix}_KByte"
-            KonanPrimitiveType.SHORT -> "${prefix}_KShort"
-            KonanPrimitiveType.INT -> "${prefix}_KInt"
-            KonanPrimitiveType.LONG -> "${prefix}_KLong"
-            KonanPrimitiveType.FLOAT -> "${prefix}_KFloat"
-            KonanPrimitiveType.DOUBLE -> "${prefix}_KDouble"
-            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> "void*"
-            KonanPrimitiveType.VECTOR128 -> "${prefix}_KVector128"
-        }
-    }
-
-    private val unsignedTypeMapping = UnsignedType.values().associate {
-        it.classId to when (it) {
-            UnsignedType.UBYTE -> "${prefix}_KUByte"
-            UnsignedType.USHORT -> "${prefix}_KUShort"
-            UnsignedType.UINT -> "${prefix}_KUInt"
-            UnsignedType.ULONG -> "${prefix}_KULong"
-        }
-    }
-
-    internal fun isMappedToString(type: KotlinType): Boolean =
-            isMappedToString(type.computeBinaryType())
-
-    private fun isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
-            when (binaryType) {
-                is BinaryType.Primitive -> false
-                is BinaryType.Reference -> binaryType.types.first() == context.builtIns.string
-            }
-
-    internal fun isMappedToReference(type: KotlinType) =
-            !isMappedToVoid(type) && !isMappedToString(type) &&
-                    type.binaryTypeIsReference()
-
-    internal fun isMappedToVoid(type: KotlinType): Boolean {
-        return type.isUnit() || type.isNothing()
-    }
-
-    fun translateName(name: Name): String {
-        val nameString = name.asString()
-        return when {
-            simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
-            cKeywords.contains(nameString) -> "${nameString}_"
-            name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
-            else -> nameString
-        }
-    }
-
-    private fun translateTypeFull(type: KotlinType): Pair<String, String> =
-            if (isMappedToVoid(type)) {
-                "void" to "void"
-            } else {
-                translateNonVoidTypeFull(type)
-            }
-
-    private fun translateNonVoidTypeFull(type: KotlinType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
-            eachInlinedClass = { inlinedClass, _ ->
-                unsignedTypeMapping[inlinedClass.classId]?.let {
-                    return it to it
-                }
-            },
-            ifPrimitive = { primitiveType, _ ->
-                primitiveTypeMapping[primitiveType]!!.let { it to it }
-            },
-            ifReference = {
-                val clazz = (it.computeBinaryType() as BinaryType.Reference).types.first()
-                if (clazz == context.builtIns.string) {
-                    "const char*" to "KObjHeader*"
-                } else {
-                    "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
-                }
-            }
-    )
-
-    fun translateType(element: SignatureElement): String =
-            translateTypeFull(element.type).first
-
-    fun translateType(type: KotlinType): String
-            = translateTypeFull(type).first
-
-    fun translateTypeBridge(type: KotlinType): String = translateTypeFull(type).second
-
-    fun translateTypeFqName(name: String): String {
-        return name.replace('.', '_')
-    }
-
     private var functionIndex = 0
     fun nextFunctionIndex() = functionIndex++
 
@@ -1130,60 +1034,57 @@ private fun FunctionDescriptor.isTopLevelFunction(): Boolean {
     return externName != null && externName.isNotEmpty()
 }
 
-internal class FunctionAdapterResultVariable(generator: FunctionAdapterGenerator, cType: String, kotlinType: KotlinType) : FunctionAdapterVariable(generator,"result", cType, kotlinType)
-internal class FunctionAdapterHolderVariable(generator: FunctionAdapterGenerator,
-                                             name: String,
-                                             kotlinType: KotlinType?) : FunctionAdapterVariable(generator, name, "KObjHolder", kotlinType, ".slot()") {
+private class FunctionAdapterResultVariable(context:Context, cType: String, kotlinType: KotlinType) : FunctionAdapterVariable(context,"result", cType, kotlinType)
+private class FunctionAdapterHolderVariable(
+        context: Context,
+        name: String,
+        kotlinType: KotlinType?) : FunctionAdapterVariable(context, name, "KObjHolder", kotlinType, ".slot()") {
     override fun holder() = this
 
 }
 
-internal open class FunctionAdapterVariable(val generator: FunctionAdapterGenerator,
-                                            val name: String, val cType: String,
-                                            val kotlinType: KotlinType? = null,
-                                            access: String? = null) {
+private open class FunctionAdapterVariable(
+        override val context: Context,
+        val name: String,
+        val cType: String, val kotlinType: KotlinType? = null,
+        access: String? = null) : CCodeGeneratorContextUtils {
     val definition = "$cType $name"
     val ref = access?.let { "$name$it" } ?: name
     fun isReference() = kotlinType?.run {
-        binaryTypeIsReference() && !isVoid() && !isStringReference()
+        isMappedToReference(this)
     } ?: false
 
     fun isVoid() = kotlinType?.run {
         isUnit() || isNothing()
     } ?: false
 
-    fun isStringReference() = kotlinType?.run {
-        val binaryType = computeBinaryType()
-        when (binaryType) {
-            is BinaryType.Primitive -> false
-            is BinaryType.Reference -> binaryType.types.first() == generator.owner.context.builtIns.string
-        }
+    fun isStringReference():Boolean = kotlinType?.run {
+        isMappedToString(this)
     } ?: false
 
-    open fun holder() = FunctionAdapterHolderVariable(generator, "${name}_holder", kotlinType)
+    open fun holder() = FunctionAdapterHolderVariable(context, "${name}_holder", kotlinType)
 }
 
-internal inline fun StringBuilder.functionGenerator(signature: List<KotlinType>,
-                                                    cAdapterGenerator: CAdapterGenerator,
-                                                    descriptor: DeclarationDescriptor?,
-                                                    cFunctionImplName: String,
-                                                    body: FunctionAdapterGenerator.() -> Unit): String {
-    return with(FunctionAdapterGenerator(cAdapterGenerator, this, descriptor, cFunctionImplName, signature)) {
-        function(body)
-        this@functionGenerator.toString()
-    }
-}
+private inline fun StringBuilder.functionGenerator(signature: List<KotlinType>,
+                                                   context: Context,
+                                                   descriptor: DeclarationDescriptor?,
+                                                   cFunctionImplName: String,
+                                                   body: FunctionAdapterGenerator.() -> Unit) =
+        FunctionAdapterGenerator(context, this, descriptor, cFunctionImplName, signature).run {
+            function(body)
+        }
 
-internal class FunctionAdapterGenerator(val owner: CAdapterGenerator,
-                                        val builder: StringBuilder,
-                                        val declaration: DeclarationDescriptor?,
-                                        val functionName: String,
-                                        val signature: List<KotlinType>) {
+private class FunctionAdapterGenerator(
+        override val context: Context,
+        val builder: StringBuilder,
+        val declaration: DeclarationDescriptor?,
+        val functionName: String,
+        val signature: List<KotlinType>) : CCodeGeneratorContextUtils {
     val parameters = signature.drop(1).mapIndexed { index, element ->
         FunctionAdapterVariable(
-                this,
+                context,
                 "arg$index",
-                owner.translateType(element),
+                translateType(element),
                 element
         )
     }
@@ -1213,16 +1114,16 @@ internal class FunctionAdapterGenerator(val owner: CAdapterGenerator,
     }
 
     fun variable(variableType: KotlinType? = null, name: String, cType: String? = null, init: (FunctionAdapterGenerator.() -> Unit)? = null) =
-            FunctionAdapterVariable(this, name, cType ?: "KObjHeader *", variableType).apply {
+            FunctionAdapterVariable(context, name, cType ?: "KObjHeader *", variableType).apply {
                 init?.let {
                     defineAndInitVariable(it)
                 }
             }
 
-    fun result(variableType: KotlinType) = FunctionAdapterResultVariable(this, "auto", variableType)
+    fun result(variableType: KotlinType) = FunctionAdapterResultVariable(context, "auto", variableType)
 
-    fun holder(variableType: KotlinType? = null, name: String, init: (FunctionAdapterGenerator.() -> Unit)? = null) =
-            FunctionAdapterHolderVariable(this, "${name}_holder", kotlinType = variableType).apply {
+    private fun holder(variableType: KotlinType? = null, name: String, init: (FunctionAdapterGenerator.() -> Unit)? = null) =
+            FunctionAdapterHolderVariable(context,"${name}_holder", kotlinType = variableType).apply {
                 init?.let { defineAndInitVariable(it) }
             }
 
@@ -1234,17 +1135,11 @@ internal class FunctionAdapterGenerator(val owner: CAdapterGenerator,
         } ?: appendLine(";")
     }
 
-    fun FunctionAdapterVariable.initVariable(init: FunctionAdapterGenerator.() -> Unit) {
-        append("$name = ")
-        init()
-    }
-
-
     fun ret(variable: FunctionAdapterVariable) {
         val returnValue = when {
-            owner.isMappedToVoid(variable.kotlinType!!) -> return
-            owner.isMappedToReference(variable.kotlinType) -> "((${owner.translateType(variable.kotlinType)}){ .pinned = CreateStablePointer(${variable.name})})"
-            owner.isMappedToString(variable.kotlinType) -> "CreateCStringFromString(${variable.name})"
+            isMappedToVoid(variable.kotlinType!!) -> return
+            isMappedToReference(variable.kotlinType) -> "((${translateType(variable.kotlinType)}){ .pinned = CreateStablePointer(${variable.name})})"
+            isMappedToString(variable.kotlinType) -> "CreateCStringFromString(${variable.name})"
             else -> variable.name
         }
         appendLine("return $returnValue;")
@@ -1255,32 +1150,32 @@ internal class FunctionAdapterGenerator(val owner: CAdapterGenerator,
         append(header)
         appendLine("{")
         scope++
-        body()
-        scope--
-        if (scope == 0)
-            appendLine("};")
-        else
-            appendLine("}")
+        try {
+            body()
+        } finally {
+            scope--
+        }
+        appendLine("}")
     }
 
     inline fun function(body: FunctionAdapterGenerator.() -> Unit) {
         appendLine("""
             /**
              * name: $functionName
-             * return: ${owner.translateType(returnType)}
-             * string: ${owner.isMappedToString(returnType)}
-             * reference: ${owner.isMappedToReference(returnType)}
-             * void: ${owner.isMappedToVoid(returnType)}
+             * return: ${translateType(returnType)}
+             * string: ${isMappedToString(returnType)}
+             * reference: ${isMappedToReference(returnType)}
+             * void: ${isMappedToVoid(returnType)}
              * constructor: ${declaration is ConstructorDescriptor}
              */
         """.trimIndent())
         scope(
-                "$visibility ${owner.translateType(returnType)} $functionName ${parameters.joinToString(prefix = "(", separator = ", ", postfix = ")") { "${it.cType} ${it.name}" }}"
+                "$visibility ${translateType(returnType)} $functionName ${parameters.joinToString(prefix = "(", separator = ", ", postfix = ")") { "${it.cType} ${it.name}" }}"
         ) {
             kotlinInitRuntimeIfNeeded()
             parameters
-                    .filter { owner.isMappedToString(it.kotlinType!!) || owner.isMappedToReference(it.kotlinType) }
-                    .map { it.holder() }.forEach { append(it.definition).appendLine(";") }
+                    .filter { isMappedToString(it.kotlinType!!) || isMappedToReference(it.kotlinType) }
+                    .map { it.holder() }.forEach { it.defineAndInitVariable() }
             resultHolder?.let {
                 append(it.definition).appendLine(";")
             }
@@ -1295,10 +1190,10 @@ internal class FunctionAdapterGenerator(val owner: CAdapterGenerator,
             when {
                 variable is FunctionAdapterHolderVariable -> variable.ref
                 variable is FunctionAdapterResultVariable -> variable.name
-                owner.isMappedToString(variable.kotlinType) -> {
+                isMappedToString(variable.kotlinType) -> {
                     "CreateStringFromCString(${variable.name}, ${variable.holder().ref})"
                 }
-                owner.isMappedToReference(variable.kotlinType) -> {
+                isMappedToReference(variable.kotlinType) -> {
                     "DerefStablePointer(${variable.name}.pinned, ${variable.holder().ref})"
                 }
                 else -> variable.name
@@ -1314,3 +1209,99 @@ internal class FunctionAdapterGenerator(val owner: CAdapterGenerator,
 
     fun call(name: String, vararg args: String) = appendLine(args.joinToString(prefix = "$name(", postfix = ");", separator = ", "))
 }
+
+private interface CCodeGeneratorContextUtils {
+    val context: Context
+    val prefix: String
+        get() = context.config.fullExportedNamePrefix
+    val simpleNameMapping: Map<String, String>
+        get() = mapOf(
+                "<this>" to "thiz",
+                "<set-?>" to "set"
+        )
+
+
+    val CCodeGeneratorContextUtils.primitiveTypeMapping: Map<KonanPrimitiveType, String>
+        get() = KonanPrimitiveType.values().associate {
+            it to when (it) {
+                KonanPrimitiveType.BOOLEAN -> "${prefix}_KBoolean"
+                KonanPrimitiveType.CHAR -> "${prefix}_KChar"
+                KonanPrimitiveType.BYTE -> "${prefix}_KByte"
+                KonanPrimitiveType.SHORT -> "${prefix}_KShort"
+                KonanPrimitiveType.INT -> "${prefix}_KInt"
+                KonanPrimitiveType.LONG -> "${prefix}_KLong"
+                KonanPrimitiveType.FLOAT -> "${prefix}_KFloat"
+                KonanPrimitiveType.DOUBLE -> "${prefix}_KDouble"
+                KonanPrimitiveType.NON_NULL_NATIVE_PTR -> "void*"
+                KonanPrimitiveType.VECTOR128 -> "${prefix}_KVector128"
+            }
+        }
+
+    val CCodeGeneratorContextUtils.unsignedTypeMapping: Map<ClassId, String>
+        get() = UnsignedType.values().associate {
+            it.classId to when (it) {
+                UnsignedType.UBYTE -> "${prefix}_KUByte"
+                UnsignedType.USHORT -> "${prefix}_KUShort"
+                UnsignedType.UINT -> "${prefix}_KUInt"
+                UnsignedType.ULONG -> "${prefix}_KULong"
+            }
+        }
+}
+
+private fun CCodeGeneratorContextUtils.isMappedToString(type: KotlinType): Boolean =
+        isMappedToString(type.computeBinaryType())
+
+private fun CCodeGeneratorContextUtils.isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
+        when (binaryType) {
+            is BinaryType.Primitive -> false
+            is BinaryType.Reference -> binaryType.types.first() == context.builtIns.string
+        }
+
+private fun CCodeGeneratorContextUtils.isMappedToReference(type: KotlinType) =
+        !isMappedToVoid(type) && !isMappedToString(type) &&
+                type.binaryTypeIsReference()
+
+private fun CCodeGeneratorContextUtils.isMappedToVoid(type: KotlinType): Boolean {
+    return type.isUnit() || type.isNothing()
+}
+
+private fun CCodeGeneratorContextUtils.translateName(name: Name): String {
+    val nameString = name.asString()
+    return when {
+        simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
+        cKeywords.contains(nameString) -> "${nameString}_"
+        name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
+        else -> nameString
+    }
+}
+
+private fun CCodeGeneratorContextUtils.translateTypeFull(type: KotlinType): Pair<String, String> =
+        if (isMappedToVoid(type)) {
+            "void" to "void"
+        } else {
+            translateNonVoidTypeFull(type)
+        }
+
+private fun CCodeGeneratorContextUtils.translateNonVoidTypeFull(type: KotlinType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
+        eachInlinedClass = { inlinedClass, _ ->
+            unsignedTypeMapping[inlinedClass.classId]?.let {
+                return it to it
+            }
+        },
+        ifPrimitive = { primitiveType, _ ->
+            primitiveTypeMapping[primitiveType]!!.let { it to it }
+        },
+        ifReference = {
+            val clazz = (it.computeBinaryType() as BinaryType.Reference).types.first()
+            if (clazz == context.builtIns.string) {
+                "const char*" to "KObjHeader*"
+            } else {
+                "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
+            }
+        }
+)
+
+private fun CCodeGeneratorContextUtils.translateType(element: SignatureElement) = translateTypeFull(element.type).first
+private fun CCodeGeneratorContextUtils.translateType(type: KotlinType) = translateTypeFull(type).first
+private fun CCodeGeneratorContextUtils.translateTypeBridge(type: KotlinType): String = translateTypeFull(type).second
+private fun translateTypeFqName(name: String) = name.replace('.', '_')
