@@ -54,8 +54,14 @@ fun walkDaemons(registryDir: File,
                 fileToCompareTimestamp: File,
                 filter: (File, Int) -> Boolean = { _, _ -> true },
                 report: (DaemonReportCategory, String) -> Unit = { _, _ -> }
+) = walkDaemons(registryDir, compilerId.digest(), fileToCompareTimestamp, filter, report)
+
+fun walkDaemons(registryDir: File,
+                classPathDigest: String,
+                fileToCompareTimestamp: File,
+                filter: (File, Int) -> Boolean = { _, _ -> true },
+                report: (DaemonReportCategory, String) -> Unit = { _, _ -> }
 ): Sequence<DaemonWithMetadata> {
-    val classPathDigest = compilerId.digest()
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
             .map { Pair(it, portExtractor(it.name)) }

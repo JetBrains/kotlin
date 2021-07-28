@@ -32,6 +32,7 @@ import java.rmi.ConnectException
 import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
 import java.rmi.server.UnicastRemoteObject
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -45,7 +46,7 @@ class CompilationServices(
 data class CompileServiceSession(val compileService: CompileService, val sessionId: Int)
 
 object KotlinCompilerClient {
-
+    val startedDaemons = ConcurrentHashMap.newKeySet<String>()
     val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
     val DAEMON_CONNECT_CYCLE_ATTEMPTS = 3
 
@@ -96,33 +97,45 @@ object KotlinCompilerClient {
                         autostart: Boolean,
                         leaseSession: Boolean,
                         sessionAliveFlagFile: File? = null
-    ): CompileServiceSession? = connectLoop(reportingTargets, autostart) { isLastAttempt ->
+    ): CompileServiceSession? {
+        var startedNewDaemon = false
+        return connectLoop(reportingTargets, autostart) { isLastAttempt ->
 
-        fun CompileService.leaseImpl(): CompileServiceSession? {
-            // the newJVMOptions could be checked here for additional parameters, if needed
-            registerClient(clientAliveFlagFile.absolutePath)
-            reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
+            fun CompileService.leaseImpl(): CompileServiceSession? {
+                // the newJVMOptions could be checked here for additional parameters, if needed
+                registerClient(clientAliveFlagFile.absolutePath)
+                reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
 
-            if (!leaseSession) return CompileServiceSession(this, CompileService.NO_SESSION)
+                if (!leaseSession) return CompileServiceSession(this, CompileService.NO_SESSION)
 
-            return leaseCompileSession(sessionAliveFlagFile?.absolutePath).takeUnless { it is CompileService.CallResult.Dying }?.let {
-                CompileServiceSession(this, it.get())
-            }
-        }
-
-        ensureServerHostnameIsSetUp()
-        val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
-
-        if (service != null) {
-            service.leaseImpl()
-        }
-        else {
-            if (!isLastAttempt && autostart) {
-                if (startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)) {
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
+                return leaseCompileSession(sessionAliveFlagFile?.absolutePath).takeUnless { it is CompileService.CallResult.Dying }?.let {
+                    CompileServiceSession(this, it.get())
                 }
             }
-            null
+
+            ensureServerHostnameIsSetUp()
+            val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
+
+            if (service != null) {
+                service.leaseImpl()
+            }
+            else {
+                if (!isLastAttempt && autostart) {
+                    if (startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)) {
+                        startedNewDaemon = true
+                        reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
+                    }
+                }
+                null
+            }
+        }.also { session ->
+            if (session != null && startedNewDaemon) {
+                try {
+                    startedDaemons.add(session.compileService.getDaemonInfo().get())
+                } catch (e: Exception) {
+                    // noop
+                }
+            }
         }
     }
 

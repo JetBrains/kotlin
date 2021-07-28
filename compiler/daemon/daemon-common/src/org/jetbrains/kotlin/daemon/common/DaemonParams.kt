@@ -202,6 +202,7 @@ data class DaemonOptions(
         var autoshutdownUnusedSeconds: Int = COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S,
         var shutdownDelayMilliseconds: Long = COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS,
         var forceShutdownTimeoutMilliseconds: Long = COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS,
+        var rootBuildDir: File? = null,
         var verbose: Boolean = false,
         var reportPerf: Boolean = false
 ) : OptionsGroup {
@@ -214,6 +215,7 @@ data class DaemonOptions(
                        PropMapper(this, DaemonOptions::autoshutdownUnusedSeconds, fromString = String::toInt, skipIf = { it == COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S }, mergeDelimiter = "="),
                        PropMapper(this, DaemonOptions::shutdownDelayMilliseconds, fromString = String::toLong, skipIf = { it == COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS }, mergeDelimiter = "="),
                        PropMapper(this, DaemonOptions::forceShutdownTimeoutMilliseconds, fromString = String::toLong, skipIf = { it == COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS }, mergeDelimiter = "="),
+                       PropMapper(this, DaemonOptions::rootBuildDir, fromString = ::File, skipIf = { it == null }, mergeDelimiter = "="),
                        BoolPropMapper(this, DaemonOptions::verbose),
                        BoolPropMapper(this, DaemonOptions::reportPerf))
 }

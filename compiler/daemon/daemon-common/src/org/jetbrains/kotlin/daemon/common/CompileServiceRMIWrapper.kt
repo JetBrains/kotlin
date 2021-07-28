@@ -136,6 +136,10 @@ class CompileServiceClientRMIWrapper(
         asyncCompileService.getUsedMemory()
     }
 
+    override fun getTotalGcTime(): CompileService.CallResult<Long> {
+        TODO("Not yet implemented")
+    }
+
     override fun getDaemonOptions() = runBlocking {
         asyncCompileService.getDaemonOptions()
     }
