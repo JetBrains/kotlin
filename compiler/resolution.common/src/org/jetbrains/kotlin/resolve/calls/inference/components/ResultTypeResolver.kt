@@ -265,7 +265,8 @@ class ResultTypeResolver(
                  * fun <T : String> materialize(): T = null as T
                  * val bar: Int = materialize() // no errors, T is inferred into String & Int
                  */
-                intersectTypes(upperConstraints.filterNot { it.isExpectedTypePosition() }.map { it.type })
+                val filteredUpperConstraints = upperConstraints.filterNot { it.isExpectedTypePosition() }.map { it.type }
+                if (filteredUpperConstraints.isNotEmpty()) intersectTypes(filteredUpperConstraints) else intersectionUpperType
             } else intersectionUpperType
 
             return typeApproximator.approximateToSubType(
