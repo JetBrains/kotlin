@@ -567,7 +567,7 @@ abstract class BaseGradleIT {
         return this
     }
 
-    private fun Iterable<File>.projectRelativePaths(project: Project): Iterable<String> {
+    internal fun Iterable<File>.projectRelativePaths(project: Project): Iterable<String> {
         return map { it.canonicalFile.toRelativeString(project.projectDir) }
     }
 

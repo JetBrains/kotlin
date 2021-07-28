@@ -12,6 +12,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.process.CommandLineArgumentProvider
+import org.gradle.work.InputChanges
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -99,11 +100,11 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     }
 
     @TaskAction
-    fun compile(inputs: IncrementalTaskInputs) {
+    fun compile(inputChanges: InputChanges) {
         logger.info("Running kapt annotation processing using the Gradle Worker API")
         checkAnnotationProcessorClasspath()
 
-        val incrementalChanges = getIncrementalChanges(inputs)
+        val incrementalChanges = getIncrementalChanges(inputChanges)
         val (changedFiles, classpathChanges) = when (incrementalChanges) {
             is KaptIncrementalChanges.Unknown -> Pair(emptyList<File>(), emptyList<String>())
             is KaptIncrementalChanges.Known -> Pair(incrementalChanges.changedSources.toList(), incrementalChanges.changedClasspathJvmNames)
@@ -117,7 +118,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         val kaptFlagsForWorker = mutableSetOf<String>().apply {
             if (verbose.get()) add("VERBOSE")
             if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
-            if (includeCompileClasspath) add("INCLUDE_COMPILE_CLASSPATH")
+            if (includeCompileClasspath.get()) add("INCLUDE_COMPILE_CLASSPATH")
             if (incrementalChanges is KaptIncrementalChanges.Known) add("INCREMENTAL_APT")
         }
 

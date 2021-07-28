@@ -818,6 +818,7 @@ fun getSomething() = 10
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
+            output
         }
 
         val androidModuleKt = project.projectDir.getFileByName("AndroidModule.kt")
@@ -830,13 +831,22 @@ fun getSomething() = 10
 
         project.build(":app:assembleDebug", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(androidModuleKt))
             assertTasksExecuted(
                 ":app:kaptGenerateStubsDebugKotlin",
                 ":app:kaptDebugKotlin",
                 ":app:compileDebugKotlin",
                 ":app:compileDebugJavaWithJavac"
             )
+
+            // Output is combined with previous build, but we are only interested in the compilation
+            // from second build to avoid false positive test failure
+            val filteredOutput = output
+                .lineSequence()
+                .filter { it.contains("[KOTLIN] compile iteration:") }
+                .drop(1)
+                .joinToString(separator = "/n")
+            val actualSources = getCompiledKotlinSources(filteredOutput).projectRelativePaths(project)
+            assertSameFiles(project.relativize(androidModuleKt), actualSources, "Compiled Kotlin files differ:\n  ")
         }
     }
 

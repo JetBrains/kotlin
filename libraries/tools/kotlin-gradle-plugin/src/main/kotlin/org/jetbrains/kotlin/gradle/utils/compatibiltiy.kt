@@ -18,15 +18,12 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
-import org.gradle.api.tasks.TaskInputs
-import org.gradle.api.tasks.TaskOutputs
 import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.testing.TestDescriptor
@@ -35,30 +32,6 @@ import java.io.File
 import java.io.Serializable
 
 const val minSupportedGradleVersion = "6.1.1"
-
-internal val Task.inputsCompatible: TaskInputs get() = inputs
-
-internal val Task.outputsCompatible: TaskOutputs get() = outputs
-
-private val propertyMethod by lazy {
-    TaskInputs::class.java.methods.first {
-        it.name == "property" && it.parameterTypes.contentEquals(arrayOf(String::class.java, Any::class.java))
-    }
-}
-
-internal fun TaskInputs.propertyCompatible(name: String, value: Any) {
-    propertyMethod(this, name, value)
-}
-
-private val inputsDirMethod by lazy {
-    TaskInputs::class.java.methods.first {
-        it.name == "dir" && it.parameterTypes.contentEquals(arrayOf(Any::class.java))
-    }
-}
-
-internal fun TaskInputs.dirCompatible(dirPath: Any) {
-    inputsDirMethod(this, dirPath)
-}
 
 internal fun checkGradleCompatibility(
     withComponent: String = "the Kotlin Gradle plugin",

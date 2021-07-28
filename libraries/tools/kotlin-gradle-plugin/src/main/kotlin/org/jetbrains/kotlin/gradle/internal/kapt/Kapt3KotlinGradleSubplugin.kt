@@ -519,7 +519,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             kaptTask.destinationDir = sourcesOutputDir
             kaptTask.kotlinSourcesDestinationDir = kotlinSourcesOutputDir
             kaptTask.classesDir = classesOutputDir
-            kaptTask.includeCompileClasspath = includeCompileClasspath
+            kaptTask.includeCompileClasspath.set(includeCompileClasspath)
 
             kaptTask.isIncremental = project.isIncrementalKapt()
 
@@ -618,7 +618,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         kaptTaskProvider.configure { task ->
             task.onlyIf {
                 it as KaptTask
-                it.includeCompileClasspath || !it.kaptClasspath.isEmpty()
+                it.includeCompileClasspath.get() || !it.kaptClasspath.isEmpty
             }
         }
 
