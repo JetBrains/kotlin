@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -34,12 +35,14 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
         when {
             javaClass == HashMap::class.java -> {
                 val nodeClass = javaClass.declaredClasses.single { it.name.contains("\$Node") }
-                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }.single { it.name.asString() == "MutableMap" }
+                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }
+                    .single { it.name == StandardNames.FqNames.mutableMap.shortName() }
                 javaClassToIrClass += nodeClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
             }
             javaClass == LinkedHashMap::class.java -> {
                 val entryClass = javaClass.declaredClasses.single { it.name.contains("\$Entry") }
-                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }.single { it.name.asString() == "MutableMap" }
+                val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }
+                    .single { it.name == StandardNames.FqNames.mutableMap.shortName() }
                 javaClassToIrClass += entryClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
             }
             javaClass.canonicalName == "java.util.Collections.SingletonMap" -> {
@@ -185,7 +188,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
             val jvmEnumClass = Class.forName(intrinsicName)
 
             val methodType = MethodType.methodType(jvmEnumClass, String::class.java)
-            return MethodHandles.lookup().findStatic(jvmEnumClass, "valueOf", methodType)
+            return MethodHandles.lookup().findStatic(jvmEnumClass, StandardNames.ENUM_VALUE_OF.identifier, methodType)
         }
 
         private fun IrFunction.getMethodType(): MethodType {
