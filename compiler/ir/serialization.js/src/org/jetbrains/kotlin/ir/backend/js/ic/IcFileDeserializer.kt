@@ -35,7 +35,6 @@ class IcFileDeserializer(
     allowErrorNodes: Boolean,
     deserializeInlineFunctions: Boolean,
     val moduleDeserializer: IrModuleDeserializer,
-    useGlobalSignatures: Boolean,
     val handleNoModuleDeserializerFound: (IdSignature, ModuleDescriptor, Collection<IrModuleDeserializer>) -> IrModuleDeserializer,
     val originalEnqueue: IdSignature.(IcFileDeserializer) -> Unit,
     val icFileData: SerializedIcDataForFile,
@@ -56,7 +55,6 @@ class IcFileDeserializer(
                 }
             },
             linker::handleExpectActualMapping,
-            useGlobalSignatures = useGlobalSignatures,
             enqueueAllDeclarations = true,
             deserializePublicSymbol = ::deserializeOriginalPublicSymbol,
         )
@@ -151,7 +149,6 @@ class IcFileDeserializer(
         { idSig -> idSig.enqueue(this) },
         { _, s -> s },
         enqueueAllDeclarations = true,
-        useGlobalSignatures = true,
         deserializedSymbols = originalFileDeserializer.symbolDeserializer.deserializedSymbols,
         ::deserializePublicSymbol
     )

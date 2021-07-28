@@ -30,7 +30,6 @@ class JsIrLinker(
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     private val loweredIcData: Map<ModuleDescriptor, SerializedIcData> = emptyMap(),
-    private val useGlobalSignatures: Boolean = false,
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
 
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JsManglerIr, IrTypeSystemContextImpl(builtIns))
@@ -53,7 +52,6 @@ class JsIrLinker(
                 klib,
                 strategy,
                 containsErrorCode = klib.libContainsErrorCode,
-                useGlobalSignatures = useGlobalSignatures
             )
         }
         return JsModuleDeserializer(moduleDescriptor, klib, strategy, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, klib.libContainsErrorCode)
@@ -62,7 +60,7 @@ class JsIrLinker(
     val mapping: JsMapping by lazy { JsMapping(symbolTable.irFactory) }
 
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
-        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategy, libraryAbiVersion, allowErrorCode, useGlobalSignatures)
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategy, libraryAbiVersion, allowErrorCode)
 
     override fun maybeWrapWithBuiltInAndInit(
         moduleDescriptor: ModuleDescriptor,
