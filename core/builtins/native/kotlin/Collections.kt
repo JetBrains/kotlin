@@ -170,6 +170,8 @@ public interface List<out E> : Collection<E> {
      * Structural changes in the base list make the behavior of the view undefined.
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
+
+    companion object
 }
 
 /**
@@ -253,6 +255,8 @@ public interface Set<out E> : Collection<E> {
 
     // Bulk Operations
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+
+    companion object
 }
 
 /**

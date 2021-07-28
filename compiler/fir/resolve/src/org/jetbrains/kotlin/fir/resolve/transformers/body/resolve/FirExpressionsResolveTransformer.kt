@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -314,23 +315,25 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
-        return when (data) {
+        when (data) {
             is ResolutionMode.WithExpectedType -> {
                 collectionLiteral.transformChildren(transformer, data)
-                if (data.expectedTypeRef is FirImplicitTypeRef) {
-                    collectionLiteral.resultType = buildResolvedTypeRef {
-                        type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
+                when (data.expectedTypeRef) {
+                    is FirImplicitTypeRef -> {
+                        collectionLiteral.resultType = buildResolvedTypeRef {
+                            type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
+                        }
+                    }
+                    else -> {
+                        collectionLiteral.resultType = data.expectedTypeRef
                     }
                 }
-                collectionLiteral
             }
             is ResolutionMode.WithExpectedArgumentsType -> {
                 collectionLiteral.transformChildren(transformer, data)
                 collectionLiteral.resultType = data.argumentMapping[collectionLiteral]?.returnTypeRef ?: buildResolvedTypeRef {
                     type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
                 }
-
-                collectionLiteral
             }
             ResolutionMode.ContextDependent,
             ResolutionMode.ContextDependentDelegate,
@@ -342,6 +345,26 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 return collectionLiteral
             }
         }
+        val resultType = collectionLiteral.resultType
+        if (resultType is FirResolvedTypeRef) {
+            val builder = buildFunctionCall {
+                source = collectionLiteral.source
+                typeRef = resultType // TODO Билдер может вернуть другой тип?
+                calleeReference = buildSimpleNamedReference {
+                    this.source = collectionLiteral.source // TODO а точно тот же сорс?
+                    this.name = Name.identifier("build") // FIXME имя нужно брать откуда-то типа СтандартныеИмена
+                }
+                this.explicitReceiver = buildQualifiedAccessExpression {
+                    this.source = collectionLiteral.source
+                    this.calleeReference = buildSimpleNamedReference {
+                        this.source = collectionLiteral.source
+                        this.name = resultType.coneType.classId!!.shortClassName
+                    }
+                }
+            }
+            return transformer.transformFunctionCall(builder, data)
+        }
+        return collectionLiteral
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {

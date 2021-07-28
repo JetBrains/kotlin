@@ -5,9 +5,25 @@
 
 package org.jetbrains.kotlin.runner
 
-fun main() {
-    val a = arrayOf(1, 2, 3)
-    val b = [1, 2, 3]
-    println(a)
-    println(b)
+//class A<T>(val a: T) {
+//    companion object
+//}
+//
+//operator fun <T> A<T>.invoke(): T {
+//    return a
+//}
+
+
+operator fun List.Companion.build(): List<Any> {
+    return TODO()
 }
+
+operator fun Set.Companion.build(): Set<Any> {
+    return TODO()
+}
+
+fun main() {
+    val a: Set<Any> = [1, 2, 3]
+    println(a)
+}
+
