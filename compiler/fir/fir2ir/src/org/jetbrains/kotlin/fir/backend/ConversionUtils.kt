@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -476,7 +476,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
 ): IrValueParameter =
     symbolTable.irFactory.createValueParameter(
         startOffset, endOffset, thisOrigin, IrValueParameterSymbolImpl(),
-        Name.special("<this>"), UNDEFINED_PARAMETER_INDEX, thisType,
+        SpecialNames.THIS, UNDEFINED_PARAMETER_INDEX, thisType,
         varargElementType = null, isCrossinline = false, isNoinline = false,
         isHidden = false, isAssignable = false
     ).apply {

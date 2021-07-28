@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.types.Variance
 public sealed class KtClassifierSymbol : KtSymbol, KtPossiblyNamedSymbol
 
 public val KtClassifierSymbol.nameOrAnonymous: Name
-    get() = name ?: SpecialNames.ANONYMOUS_FUNCTION
+    get() = name ?: SpecialNames.ANONYMOUS
 
 public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
     abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>

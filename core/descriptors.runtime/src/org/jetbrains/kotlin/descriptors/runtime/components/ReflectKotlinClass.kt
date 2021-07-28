@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import java.lang.reflect.Constructor
@@ -115,7 +116,7 @@ private object ReflectClassStructure {
 
     private fun loadConstructorAnnotations(klass: Class<*>, memberVisitor: KotlinJvmBinaryClass.MemberVisitor) {
         for (constructor in klass.declaredConstructors) {
-            val visitor = memberVisitor.visitMethod(Name.special("<init>"), SignatureSerializer.constructorDesc(constructor)) ?: continue
+            val visitor = memberVisitor.visitMethod(SpecialNames.INIT, SignatureSerializer.constructorDesc(constructor)) ?: continue
 
             for (annotation in constructor.declaredAnnotations) {
                 processAnnotation(visitor, annotation)

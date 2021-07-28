@@ -367,7 +367,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             }
             getter.overriddenSymbols += supperGetter.symbol
             getter.dispatchReceiverParameter = buildValueParameter(getter) {
-                name = THIS_NAME
+                name = SpecialNames.THIS
                 type = clazz.defaultType
             }
 
@@ -401,10 +401,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
         object GENERATED_MEMBER_IN_CALLABLE_REFERENCE : IrDeclarationOriginImpl("GENERATED_MEMBER_IN_CALLABLE_REFERENCE")
 
-
-
-        val THIS_NAME = Name.special("<this>")
         val BOUND_RECEIVER_NAME = Name.identifier("\$boundThis")
     }
-
 }

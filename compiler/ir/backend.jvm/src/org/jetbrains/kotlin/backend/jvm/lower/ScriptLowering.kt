@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -454,7 +455,7 @@ private class ScriptToClassTransformer(
     override fun visitGetField(expression: IrGetField): IrExpression {
         if (irScript.earlierScripts != null) {
             val receiver = expression.receiver
-            if (receiver is IrGetValue && receiver.symbol.owner.name == Name.special("<this>")) {
+            if (receiver is IrGetValue && receiver.symbol.owner.name == SpecialNames.THIS) {
                 val newReceiver = getAccessCallForEarlierScript(expression, receiver.type)
                 if (newReceiver != null) {
                     val newGetField =
@@ -470,7 +471,7 @@ private class ScriptToClassTransformer(
         if (irScript.earlierScripts != null) {
             val target = expression.symbol.owner
             val receiver: IrValueParameter? = target.dispatchReceiverParameter
-            if (receiver?.name == Name.special("<this>")) {
+            if (receiver?.name == SpecialNames.THIS) {
                 val newReceiver = getAccessCallForEarlierScript(expression, receiver.type)
                 if (newReceiver != null) {
                     expression.dispatchReceiver = newReceiver

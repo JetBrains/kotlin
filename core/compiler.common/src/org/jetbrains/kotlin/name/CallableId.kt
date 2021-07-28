@@ -14,7 +14,7 @@ data class CallableId(
     private val pathToLocal: FqName? = null
 ) {
     private companion object {
-        val LOCAL_NAME = Name.special("<local>")
+        val LOCAL_NAME = SpecialNames.LOCAL
         val PACKAGE_FQ_NAME_FOR_LOCAL = FqName.topLevel(LOCAL_NAME)
     }
 

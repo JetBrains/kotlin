@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -50,6 +53,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.threadLocal
@@ -456,7 +460,7 @@ class Fir2IrDeclarationStorage(
         }
         classifierStorage.preCacheTypeParameters(function)
         val name = simpleFunction?.name
-            ?: if (isLambda) Name.special("<anonymous>") else Name.special("<no name provided>")
+            ?: if (isLambda) SpecialNames.ANONYMOUS else Name.special("<no name provided>")
         val visibility = simpleFunction?.visibility ?: Visibilities.Local
         val isSuspend =
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendFunctionType(session) == true
@@ -553,7 +557,7 @@ class Fir2IrDeclarationStorage(
             declareIrConstructor(signature) { symbol ->
                 irFactory.createConstructor(
                     startOffset, endOffset, origin, symbol,
-                    Name.special("<init>"), components.visibilityConverter.convertToDescriptorVisibility(constructor.visibility),
+                    SpecialNames.INIT, components.visibilityConverter.convertToDescriptorVisibility(constructor.visibility),
                     constructor.returnTypeRef.toIrType(),
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = constructor.isExpect
                 ).apply {
@@ -977,7 +981,7 @@ class Fir2IrDeclarationStorage(
         // Some temporary variables are produced in RawFirBuilder, but we consistently use special names for them.
         val origin = when {
             givenOrigin != null -> givenOrigin
-            variable.name == Name.special("<iterator>") -> IrDeclarationOrigin.FOR_LOOP_ITERATOR
+            variable.name == SpecialNames.ITERATOR -> IrDeclarationOrigin.FOR_LOOP_ITERATOR
             variable.name.isSpecial -> IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
             else -> IrDeclarationOrigin.DEFINED
         }

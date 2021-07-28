@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.name
 
-import java.util.*
-
 object NameUtils {
     private val SANITIZE_AS_JAVA_INVALID_CHARACTERS = "[^\\p{L}\\p{Digit}]".toRegex()
 
@@ -52,5 +50,5 @@ object NameUtils {
             Name.identifier(NameUtils.getPackagePartClassNamePrefix(filePath.substringAfterLast('/').substringBeforeLast('.')))
 
     @JvmStatic
-    fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS_FUNCTION
+    fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS
 }

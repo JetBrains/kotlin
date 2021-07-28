@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -298,7 +299,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     private String getName(ClassDescriptor classDescriptor) {
         String base = peekFromStack(nameStack);
-        Name descriptorName = safeIdentifier(classDescriptor.getName());
+        Name descriptorName = SpecialNames.safeIdentifier(classDescriptor.getName());
         if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
             return base.isEmpty() ? descriptorName.asString() : base + '/' + descriptorName;
         }

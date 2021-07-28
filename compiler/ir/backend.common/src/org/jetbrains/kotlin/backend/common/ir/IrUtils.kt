@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import java.io.StringWriter
 
 fun ir2string(ir: IrElement?): String = ir?.render() ?: ""
@@ -424,7 +425,7 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
         startOffset, endOffset,
         origin ?: parentAsClass.origin,
         IrValueParameterSymbolImpl(),
-        Name.special("<this>"),
+        SpecialNames.THIS,
         -1,
         parentAsClass.defaultType,
         null,

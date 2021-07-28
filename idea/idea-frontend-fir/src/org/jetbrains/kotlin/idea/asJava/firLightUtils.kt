@@ -90,7 +90,7 @@ private class AnonymousTypesSubstitutor(
 
         if (type !is ConeClassLikeType) return null
 
-        val isAnonymous = type.classId.let { it?.shortClassName?.asString() == SpecialNames.ANONYMOUS }
+        val isAnonymous = type.classId.let { it?.shortClassName?.asString() == SpecialNames.ANONYMOUS_STRING }
         if (!isAnonymous) return null
 
         fun ConeClassLikeType.isNotInterface(): Boolean {
@@ -134,7 +134,7 @@ internal fun ConeKotlinType.asPsiType(
     val canonicalSignature = signatureWriter.toString()
 
     if (canonicalSignature.contains("L<error>")) return psiContext.nonExistentType()
-    require(!canonicalSignature.contains(SpecialNames.ANONYMOUS))
+    require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
 
     val signature = StringCharacterIterator(canonicalSignature)
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
@@ -301,7 +301,7 @@ internal fun KtType.getTypeNullability(context: KtSymbol, phase: FirResolvePhase
 
     if (coneType is ConeClassErrorType) return NullabilityType.NotNull
     if (coneType.typeArguments.any { it is ConeClassErrorType }) return NullabilityType.NotNull
-    if (coneType.classId?.shortClassName?.asString() == SpecialNames.ANONYMOUS) return NullabilityType.NotNull
+    if (coneType.classId?.shortClassName?.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
 
     val canonicalSignature = context.firRef.withFir(phase) {
         it.moduleData.session.jvmTypeMapper.mapType(coneType, TypeMappingMode.DEFAULT).descriptor

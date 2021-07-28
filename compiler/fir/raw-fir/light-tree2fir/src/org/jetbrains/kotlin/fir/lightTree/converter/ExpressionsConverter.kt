@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -152,7 +153,7 @@ class ExpressionsConverter(
             for (valueParameter in valueParameterList) {
                 val multiDeclaration = valueParameter.destructuringDeclaration
                 valueParameters += if (multiDeclaration != null) {
-                    val name = DESTRUCTURING_NAME
+                    val name = SpecialNames.DESTRUCT
                     val multiParameter = buildValueParameter {
                         source = valueParameter.firValueParameter.source
                         moduleData = baseModuleData
@@ -1055,7 +1056,7 @@ class ExpressionsConverter(
             val iteratorVal = generateTemporaryVariable(
                 baseModuleData,
                 calculatedRangeExpression.source?.fakeElement(FirFakeSourceElementKind.DesugaredForLoop),
-                ITERATOR_NAME,
+                SpecialNames.ITERATOR,
                 buildFunctionCall {
                     source = fakeSource
                     calleeReference = buildSimpleNamedReference {
@@ -1089,7 +1090,7 @@ class ExpressionsConverter(
                     val firLoopParameter = generateTemporaryVariable(
                         baseModuleData,
                         valueParameter.firValueParameter.source,
-                        if (multiDeclaration != null) DESTRUCTURING_NAME else valueParameter.firValueParameter.name,
+                        if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.firValueParameter.name,
                         buildFunctionCall {
                             source = fakeSource
                             calleeReference = buildSimpleNamedReference {

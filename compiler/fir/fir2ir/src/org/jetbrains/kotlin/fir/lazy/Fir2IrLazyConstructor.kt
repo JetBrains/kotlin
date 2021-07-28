@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.name.SpecialNames
 
 class Fir2IrLazyConstructor(
     components: Fir2IrComponents,
@@ -63,7 +64,7 @@ class Fir2IrLazyConstructor(
     override var body: IrBody? = null
 
     override val name: Name
-        get() = Name.special("<init>")
+        get() = SpecialNames.INIT
 
     @Suppress("SetterBackingFieldAssignment")
     override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)

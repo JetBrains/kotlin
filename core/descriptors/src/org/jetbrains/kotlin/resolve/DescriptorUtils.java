@@ -292,7 +292,7 @@ public class DescriptorUtils {
     @SuppressWarnings("unused")
     public static boolean isAnonymousFunction(@NotNull DeclarationDescriptor descriptor) {
         return descriptor instanceof SimpleFunctionDescriptor &&
-               descriptor.getName().equals(SpecialNames.ANONYMOUS_FUNCTION);
+               descriptor.getName().equals(SpecialNames.ANONYMOUS);
     }
 
     public static boolean isNonCompanionObject(@Nullable DeclarationDescriptor descriptor) {

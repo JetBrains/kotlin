@@ -137,4 +137,4 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
 }
 
 val Name.isAnonymous: Boolean
-    get() = isSpecial && (this == SpecialNames.ANONYMOUS_FUNCTION || this == SpecialNames.NO_NAME_PROVIDED)
+    get() = isSpecial && (this == SpecialNames.ANONYMOUS || this == SpecialNames.NO_NAME_PROVIDED)
