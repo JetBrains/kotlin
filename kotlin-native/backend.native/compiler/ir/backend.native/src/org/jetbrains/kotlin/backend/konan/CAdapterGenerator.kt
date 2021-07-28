@@ -970,18 +970,18 @@ internal class CAdapterGenerator(override val context: Context) : CCodeGenerator
         |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);
         |}
         """.trimMargin())
-        predefinedTypes.forEach { it:KotlinType ->
-            assert(!it.isNothing())
-            val nullableIt = it.makeNullable()
+        predefinedTypes.forEach { type ->
+            assert(!type.isNothing())
+            val nullableIt = type.makeNullable()
             buildString {
-                appendLine("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}(${"${translateType(it)} ,".takeIf { _ -> !it.isUnit() } ?: ""} KObjHeader**);")
+                appendLine("extern \"C\" KObjHeader* Kotlin_box${type.shortNameForPredefinedType}(${"${translateType(type)} ,".takeIf { _ -> !type.isUnit() } ?: ""} KObjHeader**);")
                 generateFunction(
-                        it.takeIf { !it.isUnit() }?.run { listOf(nullableIt, this) } ?: listOf(nullableIt),
+                        type.takeIf { !it.isUnit() }?.run { listOf(nullableIt, this) } ?: listOf(nullableIt),
                         context,
                         null,
-                        "${it.createNullableNameForPredefinedType}Impl") {
+                        "${type.createNullableNameForPredefinedType}Impl") {
                     val result = result(nullableIt).defineAndInitVariable {
-                        call("Kotlin_box${it.shortNameForPredefinedType}", *parameters.toTypedArray(), resultHolder!!)
+                        call("Kotlin_box${type.shortNameForPredefinedType}", *parameters.toTypedArray(), resultHolder!!)
                     }
                     ret(result)
                 }
