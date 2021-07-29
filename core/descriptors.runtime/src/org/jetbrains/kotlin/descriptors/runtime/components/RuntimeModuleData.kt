@@ -16,39 +16,9 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
-import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
-import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
-import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
-import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
-import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluator
-import org.jetbrains.kotlin.load.java.components.JavaResolverCache
-import org.jetbrains.kotlin.load.java.components.SignaturePropagator
-import org.jetbrains.kotlin.load.java.lazy.*
-import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeEnhancement
-import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
-import org.jetbrains.kotlin.load.kotlin.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
-import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
+import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava.Companion.createModuleData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
 class RuntimeModuleData private constructor(
     val deserialization: DeserializationComponents,
@@ -73,118 +43,5 @@ class RuntimeModuleData private constructor(
                 PackagePartScopeCache(moduleData.deserializedDescriptorResolver, kotlinClassFinder)
             )
         }
-
-        /** Contains [DeserializationComponentsForJava] and some related information. */
-        class ModuleData(
-            val deserializationComponentsForJava: DeserializationComponentsForJava,
-            val deserializedDescriptorResolver: DeserializedDescriptorResolver
-        )
-
-        fun createModuleData(
-            kotlinClassFinder: KotlinClassFinder,
-            jvmBuiltInsKotlinClassFinder: KotlinClassFinder,
-            javaClassFinder: JavaClassFinder,
-            moduleName: String,
-            errorReporter: ErrorReporter,
-            javaSourceElementFactory: JavaSourceElementFactory
-        ): ModuleData {
-            val storageManager = LockBasedStorageManager("RuntimeModuleData")
-            val builtIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
-            val module = ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, builtIns)
-            builtIns.builtInsModule = module
-
-            builtIns.initialize(module, isAdditionalBuiltInsFeatureSupported = true)
-
-            val deserializedDescriptorResolver = DeserializedDescriptorResolver()
-            val singleModuleClassResolver = SingleModuleClassResolver()
-            val notFoundClasses = NotFoundClasses(storageManager, module)
-
-            val lazyJavaPackageFragmentProvider =
-                makeLazyJavaPackageFragmentProvider(
-                    javaClassFinder, module, storageManager, notFoundClasses,
-                    kotlinClassFinder, deserializedDescriptorResolver,
-                    errorReporter, javaSourceElementFactory, singleModuleClassResolver
-                )
-
-            val deserializationComponentsForJava =
-                makeDeserializationComponentsForJava(
-                    module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
-                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter
-                )
-
-            deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)
-
-            val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider, JavaResolverCache.EMPTY)
-            singleModuleClassResolver.resolver = javaDescriptorResolver
-
-            val builtinsProvider = JvmBuiltInsPackageFragmentProvider(
-                storageManager, jvmBuiltInsKotlinClassFinder, module, notFoundClasses, builtIns.customizer, builtIns.customizer,
-                DeserializationConfiguration.Default, NewKotlinTypeChecker.Default, SamConversionResolverImpl(storageManager, emptyList())
-            )
-
-            module.setDependencies(module)
-            module.initialize(
-                CompositePackageFragmentProvider(
-                    listOf(javaDescriptorResolver.packageFragmentProvider, builtinsProvider),
-                    "CompositeProvider@RuntimeModuleData for $module"
-                )
-            )
-
-            return ModuleData(deserializationComponentsForJava, deserializedDescriptorResolver)
-        }
     }
-}
-
-fun makeLazyJavaPackageFragmentProvider(
-    javaClassFinder: JavaClassFinder,
-    module: ModuleDescriptor,
-    storageManager: StorageManager,
-    notFoundClasses: NotFoundClasses,
-    reflectKotlinClassFinder: KotlinClassFinder,
-    deserializedDescriptorResolver: DeserializedDescriptorResolver,
-    errorReporter: ErrorReporter,
-    javaSourceElementFactory: JavaSourceElementFactory,
-    singleModuleClassResolver: ModuleClassResolver,
-    packagePartProvider: PackagePartProvider = PackagePartProvider.Empty
-): LazyJavaPackageFragmentProvider {
-    val annotationTypeQualifierResolver = AnnotationTypeQualifierResolver(storageManager, JavaTypeEnhancementState.DEFAULT)
-    val javaTypeEnhancementState = JavaTypeEnhancementState.DEFAULT
-    val javaResolverComponents = JavaResolverComponents(
-        storageManager, javaClassFinder, reflectKotlinClassFinder, deserializedDescriptorResolver,
-        SignaturePropagator.DO_NOTHING, errorReporter, JavaResolverCache.EMPTY,
-        JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolverImpl(storageManager, emptyList()), javaSourceElementFactory,
-        singleModuleClassResolver, packagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
-        ReflectionTypes(module, notFoundClasses), annotationTypeQualifierResolver,
-        SignatureEnhancement(
-            annotationTypeQualifierResolver,
-            JavaTypeEnhancementState.DEFAULT,
-            JavaTypeEnhancement(JavaResolverSettings.Default)
-        ),
-        JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default, javaTypeEnhancementState,
-        object : JavaModuleAnnotationsProvider {
-            override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? = null
-        }
-    )
-
-    return LazyJavaPackageFragmentProvider(javaResolverComponents)
-}
-
-fun makeDeserializationComponentsForJava(
-    module: ModuleDescriptor,
-    storageManager: StorageManager,
-    notFoundClasses: NotFoundClasses,
-    lazyJavaPackageFragmentProvider: LazyJavaPackageFragmentProvider,
-    reflectKotlinClassFinder: KotlinClassFinder,
-    deserializedDescriptorResolver: DeserializedDescriptorResolver,
-    errorReporter: ErrorReporter
-): DeserializationComponentsForJava {
-    val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
-    val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(
-        module, notFoundClasses, storageManager, reflectKotlinClassFinder
-    )
-    return DeserializationComponentsForJava(
-        storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
-        binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
-        errorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT, NewKotlinTypeChecker.Default
-    )
 }
