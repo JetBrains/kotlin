@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.wasm.internal.*
+
 /**
  * Counts the number of set bits in the binary representation of this [Int] number.
  */
@@ -17,7 +19,7 @@ public actual fun Int.countOneBits(): Int = TODO("Wasm stdlib: Numbers")
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Int.countLeadingZeroBits(): Int = TODO("Wasm stdlib: Numbers")
+public actual fun Int.countLeadingZeroBits(): Int = wasm_i32_clz(this)
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
@@ -84,7 +86,7 @@ public actual fun Long.countOneBits(): Int = TODO("Wasm stdlib: Numbers")
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public actual fun Long.countLeadingZeroBits(): Int = TODO("Wasm stdlib: Numbers")
+public actual fun Long.countLeadingZeroBits(): Int = wasm_i64_clz(this).toInt()
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
