@@ -142,21 +142,23 @@ internal class KtFirExpressionTypeProvider(
         getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NOT_NULL
 
     private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability = withValidityAssertion {
-        // TODO: Check stability of smartcast (pending PR 4382)
-        return when (val fir = expression.getOrBuildFir(analysisSession.firResolveState)) {
-            is FirExpressionWithSmartcastToNull -> DefiniteNullability.DEFINITELY_NULL
-            is FirExpression -> {
-                // Note: This includes FirExpressionWithSmartcast
-                with(analysisSession.rootModuleSession.typeContext) {
-                    if (!fir.typeRef.coneType.isNullableType()) {
-                        DefiniteNullability.DEFINITELY_NOT_NULL
-                    } else {
-                        DefiniteNullability.UNKNOWN
-                    }
-                }
-            }
-            else -> DefiniteNullability.UNKNOWN
+        fun FirExpression.isNotNullable() = with(analysisSession.rootModuleSession.typeContext) {
+            !typeRef.coneType.isNullableType()
         }
+
+        when (val fir = expression.getOrBuildFir(analysisSession.firResolveState)) {
+            is FirExpressionWithSmartcastToNull -> if (fir.isStable) {
+                return DefiniteNullability.DEFINITELY_NULL
+            }
+            is FirExpressionWithSmartcast -> if (fir.isStable && fir.isNotNullable()) {
+                return DefiniteNullability.DEFINITELY_NOT_NULL
+            }
+            is FirExpression -> if (fir.isNotNullable()) {
+                return DefiniteNullability.DEFINITELY_NOT_NULL
+            }
+        }
+
+        return DefiniteNullability.UNKNOWN
     }
 }
 
