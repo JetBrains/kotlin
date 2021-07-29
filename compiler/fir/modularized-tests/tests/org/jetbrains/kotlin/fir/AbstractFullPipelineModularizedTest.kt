@@ -127,7 +127,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         args.reportPerf = true
         args.jvmTarget = "1.8"
         args.classpath = moduleData.classpath.joinToString(separator = ":") { it.absolutePath }
-        args.javaSourceRoots = moduleData.javaSourceRoots.map { it.absolutePath }.toTypedArray()
+        args.javaSourceRoots = moduleData.javaSourceRoots.map { it.path.absolutePath }.toTypedArray()
         args.allowKotlinPackage = true
         args.freeArgs = moduleData.sources.map { it.absolutePath }
         args.destination = tmp.toAbsolutePath().toFile().toString()

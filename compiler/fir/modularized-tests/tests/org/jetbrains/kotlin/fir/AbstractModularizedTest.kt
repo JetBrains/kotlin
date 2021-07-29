@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -30,7 +29,7 @@ data class ModuleData(
     val qualifier: String,
     val rawClasspath: List<String>,
     val rawSources: List<String>,
-    val rawJavaSourceRoots: List<String>,
+    val rawJavaSourceRoots: List<JavaSourceRootData<String>>,
     val rawFriendDirs: List<String>,
     val rawModularJdkRoot: String?,
     val isCommon: Boolean
@@ -40,10 +39,12 @@ data class ModuleData(
     val outputDir = rawOutputDir.fixPath()
     val classpath = rawClasspath.map { it.fixPath() }
     val sources = rawSources.map { it.fixPath() }
-    val javaSourceRoots = rawJavaSourceRoots.map { it.fixPath() }
+    val javaSourceRoots = rawJavaSourceRoots.map { JavaSourceRootData(it.path.fixPath(), it.packagePrefix) }
     val friendDirs = rawFriendDirs.map { it.fixPath() }
     val modularJdkRoot = rawModularJdkRoot?.fixPath()
 }
+
+data class JavaSourceRootData<Path : Any>(val path: Path, val packagePrefix: String?)
 
 private fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
 
@@ -92,11 +93,10 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     fun createDefaultConfiguration(moduleData: ModuleData): CompilerConfiguration {
         val configuration = KotlinTestUtils.newConfiguration()
-        configuration.addJavaSourceRoots(moduleData.javaSourceRoots)
+        moduleData.javaSourceRoots.forEach {
+            configuration.addJavaSourceRoot(it.path, it.packagePrefix)
+        }
         configuration.addJvmClasspathRoots(moduleData.classpath)
-
-        // ignored for modular jdks
-        configuration.put(JVMConfigurationKeys.NO_JDK, true)
 
         // in case of modular jdk only
         configuration.putIfNotNull(JVMConfigurationKeys.JDK_HOME, moduleData.modularJdkRoot)
@@ -118,7 +118,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val moduleName = moduleElement.attributes.getNamedItem("name").nodeValue
         val outputDir = moduleElement.attributes.getNamedItem("outputDir").nodeValue
         val moduleNameQualifier = outputDir.substringAfterLast("/")
-        val javaSourceRoots = mutableListOf<String>()
+        val javaSourceRoots = mutableListOf<JavaSourceRootData<String>>()
         val classpath = mutableListOf<String>()
         val sources = mutableListOf<String>()
         val friendDirs = mutableListOf<String>()
@@ -140,7 +140,13 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
                     val path = item.attributes.getNamedItem("path").nodeValue
                     friendDirs += path
                 }
-                "javaSourceRoots" -> javaSourceRoots += item.attributes.getNamedItem("path").nodeValue
+                "javaSourceRoots" -> {
+                    javaSourceRoots +=
+                        JavaSourceRootData(
+                            item.attributes.getNamedItem("path").nodeValue,
+                            item.attributes.getNamedItem("packagePrefix")?.nodeValue,
+                        )
+                }
                 "sources" -> sources += item.attributes.getNamedItem("path").nodeValue
                 "commonSources" -> isCommon = true
                 "modularJdkRoot" -> modularJdkRoot = item.attributes.getNamedItem("path").nodeValue
