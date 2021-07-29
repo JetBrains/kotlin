@@ -458,7 +458,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeGetValue(proto: ProtoGetValue, start: Int, end: Int, type: IrType): IrGetValue {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrValueSymbol
+        val symbol = declarationDeserializer.deserializeIrSymbol(proto.symbol) as IrValueSymbol
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
         // TODO: origin!
         return IrGetValueImpl(start, end, type, symbol, origin)
@@ -569,7 +569,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeSetValue(proto: ProtoSetValue, start: Int, end: Int): IrSetValue {
-        val symbol = declarationDeserializer.deserializeIrSymbolAndRemap(proto.symbol) as IrValueSymbol
+        val symbol = declarationDeserializer.deserializeIrSymbol(proto.symbol) as IrValueSymbol
         val value = deserializeExpression(proto.value)
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
         return IrSetValueImpl(start, end, builtIns.unitType, symbol, value, origin)
