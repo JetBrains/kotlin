@@ -189,6 +189,10 @@ class IrDeclarationDeserializer(
     // Delegating symbol maps to it's delegate only inside the declaration the symbol belongs to.
     private val delegatedSymbolMap = mutableMapOf<IrSymbol, IrSymbol>()
 
+    internal fun deserializeIrSymbol(code: Long): IrSymbol {
+        return symbolDeserializer.deserializeIrSymbol(code)
+    }
+
     internal fun deserializeIrSymbolAndRemap(code: Long): IrSymbol {
         // TODO: could be simplified
         return symbolDeserializer.deserializeIrSymbol(code).let {
