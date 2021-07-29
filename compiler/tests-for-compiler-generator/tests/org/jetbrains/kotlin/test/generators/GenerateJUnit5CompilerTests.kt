@@ -49,21 +49,21 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractForeignAnnotationsSourceJavaTest> {
-                model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests")
-                model("diagnostics/foreignAnnotationsTests/java9Tests")
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractForeignAnnotationsCompiledJavaTest> {
-                model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests")
-                model("diagnostics/foreignAnnotationsTests/java9Tests")
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest> {
-                model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests",)
-                model("diagnostics/foreignAnnotationsTests/java9Tests")
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractBlackBoxCodegenTest> {
