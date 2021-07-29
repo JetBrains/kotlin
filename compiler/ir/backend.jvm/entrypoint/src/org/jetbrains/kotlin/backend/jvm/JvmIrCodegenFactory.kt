@@ -132,7 +132,11 @@ open class JvmIrCodegenFactory(
                 // Deserializer for built-ins module should exist because built-in types returned from SDK belong to that module,
                 // but JDK's built-ins module might not be in current module's dependencies
                 // We have to ensure that deserializer for built-ins module is created
-                irLinker.deserializeIrModuleHeader(it.builtIns.builtInsModule, null)
+                irLinker.deserializeIrModuleHeader(
+                    it.builtIns.builtInsModule,
+                    null,
+                    _moduleName = it.builtIns.builtInsModule.name.asString()
+                )
             }
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
         }
