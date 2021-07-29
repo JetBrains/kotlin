@@ -43,11 +43,7 @@ private String defFileToLibName(String target, String name) {
 //#endregion
 
 if (HostManager.host.name == "macos_arm64") {
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
-        }
-    }
+    JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_17)
 }
 
 // TODO: I think most for the non-DSL language below can either be incorporated into DSL
