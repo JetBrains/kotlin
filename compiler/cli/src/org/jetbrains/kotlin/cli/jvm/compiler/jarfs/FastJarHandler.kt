@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.FactoryMap
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.RandomAccessFile
@@ -32,11 +31,10 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
             }
         }
 
-        val childrenMap = FactoryMap.create<FastJarVirtualFile, MutableList<VirtualFile>> { ArrayList() }
-
+        val childrenMap = HashMap<FastJarVirtualFile, MutableList<VirtualFile>>(ourEntryMap.size)
         myRoot = FastJarVirtualFile(this, "", -1, DEFAULT_TIMESTAMP, null)
 
-        val filesByRelativePath = mutableMapOf<String, FastJarVirtualFile>()
+        val filesByRelativePath = HashMap<String, FastJarVirtualFile>(ourEntryMap.size)
         filesByRelativePath[""] = myRoot
 
         for (info in ourEntryMap.values) {
@@ -44,7 +42,8 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
         }
 
         for (child in filesByRelativePath.values) {
-            child.parent?.let(childrenMap::get)?.add(child)
+            val parent = child.parent as? FastJarVirtualFile ?: continue
+            childrenMap.getOrPut(parent) { mutableListOf() }.add(child)
         }
 
         for ((key, childList) in childrenMap) {
