@@ -103,9 +103,7 @@ class IcModuleDeserializer(
         val icDeserializer = moduleReversedFileIndex[topLevelSignature]
             ?: error("No file for $topLevelSignature (@ $idSig) in module $moduleDescriptor")
 
-        val symbol = icDeserializer.originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
-            linker.deserializedSymbols.add(it)
-        }
+        val symbol = icDeserializer.originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
 
         if (!symbol.isBound) {
             topLevelSignature.originalEnqueue(icDeserializer)

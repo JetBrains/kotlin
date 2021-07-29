@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -50,8 +49,7 @@ abstract class KotlinIrLinker(
 
     abstract val translationPluginContext: TranslationPluginContext?
 
-    internal val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
-    val deserializedSymbols = mutableSetOf<IrSymbol>()
+    private val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
@@ -103,7 +101,7 @@ abstract class KotlinIrLinker(
 
     private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
 
-        if (symbol in triedToDeserializeDeclarationForSymbol || symbol in deserializedSymbols) {
+        if (symbol in triedToDeserializeDeclarationForSymbol) {
             return null
         }
         triedToDeserializeDeclarationForSymbol.add(symbol)
@@ -205,7 +203,6 @@ abstract class KotlinIrLinker(
         finalizeExpectActualLinker()
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
-        deserializedSymbols.clear()
 
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
