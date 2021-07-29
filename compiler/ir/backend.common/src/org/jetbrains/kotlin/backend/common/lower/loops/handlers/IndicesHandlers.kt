@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
@@ -23,21 +24,38 @@ import org.jetbrains.kotlin.name.FqName
 internal abstract class IndicesHandler(protected val context: CommonBackendContext) :
     ProgressionHandler {
 
+    private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
+
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
-            // `last = array.size - 1` (last is inclusive) for the loop `for (i in array.indices)`.
-            val last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter)
-                .apply { dispatchReceiver = expression.extensionReceiver!! }
+            val last: IrExpression
+            val lastInclusive: IrExpression?
+            val isLastInclusive: Boolean
+
+            if (preferJavaLikeCounterLoop) {
+                // Convert range with inclusive upper bound to exclusive upper bound if possible.
+                // This affects loop code performance on JVM.
+                last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter)
+                    .apply { dispatchReceiver = expression.extensionReceiver!! }
+                lastInclusive = last.decrement()
+                isLastInclusive = false
+            } else {
+                last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter)
+                    .apply { dispatchReceiver = expression.extensionReceiver!! }
+                    .decrement()
+                lastInclusive = null
+                isLastInclusive = true
+            }
 
             ProgressionHeaderInfo(
                 data,
                 first = irInt(0),
                 last = last,
                 step = irInt(1),
-                isLastInclusive = false,
+                isLastInclusive = isLastInclusive,
                 canOverflow = false,
                 direction = ProgressionDirection.INCREASING,
-                originalLastInclusive = last.decrement()
+                originalLastInclusive = lastInclusive
             )
         }
 

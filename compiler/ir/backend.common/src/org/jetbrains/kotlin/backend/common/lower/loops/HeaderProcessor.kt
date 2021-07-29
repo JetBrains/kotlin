@@ -252,6 +252,8 @@ class ProgressionLoopHeader(
     context: CommonBackendContext
 ) : NumericForLoopHeader<ProgressionHeaderInfo>(headerInfo, builder, context) {
 
+    private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
+
     // For this loop:
     //
     //   for (i in first()..last() step step())
@@ -331,7 +333,7 @@ class ProgressionLoopHeader(
 
                 val loopCondition = buildLoopCondition(this@with)
                 LoopReplacement(newLoop, irIfThen(loopCondition, newLoop))
-            } else if (!headerInfo.isLastInclusive) {
+            } else if (preferJavaLikeCounterLoop && !headerInfo.isLastInclusive) {
                 // It is critically important for loop code performance on JVM to "look like" a simple counter loop in Java when possible
                 // (`for (int i = first; i < lastExclusive; ++i) { ... }`).
                 // Otherwise loop-related optimizations will not kick in, resulting in significant performance degradation.

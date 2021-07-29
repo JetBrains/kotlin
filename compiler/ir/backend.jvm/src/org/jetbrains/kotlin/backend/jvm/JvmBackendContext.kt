@@ -212,6 +212,9 @@ class JvmBackendContext(
         super.handleDeepCopy(fileSymbolMap, classSymbolMap, functionSymbolMap)
     }
 
+    override val preferJavaLikeCounterLoop: Boolean
+        get() = true
+
     inner class JvmIr(
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable

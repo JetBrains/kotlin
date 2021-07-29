@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal class RangeToHandler(private val context: CommonBackendContext) :
     ProgressionHandler {
 
+    private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
+
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
     override val matcher = SimpleCalleeMatcher {
@@ -39,9 +41,9 @@ internal class RangeToHandler(private val context: CommonBackendContext) :
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             val last = expression.getValueArgument(0)!!
 
-            // Convert range with inclusive upper bound to exclusive upper bound if possible.
-            // This affects loop code performance on JVM.
-            if (canUseExclusiveUpperBound(last, data)) {
+            if (preferJavaLikeCounterLoop && canUseExclusiveUpperBound(last, data)) {
+                // Convert range with inclusive upper bound to exclusive upper bound if possible.
+                // This affects loop code performance on JVM.
                 val lastExclusive = last.convertToExclusiveUpperBound()
                 if (lastExclusive != null) {
                     return@with ProgressionHeaderInfo(
