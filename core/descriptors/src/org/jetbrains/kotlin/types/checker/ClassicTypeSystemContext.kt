@@ -142,7 +142,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? {
         require(this is SimpleType, this::errorMessage)
-        return this as? NewCapturedType
+        return if (this is SimpleTypeWithEnhancement) origin.asCapturedType() else this as? NewCapturedType
     }
 
     override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? {
@@ -326,8 +326,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is SimpleType, this::errorMessage)
         return !isError &&
                 constructor.declarationDescriptor !is TypeAliasDescriptor &&
-                (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType || constructor is IntegerLiteralTypeConstructor)
+                (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType || constructor is IntegerLiteralTypeConstructor || isSingleClassifierTypeWithEnhancement())
     }
+
+    private fun SimpleTypeMarker.isSingleClassifierTypeWithEnhancement() =
+        this is SimpleTypeWithEnhancement && origin.isSingleClassifierType()
 
     override fun KotlinTypeMarker.contains(predicate: (KotlinTypeMarker) -> Boolean): Boolean {
         require(this is KotlinType, this::errorMessage)
