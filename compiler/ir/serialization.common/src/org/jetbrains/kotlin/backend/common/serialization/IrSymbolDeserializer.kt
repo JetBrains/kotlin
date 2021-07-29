@@ -67,7 +67,7 @@ class IrSymbolDeserializer(
             BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
             BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
                 IrLocalDelegatedPropertySymbolImpl()
-            BinarySymbolData.SymbolKind.FILE_SYMBOL -> (idSig as IdSignature.FileSignature).fileSymbol
+            BinarySymbolData.SymbolKind.FILE_SYMBOL -> fileSymbol
             else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
         }
     }
