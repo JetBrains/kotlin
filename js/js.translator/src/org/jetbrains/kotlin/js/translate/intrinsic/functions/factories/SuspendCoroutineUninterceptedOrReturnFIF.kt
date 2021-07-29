@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 
 object SuspendCoroutineUninterceptedOrReturnFIF: FunctionIntrinsicFactory {
     override fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {
-        if (!descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(context.languageVersionSettings)) return null
+        if (!descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn()) return null
         return Intrinsic
     }
     object Intrinsic: FunctionIntrinsic() {

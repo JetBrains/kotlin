@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
@@ -27,7 +26,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 internal class MethodNodeExaminer(
-    val languageVersionSettings: LanguageVersionSettings,
     containingClassInternalName: String,
     val methodNode: MethodNode,
     suspensionPoints: List<SuspensionPoint>,
@@ -116,7 +114,7 @@ internal class MethodNodeExaminer(
                 val label = Label()
                 methodNode.instructions.insertBefore(pop, withInstructionAdapter {
                     dup()
-                    loadCoroutineSuspendedMarker(languageVersionSettings)
+                    loadCoroutineSuspendedMarker()
                     ifacmpne(label)
                     areturn(AsmTypes.OBJECT_TYPE)
                     mark(label)

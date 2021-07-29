@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -84,7 +83,6 @@ class CliLightClassGenerationSupport(
             get() = DeprecationResolver(
                 LockBasedStorageManager.NO_LOCKS,
                 languageVersionSettings,
-                CoroutineCompatibilitySupport.ENABLED,
                 JavaDeprecationSettings
             )
 

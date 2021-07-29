@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isReleaseCoroutines
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
@@ -233,7 +231,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, languageVersionSettings, unifiedNullChecks)
+        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, unifiedNullChecks)
 
         instructions.insert(insn, newMethodNode.instructions)
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
@@ -257,7 +255,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         if (stubInstanceOf !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType, languageVersionSettings.isReleaseCoroutines())
+        generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
 
         instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubInstanceOf)

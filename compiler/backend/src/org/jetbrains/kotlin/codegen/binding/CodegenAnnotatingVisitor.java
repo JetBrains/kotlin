@@ -477,7 +477,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         SimpleFunctionDescriptor jvmSuspendFunctionView =
                 CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
                         functionDescriptor,
-                        languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
                         this.bindingContext
                 );
 
@@ -714,54 +713,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         super.visitCallExpression(expression);
         checkSamCall(expression);
         checkCrossinlineCall(expression);
-        recordSuspendFunctionTypeWrapperForArguments(expression);
-    }
-
-    private void recordSuspendFunctionTypeWrapperForArguments(@NotNull KtCallExpression expression) {
-        ResolvedCall<?> call = CallUtilKt.getResolvedCall(expression, bindingContext);
-        if (call == null) return;
-
-        CallableDescriptor descriptor = call.getResultingDescriptor();
-        if (!CodegenUtilKt.needsExperimentalCoroutinesWrapper(descriptor)) return;
-
-        List<ResolvedValueArgument> argumentsByIndex = call.getValueArgumentsByIndex();
-        if (argumentsByIndex == null) return;
-
-        for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
-            ResolvedValueArgument resolvedValueArgument = argumentsByIndex.get(parameter.getIndex());
-            if (!(resolvedValueArgument instanceof ExpressionValueArgument)) continue;
-            ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
-            if (valueArgument == null) continue;
-            KtExpression argumentExpression = valueArgument.getArgumentExpression();
-            if (argumentExpression == null) continue;
-
-            recordSuspendFunctionTypeWrapperForArgument(parameter, argumentExpression);
-        }
-
-        ReceiverValue receiver = call.getExtensionReceiver();
-        if (descriptor.getExtensionReceiverParameter() != null && receiver instanceof ExpressionReceiver) {
-            recordSuspendFunctionTypeWrapperForArgument(
-                    descriptor.getExtensionReceiverParameter(),
-                    ((ExpressionReceiver) receiver).getExpression()
-            );
-        }
-    }
-
-    private void recordSuspendFunctionTypeWrapperForArgument(ParameterDescriptor parameter, KtExpression argumentExpression) {
-        if (FunctionTypesKt.isSuspendFunctionTypeOrSubtype(parameter.getType())) {
-
-            // SuspendFunctionN type is mapped to is mapped to FunctionTypeN+1, but we also need to remove an argument for return type
-            // So, it could be parameter.getType().getArguments().size() + 1 - 1
-            int functionTypeArity = parameter.getType().getArguments().size();
-
-            Type functionType = Type.getObjectType(NUMBERED_FUNCTION_PREFIX + functionTypeArity);
-
-            bindingTrace.record(
-                    FUNCTION_TYPE_FOR_SUSPEND_WRAPPER,
-                    argumentExpression,
-                    functionType
-            );
-        }
     }
 
     private void checkCrossinlineCall(@NotNull KtCallExpression expression) {

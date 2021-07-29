@@ -624,7 +624,7 @@ class DescriptorSerializer private constructor(
         }
 
         if (type.isSuspendFunctionType) {
-            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type, extension.releaseCoroutines()))
+            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type))
             functionType.flags = Flags.getTypeFlags(true, false)
             return functionType
         }

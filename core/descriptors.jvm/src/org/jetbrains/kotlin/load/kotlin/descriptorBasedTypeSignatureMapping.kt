@@ -44,7 +44,7 @@ fun <T : Any> mapType(
 
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
-            transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),
+            transformSuspendFunctionToRuntimeFunctionType(kotlinType),
             factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
         )
     }

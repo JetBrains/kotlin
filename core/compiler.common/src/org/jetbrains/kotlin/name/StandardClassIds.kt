@@ -75,7 +75,7 @@ object StandardClassIds {
     val constantAllowedTypes = primitiveTypes + unsignedTypes + String
 
     val Continuation =
-        ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.shortName())
+        ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, StandardNames.CONTINUATION_INTERFACE_FQ_NAME.shortName())
 
     @Suppress("FunctionName")
     fun FunctionN(n: Int): ClassId {

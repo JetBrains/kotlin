@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.calls.checkers.InstantiationOfAnnotationClassesCallChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 object JsPlatformConfigurator : PlatformConfiguratorBase(
@@ -51,7 +50,6 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
-        container.useInstance(CoroutineCompatibilitySupport.DISABLED)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

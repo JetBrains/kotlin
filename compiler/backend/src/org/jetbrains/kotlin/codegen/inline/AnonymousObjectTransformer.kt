@@ -62,7 +62,7 @@ class AnonymousObjectTransformer(
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(null, maxOf(version, state.classFileVersion), access, name, signature, superName, interfaces)
-                if (languageVersionSettings.isCoroutineSuperClass(superName)) {
+                if (superName.isCoroutineSuperClass()) {
                     inliningContext.isContinuation = true
                 }
                 superClassName = superName

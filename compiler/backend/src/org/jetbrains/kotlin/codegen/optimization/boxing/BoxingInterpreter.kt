@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.google.common.collect.ImmutableSet
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.coroutines.RELEASE_COROUTINES_VERSION_SETTINGS
-import org.jetbrains.kotlin.codegen.coroutines.coroutinesJvmInternalPackageFqName
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
@@ -216,7 +215,7 @@ fun AbstractInsnNode.isPrimitiveBoxing() =
     }
 
 private val BOXING_CLASS_INTERNAL_NAME =
-    RELEASE_COROUTINES_VERSION_SETTINGS.coroutinesJvmInternalPackageFqName().child(Name.identifier("Boxing")).topLevelClassInternalName()
+    StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("Boxing")).topLevelClassInternalName()
 
 private fun isJvmPrimitiveName(name: String) = JvmPrimitiveType.values().any { it.javaKeywordName == name }
 

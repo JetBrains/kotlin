@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.codegen.coroutines.coroutinesJvmInternalPackageFqName
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.coroutines.isSuspendLambdaOrLocalFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -33,8 +32,7 @@ class JvmRuntimeTypes(
     private val generateOptimizedCallableReferenceSuperClasses: Boolean
 ) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
-    private val kotlinCoroutinesJvmInternalPackage =
-        MutablePackageFragmentDescriptor(module, languageVersionSettings.coroutinesJvmInternalPackageFqName())
+    private val kotlinCoroutinesJvmInternalPackage = MutablePackageFragmentDescriptor(module, COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME)
 
     private fun internal(className: String, packageFragment: PackageFragmentDescriptor = kotlinJvmInternalPackage): Lazy<ClassDescriptor> =
         lazy { createClass(packageFragment, className) }
@@ -53,24 +51,16 @@ class JvmRuntimeTypes(
     private val localVariableReference: ClassDescriptor by internal("LocalVariableReference")
     private val mutableLocalVariableReference: ClassDescriptor by internal("MutableLocalVariableReference")
 
-    private val coroutineImpl: ClassDescriptor by internal("CoroutineImpl", kotlinCoroutinesJvmInternalPackage)
     private val continuationImpl: ClassDescriptor by coroutinesInternal("ContinuationImpl")
     private val restrictedContinuationImpl: ClassDescriptor by coroutinesInternal("RestrictedContinuationImpl")
     private val suspendLambda: ClassDescriptor by coroutinesInternal("SuspendLambda")
     private val restrictedSuspendLambda: ClassDescriptor by coroutinesInternal("RestrictedSuspendLambda")
 
     private val suspendFunctionInterface: ClassDescriptor? by lazy {
-        if (languageVersionSettings.isReleaseCoroutines())
-            createClass(kotlinCoroutinesJvmInternalPackage, "SuspendFunction", ClassKind.INTERFACE)
-        else null
+        createClass(kotlinCoroutinesJvmInternalPackage, "SuspendFunction", ClassKind.INTERFACE)
     }
 
-    private fun createCoroutineSuperClass(className: String): ClassDescriptor {
-        return if (languageVersionSettings.isReleaseCoroutines())
-            createClass(kotlinCoroutinesJvmInternalPackage, className)
-        else
-            coroutineImpl
-    }
+    private fun createCoroutineSuperClass(className: String): ClassDescriptor = createClass(kotlinCoroutinesJvmInternalPackage, className)
 
     private val propertyReferences: List<ClassDescriptor> by propertyClasses("PropertyReference", "")
     private val mutablePropertyReferences: List<ClassDescriptor> by propertyClasses("MutablePropertyReference", "")
@@ -94,7 +84,7 @@ class JvmRuntimeTypes(
     fun getSupertypesForClosure(descriptor: FunctionDescriptor): Collection<KotlinType> {
         val actualFunctionDescriptor =
             if (descriptor.isSuspend)
-                getOrCreateJvmSuspendFunctionView(descriptor, languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines))
+                getOrCreateJvmSuspendFunctionView(descriptor)
             else
                 descriptor
 
@@ -118,7 +108,7 @@ class JvmRuntimeTypes(
         if (descriptor.isSuspend) {
             return mutableListOf<KotlinType>().apply {
                 if (actualFunctionDescriptor.extensionReceiverParameter?.type
-                        ?.isRestrictsSuspensionReceiver(languageVersionSettings) == true
+                        ?.isRestrictsSuspensionReceiver() == true
                 ) {
                     if (descriptor.isSuspendLambdaOrLocalFunction()) {
                         add(restrictedSuspendLambda.defaultType)

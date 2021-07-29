@@ -36,7 +36,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
     override val stateMachineMethodName = Name.identifier("invokeSuspend")
 
     override fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol =
-            (if (function.isRestrictedSuspendFunction(context.irBuiltIns.languageVersionSettings)) {
+            (if (function.isRestrictedSuspendFunction()) {
                 symbols.restrictedContinuationImpl
             } else {
                 symbols.continuationImpl

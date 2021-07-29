@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.config.CoroutineLanguageVersionSettingsUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
@@ -397,8 +396,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static ClassDescriptor getCoroutineBaseClass(@NotNull TranslationContext context) {
-        FqName className = CoroutineLanguageVersionSettingsUtilKt.coroutinesPackageFqName(context.getLanguageVersionSettings())
-                .child(Name.identifier("CoroutineImpl"));
+        FqName className = StandardNames.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl"));
         ClassDescriptor descriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(
                 context.getCurrentModule(), ClassId.topLevel(className));
         assert descriptor != null;

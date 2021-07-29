@@ -104,7 +104,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             copyTypeParametersFrom(irFunction)
             val resultField = addField {
                 origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD
-                name = Name.identifier(context.state.languageVersionSettings.dataFieldName())
+                name = Name.identifier(CONTINUATION_RESULT_FIELD_NAME)
                 type = context.ir.symbols.resultOfAnyType
                 visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             }

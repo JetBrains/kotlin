@@ -41,7 +41,7 @@ object IdSignatureValues {
     @JvmField val comparable = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Comparable")
     @JvmField val charSequence = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "CharSequence")
     @JvmField val iterable = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Iterable")
-    @JvmField val continuation = getPublicSignature(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, "Continuation")
+    @JvmField val continuation = getPublicSignature(StandardNames.COROUTINES_PACKAGE_FQ_NAME, "Continuation")
     @JvmField val result = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Result")
     @JvmField val sequence = IdSignature.CommonSignature("kotlin.sequences", "Sequence", null, 0)
 }
@@ -157,7 +157,7 @@ fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean): Boolean 
 
 fun IrType.isKotlinResult(): Boolean = isClassType(StandardNames.RESULT_FQ_NAME.toUnsafe(), false)
 
-fun IrType.isNullableContinuation(): Boolean = isClassType(StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe(), true)
+fun IrType.isNullableContinuation(): Boolean = isClassType(StandardNames.CONTINUATION_INTERFACE_FQ_NAME.toUnsafe(), true)
 
 // FIR and backend instances have different mask.
 fun IrType.isKClass(): Boolean = isClassType(StandardNames.FqNames.kClass, false)

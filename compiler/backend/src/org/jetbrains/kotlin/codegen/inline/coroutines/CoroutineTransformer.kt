@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -49,18 +48,16 @@ class CoroutineTransformer(
     fun suspendLambdaWithGeneratedStateMachine(node: MethodNode): Boolean =
         !isContinuationNotLambda() && isSuspendLambda(node) && isStateMachine(node)
 
-    private fun isContinuationNotLambda(): Boolean = inliningContext.isContinuation &&
-            if (state.languageVersionSettings.isReleaseCoroutines()) superClassName.endsWith("ContinuationImpl")
-            else methods.any { it.name == "getLabel" }
+    private fun isContinuationNotLambda(): Boolean = inliningContext.isContinuation && superClassName.endsWith("ContinuationImpl")
 
     private fun isStateMachine(node: MethodNode): Boolean =
         node.instructions.asSequence().any { insn -> insn is LdcInsnNode && insn.cst == ILLEGAL_STATE_ERROR_MESSAGE }
 
-    private fun isSuspendLambda(node: MethodNode) = isResumeImpl(node)
+    private fun isSuspendLambda(node: MethodNode) = isInvokeSuspend(node)
 
     fun newMethod(node: MethodNode): DeferredMethodVisitor {
         return when {
-            isResumeImpl(node) -> {
+            isInvokeSuspend(node) -> {
                 assert(!isStateMachine(node)) {
                     "Inlining/transforming state-machine"
                 }
@@ -71,9 +68,8 @@ class CoroutineTransformer(
         }
     }
 
-    private fun isResumeImpl(node: MethodNode): Boolean =
-        state.languageVersionSettings.isResumeImplMethodName(node.name.removeSuffix(FOR_INLINE_SUFFIX)) &&
-                inliningContext.isContinuation
+    private fun isInvokeSuspend(node: MethodNode): Boolean =
+        node.name.removeSuffix(FOR_INLINE_SUFFIX) == INVOKE_SUSPEND_METHOD_NAME && inliningContext.isContinuation
 
     private fun isSuspendFunctionWithFakeConstructorCall(node: MethodNode): Boolean = findFakeContinuationConstructorClassName(node) != null
 
@@ -88,16 +84,15 @@ class CoroutineTransformer(
             val sourceCompilerForInline = inliningContext.root.sourceCompilerForInline
             val stateMachineBuilder = CoroutineTransformerMethodVisitor(
                 createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
+                containingClassInternalName = classBuilder.thisName,
                 obtainClassBuilderForCoroutineState = { classBuilder },
+                isForNamedFunction = false,
+                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                disableTailCallOptimizationForFunctionReturningUnit = false,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
-                languageVersionSettings = state.languageVersionSettings,
-                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                containingClassInternalName = classBuilder.thisName,
-                isForNamedFunction = false,
-                disableTailCallOptimizationForFunctionReturningUnit = false,
                 useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
             )
 
@@ -123,17 +118,16 @@ class CoroutineTransformer(
             val sourceCompilerForInline = inliningContext.root.sourceCompilerForInline
             val stateMachineBuilder = CoroutineTransformerMethodVisitor(
                 createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
+                containingClassInternalName = classBuilder.thisName,
                 obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
+                isForNamedFunction = true,
+                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
-                languageVersionSettings = state.languageVersionSettings,
-                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                containingClassInternalName = classBuilder.thisName,
-                isForNamedFunction = true,
                 needDispatchReceiver = true,
                 internalNameForDispatchReceiver = classBuilder.thisName,
-                disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization,
                 putContinuationParameterToLvt = !state.isIrBackend,
                 useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
             )

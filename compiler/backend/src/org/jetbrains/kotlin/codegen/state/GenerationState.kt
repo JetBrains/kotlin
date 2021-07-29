@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.PrecomputedSuppressCache
@@ -158,8 +157,7 @@ class GenerationState private constructor(
         CompilerDeserializationConfiguration(languageVersionSettings)
 
     val deprecationProvider = DeprecationResolver(
-        LockBasedStorageManager.NO_LOCKS, languageVersionSettings, CoroutineCompatibilitySupport.ENABLED,
-        JavaDeprecationSettings
+        LockBasedStorageManager.NO_LOCKS, languageVersionSettings, JavaDeprecationSettings
     )
 
     init {

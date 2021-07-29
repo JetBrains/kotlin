@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -54,26 +54,18 @@ fun IrFunction.isTopLevelInPackage(name: String, packageName: String): Boolean {
     return packageName == packageFqName
 }
 
-fun IrFunction.isBuiltInIntercepted(languageVersionSettings: LanguageVersionSettings): Boolean =
-    !languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines) &&
-            isTopLevelInPackage("intercepted", languageVersionSettings.coroutinesIntrinsicsPackageFqName().asString())
-
-fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings: LanguageVersionSettings): Boolean =
+fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
     isTopLevelInPackage(
         "suspendCoroutineUninterceptedOrReturn",
-        languageVersionSettings.coroutinesIntrinsicsPackageFqName().asString()
+        StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.asString()
     )
 
 open class DefaultInlineFunctionResolver(open val context: CommonBackendContext) : InlineFunctionResolver {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = symbol.owner
-        val languageVersionSettings = context.configuration.languageVersionSettings
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
         return when {
-            function.isBuiltInIntercepted(languageVersionSettings) ->
-                error("Continuation.intercepted is not available with release coroutines")
-
-            function.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
+            function.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
                 context.ir.symbols.suspendCoroutineUninterceptedOrReturn.owner
 
             symbol == context.ir.symbols.coroutineContextGetter ->

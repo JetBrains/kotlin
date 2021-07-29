@@ -132,17 +132,6 @@ internal data class DeprecatedByOverridden(private val deprecations: Collection<
         "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
 }
 
-internal data class DeprecatedExperimentalCoroutine(
-    override val target: DeclarationDescriptor,
-    override val deprecationLevel: DeprecationLevelValue
-) : Deprecation {
-    override val message: String? =
-        if (deprecationLevel == WARNING)
-            "Experimental coroutines support will be dropped in 1.4"
-        else
-            "Experimental coroutine cannot be used with API version 1.3"
-}
-
 internal data class DeprecatedOperatorMod(
     val languageVersionSettings: LanguageVersionSettings,
     val currentDeprecation: Deprecation

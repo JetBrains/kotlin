@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.psi.*
@@ -158,8 +157,7 @@ class PsiSourceCompilerForInline(
         }
 
         FunctionCodegen.generateMethodBody(
-            adapter, descriptor, context, jvmMethodSignature, strategy, parentCodegen, state.jvmDefaultMode,
-            state.languageVersionSettings.isReleaseCoroutines()
+            adapter, descriptor, context, jvmMethodSignature, strategy, parentCodegen, state.jvmDefaultMode
         )
 
         if (isLambda) {
@@ -235,7 +233,7 @@ class PsiSourceCompilerForInline(
     }
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
-        generateInlineIntrinsic(state.languageVersionSettings, functionDescriptor, jvmSignature.asmMethod, codegen.typeSystem)?.let {
+        generateInlineIntrinsic(functionDescriptor, jvmSignature.asmMethod, codegen.typeSystem)?.let {
             return it
         }
 

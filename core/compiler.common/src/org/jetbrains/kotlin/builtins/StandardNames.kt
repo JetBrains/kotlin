@@ -22,15 +22,13 @@ object StandardNames {
 
     @JvmField val CHAR_CODE = Name.identifier("code")
 
-    @JvmField val COROUTINES_PACKAGE_FQ_NAME_RELEASE = FqName("kotlin.coroutines")
+    @JvmField val COROUTINES_PACKAGE_FQ_NAME = FqName("kotlin.coroutines")
 
-    @JvmField val COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL = COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("experimental"))
+    @JvmField val COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.jvm.internal")
 
-    @JvmField val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME_EXPERIMENTAL = COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("intrinsics"))
+    @JvmField val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.intrinsics")
 
-    @JvmField val CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL = COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("Continuation"))
-
-    @JvmField val CONTINUATION_INTERFACE_FQ_NAME_RELEASE = COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"))
+    @JvmField val CONTINUATION_INTERFACE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"))
 
     @JvmField val RESULT_FQ_NAME = FqName("kotlin.Result")
 
@@ -68,7 +66,7 @@ object StandardNames {
         ANNOTATION_PACKAGE_FQ_NAME,
         KOTLIN_REFLECT_FQ_NAME,
         BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal")),
-        COROUTINES_PACKAGE_FQ_NAME_RELEASE
+        COROUTINES_PACKAGE_FQ_NAME
     )
 
     object FqNames {
@@ -237,7 +235,7 @@ object StandardNames {
 
     @JvmStatic
     fun getSuspendFunctionClassId(parameterCount: Int): ClassId {
-        return ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier(getSuspendFunctionName(parameterCount)))
+        return ClassId(COROUTINES_PACKAGE_FQ_NAME, Name.identifier(getSuspendFunctionName(parameterCount)))
     }
 
     @JvmStatic

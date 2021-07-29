@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
-import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.codegen.createMethodNodeForAlwaysEnabledAssert
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
@@ -30,25 +28,22 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-fun generateInlineIntrinsicForIr(languageVersionSettings: LanguageVersionSettings, descriptor: FunctionDescriptor): SMAPAndMethodNode? =
+fun generateInlineIntrinsicForIr(descriptor: FunctionDescriptor): SMAPAndMethodNode? =
     when {
         // TODO: implement these as codegen intrinsics (see IrIntrinsicMethods)
-        descriptor.isBuiltInIntercepted(languageVersionSettings) ->
-            createMethodNodeForIntercepted(languageVersionSettings)
-        descriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
-            createMethodNodeForCoroutineContext(descriptor, languageVersionSettings)
-        descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
-            createMethodNodeForSuspendCoroutineUninterceptedOrReturn(languageVersionSettings)
+        descriptor.isBuiltInCoroutineContext() ->
+            createMethodNodeForCoroutineContext(descriptor)
+        descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
+            createMethodNodeForSuspendCoroutineUninterceptedOrReturn()
         else -> null
     }?.let { SMAPAndMethodNode(it, SMAP(listOf())) }
 
 internal fun generateInlineIntrinsic(
-    languageVersionSettings: LanguageVersionSettings,
     descriptor: FunctionDescriptor,
     asmMethod: Method,
     typeSystem: TypeSystemCommonBackendContext
 ): SMAPAndMethodNode? {
-    return generateInlineIntrinsicForIr(languageVersionSettings, descriptor) ?: when {
+    return generateInlineIntrinsicForIr(descriptor) ?: when {
         isSpecialEnumMethod(descriptor) ->
             createSpecialEnumMethodBody(descriptor.name.asString(), descriptor.original.typeParameters.single(), typeSystem)
         TypeOfChecker.isTypeOf(descriptor) ->

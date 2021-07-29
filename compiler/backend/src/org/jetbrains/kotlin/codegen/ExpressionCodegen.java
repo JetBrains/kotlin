@@ -89,7 +89,6 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContextImpl;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker;
 import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -1288,11 +1287,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     private static CallableDescriptor unwrapOriginalReceiverOwnerForSuspendLambda(@NotNull MethodContext context) {
-        FunctionDescriptor originalForDoResume =
-                context.getFunctionDescriptor().getUserData(CoroutineCodegenUtilKt.INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME);
+        FunctionDescriptor originalForInvokeSuspend =
+                context.getFunctionDescriptor().getUserData(CoroutineCodegenUtilKt.INITIAL_SUSPEND_DESCRIPTOR_FOR_INVOKE_SUSPEND);
 
-        if (originalForDoResume != null) {
-            return originalForDoResume;
+        if (originalForInvokeSuspend != null) {
+            return originalForInvokeSuspend;
         }
 
         if (context.getFunctionDescriptor().isSuspend()) {
@@ -2617,26 +2616,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 ? coroutineInstanceValueForSuspensionPoint
                 : getContinuationParameterFromEnclosingSuspendFunction(resolvedCall);
 
-        if (coroutineInstanceValue != null && needsExperimentalCoroutinesWrapper(resolvedCall.getCandidateDescriptor())) {
-            StackValue releaseContinuation = coroutineInstanceValue;
-            coroutineInstanceValue = new StackValue(CoroutineCodegenUtilKt.EXPERIMENTAL_CONTINUATION_ASM_TYPE) {
-                @Override
-                public void putSelector(
-                        @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v
-                ) {
-                    releaseContinuation.put(CoroutineCodegenUtilKt.RELEASE_CONTINUATION_ASM_TYPE, v);
-                    invokeCoroutineMigrationMethod(
-                            v,
-                            "toExperimentalContinuation",
-                            Type.getMethodDescriptor(
-                                    CoroutineCodegenUtilKt.EXPERIMENTAL_CONTINUATION_ASM_TYPE,
-                                    CoroutineCodegenUtilKt.RELEASE_CONTINUATION_ASM_TYPE
-                            )
-                    );
-                }
-            };
-        }
-
         tempVariables.put(continuationExpression, coroutineInstanceValue);
     }
 
@@ -2774,7 +2753,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         SuspensionPointKind suspensionPointKind =
-                CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, this, state.getLanguageVersionSettings());
+                CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, this);
         boolean maybeSuspensionPoint = suspensionPointKind != SuspensionPointKind.NEVER && !insideCallableReference();
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
         if (!(callableMethod instanceof IntrinsicWithSpecialReceiver)) {
@@ -2833,7 +2812,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             KotlinType unboxedInlineClass = CoroutineCodegenUtilKt.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(
                     (FunctionDescriptor) resolvedCall.getResultingDescriptor(), typeMapper);
             if (unboxedInlineClass != null) {
-                CoroutineCodegenUtilKt.generateCoroutineSuspendedCheck(v, state.getLanguageVersionSettings());
+                CoroutineCodegenUtilKt.generateCoroutineSuspendedCheck(v);
             }
         }
 
@@ -2948,7 +2927,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor original =
                 CoroutineCodegenUtilKt.getOriginalSuspendFunctionView(
                         unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal())),
-                        bindingContext, state
+                        bindingContext
                 );
 
         FunctionDescriptor functionDescriptor =
@@ -5243,7 +5222,7 @@ The "returned" value of try expression with no finally is either the last expres
             }
 
             CodegenUtilKt.generateAsCast(
-                    v, rightKotlinType, boxedRightType, safeAs, state.getLanguageVersionSettings(), state.getUnifiedNullChecks()
+                    v, rightKotlinType, boxedRightType, safeAs, state.getUnifiedNullChecks()
             );
 
             return Unit.INSTANCE;
@@ -5297,7 +5276,7 @@ The "returned" value of try expression with no finally is either the last expres
                 return null;
             }
 
-            CodegenUtilKt.generateIsCheck(v, rhsKotlinType, type, state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
+            CodegenUtilKt.generateIsCheck(v, rhsKotlinType, type);
             return null;
         });
     }

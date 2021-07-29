@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
+import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspend
@@ -688,7 +688,7 @@ class MethodInliner(
             }
 
             for ((index, param) in paramTypes.reversed().withIndex()) {
-                if (param != languageVersionSettings.continuationAsmType() && param != OBJECT_TYPE) continue
+                if (param != CONTINUATION_ASM_TYPE && param != OBJECT_TYPE) continue
                 val sourceIndices = (frame.getStack(frame.stackSize - index - 1) as? Aload0BasicValue)?.indices ?: continue
                 for (sourceIndex in sourceIndices) {
                     val src = processingNode.instructions[sourceIndex]

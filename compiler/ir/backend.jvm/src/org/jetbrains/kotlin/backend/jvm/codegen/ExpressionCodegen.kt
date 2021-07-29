@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -534,7 +533,7 @@ class ExpressionCodegen(
                 MaterialValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType).apply {
                     if (!irFunction.shouldContainSuspendMarkers()) {
                         // Since the coroutine transformer won't run, we need to do this manually.
-                        mv.generateCoroutineSuspendedCheck(state.languageVersionSettings)
+                        mv.generateCoroutineSuspendedCheck()
                     }
                     mv.checkcast(type)
                 }
@@ -1050,7 +1049,7 @@ class ExpressionCodegen(
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
                     mv.instanceOf(type)
                 } else {
-                    TypeIntrinsics.instanceOf(mv, kotlinType, type, state.languageVersionSettings.isReleaseCoroutines())
+                    TypeIntrinsics.instanceOf(mv, kotlinType, type)
                 }
                 expression.onStack
             }

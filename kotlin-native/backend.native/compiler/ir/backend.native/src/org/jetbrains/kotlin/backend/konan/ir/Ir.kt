@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.kotlinNativeInternal
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
-import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -359,11 +357,11 @@ internal class KonanSymbols(
 
     override val suspendCoroutineUninterceptedOrReturn = internalFunction("suspendCoroutineUninterceptedOrReturn")
 
-    private val coroutinesIntrinsicsPackage = context.builtIns.builtInsModule.getPackage(
-        context.config.configuration.languageVersionSettings.coroutinesIntrinsicsPackageFqName()).memberScope
+    private val coroutinesIntrinsicsPackage =
+            context.builtIns.builtInsModule.getPackage(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
 
-    private val coroutinesPackage = context.builtIns.builtInsModule.getPackage(
-            context.config.configuration.languageVersionSettings.coroutinesPackageFqName()).memberScope
+    private val coroutinesPackage =
+            context.builtIns.builtInsModule.getPackage(StandardNames.COROUTINES_PACKAGE_FQ_NAME).memberScope
 
     override val coroutineContextGetter = symbolTable.referenceSimpleFunction(
             coroutinesPackage

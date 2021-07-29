@@ -16,7 +16,7 @@ enum class FunctionClassKind(
     val isReflectType: Boolean
 ) {
     Function(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Function", isSuspendType = false, isReflectType = false),
-    SuspendFunction(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, "SuspendFunction", isSuspendType = true, isReflectType = false),
+    SuspendFunction(StandardNames.COROUTINES_PACKAGE_FQ_NAME, "SuspendFunction", isSuspendType = true, isReflectType = false),
     KFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KFunction", isSuspendType = false, isReflectType = true),
     KSuspendFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KSuspendFunction", isSuspendType = true, isReflectType = true);
 

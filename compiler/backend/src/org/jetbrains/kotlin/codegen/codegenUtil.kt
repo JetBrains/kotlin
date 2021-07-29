@@ -13,15 +13,13 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.MultifileClassFacadeContext
-import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
+import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -45,8 +43,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -70,8 +66,7 @@ internal val JAVA_LANG_DEPRECATED = Type.getType(Deprecated::class.java).descrip
 fun generateIsCheck(
     v: InstructionAdapter,
     kotlinType: KotlinType,
-    asmType: Type,
-    isReleaseCoroutines: Boolean
+    asmType: Type
 ) {
     if (TypeUtils.isNullableType(kotlinType)) {
         val nope = Label()
@@ -82,7 +77,7 @@ fun generateIsCheck(
 
             ifnull(nope)
 
-            TypeIntrinsics.instanceOf(this, kotlinType, asmType, isReleaseCoroutines)
+            TypeIntrinsics.instanceOf(this, kotlinType, asmType)
 
             goTo(end)
 
@@ -93,7 +88,7 @@ fun generateIsCheck(
             mark(end)
         }
     } else {
-        TypeIntrinsics.instanceOf(v, kotlinType, asmType, isReleaseCoroutines)
+        TypeIntrinsics.instanceOf(v, kotlinType, asmType)
     }
 }
 
@@ -102,7 +97,6 @@ fun generateAsCast(
     kotlinType: KotlinType,
     asmType: Type,
     isSafe: Boolean,
-    languageVersionSettings: LanguageVersionSettings,
     unifiedNullChecks: Boolean,
 ) {
     if (!isSafe) {
@@ -112,7 +106,7 @@ fun generateAsCast(
     } else {
         with(v) {
             dup()
-            TypeIntrinsics.instanceOf(v, kotlinType, asmType, languageVersionSettings.isReleaseCoroutines())
+            TypeIntrinsics.instanceOf(v, kotlinType, asmType)
             val ok = Label()
             ifne(ok)
             pop()
@@ -444,14 +438,10 @@ fun KotlinType.isInlineClassTypeWithPrimitiveEquality(): Boolean {
     return false
 }
 
-fun CallableDescriptor.needsExperimentalCoroutinesWrapper() =
-    (this as? DeserializedMemberDescriptor)?.coroutinesExperimentalCompatibilityMode == CoroutinesCompatibilityMode.NEEDS_WRAPPER
-
 fun recordCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingTrace: BindingTrace) {
     val labelName = getCallLabelForLambdaArgument(declaration, bindingTrace.bindingContext) ?: return
     val functionDescriptor = bindingTrace[BindingContext.FUNCTION, declaration] ?: return
     bindingTrace.record(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, functionDescriptor, labelName)
-
 }
 
 fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {
@@ -647,7 +637,7 @@ private fun generateLambdaForRunSuspend(
         }
 
         visitVarInsn(ALOAD, 1)
-        val continuationInternalName = state.languageVersionSettings.continuationAsmType().internalName
+        val continuationInternalName = CONTINUATION_ASM_TYPE.internalName
 
         visitTypeInsn(
             CHECKCAST,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.optimization.boxing.isPrimitiveBoxing
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -15,10 +16,9 @@ import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.*
 
 private val BOXING_CLASS_INTERNAL_NAME =
-    RELEASE_COROUTINES_VERSION_SETTINGS.coroutinesJvmInternalPackageFqName().child(Name.identifier("Boxing")).topLevelClassInternalName()
+    StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("Boxing")).topLevelClassInternalName()
 
 @OptIn(ExperimentalStdlibApi::class)
 object ChangeBoxingMethodTransformer : MethodTransformer() {

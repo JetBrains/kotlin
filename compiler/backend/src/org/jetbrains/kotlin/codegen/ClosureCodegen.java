@@ -475,7 +475,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
             List<Type> superCtorArgTypes = new ArrayList<>();
             if (superClassAsmType.equals(LAMBDA) || functionReferenceTarget != null ||
-                CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())
+                CoroutineCodegenUtilKt.isCoroutineSuperClass(superClassAsmType.getInternalName())
             ) {
                 iv.iconst(CodegenUtilKt.getArity(funDescriptor));
                 superCtorArgTypes.add(Type.INT_TYPE);

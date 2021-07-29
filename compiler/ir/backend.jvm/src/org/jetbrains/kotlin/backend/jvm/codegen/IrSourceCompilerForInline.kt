@@ -68,7 +68,7 @@ class IrSourceCompilerForInline(
     }
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
-        generateInlineIntrinsicForIr(state.languageVersionSettings, callee.toIrBasedDescriptor())?.let {
+        generateInlineIntrinsicForIr(callee.toIrBasedDescriptor())?.let {
             return it
         }
         if (jvmSignature.asmMethod.name != callee.name.asString()) {
