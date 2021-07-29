@@ -15,11 +15,11 @@ fun main() {
     val d = Data(a, b)
     val e = Data(200).foo(a, b)!!
 
-    val a1 = a.checkData(17)
-    val b1 = b.checkData(119)
-    val c1 = c.checkData(217)
-    val d1 = d.checkData(436)
-    val e1 = e.checkData(536)
+    val a1 = a.checkData(17) != 0
+    val b1 = b.checkData(119) != 0
+    val c1 = c.checkData(217) != 0
+    val d1 = d.checkData(436) != 0
+    val e1 = e.checkData(536) != 0
 
     // Use printf instead of println to avoid messages
     // appearing out of order with the native code.

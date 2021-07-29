@@ -4333,6 +4333,7 @@ interopTest("interop_cppSkia") {
             "MANAGED: f: true, a: true, b: false, v: true, c: false\n" +
             "DATA: 17 19 17 17\n" +
             "unref\n~SkData()\n~SkFoo()\n"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 interopTest("interop_cppSkiaSignature") {
@@ -4342,6 +4343,7 @@ interopTest("interop_cppSkiaSignature") {
     goldValue =
             "SkData()\nSkData(19)\nSkData(SkData*)\nSkData(SkData*, SkData*)\nSkData(200)\nSkData(436)\n"+
             "true true true true true\n"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 /**

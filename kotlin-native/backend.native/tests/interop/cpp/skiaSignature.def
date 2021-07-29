@@ -55,7 +55,7 @@ class SkData {
             data = val;
         };
 
-        bool checkData(int val) {
+        int checkData(int val) {
             return val == data;
         };
 };
