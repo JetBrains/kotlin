@@ -1,4 +1,5 @@
 // JSPECIFY_STATE: warn
+// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // FILE: J1.java
 import org.jetbrains.annotations.Nullable;
 

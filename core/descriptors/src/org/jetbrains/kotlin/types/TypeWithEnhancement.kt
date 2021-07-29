@@ -33,7 +33,7 @@ class SimpleTypeWithEnhancement(
 ) : DelegatingSimpleType(),
     TypeWithEnhancement {
 
-    override val origin: UnwrappedType get() = delegate
+    override val origin get() = delegate
 
     override fun replaceAnnotations(newAnnotations: Annotations): SimpleType =
         origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement) as SimpleType
