@@ -631,6 +631,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 }
 
                 @Test
+                @TestMetadata("Captured.kt")
+                public void testCaptured() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
+                }
+
+                @Test
                 @TestMetadata("Defaults.kt")
                 public void testDefaults() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Defaults.kt");
@@ -776,6 +782,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
                 @TestMetadata("AnnotatedBoundsOfWildcard.fir.kt")
                 public void testAnnotatedBoundsOfWildcard_fir() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.fir.kt");
+                }
+
+                @Test
+                @TestMetadata("Captured.kt")
+                public void testCaptured() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Captured.kt");
                 }
 
                 @Test
