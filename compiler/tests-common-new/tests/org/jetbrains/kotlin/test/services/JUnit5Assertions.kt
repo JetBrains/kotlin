@@ -15,13 +15,19 @@ import java.io.IOException
 import org.junit.jupiter.api.Assertions as JUnit5PlatformAssertions
 
 object JUnit5Assertions : AssertionsService() {
+    private val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
+
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
         try {
             val actualText = actual.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
             if (!expectedFile.exists()) {
-                expectedFile.parentFile.mkdirs()
-                expectedFile.writeText(actualText)
-                org.junit.jupiter.api.fail("Expected data file did not exist. Generating: $expectedFile")
+                if (isTeamCityBuild) {
+                    org.junit.jupiter.api.fail("Expected data file did not exist `$expectedFile`")
+                } else {
+                    expectedFile.parentFile.mkdirs()
+                    expectedFile.writeText(actualText)
+                    org.junit.jupiter.api.fail("Expected data file did not exist. Generating: $expectedFile")
+                }
             }
             val expected = expectedFile.readText().convertLineSeparators()
             val expectedText = expected.trim { it <= ' ' }.trimTrailingWhitespacesAndAddNewlineAtEOF()
