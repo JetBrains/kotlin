@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -306,6 +307,14 @@ private object FirToKtConversionCreator {
             "firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol({0}.fir)",
             KtFunctionLikeSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirSimpleFunction")
+        ),
+        FirSourceElement::class to HLFunctionCallConversion(
+            "({0} as FirPsiSourceElement).psi",
+            PsiElement::class.createType(),
+            importsToAdd = listOf(
+                "org.jetbrains.kotlin.fir.psi",
+                "org.jetbrains.kotlin.fir.FirPsiSourceElement"
+            )
         )
     )
 

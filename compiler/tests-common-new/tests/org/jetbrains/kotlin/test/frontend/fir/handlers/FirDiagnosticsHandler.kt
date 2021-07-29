@@ -81,12 +81,17 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             if (LanguageSettingsDirectives.API_VERSION in module.directives) {
                 diagnostics = diagnostics.filter { it.factory.name != FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
             }
-            val diagnosticsMetadataInfos = diagnostics.mapNotNull { diagnostic ->
-                if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name, diagnostic.severity)) return@mapNotNull null
+            val diagnosticsMetadataInfos = diagnostics.flatMap { diagnostic ->
+                if (!diagnosticsService.shouldRenderDiagnostic(
+                        module,
+                        diagnostic.factory.name,
+                        diagnostic.severity
+                    )
+                ) return@flatMap emptyList()
                 // SYNTAX errors will be reported later
-                if (diagnostic.factory == FirErrors.SYNTAX) return@mapNotNull null
-                if (!diagnostic.isValid) return@mapNotNull null
-                diagnostic.toMetaInfo(file, lightTreeEnabled, lightTreeComparingModeEnabled)
+                if (diagnostic.factory == FirErrors.SYNTAX) return@flatMap emptyList()
+                if (!diagnostic.isValid) return@flatMap emptyList()
+                diagnostic.toMetaInfos(file, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
             globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
             collectSyntaxDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
@@ -94,22 +99,25 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
     }
 
-    private fun FirDiagnostic.toMetaInfo(
+    private fun FirDiagnostic.toMetaInfos(
         file: TestFile,
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean,
         forceRenderArguments: Boolean = false
-    ): FirDiagnosticCodeMetaInfo {
-        val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs)
-        val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, metaInfo)
-            .any { it.description != null }
-        if (shouldRenderArguments) {
-            metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
+    ): List<FirDiagnosticCodeMetaInfo> {
+        val ranges = factory.defaultPositioningStrategy.markDiagnostic(this)
+        return ranges.map { range ->
+            val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)
+            val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, metaInfo)
+                .any { it.description != null }
+            if (shouldRenderArguments) {
+                metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
+            }
+            if (lightTreeComparingModeEnabled) {
+                metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
+            }
+            metaInfo
         }
-        if (lightTreeComparingModeEnabled) {
-            metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
-        }
-        return metaInfo
     }
 
     @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -120,14 +128,14 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeComparingModeEnabled: Boolean
     ) {
         val metaInfos = if (firFile.psi != null) {
-            AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
+            AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
                 FirErrors.SYNTAX.on(FirRealPsiSourceElement(it), positioningStrategy = null)
-                    .toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                    .toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
         } else {
-            collectLightTreeSyntaxErrors(firFile).map { sourceElement ->
+            collectLightTreeSyntaxErrors(firFile).flatMap { sourceElement ->
                 FirErrors.SYNTAX.on(sourceElement, positioningStrategy = null)
-                    .toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                    .toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
         }
 
@@ -183,7 +191,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }.let(firFile::accept)
         globalMetadataInfoHandler.addMetadataInfosForFile(
             testFile,
-            result.map { it.toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments = true) }
+            result.flatMap { it.toMetaInfos(testFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments = true) }
         )
     }
 

@@ -1,14 +1,14 @@
 fun testBinary1() {
     operator fun Int.times(s: String) {}
 
-    todo() * ""
+    todo() <!UNREACHABLE_CODE!>* ""<!>
 }
 fun testBinary2() {
-    "1" + todo()
+    "1" <!UNREACHABLE_CODE!>+<!> todo()
 }
 
 fun testElvis1() {
-    todo() <!USELESS_ELVIS!>?: ""<!>
+    todo() <!UNREACHABLE_CODE, USELESS_ELVIS!>?: ""<!>
 }
 
 fun testElvis2(s: String?) {
@@ -24,15 +24,15 @@ fun testAnd1(b: Boolean) {
 }
 
 fun testAnd2(b: Boolean) {
-    todo() && b
+    todo() && <!UNREACHABLE_CODE!>b<!>
 }
 
 fun returnInBinary1(): Boolean {
-    (return true) && (return false)
+    (return true) && (<!UNREACHABLE_CODE!>return false<!>)
 }
 
 fun returnInBinary2(): Boolean {
-    (return true) || (return false)
+    (return true) || (<!UNREACHABLE_CODE!>return false<!>)
 }
 
 fun todo(): Nothing = throw Exception()

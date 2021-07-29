@@ -3,80 +3,80 @@
 
 fun t1() : Int{
   return 0
-  1
+  <!UNREACHABLE_CODE!>1<!>
 }
 
 fun t1a() : Int {
   <!RETURN_TYPE_MISMATCH!>return<!>
-  return 1
-  1
+  <!UNREACHABLE_CODE!>return 1<!>
+  <!UNREACHABLE_CODE!>1<!>
 }
 
 fun t1b() : Int {
   return 1
-  return 1
-  1
+  <!UNREACHABLE_CODE!>return 1<!>
+  <!UNREACHABLE_CODE!>1<!>
 }
 
 fun t1c() : Int {
   return 1
-  <!RETURN_TYPE_MISMATCH!>return<!>
-  1
+  <!RETURN_TYPE_MISMATCH, UNREACHABLE_CODE!>return<!>
+  <!UNREACHABLE_CODE!>1<!>
 }
 
 fun t2() : Int {
   if (1 > 2)
     return 1
   else return 1
-  1
+  <!UNREACHABLE_CODE!>1<!>
 }
 
 fun t2a() : Int {
   if (1 > 2) {
     return 1
-    1
+    <!UNREACHABLE_CODE!>1<!>
   } else { return 1
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
-  1
+  <!UNREACHABLE_CODE!>1<!>
 }
 
 fun t3() : Any {
   if (1 > 2)
     return 2
   else return ""
-  1
+  <!UNREACHABLE_CODE!>1<!>
 }
 
 fun t4(a : Boolean) : Int {
   do {
     return 1
   }
-  while (a)
-  1
+  while (<!UNREACHABLE_CODE!>a<!>)
+  <!UNREACHABLE_CODE!>1<!>
 }
 
 fun t4break(a : Boolean) : Int {
   do {
     break
   }
-  while (a)
+  while (<!UNREACHABLE_CODE!>a<!>)
   return 1
 }
 
 fun t5() : Int {
   do {
     return 1
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
-  while (1 > 2)
-  return 1
+  while (<!UNREACHABLE_CODE!>1 > 2<!>)
+  <!UNREACHABLE_CODE!>return 1<!>
 }
 
 fun t6() : Int {
   while (1 > 2) {
     return 1
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
   return 1
 }
@@ -84,7 +84,7 @@ fun t6() : Int {
 fun t6break() : Int {
   while (1 > 2) {
     break
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
   return 1
 }
@@ -92,7 +92,7 @@ fun t6break() : Int {
 fun t7(b : Int) : Int {
   for (i in 1..b) {
     return 1
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
   return 1
 }
@@ -100,7 +100,7 @@ fun t7(b : Int) : Int {
 fun t7break(b : Int) : Int {
   for (i in 1..b) {
     return 1
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
   return 1
 }
@@ -108,54 +108,54 @@ fun t7break(b : Int) : Int {
 fun t7() : Int {
   try {
     return 1
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
   catch (<!THROWABLE_TYPE_MISMATCH!>e : Any<!>) {
     2
   }
-  return 1 // this is OK, like in Java
+  <!UNREACHABLE_CODE!>return 1<!> // this is OK, like in Java
 }
 
 fun t8() : Int {
   try {
     return 1
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
   catch (<!THROWABLE_TYPE_MISMATCH!>e : Any<!>) {
     return 1
     2
   }
-  return 1
+  <!UNREACHABLE_CODE!>return 1<!>
 }
 
 fun blockAndAndMismatch() : Boolean {
-  (return true) || (return false)
-  return true
+  (return true) || (<!UNREACHABLE_CODE!>return false<!>)
+  <!UNREACHABLE_CODE!>return true<!>
 }
 
 fun tf() : Int {
   try {return 1} finally{return 1}
-  return 1
+  <!UNREACHABLE_CODE!>return 1<!>
 }
 
 fun failtest(a : Int) : Int {
-  if (fail() || true) {
+  if (fail() || <!UNREACHABLE_CODE!>true<!>) {
 
   }
-  return 1
+  <!UNREACHABLE_CODE!>return 1<!>
 }
 
-fun foo(a : Nothing) : Unit {
+fun foo(a : Nothing) : <!REDUNDANT_RETURN_UNIT_TYPE!>Unit<!> {
   1
   a
-  2
+  <!UNREACHABLE_CODE!>2<!>
 }
 
 fun fail() : Nothing {
   throw java.lang.RuntimeException()
 }
 
-fun nullIsNotNothing() : Unit {
+fun nullIsNotNothing() : <!REDUNDANT_RETURN_UNIT_TYPE!>Unit<!> {
     val x : Int? = 1
     if (x != null) {
          return
@@ -165,5 +165,5 @@ fun nullIsNotNothing() : Unit {
 
 fun returnInWhile(a: Int) {
     do {return}
-    while (1 > a)
+    while (<!UNREACHABLE_CODE!>1 > a<!>)
 }

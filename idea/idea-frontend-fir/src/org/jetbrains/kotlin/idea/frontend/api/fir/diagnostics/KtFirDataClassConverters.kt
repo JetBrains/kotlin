@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -2591,6 +2592,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.INITIALIZATION_BEFORE_DECLARATION) { firDiagnostic ->
         InitializationBeforeDeclarationImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNREACHABLE_CODE) { firDiagnostic ->
+        UnreachableCodeImpl(
+            firDiagnostic.a.map { firSourceElement ->
+                (firSourceElement as FirPsiSourceElement).psi
+            },
+            firDiagnostic.b.map { firSourceElement ->
+                (firSourceElement as FirPsiSourceElement).psi
+            },
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

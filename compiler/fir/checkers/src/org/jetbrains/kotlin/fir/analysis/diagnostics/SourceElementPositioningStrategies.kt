@@ -273,6 +273,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DECLARATION_WITH_BODY
     )
 
+    val UNREACHABLE_CODE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DEFAULT, //todo
+        FirPsiPositioningStrategies.UNREACHABLE_CODE
+    )
+
     // TODO
     val ACTUAL_DECLARATION_NAME = DEFAULT
     val INCOMPATIBLE_DECLARATION = DEFAULT

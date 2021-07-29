@@ -18,10 +18,14 @@ class SourceElementPositioningStrategy(
     fun markDiagnostic(diagnostic: FirDiagnostic): List<TextRange> {
         val element = diagnostic.element
         if (element is FirPsiSourceElement) {
-            @Suppress("UNCHECKED_CAST")
-            return psiStrategy.hackyMark(element.psi)
+            return if (psiStrategy is FirPsiPositioningStrategy<*>) {
+                psiStrategy.markFirDiagnostic(element, diagnostic)
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                psiStrategy.hackyMark(element.psi)
+            }
         }
-        return lightTreeStrategy.mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
+        return lightTreeStrategy.markFirDiagnostic(element, diagnostic)
     }
 
     fun isValid(element: FirSourceElement): Boolean {

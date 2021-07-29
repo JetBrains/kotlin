@@ -30,6 +30,7 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = setOf(
             UnusedChecker,
+            UnreachableCodeChecker,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>

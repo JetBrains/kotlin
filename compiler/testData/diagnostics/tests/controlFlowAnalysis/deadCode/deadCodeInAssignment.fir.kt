@@ -1,17 +1,17 @@
 fun testAssignment() {
-    var a = 1
-    a = todo()
+    var <!UNUSED_VARIABLE!>a<!> = 1
+    <!UNREACHABLE_CODE!><!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> =<!> todo()
 }
 
 fun testVariableDeclaration() {
-    val a = todo()
+    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>a<!> =<!> todo()
 }
 
 fun testPlusAssign() {
     operator fun Int.plusAssign(i: Int) {}
 
-    var a = 1
-    a += todo()
+    <!CAN_BE_VAL!>var<!> a = 1
+    a <!UNREACHABLE_CODE!>+=<!> todo()
 }
 
 

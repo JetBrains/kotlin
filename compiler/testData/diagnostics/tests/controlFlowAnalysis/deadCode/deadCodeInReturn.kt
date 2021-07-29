@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun testReturn() {
     <!UNREACHABLE_CODE!>return<!> todo()
 }

@@ -19,20 +19,17 @@ object FirMetaInfoUtils {
 
 class FirDiagnosticCodeMetaInfo(
     val diagnostic: FirDiagnostic,
-    renderConfiguration: FirDiagnosticCodeMetaRenderConfiguration
+    renderConfiguration: FirDiagnosticCodeMetaRenderConfiguration,
+    private val range: TextRange
 ) : CodeMetaInfo {
-    private val textRangeFromClassicDiagnostic: TextRange = run {
-        diagnostic.factory.defaultPositioningStrategy.markDiagnostic(diagnostic).first()
-    }
-
     override var renderConfiguration: FirDiagnosticCodeMetaRenderConfiguration = renderConfiguration
         private set
 
     override val start: Int
-        get() = textRangeFromClassicDiagnostic.startOffset
+        get() = range.startOffset
 
     override val end: Int
-        get() = textRangeFromClassicDiagnostic.endOffset
+        get() = range.endOffset
 
     override val tag: String
         get() = renderConfiguration.getTag(this)

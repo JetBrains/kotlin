@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 fun testFor() {
     operator fun Nothing.iterator() = (0..1).iterator()
 

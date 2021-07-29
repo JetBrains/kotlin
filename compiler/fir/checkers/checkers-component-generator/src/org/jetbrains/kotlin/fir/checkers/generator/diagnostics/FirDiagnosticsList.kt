@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -942,6 +943,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val INITIALIZATION_BEFORE_DECLARATION by error<KtExpression>() {
             parameter<Symbol>("property")
+        }
+
+        val UNREACHABLE_CODE by warning<KtElement>(PositioningStrategy.UNREACHABLE_CODE) {
+            parameter<Set<FirSourceElement>>("reachable")
+            parameter<Set<FirSourceElement>>("unreachable")
         }
     }
 

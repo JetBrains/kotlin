@@ -397,6 +397,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_NOT_NULL_ASSERTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_SAFE_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNREACHABLE_CODE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
@@ -1283,6 +1284,7 @@ class FirDefaultErrorMessages {
             )
             map.put(LEAKED_IN_PLACE_LAMBDA, "Leaked in-place lambda: {2}", SYMBOL)
             map.put(FirErrors.WRONG_IMPLIES_CONDITION, "Wrong implies condition")
+            map.put(UNREACHABLE_CODE, "Unreachable code", NOT_RENDERED, NOT_RENDERED)
 
             // Nullability
             map.put(
