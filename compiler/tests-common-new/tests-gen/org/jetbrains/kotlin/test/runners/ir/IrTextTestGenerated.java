@@ -2485,6 +2485,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("kt44855.kt")
+        public void testKt44855() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/kt44855.kt");
+        }
+
+        @Test
         @TestMetadata("kt45236.kt")
         public void testKt45236() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/kt45236.kt");

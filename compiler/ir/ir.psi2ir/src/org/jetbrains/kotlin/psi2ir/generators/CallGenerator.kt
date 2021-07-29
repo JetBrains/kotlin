@@ -88,19 +88,23 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         descriptor: DeclarationDescriptor,
         resolvedCall: ResolvedCall<*>?,
         origin: IrStatementOrigin?,
-        irType: IrType? = null
+        smartCastIrType: IrType? = null
     ): IrExpression =
         when (descriptor) {
             is FakeCallableDescriptorForObject ->
-                generateValueReference(startOffset, endOffset, descriptor.getReferencedDescriptor(), resolvedCall, origin, irType)
+                generateValueReference(startOffset, endOffset, descriptor.getReferencedDescriptor(), resolvedCall, origin, smartCastIrType)
             is TypeAliasDescriptor ->
-                generateValueReference(startOffset, endOffset, descriptor.classDescriptor!!, null, origin, irType)
+                generateValueReference(startOffset, endOffset, descriptor.classDescriptor!!, null, origin, smartCastIrType)
             is ClassDescriptor -> {
                 val classValueType = descriptor.classValueType!!
                 statementGenerator.generateSingletonReference(descriptor, startOffset, endOffset, classValueType)
             }
             is PropertyDescriptor -> {
-                generateCall(startOffset, endOffset, statementGenerator.pregenerateCall(resolvedCall!!))
+                val irCall = generateCall(startOffset, endOffset, statementGenerator.pregenerateCall(resolvedCall!!))
+                if (smartCastIrType != null)
+                    IrTypeOperatorCallImpl(startOffset, endOffset, smartCastIrType, IrTypeOperator.IMPLICIT_CAST, smartCastIrType, irCall)
+                else
+                    irCall
             }
             is SyntheticFieldDescriptor -> {
                 val receiver = statementGenerator.generateBackingFieldReceiver(startOffset, endOffset, resolvedCall, descriptor)
@@ -109,7 +113,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 IrGetFieldImpl(startOffset, endOffset, field, fieldType, receiver?.load())
             }
             is VariableDescriptor ->
-                generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(resolvedCall), origin, irType)
+                generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(resolvedCall), origin, smartCastIrType)
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor::class.java.simpleName}")
         }
