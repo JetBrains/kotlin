@@ -367,7 +367,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
 }
 
 fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
-    isStable || this == KOTLIN_1_5
+    isStable || this == KOTLIN_1_6
 
 fun LanguageVersion.toKotlinVersion() = KotlinVersion(major, minor)
 
