@@ -1,13 +1,15 @@
 // !LANGUAGE: +RepeatableAnnotations
+// !API_VERSION: LATEST
 // TARGET_BACKEND: JVM_IR
 // WITH_RUNTIME
 // FULL_JDK
 // JVM_TARGET: 1.8
+// STDLIB_JDK8
 
 package test
 
 @Repeatable
-@java.lang.annotation.Repeatable(As::class)
+@JvmRepeatable(As::class)
 annotation class A(val value: String)
 
 annotation class As(val value: Array<A>)
