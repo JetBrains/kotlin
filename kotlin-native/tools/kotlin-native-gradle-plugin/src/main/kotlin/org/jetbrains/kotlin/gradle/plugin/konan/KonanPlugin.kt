@@ -311,7 +311,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
 
         internal const val KONAN_EXTENSION_NAME = "konan"
 
-        internal val REQUIRED_GRADLE_VERSION = GradleVersion.version("4.7")
+        internal val REQUIRED_GRADLE_VERSION = GradleVersion.version("6.7")
     }
 
     private fun Project.cleanKonan() = project.tasks.withType(KonanBuildingTask::class.java).forEach {
@@ -330,6 +330,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     override fun apply(project: ProjectInternal) {
         checkGradleVersion()
         project.plugins.apply("base")
+        project.plugins.apply("java")
         // Create necessary tasks and extensions.
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)

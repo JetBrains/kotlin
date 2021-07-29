@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.EndorsedLibraryInfo
 import org.jetbrains.kotlin.UtilsKt
 
-apply plugin: 'java'
+apply plugin: 'konan'
 
 buildscript {
     repositories {

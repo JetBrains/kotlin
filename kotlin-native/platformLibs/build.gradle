@@ -25,7 +25,6 @@ ext.setProperty("org.jetbrains.kotlin.native.home", konanHome)
 ext.setProperty("konan.jvmArgs", jvmArgs)
 
 apply plugin: 'konan'
-apply plugin: 'java'
 
 //#region Util functions.
 private ArrayList<DefFile> targetDefFiles(KonanTarget  target) {
