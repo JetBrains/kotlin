@@ -31,7 +31,7 @@ class IcFileDeserializer(
     val linker: JsIrLinker,
     private val file: IrFile,
     originalFileReader: IrLibraryFile,
-    fileProto: org.jetbrains.kotlin.backend.common.serialization.proto.IrFile,
+    fileProto: ProtoIrFile,
     deserializeBodies: Boolean,
     allowErrorNodes: Boolean,
     deserializeInlineFunctions: Boolean,
@@ -59,7 +59,7 @@ class IcFileDeserializer(
             linker::handleExpectActualMapping,
             enqueueAllDeclarations = true,
             deserializedSymbols = deserializedSymbols,
-            deserializePublicSymbol = ::deserializeOriginalPublicSymbol
+            deserializePublicSymbol = ::deserializePublicSymbol
         )
 
     private val originalDeclarationDeserializer = IrDeclarationDeserializer(
@@ -77,49 +77,27 @@ class IcFileDeserializer(
         compatibilityMode = CompatibilityMode.CURRENT
     )
 
-    private fun deserializeOriginalPublicSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        assert(idSig.isPubliclyVisible)
+    private fun deserializePublicSymbol(idSig: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol {
+        // TODO: reference lowered declarations cross-module
+        if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return file.symbol
 
         val topLevelSig = idSig.topLevelSignature()
+        val actualModuleDeserializer =
+            moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
+                ?: handleNoModuleDeserializerFound(idSig, moduleDeserializer.moduleDescriptor, moduleDeserializer.moduleDependencies)
 
-        if (idSig in originalFileDeserializer.reversedSignatureIndex) {
-            val symbol = originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
-
-            if (!symbol.isBound) {
-                topLevelSig.originalEnqueue(this)
-                idSig.enqueue(this)
-                linker.modulesWithReachableTopLevels.add(moduleDeserializer)
-            }
-
-            return symbol
-        } else {
-
-            val actualModuleDeserializer =
-                moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig) ?: handleNoModuleDeserializerFound(
-                    idSig,
-                    moduleDeserializer.moduleDescriptor,
-                    moduleDeserializer.moduleDependencies
-                )
-
-            return actualModuleDeserializer.deserializeIrSymbol(idSig, symbolKind)
-        }
+        return actualModuleDeserializer.deserializeIrSymbol(idSig, kind)
     }
 
     val originalFileDeserializer =
         IrFileDeserializer(file, originalFileReader, fileProto, originalSymbolDeserializer, originalDeclarationDeserializer)
 
-    val originalVisited = HashSet<IdSignature>()
-
-    val originalSignatureQueue = ArrayDeque<IdSignature>() // Top-level signatures to be deserialized from original KLIB
+    private val originalSignatureQueue = ArrayDeque<IdSignature>() // Top-level signatures to be deserialized from original KLIB
 
     // Returns whether this file should be queued for deserialization
     fun enqueueForDeserialization(idSig: IdSignature): Boolean {
-        if (originalVisited.add(idSig)) {
-            originalSignatureQueue.addLast(idSig)
-            return originalSignatureQueue.size == 1
-        }
-
-        return false
+        originalSignatureQueue.addLast(idSig)
+        return originalSignatureQueue.size == 1
     }
 
     fun deserializePendingSignatures() {
@@ -182,9 +160,8 @@ class IcFileDeserializer(
         CarrierDeserializer(declarationDeserializer, icFileData.carriers)
     }
 
-    val reversedSignatureIndex: Map<IdSignature, Int> = protoFile.declarationIdList.map {
-        symbolDeserializer.deserializeIdSignature(it) to it
-    }.toMap()
+    val reversedSignatureIndex: Map<IdSignature, Int> =
+        protoFile.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
 
     val visited = HashSet<IdSignature>()
 
@@ -217,24 +194,12 @@ class IcFileDeserializer(
         return IrLongArrayMemoryReader(bytes).array.map { deserializeIrSymbol(it) }
     }
 
-
-    private fun deserializePublicSymbol(idSig: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol {
-        // TODO: reference lowered declarations cross-module
-        if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return file.symbol
-        val topLevelSig = idSig.topLevelSignature()
-        val actualModuleDeserializer =
-            moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
-                ?: handleNoModuleDeserializerFound(idSig, moduleDeserializer.moduleDescriptor, moduleDeserializer.moduleDependencies)
-
-        return actualModuleDeserializer.deserializeIrSymbol(idSig, kind)
-    }
-
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration? {
         cachedDeclaration(idSig)?.let { return it }
 
         val idSigIndex = reversedSignatureIndex[idSig] ?: return null
         val declarationStream = icFileReader.irDeclaration(idSigIndex).codedInputStream
-        val declarationProto = ProtoIrDeclaration.parseFrom(declarationStream, ExtensionRegistryLite.newInstance())
+        val declarationProto = ProtoIrDeclaration.parseFrom(declarationStream, extensionRegistryLite)
         return declarationDeserializer.deserializeDeclaration(declarationProto)
     }
 
@@ -251,16 +216,17 @@ class IcFileDeserializer(
         cachedDeclaration(idSig)?.let { return it }
 
         // TODO fast path?
-        val maybeTopLevel = if (!idSig.isLocal || idSig.hasTopLevel) idSig.topLevelSignature() else idSig
+        val maybeTopLevel = if (idSig.hasTopLevel) idSig.topLevelSignature() else idSig
 
         if (maybeTopLevel in originalFileDeserializer.reversedSignatureIndex.keys) {
             originalFileDeserializer.deserializeFileImplicitDataIfFirstUse()
-            originalFileDeserializer.deserializeDeclaration(maybeTopLevel)
+            return originalFileDeserializer.deserializeDeclaration(maybeTopLevel)
+        }
 
-            // At this point the declaration should've been deserialized
-            return cachedDeclaration(idSig) // Will be null in case of fake overrides
-        } else if (maybeTopLevel in reversedSignatureIndex) {
-            return deserializeDeclaration(maybeTopLevel)
+        reversedSignatureIndex[maybeTopLevel]?.let { idSigIndex ->
+            val declarationStream = icFileReader.irDeclaration(idSigIndex).codedInputStream
+            val declarationProto = ProtoIrDeclaration.parseFrom(declarationStream, extensionRegistryLite)
+            return declarationDeserializer.deserializeDeclaration(declarationProto)
         }
 
         // TODO: error?
@@ -286,6 +252,8 @@ class IcFileDeserializer(
             additionalStatementOrigins.mapNotNull { it.objectInstance as? IrStatementOriginImpl }.associateBy { it.debugName }
     }
 }
+
+private val extensionRegistryLite = ExtensionRegistryLite.newInstance()
 
 private class FileReaderFromSerializedIrFile(val irFile: SerializedIrFile) : IrLibraryFile() {
     private val declarationReader = DeclarationIrTableMemoryReader(irFile.declarations)
