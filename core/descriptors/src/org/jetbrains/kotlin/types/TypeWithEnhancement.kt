@@ -144,6 +144,9 @@ fun KotlinType.unwrapEnhancementDeeply() = getEnhancementDeeply() ?: this
 
 fun KotlinType.unwrapEnhancement(): KotlinType = getEnhancement() ?: this
 
+fun UnwrappedType.inheritEnhancement(origin: KotlinType, transform: (KotlinType) -> KotlinType): UnwrappedType =
+    wrapEnhancement(origin.getEnhancement()?.let(transform))
+
 fun UnwrappedType.inheritEnhancement(origin: KotlinType): UnwrappedType = wrapEnhancement(origin.getEnhancement())
 
 fun UnwrappedType.wrapEnhancement(enhancement: KotlinType?): UnwrappedType {

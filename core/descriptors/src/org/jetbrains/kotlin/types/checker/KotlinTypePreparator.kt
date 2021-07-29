@@ -68,7 +68,7 @@ abstract class KotlinTypePreparator : AbstractTypePreparator {
                     unwrappedType
                 }
             }
-        }.inheritEnhancement(unwrappedType)
+        }.inheritEnhancement(unwrappedType, ::prepareType)
     }
 
     object Default : KotlinTypePreparator()
