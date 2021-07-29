@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.JspecifyDiagnosticComplianceHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
+import org.jetbrains.kotlin.test.frontend.classic.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.preprocessors.JspecifyMarksCleanupPreprocessor
@@ -35,10 +32,36 @@ import org.jetbrains.kotlin.test.services.jvm.PsiClassFilesReadingForCompiledJav
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest() {
+private val configureClassicFrontend: TestConfigurationBuilder.() -> Unit = {
+    globalDefaults {
+        frontend = FrontendKinds.ClassicFrontend
+    }
+
+    useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
+    classicFrontendStep()
+    classicFrontendHandlersStep {
+        useHandlers(
+            ::DeclarationsDumpHandler,
+            ::ClassicDiagnosticsHandler,
+        )
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/*") {
+        configureClassicFrontendHandlersStep {
+            useHandlers(::JspecifyDiagnosticComplianceHandler)
+        }
+        useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
+    }
+
+    useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
+}
+
+abstract class AbstractForeignAnnotationsTestBase(
+    private val configureFrontend: TestConfigurationBuilder.() -> Unit = configureClassicFrontend
+) : AbstractKotlinCompilerTest() {
+
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
-            frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Source
         }
@@ -56,19 +79,12 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
             ::JvmEnvironmentConfigurator
         )
 
-        useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        classicFrontendStep()
-        classicFrontendHandlersStep {
-            useHandlers(
-                ::DeclarationsDumpHandler,
-                ::ClassicDiagnosticsHandler,
-            )
-        }
+        configureFrontend()
 
         forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/tests/*") {
             defaultDirectives {
@@ -90,19 +106,15 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
                 COMPILE_JAVA_USING with TestJavacVersion.JAVAC_9
             }
         }
-
-        forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/*") {
-            configureClassicFrontendHandlersStep {
-                useHandlers(::JspecifyDiagnosticComplianceHandler)
-            }
-            useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
-        }
     }
 }
 
 abstract class AbstractForeignAnnotationsSourceJavaTest : AbstractForeignAnnotationsTestBase()
 
-abstract class AbstractForeignAnnotationsCompiledJavaTest : AbstractForeignAnnotationsTestBase() {
+abstract class AbstractForeignAnnotationsCompiledJavaTest : AbstractForeignAnnotationsTestBase {
+    constructor() : super()
+    constructor(configureFrontend: TestConfigurationBuilder.() -> Unit) : super(configureFrontend)
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -116,7 +128,10 @@ abstract class AbstractForeignAnnotationsCompiledJavaTest : AbstractForeignAnnot
     }
 }
 
-abstract class AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest : AbstractForeignAnnotationsCompiledJavaTest() {
+abstract class AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest : AbstractForeignAnnotationsCompiledJavaTest {
+    constructor() : super()
+    constructor(configureFrontend: TestConfigurationBuilder.() -> Unit) : super(configureFrontend)
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
