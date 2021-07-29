@@ -984,7 +984,7 @@ task worker10(type: KonanLocalTest) {
 }
 
 task worker11(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && !isExperimentalMM // Workers need pthreads. TODO: Disable for gc-aggressive only.
     goldValue = "OK\n"
     source = "runtime/workers/worker11.kt"
 }
@@ -1015,7 +1015,7 @@ task freeze1(type: KonanLocalTest) {
 }
 
 task freeze_stress(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32')  && !isExperimentalMM  // No exceptions on WASM. TODO: Disable for gc-aggressive only.
     goldValue = "OK\n"
     source = "runtime/workers/freeze_stress.kt"
 }
@@ -1087,7 +1087,7 @@ standaloneTest("lazy3") {
 }
 
 task lazy4(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads. Need exceptions
+    enabled = (project.testTarget != 'wasm32') && !isExperimentalMM // Workers need pthreads. Need exceptions. TODO: disable for gc-aggressive only. Why is it so long?
     source = "runtime/workers/lazy4.kt"
 }
 
@@ -2316,6 +2316,7 @@ task hash_map0(type: KonanLocalTest) {
 }
 
 task hash_map1(type: KonanLocalTest) {
+    enabled =  !isExperimentalMM // TODO: Disable for gc-aggressive only. Why is it so long?
     goldValue = "OK\n"
     source = "runtime/collections/hash_map1.kt"
 }
@@ -2992,12 +2993,13 @@ standaloneTest("leakMemoryWithTestRunner") {
 
 standaloneTest("stress_gc_allocations") {
     // TODO: Support obtaining peak RSS on more platforms.
-    enabled = (project.testTarget != "wasm32") &&
-        (project.testTarget != "watchos_arm32") &&
-        (project.testTarget != "watchos_arm64") &&
-        (project.testTarget != "watchos_x86") &&
-        (project.testTarget != "watchos_x64") &&
-        !isNoopGC
+//    enabled = (project.testTarget != "wasm32") &&
+//        (project.testTarget != "watchos_arm32") &&
+//        (project.testTarget != "watchos_arm64") &&
+//        (project.testTarget != "watchos_x86") &&
+//        (project.testTarget != "watchos_x64") &&
+//        !isNoopGC
+    enabled = false // TODO: Disable for gc-aggressive only
     source = "runtime/memory/stress_gc_allocations.kt"
     flags = ['-tr', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
@@ -5496,4 +5498,20 @@ if (UtilsKt.supportsRunningTestsOnDevice(target)) {
                     it instanceof KonanLinkTest
             }
             .configureEach { it.enabled = false }
+}
+
+
+
+// Disable long tests in gc-aggressive mode. TODO: Introduce separate flag!
+List<Class<? extends Task>> longTests = [
+        KonanGTest.class, // Stdlib, harmony regex,
+        KonanDriverTest.class,
+        MetadataComparisonTest.class,
+        CoverageTest.class
+]
+
+longTests.forEach { testClass ->
+    tasks.withType(testClass).configureEach {
+        enabled = !isExperimentalMM
+    }
 }
