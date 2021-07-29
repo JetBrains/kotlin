@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import java.io.*
 
 /** Snapshot of a classpath. It consists of a list of [ClasspathEntrySnapshot]s. */
@@ -29,7 +30,23 @@ class ClasspathEntrySnapshot(
  * Snapshot of a class. It contains information to compute the source files that need to be recompiled during an incremental run of the
  * `KotlinCompile` task.
  */
-class ClassSnapshot : Serializable {
+abstract class ClassSnapshot : Serializable {
+
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}
+
+/** [ClassSnapshot] of a kotlinc-generated class. */
+class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot(), Serializable {
+
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}
+
+/** [ClassSnapshot] of a non-kotlinc-generated class. */
+class JavaClassSnapshot : ClassSnapshot(), Serializable {
 
     // TODO WORK-IN-PROGRESS
 

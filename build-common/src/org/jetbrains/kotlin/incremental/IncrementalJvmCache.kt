@@ -25,6 +25,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
@@ -113,7 +114,7 @@ open class IncrementalJvmCache(
     }
 
     open fun saveFileToCache(generatedClass: GeneratedJvmClass, changesCollector: ChangesCollector) {
-        saveClassToCache(KotlinClassInfo(generatedClass.outputClass), generatedClass.sourceFiles, changesCollector)
+        saveClassToCache(KotlinClassInfo.createFrom(generatedClass.outputClass), generatedClass.sourceFiles, changesCollector)
     }
 
     /**
@@ -612,16 +613,6 @@ class KotlinClassInfo private constructor(
     val inlineFunctionsMap: LinkedHashMap<String, Long>
 ) {
 
-    constructor(kotlinClass: LocalFileKotlinClass) : this(
-        kotlinClass.classId,
-        kotlinClass.classHeader.kind,
-        kotlinClass.classHeader.data,
-        kotlinClass.classHeader.strings,
-        kotlinClass.classHeader.multifileClassName,
-        getConstantsMap(kotlinClass.fileContents),
-        getInlineFunctionsMap(kotlinClass.classHeader, kotlinClass.fileContents)
-    )
-
     val className: JvmClassName by lazy { JvmClassName.byClassId(classId) }
 
     fun scopeFqName(companion: Boolean = false) = when (classKind) {
@@ -629,6 +620,36 @@ class KotlinClassInfo private constructor(
             className.fqNameForClassNameWithoutDollars.let { if (companion) it.child(DEFAULT_NAME_FOR_COMPANION_OBJECT) else it }
         }
         else -> className.packageFqName
+    }
+
+    companion object {
+
+        fun createFrom(kotlinClass: LocalFileKotlinClass): KotlinClassInfo {
+            return KotlinClassInfo(
+                kotlinClass.classId,
+                kotlinClass.classHeader.kind,
+                kotlinClass.classHeader.data,
+                kotlinClass.classHeader.strings,
+                kotlinClass.classHeader.multifileClassName,
+                getConstantsMap(kotlinClass.fileContents),
+                getInlineFunctionsMap(kotlinClass.classHeader, kotlinClass.fileContents)
+            )
+        }
+
+        /** Creates [KotlinClassInfo] from the given classContents, or returns `null` if the class is not a kotlinc-generated class. */
+        fun tryCreateFrom(classContents: ByteArray): KotlinClassInfo? {
+            return FileBasedKotlinClass.create(classContents) { classId, _, classHeader, _ ->
+                KotlinClassInfo(
+                    classId,
+                    classHeader.kind,
+                    classHeader.data,
+                    classHeader.strings,
+                    classHeader.multifileClassName,
+                    getConstantsMap(classContents),
+                    getInlineFunctionsMap(classHeader, classContents)
+                )
+            }
+        }
     }
 }
 
