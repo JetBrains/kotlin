@@ -27,8 +27,7 @@ enum class TaskExecutionState {
     ;
 }
 
-class KotlinBuildEsStatListener(val projectName: String) : OperationCompletionListener, AutoCloseable, TaskExecutionListener {
-    val reportStatistics: ReportStatistics = ReportStatisticsToElasticSearch
+class KotlinBuildEsStatListener(val projectName: String, val reportStatistics : List<ReportStatistics>) : OperationCompletionListener, AutoCloseable, TaskExecutionListener {
 
     val label by lazy { CompilerSystemProperties.KOTLIN_STAT_LABEl_PROPERTY.value }
 
@@ -69,7 +68,7 @@ class KotlinBuildEsStatListener(val projectName: String) : OperationCompletionLi
             statData = statData, projectName = projectName, taskName = taskPath, changes = changes,
             tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList()
         )
-        reportStatistics.report(compileStatData)
+        reportStatistics.forEach { it.report(compileStatData) }
     }
 
     private fun availableForStat(taskPath: String): Boolean {
