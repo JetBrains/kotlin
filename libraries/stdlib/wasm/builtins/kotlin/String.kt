@@ -52,8 +52,6 @@ public class String internal constructor(internal val chars: CharArray) : Compar
 
 internal fun stringLiteral(startAddr: Int, length: Int) = String(unsafeRawMemoryToCharArray(startAddr, length))
 
-internal fun charToString(c: Char): String = String(charArrayOf(c))
-
 //@JsFun("(it, other) => it + String(other)")
 //private fun stringPlusImpl(it: String, other: String): String =
 //    implementedAsIntrinsic

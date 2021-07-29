@@ -341,7 +341,7 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
         wasm_i32_eq(this.toInt(), other.toInt())
 
     public override fun toString(): String =
-        TODO("Wasm: string coercion")
+        this.toInt().toString()
 
     public override inline fun hashCode(): Int =
         this.toInt()
@@ -681,7 +681,7 @@ public class Short private constructor(public val value: Short) : Number(), Comp
         other is Short && wasm_i32_eq(this.toInt(), other.toInt())
 
     public override fun toString(): String =
-        TODO("Wasm: string coercion")
+        this.toInt().toString()
 
     public override inline fun hashCode(): Int =
         this.toInt()
@@ -1060,7 +1060,7 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
         other is Int && wasm_i32_eq(this, other)
 
     public override fun toString(): String =
-        TODO("Wasm: string coercion")
+        itoa32(this, 10)
 
     public override inline fun hashCode(): Int =
         this
@@ -1453,7 +1453,7 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
         other is Long && wasm_i64_eq(this, other)
 
     public override fun toString(): String =
-        TODO("Wasm: string coercion")
+        itoa64(this, 10)
 
     public override fun hashCode(): Int =
         ((this ushr 32) xor this).toInt()
