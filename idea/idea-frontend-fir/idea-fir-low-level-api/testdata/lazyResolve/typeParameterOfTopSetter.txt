@@ -30,6 +30,14 @@ FILE: typeParameterOfTopSetter.kt
             ^ Unit#
         }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: typeParameterOfTopSetter.kt
+    public? final? [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = IntegerLiteral(2)
+        [TYPES] public? get(): R|kotlin/Int|
+        [ARGUMENTS_OF_ANNOTATIONS] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            ^ Unit#
+        }
+
 STATUS:
 FILE: typeParameterOfTopSetter.kt
     public final [STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
@@ -104,10 +112,10 @@ FILE: typeParameterOfTopSetter.kt
 
 AnnotationsArguments:
 FILE: typeParameterOfTopSetter.kt
-    public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-        [BODY_RESOLVE] public get(): R|kotlin/Int|
-        [BODY_RESOLVE] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Q|kotlin/Unit|
+    public? final? [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = IntegerLiteral(2)
+        [TYPES] public? get(): R|kotlin/Int|
+        [ARGUMENTS_OF_ANNOTATIONS] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            ^ Unit#
         }
 
 CallableContracts:

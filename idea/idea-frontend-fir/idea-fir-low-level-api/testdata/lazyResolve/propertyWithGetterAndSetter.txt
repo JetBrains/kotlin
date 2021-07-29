@@ -62,6 +62,22 @@ FILE: propertyWithGetterAndSetter.kt
             field# = value#
         }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: propertyWithGetterAndSetter.kt
+    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(withGetterAndSetter#)
+        withGetterAndSetter# = IntegerLiteral(123)
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
+    }
+    public? final? [RAW_FIR] var withGetterAndSetter: Int = IntegerLiteral(42)
+        [RAW_FIR] public? get(): Int {
+            ^ field#
+        }
+        [RAW_FIR] public? set([RAW_FIR] value: Int): R|kotlin/Unit| {
+            field# = value#
+        }
+
 STATUS:
 FILE: propertyWithGetterAndSetter.kt
     public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
@@ -208,17 +224,17 @@ FILE: propertyWithGetterAndSetter.kt
 
 AnnotationsArguments:
 FILE: propertyWithGetterAndSetter.kt
-    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
+    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(withGetterAndSetter#)
+        withGetterAndSetter# = IntegerLiteral(123)
     }
-    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
     }
-    public final [STATUS] var withGetterAndSetter: R|kotlin/Int| = IntegerLiteral(42)
-        [STATUS] public get(): R|kotlin/Int| {
+    public? final? [RAW_FIR] var withGetterAndSetter: Int = IntegerLiteral(42)
+        [RAW_FIR] public? get(): Int {
             ^ field#
         }
-        [STATUS] public set([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+        [RAW_FIR] public? set([RAW_FIR] value: Int): R|kotlin/Unit| {
             field# = value#
         }
 

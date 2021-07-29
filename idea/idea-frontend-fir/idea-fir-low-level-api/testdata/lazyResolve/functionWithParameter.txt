@@ -30,6 +30,14 @@ FILE: functionWithParameter.kt
         ^resolveMe Unit#
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: functionWithParameter.kt
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
+    }
+    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([RAW_FIR] param: R|I|): <implicit> {
+        ^resolveMe Unit#
+    }
+
 STATUS:
 FILE: functionWithParameter.kt
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
@@ -106,8 +114,8 @@ AnnotationsArguments:
 FILE: functionWithParameter.kt
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
-    public final [BODY_RESOLVE] fun resolveMe([BODY_RESOLVE] param: R|I|): R|kotlin/Unit| {
-        ^resolveMe Q|kotlin/Unit|
+    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([RAW_FIR] param: R|I|): <implicit> {
+        ^resolveMe Unit#
     }
 
 CallableContracts:

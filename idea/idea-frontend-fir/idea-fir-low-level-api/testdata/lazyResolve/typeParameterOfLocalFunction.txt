@@ -30,6 +30,14 @@ FILE: typeParameterOfLocalFunction.kt
 
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: typeParameterOfLocalFunction.kt
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+        local final [BODY_RESOLVE] fun <resolveMe> kkk(): R|kotlin/Unit| {
+        }
+
+    }
+
 STATUS:
 FILE: typeParameterOfLocalFunction.kt
     public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {

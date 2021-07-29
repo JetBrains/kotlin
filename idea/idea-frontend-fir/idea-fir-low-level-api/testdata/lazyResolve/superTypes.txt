@@ -82,6 +82,27 @@ FILE: superTypes.kt
 
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: superTypes.kt
+    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<A>()
+        }
+
+    }
+    public? open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|A| {
+        public? [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|A|>()
+        }
+
+    }
+
 STATUS:
 FILE: superTypes.kt
     public open [TYPES] class A : R|kotlin/Any| {
@@ -231,8 +252,8 @@ FILE: superTypes.kt
 
 AnnotationsArguments:
 FILE: superTypes.kt
-    public open [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -243,8 +264,8 @@ FILE: superTypes.kt
         }
 
     }
-    public open [BODY_RESOLVE] class resolveMe : R|A| {
-        public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|A| {
+        public? [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 

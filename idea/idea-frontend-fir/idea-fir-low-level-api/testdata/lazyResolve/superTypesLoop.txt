@@ -106,6 +106,33 @@ FILE: superTypesLoop.kt
 
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: superTypesLoop.kt
+    public? open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|C| {
+        public? [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|C|>()
+        }
+
+    }
+    public? open [RAW_FIR] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+            super<B>()
+        }
+
+    }
+    public? open [RAW_FIR] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            super<C>()
+        }
+
+    }
+    public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
+        }
+
+    }
+
 STATUS:
 FILE: superTypesLoop.kt
     public open [STATUS] class resolveMe : R|C| {
@@ -297,8 +324,8 @@ FILE: superTypesLoop.kt
 
 AnnotationsArguments:
 FILE: superTypesLoop.kt
-    public open [BODY_RESOLVE] class resolveMe : R|C| {
-        public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|C| {
+        public? [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
@@ -315,9 +342,9 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public open [STATUS] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
-            super<R|A|>()
+    public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
+            super<A>()
         }
 
     }

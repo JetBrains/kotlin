@@ -58,6 +58,21 @@ FILE: parameterOfNonLocalSetter.kt
 
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: parameterOfNonLocalSetter.kt
+    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
+            [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ Unit#
+            }
+
+    }
+
 STATUS:
 FILE: parameterOfNonLocalSetter.kt
     public final [SUPER_TYPES] class X : R|kotlin/Any| {
@@ -195,15 +210,15 @@ FILE: parameterOfNonLocalSetter.kt
 
 AnnotationsArguments:
 FILE: parameterOfNonLocalSetter.kt
-    public final [STATUS] class X : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [BODY_RESOLVE] [ContainingClassKey=X] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public? final? [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = IntegerLiteral(2)
+            [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
+            [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ Unit#
             }
 
     }

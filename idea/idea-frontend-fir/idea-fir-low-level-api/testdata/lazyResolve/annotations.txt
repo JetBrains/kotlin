@@ -22,6 +22,12 @@ FILE: annotations.kt
     @R|kotlin/Suppress|(String(2)) public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| {
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: annotations.kt
+    @FILE:Suppress(String(1))
+    @R|kotlin/Suppress|(String(2)) public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    }
+
 STATUS:
 FILE: annotations.kt
     @FILE:Suppress(String(1))
@@ -79,7 +85,7 @@ FILE: annotations.kt
 AnnotationsArguments:
 FILE: annotations.kt
     @FILE:Suppress(String(1))
-    @R|kotlin/Suppress|(vararg(String(2))) public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|(String(2)) public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
     }
 
 CallableContracts:

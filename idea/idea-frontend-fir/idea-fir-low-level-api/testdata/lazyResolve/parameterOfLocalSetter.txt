@@ -70,6 +70,24 @@ FILE: parameterOfLocalSetter.kt
 
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: parameterOfLocalSetter.kt
+    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
+        local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
+            public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
+                [BODY_RESOLVE] [ContainingClassKey=XX] public get(): R|kotlin/Int|
+                [BODY_RESOLVE] [ContainingClassKey=XX] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+    }
+
 STATUS:
 FILE: parameterOfLocalSetter.kt
     public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {

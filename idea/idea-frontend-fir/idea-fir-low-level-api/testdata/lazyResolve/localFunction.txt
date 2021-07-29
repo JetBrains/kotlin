@@ -58,6 +58,21 @@ FILE: localFunction.kt
 
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: localFunction.kt
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+            local final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+
 STATUS:
 FILE: localFunction.kt
     public final [STATUS] class A : R|kotlin/Any| {

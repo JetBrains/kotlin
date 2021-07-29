@@ -46,6 +46,18 @@ FILE: typeParameterOfNonLocalFunction.kt
 
     }
 
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: typeParameterOfNonLocalFunction.kt
+    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [ARGUMENTS_OF_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        }
+
+    }
+
 STATUS:
 FILE: typeParameterOfNonLocalFunction.kt
     public final [SUPER_TYPES] class X : R|kotlin/Any| {
@@ -132,12 +144,12 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 AnnotationsArguments:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] class X : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ARGUMENTS_OF_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }

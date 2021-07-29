@@ -25,6 +25,12 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
     }
 
     @Test
+    @TestMetadata("annotationParameters.kt")
+    public void testAnnotationParameters() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/annotationParameters.kt");
+    }
+
+    @Test
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/lazyResolve/annotations.kt");

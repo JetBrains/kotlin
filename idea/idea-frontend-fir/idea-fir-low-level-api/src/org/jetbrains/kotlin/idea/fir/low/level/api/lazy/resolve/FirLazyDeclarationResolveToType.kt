@@ -85,7 +85,8 @@ internal fun FirLazyDeclarationResolver.lazyResolveDeclaration(
                     checkPCE = checkPCE
                 )
             } else {
-                val toPhase = if (toResolveType == ResolveType.AnnotationType) FirResolvePhase.TYPES else FirResolvePhase.BODY_RESOLVE
+                val toPhase =
+                    if (toResolveType == ResolveType.AnnotationType) FirResolvePhase.TYPES else FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS
                 lazyResolveDeclaration(
                     firDeclarationToResolve = firDeclaration,
                     moduleFileCache = moduleFileCache,
