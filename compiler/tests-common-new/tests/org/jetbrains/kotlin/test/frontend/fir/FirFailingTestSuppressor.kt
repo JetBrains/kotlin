@@ -10,25 +10,26 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.utils.firTestDataFile
 
 class FirFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val testFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val failFile = testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail")
-        val exceptionFromFir =
-            failedAssertions.firstOrNull {
-                when (it) {
-                    is WrappedException.FromFacade -> it.facade is FirFrontendFacade
-                    is WrappedException.FromHandler -> it.handler.artifactKind == FrontendKinds.FIR
-                    else -> false
-                }
+        val testFile = testServices.moduleStructure.originalTestDataFiles.first().firTestDataFile
+        val failFile = testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail").takeIf { it.exists() }
+            ?: return failedAssertions
+        val failReason = failFile.readText().trim()
+        val hasFail = failedAssertions.any {
+            when (it) {
+                is WrappedException.FromFacade -> it.facade is FirFrontendFacade
+                is WrappedException.FromHandler -> it.handler.artifactKind == FrontendKinds.FIR
+                else -> false
             }
-        return when {
-            failFile.exists() && exceptionFromFir != null -> emptyList()
-            failFile.exists() && exceptionFromFir == null -> {
-                failedAssertions + AssertionError("Fail file exists but no exception was throw. Please remove ${failFile.name}").wrap()
-            }
-            else -> failedAssertions
         }
+        if (hasFail || failReason == INCONSISTENT_DIAGNOSTICS) return emptyList()
+        return failedAssertions + AssertionError("Fail file exists but no exception was thrown. Please remove ${failFile.name}").wrap()
+    }
+
+    companion object {
+        const val INCONSISTENT_DIAGNOSTICS = "INCONSISTENT_DIAGNOSTICS"
     }
 }
