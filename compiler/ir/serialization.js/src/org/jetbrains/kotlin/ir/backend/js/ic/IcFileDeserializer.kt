@@ -83,9 +83,7 @@ class IcFileDeserializer(
         val topLevelSig = idSig.topLevelSignature()
 
         if (idSig in originalFileDeserializer.reversedSignatureIndex) {
-            val symbol = originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
-                linker.deserializedSymbols.add(it)
-            }
+            val symbol = originalFileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
 
             if (!symbol.isBound) {
                 topLevelSig.originalEnqueue(this)
@@ -216,7 +214,7 @@ class IcFileDeserializer(
     fun loadClassOrder(classSignature: IdSignature): List<IrSymbol>? {
         val bytes = containerSigToOrder[classSignature] ?: return null
 
-        return IrLongArrayMemoryReader(bytes).array.map(::deserializeIrSymbol)
+        return IrLongArrayMemoryReader(bytes).array.map { deserializeIrSymbol(it) }
     }
 
 
