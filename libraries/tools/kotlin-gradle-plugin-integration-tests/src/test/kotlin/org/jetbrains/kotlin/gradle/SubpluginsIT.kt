@@ -275,6 +275,30 @@ class SubpluginsIT : BaseGradleIT() {
         Project("lombokProject").build("build") {
             assertSuccessful()
         }
-        
+
+    }
+
+    @Test // KT-47921
+    fun testSerializationPluginOrderedFirst() = with(Project("allOpenSimple")) {
+        setupWorkingDir()
+        // Ensure that there are also allopen, noarg, and serialization plugins applied:
+        gradleBuildScript().appendText(
+            """
+            buildscript {
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-noarg:${defaultBuildOptions().kotlinVersion}")                
+                    classpath("org.jetbrains.kotlin:kotlin-serialization:${defaultBuildOptions().kotlinVersion}")                
+                }
+            }
+            apply plugin: "org.jetbrains.kotlin.plugin.noarg"
+            apply plugin: "org.jetbrains.kotlin.plugin.serialization"
+        """.trimIndent()
+        )
+
+        build("compileKotlin") {
+            assertSuccessful()
+            val xPlugin = output.split(" ").single { it.startsWith("-Xplugin") }.substringAfter("-Xplugin").split(",")
+            assertTrue("Expected serialization plugin to go first; actual order: $xPlugin") { xPlugin.first().contains("serialization") }
+        }
     }
 }

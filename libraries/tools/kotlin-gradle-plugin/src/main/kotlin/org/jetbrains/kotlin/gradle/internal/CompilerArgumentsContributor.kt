@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileArgumentsProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 
@@ -63,7 +63,7 @@ internal open class AbstractKotlinCompileArgumentsContributor<T : CommonCompiler
     }
 
     internal fun setupPlugins(compilerArgs: T) {
-        compilerArgs.pluginClasspaths = pluginClasspath.toSortedPathsArray()
+        compilerArgs.pluginClasspaths = pluginClasspath.toPathsArray()
         compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 }
