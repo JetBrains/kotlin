@@ -116,6 +116,7 @@ object CheckDispatchReceiver : ResolutionStage() {
             (candidate.originScope as? FirUnstableSmartcastTypeScope)?.isSymbolFromUnstableSmartcast(candidate.symbol) == true
 
         if (explicitReceiverExpression is FirExpressionWithSmartcast &&
+            explicitReceiverExpression !is FirExpressionWithSmartcastToNull &&
             explicitReceiverExpression.smartcastStability != SmartcastStability.STABLE_VALUE &&
             (isCandidateFromUnstableSmartcast || isReceiverNullable)
         ) {

@@ -232,3 +232,11 @@ FILE: nullability.kt
         }
 
     }
+    public final fun test_14(q: R|Q|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/q|.R|/Q.data|, Null(null)) ->  {
+                R|<local>/q|.R|/Q.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#
+            }
+        }
+
+    }
