@@ -85,7 +85,6 @@ class IcSerializer(
                 mutableMapOf(),
                 skipExpects = true,
                 icMode = true,
-                allowNullTypes = true,
                 allowErrorStatementOrigins = true,
                 compatibilityMode = CompatibilityMode.CURRENT
             )
@@ -104,10 +103,7 @@ class IcSerializer(
                     d is PersistentIrDeclarationBase<*> && (d.createdOn > 0 || /*d.isFakeOverride ||*/ (d is IrValueParameter || d is IrTypeParameter) && (d.parent as IrDeclaration).isFakeOverride)
                 }
 
-                val serializedCarriers = fileSerializer.serializeCarriers(
-                    fileDeclarations,
-                    bodies,
-                ) { declaration ->
+                val serializedCarriers = fileSerializer.serializeCarriers(fileDeclarations, bodies) { declaration ->
                     icDeclarationTable.signatureByDeclaration(declaration, compatibleMode = false)
                 }
 

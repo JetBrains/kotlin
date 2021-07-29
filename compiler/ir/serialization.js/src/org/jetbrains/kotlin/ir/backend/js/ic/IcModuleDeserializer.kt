@@ -95,8 +95,7 @@ class IcModuleDeserializer(
     override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         assert(idSig.isPubliclyVisible)
 
-        if (idSig in icModuleReversedFileIndex) {
-            val icDeserializer = icModuleReversedFileIndex[idSig]!!
+        icModuleReversedFileIndex[idSig]?.let { icDeserializer ->
             return icDeserializer.deserializeIrSymbol(idSig, symbolKind)
         }
 
