@@ -289,11 +289,17 @@ public external fun wasm_f64_convert_i64_s(a: Long): Double
 @WasmOp(WasmOp.F64_PROMOTE_F32)
 public external fun wasm_f64_promote_f32(a: Float): Double
 
+@WasmOp(WasmOp.F32_REINTERPRET_I32)
+public external fun wasm_f32_reinterpret_i32(a: Int): Float
+
+@WasmOp(WasmOp.F64_REINTERPRET_I64)
+public external fun wasm_f64_reinterpret_i64(a: Long): Double
+
 @WasmOp(WasmOp.I32_REINTERPRET_F32)
 public external fun wasm_i32_reinterpret_f32(a: Float): Int
 
-@WasmOp(WasmOp.F32_REINTERPRET_I32)
-public external fun wasm_f32_reinterpret_i32(a: Int): Float
+@WasmOp(WasmOp.I64_REINTERPRET_F64)
+public external fun wasm_i64_reinterpret_f64(a: Double): Long
 
 @WasmOp(WasmOp.I32_TRUNC_SAT_F32_S)
 public external fun wasm_i32_trunc_sat_f32_s(a: Float): Int
@@ -318,3 +324,9 @@ public external fun wasm_i32_store(addr: Int, i: Int): Unit
 
 @WasmOp(WasmOp.I32_STORE16)
 public external fun wasm_i32_store16(addr: Int, c: Char): Unit
+
+@WasmOp(WasmOp.I32_CLZ)
+public external fun wasm_i32_clz(a: Int): Int
+
+@WasmOp(WasmOp.I64_CLZ)
+public external fun wasm_i64_clz(a: Long): Long

@@ -1758,7 +1758,7 @@ public class Float private constructor(public val value: Float) : Number(), Comp
         other is Float && this.equals(other)
 
     public override fun toString(): String =
-        TODO("Wasm: string coercion")
+        dtoa(this.toDouble())
 
     public override inline fun hashCode(): Int =
         bits()
@@ -2071,7 +2071,7 @@ public class Double private constructor(public val value: Double) : Number(), Co
         other is Double && this.bits() == other.bits()
 
     public override fun toString(): String =
-        TODO("Wasm: string coercion")
+        dtoa(this)
 
     public override inline fun hashCode(): Int = bits().hashCode()
 
