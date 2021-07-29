@@ -75,15 +75,16 @@ class ValueParameter(
                 isLateInit = false
             }
             annotations += this@ValueParameter.firValueParameter.annotations
+            val defaultAccessorSource = propertySource?.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
             getter = FirDefaultPropertyGetter(
-                null,
+                defaultAccessorSource,
                 moduleData,
                 FirDeclarationOrigin.Source,
                 type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility()
             )
             setter = if (this.isVar) FirDefaultPropertySetter(
-                null,
+                defaultAccessorSource,
                 moduleData,
                 FirDeclarationOrigin.Source,
                 type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),

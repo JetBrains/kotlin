@@ -623,7 +623,11 @@ class DeclarationsConverter(
                     )
                     //parse primary constructor
                     convertPrimaryConstructor(
-                        primaryConstructor, delegatedSelfType.source, classWrapper, delegatedConstructorSource, containingClassIsExpectClass = false
+                        primaryConstructor,
+                        delegatedSelfType.source,
+                        classWrapper,
+                        delegatedConstructorSource,
+                        containingClassIsExpectClass = false
                     )?.let { this.declarations += it.firConstructor }
                     delegateFields?.let { this.declarations += it }
 
@@ -710,7 +714,7 @@ class DeclarationsConverter(
                             enumClassWrapper,
                             superTypeCallEntry?.toFirSourceElement(),
                             isEnumEntry = true,
-                        containingClassIsExpectClass = false
+                            containingClassIsExpectClass = false
                         )?.let { declarations += it.firConstructor }
                         classBodyNode?.also {
                             // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
@@ -1117,7 +1121,11 @@ class DeclarationsConverter(
                     val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility, modifiers) }
                     this.getter = convertedAccessors.find { it.isGetter }
                         ?: FirDefaultPropertyGetter(
-                            null, moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                            property.toFirSourceElement(FirFakeSourceElementKind.DefaultAccessor),
+                            moduleData,
+                            FirDeclarationOrigin.Source,
+                            returnType,
+                            propertyVisibility
                         ).also {
                             it.status = defaultAccessorStatus()
                             it.initContainingClassAttr()
@@ -1126,7 +1134,11 @@ class DeclarationsConverter(
                     this.setter = convertedAccessors.find { it.isSetter }
                         ?: if (isVar) {
                             FirDefaultPropertySetter(
-                                null, moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                                property.toFirSourceElement(FirFakeSourceElementKind.DefaultAccessor),
+                                moduleData,
+                                FirDeclarationOrigin.Source,
+                                returnType,
+                                propertyVisibility
                             ).also {
                                 it.status = defaultAccessorStatus()
                                 it.initContainingClassAttr()

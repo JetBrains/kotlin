@@ -117,6 +117,7 @@ object FirOverrideChecker : FirClassChecker() {
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
+        if (overriddenSymbols.isEmpty()) return
         val visibilities = overriddenSymbols.map {
             it to it.visibility
         }.sortedBy { pair ->
@@ -124,14 +125,29 @@ object FirOverrideChecker : FirClassChecker() {
             Visibilities.compare(visibility, pair.second) ?: Int.MIN_VALUE
         }
 
-        for ((overridden, overriddenVisibility) in visibilities) {
-            val compare = Visibilities.compare(visibility, overriddenVisibility)
-            if (compare == null) {
-                reporter.reportCannotChangeAccessPrivilege(this, overridden, context)
-                return
-            } else if (compare < 0) {
-                reporter.reportCannotWeakenAccessPrivilege(this, overridden, context)
-                return
+        if (this is FirPropertySymbol) {
+            getterSymbol?.checkVisibility(
+                containingClass,
+                reporter,
+                overriddenSymbols.map { (it as FirPropertySymbol).getterSymbol ?: it },
+                context
+            )
+            setterSymbol?.checkVisibility(
+                containingClass,
+                reporter,
+                overriddenSymbols.mapNotNull { (it as FirPropertySymbol).setterSymbol },
+                context
+            )
+        } else {
+            for ((overridden, overriddenVisibility) in visibilities) {
+                val compare = Visibilities.compare(visibility, overriddenVisibility)
+                if (compare == null) {
+                    reporter.reportCannotChangeAccessPrivilege(this, overridden, context)
+                    break
+                } else if (compare < 0) {
+                    reporter.reportCannotWeakenAccessPrivilege(this, overridden, context)
+                    break
+                }
             }
         }
 
