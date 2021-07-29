@@ -127,7 +127,7 @@ open class KotlinJvmTarget @Inject constructor(
 
         project.tasks.withType(Jar::class.java).named(javaPluginConvention.sourceSets.getByName("main").jarTaskName) { javaJar ->
             (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.map { it.source })
-            javaJar.conventionMapping("archiveName") { targetJar.get().archiveFileName.get() }
+            javaJar.archiveFileName.set(targetJar.flatMap { it.archiveFileName })
             javaJar.dependsOn(targetJar)
             javaJar.enabled = false
         }
