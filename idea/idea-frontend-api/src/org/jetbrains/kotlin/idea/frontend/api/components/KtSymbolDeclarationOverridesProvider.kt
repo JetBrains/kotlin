@@ -13,6 +13,9 @@ public abstract class KtSymbolDeclarationOverridesProvider : KtAnalysisSessionCo
     public abstract fun <T : KtSymbol> getAllOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol>
     public abstract fun <T : KtSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol>
 
+    public abstract fun isSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol): Boolean
+    public abstract fun isDirectSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol): Boolean
+
     public abstract fun getIntersectionOverriddenSymbols(symbol: KtCallableSymbol): Collection<KtCallableSymbol>
 }
 
@@ -40,6 +43,12 @@ public interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMi
      */
     public fun KtCallableSymbol.getDirectlyOverriddenSymbols(): List<KtCallableSymbol> =
         analysisSession.symbolDeclarationOverridesProvider.getDirectlyOverriddenSymbols(this)
+
+    public fun KtClassOrObjectSymbol.isSubClassOf(superClass: KtClassOrObjectSymbol): Boolean =
+        analysisSession.symbolDeclarationOverridesProvider.isSubClassOf(this, superClass)
+
+    public fun KtClassOrObjectSymbol.isDirectSubClassOf(superClass: KtClassOrObjectSymbol): Boolean =
+        analysisSession.symbolDeclarationOverridesProvider.isDirectSubClassOf(this, superClass)
 
     public fun KtCallableSymbol.getIntersectionOverriddenSymbols(): Collection<KtCallableSymbol> =
         analysisSession.symbolDeclarationOverridesProvider.getIntersectionOverriddenSymbols(this)
