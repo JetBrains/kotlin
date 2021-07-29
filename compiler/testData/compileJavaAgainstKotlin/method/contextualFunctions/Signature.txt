@@ -1,0 +1,25 @@
+package test
+
+public fun test.R.f(/*0*/ test.P1, /*1*/ test.P2): kotlin.Unit
+
+public interface C1 {
+}
+
+public interface C2 {
+}
+
+public/*package*/ open class JavaClass {
+    public/*package*/ constructor JavaClass()
+
+    // Static members
+    public open fun test(/*0*/ test.C1!, /*1*/ test.C2!, /*2*/ test.R!, /*3*/ test.P1!, /*4*/ test.P2!): kotlin.Unit
+}
+
+public interface P1 {
+}
+
+public interface P2 {
+}
+
+public interface R {
+}

@@ -339,6 +339,24 @@ public class IrCompileJavaAgainstKotlinTestGenerated extends AbstractIrCompileJa
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/Void.kt");
             }
 
+            @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ContextualFunctions extends AbstractIrCompileJavaAgainstKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestWithoutJavac, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInContextualFunctions() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("Signature.kt")
+                public void testSignature() throws Exception {
+                    runTest("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions/Signature.kt");
+                }
+            }
+
             @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1000,6 +1018,24 @@ public class IrCompileJavaAgainstKotlinTestGenerated extends AbstractIrCompileJa
             @TestMetadata("Void.kt")
             public void testVoid() throws Exception {
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/Void.kt");
+            }
+
+            @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ContextualFunctions extends AbstractIrCompileJavaAgainstKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestWithJavac, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInContextualFunctions() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("Signature.kt")
+                public void testSignature() throws Exception {
+                    runTest("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions/Signature.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName")

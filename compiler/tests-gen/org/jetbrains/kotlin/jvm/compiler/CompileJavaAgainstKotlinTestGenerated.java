@@ -339,6 +339,19 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/Void.kt");
             }
 
+            @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ContextualFunctions extends AbstractCompileJavaAgainstKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestWithoutJavac, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInContextualFunctions() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+            }
+
             @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1000,6 +1013,19 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             @TestMetadata("Void.kt")
             public void testVoid() throws Exception {
                 runTest("compiler/testData/compileJavaAgainstKotlin/method/Void.kt");
+            }
+
+            @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ContextualFunctions extends AbstractCompileJavaAgainstKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTestWithJavac, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInContextualFunctions() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
             }
 
             @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/platformName")
