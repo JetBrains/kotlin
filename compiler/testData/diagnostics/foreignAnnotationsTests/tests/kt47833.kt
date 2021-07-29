@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: main.kt
 sealed class ClientBootResult
 
