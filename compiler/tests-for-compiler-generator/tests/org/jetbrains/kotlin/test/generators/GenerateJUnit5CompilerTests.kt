@@ -153,6 +153,30 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
             }
+
+            testClass<AbstractFirForeignAnnotationsSourceJavaTest>(
+                suiteTestClassName = "FirOldFrontendForeignAnnotationsSourceJavaTestGenerated"
+            ) {
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
+            }
+
+            testClass<AbstractFirForeignAnnotationsCompiledJavaTest>(
+                suiteTestClassName = "FirOldFrontendForeignAnnotationsCompiledJavaTestGenerated"
+            ) {
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
+            }
+
+            testClass<AbstractFirForeignAnnotationsCompiledJavaWithPsiClassReadingTest>(
+                suiteTestClassName = "FirOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated"
+            ) {
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java9Tests", excludedPattern = excludedFirTestdataPattern)
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {

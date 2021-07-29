@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 // FILE: I1.java
 import org.checkerframework.checker.nullness.qual.NonNull;
