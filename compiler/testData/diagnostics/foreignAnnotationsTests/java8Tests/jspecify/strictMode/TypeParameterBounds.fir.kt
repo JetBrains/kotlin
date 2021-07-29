@@ -30,10 +30,12 @@ fun <T : Test> main(a1: A<Any?>, a2: A<Test>, b1: B<Any?>, b2: B<Test>, x: T): U
     a2.bar<T?>(null)
     a2.bar<T>(x)
 
+    // jspecify_nullness_mismatch
     b1.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     b1.bar<T?>(null)
     b1.bar<T>(x)
 
+    // jspecify_nullness_mismatch
     b2.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     b2.bar<T?>(null)
     b2.bar<T>(x)
