@@ -38,17 +38,28 @@ ALWAYS_INLINE inline ThreadState SwitchThreadState(mm::ThreadData* threadData, T
 
 // Asserts that the given thread is in the given state.
 ALWAYS_INLINE inline void AssertThreadState(mm::ThreadData* threadData, ThreadState expected) noexcept {
-    auto actual = threadData->state();
-    RuntimeAssert(actual == expected,
-                  "Unexpected thread state. Expected: %s. Actual: %s.",
-                  ThreadStateName(expected), ThreadStateName(actual));
+    // The read of the thread state is atomic, thus the compiler cannot eliminate it
+    // even if its result is unused due to disabled runtime asserts.
+    // So we explicitly avoid the read if asserts are disabled.
+    if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
+        auto actual = threadData->state();
+        RuntimeAssert(
+                actual == expected, "Unexpected thread state. Expected: %s. Actual: %s.", ThreadStateName(expected),
+                ThreadStateName(actual));
+    }
 }
 
 ALWAYS_INLINE inline void AssertThreadState(mm::ThreadData* threadData, std::initializer_list<ThreadState> expected) noexcept {
-    auto actual = threadData->state();
-    RuntimeAssert(std::any_of(expected.begin(), expected.end(), [actual](ThreadState expected) { return expected == actual; }),
-                  "Unexpected thread state. Expected one of: %s. Actual: %s",
-                  internal::statesToString(expected).c_str(), ThreadStateName(actual));
+    // The read of the thread state is atomic, thus the compiler cannot eliminate it
+    // even if its result is unused due to disabled runtime asserts.
+    // So we explicitly avoid the read if asserts are disabled.
+    if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
+        auto actual = threadData->state();
+        RuntimeAssert(
+                std::any_of(expected.begin(), expected.end(), [actual](ThreadState expected) { return expected == actual; }),
+                "Unexpected thread state. Expected one of: %s. Actual: %s", internal::statesToString(expected).c_str(),
+                ThreadStateName(actual));
+    }
 }
 
 } // namespace kotlin

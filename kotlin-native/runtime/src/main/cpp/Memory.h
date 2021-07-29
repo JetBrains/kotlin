@@ -414,11 +414,17 @@ ALWAYS_INLINE void AssertThreadState(MemoryState* thread, std::initializer_list<
 
 // Asserts that the current thread is in the the given state.
 ALWAYS_INLINE inline void AssertThreadState(ThreadState expected) noexcept {
-    AssertThreadState(mm::GetMemoryState(), expected);
+    // Avoid redundant TLS access in GetMemoryState if runtime asserts are disabled.
+    if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
+        AssertThreadState(mm::GetMemoryState(), expected);
+    }
 }
 
 ALWAYS_INLINE inline void AssertThreadState(std::initializer_list<ThreadState> expected) noexcept {
-    AssertThreadState(mm::GetMemoryState(), expected);
+    // Avoid redundant TLS access in GetMemoryState if runtime asserts are disabled.
+    if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
+        AssertThreadState(mm::GetMemoryState(), expected);
+    }
 }
 
 // Scopely sets the given thread state for the given thread.

@@ -33,11 +33,17 @@ ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadS
 }
 
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {
-    AssertThreadState(thread->GetThreadData(), expected);
+    // Avoid redundant read in GetThreadData if runtime asserts are disabled.
+    if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
+        AssertThreadState(thread->GetThreadData(), expected);
+    }
 }
 
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept {
-    AssertThreadState(thread->GetThreadData(), expected);
+    // Avoid redundant read in GetThreadData if runtime asserts are disabled.
+    if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
+        AssertThreadState(thread->GetThreadData(), expected);
+    }
 }
 
 ThreadState kotlin::GetThreadState(MemoryState* thread) noexcept {
