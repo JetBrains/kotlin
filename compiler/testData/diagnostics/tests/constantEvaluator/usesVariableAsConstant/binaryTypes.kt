@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 package test
 
 val x = 1

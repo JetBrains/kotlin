@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 package test
 
 // val prop1: false
