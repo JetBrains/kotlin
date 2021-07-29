@@ -117,6 +117,7 @@ object StandardClassIds {
     val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
     val suspend = CallableId(BASE_KOTLIN_PACKAGE, Name.identifier("suspend"))
 
+    val JvmStatic = "JvmStatic".jvmId()
     val JvmName = "JvmName".jvmId()
 
     val Result = "Result".baseId()

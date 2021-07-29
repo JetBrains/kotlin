@@ -1,6 +1,6 @@
 interface Test {
-    @get:JvmStatic
-    val a: Int
+    <!JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION!>@get:JvmStatic
+    val a: Int<!>
 
     @get:JvmName("1")
     val b: Int

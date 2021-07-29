@@ -37,9 +37,9 @@ class A {
     }
 
     var p:Int = 1
-        @JvmStatic set(p1: Int) {
+        <!JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION!>@JvmStatic set(p1: Int)<!> {
             p = 1
         }
 
-    @JvmStatic val z2 = 1;
+    <!JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION!>@JvmStatic val z2<!> = 1;
 }

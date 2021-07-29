@@ -3670,6 +3670,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION) { firDiagnostic ->
+        JvmStaticNotInObjectOrClassCompanionImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION) { firDiagnostic ->
+        JvmStaticNotInObjectOrCompanionImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.INAPPLICABLE_JVM_NAME) { firDiagnostic ->
         InapplicableJvmNameImpl(
             firDiagnostic as FirPsiDiagnostic,

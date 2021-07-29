@@ -4145,6 +4145,20 @@ internal class OverrideCannotBeStaticImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class JvmStaticNotInObjectOrClassCompanionImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.JvmStaticNotInObjectOrClassCompanion(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class JvmStaticNotInObjectOrCompanionImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.JvmStaticNotInObjectOrCompanion(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class InapplicableJvmNameImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

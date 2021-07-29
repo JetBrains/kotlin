@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_RECORD_NOT_LAST_VARARG_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_RECORD_NOT_VAL_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.LOCAL_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_DATA_CLASS_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_FINAL_JVM_RECORD
@@ -98,6 +100,14 @@ object FirJvmDefaultErrorMessages {
             map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype")
 
             map.put(OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object")
+            map.put(
+                JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION,
+                "Only members in named objects and companion objects of classes can be annotated with '@JvmStatic'"
+            )
+            map.put(
+                JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION,
+                "Only members in named objects and companion objects can be annotated with '@JvmStatic'"
+            )
 
             map.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration")
             map.put(ILLEGAL_JVM_NAME, "Illegal JVM name")

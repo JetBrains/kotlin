@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -529,12 +530,7 @@ object KSerializerDescriptorResolver {
         else this.makeNullable()
 
     fun createWriteSelfFunctionDescriptor(thisClass: ClassDescriptor): SimpleFunctionDescriptor {
-        val jvmStaticClass = thisClass.module.findClassAcrossModuleDependencies(
-            ClassId(
-                FqName("kotlin.jvm"),
-                Name.identifier("JvmStatic")
-            )
-        )!!
+        val jvmStaticClass = thisClass.module.findClassAcrossModuleDependencies(StandardClassIds.JvmStatic)!!
         val jvmStaticAnnotation = AnnotationDescriptorImpl(jvmStaticClass.defaultType, mapOf(), jvmStaticClass.source)
         val annotations = Annotations.create(listOf(jvmStaticAnnotation))
 

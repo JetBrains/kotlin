@@ -21,7 +21,7 @@ class A {
         }
     }
 
-    @JvmStatic fun a4() {
+    <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a4()<!> {
 
     }
 }
@@ -47,7 +47,7 @@ interface B {
         }
     }
 
-    @JvmStatic fun a4() {
+    <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a4()<!> {
 
     }
 }
