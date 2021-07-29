@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -24,7 +23,6 @@ class JsIrFileSerializer(
     skipExpects: Boolean,
     bodiesOnlyForInlines: Boolean = false,
     icMode: Boolean = false,
-    allowNullTypes: Boolean = false,
     allowErrorStatementOrigins: Boolean = false,
 ) : IrFileSerializer(
     messageLogger,
@@ -34,7 +32,6 @@ class JsIrFileSerializer(
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     skipExpects = skipExpects,
     skipMutableState = icMode,
-    allowNullTypes = allowNullTypes,
     allowErrorStatementOrigins = allowErrorStatementOrigins,
 ) {
     companion object {

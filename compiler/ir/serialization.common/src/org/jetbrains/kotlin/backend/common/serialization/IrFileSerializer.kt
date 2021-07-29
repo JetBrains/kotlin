@@ -125,7 +125,6 @@ open class IrFileSerializer(
     private val skipExpects: Boolean = false,
     // required for JS IC caches
     private val skipMutableState: Boolean = false,
-    private val allowNullTypes: Boolean = false,
     private val allowErrorStatementOrigins: Boolean = false, // TODO: support InlinerExpressionLocationHint
     private val addDebugInfo: Boolean = true
 ) {
@@ -495,7 +494,7 @@ open class IrFileSerializer(
             type = (this as? IrTypeProjection)?.type?.toIrTypeKey
         )
 
-    fun serializeIrType(type: IrType?) = if (type == null) -1 else protoTypeMap.getOrPut(type.toIrTypeKey) {
+    fun serializeIrType(type: IrType) = protoTypeMap.getOrPut(type.toIrTypeKey) {
         protoTypeArray.add(serializeIrTypeData(type))
         protoTypeArray.size - 1
     }
@@ -594,9 +593,9 @@ open class IrFileSerializer(
         }
 
         for (index in 0 until call.typeArgumentsCount) {
-            val typeArgument = call.getTypeArgument(index)
-            if (typeArgument == null && !allowNullTypes) error("Expected type argument at $index in ${call.render()}")
-            proto.addTypeArgument(serializeIrType(typeArgument))
+            // See `ForbidUsingExtensionPropertyTypeParameterInDelegate` language feature
+            val typeArgumentIndex = call.getTypeArgument(index)?.let { serializeIrType(it) } ?: -1
+            proto.addTypeArgument(typeArgumentIndex)
         }
 
         for (index in 0 until call.valueArgumentsCount) {

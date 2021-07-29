@@ -24,11 +24,12 @@ import org.jetbrains.kotlin.library.impl.DeclarationIrTableMemoryReader
 import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.library.impl.IrLongArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoIrDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoIrFile
 
 class IcFileDeserializer(
     val linker: JsIrLinker,
-    file: IrFile,
+    private val file: IrFile,
     originalFileReader: IrLibraryFile,
     fileProto: org.jetbrains.kotlin.backend.common.serialization.proto.IrFile,
     deserializeBodies: Boolean,
@@ -42,6 +43,7 @@ class IcFileDeserializer(
     val enqueue: IdSignature.(IcFileDeserializer) -> Unit,
 ) {
 
+    private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
     val originalSymbolDeserializer =
         IrSymbolDeserializer(
             linker.symbolTable,
@@ -56,7 +58,8 @@ class IcFileDeserializer(
             },
             linker::handleExpectActualMapping,
             enqueueAllDeclarations = true,
-            deserializePublicSymbol = ::deserializeOriginalPublicSymbol,
+            deserializedSymbols = deserializedSymbols,
+            deserializePublicSymbol = ::deserializeOriginalPublicSymbol
         )
 
     private val originalDeclarationDeserializer = IrDeclarationDeserializer(
@@ -71,7 +74,6 @@ class IcFileDeserializer(
         originalSymbolDeserializer,
         linker.fakeOverrideBuilder.platformSpecificClassFilter,
         linker.fakeOverrideBuilder,
-        allowRedeclaration = true,
         compatibilityMode = CompatibilityMode.CURRENT
     )
 
@@ -105,7 +107,8 @@ class IcFileDeserializer(
         }
     }
 
-    val originalFileDeserializer = IrFileDeserializer(file, originalFileReader, fileProto, originalSymbolDeserializer, originalDeclarationDeserializer)
+    val originalFileDeserializer =
+        IrFileDeserializer(file, originalFileReader, fileProto, originalSymbolDeserializer, originalDeclarationDeserializer)
 
     val originalVisited = HashSet<IdSignature>()
 
@@ -149,7 +152,7 @@ class IcFileDeserializer(
         { idSig -> idSig.enqueue(this) },
         { _, s -> s },
         enqueueAllDeclarations = true,
-        deserializedSymbols = originalFileDeserializer.symbolDeserializer.deserializedSymbols,
+        deserializedSymbols = deserializedSymbols,
         ::deserializePublicSymbol
     )
 
@@ -173,11 +176,17 @@ class IcFileDeserializer(
         allowErrorLoopIndices = true,
     )
 
-    private val protoFile: ProtoIrFile by lazy { ProtoIrFile.parseFrom(icFileData.file.fileData.codedInputStream, ExtensionRegistryLite.newInstance()) }
+    private val protoFile: ProtoIrFile by lazy {
+        ProtoIrFile.parseFrom(icFileData.file.fileData.codedInputStream, ExtensionRegistryLite.newInstance())
+    }
 
-    private val carrierDeserializer by lazy { CarrierDeserializer(declarationDeserializer, icFileData.carriers) }
+    private val carrierDeserializer by lazy {
+        CarrierDeserializer(declarationDeserializer, icFileData.carriers)
+    }
 
-    val reversedSignatureIndex: Map<IdSignature, Int> = protoFile.declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
+    val reversedSignatureIndex: Map<IdSignature, Int> = protoFile.declarationIdList.map {
+        symbolDeserializer.deserializeIdSignature(it) to it
+    }.toMap()
 
     val visited = HashSet<IdSignature>()
 
@@ -211,17 +220,13 @@ class IcFileDeserializer(
     }
 
 
-    private fun deserializePublicSymbol(idSig: IdSignature, kind: BinarySymbolData.SymbolKind) : IrSymbol {
+    private fun deserializePublicSymbol(idSig: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol {
         // TODO: reference lowered declarations cross-module
-        if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return (idSig as IdSignature.FileSignature).fileSymbol
+        if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return file.symbol
         val topLevelSig = idSig.topLevelSignature()
         val actualModuleDeserializer =
-            moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig) ?:
-                handleNoModuleDeserializerFound(
-                idSig,
-                moduleDeserializer.moduleDescriptor,
-                moduleDeserializer.moduleDependencies
-            )
+            moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
+                ?: handleNoModuleDeserializerFound(idSig, moduleDeserializer.moduleDescriptor, moduleDeserializer.moduleDependencies)
 
         return actualModuleDeserializer.deserializeIrSymbol(idSig, kind)
     }
@@ -231,13 +236,13 @@ class IcFileDeserializer(
 
         val idSigIndex = reversedSignatureIndex[idSig] ?: return null
         val declarationStream = icFileReader.irDeclaration(idSigIndex).codedInputStream
-        val declarationProto = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.parseFrom(declarationStream, ExtensionRegistryLite.newInstance())
+        val declarationProto = ProtoIrDeclaration.parseFrom(declarationStream, ExtensionRegistryLite.newInstance())
         return declarationDeserializer.deserializeDeclaration(declarationProto)
     }
 
     // Return declaration iff it was already deserialized
     private fun cachedDeclaration(idSig: IdSignature): IrDeclaration? {
-        val symbol = symbolDeserializer.deserializedSymbols[idSig] // Same map is used for both symbol deserializers
+        val symbol = deserializedSymbols[idSig] // Same map is used for both symbol deserializers
 
         if (symbol != null && symbol.isBound) return symbol.owner as? IrDeclaration
 
@@ -245,8 +250,6 @@ class IcFileDeserializer(
     }
 
     fun deserializeAnyDeclaration(idSig: IdSignature): IrDeclaration? {
-        if (idSig is IdSignature.FileSignature) return null // TODO: is it needed
-
         cachedDeclaration(idSig)?.let { return it }
 
         // TODO fast path?
@@ -266,7 +269,7 @@ class IcFileDeserializer(
         return null
     }
 
-    fun deserializeIrSymbol(code: Long): IrSymbol {
+    private fun deserializeIrSymbol(code: Long): IrSymbol {
         return symbolDeserializer.deserializeIrSymbol(code)
     }
 
