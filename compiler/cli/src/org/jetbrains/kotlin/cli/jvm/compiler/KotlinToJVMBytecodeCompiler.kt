@@ -145,7 +145,12 @@ object KotlinToJVMBytecodeCompiler {
                         addContent(Element("sources").setAttribute("path", source))
                     }
                     for (javaSourceRoots in module.getJavaSourceRoots()) {
-                        addContent(Element("javaSourceRoots").setAttribute("path", javaSourceRoots.path))
+                        addContent(
+                            Element("javaSourceRoots").apply {
+                                setAttribute("path", javaSourceRoots.path)
+                                javaSourceRoots.packagePrefix?.let { setAttribute("packagePrefix", it) }
+                            }
+                        )
                     }
                     for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
                         if (classpath is JvmClasspathRoot) {
