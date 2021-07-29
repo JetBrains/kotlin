@@ -155,7 +155,9 @@ private fun Project.configureCheckTasks(
             apiCheckDir.mkdirs()
         }
     }
-    project.tasks.getByName("check").dependsOn(apiCheck)
+    project.tasks.named("check").configure {
+        it.dependsOn(apiCheck)
+    }
 }
 
 inline fun <reified T : Task> Project.task(
