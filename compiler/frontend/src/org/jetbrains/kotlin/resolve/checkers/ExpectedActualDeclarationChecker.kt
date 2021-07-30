@@ -186,9 +186,7 @@ class ExpectedActualDeclarationChecker(
 
         // Here we have exactly one compatible actual and/or some weakly incompatible. In either case, we don't report anything on expect
         val actualMembers = compatibility.asSequence()
-            .filter { (compatibility, _) ->
-                compatibility is Compatible || (compatibility is Incompatible && compatibility.kind != IncompatibilityKind.STRONG)
-            }.flatMap { it.value.asSequence() }
+            .filter { it.key.isCompatibleOrWeakCompatible() }.flatMap { it.value.asSequence() }
 
         expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
     }
