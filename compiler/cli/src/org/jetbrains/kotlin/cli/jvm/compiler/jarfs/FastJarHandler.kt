@@ -57,15 +57,15 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
         return map.getOrPut(entryName) {
             val (parentName, shortName) = entryName.splitPath()
 
-            val parentInfo = getOrCreateDirectory(parentName, map)
+            val parentFile = getOrCreateDirectory(parentName, map)
             if ("." == shortName) {
-                return parentInfo
+                return parentFile
             }
 
             FastJarVirtualFile(
                 this, shortName,
                 if (entry.isDirectory) -1 else entry.uncompressedSize,
-                parentInfo
+                parentFile
             )
         }
     }
@@ -80,9 +80,9 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
             require(entryName != parentPath) {
                 "invalid entry name: '" + entryName + "' in " + this.file.absolutePath + "; after split: " + Pair(parentPath, shortName)
             }
-            val parentInfo = getOrCreateDirectory(parentPath, map)
+            val parentFile = getOrCreateDirectory(parentPath, map)
 
-            FastJarVirtualFile(this, shortName, -1, parentInfo)
+            FastJarVirtualFile(this, shortName, -1, parentFile)
         }
     }
 
