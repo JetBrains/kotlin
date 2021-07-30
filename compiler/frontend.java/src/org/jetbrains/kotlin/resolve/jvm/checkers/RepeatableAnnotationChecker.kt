@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -61,16 +64,48 @@ class RepeatableAnnotationChecker(
 
         if (annotated is KtClassOrObject && annotated.hasModifier(KtTokens.ANNOTATION_KEYWORD)) {
             val annotationClass = trace.get(BindingContext.CLASS, annotated)
-            val repeatable = annotations.find { it.descriptor.fqName == JvmAnnotationNames.REPEATABLE_ANNOTATION }
-            if (annotationClass != null && repeatable != null) {
-                val containerKClassValue = repeatable.descriptor.allValueArguments[Name.identifier("value")]
-                if (containerKClassValue is KClassValue) {
-                    val containerClass = TypeUtils.getClassDescriptor(containerKClassValue.getArgumentType(module))
-                    if (containerClass != null) {
-                        checkRepeatableAnnotationContainer(annotationClass, containerClass, trace, repeatable.entry)
-                    }
+            if (annotationClass != null) {
+                val javaRepeatable = annotations.find { it.descriptor.fqName == JvmAnnotationNames.REPEATABLE_ANNOTATION }
+                val kotlinRepeatable = annotations.find { it.descriptor.fqName == StandardNames.FqNames.repeatable }
+                when {
+                    javaRepeatable != null -> checkJavaRepeatableAnnotationDeclaration(javaRepeatable, annotationClass, trace)
+                    kotlinRepeatable != null -> checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, annotationClass, trace)
                 }
             }
+        }
+    }
+
+    private fun checkJavaRepeatableAnnotationDeclaration(
+        javaRepeatable: ResolvedAnnotation,
+        annotationClass: ClassDescriptor,
+        trace: BindingTrace,
+    ) {
+        val containerKClassValue = javaRepeatable.descriptor.allValueArguments[Name.identifier("value")]
+        if (containerKClassValue is KClassValue) {
+            val containerClass = TypeUtils.getClassDescriptor(containerKClassValue.getArgumentType(module))
+            if (containerClass != null) {
+                checkRepeatableAnnotationContainer(annotationClass, containerClass, trace, javaRepeatable.entry)
+            }
+        }
+    }
+
+    private fun checkKotlinRepeatableAnnotationDeclaration(
+        kotlinRepeatable: ResolvedAnnotation,
+        annotationClass: ClassDescriptor,
+        trace: BindingTrace,
+    ) {
+        val nestedClassNamedContainer =
+            annotationClass.unsubstitutedInnerClassesScope.getContributedClassifier(
+                Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME),
+                NoLookupLocation.FOR_ALREADY_TRACKED
+            )
+        if (nestedClassNamedContainer != null) {
+            trace.report(
+                select(
+                    ErrorsJvm.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER,
+                    ErrorsJvm.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR
+                ).on(kotlinRepeatable.entry)
+            )
         }
     }
 

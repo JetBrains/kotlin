@@ -1907,6 +1907,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 public void testKotlinRepeatable() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/repeatable/kotlinRepeatable.kt");
                 }
+
+                @Test
+                @TestMetadata("nestedClassContainer_1_5.kt")
+                public void testNestedClassContainer_1_5() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/nestedClassContainer_1_5.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedClassContainer_1_6.kt")
+                public void testNestedClassContainer_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/nestedClassContainer_1_6.kt");
+                }
             }
 
             @Nested

@@ -80,6 +80,8 @@ public interface ErrorsJvm {
     DiagnosticFactory4<KtAnnotationEntry, FqName, String, FqName, String> REPEATABLE_CONTAINER_HAS_SHORTER_RETENTION_ERROR = DiagnosticFactory4.create(ERROR);
     DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET_ERROR = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtAnnotationEntry> REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<KtAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
 
