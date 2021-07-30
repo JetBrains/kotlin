@@ -85,6 +85,10 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Boost Software License 1.0 ([license/third_party/boost_LICENSE.txt][boost])
       - Origin: Derived from boost special math functions, Copyright Eric Ford & Hubert Holin 2001.
 
+ - Path: libraries/stdlib/wasm/internal/kotlin/wasm/internal/Number2String.kt
+      - License: Apache 2 ([third_party/assemblyscript_license.txt][assemblyscript])
+      - Origin: Derived from assemblyscript standard library
+
  - Path: plugins/lint/android-annotations
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
@@ -261,3 +265,4 @@ any distributions of the compiler, libraries or plugin:
 [rhino]: third_party/rhino_LICENSE.txt
 [rxjava]: third_party/testdata/rxjava_license.txt
 [spring]: third_party/testdata/spring_license.txt
+[assemblyscript]: third_party/assemblyscript_license.txt
