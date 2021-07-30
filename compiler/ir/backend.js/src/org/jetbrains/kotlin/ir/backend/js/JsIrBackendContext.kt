@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.isNullable
 
 class JsIrBackendContext(
     val module: ModuleDescriptor,
@@ -229,6 +230,16 @@ class JsIrBackendContext(
                         NoLookupLocation.FROM_BACKEND
                     ).filterNot { it.isExpect }.single().getter!!
                 )
+
+            private val _arraysContentEquals = getFunctions(FqName("kotlin.collections.contentEquals")).mapNotNull {
+                if (it.extensionReceiverParameter != null && it.extensionReceiverParameter!!.type.isNullable())
+                    symbolTable.referenceSimpleFunction(it)
+                else null
+            }
+
+            // Can't use .owner until ExternalStubGenerator is invoked, hence get() = here.
+            override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
+                get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
 
             override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
 

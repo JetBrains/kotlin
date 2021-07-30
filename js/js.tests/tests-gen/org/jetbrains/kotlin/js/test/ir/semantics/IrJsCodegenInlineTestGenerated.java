@@ -41,6 +41,16 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         public void testAllFilesPresentInAnnotations() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
+
+        @TestMetadata("annotationInstanceInlining.kt")
+        public void testAnnotationInstanceInlining() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/annotations/annotationInstanceInlining.kt");
+        }
+
+        @TestMetadata("instanceInAnonymousClass.kt")
+        public void testInstanceInAnonymousClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/annotations/instanceInAnonymousClass.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")

@@ -1,5 +1,8 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: WASM
+// DONT_TARGET_EXACT_BACKEND: JS
 
 // WITH_RUNTIME
 // !LANGUAGE: +InstantiationOfAnnotationClasses
@@ -22,7 +25,7 @@ data class BarLike(val i:Int, val s: String, val f: Float)
 fun box(): String {
     val foo1 = Foo(42, "foo", arrayOf("a", "b"), intArrayOf(1,2), Bar::class, Bar(10, "bar", Float.NaN))
     val foo2 = Foo(42, "foo", arrayOf("a", "b"), intArrayOf(1,2), Bar::class, Bar(10, "bar", Float.NaN))
-    if (foo1 != foo2) return "Failed equals"
+    if (foo1 != foo2) return "Failed equals ${foo1.toString()} ${foo2.toString()}"
     val barlike = BarLike(10, "bar", Float.NaN)
     if (barlike.hashCode() != foo1.bar.hashCode()) return "Failed HC1"
     if (barlike.hashCode() != foo2.bar.hashCode()) return "Failed HC2"

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
@@ -69,7 +70,8 @@ class MethodsFromAnyGeneratorForLowerings(val context: BackendContext, val irCla
             val symbol = if (type.isArray() || type.isPrimitiveArray()) {
                 context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
             } else {
-                context.irBuiltIns.anyClass.functions.single { it.owner.name.asString() == "hashCode" }
+                type.classOrNull?.functions?.singleOrNull { it.owner.isHashCode() } ?:
+                    context.irBuiltIns.anyClass.functions.single { it.owner.name.asString() == "hashCode" }
             }
             return object : HashCodeFunctionInfo {
                 override val symbol: IrSimpleFunctionSymbol = symbol

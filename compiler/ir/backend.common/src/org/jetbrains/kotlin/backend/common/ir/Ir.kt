@@ -170,7 +170,7 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
 
     private val binaryOperatorCache = mutableMapOf<Triple<Name, IrType, IrType>, IrSimpleFunctionSymbol>()
 
-    fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol = 
+    fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol =
         irBuiltIns.getBinaryOperator(name, lhsType, rhsType)
 
     fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol = irBuiltIns.getUnaryOperator(name, receiverType)
@@ -231,6 +231,8 @@ abstract class Symbols<out T : CommonBackendContext>(
     open val getWithoutBoundCheckName: Name? = null
 
     open val setWithoutBoundCheckName: Name? = null
+
+    open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>? = null
 
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =

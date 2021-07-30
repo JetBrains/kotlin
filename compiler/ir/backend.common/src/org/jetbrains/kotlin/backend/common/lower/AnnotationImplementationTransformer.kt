@@ -13,19 +13,19 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isKClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -46,7 +46,7 @@ class AnnotationImplementationLowering(
     }
 }
 
-open class AnnotationImplementationTransformer(val context: BackendContext, val irFile: IrFile) : IrElementTransformerVoidWithContext() {
+open class AnnotationImplementationTransformer(val context: BackendContext, val irFile: IrFile?) : IrElementTransformerVoidWithContext() {
     internal val implementations: MutableMap<IrClass, IrClass> = mutableMapOf()
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
@@ -79,7 +79,7 @@ open class AnnotationImplementationTransformer(val context: BackendContext, val 
             // since declaration is synthetic anyway
             visibility = DescriptorVisibilities.INTERNAL
         }.apply {
-            parent = localDeclarationParent ?: irFile
+            parent = localDeclarationParent ?: irFile ?: error("irFile in transformer should be specified when creating synthetic implementation")
             createImplicitParameterDeclarationWithWrappedDescriptor()
             superTypes = listOf(annotationClass.defaultType)
         }
@@ -138,6 +138,7 @@ open class AnnotationImplementationTransformer(val context: BackendContext, val 
                 isVar = false
                 origin = ANNOTATION_IMPLEMENTATION
             }.apply {
+                field.correspondingPropertySymbol = this.symbol
                 backingField = field
                 parent = implClass
             }
@@ -149,6 +150,7 @@ open class AnnotationImplementationTransformer(val context: BackendContext, val 
                 visibility = DescriptorVisibilities.PUBLIC
                 modality = Modality.FINAL
             }.apply {
+                correspondingPropertySymbol = prop.symbol
                 dispatchReceiverParameter = implClass.thisReceiver!!.copyTo(this)
                 body = context.createIrBuilder(symbol).irBlockBody {
                     var value: IrExpression = irGetField(irGet(dispatchReceiverParameter!!), field)
