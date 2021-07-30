@@ -176,7 +176,12 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val result = SmartSet.create<Experimentality>()
             if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 for (overridden in overriddenDescriptors) {
-                    result.addAll(overridden.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
+                    result.addAll(overridden.loadExperimentalities(
+                        moduleAnnotationsResolver,
+                        languageVersionSettings,
+                        visited,
+                        useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
+                    ))
                 }
                 return result
             }
