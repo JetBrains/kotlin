@@ -43,6 +43,12 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
         }
 
         @Test
+        @TestMetadata("concatDynamic199Long.kt")
+        public void testConcatDynamic199Long() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/concatDynamic199Long.kt");
+        }
+
+        @Test
         @TestMetadata("concatDynamic200.kt")
         public void testConcatDynamic200() throws Exception {
             runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/concatDynamic200.kt");
@@ -58,6 +64,12 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
         @TestMetadata("concatDynamic201.kt")
         public void testConcatDynamic201() throws Exception {
             runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/concatDynamic201.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicIndy199Long.kt")
+        public void testConcatDynamicIndy199Long() throws Exception {
+            runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/concatDynamicIndy199Long.kt");
         }
 
         @Test

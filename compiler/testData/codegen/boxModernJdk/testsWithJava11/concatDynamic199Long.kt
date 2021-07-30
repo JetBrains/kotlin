@@ -1,21 +1,26 @@
-// KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=indy-with-constants
-// JVM_TARGET: 9
+// STRING_CONCAT: indy-with-constants
+fun test(z: Long): String {
+    val result = "" + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z   //199 z
 
-fun box() {
-    val z = "0"
-    val result = z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            "some constant" + "some constant" + "some constant" + "some constant" +     // constant in this mode are inlined in recipe
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z   //200
+    return result
 }
 
-// 2 INVOKEDYNAMIC makeConcatWithConstants
-// 0 append
-// 0 stringPlus
+fun box(): String {
+    val result = test(0L)
+
+    if (result.length != 199)
+        return "fail 1: ${result.length}"
+
+    return if (result != "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+        "fail 2: ${result}"
+    else "OK"
+}
