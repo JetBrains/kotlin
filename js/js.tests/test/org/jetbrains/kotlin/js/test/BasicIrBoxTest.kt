@@ -173,6 +173,7 @@ abstract class BasicIrBoxTest(
 
             fun prepareModule(allowIc: Boolean): ModulesStructure {
                 val useIc = runIcMode && allowIc
+                @Suppress("NAME_SHADOWING")
                 val icCache = if (useIc) icCache else emptyMap()
                 return if (!klibMainModule) {
                     prepareAnalyzedSourceModule(

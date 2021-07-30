@@ -315,15 +315,7 @@ extra["compilerArtifactsForIde"] = listOf(
 
 // TODO: fix remaining warnings and remove this property.
 extra["tasksWithWarnings"] = listOf(
-    ":kotlin-stdlib:compileTestKotlin",
-    ":kotlin-stdlib-jdk7:compileTestKotlin",
-    ":kotlin-stdlib-jdk8:compileTestKotlin",
-    ":plugins:uast-kotlin-base:compileKotlin",
-    ":plugins:uast-kotlin-base:compileTestKotlin",
-    ":plugins:uast-kotlin:compileKotlin",
-    ":plugins:uast-kotlin:compileTestKotlin",
-    ":plugins:uast-kotlin-fir:compileKotlin",
-    ":plugins:uast-kotlin-fir:compileTestKotlin"
+    ":kotlin-gradle-plugin:compileKotlin"
 )
 
 val tasksWithWarnings: List<String> by extra
@@ -482,15 +474,10 @@ allprojects {
     }
 
     if (!kotlinBuildProperties.disableWerror) {
-        // For compiler and stdlib, allWarningsAsErrors is configured in the corresponding "root" projects
-        // (compiler/build.gradle.kts and libraries/commonConfiguration.gradle).
-        val projectsWithWarningsAsErrors = listOf("core", "plugins").map { File(it).absoluteFile }
-        if (projectsWithWarningsAsErrors.any(projectDir::startsWith)) {
-            tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
-                if (path !in tasksWithWarnings) {
-                    kotlinOptions {
-                        allWarningsAsErrors = true
-                    }
+        tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+            if (path !in tasksWithWarnings) {
+                kotlinOptions {
+                    allWarningsAsErrors = true
                 }
             }
         }
