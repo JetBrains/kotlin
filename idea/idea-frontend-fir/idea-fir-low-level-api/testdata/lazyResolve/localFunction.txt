@@ -58,7 +58,7 @@ FILE: localFunction.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: localFunction.kt
     public final [STATUS] class A : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
@@ -73,7 +73,7 @@ FILE: localFunction.kt
 
     }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: localFunction.kt
     public final [STATUS] class A : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=A] constructor(): R|A| {

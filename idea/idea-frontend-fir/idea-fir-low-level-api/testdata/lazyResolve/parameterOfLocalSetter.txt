@@ -70,7 +70,7 @@ FILE: parameterOfLocalSetter.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: parameterOfLocalSetter.kt
     public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
@@ -88,7 +88,7 @@ FILE: parameterOfLocalSetter.kt
 
     }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: parameterOfLocalSetter.kt
     public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
         local final [BODY_RESOLVE] class XX : R|kotlin/Any| {

@@ -30,19 +30,19 @@ FILE: functionWithParameter.kt
         ^resolveMe Unit#
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: functionWithParameter.kt
-    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
-    }
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([RAW_FIR] param: R|I|): <implicit> {
-        ^resolveMe Unit#
-    }
-
 STATUS:
 FILE: functionWithParameter.kt
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [STATUS] fun resolveMe([RAW_FIR] param: R|I|): <implicit> {
+        ^resolveMe Unit#
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: functionWithParameter.kt
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
+    }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([RAW_FIR] param: R|I|): <implicit> {
         ^resolveMe Unit#
     }
 
@@ -114,7 +114,7 @@ AnnotationsArguments:
 FILE: functionWithParameter.kt
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([RAW_FIR] param: R|I|): <implicit> {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([RAW_FIR] param: R|I|): <implicit> {
         ^resolveMe Unit#
     }
 

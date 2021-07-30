@@ -58,9 +58,9 @@ FILE: secondaryConstructor.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: secondaryConstructor.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -73,9 +73,9 @@ FILE: secondaryConstructor.kt
 
     }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: secondaryConstructor.kt
-    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {
@@ -210,7 +210,7 @@ FILE: secondaryConstructor.kt
 
 AnnotationsArguments:
 FILE: secondaryConstructor.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| {

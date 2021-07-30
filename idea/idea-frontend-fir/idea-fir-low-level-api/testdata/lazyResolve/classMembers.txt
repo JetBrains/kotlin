@@ -98,14 +98,14 @@ FILE: classMembers.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: classMembers.kt
-    public? final? [SUPER_TYPES] class A : R|kotlin/Any| {
+    public final [SUPER_TYPES] class A : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
@@ -123,14 +123,14 @@ FILE: classMembers.kt
 
     }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: classMembers.kt
     public final [SUPER_TYPES] class A : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+        public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 
@@ -350,12 +350,12 @@ FILE: classMembers.kt
 
 AnnotationsArguments:
 FILE: classMembers.kt
-    public? final? [SUPER_TYPES] class A : R|kotlin/Any| {
+    public final [SUPER_TYPES] class A : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 

@@ -62,9 +62,9 @@ FILE: propertyWithGetterAndSetter.kt
             field# = value#
         }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: propertyWithGetterAndSetter.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetterAndSetter#)
         withGetterAndSetter# = IntegerLiteral(123)
     }
@@ -78,9 +78,9 @@ FILE: propertyWithGetterAndSetter.kt
             field# = value#
         }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: propertyWithGetterAndSetter.kt
-    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetterAndSetter#)
         withGetterAndSetter# = IntegerLiteral(123)
     }
@@ -224,7 +224,7 @@ FILE: propertyWithGetterAndSetter.kt
 
 AnnotationsArguments:
 FILE: propertyWithGetterAndSetter.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetterAndSetter#)
         withGetterAndSetter# = IntegerLiteral(123)
     }

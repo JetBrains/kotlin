@@ -37,7 +37,7 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.STATUS) return
-        designation.declaration.ensurePhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+        designation.declaration.ensurePhase(FirResolvePhase.TYPES)
 
         val transformer = FirDesignatedStatusResolveTransformerForIDE()
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.STATUS) {

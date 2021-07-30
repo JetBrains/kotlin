@@ -146,14 +146,14 @@ FILE: annotationParameters.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: annotationParameters.kt
-    public final [STATUS] enum class X : R|kotlin/Enum<X>| {
-        private [STATUS] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [RAW_FIR] enum class X : R|kotlin/Enum<X>| {
+        private [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Enum<X>|>()
         }
 
-        public final static [STATUS] [ContainingClassKey=X] enum entry A: R|X|
+        public final static [RAW_FIR] [ContainingClassKey=X] enum entry A: R|X|
         public final static [BODY_RESOLVE] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
         }
 
@@ -170,12 +170,12 @@ FILE: annotationParameters.kt
             [TYPES] public? get(): A.X
 
     }
-    public? final? [SUPER_TYPES] class B : R|kotlin/Any| {
+    public final [SUPER_TYPES] class B : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|(X#.A#) public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         }
 
         @Anno(X#.A#) public? final? [SUPER_TYPES] fun foo(): R|kotlin/Unit| {
@@ -183,7 +183,7 @@ FILE: annotationParameters.kt
 
     }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: annotationParameters.kt
     public final [STATUS] enum class X : R|kotlin/Enum<X>| {
         private [STATUS] [ContainingClassKey=X] constructor(): R|X| {
@@ -212,7 +212,7 @@ FILE: annotationParameters.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|(Q|X|.R|/X.A|) public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         }
 
         @Anno(X#.A#) public? final? [SUPER_TYPES] fun foo(): R|kotlin/Unit| {
@@ -289,7 +289,7 @@ FILE: annotationParameters.kt
         @R|Anno|(Q|X|.R|/X.A|) public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [STATUS] fun foo(): R|kotlin/Unit| {
+        @R|Anno|(X#.A#) public final [STATUS] fun foo(): R|kotlin/Unit| {
         }
 
     }
@@ -326,7 +326,7 @@ FILE: annotationParameters.kt
         @R|Anno|(Q|X|.R|/X.A|) public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [STATUS] fun foo(): R|kotlin/Unit| {
+        @R|Anno|(X#.A#) public final [STATUS] fun foo(): R|kotlin/Unit| {
         }
 
     }
@@ -400,7 +400,7 @@ FILE: annotationParameters.kt
         @R|Anno|(Q|X|.R|/X.A|) public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [STATUS] fun foo(): R|kotlin/Unit| {
+        @R|Anno|(X#.A#) public final [STATUS] fun foo(): R|kotlin/Unit| {
         }
 
     }
@@ -437,7 +437,7 @@ FILE: annotationParameters.kt
         @R|Anno|(Q|X|.R|/X.A|) public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [STATUS] fun foo(): R|kotlin/Unit| {
+        @R|Anno|(X#.A#) public final [STATUS] fun foo(): R|kotlin/Unit| {
         }
 
     }
@@ -540,12 +540,12 @@ FILE: annotationParameters.kt
             [TYPES] public? get(): A.X
 
     }
-    public? final? [SUPER_TYPES] class B : R|kotlin/Any| {
+    public final [SUPER_TYPES] class B : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|(Q|X|.R|/X.A|) public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         }
 
         @Anno(X#.A#) public? final? [SUPER_TYPES] fun foo(): R|kotlin/Unit| {
@@ -592,12 +592,12 @@ FILE: annotationParameters.kt
 
 DeclarationStatus:
 FILE: annotationParameters.kt
-    public final [STATUS] enum class X : R|kotlin/Enum<X>| {
-        private [STATUS] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [RAW_FIR] enum class X : R|kotlin/Enum<X>| {
+        private [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Enum<X>|>()
         }
 
-        public final static [STATUS] [ContainingClassKey=X] enum entry A: R|X|
+        public final static [RAW_FIR] [ContainingClassKey=X] enum entry A: R|X|
         public final static [BODY_RESOLVE] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
         }
 
@@ -619,7 +619,7 @@ FILE: annotationParameters.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|(X#.A#) public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         }
 
         @Anno(X#.A#) public? final? [SUPER_TYPES] fun foo(): R|kotlin/Unit| {

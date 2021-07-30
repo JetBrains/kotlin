@@ -86,7 +86,7 @@ FILE: localDeclaration.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: localDeclaration.kt
     public final [STATUS] class A : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
@@ -108,7 +108,7 @@ FILE: localDeclaration.kt
 
     }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: localDeclaration.kt
     public final [STATUS] class A : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=A] constructor(): R|A| {

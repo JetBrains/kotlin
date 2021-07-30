@@ -30,17 +30,17 @@ FILE: propertyWithInitializer.kt
     public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
         [TYPES] public? get(): Int
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: propertyWithInitializer.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
     public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
         [TYPES] public? get(): Int
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: propertyWithInitializer.kt
-    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
     public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)
@@ -112,7 +112,7 @@ FILE: propertyWithInitializer.kt
 
 AnnotationsArguments:
 FILE: propertyWithInitializer.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
     public? final? [RAW_FIR] val property: Int = IntegerLiteral(10)

@@ -42,9 +42,9 @@ FILE: topLevelFunctionsWithImplicitType.kt
         ^functionWithLazyBody String(42)
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: topLevelFunctionsWithImplicitType.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
@@ -53,9 +53,9 @@ FILE: topLevelFunctionsWithImplicitType.kt
         ^functionWithLazyBody String(42)
     }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: topLevelFunctionsWithImplicitType.kt
-    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {
@@ -154,7 +154,7 @@ FILE: topLevelFunctionsWithImplicitType.kt
 
 AnnotationsArguments:
 FILE: topLevelFunctionsWithImplicitType.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| {

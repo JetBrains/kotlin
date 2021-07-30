@@ -46,9 +46,9 @@ FILE: propertyWithGetter.kt
             ^ IntegerLiteral(42)
         }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: propertyWithGetter.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -58,9 +58,9 @@ FILE: propertyWithGetter.kt
             ^ IntegerLiteral(42)
         }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: propertyWithGetter.kt
-    public final [STATUS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {
@@ -168,7 +168,7 @@ FILE: propertyWithGetter.kt
 
 AnnotationsArguments:
 FILE: propertyWithGetter.kt
-    public? final? [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| {

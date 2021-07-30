@@ -50,7 +50,7 @@ internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
 
     override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) return
-        designation.declaration.ensurePhase(FirResolvePhase.TYPES)
+        designation.declaration.ensurePhase(FirResolvePhase.STATUS)
 
         val designationIterator = designation.toSequenceWithFile(includeTarget = false).iterator()
 
@@ -65,7 +65,7 @@ internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
 
     override fun ensureResolved(declaration: FirDeclaration) {
         if (declaration is FirAnnotatedDeclaration) {
-            val unresolvedAnnotation = declaration.annotations.firstOrNull { it.resolveStatus == FirAnnotationResolveStatus.Resolved }
+            val unresolvedAnnotation = declaration.annotations.firstOrNull { it.resolveStatus == FirAnnotationResolveStatus.Unresolved }
             check(unresolvedAnnotation == null) {
                 "Unexpected resolve status of annotation, expected Resolved but actual $unresolvedAnnotation"
             }

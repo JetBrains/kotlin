@@ -106,10 +106,10 @@ FILE: superTypesLoop.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
+STATUS:
 FILE: superTypesLoop.kt
-    public? open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|C| {
-        public? [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [STATUS] class resolveMe : R|C| {
+        public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
@@ -126,17 +126,17 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
-            super<A>()
+    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
         }
 
     }
 
-STATUS:
+ARGUMENTS_OF_ANNOTATIONS:
 FILE: superTypesLoop.kt
-    public open [STATUS] class resolveMe : R|C| {
-        public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|C| {
+        public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
@@ -324,8 +324,8 @@ FILE: superTypesLoop.kt
 
 AnnotationsArguments:
 FILE: superTypesLoop.kt
-    public? open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|C| {
-        public? [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|C| {
+        public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
@@ -342,9 +342,9 @@ FILE: superTypesLoop.kt
         }
 
     }
-    public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
-        public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
-            super<A>()
+    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|A|>()
         }
 
     }
