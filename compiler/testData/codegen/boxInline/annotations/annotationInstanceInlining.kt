@@ -1,8 +1,14 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_MULTI_MODULE_OLD_AGAINST_IR, JVM_MULTI_MODULE_IR_AGAINST_OLD
+// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND_MULTI_MODULE: JVM, JVM_MULTI_MODULE_IR_AGAINST_OLD
+
+// (supported: JVM_IR, JS_IR(_E6))
+
 // WITH_RUNTIME
 // !LANGUAGE: +InstantiationOfAnnotationClasses
+
 // IGNORE_DEXING
 // TODO: D8 fails with AssertionError and does not print reason, need further investigation
 
@@ -19,6 +25,7 @@ inline fun bar(f: () -> Int): A = A(f())
 // FILE: 2.kt
 
 import a.*
+import kotlin.test.assertTrue as assert
 
 class C {
     fun one(): A {
@@ -35,7 +42,5 @@ fun box(): String {
     assert(one.i == 1)
     val two = two()
     assert(two.i == 2)
-    // During cross-module inlining, anonymous classes are copied
-    // println(one.javaClass.getName().startsWith("a._1Kt"))
     return "OK"
 }

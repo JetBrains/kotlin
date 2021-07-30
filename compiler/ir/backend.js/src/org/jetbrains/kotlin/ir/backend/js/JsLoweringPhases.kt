@@ -152,6 +152,12 @@ val createScriptFunctionsPhase = makeJsModulePhase(
     description = "Create functions for initialize and evaluate script"
 ).toModuleLowering()
 
+private val annotationInstantiationLowering = makeDeclarationTransformerPhase(
+    ::JsAnnotationImplementationTransformer,
+    name = "AnnotationImplementation",
+    description = "Create synthetic annotations implementations and use them in annotations constructor calls"
+)
+
 private val expectDeclarationsRemovingPhase = makeDeclarationTransformerPhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
@@ -746,6 +752,7 @@ private val jsSuspendArityStorePhase = makeDeclarationTransformerPhase(
 private val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
+    annotationInstantiationLowering,
     expectDeclarationsRemovingPhase,
     stripTypeAliasDeclarationsPhase,
     jsCodeOutliningPhase,

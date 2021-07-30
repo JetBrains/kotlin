@@ -1,5 +1,10 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: WASM
+
+// (supported: JVM_IR, JS_IR(_E6))
+// Regular JS works too, but without proper hashCode or equals
 
 // WITH_RUNTIME
 // !LANGUAGE: +InstantiationOfAnnotationClasses
@@ -7,6 +12,7 @@
 // note: taken from ../parameters.kt and ../parametersWithPrimitiveValues.kt
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue as assert
 
 enum class E { E0 }
 annotation class Empty

@@ -1,5 +1,9 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: WASM
+
+// (supported: JVM_IR, JS_IR(_E6))
 
 // WITH_RUNTIME
 // !LANGUAGE: +InstantiationOfAnnotationClasses +MultiPlatformProjects

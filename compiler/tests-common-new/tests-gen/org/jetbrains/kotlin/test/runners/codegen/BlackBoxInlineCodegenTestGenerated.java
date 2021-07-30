@@ -33,6 +33,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         public void testAllFilesPresentInAnnotations() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
+
+        @Test
+        @TestMetadata("annotationInstanceInlining.kt")
+        public void testAnnotationInstanceInlining() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/annotations/annotationInstanceInlining.kt");
+        }
+
+        @Test
+        @TestMetadata("instanceInAnonymousClass.kt")
+        public void testInstanceInAnonymousClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/annotations/instanceInAnonymousClass.kt");
+        }
     }
 
     @Nested

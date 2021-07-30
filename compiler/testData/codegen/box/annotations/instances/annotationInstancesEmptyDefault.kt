@@ -1,5 +1,8 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: WASM
+// DONT_TARGET_EXACT_BACKEND: JS
 
 // WITH_RUNTIME
 // !LANGUAGE: +InstantiationOfAnnotationClasses
@@ -7,6 +10,8 @@
 package test
 
 import kotlin.reflect.KClass
+import kotlin.test.assertTrue as assert
+import kotlin.test.assertEquals
 
 enum class E { A, B }
 
@@ -31,8 +36,15 @@ annotation class Partial(
 
 fun box(): String {
     val c = C()
-    assert(c.toString() == "@test.C(i=42, b=@test.B(a=@test.A()), kClass=interface test.B (Kotlin reflection is not available), e=B, aS=[a, b], aI=[1, 2])")
+    assertEquals(42, c.i)
+    assertEquals(A(), c.b.a)
+    assertEquals(B::class, c.kClass)
+    assertEquals(E.B, c.e)
+    assert(arrayOf("a", "b").contentEquals(c.aS))
+    assert(intArrayOf(1, 2).contentEquals(c.aI))
     val p = Partial(e = E.B, s = "bar")
-    assert(p.toString() == "@test.Partial(i=42, s=bar, e=B)")
+    assertEquals(42, p.i)
+    assertEquals("bar", p.s)
+    assertEquals(E.B, p.e)
     return "OK"
 }

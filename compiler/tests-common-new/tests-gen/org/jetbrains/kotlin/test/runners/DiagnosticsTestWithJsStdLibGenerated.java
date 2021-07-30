@@ -25,12 +25,6 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
-    @TestMetadata("annotationConstructorCallJs.kt")
-    public void testAnnotationConstructorCallJs() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJsStdLib/annotationConstructorCallJs.kt");
-    }
-
-    @Test
     @TestMetadata("funConstructorCallJS.kt")
     public void testFunConstructorCallJS() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");
