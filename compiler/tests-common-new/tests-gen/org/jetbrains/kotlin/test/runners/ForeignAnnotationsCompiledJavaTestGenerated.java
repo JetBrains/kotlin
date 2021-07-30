@@ -809,6 +809,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
                 }
 
                 @Test
+                @TestMetadata("kt47899.kt")
+                public void testKt47899() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt47899.kt");
+                }
+
+                @Test
                 @TestMetadata("NonPlatformTypeParameter.kt")
                 public void testNonPlatformTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
