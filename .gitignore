@@ -12,7 +12,7 @@
 /android-studio/sdk
 out/
 /tmp
-kotlin-ide/
+intellij/
 workspace.xml
 *.versionsBackup
 /idea/testData/debugger/tinyApp/classes*

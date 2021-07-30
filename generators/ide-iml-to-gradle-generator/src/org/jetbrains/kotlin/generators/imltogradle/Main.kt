@@ -22,8 +22,8 @@ import kotlin.system.measureNanoTime
 
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
 private val KOTLIN_REPO_ROOT = File(".").canonicalFile
-private val INTELLIJ_REPO_ROOT = KOTLIN_REPO_ROOT.resolve("kotlin-ide")
-private val INTELLIJ_COMMUNITY_REPO_ROOT = INTELLIJ_REPO_ROOT.resolve("kotlin").takeIf { it.exists() } ?: INTELLIJ_REPO_ROOT
+private val INTELLIJ_REPO_ROOT = KOTLIN_REPO_ROOT.resolve("intellij").resolve("community").takeIf { it.exists() }
+    ?: KOTLIN_REPO_ROOT.resolve("intellij")
 
 private val intellijModuleNameToGradleDependencyNotationsMappingManual: List<Pair<String, GradleDependencyNotation>> = listOf(
     "intellij.platform.jps.build" to GradleDependencyNotation("jpsBuildTest()"),
@@ -46,6 +46,7 @@ val jsonUrlPrefixes = mapOf(
     "202" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform202_IntellijArtifactMappings/113235432:id",
     "203" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform203_IntellijArtifactMappings/117989041:id",
     "211" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform211_IntellijArtifactMappings/121258191:id",
+    "212" to "https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform211_IntellijArtifactMappings/131509697:id",
 )
 
 fun main() {
@@ -115,12 +116,12 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
         mavenRepositoryLibraryDescriptor == null -> {
             lib.getRootUrls(JpsOrderRootType.COMPILED)
                 .map {
-                    it.removePrefix("jar://").removeSuffix("!/")
+                    val relativeToCommunity = it.removePrefix("jar://").removeSuffix("!/")
                         .removePrefix(KOTLIN_REPO_ROOT.canonicalPath.replace("\\", "/"))
-                }
-                .map {
-                    check(it.startsWith("/kotlin-ide/intellij/")) { "Only jars from Community repo are accepted $it" }
-                    val relativeToCommunity = it.removePrefix("/kotlin-ide/intellij/").removePrefix("community/")
+                        .also {
+                            check(it.startsWith("/intellij/")) { "Only jars from Community repo are accepted $it" }
+                        }
+                        .removePrefix("/intellij/").removePrefix("community/")
                     JpsLikeJarDependency(
                         "files(intellijCommunityDir.resolve(\"$relativeToCommunity\").canonicalPath)",
                         scope,
@@ -214,7 +215,7 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         .mapValues { entry -> entry.value.joinToString("\n") { convertJpsModuleSourceRoot(imlFile, it) } }
         .let { Pair(it[false] ?: "", it[true] ?: "") }
 
-    val mavenRepos = INTELLIJ_COMMUNITY_REPO_ROOT.resolve(".idea/jarRepositories.xml").readXml().traverseChildren()
+    val mavenRepos = INTELLIJ_REPO_ROOT.resolve(".idea/jarRepositories.xml").readXml().traverseChildren()
         .filter { it.getAttributeValue("name") == "url" }
         .map { it.getAttributeValue("value")!! }
         .map { "maven { setUrl(\"$it\") }" }
