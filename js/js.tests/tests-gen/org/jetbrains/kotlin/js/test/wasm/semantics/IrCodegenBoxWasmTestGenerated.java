@@ -953,11 +953,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/bridges/complexMultiInheritance.kt");
         }
 
-        @TestMetadata("covariantGenericDiamond.kt")
-        public void testCovariantGenericDiamond() throws Exception {
-            runTest("compiler/testData/codegen/box/bridges/covariantGenericDiamond.kt");
-        }
-
         @TestMetadata("delegation.kt")
         public void testDelegation() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/delegation.kt");
@@ -4025,21 +4020,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/defaultArguments/complexInheritance.kt");
         }
 
-        @TestMetadata("implementedByFake.kt")
-        public void testImplementedByFake() throws Exception {
-            runTest("compiler/testData/codegen/box/defaultArguments/implementedByFake.kt");
-        }
-
-        @TestMetadata("implementedByFake2.kt")
-        public void testImplementedByFake2() throws Exception {
-            runTest("compiler/testData/codegen/box/defaultArguments/implementedByFake2.kt");
-        }
-
-        @TestMetadata("implementedByFake3.kt")
-        public void testImplementedByFake3() throws Exception {
-            runTest("compiler/testData/codegen/box/defaultArguments/implementedByFake3.kt");
-        }
-
         @TestMetadata("inheritedFromInterfaceViaAbstractSuperclass.kt")
         public void testInheritedFromInterfaceViaAbstractSuperclass() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/inheritedFromInterfaceViaAbstractSuperclass.kt");
@@ -4256,16 +4236,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             @TestMetadata("complexInheritance.kt")
             public void testComplexInheritance() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/function/complexInheritance.kt");
-            }
-
-            @TestMetadata("covariantOverride.kt")
-            public void testCovariantOverride() throws Exception {
-                runTest("compiler/testData/codegen/box/defaultArguments/function/covariantOverride.kt");
-            }
-
-            @TestMetadata("covariantOverrideGeneric.kt")
-            public void testCovariantOverrideGeneric() throws Exception {
-                runTest("compiler/testData/codegen/box/defaultArguments/function/covariantOverrideGeneric.kt");
             }
 
             @TestMetadata("defaultLambdaInline.kt")
@@ -7164,11 +7134,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inlineClasses/kt44141.kt");
         }
 
-        @TestMetadata("kt44867.kt")
-        public void testKt44867() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/kt44867.kt");
-        }
-
         @TestMetadata("kt44978.kt")
         public void testKt44978() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt44978.kt");
@@ -8270,36 +8235,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
 
             public void testAllFilesPresentInReturnResult() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/returnResult"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-            }
-
-            @TestMetadata("class.kt")
-            public void testClass() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/class.kt");
-            }
-
-            @TestMetadata("classAnyOverride.kt")
-            public void testClassAnyOverride() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classAnyOverride.kt");
-            }
-
-            @TestMetadata("classGenericOverride.kt")
-            public void testClassGenericOverride() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classGenericOverride.kt");
-            }
-
-            @TestMetadata("classResultOverride.kt")
-            public void testClassResultOverride() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classResultOverride.kt");
-            }
-
-            @TestMetadata("interface.kt")
-            public void testInterface() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/interface.kt");
-            }
-
-            @TestMetadata("topLevel.kt")
-            public void testTopLevel() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/topLevel.kt");
             }
         }
 
