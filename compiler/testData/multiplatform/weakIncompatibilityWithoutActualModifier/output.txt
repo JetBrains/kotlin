@@ -5,9 +5,6 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/jvm.kt:1:1: error: interface 'Foo' has no corresponding expected declaration
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final expect class Foo
-
+compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/jvm.kt:1:11: error: declaration must be marked with 'actual'
 interface Foo
-^
+          ^
