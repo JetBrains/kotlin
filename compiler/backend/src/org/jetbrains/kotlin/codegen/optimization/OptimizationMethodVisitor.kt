@@ -41,7 +41,7 @@ class OptimizationMethodVisitor(
 
     val normalizationMethodTransformer = CompositeMethodTransformer(
         FixStackWithLabelNormalizationMethodTransformer(),
-        MethodVerifier("AFTER mandatory stack transformations")
+        MethodVerifier("AFTER mandatory stack transformations", generationState)
     )
 
     val optimizationTransformer = CompositeMethodTransformer(
@@ -55,7 +55,7 @@ class OptimizationMethodVisitor(
         DeadCodeEliminationMethodTransformer(),
         RedundantGotoMethodTransformer(),
         RedundantNopsCleanupMethodTransformer(),
-        MethodVerifier("AFTER optimizations")
+        MethodVerifier("AFTER optimizations", generationState)
     )
 
     override fun performTransformations(methodNode: MethodNode) {

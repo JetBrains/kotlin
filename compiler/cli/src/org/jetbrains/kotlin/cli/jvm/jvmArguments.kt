@@ -254,6 +254,9 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.SERIALIZE_IR, arguments.serializeIr)
 
+    put(JVMConfigurationKeys.VALIDATE_IR, arguments.validateIr)
+    put(JVMConfigurationKeys.VALIDATE_BYTECODE, arguments.validateBytecode)
+
     if (!JVMConstructorCallNormalizationMode.isSupportedValue(arguments.constructorCallNormalizationMode)) {
         messageCollector.report(
             ERROR,

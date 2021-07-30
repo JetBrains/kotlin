@@ -146,6 +146,8 @@ where advanced options include:
   -Xuse-old-spilled-var-type-analysis
                              Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines
   -Xuse-type-table           Use type table in metadata serialization
+  -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations
+  -Xvalidate-ir              Validate IR before and after lowering
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xbuiltins-from-sources    Compile builtIns from sources

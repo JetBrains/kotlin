@@ -299,6 +299,8 @@ class GenerationState private constructor(
                 !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
     val functionsWithInlineClassReturnTypesMangled: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
+    val shouldValidateIr = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_IR)
+    val shouldValidateBytecode = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)
 
     val rootContext: CodegenContext<*> = RootContext(this)
 

@@ -157,5 +157,11 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("Don't automatically include kotlin-reflect.jar into the output if the output is a jar");
 
     public static final CompilerConfigurationKey<Boolean> SERIALIZE_IR =
-            CompilerConfigurationKey.create("serialize IR to class metadata");
+            CompilerConfigurationKey.create("Serialize IR to class metadata");
+
+    public static final CompilerConfigurationKey<Boolean> VALIDATE_IR =
+            CompilerConfigurationKey.create("Validate IR");
+
+    public static final CompilerConfigurationKey<Boolean> VALIDATE_BYTECODE =
+            CompilerConfigurationKey.create("Validate generated JVM bytecode");
 }

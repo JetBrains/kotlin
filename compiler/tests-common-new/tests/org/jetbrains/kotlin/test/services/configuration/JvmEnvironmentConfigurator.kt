@@ -255,6 +255,9 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         if (CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES in module.directives) {
             configuration.putCustomPhaseConfigWithEnabledDump(module)
         }
+
+        configuration.put(JVMConfigurationKeys.VALIDATE_IR, true)
+        configuration.put(JVMConfigurationKeys.VALIDATE_BYTECODE, true)
     }
 
     private fun addJavaSourceRootsByJavaModules(configuration: CompilerConfiguration, moduleInfoFiles: List<TestFile>) {
