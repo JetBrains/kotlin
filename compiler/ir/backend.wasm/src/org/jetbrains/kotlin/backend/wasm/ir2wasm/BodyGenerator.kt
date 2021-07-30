@@ -369,7 +369,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         // Handle complex exported parameters.
         // TODO: This should live as a separate lowering which creates separate shims for each exported function.
         if (context.irFunction.isExported(context.backendContext) &&
-            expression.value.type == irBuiltIns.stringType) {
+            expression.value.type.getClass() == irBuiltIns.stringType.getClass()) {
 
             body.buildCall(context.referenceFunction(wasmSymbols.exportString))
         }

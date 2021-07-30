@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -59,7 +60,7 @@ class WasmModuleCodegenContextImpl(
 
     override fun transformExportedResultType(irType: IrType): WasmType? {
         // Exported strings are passed as pointers to the raw memory
-        if (irType == backendContext.irBuiltIns.stringType)
+        if (irType.getClass() == backendContext.irBuiltIns.stringType.getClass())
             return WasmI32
         return with(typeTransformer) { irType.toWasmResultType() }
     }
