@@ -18,14 +18,11 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analyzer.CombinedModuleInfo
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.*
@@ -39,6 +36,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compati
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.multiplatform.ModuleFilter
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -64,19 +62,30 @@ class ExpectedActualDeclarationChecker(
         if (declaration !is KtNamedDeclaration) return
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
-        if (descriptor.isExpect) {
-            checkExpectedDeclarationHasProperActuals(declaration, descriptor, context.trace, context.expectActualTracker)
-        } else {
-            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
+        val checkActualModifier = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
 
+        if (descriptor.isExpect) {
+            checkExpectedDeclarationHasProperActuals(
+                declaration, descriptor, context.trace,
+                checkActualModifier, context.expectActualTracker
+            )
+        } else if (descriptor.isActualOrSomeContainerIsActual()) {
             val allImplementedModules = moduleStructureOracle.findAllDependsOnPaths(descriptor.module).flatMap { it.nodes }.toHashSet()
             checkActualDeclarationHasExpected(
                 declaration,
                 descriptor,
+                checkActualModifier,
                 context.trace,
-                checkActual,
                 moduleVisibilityFilter = { it in allImplementedModules }
             )
+        }
+    }
+
+    private fun MemberDescriptor.isActualOrSomeContainerIsActual(): Boolean {
+        var declaration: MemberDescriptor = this
+        while (true) {
+            if (declaration.isActual) return true
+            declaration = declaration.containingDeclaration as? MemberDescriptor ?: return false
         }
     }
 
@@ -84,6 +93,7 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         trace: BindingTrace,
+        checkActualModifier: Boolean,
         expectActualTracker: ExpectActualTracker
     ) {
         val allActualizationPaths = moduleStructureOracle.findAllReversedDependsOnPaths(descriptor.module)
@@ -96,6 +106,7 @@ class ExpectedActualDeclarationChecker(
                 descriptor,
                 trace,
                 leafModule,
+                checkActualModifier,
                 expectActualTracker,
                 moduleVisibilityFilter = { it in modulesVisibleFromLeaf }
             )
@@ -163,6 +174,7 @@ class ExpectedActualDeclarationChecker(
         descriptor: MemberDescriptor,
         trace: BindingTrace,
         module: ModuleDescriptor,
+        checkActualModifier: Boolean,
         expectActualTracker: ExpectActualTracker,
         moduleVisibilityFilter: ModuleFilter
     ) {
@@ -185,11 +197,26 @@ class ExpectedActualDeclarationChecker(
             return
         }
 
-        // Here we have exactly one compatible actual and/or some weakly incompatible. In either case, we don't report anything on expect
+        // Here we have exactly one compatible actual and/or some weakly incompatible. In either case, we don't report anything on expect...
         val actualMembers = compatibility.asSequence()
             .filter { it.key.isCompatibleOrWeakCompatible() }.flatMap { it.value.asSequence() }
 
+        // ...except diagnostics regarding missing actual keyword, because in that case we won't start looking for the actual at all
+        if (checkActualModifier) {
+            actualMembers.forEach { reportMissingActualModifier(it, reportOn = null, trace) }
+        }
+
         expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
+    }
+
+    private fun reportMissingActualModifier(actual: MemberDescriptor, reportOn: KtNamedDeclaration?, trace: BindingTrace) {
+        if (actual.isActual) return
+        @Suppress("NAME_SHADOWING")
+        val reportOn = reportOn ?: actual.source.safeAs<KotlinSourceElement>()?.psi.safeAs<KtNamedDeclaration>() ?: return
+
+        if (requireActualModifier(actual)) {
+            trace.report(Errors.ACTUAL_MISSING.on(reportOn))
+        }
     }
 
     private fun MemberDescriptor.hasNoActualWithDiagnostic(
@@ -220,8 +247,8 @@ class ExpectedActualDeclarationChecker(
     private fun checkActualDeclarationHasExpected(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
+        checkActualModifier: Boolean,
         trace: BindingTrace,
-        checkActual: Boolean,
         moduleVisibilityFilter: ModuleFilter
     ) {
         val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, descriptor.module, moduleVisibilityFilter)
@@ -229,18 +256,19 @@ class ExpectedActualDeclarationChecker(
 
         checkAmbiguousExpects(compatibility, trace, reportOn, descriptor)
 
-        val hasActualModifier = descriptor.isActual && reportOn.hasActualModifier()
-        if (!hasActualModifier) {
-            if (compatibility.allStrongIncompatibilities()) return
-
-            if (Compatible in compatibility) {
-                if (checkActual && requireActualModifier(descriptor)) {
-                    trace.report(Errors.ACTUAL_MISSING.on(reportOn))
-                }
-
-                return
-            }
+        // For top-level declaration missing actual error reported in Actual checker
+        if (checkActualModifier
+            && descriptor.containingDeclaration !is PackageFragmentDescriptor
+            && compatibility.any { it.key.isCompatibleOrWeakCompatible() }
+        ) {
+            reportMissingActualModifier(descriptor, reportOn, trace)
         }
+
+        // Usually, reportOn.hasActualModifier() and descriptor.isActual are the same.
+        // The only one case where it isn't true is constructor of annotation class. In that case descriptor.isActual is true.
+        // See the FunctionDescriptorResolver.createConstructorDescriptor
+        // But in that case compatibility.allStrongIncompatibilities() == true means that in the expect class there is no constructor
+        if (!reportOn.hasActualModifier() && compatibility.allStrongIncompatibilities()) return
 
         // 'firstOrNull' is needed because in diagnostic tests, common sources appear twice, so the same class is duplicated
         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
