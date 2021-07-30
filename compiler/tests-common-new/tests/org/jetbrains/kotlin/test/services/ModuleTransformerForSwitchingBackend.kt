@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.model.DependencyDescription
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.DependencyRelation
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 
 /**
@@ -28,8 +25,8 @@ class ModuleTransformerForSwitchingBackend(
 
         return TestModuleStructureImpl(
             listOf(
-                first.copy(targetBackend = backendForLib),
-                second.copy(targetBackend = backendForMain)
+                first.copy(targetBackend = backendForLib, backendKind = BackendKinds.fromTargetBackend(backendForLib)),
+                second.copy(targetBackend = backendForMain, backendKind = BackendKinds.fromTargetBackend(backendForMain))
             ),
             moduleStructure.originalTestDataFiles
         )

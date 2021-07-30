@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.model
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.backendKindExtractor
 
 interface ServicesAndDirectivesContainer {
     val additionalServices: List<ServiceRegistrationData>
@@ -51,7 +50,7 @@ abstract class Frontend2BackendConverter<R : ResultingArtifact.FrontendOutput<R>
     final override val outputKind: BackendKind<I>
 ) : AbstractTestFacade<R, I>() {
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return testServices.backendKindExtractor.backendKind(module.targetBackend) == outputKind
+        return module.backendKind == outputKind
     }
 }
 
@@ -61,6 +60,6 @@ abstract class BackendFacade<I : ResultingArtifact.BackendInput<I>, A : Resultin
     final override val outputKind: BinaryKind<A>
 ) : AbstractTestFacade<I, A>() {
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return testServices.backendKindExtractor.backendKind(module.targetBackend) == inputKind && module.binaryKind == outputKind
+        return module.backendKind == inputKind && module.binaryKind == outputKind
     }
 }

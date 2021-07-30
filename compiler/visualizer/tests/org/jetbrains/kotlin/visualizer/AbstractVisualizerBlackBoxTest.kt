@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.impl.BackendKindExtractorImpl
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
@@ -37,7 +36,6 @@ abstract class AbstractVisualizerBlackBoxTest {
         startingArtifactFactory = { ResultingArtifact.Source() }
 
         useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
-        useAdditionalService<BackendKindExtractor>(::BackendKindExtractorImpl)
         useSourcePreprocessor(*AbstractKotlinCompilerTest.defaultPreprocessors.toTypedArray())
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
 

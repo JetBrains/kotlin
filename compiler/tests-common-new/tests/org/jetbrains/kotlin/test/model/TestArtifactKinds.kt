@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.model
 
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -33,6 +34,12 @@ object BackendKinds {
             "IrBackend" -> IrBackend
             else -> null
         }
+    }
+
+    fun fromTargetBackend(targetBackend: TargetBackend?): BackendKind<*> {
+        if (targetBackend == null) return BackendKind.NoBackend
+        return if (targetBackend.isIR) IrBackend
+        else ClassicBackend
     }
 }
 
