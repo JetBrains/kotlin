@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -62,7 +61,7 @@ internal class KtFirCompletionCandidateChecker(
         val file = originalFile.getOrBuildFirFile(firResolveState)
         val explicitReceiverExpression = possibleExplicitReceiver?.getOrBuildFirOfType<FirExpression>(firResolveState)
         val resolver = SingleCandidateResolver(firResolveState.rootModuleSession, file)
-        val implicitReceivers = getImplicitReceivers(originalFile, file, nameExpression)
+        val implicitReceivers = getImplicitReceivers(nameExpression)
         for (implicitReceiverValue in implicitReceivers) {
             val resolutionParameters = ResolutionParameters(
                 singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
@@ -84,11 +83,7 @@ internal class KtFirCompletionCandidateChecker(
         return KtExtensionApplicabilityResult.NonApplicable
     }
 
-    private fun getImplicitReceivers(
-        originalFile: KtFile,
-        firFile: FirFile,
-        fakeNameExpression: KtSimpleNameExpression
-    ): Sequence<ImplicitReceiverValue<*>?> {
+    private fun getImplicitReceivers(fakeNameExpression: KtSimpleNameExpression): Sequence<ImplicitReceiverValue<*>?> {
         val towerDataContext = analysisSession.firResolveState.getTowerContextProvider()
             .getClosestAvailableParentContext(fakeNameExpression)
             ?: error("Cannot find enclosing declaration for ${fakeNameExpression.getElementTextInContext()}")

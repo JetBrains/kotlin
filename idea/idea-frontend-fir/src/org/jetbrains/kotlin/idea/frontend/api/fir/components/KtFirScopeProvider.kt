@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -169,7 +168,7 @@ internal class KtFirScopeProvider(
             KtImplicitReceiver(
                 token,
                 builder.typeBuilder.buildKtType(receiver.type),
-                builder.buildSymbol(receiver.boundSymbol.fir as FirDeclaration),
+                builder.buildSymbol(receiver.boundSymbol.fir),
             )
         }
 

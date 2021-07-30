@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference
 import kotlin.reflect.KProperty
 
 class ReadOnlyWeakRef<V : Any>
-@Deprecated("Consider suing ValidityTokenOwner.weakRef instead")
+@Deprecated("Consider using ValidityTokenOwner.weakRef instead")
 constructor(value: V, val token: ValidityToken) {
     val weakRef = WeakReference(value)
 
@@ -24,7 +24,8 @@ constructor(value: V, val token: ValidityToken) {
         }
 }
 
-@Suppress("NOTHING_TO_INLINE")
+@Suppress("NOTHING_TO_INLINE", "DEPRECATION")
 internal inline fun <V : Any> ValidityTokenOwner.weakRef(value: V) = ReadOnlyWeakRef(value, token)
 
+@Suppress("DEPRECATION")
 internal inline fun <V : Any> ValidityTokenOwner.weakRef(value: () -> V) = ReadOnlyWeakRef(value(), token)

@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.name.Name
 
 @ThreadSafeMutableState
 internal class FirIdeProvider(
-    project: Project,
+    @Suppress("UNUSED_PARAMETER") project: Project,
     val session: FirSession,
-    moduleInfo: ModuleSourceInfoBase,
+    @Suppress("UNUSED_PARAMETER") moduleInfo: ModuleSourceInfoBase,
     val kotlinScopeProvider: FirKotlinScopeProvider,
     firFileBuilder: FirFileBuilder,
     val cache: ModuleFileCache,
     private val declarationProvider: DeclarationProvider,
-    private val packageExistenceChecker: KtPackageProvider,
+    packageExistenceChecker: KtPackageProvider,
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
@@ -54,7 +54,7 @@ internal class FirIdeProvider(
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return getFirClassifierContainerFileIfAny(fqName)
-            ?: error("Couldn't find container for ${fqName}")
+            ?: error("Couldn't find container for $fqName")
     }
 
     override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {

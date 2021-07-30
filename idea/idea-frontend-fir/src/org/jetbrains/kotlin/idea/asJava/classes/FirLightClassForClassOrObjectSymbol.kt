@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.asJava
 
-import com.intellij.openapi.util.Comparing
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.PsiClassImplUtil
@@ -13,16 +12,18 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
+import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.idea.asJava.classes.checkIsInheritor
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -111,7 +112,7 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         basicIsEquivalentTo(this, another) ||
-                another is PsiClass && qualifiedName != null && Comparing.equal(another.qualifiedName, qualifiedName)
+                another is PsiClass && qualifiedName != null && another.qualifiedName == qualifiedName
 
     abstract override fun equals(other: Any?): Boolean
 

@@ -17,6 +17,7 @@ internal class KtFirBackingFieldSymbolPointer(
 ) : KtSymbolPointer<KtBackingFieldSymbol>() {
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtBackingFieldSymbol? {
         require(analysisSession is KtFirAnalysisSession)
+        @Suppress("DEPRECATION")
         val propertySymbol = propertySymbolPointer.restoreSymbol(analysisSession) ?: return null
         check(propertySymbol is KtFirKotlinPropertySymbol)
         return propertySymbol.firRef.withFir { firProperty ->

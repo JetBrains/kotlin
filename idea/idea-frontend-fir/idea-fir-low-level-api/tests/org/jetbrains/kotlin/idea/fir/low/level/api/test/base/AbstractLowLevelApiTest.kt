@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
 
-import com.intellij.DynamicBundle
-import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
-import com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.ModuleRegistrarPreAnalysisHandler
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.TestModuleInfoProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.moduleInfoProvider
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -57,7 +55,7 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
         useDirectives(JvmEnvironmentConfigurationDirectives)
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
-        useAdditionalService(::ExpressionMarkerProvider)
+        useAdditionalService { ExpressionMarkerProvider() }
         useAdditionalService(::TestModuleInfoProvider)
         usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable))
         configureTest(this)
@@ -133,9 +131,5 @@ abstract class AbstractLowLevelApiTest : TestWithDisposable() {
     }
 }
 
-
 fun String.indexOfOrNull(substring: String) =
     indexOf(substring).takeIf { it >= 0 }
-
-private fun String.indexOfOrNull(substring: String, startingIndex: Int) =
-    indexOf(substring, startingIndex).takeIf { it >= 0 }

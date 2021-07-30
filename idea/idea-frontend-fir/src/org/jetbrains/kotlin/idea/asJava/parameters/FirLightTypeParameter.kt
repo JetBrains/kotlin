@@ -18,15 +18,14 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.basicIsEquivalentTo
 import org.jetbrains.kotlin.idea.asJava.invalidAccess
 import org.jetbrains.kotlin.idea.asJava.mapSupertype
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -70,7 +69,6 @@ internal class FirLightTypeParameter(
                 it.mapSupertype(
                     psiContext = this,
                     kotlinCollectionAsIs = true,
-                    annotations = emptyList()
                 )
             }
             .forEach { listBuilder.addReference(it) }

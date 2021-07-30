@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.isPrimitiveType
@@ -36,7 +39,10 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithModality
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
@@ -162,12 +168,11 @@ private fun mapSupertype(
 internal fun KtTypeAndAnnotations.mapSupertype(
     psiContext: PsiElement,
     kotlinCollectionAsIs: Boolean = false
-): PsiClassType? = type.mapSupertype(psiContext, kotlinCollectionAsIs, emptyList())
+): PsiClassType? = type.mapSupertype(psiContext, kotlinCollectionAsIs)
 
 internal fun KtType.mapSupertype(
     psiContext: PsiElement,
     kotlinCollectionAsIs: Boolean = false,
-    annotations: List<KtAnnotationCall>
 ): PsiClassType? {
     if (this !is KtNonErrorClassType) return null
     require(this is KtFirType)

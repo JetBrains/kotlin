@@ -94,7 +94,7 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : FirBa
     override val diagnostics = FileStructureElementDiagnostics(
         firFile,
         lockProvider,
-        SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir as FirDeclaration)
+        SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir)
     )
 
     companion object {

@@ -24,7 +24,6 @@ class IdeTestIgnoreHandler(testServices: TestServices) : AfterAnalysisChecker(te
     override fun check(failedAssertions: List<WrappedException>) {
         if (!isFirIdeIgnoreDirectivePresent()) return
         if (failedAssertions.isNotEmpty()) return
-        val moduleStructure = testServices.moduleStructure
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
 
         if (!isTeamCityBuild) {
