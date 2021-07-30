@@ -20,10 +20,14 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.Action
+import org.gradle.api.GradleException
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaLauncher
 import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.ProjectProperty.KONAN_HOME
 import org.jetbrains.kotlin.konan.target.Family
@@ -101,8 +105,9 @@ internal abstract class KonanCliRunner(
                     "Please change it to the compiler root directory and rerun the build.")
         }
 
-        val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
-        val launcher = project.extensions.getByType(JavaToolchainService::class.java).launcherFor(toolchain)
+        @Suppress("UNCHECKED_CAST")
+        val launcher = project.getProperty(KonanPlugin.ProjectProperty.KONAN_JVM_LAUNCHER) as? Provider<JavaLauncher>
+                ?: throw IllegalStateException("Missing property: ${KonanPlugin.ProjectProperty.KONAN_JVM_LAUNCHER}")
 
         project.exec(object : Action<ExecSpec> {
             override fun execute(exec: ExecSpec) {

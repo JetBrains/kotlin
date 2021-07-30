@@ -27,10 +27,16 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.tasks.Exec
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaLauncher
+import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
@@ -168,6 +174,26 @@ internal fun Project.konanCompilerName(): String =
 internal fun Project.konanCompilerDownloadDir(): String =
         DependencyProcessor.localKonanDir.resolve(project.konanCompilerName()).absolutePath
 
+private lateinit var konanJvmLauncher: JavaLauncher
+
+internal fun Project.getJavaLauncher(): Provider<JavaLauncher> = providers.provider {
+    if (!::konanJvmLauncher.isInitialized) {
+        val toolchain = project.extensions.getByType(JavaPluginExtension::class.java).toolchain
+        val service = project.extensions.getByType(JavaToolchainService::class.java)
+        konanJvmLauncher = try {
+            service.launcherFor(toolchain).get()
+        } catch (ex: GradleException) {
+            // If the JDK that was set is not available get the JDK 11 as a default
+            service.launcherFor(object : Action<JavaToolchainSpec> {
+                override fun execute(toolchainSpec: JavaToolchainSpec) {
+                    toolchainSpec.languageVersion.set(JavaLanguageVersion.of(JdkMajorVersion.JDK_11.majorVersion))
+                }
+            }).get()
+        }
+    }
+    konanJvmLauncher
+}
+
 // region Useful extensions and functions ---------------------------------------
 
 internal fun MutableList<String>.addArg(parameter: String, value: String) {
@@ -293,6 +319,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         KONAN_VERSION                  ("org.jetbrains.kotlin.native.version"),
         KONAN_BUILD_TARGETS            ("konan.build.targets"),
         KONAN_JVM_ARGS                 ("konan.jvmArgs"),
+        KONAN_JVM_LAUNCHER             ("konan.javaLauncher"),
         KONAN_USE_ENVIRONMENT_VARIABLES("konan.useEnvironmentVariables"),
         DOWNLOAD_COMPILER              ("download.compiler"),
 
@@ -340,6 +367,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 KonanArtifactContainer::class.java,
                 project
         )
+        project.setProperty(ProjectProperty.KONAN_JVM_LAUNCHER, project.getJavaLauncher())
 
         project.warnAboutDeprecatedProperty(ProjectProperty.KONAN_HOME)
 
