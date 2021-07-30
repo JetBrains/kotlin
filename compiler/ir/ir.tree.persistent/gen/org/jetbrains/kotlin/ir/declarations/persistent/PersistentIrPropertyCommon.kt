@@ -54,6 +54,9 @@ internal abstract class PersistentIrPropertyCommon(
     override var originField: IrDeclarationOrigin = origin
     override var removedOn: Int = Int.MAX_VALUE
     override var annotationsField: List<IrConstructorCall> = emptyList()
+    private val hashCodeValue: Int = PersistentIrDeclarationBase.hashCodeCounter++
+    override fun hashCode(): Int = hashCodeValue
+    override fun equals(other: Any?): Boolean = (this === other)
 
     override var backingFieldField: IrField? = null
 

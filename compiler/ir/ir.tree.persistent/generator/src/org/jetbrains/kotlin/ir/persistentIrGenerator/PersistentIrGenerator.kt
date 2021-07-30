@@ -131,6 +131,13 @@ internal object PersistentIrGenerator {
         +"symbol.bind(this)"
     )
 
+    // import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrDeclarationBase.Companion.hashCodeCounter
+
+    val hashCodeValue = "private val hashCodeValue: Int = PersistentIrDeclarationBase.hashCodeCounter++"
+    val hashCodeImplementation = "override fun hashCode(): Int = hashCodeValue"
+    val equalsImplementation = "override fun equals(other: Any?): Boolean = (this === other)"
+    val hashCodeAndEqualsImpl = +"$hashCodeValue\n$hashCodeImplementation\n$equalsImplementation"
+
     // Proto types
 
     val protoValueParameterType = import("IrValueParameter", protoPackage, "ProtoIrValueParameter")
@@ -222,6 +229,7 @@ internal object PersistentIrGenerator {
         originField,
         removedOn,
         annotationsField,
+        hashCodeAndEqualsImpl
     )
 
     val typeParametersField = Field(
