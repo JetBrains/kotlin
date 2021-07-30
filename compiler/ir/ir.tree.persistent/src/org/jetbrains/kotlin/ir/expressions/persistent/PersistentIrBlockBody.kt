@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.persistent
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -44,4 +45,8 @@ internal class PersistentIrBlockBody(
 
     override val statements: MutableList<IrStatement>
         get() = checkEnabled { statementsField }
+
+    private val hashCodeValue: Int = PersistentIrDeclarationBase.hashCodeCounter++
+    override fun hashCode(): Int = hashCodeValue
+    override fun equals(other: Any?): Boolean = (this === other)
 }

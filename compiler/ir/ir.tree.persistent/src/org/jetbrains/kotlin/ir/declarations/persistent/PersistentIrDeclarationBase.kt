@@ -7,7 +7,10 @@
 package org.jetbrains.kotlin.ir.declarations.persistent
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.BodyCarrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.DeclarationCarrier
@@ -19,7 +22,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElementBase<T>, IrDeclaration, DeclarationCarrier {
     var removedOn: Int
-
 
     override var parentField: IrDeclarationParent?
 
@@ -67,6 +69,10 @@ interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElem
         if (factory.stageController.currentStage > loweredUpTo) {
             factory.stageController.lazyLower(this)
         }
+    }
+
+    companion object {
+        var hashCodeCounter = 0
     }
 }
 
