@@ -27,6 +27,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -286,6 +287,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 isVisible = false
                 isCanBeConsumed = false
                 description = "Kotlin compiler plugins for $compilation"
+                reorderPluginClasspathDependencies()
             }
 
             val compileConfiguration = configurations.findByName(compilation.deprecatedCompileConfigurationName)?.apply {
