@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -94,7 +93,7 @@ fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
 
 fun FirAnnotationContainer.getAnnotationByFqName(fqName: FqName): FirAnnotationCall? {
     return annotations.find {
-        it.annotationTypeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.classId.asSingleFqName() == fqName
+        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId?.asSingleFqName() == fqName
     }
 }
 

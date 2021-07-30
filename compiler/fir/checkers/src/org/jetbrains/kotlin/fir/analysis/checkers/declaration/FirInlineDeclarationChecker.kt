@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.util.checkChildrenWithCustomVisitor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -50,8 +50,10 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
         if (declaration !is FirPropertyAccessor && declaration !is FirSimpleFunction) return
 
         val effectiveVisibility = declaration.effectiveVisibility
-        checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
-        checkCallableDeclaration(declaration, context, reporter)
+        withSuppressedDiagnostics(declaration, context) { ctx ->
+            checkInlineFunctionBody(declaration, effectiveVisibility, ctx, reporter)
+            checkCallableDeclaration(declaration, ctx, reporter)
+        }
     }
 
     private fun checkInlineFunctionBody(
@@ -74,7 +76,9 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             context.session,
             reporter
         )
-        body.checkChildrenWithCustomVisitor((context as PersistentCheckerContext).addDeclaration(function), visitor)
+        context.withDeclaration(function) {
+            body.checkChildrenWithCustomVisitor(it, visitor)
+        }
     }
 
     private class Visitor(
