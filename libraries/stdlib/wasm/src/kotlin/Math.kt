@@ -913,7 +913,7 @@ public actual fun abs(n: Int): Int = TODO("Wasm stdlib: Math")
  * Returns the smaller of two values.
  */
 @SinceKotlin("1.2")
-public actual fun min(a: Int, b: Int): Int = TODO("Wasm stdlib: Math")
+public actual fun min(a: Int, b: Int): Int = if (a < b) a else b
 
 /**
  * Returns the greater of two values.
