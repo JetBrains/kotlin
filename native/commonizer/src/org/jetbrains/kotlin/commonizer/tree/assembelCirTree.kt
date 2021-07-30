@@ -28,8 +28,8 @@ internal fun CirPackageNode.assembleCirTree(): CirTreePackage? {
 
     return CirTreePackage(
         pkg = commonizedPackage,
-        properties = properties.mapNotNull { (key, property) -> property.commonDeclaration() },
-        functions = functions.mapNotNull { (key, function) -> function.commonDeclaration() },
+        properties = properties.mapNotNull { (_, property) -> property.commonDeclaration() },
+        functions = functions.mapNotNull { (_, function) -> function.commonDeclaration() },
         typeAliases = commonizedTypeAliases.filterIsInstance<CirTreeTypeAlias>(),
         classes = classes.mapNotNull { (_, clazz) -> clazz.assembleCirTree() } + commonizedTypeAliases.filterIsInstance<CirTreeClass>()
     )
@@ -39,9 +39,9 @@ internal fun CirClassNode.assembleCirTree(): CirTreeClass? {
     return CirTreeClass(
         id = id,
         clazz = commonDeclaration() ?: return null,
-        properties = properties.mapNotNull { (key, property) -> property.commonDeclaration() },
-        functions = functions.mapNotNull { (key, function) -> function.commonDeclaration() },
-        constructors = constructors.mapNotNull { (key, constructor) -> constructor.commonDeclaration() },
+        properties = properties.mapNotNull { (_, property) -> property.commonDeclaration() },
+        functions = functions.mapNotNull { (_, function) -> function.commonDeclaration() },
+        constructors = constructors.mapNotNull { (_, constructor) -> constructor.commonDeclaration() },
         classes = classes.mapNotNull { (_, clazz) -> clazz.assembleCirTree() }
     )
 }
