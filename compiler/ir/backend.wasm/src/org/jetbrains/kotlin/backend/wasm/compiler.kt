@@ -98,36 +98,6 @@ fun WasmCompiledModuleFragment.generateJs(): String {
     var wasmInstance = null;
     
     const runtime = {
-        String_getChar(str, index) {
-            return str.charCodeAt(index);
-        },
-
-        String_compareTo(str1, str2) {
-            if (str1 > str2) return 1;
-            if (str1 < str2) return -1;
-            return 0;
-        },
-
-        String_equals(str, other) {
-            return str === other;
-        },
-
-        String_subsequence(str, startIndex, endIndex) {
-            return str.substring(startIndex, endIndex);
-        },
-
-        String_getLiteral(index) {
-            return runtime.stringLiterals[index];
-        },
-
-        coerceToString(value) {
-            return String(value);
-        },
-
-        Char_toString(char) {
-            return String.fromCharCode(char)
-        },
- 
         identity(x) {
             return x;
         },

@@ -69,23 +69,3 @@ public class String internal constructor(internal val chars: CharArray) : Compar
 }
 
 internal fun stringLiteral(startAddr: Int, length: Int) = String(unsafeRawMemoryToCharArray(startAddr, length))
-
-//@JsFun("(it, other) => it + String(other)")
-//private fun stringPlusImpl(it: String, other: String): String =
-//    implementedAsIntrinsic
-//
-//@JsFun("(it) => it.length")
-//private fun stringLengthImpl(it: String): Int =
-//    implementedAsIntrinsic
-//
-//@WasmImport("runtime", "String_getChar")
-//private fun stringGetCharImpl(it: String, index: Int): Char =
-//    implementedAsIntrinsic
-//
-//@WasmImport("runtime", "String_compareTo")
-//private fun stringCompareToImpl(it: String, other: String): Int =
-//    implementedAsIntrinsic
-//
-//@WasmImport("runtime", "String_subsequence")
-//private fun stringSubSequenceImpl(string: String, startIndex: Int, endIndex: Int): String =
-//    implementedAsIntrinsic
