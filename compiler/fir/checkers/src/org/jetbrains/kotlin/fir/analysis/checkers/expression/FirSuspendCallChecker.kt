@@ -33,17 +33,11 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_2_20_FQ_NAME
-import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_2_30_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.checkers.COROUTINE_CONTEXT_1_3_FQ_NAME
 import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
-    private val SUSPEND_PROPERTIES_FQ_NAMES = setOf(
-        COROUTINE_CONTEXT_1_2_20_FQ_NAME, COROUTINE_CONTEXT_1_2_30_FQ_NAME, COROUTINE_CONTEXT_1_3_FQ_NAME
-    )
-
     private val RESTRICTS_SUSPENSION_CLASS_ID =
         ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier("RestrictsSuspension"))
 
@@ -65,7 +59,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         if (reference is FirResolvedCallableReference) return
         when (fir) {
             is FirSimpleFunction -> if (!fir.isSuspend) return
-            is FirProperty -> if (symbol.callableId.asSingleFqName() !in SUSPEND_PROPERTIES_FQ_NAMES) return
+            is FirProperty -> if (symbol.callableId.asSingleFqName() != COROUTINE_CONTEXT_1_3_FQ_NAME) return
             else -> return
         }
         val enclosingSuspendFunction = findEnclosingSuspendFunction(context)
