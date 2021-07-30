@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 import java.io.FileNotFoundException
@@ -36,8 +35,12 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
         val filesByRelativePath = HashMap<String, FastJarVirtualFile>(ourEntryMap.size)
         filesByRelativePath[""] = myRoot
 
-        for (info in ourEntryMap.values) {
-            getOrCreateFile(info, filesByRelativePath)
+        for (entryDescription in ourEntryMap.values) {
+            if (!entryDescription.isDirectory) {
+                createFile(entryDescription, filesByRelativePath)
+            } else {
+                getOrCreateDirectory(entryDescription.relativePath, filesByRelativePath)
+            }
         }
 
         for (node in filesByRelativePath.values) {
@@ -45,50 +48,37 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
         }
     }
 
-    private fun getOrCreateFile(entry: ZipEntryDescription, map: MutableMap<String, FastJarVirtualFile>): FastJarVirtualFile {
-        val entryName = entry.relativePath.normalizePath()
+    private fun createFile(entry: ZipEntryDescription, directories: MutableMap<String, FastJarVirtualFile>): FastJarVirtualFile {
+        val (parentName, shortName) = entry.relativePath.splitPath()
 
-        return map.getOrPut(entryName) {
-            val (parentName, shortName) = entryName.splitPath()
-
-            val parentFile = getOrCreateDirectory(parentName, map)
-            if ("." == shortName) {
-                return parentFile
-            }
-
-            FastJarVirtualFile(
-                this, shortName,
-                if (entry.isDirectory) -1 else entry.uncompressedSize,
-                parentFile
-            )
+        val parentFile = getOrCreateDirectory(parentName, directories)
+        if ("." == shortName) {
+            return parentFile
         }
+
+        return FastJarVirtualFile(
+            this, shortName,
+            if (entry.isDirectory) -1 else entry.uncompressedSize,
+            parentFile
+        )
     }
 
-    private fun getOrCreateDirectory(entryName: String, map: MutableMap<String, FastJarVirtualFile>): FastJarVirtualFile {
-        return map.getOrPut(entryName) {
-            val entry = ourEntryMap["$entryName/"]
-            if (entry != null) {
-                return getOrCreateFile(entry, map)
-            }
+    private fun getOrCreateDirectory(entryName: String, directories: MutableMap<String, FastJarVirtualFile>): FastJarVirtualFile {
+        return directories.getOrPut(entryName) {
             val (parentPath, shortName) = entryName.splitPath()
-            require(entryName != parentPath) {
-                "invalid entry name: '" + entryName + "' in " + this.file.absolutePath + "; after split: " + Pair(parentPath, shortName)
-            }
-            val parentFile = getOrCreateDirectory(parentPath, map)
+            val parentFile = getOrCreateDirectory(parentPath, directories)
 
             FastJarVirtualFile(this, shortName, -1, parentFile)
         }
     }
 
-    private fun String.normalizePath(): String {
-        if (endsWith('/')) return substring(0, length - 1).normalizePath()
-        if (startsWith('/') || startsWith('\\')) return substring(1, length).normalizePath()
-        if (!contains('\\')) return this
-        return FileUtil.normalize(this)
-    }
-
     private fun String.splitPath(): Pair<String, String> {
-        val slashIndex = lastIndexOf('/')
+        var slashIndex = this.length - 1
+
+        while (slashIndex >= 0 && this[slashIndex] != '/') {
+            slashIndex--
+        }
+
         if (slashIndex == -1) return Pair("", this)
         return Pair(substring(0, slashIndex), substring(slashIndex + 1))
     }
