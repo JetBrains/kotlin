@@ -136,9 +136,11 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
 ) : FirExpressionsResolveTransformer(transformer) {
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
+        if (annotationCall.resolveStatus >= FirAnnotationResolveStatus.PartiallyResolved) return annotationCall
         dataFlowAnalyzer.enterAnnotationCall(annotationCall)
         annotationCall.transformChildren(transformer, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitAnnotationCall(annotationCall)
+        annotationCall.replaceResolveStatus(FirAnnotationResolveStatus.PartiallyResolved)
         return annotationCall
     }
 
