@@ -738,14 +738,26 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ANNOTATION_ON_SUPERCLASS) { firDiagnostic ->
-        AnnotationOnSuperclassImpl(
+    add(FirErrors.ANNOTATION_ON_SUPERCLASS.errorFactory) { firDiagnostic ->
+        AnnotationOnSuperclassErrorImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION) { firDiagnostic ->
-        RestrictedRetentionForExpressionAnnotationImpl(
+    add(FirErrors.ANNOTATION_ON_SUPERCLASS.warningFactory) { firDiagnostic ->
+        AnnotationOnSuperclassWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION.errorFactory) { firDiagnostic ->
+        RestrictedRetentionForExpressionAnnotationErrorImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION.warningFactory) { firDiagnostic ->
+        RestrictedRetentionForExpressionAnnotationWarningImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
@@ -1463,14 +1475,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY) { firDiagnostic ->
-        TypeParameterAsReifiedArrayImpl(
+    add(FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.errorFactory) { firDiagnostic ->
+        TypeParameterAsReifiedArrayErrorImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING) { firDiagnostic ->
+    add(FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.warningFactory) { firDiagnostic ->
         TypeParameterAsReifiedArrayWarningImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic,
@@ -1792,15 +1804,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER) { firDiagnostic ->
-        InvisibleAbstractMemberFromSuperImpl(
+    add(FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER.errorFactory) { firDiagnostic ->
+        InvisibleAbstractMemberFromSuperErrorImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a.fir),
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b.fir),
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING) { firDiagnostic ->
+    add(FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER.warningFactory) { firDiagnostic ->
         InvisibleAbstractMemberFromSuperWarningImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a.fir),
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b.fir),
@@ -2513,15 +2525,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD) { firDiagnostic ->
-        ValReassignmentViaBackingFieldImpl(
+    add(FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.errorFactory) { firDiagnostic ->
+        ValReassignmentViaBackingFieldErrorImpl(
             firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR) { firDiagnostic ->
-        ValReassignmentViaBackingFieldErrorImpl(
+    add(FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.warningFactory) { firDiagnostic ->
+        ValReassignmentViaBackingFieldWarningImpl(
             firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic,
             token,

@@ -534,12 +534,20 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DeprecatedSinceKotlinOutsideKotlinSubpackage::class
     }
 
-    abstract class AnnotationOnSuperclass : KtFirDiagnostic<KtAnnotationEntry>() {
-        override val diagnosticClass get() = AnnotationOnSuperclass::class
+    abstract class AnnotationOnSuperclassError : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = AnnotationOnSuperclassError::class
     }
 
-    abstract class RestrictedRetentionForExpressionAnnotation : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = RestrictedRetentionForExpressionAnnotation::class
+    abstract class AnnotationOnSuperclassWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = AnnotationOnSuperclassWarning::class
+    }
+
+    abstract class RestrictedRetentionForExpressionAnnotationError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = RestrictedRetentionForExpressionAnnotationError::class
+    }
+
+    abstract class RestrictedRetentionForExpressionAnnotationWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = RestrictedRetentionForExpressionAnnotationWarning::class
     }
 
     abstract class WrongAnnotationTarget : KtFirDiagnostic<KtAnnotationEntry>() {
@@ -1041,8 +1049,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeParameter: KtTypeParameterSymbol
     }
 
-    abstract class TypeParameterAsReifiedArray : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = TypeParameterAsReifiedArray::class
+    abstract class TypeParameterAsReifiedArrayError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeParameterAsReifiedArrayError::class
         abstract val typeParameter: KtTypeParameterSymbol
     }
 
@@ -1278,8 +1286,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val missingDeclaration: KtCallableSymbol
     }
 
-    abstract class InvisibleAbstractMemberFromSuper : KtFirDiagnostic<KtClassOrObject>() {
-        override val diagnosticClass get() = InvisibleAbstractMemberFromSuper::class
+    abstract class InvisibleAbstractMemberFromSuperError : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = InvisibleAbstractMemberFromSuperError::class
         abstract val classOrObject: KtClassLikeSymbol
         abstract val invisibleDeclaration: KtCallableSymbol
     }
@@ -1761,13 +1769,13 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val variable: KtVariableLikeSymbol
     }
 
-    abstract class ValReassignmentViaBackingField : KtFirDiagnostic<KtExpression>() {
-        override val diagnosticClass get() = ValReassignmentViaBackingField::class
+    abstract class ValReassignmentViaBackingFieldError : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ValReassignmentViaBackingFieldError::class
         abstract val property: KtVariableSymbol
     }
 
-    abstract class ValReassignmentViaBackingFieldError : KtFirDiagnostic<KtExpression>() {
-        override val diagnosticClass get() = ValReassignmentViaBackingFieldError::class
+    abstract class ValReassignmentViaBackingFieldWarning : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ValReassignmentViaBackingFieldWarning::class
         abstract val property: KtVariableSymbol
     }
 

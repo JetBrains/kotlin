@@ -853,17 +853,31 @@ internal class DeprecatedSinceKotlinOutsideKotlinSubpackageImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class AnnotationOnSuperclassImpl(
+internal class AnnotationOnSuperclassErrorImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnnotationOnSuperclass(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+) : KtFirDiagnostic.AnnotationOnSuperclassError(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class RestrictedRetentionForExpressionAnnotationImpl(
+internal class AnnotationOnSuperclassWarningImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RestrictedRetentionForExpressionAnnotation(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.AnnotationOnSuperclassWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RestrictedRetentionForExpressionAnnotationErrorImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RestrictedRetentionForExpressionAnnotationError(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class RestrictedRetentionForExpressionAnnotationWarningImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RestrictedRetentionForExpressionAnnotationWarning(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
@@ -1669,11 +1683,11 @@ internal class TypeParameterAsReifiedImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class TypeParameterAsReifiedArrayImpl(
+internal class TypeParameterAsReifiedArrayErrorImpl(
     override val typeParameter: KtTypeParameterSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.TypeParameterAsReifiedArray(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.TypeParameterAsReifiedArrayError(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
@@ -2041,12 +2055,12 @@ internal class AbstractClassMemberNotImplementedImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class InvisibleAbstractMemberFromSuperImpl(
+internal class InvisibleAbstractMemberFromSuperErrorImpl(
     override val classOrObject: KtClassLikeSymbol,
     override val invisibleDeclaration: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InvisibleAbstractMemberFromSuper(), KtAbstractFirDiagnostic<KtClassOrObject> {
+) : KtFirDiagnostic.InvisibleAbstractMemberFromSuperError(), KtAbstractFirDiagnostic<KtClassOrObject> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
@@ -2836,19 +2850,19 @@ internal class ValReassignmentImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
-internal class ValReassignmentViaBackingFieldImpl(
-    override val property: KtVariableSymbol,
-    firDiagnostic: FirPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.ValReassignmentViaBackingField(), KtAbstractFirDiagnostic<KtExpression> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
-
 internal class ValReassignmentViaBackingFieldErrorImpl(
     override val property: KtVariableSymbol,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ValReassignmentViaBackingFieldError(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class ValReassignmentViaBackingFieldWarningImpl(
+    override val property: KtVariableSymbol,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ValReassignmentViaBackingFieldWarning(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 

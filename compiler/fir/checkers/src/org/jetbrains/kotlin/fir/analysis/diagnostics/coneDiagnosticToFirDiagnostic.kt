@@ -66,7 +66,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidates)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.createOn(source)
     is ConeValReassignmentError -> when (val symbol = this.variable) {
-        is FirBackingFieldSymbol -> FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR.createOn(source, symbol)
+        is FirBackingFieldSymbol -> FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.errorFactory.createOn(source, symbol)
         else -> FirErrors.VAL_REASSIGNMENT.createOn(source, symbol)
     }
     is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source ?: source)

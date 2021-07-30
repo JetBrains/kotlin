@@ -35,13 +35,7 @@ object FirValReassignmentChecker : FirVariableAssignmentChecker() {
         val closestGetter = context.findClosest<FirPropertyAccessor> { it.isGetter }?.symbol ?: return
         if (propertySymbol.getterSymbol != closestGetter) return
 
-        backingFieldReference.source?.let {
-            if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfValReassignmentViaBackingField)) {
-                reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, propertySymbol, context)
-            } else {
-                reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, propertySymbol, context)
-            }
-        }
+        reporter.reportOn(backingFieldReference.source, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, propertySymbol, context)
     }
 
     private fun checkValReassignmentOnValueParameter(

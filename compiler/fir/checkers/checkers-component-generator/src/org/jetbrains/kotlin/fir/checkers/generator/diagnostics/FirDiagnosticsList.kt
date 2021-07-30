@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -229,8 +229,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
 
-        val ANNOTATION_ON_SUPERCLASS by error<KtAnnotationEntry>()
-        val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by error<PsiElement>()
+        val ANNOTATION_ON_SUPERCLASS by deprecationError<KtAnnotationEntry>(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)
+        val RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION by deprecationError<PsiElement>(LanguageFeature.RestrictRetentionForExpressionAnnotations)
         val WRONG_ANNOTATION_TARGET by error<KtAnnotationEntry> {
             parameter<String>("actualTarget")
         }
@@ -491,11 +491,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
-        val TYPE_PARAMETER_AS_REIFIED_ARRAY by error<PsiElement> {
-            parameter<FirTypeParameterSymbol>("typeParameter")
-        }
-
-        val TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING by warning<PsiElement> {
+        val TYPE_PARAMETER_AS_REIFIED_ARRAY by deprecationError<PsiElement>(LanguageFeature.ProhibitNonReifiedArraysAsReifiedTypeArguments) {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
@@ -664,11 +660,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirClassSymbol<*>>("classOrObject")
             parameter<FirCallableSymbol<*>>("missingDeclaration")
         }
-        val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<FirClassSymbol<*>>("classOrObject")
-            parameter<FirCallableSymbol<*>>("invisibleDeclaration")
-        }
-        val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING by warning<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+        val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER by deprecationError<KtClassOrObject>(
+            LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses,
+            PositioningStrategy.DECLARATION_NAME
+        ) {
             parameter<FirClassSymbol<*>>("classOrObject")
             parameter<FirCallableSymbol<*>>("invisibleDeclaration")
         }
@@ -922,10 +917,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VAL_REASSIGNMENT by error<KtExpression> {
             parameter<FirVariableSymbol<*>>("variable")
         }
-        val VAL_REASSIGNMENT_VIA_BACKING_FIELD by warning<KtExpression> {
-            parameter<FirBackingFieldSymbol>("property")
-        }
-        val VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR by error<KtExpression> {
+        val VAL_REASSIGNMENT_VIA_BACKING_FIELD by deprecationError<KtExpression>(LanguageFeature.RestrictionOfValReassignmentViaBackingField) {
             parameter<FirBackingFieldSymbol>("property")
         }
         val CAPTURED_VAL_INITIALIZATION by error<KtExpression> {
@@ -1207,13 +1199,13 @@ private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {
 
 private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityError(
     positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
-): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, DiagnosticData>> {
+): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, RegularDiagnosticData>> {
     return error<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
 
 private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityWarning(
     positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
-): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, DiagnosticData>> {
+): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, RegularDiagnosticData>> {
     return warning<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
 
