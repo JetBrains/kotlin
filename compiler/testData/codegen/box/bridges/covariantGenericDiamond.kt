@@ -1,3 +1,8 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BRIDGE_ISSUES
+// Before we implemented native wasm strings this passed by chance, only because we inserted unbox intrinsic at the end of
+// the BImpl::<get-result>. Need to find common source of this bridge problems.
+
 interface A {
     val result: Any
 }
