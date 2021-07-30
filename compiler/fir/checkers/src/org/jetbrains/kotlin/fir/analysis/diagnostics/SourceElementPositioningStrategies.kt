@@ -274,7 +274,7 @@ object SourceElementPositioningStrategies {
     )
 
     val UNREACHABLE_CODE = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.DEFAULT, //todo
+        LightTreePositioningStrategies.UNREACHABLE_CODE,
         FirPsiPositioningStrategies.UNREACHABLE_CODE
     )
 
