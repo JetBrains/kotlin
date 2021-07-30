@@ -197,16 +197,19 @@ fun ConeKotlinType.toSymbol(session: FirSession): FirBasedSymbol<*>? {
 
 fun ConeKotlinType.toFirResolvedTypeRef(
     source: FirSourceElement? = null,
+    delegatedTypeRef: FirTypeRef? = null
 ): FirResolvedTypeRef {
     return if (this is ConeKotlinErrorType) {
         buildErrorTypeRef {
             this.source = source
             diagnostic = this@toFirResolvedTypeRef.diagnostic
+            this.delegatedTypeRef = delegatedTypeRef
         }
     } else {
         buildResolvedTypeRef {
             this.source = source
             type = this@toFirResolvedTypeRef
+            this.delegatedTypeRef = delegatedTypeRef
         }
     }
 }

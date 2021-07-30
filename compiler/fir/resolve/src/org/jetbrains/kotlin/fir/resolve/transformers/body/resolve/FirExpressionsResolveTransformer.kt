@@ -226,7 +226,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                  *   DiagnosticsTestGenerated$Tests$ThisAndSuper.testGenericQualifiedSuperOverridden
                  *   DiagnosticsTestGenerated$Tests$ThisAndSuper.testQualifiedSuperOverridden
                  */
-                val actualSuperTypeRef = actualSuperType?.toFirResolvedTypeRef(superTypeRef.source) ?: buildErrorTypeRef {
+                val actualSuperTypeRef = actualSuperType?.toFirResolvedTypeRef(superTypeRef.source, superTypeRef) ?: buildErrorTypeRef {
                     source = superTypeRef.source
                     diagnostic = ConeSimpleDiagnostic("Not a super type", DiagnosticKind.NotASupertype)
                 }
