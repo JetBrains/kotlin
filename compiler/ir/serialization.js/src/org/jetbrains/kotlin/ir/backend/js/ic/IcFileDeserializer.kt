@@ -74,6 +74,7 @@ class IcFileDeserializer(
         originalSymbolDeserializer,
         linker.fakeOverrideBuilder.platformSpecificClassFilter,
         linker.fakeOverrideBuilder,
+        allowRedeclaration = true,
         compatibilityMode = CompatibilityMode.CURRENT
     )
 
@@ -81,9 +82,8 @@ class IcFileDeserializer(
         // TODO: reference lowered declarations cross-module
         if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return file.symbol
 
-        val topLevelSig = idSig.topLevelSignature()
         val actualModuleDeserializer =
-            moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
+            moduleDeserializer.findModuleDeserializerForTopLevelId(idSig)
                 ?: handleNoModuleDeserializerFound(idSig, moduleDeserializer.moduleDescriptor, moduleDeserializer.moduleDependencies)
 
         return actualModuleDeserializer.deserializeIrSymbol(idSig, kind)

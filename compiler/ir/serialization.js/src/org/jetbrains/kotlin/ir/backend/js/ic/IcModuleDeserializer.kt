@@ -90,7 +90,7 @@ class IcModuleDeserializer(
             ?: error("No deserializer for file $file in module ${moduleDescriptor.name}")
 
     // TODO: fix to topLevel checker
-    override fun contains(idSig: IdSignature): Boolean = idSig in moduleReversedFileIndex || idSig in icModuleReversedFileIndex
+    override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex || idSig in icModuleReversedFileIndex
 
     override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         assert(idSig.isPubliclyVisible)

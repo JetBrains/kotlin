@@ -119,9 +119,10 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     override operator fun contains(idSig: IdSignature): Boolean {
-        if (idSig in irBuiltInsMap) return true
+        val topLevel = idSig.topLevelSignature()
+        if (topLevel in irBuiltInsMap) return true
 
-        return checkIsFunctionInterface(idSig) || idSig in delegate
+        return checkIsFunctionInterface(topLevel) || idSig in delegate
     }
 
     override fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature) : IrSimpleFunctionSymbol =
