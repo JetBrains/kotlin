@@ -270,11 +270,7 @@ class OverrideResolver(
             }
 
             if (abstractInvisibleSuper.isNotEmpty() && !canHaveAbstractMembers) {
-                if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses)) {
-                    trace.report(INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER.on(klass, classDescriptor, abstractInvisibleSuper))
-                } else {
-                    trace.report(INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING.on(klass, classDescriptor, abstractInvisibleSuper))
-                }
+                trace.report(INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER.on(languageVersionSettings, klass, classDescriptor, abstractInvisibleSuper))
             }
 
             conflictingInterfaceMembers.removeAll(conflictingReturnTypes)
@@ -410,11 +406,7 @@ class OverrideResolver(
         if (overridden != null) {
             val baseClassifier = overridden.containingDeclaration
             val dataModifier = findDataModifierForDataClass(copyFunction.containingDeclaration)
-            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitDataClassesOverridingCopy)) {
-                trace.report(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR.on(dataModifier, copyFunction, baseClassifier))
-            } else {
-                trace.report(DATA_CLASS_OVERRIDE_DEFAULT_VALUES_WARNING.on(dataModifier, copyFunction, baseClassifier))
-            }
+            trace.report(DATA_CLASS_OVERRIDE_DEFAULT_VALUES.on(languageVersionSettings, dataModifier, copyFunction, baseClassifier))
         }
     }
 

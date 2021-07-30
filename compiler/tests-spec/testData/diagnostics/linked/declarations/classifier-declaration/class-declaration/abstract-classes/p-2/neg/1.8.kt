@@ -33,7 +33,7 @@ abstract class AbstractClassCase1() {
     public abstract val pub1: String
 }
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Case1<!> : AbstractClassCase1(){
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case1<!> : AbstractClassCase1(){
     override fun prot() {}
 
     override fun int() {

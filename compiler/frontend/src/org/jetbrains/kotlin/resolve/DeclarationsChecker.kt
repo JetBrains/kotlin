@@ -347,11 +347,7 @@ class DeclarationsChecker(
 
     private fun checkLocalAnnotation(classDescriptor: ClassDescriptor, classOrObject: KtClassOrObject) {
         if (classDescriptor.kind == ClassKind.ANNOTATION_CLASS && DescriptorUtils.isLocal(classDescriptor)) {
-            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitLocalAnnotations)) {
-                trace.report(LOCAL_ANNOTATION_CLASS_ERROR.on(classOrObject))
-            } else {
-                trace.report(LOCAL_ANNOTATION_CLASS.on(classOrObject))
-            }
+            trace.report(LOCAL_ANNOTATION_CLASS.on(languageVersionSettings, classOrObject))
         }
     }
 

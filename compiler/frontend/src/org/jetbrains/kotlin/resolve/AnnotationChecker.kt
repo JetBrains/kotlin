@@ -170,13 +170,7 @@ class AnnotationChecker(
                 }
                 val actualTargets = getActualTargetList(reference, null, trace.bindingContext)
                 if (entry.useSiteTarget != null && isSuperType) {
-                    val reportError = languageVersionSettings.supportsFeature(ProhibitUseSiteTargetAnnotationsOnSuperTypes)
-                    val diagnostic = if (reportError) {
-                        Errors.ANNOTATION_ON_SUPERCLASS.on(entry)
-                    } else {
-                        Errors.ANNOTATION_ON_SUPERCLASS_WARNING.on(entry)
-                    }
-                    trace.report(diagnostic)
+                    trace.report(Errors.ANNOTATION_ON_SUPERCLASS.on(languageVersionSettings, entry))
                 } else if (shouldRunCheck && (languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions) || checkWithoutLanguageFeature)) {
                     checkAnnotationEntry(entry, actualTargets, trace)
                 }

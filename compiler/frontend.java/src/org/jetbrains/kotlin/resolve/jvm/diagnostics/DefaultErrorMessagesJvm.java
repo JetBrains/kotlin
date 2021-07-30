@@ -51,7 +51,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(OVERLOADS_INTERFACE, "'@JvmOverloads' annotation cannot be used on interface methods");
         MAP.put(OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private declarations");
         MAP.put(OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations");
-        MAP.put(OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING, "'@JvmOverloads' annotation on constructors of annotation classes is deprecated");
         MAP.put(OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors of annotation classes");
         MAP.put(OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors hidden by inline class rules");
         MAP.put(OVERLOADS_ANNOTATION_MANGLED_FUNCTION, "'@JvmOverloads' annotation cannot be used on functions mangled by inline class rules");
@@ -147,10 +146,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "Please make explicit overrides (abstract or concrete) for the following non-abstract members of ''{1}'': {2}",
                 NAME, NAME, STRING);
 
-        MAP.put(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET, "Super calls to Java default methods are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
-        MAP.put(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR, "Super calls to Java default methods are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'");
-        MAP.put(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, "Calls to static methods in Java interfaces are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
-        MAP.put(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR, "Calls to static methods in Java interfaces are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'");
+        MAP.put(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET, "Super calls to Java default methods are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'");
+        MAP.put(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, "Calls to static methods in Java interfaces are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'");
 
         MAP.put(INLINE_FROM_HIGHER_PLATFORM, "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option", STRING, STRING);
         MAP.put(INLINE_FROM_HIGHER_PLATFORM_WARNING, "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option", STRING, STRING);
@@ -195,12 +192,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "Use explicit form of the call to 'containsKey'/'containsValue'/'contains' or cast the value to kotlin.collections.Map instead. " +
                 "See https://youtrack.jetbrains.com/issue/KT-18053 for more details";
         MAP.put(CONCURRENT_HASH_MAP_CONTAINS_OPERATOR, MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS);
-        MAP.put(CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR, MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS);
         MAP.put(TAILREC_WITH_DEFAULTS, "Computation order of non-constant default arguments in tail-recursive functions will change in 1.4. See KT-31540 for more details");
 
         String spreadOnPolymorphicSignature = "Spread operator is prohibited for arguments to signature-polymorphic calls";
         MAP.put(SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL, spreadOnPolymorphicSignature);
-        MAP.put(SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR, spreadOnPolymorphicSignature);
 
         MAP.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH,
                 "Functional interface member cannot have this name on JVM because it clashes with an internal member getFunctionDelegate");

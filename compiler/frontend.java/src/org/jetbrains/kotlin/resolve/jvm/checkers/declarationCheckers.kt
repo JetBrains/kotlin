@@ -235,13 +235,7 @@ class OverloadsAnnotationChecker : DeclarationChecker {
                 diagnosticHolder.report(ErrorsJvm.OVERLOADS_LOCAL.on(annotationEntry))
 
             descriptor.isAnnotationConstructor() -> {
-                val diagnostic =
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses))
-                        ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR
-                    else
-                        ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING
-
-                diagnosticHolder.report(diagnostic.on(annotationEntry))
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR.on(context.languageVersionSettings, annotationEntry))
             }
 
             !descriptor.visibility.isPublicAPI && descriptor.visibility != DescriptorVisibilities.INTERNAL ->

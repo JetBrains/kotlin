@@ -67,11 +67,7 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
             DiagnosticFactory1<PsiElement, TypeParameterDescriptor> diagnosticFactory;
 
             if (isArrayArgumentCheck) {
-                if (context.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProhibitNonReifiedArraysAsReifiedTypeArguments)) {
-                    diagnosticFactory = Errors.TYPE_PARAMETER_AS_REIFIED_ARRAY;
-                } else {
-                    diagnosticFactory = Errors.TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING;
-                }
+                diagnosticFactory = Errors.TYPE_PARAMETER_AS_REIFIED_ARRAY.chooseFactory(context.getLanguageVersionSettings());
             } else {
                 diagnosticFactory = Errors.TYPE_PARAMETER_AS_REIFIED;
             }

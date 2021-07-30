@@ -9,7 +9,7 @@
 
 // TESTCASE NUMBER: 7
 open class Foo(val prop: Int) {
-    object MyObject : Foo(<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR!>MyObject.<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR!>prop<!><!>)
+    object MyObject : Foo(<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>MyObject.<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>prop<!><!>)
 }
 
 fun box(): String? {

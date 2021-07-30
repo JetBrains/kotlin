@@ -60,14 +60,11 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
 
     private var supportDefaultValueInline by Delegates.notNull<Boolean>()
 
-    private var prohibitProtectedCallFromInline by Delegates.notNull<Boolean>()
-
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val call = resolvedCall.call
         val expression = call.calleeExpression ?: return
 
         supportDefaultValueInline = context.languageVersionSettings.supportsFeature(LanguageFeature.InlineDefaultFunctionalParameters)
-        prohibitProtectedCallFromInline = context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitProtectedCallFromInline)
 
         //checking that only invoke or inlinable extension called on function parameter
         val targetDescriptor = resolvedCall.resultingDescriptor
@@ -282,11 +279,10 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
                 isConstructorCall -> {
                     context.trace.report(PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor))
                 }
-                prohibitProtectedCallFromInline -> {
-                    context.trace.report(PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR.on(expression, calledDescriptor))
-                }
                 else -> {
-                    context.trace.report(PROTECTED_CALL_FROM_PUBLIC_INLINE.on(expression, calledDescriptor))
+                    context.trace.report(
+                        PROTECTED_CALL_FROM_PUBLIC_INLINE.on(context.languageVersionSettings, expression, calledDescriptor)
+                    )
                 }
             }
         }

@@ -20,7 +20,7 @@ fun test(
     invOut.onlyOut(42)
     invOut.onlyOut(1L)
 
-    invOut.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>onlyOutUB<!>(<!TYPE_MISMATCH!>"str"<!>)
+    invOut.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>onlyOutUB<!>(<!TYPE_MISMATCH!>"str"<!>)
     invStar.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOutUB<!>(0)
     invOut.onlyOutUB(42)
     invOut.onlyOutUB(1L)

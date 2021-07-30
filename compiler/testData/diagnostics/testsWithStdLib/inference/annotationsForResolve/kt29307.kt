@@ -2,7 +2,7 @@
 // ISSUE: KT-29307
 
 fun test_1(map: Map<String, String>) {
-    val x = <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>map[42]<!> // OK
+    val x = <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>map[42]<!> // OK
 }
 
 open class A
@@ -10,7 +10,7 @@ open class A
 class B : A()
 
 fun test_2(map: Map<A, String>) {
-    val x = <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>map[42]<!>
+    val x = <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>map[42]<!>
 }
 
 fun test_3(m: Map<*, String>) {

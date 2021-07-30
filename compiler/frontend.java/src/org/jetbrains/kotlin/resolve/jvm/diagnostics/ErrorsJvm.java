@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.diagnostics;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -58,8 +59,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_PRIVATE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_LOCAL = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactoryForDeprecation0<KtAnnotationEntry> OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses);
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_ANNOTATION_MANGLED_FUNCTION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
 
@@ -113,10 +113,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, DeclarationDescriptor, String> TARGET6_INTERFACE_INHERITANCE = DiagnosticFactory3.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactoryForDeprecation0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactoryForDeprecation0.create(LanguageFeature.DefaultMethodsCallFromJava6TargetError);
+    DiagnosticFactoryForDeprecation0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactoryForDeprecation0.create(LanguageFeature.DefaultMethodsCallFromJava6TargetError);
 
     DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM_WARNING = DiagnosticFactory2.create(WARNING);
@@ -175,13 +173,11 @@ public interface ErrorsJvm {
     DiagnosticFactory1<PsiElement, String> SUSPENSION_POINT_INSIDE_MONITOR = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, CallableDescriptor> SUSPENSION_POINT_INSIDE_CRITICAL_SECTION = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactoryForDeprecation0<PsiElement> CONCURRENT_HASH_MAP_CONTAINS_OPERATOR = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitConcurrentHashMapContains);
 
     DiagnosticFactory0<KtNamedFunction> TAILREC_WITH_DEFAULTS = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
 
-    DiagnosticFactory0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactoryForDeprecation0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall);
 
     DiagnosticFactory0<PsiElement> FUNCTION_DELEGATE_MEMBER_NAME_CLASH = DiagnosticFactory0.create(ERROR);
 

@@ -34,12 +34,12 @@ class AnnotationClassTargetAndRetentionChecker : DeclarationChecker {
             val retentionAnnotation = descriptor.annotations.findAnnotation(StandardNames.FqNames.retention)
             val targetAnnotation = descriptor.annotations.findAnnotation(StandardNames.FqNames.target)
 
-            val diagnostics =
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.RestrictRetentionForExpressionAnnotations))
-                    Errors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION
-                else
-                    Errors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_WARNING
-            context.trace.report(diagnostics.on(retentionAnnotation?.psi ?: targetAnnotation?.psi ?: declaration))
+            context.trace.report(
+                Errors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION.on(
+                    context.languageVersionSettings,
+                    retentionAnnotation?.psi ?: targetAnnotation?.psi ?: declaration
+                )
+            )
         }
     }
 
