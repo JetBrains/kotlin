@@ -131,7 +131,7 @@ class VideoPlayer(private val requestedSize: Dimensions?) : DisposableContainer(
         while (state == State.PAUSED) {
             audio.pause()
             input.check()
-            usleep(1 * 1000)
+            usleep(1u * 1000u)
         }
         audio.resume()
     }
@@ -150,7 +150,7 @@ class VideoPlayer(private val requestedSize: Dimensions?) : DisposableContainer(
             }
         } else {
             // For pure sound, playback is driven by demand.
-            usleep(10 * 1000)
+            usleep(10u * 1000u)
         }
     }
 }
