@@ -32,7 +32,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
         }
 
         val childrenMap = HashMap<FastJarVirtualFile, MutableList<VirtualFile>>(ourEntryMap.size)
-        myRoot = FastJarVirtualFile(this, "", -1, DEFAULT_TIMESTAMP, null)
+        myRoot = FastJarVirtualFile(this, "", -1, null)
 
         val filesByRelativePath = HashMap<String, FastJarVirtualFile>(ourEntryMap.size)
         filesByRelativePath[""] = myRoot
@@ -64,8 +64,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
 
             FastJarVirtualFile(
                 this, shortName,
-                if (entry.isDirectory) -1 else entry.uncompressedSize.toLong(),
-                DEFAULT_TIMESTAMP,
+                if (entry.isDirectory) -1 else entry.uncompressedSize,
                 parentInfo
             )
         }
@@ -83,7 +82,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
             }
             val parentInfo = getOrCreateDirectory(parentPath, map)
 
-            FastJarVirtualFile(this, shortName, -1, DEFAULT_TIMESTAMP, parentInfo)
+            FastJarVirtualFile(this, shortName, -1, parentInfo)
         }
     }
 
@@ -116,5 +115,3 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
 }
 
 private const val MANIFEST_PATH = "META-INF/MANIFEST.MF"
-
-private const val DEFAULT_TIMESTAMP = 0L

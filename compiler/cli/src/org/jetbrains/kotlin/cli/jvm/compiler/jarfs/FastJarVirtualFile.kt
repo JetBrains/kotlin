@@ -16,11 +16,10 @@ import java.io.OutputStream
 internal class FastJarVirtualFile(
     private val myHandler: FastJarHandler,
     private val myName: CharSequence,
-    private val myLength: Long,
-    private val myTimestamp: Long,
-    parent: FastJarVirtualFile?
+    private val myLength: Int,
+    private val myParent: VirtualFile?
 ) : VirtualFile() {
-    private val myParent: VirtualFile? = parent
+
     private var myChildren = EMPTY_ARRAY
     fun setChildren(children: Array<VirtualFile>) {
         myChildren = children
@@ -85,15 +84,12 @@ internal class FastJarVirtualFile(
         return myHandler.contentsToByteArray(pair.second)
     }
 
-    override fun getTimeStamp(): Long {
-        return myTimestamp
-    }
+    override fun getTimeStamp(): Long = 0
 
-    override fun getLength(): Long {
-        return myLength
-    }
+    override fun getLength(): Long = myLength.toLong()
 
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {}
+
     @Throws(IOException::class)
     override fun getInputStream(): InputStream {
         return BufferExposingByteArrayInputStream(contentsToByteArray())
