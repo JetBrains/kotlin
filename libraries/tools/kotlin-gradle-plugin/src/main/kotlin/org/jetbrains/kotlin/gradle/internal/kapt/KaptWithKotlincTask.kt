@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import java.io.File
 import javax.inject.Inject
 
@@ -71,7 +71,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
             ignoreClasspathResolutionErrors
         ))
 
-        args.pluginClasspaths = pluginClasspath.toSortedPathsArray()
+        args.pluginClasspaths = pluginClasspath.toPathsArray()
 
         val pluginOptionsWithKapt: CompilerPluginOptions = pluginOptions.withWrappedKaptOptions(
             withApClasspath = kaptClasspath,
