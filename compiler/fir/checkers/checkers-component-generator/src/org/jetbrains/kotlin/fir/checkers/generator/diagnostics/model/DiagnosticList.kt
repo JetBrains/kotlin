@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.PrivateForInline
 import kotlin.properties.ReadOnlyProperty
@@ -65,13 +66,52 @@ abstract class DiagnosticList(internal val objectName: String) {
     abstract inner class DiagnosticGroup(name: String) : AbstractDiagnosticGroup(name, objectName)
 }
 
-class DiagnosticBuilder(
-    private val containingObjectName: String,
-    private val severity: Severity,
-    private val name: String,
-    private val psiType: KType,
-    private val positioningStrategy: PositioningStrategy,
+sealed class DiagnosticBuilder(
+    protected val containingObjectName: String,
+    protected val name: String,
+    protected val psiType: KType,
+    protected val positioningStrategy: PositioningStrategy,
 ) {
+    class Regular(
+        containingObjectName: String,
+        private val severity: Severity,
+        name: String,
+        psiType: KType,
+        positioningStrategy: PositioningStrategy,
+    ) : DiagnosticBuilder(containingObjectName, name, psiType, positioningStrategy) {
+        @OptIn(PrivateForInline::class)
+        override fun build(): RegularDiagnosticData {
+            return RegularDiagnosticData(
+                containingObjectName,
+                severity,
+                name,
+                psiType,
+                parameters,
+                positioningStrategy,
+            )
+        }
+    }
+
+    class Deprecation(
+        containingObjectName: String,
+        private val featureForError: LanguageFeature,
+        name: String,
+        psiType: KType,
+        positioningStrategy: PositioningStrategy,
+    ) : DiagnosticBuilder(containingObjectName, name, psiType, positioningStrategy) {
+        @OptIn(PrivateForInline::class)
+        override fun build(): DeprecationDiagnosticData {
+            return DeprecationDiagnosticData(
+                containingObjectName,
+                featureForError,
+                name,
+                psiType,
+                parameters,
+                positioningStrategy,
+            )
+        }
+    }
+
     @PrivateForInline
     val parameters = mutableListOf<DiagnosticParameter>()
 
@@ -86,15 +126,7 @@ class DiagnosticBuilder(
         )
     }
 
-    @OptIn(PrivateForInline::class)
-    fun build() = DiagnosticData(
-        containingObjectName,
-        severity,
-        name,
-        psiType,
-        parameters,
-        positioningStrategy,
-    )
+    abstract fun build(): DiagnosticData
 
     companion object {
         const val MAX_DIAGNOSTIC_PARAMETER_COUNT = 4

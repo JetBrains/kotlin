@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticData
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticParameter
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
@@ -39,16 +38,33 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 
 object HLDiagnosticConverter {
-    fun convert(diagnosticList: DiagnosticList): HLDiagnosticList =
-        HLDiagnosticList(diagnosticList.allDiagnostics.map(::convertDiagnostic))
+    @OptIn(ExperimentalStdlibApi::class)
+    fun convert(diagnosticList: DiagnosticList): HLDiagnosticList {
+        return HLDiagnosticList(diagnosticList.allDiagnostics.flatMap(::convertDiagnostic))
+    }
 
-    private fun convertDiagnostic(diagnostic: DiagnosticData): HLDiagnostic =
-        HLDiagnostic(
-            original = diagnostic,
-            className = diagnostic.getHLDiagnosticClassName(),
-            implClassName = diagnostic.getHLDiagnosticImplClassName(),
-            parameters = diagnostic.parameters.mapIndexed(::convertParameter)
-        )
+    private fun convertDiagnostic(diagnostic: DiagnosticData): List<HLDiagnostic> {
+        return when (diagnostic){
+            is RegularDiagnosticData -> listOf(
+                HLDiagnostic(
+                    original = diagnostic,
+                    severity = null,
+                    className = diagnostic.getHLDiagnosticClassName(),
+                    implClassName = diagnostic.getHLDiagnosticImplClassName(),
+                    parameters = diagnostic.parameters.mapIndexed(::convertParameter)
+                )
+            )
+            is DeprecationDiagnosticData -> listOf(Severity.ERROR, Severity.WARNING).map {
+                HLDiagnostic(
+                    original = diagnostic,
+                    severity = it,
+                    className = diagnostic.getHLDiagnosticClassName(it),
+                    implClassName = diagnostic.getHLDiagnosticImplClassName(it),
+                    parameters = diagnostic.parameters.mapIndexed(::convertParameter)
+                )
+            }
+        }
+    }
 
     private fun convertParameter(index: Int, diagnosticParameter: DiagnosticParameter): HLDiagnosticParameter {
         val conversion = FirToKtConversionCreator.createConversion(diagnosticParameter.type)
@@ -63,15 +79,26 @@ object HLDiagnosticConverter {
         )
     }
 
-    private fun DiagnosticData.getHLDiagnosticClassName() =
-        name.lowercase()
+    private fun RegularDiagnosticData.getHLDiagnosticClassName(): String = name.sanitizeName()
+
+    private fun RegularDiagnosticData.getHLDiagnosticImplClassName(): String =
+        "${getHLDiagnosticClassName()}Impl"
+
+    private fun DeprecationDiagnosticData.getHLDiagnosticClassName(severity: Severity): String {
+        val diagnosticName = "${name}_${severity.name}"
+        return diagnosticName.sanitizeName()
+    }
+
+    private fun DeprecationDiagnosticData.getHLDiagnosticImplClassName(severity: Severity): String {
+        return "${getHLDiagnosticClassName(severity)}Impl"
+    }
+
+    private fun String.sanitizeName(): String =
+        lowercase()
             .split('_')
             .joinToString(separator = "") {
                 it.replaceFirstChar(Char::uppercaseChar)
             }
-
-    private fun DiagnosticData.getHLDiagnosticImplClassName() =
-        "${getHLDiagnosticClassName()}Impl"
 
 }
 

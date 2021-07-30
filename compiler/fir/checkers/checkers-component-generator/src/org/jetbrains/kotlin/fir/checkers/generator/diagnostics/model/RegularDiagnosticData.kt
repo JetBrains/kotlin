@@ -5,17 +5,35 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.reflect.KType
 
-data class DiagnosticData(
-    val containingObjectName: String,
+sealed class DiagnosticData {
+    abstract val containingObjectName: String
+    abstract val name: String
+    abstract val psiType: KType
+    abstract val parameters: List<DiagnosticParameter>
+    abstract val positioningStrategy: PositioningStrategy
+}
+
+data class RegularDiagnosticData(
+    override val containingObjectName: String,
     val severity: Severity,
-    val name: String,
-    val psiType: KType,
-    val parameters: List<DiagnosticParameter>,
-    val positioningStrategy: PositioningStrategy,
-)
+    override val name: String,
+    override val psiType: KType,
+    override val parameters: List<DiagnosticParameter>,
+    override val positioningStrategy: PositioningStrategy,
+) : DiagnosticData()
+
+data class DeprecationDiagnosticData(
+    override val containingObjectName: String,
+    val featureForError: LanguageFeature,
+    override val name: String,
+    override val psiType: KType,
+    override val parameters: List<DiagnosticParameter>,
+    override val positioningStrategy: PositioningStrategy,
+) : DiagnosticData()
 
 data class DiagnosticParameter(
     val name: String,

@@ -2,6 +2,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
@@ -200,3 +201,41 @@ class FirDiagnosticFactory4<A, B, C, D>(
 private fun incorrectElement(element: FirSourceElement): Nothing {
     throw IllegalArgumentException("Unknown element type: ${element::class}")
 }
+
+// ------------------------------ factories for deprecation ------------------------------
+
+sealed class FirDiagnosticFactoryForDeprecation<F : AbstractFirDiagnosticFactory>(
+    val deprecatingFeature: LanguageFeature,
+    val warningFactory: F,
+    val errorFactory: F
+)
+
+class FirDiagnosticFactoryForDeprecation0(
+    featureForError: LanguageFeature,
+    warningFactory: FirDiagnosticFactory0,
+    errorFactory: FirDiagnosticFactory0
+) : FirDiagnosticFactoryForDeprecation<FirDiagnosticFactory0>(featureForError, warningFactory, errorFactory)
+
+class FirDiagnosticFactoryForDeprecation1<A>(
+    featureForError: LanguageFeature,
+    warningFactory: FirDiagnosticFactory1<A>,
+    errorFactory: FirDiagnosticFactory1<A>
+) : FirDiagnosticFactoryForDeprecation<FirDiagnosticFactory1<A>>(featureForError, warningFactory, errorFactory)
+
+class FirDiagnosticFactoryForDeprecation2<A, B>(
+    featureForError: LanguageFeature,
+    warningFactory: FirDiagnosticFactory2<A, B>,
+    errorFactory: FirDiagnosticFactory2<A, B>
+) : FirDiagnosticFactoryForDeprecation<FirDiagnosticFactory2<A, B>>(featureForError, warningFactory, errorFactory)
+
+class FirDiagnosticFactoryForDeprecation3<A, B, C>(
+    featureForError: LanguageFeature,
+    warningFactory: FirDiagnosticFactory3<A, B, C>,
+    errorFactory: FirDiagnosticFactory3<A, B, C>
+) : FirDiagnosticFactoryForDeprecation<FirDiagnosticFactory3<A, B, C>>(featureForError, warningFactory, errorFactory)
+
+class FirDiagnosticFactoryForDeprecation4<A, B, C, D>(
+    featureForError: LanguageFeature,
+    warningFactory: FirDiagnosticFactory4<A, B, C, D>,
+    errorFactory: FirDiagnosticFactory4<A, B, C, D>
+) : FirDiagnosticFactoryForDeprecation<FirDiagnosticFactory4<A, B, C, D>>(featureForError, warningFactory, errorFactory)
