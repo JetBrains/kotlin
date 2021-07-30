@@ -3145,6 +3145,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("noFakeVariableForInlineOnlyFun.kt")
+        public void testNoFakeVariableForInlineOnlyFun() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/noFakeVariableForInlineOnlyFun.kt");
+        }
+
+        @Test
         @TestMetadata("noSynAccessor.kt")
         public void testNoSynAccessor() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/noSynAccessor.kt");
