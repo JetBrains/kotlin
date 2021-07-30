@@ -31,7 +31,6 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
             }
         }
 
-        val childrenMap = HashMap<FastJarVirtualFile, MutableList<VirtualFile>>(ourEntryMap.size)
         myRoot = FastJarVirtualFile(this, "", -1, null)
 
         val filesByRelativePath = HashMap<String, FastJarVirtualFile>(ourEntryMap.size)
@@ -41,13 +40,8 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
             getOrCreateFile(info, filesByRelativePath)
         }
 
-        for (child in filesByRelativePath.values) {
-            val parent = child.parent as? FastJarVirtualFile ?: continue
-            childrenMap.getOrPut(parent) { mutableListOf() }.add(child)
-        }
-
-        for ((key, childList) in childrenMap) {
-            key.children = childList.toTypedArray()
+        for (node in filesByRelativePath.values) {
+            node.initChildrenArrayFromList()
         }
     }
 

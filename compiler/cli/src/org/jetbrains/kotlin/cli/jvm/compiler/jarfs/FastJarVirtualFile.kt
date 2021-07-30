@@ -17,12 +17,19 @@ internal class FastJarVirtualFile(
     private val myHandler: FastJarHandler,
     private val myName: CharSequence,
     private val myLength: Int,
-    private val myParent: VirtualFile?
+    private val myParent: FastJarVirtualFile?
 ) : VirtualFile() {
 
-    private var myChildren = EMPTY_ARRAY
-    fun setChildren(children: Array<VirtualFile>) {
-        myChildren = children
+    private var myChildrenArray = EMPTY_ARRAY
+    private val myChildrenList: MutableList<VirtualFile> = mutableListOf()
+
+    init {
+        myParent?.myChildrenList?.add(this)
+    }
+
+    fun initChildrenArrayFromList() {
+        myChildrenArray = myChildrenList.toTypedArray()
+        myChildrenList.clear()
     }
 
     override fun getName(): String {
@@ -68,7 +75,7 @@ internal class FastJarVirtualFile(
     }
 
     override fun getChildren(): Array<VirtualFile> {
-        return myChildren
+        return myChildrenArray
     }
 
     @Throws(IOException::class)
