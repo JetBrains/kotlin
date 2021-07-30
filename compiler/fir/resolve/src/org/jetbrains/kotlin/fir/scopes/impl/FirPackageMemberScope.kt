@@ -50,7 +50,6 @@ class FirPackageMemberScope(
             symbolProvider.getTopLevelFunctionSymbols(fqName, name)
         }
         for (symbol in symbols) {
-            symbol.ensureResolvedForCalls()
             processor(symbol)
         }
     }
@@ -60,7 +59,6 @@ class FirPackageMemberScope(
             symbolProvider.getTopLevelPropertySymbols(fqName, name)
         }
         for (symbol in symbols) {
-            symbol.ensureResolvedForCalls()
             processor(symbol)
         }
     }
