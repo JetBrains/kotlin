@@ -6,6 +6,7 @@
 package kotlin
 
 import kotlin.wasm.internal.*
+import kotlin.math.min
 
 /**
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
@@ -31,16 +32,25 @@ public class String internal constructor(internal val chars: CharArray) : Compar
      */
     public override fun get(index: Int): Char = chars[index]
 
-    public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
-        TODO("todo")
+    public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
+        return String(chars.sliceArray(startIndex until endIndex))
+    }
 
-    public override fun compareTo(other: String): Int =
-        TODO("todo")
+    public override fun compareTo(other: String): Int {
+        val len = min(this.length, other.length)
+
+        for (i in 0 until len) {
+            val l = this[i]
+            val r = other[i]
+            if (l != r)
+                return l - r
+        }
+        return this.length - other.length
+    }
 
     public override fun equals(other: Any?): Boolean {
         if (other is String)
-            return chars.contentEquals(other.chars)
-            //return this.compareTo(other) == 0
+            return this.compareTo(other) == 0
         return false
     }
 
