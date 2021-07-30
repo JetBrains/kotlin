@@ -112,7 +112,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
                 return true
             }
         }
-        if (source?.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+        if (origin == FirFunctionCallOrigin.Infix) {
             val lastArgument = arguments.lastOrNull()
             if (lastArgument is FirAnonymousFunctionExpression && source?.getChild(KtNodeTypes.PARENTHESIZED, depth = 1) == null) {
                 return true
