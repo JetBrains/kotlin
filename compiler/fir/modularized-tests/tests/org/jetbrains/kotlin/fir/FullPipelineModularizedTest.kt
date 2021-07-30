@@ -12,6 +12,7 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.useFir = true
         args.useIR = true
+        args.apiVersion = "1.4"
     }
 
     fun testTotalKotlin() {

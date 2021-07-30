@@ -21,6 +21,7 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
         args.optIn = arrayOf(
             "kotlin.RequiresOptIn",
             "kotlin.contracts.ExperimentalContracts",
+            "kotlin.io.path.ExperimentalPathApi",
             "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
         )
         args.multiPlatform = true
