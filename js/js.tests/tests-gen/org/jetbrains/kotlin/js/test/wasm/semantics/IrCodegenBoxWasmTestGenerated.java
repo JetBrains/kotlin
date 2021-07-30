@@ -11728,6 +11728,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/primitiveTypes/rangeTo.kt");
         }
 
+        @TestMetadata("stringEqualsHashCodeToString.kt")
+        public void testStringEqualsHashCodeToString() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/stringEqualsHashCodeToString.kt");
+        }
+
         @TestMetadata("unboxComparable.kt")
         public void testUnboxComparable() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");

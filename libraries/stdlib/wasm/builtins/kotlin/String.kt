@@ -56,8 +56,16 @@ public class String internal constructor(internal val chars: CharArray) : Compar
 
     public override fun toString(): String = this
 
-    // TODO: this is not nice
-    public override fun hashCode(): Int = 10
+    private var cachedHash: Int = 0
+    public override fun hashCode(): Int {
+        if (cachedHash != 0 || this.isEmpty())
+            return cachedHash
+        var hash = 0
+        for (c in chars)
+            hash = 31 * hash + c.toInt()
+        cachedHash = hash
+        return cachedHash
+    }
 }
 
 internal fun stringLiteral(startAddr: Int, length: Int) = String(unsafeRawMemoryToCharArray(startAddr, length))
