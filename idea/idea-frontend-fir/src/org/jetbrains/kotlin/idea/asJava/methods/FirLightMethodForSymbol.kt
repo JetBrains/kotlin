@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
+import org.jetbrains.kotlin.idea.asJava.parameters.FirLightParameterList
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
-import java.util.*
+import java.util.BitSet
 
 internal abstract class FirLightMethodForSymbol(
     private val functionSymbol: KtFunctionLikeSymbol,
@@ -31,25 +31,7 @@ internal abstract class FirLightMethodForSymbol(
     override fun isVarArgs(): Boolean = _isVarArgs
 
     private val _parametersList by lazyPub {
-        val builder = LightParameterListBuilder(manager, language)
-
-        FirLightParameterForReceiver.tryGet(functionSymbol, this)?.let {
-            builder.addParameter(it)
-        }
-
-        functionSymbol.valueParameters.mapIndexed { index, parameter ->
-            val needToSkip = argumentsSkipMask?.get(index) == true
-            if (!needToSkip) {
-                builder.addParameter(
-                    FirLightParameterForSymbol(
-                        parameterSymbol = parameter,
-                        containingMethod = this@FirLightMethodForSymbol
-                    )
-                )
-            }
-        }
-
-        builder
+        FirLightParameterList(this, functionSymbol, argumentsSkipMask)
     }
 
     private val _identifier: PsiIdentifier by lazyPub {
