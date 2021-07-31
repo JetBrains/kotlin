@@ -17,10 +17,15 @@
 package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
@@ -34,13 +39,16 @@ import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Files
+import java.util.ArrayList
 import javax.annotation.processing.Completion
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -123,6 +131,24 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
         }
     }
 
+    override fun loadMultiFiles(files: List<TestFile>) {
+        val project = myEnvironment.project
+        val psiManager = PsiManager.getInstance(project)
+
+        val tmpDir = KtTestUtil.tmpDir("kaptTest")
+
+        val ktFiles = ArrayList<KtFile>(files.size)
+        for (file in files.sorted()) {
+            if (file.name.endsWith(".kt")) {
+                val tmpKtFile = File(tmpDir, file.name).apply { writeText(file.content) }
+                val virtualFile = StandardFileSystems.local().findFileByPath(tmpKtFile.path) ?: error("Can't find ${file.name}")
+                ktFiles.add(psiManager.findFile(virtualFile) as? KtFile ?: error("Can't load ${file.name}"))
+            }
+        }
+
+        myFiles = CodegenTestFiles.create(ktFiles)
+    }
+
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".it.txt")
 
@@ -167,8 +193,15 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
         }
     }
 
-    protected inner class Kapt3ExtensionForTests(options: KaptOptions, private val processors: List<Processor>) : AbstractKapt3Extension(
-        options, MessageCollectorBackedKaptLogger(options), compilerConfiguration = myEnvironment.configuration
+    protected inner class Kapt3ExtensionForTests(
+        options: KaptOptions,
+        private val processors: List<Processor>,
+        val messageCollector: LoggingMessageCollector = LoggingMessageCollector()
+    ) : AbstractKapt3Extension(
+        options, MessageCollectorBackedKaptLogger(
+            flags = options,
+            messageCollector = messageCollector
+        ), compilerConfiguration = myEnvironment.configuration
     ) {
         internal var savedStubs: String? = null
         internal var savedBindings: Map<String, KaptJavaFileObject>? = null
@@ -203,5 +236,29 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
 
             super.saveIncrementalData(kaptContext, messageCollector, converter)
         }
+    }
+
+    class LoggingMessageCollector : MessageCollector {
+        private val _messages = mutableListOf<Message>()
+        val messages: List<Message>
+            get() = _messages
+
+        override fun clear() {
+            _messages.clear()
+        }
+
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+            _messages.add(Message(severity, message, location))
+        }
+
+        override fun hasErrors() = _messages.any {
+            it.severity.isError
+        }
+
+        data class Message(
+            val severity: CompilerMessageSeverity,
+            val message: String,
+            val location: CompilerMessageSourceLocation?
+        )
     }
 }

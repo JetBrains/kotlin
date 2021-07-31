@@ -1,0 +1,45 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MyAnnotation {
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Subject {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String field = "";
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String annotationTrigger = "";
+
+    public Subject() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getField() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getAnnotationTrigger() {
+        return null;
+    }
+
+    @MyAnnotation()
+    @java.lang.Deprecated()
+    public static void getAnnotationTrigger$annotations() {
+    }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
+}
