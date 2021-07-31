@@ -7,16 +7,23 @@ package org.jetbrains.kotlin.kapt3.test
 
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class KotlinKapt3TestBase : CodegenTestCase() {
     val kaptFlagsToAdd = mutableListOf<KaptFlag>()
     val kaptFlagsToRemove = mutableListOf<KaptFlag>()
+    private val directoriesToCleanup = mutableListOf<File>()
 
     override fun setUp() {
         super.setUp()
         kaptFlagsToAdd.clear()
         kaptFlagsToRemove.clear()
+    }
+
+    override fun tearDown() {
+        directoriesToCleanup.forEach(File::deleteRecursively)
+        super.tearDown()
     }
 
     protected fun isFlagEnabled(flagName: String, testFile: File): Boolean {
@@ -35,6 +42,10 @@ abstract class KotlinKapt3TestBase : CodegenTestCase() {
         } else if (isFlagDisabled(flag.name, testFile)) {
             kaptFlagsToRemove.add(flag)
         }
+    }
+
+    protected fun tmpDir(name: String): File {
+        return KtTestUtil.tmpDir(name).also(directoriesToCleanup::add)
     }
 
     override fun doTest(filePath: String) {

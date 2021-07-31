@@ -168,6 +168,9 @@ class KaptStubLineInformation {
     }
 
     private fun JCTree.isLocatedInside(declaration: JCTree): Boolean {
+        if (this === declaration) {
+            return true
+        }
         var found = false
 
         declaration.accept(object : TreeScanner() {

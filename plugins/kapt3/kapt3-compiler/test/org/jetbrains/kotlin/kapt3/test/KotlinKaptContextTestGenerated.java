@@ -34,6 +34,11 @@ public class KotlinKaptContextTestGenerated extends AbstractKotlinKaptContextTes
         runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/DefaultParameterValues.kt");
     }
 
+    @TestMetadata("ErrorLocationMapping.kt")
+    public void testErrorLocationMapping() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/ErrorLocationMapping.kt");
+    }
+
     @TestMetadata("NestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/NestedClasses.kt");

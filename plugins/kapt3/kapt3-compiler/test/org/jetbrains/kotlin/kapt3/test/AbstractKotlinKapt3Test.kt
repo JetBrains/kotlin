@@ -89,7 +89,7 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
         val project = myEnvironment.project
         val psiManager = PsiManager.getInstance(project)
 
-        val tmpDir = KtTestUtil.tmpDir("kaptTest")
+        val tmpDir = tmpDir("kaptTest")
 
         val ktFiles = ArrayList<KtFile>(files.size)
         for (file in files.sorted()) {
@@ -123,7 +123,7 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
             projectBaseDir = project.basePath?.let { File(it) }
             compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
 
-            sourcesOutputDir = KtTestUtil.tmpDir("kaptRunner")
+            sourcesOutputDir = tmpDir("kaptRunner")
             classesOutputDir = sourcesOutputDir
             stubsOutputDir = sourcesOutputDir
             incrementalDataOutputDir = sourcesOutputDir
