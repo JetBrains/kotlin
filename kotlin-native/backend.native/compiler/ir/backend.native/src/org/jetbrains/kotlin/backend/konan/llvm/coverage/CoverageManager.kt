@@ -93,9 +93,9 @@ internal class CoverageManager(val context: Context) {
     /**
      * Add __llvm_coverage_mapping to the LLVM module.
      */
-    fun writeRegionInfo() {
+    fun writeRegionInfo(llvmModule: LLVMModuleRef) {
         if (enabled) {
-            LLVMCoverageWriter(context, filesRegionsInfo).write()
+            LLVMCoverageWriter(context, filesRegionsInfo, llvmModule).write()
         }
     }
 

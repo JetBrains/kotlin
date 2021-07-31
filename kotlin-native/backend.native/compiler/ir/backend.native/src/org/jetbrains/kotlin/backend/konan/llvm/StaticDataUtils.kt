@@ -27,7 +27,7 @@ internal fun StaticData.placeGlobalConstArray(name: String,
 }
 
 internal fun StaticData.createAlias(name: String, aliasee: ConstPointer): ConstPointer {
-    val alias = LLVMAddAlias(context.llvmModule, aliasee.llvmType, aliasee.llvm, name)!!
+    val alias = LLVMAddAlias(llvmModule, aliasee.llvmType, aliasee.llvm, name)!!
     return constPointer(alias)
 }
 

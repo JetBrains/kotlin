@@ -47,7 +47,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             thisRef
         }
         val blockPtr = callFromBridge(
-                context.llvm.Kotlin_ObjCExport_GetAssociatedObject,
+                codegen.llvm.Kotlin_ObjCExport_GetAssociatedObject,
                 listOf(associatedObjectHolder)
         )
 
@@ -118,7 +118,7 @@ private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(
         associatedObject: LLVMValueRef,
         resultLifetime: Lifetime
 ): LLVMValueRef = call(
-        context.llvm.Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
+        codegen.llvm.Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
         listOf(typeInfo.llvm, associatedObject),
         resultLifetime
 )
@@ -159,7 +159,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
     ) {
         val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
         val refHolder = structGep(blockPtr, 1)
-        call(context.llvm.kRefSharedHolderDispose, listOf(refHolder))
+        call(codegen.llvm.kRefSharedHolderDispose, listOf(refHolder))
 
         ret(null)
     }.also {
@@ -181,13 +181,13 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         // so it is technically not necessary to check owner.
         // However this is not guaranteed by Objective-C runtime, so keep it suboptimal but reliable:
         val ref = call(
-                context.llvm.kRefSharedHolderRef,
+                codegen.llvm.kRefSharedHolderRef,
                 listOf(srcRefHolder),
                 exceptionHandler = ExceptionHandler.Caller,
                 verbatim = true
         )
 
-        call(context.llvm.kRefSharedHolderInit, listOf(dstRefHolder, ref))
+        call(codegen.llvm.kRefSharedHolderInit, listOf(dstRefHolder, ref))
 
         ret(null)
     }.also {
@@ -238,7 +238,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         val result = generateFunction(codegen, blockType.blockInvokeLlvmType, invokeName, switchToRunnable = true) {
             val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
             val kotlinObject = call(
-                    context.llvm.kRefSharedHolderRef,
+                    codegen.llvm.kRefSharedHolderRef,
                     listOf(structGep(blockPtr, 1)),
                     exceptionHandler = ExceptionHandler.Caller,
                     verbatim = true
@@ -325,11 +325,11 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
                 store(value, structGep(blockOnStackBase, index))
             }
 
-            call(context.llvm.kRefSharedHolderInitLocal, listOf(refHolder, kotlinRef))
+            call(codegen.llvm.kRefSharedHolderInitLocal, listOf(refHolder, kotlinRef))
 
             val copiedBlock = callFromBridge(retainBlock, listOf(bitcast(int8TypePtr, blockOnStack)))
 
-            val autoreleaseReturnValue = context.llvm.externalFunction(
+            val autoreleaseReturnValue = codegen.llvm.externalFunction(
                     "objc_autoreleaseReturnValue",
                     functionType(int8TypePtr, false, int8TypePtr),
                     CurrentKlibModuleOrigin
@@ -342,7 +342,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
     }
 }
 
-private val ObjCExportCodeGeneratorBase.retainBlock get() = context.llvm.externalFunction(
+private val ObjCExportCodeGeneratorBase.retainBlock get() = codegen.llvm.externalFunction(
         "objc_retainBlock",
         functionType(int8TypePtr, false, int8TypePtr),
         CurrentKlibModuleOrigin

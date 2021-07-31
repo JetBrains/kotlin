@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMLinkage
+import llvm.LLVMModuleRef
 import llvm.LLVMSetLinkage
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.*
@@ -16,11 +17,14 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-internal class KotlinObjCClassInfoGenerator(override val context: Context) : ContextUtils {
+internal class KotlinObjCClassInfoGenerator(
+        override val context: Context,
+        override val llvmModule: LLVMModuleRef
+) : ContextUtils {
     fun generate(irClass: IrClass) {
         assert(irClass.isFinalClass)
 
-        val objCLLvmDeclarations = context.llvmDeclarations.forClass(irClass).objCDeclarations!!
+        val objCLLvmDeclarations = codegen.llvmDeclarations.forClass(irClass).objCDeclarations!!
 
         val instanceMethods = generateInstanceMethodDescs(irClass)
 
@@ -28,11 +32,11 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         val classMethods = companionObject?.generateMethodDescs().orEmpty()
 
         val superclassName = irClass.getSuperClassNotAny()!!.let {
-            context.llvm.imports.add(it.llvmSymbolOrigin)
+            codegen.llvm.imports.add(it.llvmSymbolOrigin)
             it.descriptor.getExternalObjCClassBinaryName()
         }
         val protocolNames = irClass.getSuperInterfaces().map {
-            context.llvm.imports.add(it.llvmSymbolOrigin)
+            codegen.llvm.imports.add(it.llvmSymbolOrigin)
             it.name.asString().removeSuffix("Protocol")
         }
 
@@ -87,7 +91,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 .distinctBy { it.selector }
 
         allInitMethodsInfo.mapTo(this) {
-            ObjCMethodDesc(it.selector, it.encoding, context.llvm.missingInitImp)
+            ObjCMethodDesc(it.selector, it.encoding, codegen.llvm.missingInitImp)
         }
     }
 
@@ -148,7 +152,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         return constPointer(function)
     }
 
-    private val codegen = CodeGenerator(context)
+    private val codegen = CodeGenerator(context, llvmModule)
 
     companion object {
         const val createdClassFieldIndex = 11
@@ -164,6 +168,6 @@ internal fun CodeGenerator.kotlinObjCClassInfo(irClass: IrClass): LLVMValueRef {
                 origin = irClass.llvmSymbolOrigin
         )
     } else {
-        context.llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
+        llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
     }
 }

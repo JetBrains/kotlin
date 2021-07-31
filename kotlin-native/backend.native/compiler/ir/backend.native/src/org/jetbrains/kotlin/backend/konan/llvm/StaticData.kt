@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 /**
  * Provides utilities to create static data.
  */
-internal class StaticData(override val context: Context): ContextUtils {
+internal class StaticData(
+        override val context: Context,
+        override val llvmModule: LLVMModuleRef,
+): ContextUtils {
 
     /**
      * Represents the LLVM global variable.
@@ -41,19 +44,19 @@ internal class StaticData(override val context: Context): ContextUtils {
             }
 
             fun create(staticData: StaticData, type: LLVMTypeRef, name: String, isExported: Boolean): Global {
-                val module = staticData.context.llvmModule
+                val module = staticData.llvmModule
 
                 val isUnnamed = (name == "") // LLVM will select the unique index and represent the global as `@idx`.
                 if (isUnnamed && isExported) {
                     throw IllegalArgumentException("unnamed global can't be exported")
                 }
 
-                val llvmGlobal = createLlvmGlobal(module!!, type, name, isExported)
+                val llvmGlobal = createLlvmGlobal(module, type, name, isExported)
                 return Global(staticData, llvmGlobal)
             }
 
             fun get(staticData: StaticData, name: String): Global? {
-                val llvmGlobal = LLVMGetNamedGlobal(staticData.context.llvmModule, name) ?: return null
+                val llvmGlobal = LLVMGetNamedGlobal(staticData.llvmModule, name) ?: return null
                 return Global(staticData, llvmGlobal)
             }
         }

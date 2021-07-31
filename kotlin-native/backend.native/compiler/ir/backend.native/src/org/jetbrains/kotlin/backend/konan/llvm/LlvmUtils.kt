@@ -252,15 +252,15 @@ internal fun getGlobalType(ptrToGlobal: LLVMValueRef): LLVMTypeRef {
 
 internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): LLVMValueRef {
     if (isExported)
-        assert(LLVMGetNamedGlobal(context.llvmModule, name) == null)
-    return LLVMAddGlobal(context.llvmModule, type, name)!!
+        assert(LLVMGetNamedGlobal(llvmModule, name) == null)
+    return LLVMAddGlobal(llvmModule, type, name)!!
 }
 
 internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: CompiledKlibModuleOrigin): LLVMValueRef {
 
     context.llvm.imports.add(origin)
 
-    val found = LLVMGetNamedGlobal(context.llvmModule, name)
+    val found = LLVMGetNamedGlobal(llvmModule, name)
     return if (found != null) {
         assert (getGlobalType(found) == type)
         assert (LLVMGetInitializer(found) == null) { "$name is already declared in the current module" }
@@ -293,7 +293,7 @@ internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef):
         TLSAddressAccess(context, index)
     } else {
         // TODO: This will break if Workers get decoupled from host threads.
-        GlobalAddressAccess(LLVMAddGlobal(context.llvmModule, type, name)!!.also {
+        GlobalAddressAccess(LLVMAddGlobal(llvmModule, type, name)!!.also {
             LLVMSetThreadLocalMode(it, context.llvm.tlsMode)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
         })
@@ -301,7 +301,7 @@ internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef):
 }
 
 internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): AddressAccess {
-    return GlobalAddressAccess(LLVMAddGlobal(context.llvmModule, type, name)!!.also {
+    return GlobalAddressAccess(LLVMAddGlobal(llvmModule, type, name)!!.also {
         if (!isExported)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     })

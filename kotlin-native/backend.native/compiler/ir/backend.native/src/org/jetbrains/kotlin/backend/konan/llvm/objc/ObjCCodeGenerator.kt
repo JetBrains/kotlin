@@ -22,14 +22,14 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     }
 
     private val objcMsgSend = constPointer(
-            context.llvm.externalFunction(
+            codegen.llvm.externalFunction(
                     "objc_msgSend",
                     functionType(int8TypePtr, true, int8TypePtr, int8TypePtr),
                     context.stdlibModule.llvmSymbolOrigin
             )
     )
 
-    val objcRelease = context.llvm.externalFunction(
+    val objcRelease = codegen.llvm.externalFunction(
             "objc_release",
             functionType(voidType, false, int8TypePtr),
             context.stdlibModule.llvmSymbolOrigin

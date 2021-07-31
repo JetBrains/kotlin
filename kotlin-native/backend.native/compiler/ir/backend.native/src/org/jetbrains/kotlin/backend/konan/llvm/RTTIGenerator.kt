@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 
-internal class RTTIGenerator(override val context: Context) : ContextUtils {
+internal class RTTIGenerator(override val context: Context, override val llvmModule: LLVMModuleRef) : ContextUtils {
 
     private val acyclicCache = mutableMapOf<IrType, Boolean>()
     private val safeAcyclicFieldTypes = setOf(
@@ -204,7 +204,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val className = irClass.fqNameForIrSerialization
 
-        val llvmDeclarations = context.llvmDeclarations.forClass(irClass)
+        val llvmDeclarations = llvmDeclarations.forClass(irClass)
 
         val bodyType = llvmDeclarations.bodyType
 
@@ -394,7 +394,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private val debugOperations: ConstValue by lazy {
         if (debugRuntimeOrNull != null) {
             val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
-            val local = LLVMAddGlobal(context.llvmModule, LLVMGetElementType(LLVMTypeOf(external)),"Konan_debugOperationsList")!!
+            val local = LLVMAddGlobal(llvmModule, LLVMGetElementType(LLVMTypeOf(external)),"Konan_debugOperationsList")!!
             constPointer(LLVMConstBitCast(local, kInt8PtrPtr)!!)
         } else {
             Zero(kInt8PtrPtr)
@@ -415,7 +415,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             return NullPointer(runtime.extendedTypeInfoType)
 
         val className = irClass.fqNameForIrSerialization.toString()
-        val llvmDeclarations = context.llvmDeclarations.forClass(irClass)
+        val llvmDeclarations = llvmDeclarations.forClass(irClass)
         val bodyType = llvmDeclarations.bodyType
         val elementType = getElementType(irClass)
 
@@ -458,7 +458,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
             val associatedObjectGetter = generateFunction(
-                    CodeGenerator(context),
+                    CodeGenerator(context, llvmModule),
                     functionType(kObjHeaderPtr, false, kObjHeaderPtrPtr),
                     ""
             ) {

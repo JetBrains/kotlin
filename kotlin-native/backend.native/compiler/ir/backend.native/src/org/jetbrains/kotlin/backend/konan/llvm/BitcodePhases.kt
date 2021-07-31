@@ -29,16 +29,28 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
         name = "ContextLLVMSetup",
         description = "Set up Context for LLVM Bitcode generation",
-        op = { context, _ ->
+        op = { context, irModule ->
             // Note that we don't set module target explicitly.
             // It is determined by the target of runtime.bc
             // (see Llvm class in ContextUtils)
             // Which in turn is determined by the clang flags
             // used to compile runtime.bc.
             llvmContext = LLVMContextCreate()!!
+
+            irModule.files
+                    .filter { it.declarations.isNotEmpty() }
+                    .forEach { irFile ->
+                        val moduleId = irFile.path.replace('/', '_')
+                        val llvmModule = LLVMModuleCreateWithNameInContext(moduleId, llvmContext)!!
+                        irFileToModule[irFile] = llvmModule
+                        moduleToDebugInfo[llvmModule] = DebugInfo(context, llvmModule)
+                        moduleToSpecification[llvmModule] = FileLlvmModuleSpecification(irFile)
+                        moduleToLlvm[llvmModule] = Llvm(context, llvmModule)
+                    }
+
             val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
             context.llvmModule = llvmModule
-            context.debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
+            context.debugInfo.builder = LLVMCreateDIBuilder(llvmModule)!!
 
             // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
             // clashing, which happens on linking with libraries produced from intercepting sources.
@@ -61,10 +73,13 @@ internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
         name = "CreateLLVMDeclarations",
         description = "Map IR declarations to LLVM",
         prerequisite = setOf(contextLLVMSetupPhase),
-        op = { context, _ ->
-            context.llvmDeclarations = createLlvmDeclarations(context)
+        op = { context, irModule ->
             context.lifetimes = mutableMapOf()
-            context.codegenVisitor = CodeGeneratorVisitor(context, context.lifetimes)
+            irModule.files.forEach { irFile ->
+                val module = irFileToModule.getValue(irFile)
+                moduleToLlvmDeclarations[module] = createLlvmDeclarations(context, irFile)
+                irFileToCodegenVisitor[irFile] = CodeGeneratorVisitor(context, context.lifetimes, module)
+            }
         }
 )
 
@@ -92,16 +107,22 @@ internal val RTTIPhase = makeKonanModuleOpPhase(
         name = "RTTI",
         description = "RTTI generation",
         op = { context, irModule ->
-            val visitor = RTTIGeneratorVisitor(context)
-            irModule.acceptVoid(visitor)
-            visitor.dispose()
+            irModule.files.forEach { irFile ->
+                val visitor = RTTIGeneratorVisitor(context, irFileToModule.getValue(irFile))
+                irFile.acceptVoid(visitor)
+                visitor.dispose()
+            }
         }
 )
 
 internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(
         name = "GenerateDebugInfoHeader",
         description = "Generate debug info header",
-        op = { context, _ -> generateDebugInfoHeader(context) }
+        op = { context, module ->
+            module.files.forEach {
+                generateDebugInfoHeader(context, irFileToModule.getValue(it))
+            }
+        }
 )
 
 internal val buildDFGPhase = makeKonanModuleOpPhase(
@@ -315,7 +336,10 @@ internal val codegenPhase = makeKonanModuleOpPhase(
         name = "Codegen",
         description = "Code generation",
         op = { context, irModule ->
-            irModule.acceptVoid(context.codegenVisitor)
+            irModule.files.forEach { irFile ->
+                val visitor = irFileToCodegenVisitor.getValue(irFile)
+                irFile.acceptVoid(visitor)
+            }
         }
 )
 
@@ -344,13 +368,19 @@ internal val linkBitcodeDependenciesPhase = makeKonanModuleOpPhase(
 internal val checkExternalCallsPhase = makeKonanModuleOpPhase(
         name = "CheckExternalCalls",
         description = "Check external calls",
-        op = { context, _ -> checkLlvmModuleExternalCalls(context) }
+        op = { context, module ->
+            module.files.forEach {
+//                checkLlvmModuleExternalCalls(context, it)
+            }
+        }
 )
 
 internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase(
         name = "RewriteExternalCallsCheckerGlobals",
         description = "Rewrite globals for external calls checker after optimizer run",
-        op = { context, _ -> addFunctionsListSymbolForChecker(context) }
+        op = { context, _ ->
+//            addFunctionsListSymbolForChecker(context)
+        }
 )
 
 

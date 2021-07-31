@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.set
 
-internal fun createLlvmDeclarations(context: Context): LlvmDeclarations {
-    val generator = DeclarationsGeneratorVisitor(context)
-    context.ir.irModule.acceptChildrenVoid(generator)
+internal fun createLlvmDeclarations(context: Context, irFile: IrFile): LlvmDeclarations {
+    val generator = DeclarationsGeneratorVisitor(context, irFileToModule.getValue(irFile))
+    irFile.acceptChildrenVoid(generator)
     return LlvmDeclarations(generator.uniques)
 }
 
@@ -80,7 +80,7 @@ private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>
     val fieldTypes = listOf(runtime.objHeaderType) + fields.map { getLLVMType(it.type) }
     // TODO: consider adding synthetic ObjHeader field to Any.
 
-    val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
+    val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvmModule), name)!!
 
     // LLVMStructSetBody expects the struct to be properly aligned and will insert padding accordingly. In our case
     // `allocInstance` returns 16x + 8 address, i.e. always misaligned for vector types. Workaround is to use packed struct.
@@ -91,8 +91,10 @@ private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>
     return classType
 }
 
-private class DeclarationsGeneratorVisitor(override val context: Context) :
-        IrElementVisitorVoid, ContextUtils {
+private class DeclarationsGeneratorVisitor(
+        override val context: Context,
+        override val llvmModule: LLVMModuleRef
+) : IrElementVisitorVoid, ContextUtils {
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
@@ -182,7 +184,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
             typeInfoGlobal = staticData.createGlobal(typeInfoWithVtableType, typeInfoGlobalName, isExported = false)
 
-            val llvmTypeInfoPtr = LLVMAddAlias(context.llvmModule,
+            val llvmTypeInfoPtr = LLVMAddAlias(llvmModule,
                     kTypeInfoPtr,
                     typeInfoGlobal.pointer.getElementPtr(0).llvm,
                     typeInfoSymbolName)!!
@@ -371,7 +373,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
             addLlvmFunctionWithDefaultAttributes(
                     context,
-                    context.llvmModule!!,
+                    llvmModule,
                     symbolName,
                     llvmFunctionType
             ).also {

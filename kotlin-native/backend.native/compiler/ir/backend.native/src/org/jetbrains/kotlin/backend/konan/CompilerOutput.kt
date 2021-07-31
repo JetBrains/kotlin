@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.linkObjC
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.isBitcode
@@ -84,10 +85,11 @@ private fun insertAliasToEntryPoint(context: Context) {
     val nomain = context.config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (context.config.produce != CompilerOutputKind.PROGRAM || nomain)
         return
-    val module = context.llvmModule
-    val entryPoint = LLVMGetNamedFunction(module, "Konan_main")
-            ?: error("Module doesn't contain `Konan_main`")
-    LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
+    irFileToModule.values.forEach { module ->
+        LLVMGetNamedFunction(module, "Konan_main")?.let { entryPoint ->
+            LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
+        }
+    }
 }
 
 internal fun linkBitcodeDependencies(context: Context) {

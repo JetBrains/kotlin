@@ -26,7 +26,7 @@ private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
 }
 
 
-private class CallsChecker(val context: Context, goodFunctions: List<String>) {
+private class CallsChecker(val context: Context, val llvmModule: LLVMModuleRef, goodFunctions: List<String>) {
     private val goodFunctionsExact = goodFunctions.filterNot { it.endsWith("*") }.toSet()
     private val goodFunctionsByPrefix = goodFunctions.filter { it.endsWith("*") }.map { it.substring(0, it.length - 1) }.sorted()
 
@@ -42,7 +42,7 @@ private class CallsChecker(val context: Context, goodFunctions: List<String>) {
             context.llvm.externalFunction(name, type, context.stdlibModule.llvmSymbolOrigin)
 
     private fun moduleFunction(name: String) =
-            LLVMGetNamedFunction(context.llvmModule, name) ?: throw IllegalStateException("$name function is not available")
+            LLVMGetNamedFunction(llvmModule, name) ?: throw IllegalStateException("$name function is not available")
 
     val getMethodImpl = externalFunction("class_getMethodImplementation", functionType(pointerType(functionType(voidType, false)), false, int8TypePtr, int8TypePtr))
     val getClass = externalFunction("object_getClass", functionType(int8TypePtr, false, int8TypePtr))
@@ -150,8 +150,8 @@ private class CallsChecker(val context: Context, goodFunctions: List<String>) {
 private const val functionListGlobal = "Kotlin_callsCheckerKnownFunctions"
 private const val functionListSizeGlobal = "Kotlin_callsCheckerKnownFunctionsCount"
 
-internal fun checkLlvmModuleExternalCalls(context: Context) {
-    val staticData = context.llvm.staticData
+internal fun checkLlvmModuleExternalCalls(context: Context, llvmModule: LLVMModuleRef) {
+    val staticData = moduleToStaticData.getValue(llvmModule)
 
     val annotations = staticData.getGlobal("llvm.global.annotations")?.getInitializer()
 
@@ -172,8 +172,8 @@ internal fun checkLlvmModuleExternalCalls(context: Context) {
         }.toList()
     } ?: emptyList()
 
-    val checker = CallsChecker(context, goodFunctions)
-    getFunctions(context.llvmModule!!)
+    val checker = CallsChecker(context, llvmModule, goodFunctions)
+    getFunctions(llvmModule)
             .filter { !it.isExternalFunction() && it.name !in ignoredFunctions }
             .forEach(checker::processFunction)
     // otherwise optimiser can inline it
@@ -183,10 +183,10 @@ internal fun checkLlvmModuleExternalCalls(context: Context) {
 }
 
 // this should be a separate pass, to handle DCE correctly
-internal fun addFunctionsListSymbolForChecker(context: Context) {
-    val staticData = context.llvm.staticData
+internal fun addFunctionsListSymbolForChecker(context: Context, llvmModule: LLVMModuleRef) {
+    val staticData = moduleToStaticData.getValue(llvmModule)
 
-    val functions = getFunctions(context.llvmModule!!)
+    val functions = getFunctions(llvmModule)
             .filter { !it.isExternalFunction() }
             .map { constPointer(it).bitcast(int8TypePtr) }
             .toList()

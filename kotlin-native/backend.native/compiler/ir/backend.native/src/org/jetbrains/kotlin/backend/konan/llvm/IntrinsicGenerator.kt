@@ -151,7 +151,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             IntrinsicType.IMMUTABLE_BLOB -> {
                 @Suppress("UNCHECKED_CAST")
                 val arg = callSite.getValueArgument(0) as IrConst<String>
-                context.llvm.staticData.createImmutableBlob(arg)
+                codegen.llvm.staticData.createImmutableBlob(arg)
             }
             IntrinsicType.OBJC_GET_SELECTOR -> {
                 val selector = (callSite.getValueArgument(0) as IrConst<*>).value as String
@@ -287,7 +287,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
         // so let's ignore this mismatch currently for simplicity.
 
-        return context.llvm.staticData.createConstArrayList(array, length).llvm
+        return codegen.llvm.staticData.createConstArrayList(array, length).llvm
     }
 
     private fun FunctionGenerationContext.emitGetNativeNullPtr(): LLVMValueRef =
@@ -404,7 +404,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
             or(bitsWithPadding, preservedBits)
         }
-        llvm.LLVMBuildStore(builder, bitsToStore, bitsWithPaddingPtr)!!.setUnaligned()
+        LLVMBuildStore(builder, bitsToStore, bitsWithPaddingPtr)!!.setUnaligned()
         return codegen.theUnitInstanceRef.llvm
     }
 
@@ -454,12 +454,12 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val functionType = functionType(int8TypePtr, true, int8TypePtr, int8TypePtr)
 
         val libobjc = context.standardLlvmSymbolsOrigin
-        val normalMessenger = context.llvm.externalFunction(
+        val normalMessenger = codegen.llvm.externalFunction(
                 "objc_msgSend$messengerNameSuffix",
                 functionType,
                 origin = libobjc
         )
-        val superMessenger = context.llvm.externalFunction(
+        val superMessenger = codegen.llvm.externalFunction(
                 "objc_msgSendSuper$messengerNameSuffix",
                 functionType,
                 origin = libobjc
@@ -481,13 +481,13 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         assert (first.type == second.type) { "Types are different: '${llvmtype2string(first.type)}' and '${llvmtype2string(second.type)}'" }
 
         return when (val typeKind = LLVMGetTypeKind(first.type)) {
-            llvm.LLVMTypeKind.LLVMFloatTypeKind, llvm.LLVMTypeKind.LLVMDoubleTypeKind,
+            LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind,
             LLVMTypeKind.LLVMVectorTypeKind -> {
                 // TODO LLVM API does not provide guarantee for LLVMIntTypeInContext availability for longer types; consider meaningful diag message instead of NPE
                 val integerType = LLVMIntTypeInContext(llvmContext, first.type.sizeInBits())!!
                 icmpEq(bitcast(integerType, first), bitcast(integerType, second))
             }
-            llvm.LLVMTypeKind.LLVMIntegerTypeKind, llvm.LLVMTypeKind.LLVMPointerTypeKind -> icmpEq(first, second)
+            LLVMTypeKind.LLVMIntegerTypeKind, LLVMTypeKind.LLVMPointerTypeKind -> icmpEq(first, second)
             else -> error(typeKind)
         }
     }

@@ -347,12 +347,11 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             field = module!!
 
             llvm = Llvm(this, module)
-            debugInfo = DebugInfo(this)
+            debugInfo = DebugInfo(this, module)
         }
 
     lateinit var llvm: Llvm
-    val llvmImports: LlvmImports = Llvm.ImportsImpl(this)
-    lateinit var llvmDeclarations: LlvmDeclarations
+    val llvmImports: LlvmImports by lazy { Llvm.ImportsImpl(librariesWithDependencies.toSet()) }
     lateinit var bitcodeFileName: String
     lateinit var library: KonanLibraryLayout
 
@@ -409,6 +408,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun verifyBitCode() {
         if (llvmModule == null) return
         verifyModule(llvmModule!!)
+        irFileToModule.values.forEach(::verifyModule)
     }
 
     fun printBitCode() {
@@ -459,9 +459,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     lateinit var debugInfo: DebugInfo
     var moduleDFG: ModuleDFG? = null
-    var externalModulesDFG: ExternalModulesDFG? = null
     lateinit var lifetimes: MutableMap<IrElement, Lifetime>
-    lateinit var codegenVisitor: CodeGeneratorVisitor
     var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
     var referencedFunctions: Set<IrFunction>? = null

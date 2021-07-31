@@ -187,10 +187,15 @@ private class ExportedElementScope(val kind: ScopeKind, val name: String) {
     }
 }
 
-private class ExportedElement(val kind: ElementKind,
-                              val scope: ExportedElementScope,
-                              val declaration: DeclarationDescriptor,
-                              val owner: CAdapterGenerator) : ContextUtils {
+private class ExportedElement(
+        val kind: ElementKind,
+        val scope: ExportedElementScope,
+        val declaration: DeclarationDescriptor,
+        val owner: CAdapterGenerator
+) : ContextUtils {
+
+    override val llvmModule: LLVMModuleRef = owner.llvmModule
+
     init {
         scope.elements.add(this)
     }
@@ -226,7 +231,7 @@ private class ExportedElement(val kind: ElementKind,
                         ret(result)
                     }
                 } else {
-                    LLVMAddAlias(context.llvmModule, llvmFunction.type, llvmFunction, cname)!!
+                    LLVMAddAlias(llvmModule, llvmFunction.type, llvmFunction, cname)!!
                 }
                 LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
             }
@@ -236,7 +241,7 @@ private class ExportedElement(val kind: ElementKind,
                 // Produce type getter.
                 val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
                         context,
-                        context.llvmModule!!,
+                        llvmModule,
                         "${cname}_type",
                         owner.kGetTypeFuncType
                 )
@@ -513,7 +518,7 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
             getPackage(it).fragments.filter { it.module == this }
         }
 
-internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVisitor<Boolean, Void?> {
+internal class CAdapterGenerator(val context: Context, val llvmModule: LLVMModuleRef) : DeclarationDescriptorVisitor<Boolean, Void?> {
 
     private val scopes = mutableListOf<ExportedElementScope>()
     internal val prefix = context.config.fullExportedNamePrefix

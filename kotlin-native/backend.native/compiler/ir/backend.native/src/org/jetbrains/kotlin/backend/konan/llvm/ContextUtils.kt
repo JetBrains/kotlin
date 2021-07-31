@@ -143,9 +143,14 @@ internal sealed class Lifetime(val slotType: SlotType) {
  */
 internal interface ContextUtils : RuntimeAware {
     val context: Context
+    val llvmModule: LLVMModuleRef
+
+    val llvm get() = moduleToLlvm.getValue(llvmModule)
+    val llvmDeclarations get() = moduleToLlvmDeclarations.getValue(llvmModule)
+    val debugInfo get() = moduleToDebugInfo.getValue(llvmModule)
 
     override val runtime: Runtime
-        get() = context.llvm.runtime
+        get() = llvm.runtime
 
     /**
      * Describes the target platform.
@@ -156,14 +161,14 @@ internal interface ContextUtils : RuntimeAware {
         get() = runtime.targetData
 
     val staticData: StaticData
-        get() = context.llvm.staticData
+        get() = llvm.staticData
 
     /**
      * TODO: maybe it'd be better to replace with [IrDeclaration::isEffectivelyExternal()],
      * or just drop all [else] branches of corresponding conditionals.
      */
     fun isExternal(declaration: IrDeclaration): Boolean {
-        return !context.llvmModuleSpecification.containsDeclaration(declaration)
+        return !moduleToSpecification.getValue(llvmModule).containsDeclaration(declaration)
     }
 
     /**
@@ -182,7 +187,7 @@ internal interface ContextUtils : RuntimeAware {
                         origin = this.llvmSymbolOrigin) }
 
             } else {
-                context.llvmDeclarations.forFunctionOrNull(this)?.llvmFunction
+                llvmDeclarations.forFunctionOrNull(this)?.llvmFunction
             }
         }
 
@@ -201,7 +206,7 @@ internal interface ContextUtils : RuntimeAware {
                 constPointer(importGlobal(this.computeTypeInfoSymbolName(), runtime.typeInfoType,
                         origin = this.llvmSymbolOrigin))
             } else {
-                context.llvmDeclarations.forClass(this).typeInfo
+                llvmDeclarations.forClass(this).typeInfo
             }
         }
 
@@ -351,19 +356,20 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return function
     }
 
-    val imports get() = context.llvmImports
+    val imports get() = moduleToImports.getOrPut(llvmModule) {
+        ImportsImpl(context.librariesWithDependencies.toSet())
+    }
 
-    class ImportsImpl(private val context: Context) : LlvmImports {
+    class ImportsImpl(private val allLibraries: Set<KonanLibrary>) : LlvmImports {
 
         private val usedBitcode = mutableSetOf<KotlinLibrary>()
         private val usedNativeDependencies = mutableSetOf<KotlinLibrary>()
-
-        private val allLibraries by lazy { context.librariesWithDependencies.toSet() }
 
         override fun add(origin: CompiledKlibModuleOrigin, onlyBitcode: Boolean) {
             val library = when (origin) {
                 CurrentKlibModuleOrigin -> return
                 is DeserializedKlibModuleOrigin -> origin.library
+                else -> error("AAAA")
             }
 
             if (library !in allLibraries) {
@@ -387,7 +393,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 .filter {
                     require(it is KonanLibrary)
                     (!it.isDefault && !context.config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it)
-                }.cast<List<KonanLibrary>>()
+                }.cast()
     }
 
     private val immediateBitcodeDependencies: List<KonanLibrary> by lazy {
@@ -443,11 +449,11 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     private fun shouldContainBitcode(library: KonanLibrary): Boolean {
-        if (!context.llvmModuleSpecification.containsLibrary(library)) {
+        if (context.llvmModuleSpecification.containsLibrary(library)) {
             return false
         }
 
-        if (!context.llvmModuleSpecification.isFinal) {
+        if (context.llvmModuleSpecification.isFinal) {
             return true
         }
 
@@ -457,7 +463,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val additionalProducedBitcodeFiles = mutableListOf<String>()
 
-    val staticData = StaticData(context)
+    val staticData = StaticData(context, llvmModule)
 
     private val target = context.config.target
 

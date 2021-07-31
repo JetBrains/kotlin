@@ -123,7 +123,7 @@ internal fun ContextUtils.unique(kind: UniqueKind): ConstPointer {
                 kind.llvmName, context.llvm.runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
         ))
     } else {
-        context.llvmDeclarations.forUnique(kind).pointer
+        llvmDeclarations.forUnique(kind).pointer
     }
 }
 
