@@ -93,13 +93,13 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
 }
 
 sourcesJar{
-    val compilerTask = project(":kotlin-compiler").tasks.named("sourcesJar") as TaskProvider<out Jar>
+    val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("sourcesJar")
     dependsOn(compilerTask)
     from(compilerTask.map{ zipTree(it.archiveFile) })
 }
 
 javadocJar{
-    val compilerTask = project(":kotlin-compiler").tasks.named("javadocJar") as TaskProvider<out Jar>
+    val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("javadocJar")
     dependsOn(compilerTask)
     from(compilerTask.map{ zipTree(it.archiveFile) })
 }
@@ -114,5 +114,4 @@ projectTest {
         systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
     }
 }
-
 
