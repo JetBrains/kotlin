@@ -4,10 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
-import llvm.LLVMConstBitCast
-import llvm.LLVMCreatePGOFunctionNameVar
-import llvm.LLVMInstrProfIncrement
-import llvm.LLVMValueRef
+import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -20,7 +17,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 internal class LLVMCoverageInstrumentation(
         override val context: Context,
         private val functionRegions: FunctionRegions,
-        private val callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit
+        private val callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit,
+        override val llvmModule: LLVMModuleRef
 ) : ContextUtils {
 
     private val functionNameGlobal = createFunctionNameGlobal(functionRegions.function)
@@ -41,7 +39,7 @@ internal class LLVMCoverageInstrumentation(
         val numberOfRegions = Int32(functionRegions.regions.size).llvm
         val regionNumber = Int32(functionRegions.regionEnumeration.getValue(region)).llvm
         val args = listOf(functionNameGlobal, functionHash, numberOfRegions, regionNumber)
-        callSitePlacer(LLVMInstrProfIncrement(context.llvmModule)!!, args)
+        callSitePlacer(LLVMInstrProfIncrement(llvmModule)!!, args)
     }
 
     // Each profiled function should have a global with its name in a specific format.

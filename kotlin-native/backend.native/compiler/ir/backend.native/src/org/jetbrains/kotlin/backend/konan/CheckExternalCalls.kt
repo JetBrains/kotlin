@@ -39,7 +39,7 @@ private class CallsChecker(val context: Context, val llvmModule: LLVMModuleRef, 
     }
 
     private fun externalFunction(name: String, type: LLVMTypeRef) =
-            context.llvm.externalFunction(name, type, context.stdlibModule.llvmSymbolOrigin)
+            moduleToLlvm.getValue(llvmModule).externalFunction(name, type, context.stdlibModule.llvmSymbolOrigin)
 
     private fun moduleFunction(name: String) =
             LLVMGetNamedFunction(llvmModule, name) ?: throw IllegalStateException("$name function is not available")
@@ -127,8 +127,9 @@ private class CallsChecker(val context: Context, val llvmModule: LLVMModuleRef, 
                     calledPtrLlvm = LLVMBuildBitCast(builder, calleeInfo.calledPtr, int8TypePtr, "")
                 }
             }
-            val callSiteDescriptionLlvm = context.llvm.staticData.cStringLiteral(callSiteDescription).llvm
-            val calledNameLlvm = if (calledName == null) LLVMConstNull(int8TypePtr) else context.llvm.staticData.cStringLiteral(calledName).llvm
+            val llvm = moduleToLlvm.getValue(llvmModule)
+            val callSiteDescriptionLlvm = llvm.staticData.cStringLiteral(callSiteDescription).llvm
+            val calledNameLlvm = if (calledName == null) LLVMConstNull(int8TypePtr) else llvm.staticData.cStringLiteral(calledName).llvm
             LLVMBuildCall(builder, checkerFunction, listOf(callSiteDescriptionLlvm, calledNameLlvm, calledPtrLlvm).toCValues(), 3, "")
         }
         LLVMDisposeBuilder(builder)

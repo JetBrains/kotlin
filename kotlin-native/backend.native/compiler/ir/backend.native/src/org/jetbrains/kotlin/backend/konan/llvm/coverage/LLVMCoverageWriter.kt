@@ -32,7 +32,7 @@ private fun LLVMCoverageRegion.populateFrom(region: Region, regionId: Int, files
 }
 
 /**
- * Writes all of the coverage information to the [org.jetbrains.kotlin.backend.konan.Context.llvmModule].
+ * Writes all of the coverage information to the [module].
  * See http://llvm.org/docs/CoverageMappingFormat.html for the format description.
  */
 internal class LLVMCoverageWriter(
@@ -56,7 +56,7 @@ internal class LLVMCoverageWriter(
                         regions.toCValues(), regions.size.signExtend())
 
                 val functionName = moduleToLlvmDeclarations.getValue(module).forFunction(functionRegions.function).llvmFunction.name
-                val functionMappingRecord = LLVMAddFunctionMappingRecord(LLVMGetModuleContext(context.llvmModule),
+                val functionMappingRecord = LLVMAddFunctionMappingRecord(LLVMGetModuleContext(module),
                         functionName, functionRegions.structuralHash, functionCoverage)!!
 
                 Pair(functionMappingRecord, functionCoverage)

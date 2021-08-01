@@ -582,7 +582,7 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
 }
 
 private fun ObjCExportCodeGeneratorBase.setOwnWritableTypeInfo(irClass: IrClass, writableTypeInfoValue: Struct) {
-    require(!codegen.isExternal(irClass))
+//    require(!codegen.isExternal(irClass))
     val writeableTypeInfoGlobal = codegen.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal!!
     writeableTypeInfoGlobal.setLinkage(LLVMLinkage.LLVMExternalLinkage)
     writeableTypeInfoGlobal.setInitializer(writableTypeInfoValue)
@@ -772,7 +772,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
             objCFunctionType(context, methodBridge)
     )
 
-    val location = if (debugInfo) {
+    val location = if (debugInfo && false) {
         setupBridgeDebugInfo(context, codegen.debugInfo, result)
     } else {
         null

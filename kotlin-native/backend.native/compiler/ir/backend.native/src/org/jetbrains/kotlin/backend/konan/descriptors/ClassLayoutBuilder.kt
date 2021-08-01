@@ -462,7 +462,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
         if (irClass.hasAnnotation(FqName.fromSegments(listOf("kotlin", "native", "internal", "NoReorderFields"))))
             return fields
 
-        return fields.sortedByDescending{ LLVMStoreSizeOfType(context.llvm.runtime.targetData, it.type.llvmType(context)) }
+        return fields.sortedByDescending{ LLVMStoreSizeOfType(context.llvm.runtime.targetData, it.type.llvmType(context.llvm)) }
     }
 
     private val IrClass.overridableOrOverridingMethods: List<IrSimpleFunction>

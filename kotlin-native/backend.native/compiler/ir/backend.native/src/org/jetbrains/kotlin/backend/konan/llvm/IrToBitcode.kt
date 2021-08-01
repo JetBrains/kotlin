@@ -429,8 +429,8 @@ internal class CodeGeneratorVisitor(
 
         context.coverage.collectRegions(declaration)
 
-        initializeCachedBoxes(context)
-        declaration.acceptChildrenVoid(this)
+        initializeCachedBoxes(context, codegen)
+//        declaration.acceptChildrenVoid(this)
 
         runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
@@ -729,7 +729,7 @@ internal class CodeGeneratorVisitor(
         }
 
         val coverageInstrumentation: LLVMCoverageInstrumentation? =
-                context.coverage.tryGetInstrumentation(declaration) { function, args -> functionGenerationContext.call(function, args) }
+                context.coverage.tryGetInstrumentation(declaration, llvmModule) { function, args -> functionGenerationContext.call(function, args) }
 
         private var name:String? = declaration?.name?.asString()
 
@@ -2512,7 +2512,6 @@ internal class CodeGeneratorVisitor(
     private fun call(function: IrFunction, llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime): LLVMValueRef {
         check(!function.isTypedIntrinsic)
-
         val needsNativeThreadState = function.needsNativeThreadState
         val exceptionHandler = function.annotations.findAnnotation(RuntimeNames.filterExceptions)?.let {
             val foreignExceptionMode = ForeignExceptionMode.byValue(it.getAnnotationValueOrNull<String>("mode"))
@@ -2528,6 +2527,13 @@ internal class CodeGeneratorVisitor(
         }
 
         val result = call(llvmFunction, args, resultLifetime, exceptionHandler)
+
+        if (LLVMIsDeclaration(llvmFunction) != 0) {
+            val currentModule = LLVMGetGlobalParent(LLVMGetBasicBlockParent(LLVMGetInstructionParent(result)))
+            assert(LLVMGetGlobalParent(llvmFunction) == currentModule) {
+                "Error calling ${function.fqNameForIrSerialization} from different module!"
+            }
+        }
 
         when {
             !function.isSuspend && function.returnType.isNothing() ->

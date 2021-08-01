@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
  */
 internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
-    val context = codegen.context
-
     fun finishModule() {
         addModuleClassList(
                 definedClasses,
@@ -39,7 +37,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         global.setAlignment(codegen.runtime.pointerAlignment)
         global.setSection("__DATA,__objc_selrefs,literal_pointers,no_dead_strip")
 
-        context.llvm.compilerUsedGlobals += global.llvmGlobal
+        codegen.llvm.compilerUsedGlobals += global.llvmGlobal
 
         global.pointer
     }
@@ -52,7 +50,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             it.setAlignment(codegen.runtime.pointerAlignment)
         }
 
-        context.llvm.compilerUsedGlobals += global.pointer.llvm
+        codegen.llvm.compilerUsedGlobals += global.pointer.llvm
 
         global.pointer.bitcast(pointerType(int8TypePtr))
     }
@@ -60,8 +58,8 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     val classObjectType = codegen.runtime.getStructType("_class_t")
 
     fun exportClass(name: String) {
-        context.llvm.usedGlobals += getClassGlobal(name, isMetaclass = false).llvm
-        context.llvm.usedGlobals += getClassGlobal(name, isMetaclass = true).llvm
+        codegen.llvm.usedGlobals += getClassGlobal(name, isMetaclass = false).llvm
+        codegen.llvm.usedGlobals += getClassGlobal(name, isMetaclass = true).llvm
     }
 
     private fun getClassGlobal(name: String, isMetaclass: Boolean): ConstPointer {
@@ -74,7 +72,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         val globalName = prefix + name
 
         // TODO: refactor usages and use [Global] class.
-        val llvmGlobal = LLVMGetNamedGlobal(context.llvmModule, globalName) ?:
+        val llvmGlobal = LLVMGetNamedGlobal(codegen.llvmModule, globalName) ?:
                 codegen.importGlobal(globalName, classObjectType, CurrentKlibModuleOrigin)
 
         return constPointer(llvmGlobal)
@@ -95,7 +93,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     class Method(val selector: String, val encoding: String, val imp: ConstPointer)
 
     fun emitClass(name: String, superName: String, instanceMethods: List<Method>) {
-        val runtime = context.llvm.runtime
+        val runtime = codegen.llvm.runtime
         fun struct(name: String) = runtime.getStructType(name)
 
         val classRoType = struct("_class_ro_t")
@@ -121,13 +119,13 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             )
 
             val globalName = "\u0001l_OBJC_\$_INSTANCE_METHODS_$name"
-            val global = context.llvm.staticData.placeGlobal(globalName, methodList).also {
+            val global = codegen.llvm.staticData.placeGlobal(globalName, methodList).also {
                 it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
                 it.setAlignment(runtime.pointerAlignment)
                 it.setSection("__DATA, __objc_const")
             }
 
-            context.llvm.compilerUsedGlobals += global.llvmGlobal
+            codegen.llvm.compilerUsedGlobals += global.llvmGlobal
 
             return global.pointer.bitcast(pointerType(methodListType))
         }
@@ -170,7 +168,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                 "\u0001l_OBJC_CLASS_RO_\$_"
             } + name
 
-            val roGlobal = context.llvm.staticData.placeGlobal(roLabel, roValue).also {
+            val roGlobal = codegen.llvm.staticData.placeGlobal(roLabel, roValue).also {
                 it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
                 it.setAlignment(runtime.pointerAlignment)
                 it.setSection("__DATA, __objc_const")
@@ -201,7 +199,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             LLVMSetSection(classGlobal.llvm, "__DATA, __objc_data")
             LLVMSetAlignment(classGlobal.llvm, LLVMABIAlignmentOfType(runtime.targetData, classObjectType))
 
-            context.llvm.usedGlobals.add(classGlobal.llvm)
+            codegen.llvm.usedGlobals.add(classGlobal.llvm)
 
             return classGlobal
         }

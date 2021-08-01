@@ -16,10 +16,10 @@ internal var llvmContext: LLVMContextRef
     set(value) { llvmContextHolder.set(value) }
 
 internal fun tryDisposeLLVMContext() {
-    val llvmContext = llvmContextHolder.get()
-    if (llvmContext != null)
-        LLVMContextDispose(llvmContext)
-    llvmContextHolder.remove()
+//    val llvmContext = llvmContextHolder.get()
+//    if (llvmContext != null)
+//        LLVMContextDispose(llvmContext)
+//    llvmContextHolder.remove()
 }
 
 internal val LLVMTypeRef.context: LLVMContextRef
@@ -258,7 +258,7 @@ internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported:
 
 internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: CompiledKlibModuleOrigin): LLVMValueRef {
 
-    context.llvm.imports.add(origin)
+    llvm.imports.add(origin)
 
     val found = LLVMGetNamedGlobal(llvmModule, name)
     return if (found != null) {
@@ -279,22 +279,21 @@ internal class GlobalAddressAccess(private val address: LLVMValueRef): AddressAc
 }
 
 internal class TLSAddressAccess(
-        private val context: Context, private val index: Int): AddressAccess() {
+        private val llvm: Llvm, private val index: Int): AddressAccess() {
 
     override fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef {
-        return generationContext!!.call(context.llvm.lookupTLS,
-                listOf(context.llvm.tlsKey, Int32(index).llvm))
+        return generationContext!!.call(llvm.lookupTLS, listOf(llvm.tlsKey, Int32(index).llvm))
     }
 }
 
 internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef): AddressAccess {
     return if (isObjectType(type)) {
-        val index = context.llvm.tlsCount++
-        TLSAddressAccess(context, index)
+        val index = llvm.tlsCount++
+        TLSAddressAccess(llvm, index)
     } else {
         // TODO: This will break if Workers get decoupled from host threads.
         GlobalAddressAccess(LLVMAddGlobal(llvmModule, type, name)!!.also {
-            LLVMSetThreadLocalMode(it, context.llvm.tlsMode)
+            LLVMSetThreadLocalMode(it, llvm.tlsMode)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
         })
     }

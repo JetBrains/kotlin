@@ -17,7 +17,6 @@ interface RuntimeAware {
 class Runtime(bitcodeFile: String) {
     val llvmModule: LLVMModuleRef = parseBitcodeFile(bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
-    val addedLLVMExternalFunctions: MutableMap<IrFunction, LLVMValueRef> = HashMap()
 
     internal fun getStructTypeOrNull(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")
     internal fun getStructType(name: String) = getStructTypeOrNull(name)

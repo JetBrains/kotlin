@@ -83,9 +83,9 @@ internal class CoverageManager(val context: Context) {
     /**
      * @return [LLVMCoverageInstrumentation] instance if [irFunction] should be covered.
      */
-    fun tryGetInstrumentation(irFunction: IrFunction?, callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit) =
+    fun tryGetInstrumentation(irFunction: IrFunction?, llvmModule: LLVMModuleRef, callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit) =
             if (enabled && irFunction != null) {
-                getFunctionRegions(irFunction)?.let { LLVMCoverageInstrumentation(context, it, callSitePlacer) }
+                getFunctionRegions(irFunction)?.let { LLVMCoverageInstrumentation(context, it, callSitePlacer, llvmModule) }
             } else {
                 null
             }

@@ -51,7 +51,7 @@ object KonanBinaryInterface {
 
     private fun IrFunction.funSymbolNameImpl(): String {
         if (!isExported(this)) {
-            throw AssertionError(render())
+//            throw AssertionError(render())
         }
 
         if (isExternal) {
@@ -88,7 +88,7 @@ internal val IrClass.writableTypeInfoSymbolName: String
 
 internal val IrClass.globalObjectStorageSymbolName: String
     get() {
-        assert (this.isExported())
+//        assert (this.isExported())
         assert (this.kind.isSingleton)
         assert (!this.isUnit())
 

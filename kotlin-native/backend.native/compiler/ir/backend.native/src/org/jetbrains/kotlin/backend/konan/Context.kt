@@ -347,7 +347,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             field = module!!
 
             llvm = Llvm(this, module)
-            debugInfo = DebugInfo(this, module)
         }
 
     lateinit var llvm: Llvm
@@ -359,15 +358,13 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun disposeLlvm() {
         if (llvmDisposed) return
-        if (::debugInfo.isInitialized)
-            LLVMDisposeDIBuilder(debugInfo.builder)
-        if (llvmModule != null)
-            LLVMDisposeModule(llvmModule)
-        if (::llvm.isInitialized) {
-            LLVMDisposeTargetData(llvm.runtime.targetData)
-            LLVMDisposeModule(llvm.runtime.llvmModule)
-        }
-        tryDisposeLLVMContext()
+//        if (llvmModule != null)
+//            LLVMDisposeModule(llvmModule)
+//        if (::llvm.isInitialized) {
+//            LLVMDisposeTargetData(llvm.runtime.targetData)
+//            LLVMDisposeModule(llvm.runtime.llvmModule)
+//        }
+//        tryDisposeLLVMContext()
         llvmDisposed = true
     }
 
@@ -457,7 +454,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         }
     }
 
-    lateinit var debugInfo: DebugInfo
     var moduleDFG: ModuleDFG? = null
     lateinit var lifetimes: MutableMap<IrElement, Lifetime>
     var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null

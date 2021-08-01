@@ -84,7 +84,7 @@ private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>
 
     // LLVMStructSetBody expects the struct to be properly aligned and will insert padding accordingly. In our case
     // `allocInstance` returns 16x + 8 address, i.e. always misaligned for vector types. Workaround is to use packed struct.
-    val hasBigAlignment = fields.any { LLVMABIAlignmentOfType(context.llvm.runtime.targetData, getLLVMType(it.type)) > 8 }
+    val hasBigAlignment = fields.any { LLVMABIAlignmentOfType(llvm.runtime.targetData, getLLVMType(it.type)) > 8 }
     val packed = if (hasBigAlignment) 1 else 0
     LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, packed)
 
@@ -97,6 +97,8 @@ private class DeclarationsGeneratorVisitor(
 ) : IrElementVisitorVoid, ContextUtils {
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
+
+    val spec = moduleToSpecification.getValue(llvmModule)
 
     class Namer(val prefix: String) {
         private val names = mutableMapOf<IrDeclaration, Name>()
@@ -288,7 +290,7 @@ private class DeclarationsGeneratorVisitor(
             "kobjcclassinfo:$internalName"
         }
         val classInfoGlobal = staticData.createGlobal(
-                context.llvm.runtime.kotlinObjCClassInfo,
+                llvm.runtime.kotlinObjCClassInfo,
                 classInfoSymbolName,
                 isExported = isExported
         ).apply {
@@ -345,14 +347,14 @@ private class DeclarationsGeneratorVisitor(
             return
         }
 
-        val llvmFunction = if (declaration.isExternal) {
+        val llvmFunction = if (declaration.isExternal || !spec.containsDeclaration(declaration)) {
             if (declaration.isTypedIntrinsic || declaration.isObjCBridgeBased()
                     // All call-sites to external accessors to interop properties
                     // are lowered by InteropLowering.
                     || (declaration.isAccessor && declaration.isFromInteropLibrary())
                     || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
 
-            context.llvm.externalFunction(declaration.computeSymbolName(), llvmFunctionType,
+            llvm.externalFunction(declaration.computeSymbolName(), llvmFunctionType,
                     // Assume that `external fun` is defined in native libs attached to this module:
                     origin = declaration.llvmSymbolOrigin,
                     independent = declaration.hasAnnotation(RuntimeNames.independent)
@@ -361,7 +363,7 @@ private class DeclarationsGeneratorVisitor(
             val symbolName = if (declaration.isExported()) {
                 declaration.computeSymbolName().also {
                     if (declaration.name.asString() != "main") {
-                        assert(LLVMGetNamedFunction(context.llvm.llvmModule, it) == null) { it }
+                        assert(LLVMGetNamedFunction(llvm.llvmModule, it) == null) { it }
                     } else {
                         // As a workaround, allow `main` functions to clash because frontend accepts this.
                         // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.

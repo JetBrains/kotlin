@@ -183,9 +183,9 @@ internal interface ContextUtils : RuntimeAware {
         get() {
             assert(this.isReal)
             return if (isExternal(this)) {
-                runtime.addedLLVMExternalFunctions.getOrPut(this) { context.llvm.externalFunction(this.computeSymbolName(), getLlvmFunctionType(this),
-                        origin = this.llvmSymbolOrigin) }
-
+                llvm.addedLLVMExternalFunctions.getOrPut(this) {
+                    llvm.externalFunction(this.computeSymbolName(), getLlvmFunctionType(this), origin = this.llvmSymbolOrigin)
+                }
             } else {
                 llvmDeclarations.forFunctionOrNull(this)?.llvmFunction
             }
@@ -314,6 +314,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
         return result
     }
+
+    val addedLLVMExternalFunctions: MutableMap<IrFunction, LLVMValueRef> = HashMap()
 
     internal fun externalFunction(
             name: String,
@@ -467,8 +469,26 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private val target = context.config.target
 
-    val runtimeFile = context.config.distribution.runtime(target)
-    val runtime = Runtime(runtimeFile) // TODO: dispose
+    companion object {
+        var isSet = false
+
+        private var _runtime: Runtime? = null
+            set(value) {
+                if (isSet) return
+                isSet = true
+                field = value
+            }
+            get() = field
+    }
+
+    // Shared instance between all Llvms
+    val runtime: Runtime = run {
+        if (!isSet) {
+            val runtimeFile = context.config.distribution.runtime(target)
+            _runtime = Runtime(runtimeFile) // TODO: dispose
+        }
+        _runtime!!
+    }
 
     val targetTriple = runtime.target
 
@@ -481,38 +501,38 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private fun importRtGlobal(name: String) = importGlobal(name, runtime.llvmModule)
 
-    val allocInstanceFunction = importRtFunction("AllocInstance")
-    val allocArrayFunction = importRtFunction("AllocArrayInstance")
-    val initThreadLocalSingleton = importRtFunction("InitThreadLocalSingleton")
-    val initSingletonFunction = importRtFunction("InitSingleton")
-    val initAndRegisterGlobalFunction = importRtFunction("InitAndRegisterGlobal")
-    val updateHeapRefFunction = importRtFunction("UpdateHeapRef")
-    val updateStackRefFunction = importRtFunction("UpdateStackRef")
-    val updateReturnRefFunction = importRtFunction("UpdateReturnRef")
-    val zeroHeapRefFunction = importRtFunction("ZeroHeapRef")
-    val zeroArrayRefsFunction = importRtFunction("ZeroArrayRefs")
-    val enterFrameFunction = importRtFunction("EnterFrame")
-    val leaveFrameFunction = importRtFunction("LeaveFrame")
-    val lookupInterfaceTableRecord = importRtFunction("LookupInterfaceTableRecord")
-    val isInstanceFunction = importRtFunction("IsInstance")
-    val isInstanceOfClassFastFunction = importRtFunction("IsInstanceOfClassFast")
-    val throwExceptionFunction = importRtFunction("ThrowException")
-    val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
-    val callInitGlobalPossiblyLock = importRtFunction("CallInitGlobalPossiblyLock")
-    val callInitThreadLocal = importRtFunction("CallInitThreadLocal")
-    val addTLSRecord = importRtFunction("AddTLSRecord")
-    val lookupTLS = importRtFunction("LookupTLS")
-    val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")
-    val mutationCheck = importRtFunction("MutationCheck")
-    val checkLifetimesConstraint = importRtFunction("CheckLifetimesConstraint")
-    val freezeSubgraph = importRtFunction("FreezeSubgraph")
-    val checkGlobalsAccessible = importRtFunction("CheckGlobalsAccessible")
-    val Kotlin_getExceptionObject = importRtFunction("Kotlin_getExceptionObject")
+    val allocInstanceFunction by lazy { importRtFunction("AllocInstance") }
+    val allocArrayFunction by lazy { importRtFunction("AllocArrayInstance") }
+    val initThreadLocalSingleton by lazy { importRtFunction("InitThreadLocalSingleton") }
+    val initSingletonFunction by lazy { importRtFunction("InitSingleton") }
+    val initAndRegisterGlobalFunction by lazy { importRtFunction("InitAndRegisterGlobal") }
+    val updateHeapRefFunction by lazy { importRtFunction("UpdateHeapRef") }
+    val updateStackRefFunction by lazy { importRtFunction("UpdateStackRef") }
+    val updateReturnRefFunction by lazy { importRtFunction("UpdateReturnRef") }
+    val zeroHeapRefFunction by lazy { importRtFunction("ZeroHeapRef") }
+    val zeroArrayRefsFunction by lazy { importRtFunction("ZeroArrayRefs") }
+    val enterFrameFunction by lazy { importRtFunction("EnterFrame") }
+    val leaveFrameFunction by lazy { importRtFunction("LeaveFrame") }
+    val lookupInterfaceTableRecord by lazy { importRtFunction("LookupInterfaceTableRecord") }
+    val isInstanceFunction by lazy { importRtFunction("IsInstance") }
+    val isInstanceOfClassFastFunction by lazy { importRtFunction("IsInstanceOfClassFast") }
+    val throwExceptionFunction by lazy { importRtFunction("ThrowException") }
+    val appendToInitalizersTail by lazy { importRtFunction("AppendToInitializersTail") }
+    val callInitGlobalPossiblyLock by lazy { importRtFunction("CallInitGlobalPossiblyLock") }
+    val callInitThreadLocal by lazy { importRtFunction("CallInitThreadLocal") }
+    val addTLSRecord by lazy { importRtFunction("AddTLSRecord") }
+    val lookupTLS by lazy { importRtFunction("LookupTLS") }
+    val initRuntimeIfNeeded by lazy { importRtFunction("Kotlin_initRuntimeIfNeeded") }
+    val mutationCheck by lazy { importRtFunction("MutationCheck") }
+    val checkLifetimesConstraint by lazy { importRtFunction("CheckLifetimesConstraint") }
+    val freezeSubgraph by lazy { importRtFunction("FreezeSubgraph") }
+    val checkGlobalsAccessible by lazy { importRtFunction("CheckGlobalsAccessible") }
+    val Kotlin_getExceptionObject by lazy { importRtFunction("Kotlin_getExceptionObject") }
 
-    val kRefSharedHolderInitLocal = importRtFunction("KRefSharedHolder_initLocal")
-    val kRefSharedHolderInit = importRtFunction("KRefSharedHolder_init")
-    val kRefSharedHolderDispose = importRtFunction("KRefSharedHolder_dispose")
-    val kRefSharedHolderRef = importRtFunction("KRefSharedHolder_ref")
+    val kRefSharedHolderInitLocal by lazy { importRtFunction("KRefSharedHolder_initLocal") }
+    val kRefSharedHolderInit by lazy { importRtFunction("KRefSharedHolder_init") }
+    val kRefSharedHolderDispose by lazy { importRtFunction("KRefSharedHolder_dispose") }
+    val kRefSharedHolderRef by lazy { importRtFunction("KRefSharedHolder_ref") }
 
     val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass") }
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo") }
@@ -624,13 +644,26 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
-    val llvmInt8 = int8Type
-    val llvmInt16 = int16Type
-    val llvmInt32 = int32Type
-    val llvmInt64 = int64Type
-    val llvmFloat = floatType
-    val llvmDouble = doubleType
-    val llvmVector128 = vector128Type
+    val llvmInt8 by lazy { int8Type }
+    val llvmInt16 by lazy { int16Type }
+    val llvmInt32 by lazy { int32Type }
+    val llvmInt64 by lazy { int64Type }
+    val llvmFloat by lazy { floatType }
+    val llvmDouble by lazy { doubleType }
+    val llvmVector128 by lazy { vector128Type }
+
+    val otherLlvmType = LLVMPointerType(int64Type, 0)!!
+
+    val llvmTypes = mapOf(
+            context.irBuiltIns.booleanType to llvmInt8,
+            context.irBuiltIns.byteType    to llvmInt8,
+            context.irBuiltIns.charType    to llvmInt16,
+            context.irBuiltIns.shortType   to llvmInt16,
+            context.irBuiltIns.intType     to llvmInt32,
+            context.irBuiltIns.longType    to llvmInt64,
+            context.irBuiltIns.floatType   to llvmFloat,
+            context.irBuiltIns.doubleType  to llvmDouble
+    )
 
     private fun getSizeOfReturnTypeInBits(functionPointer: LLVMValueRef): Long {
         // LLVMGetElementType is called because we need to dereference a pointer to function.

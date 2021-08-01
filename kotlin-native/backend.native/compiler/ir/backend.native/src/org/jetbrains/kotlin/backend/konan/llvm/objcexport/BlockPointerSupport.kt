@@ -194,7 +194,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     }
 
-    fun org.jetbrains.kotlin.backend.konan.Context.LongInt(value: Long) =
+    fun CodeGenerator.LongInt(value: Long) =
             when (val longWidth = llvm.longTypeWidth) {
                 32L -> Int32(value.toInt())
                 64L -> Int64(value)
@@ -220,8 +220,8 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         }
 
         return Struct(blockDescriptorType,
-                codegen.context.LongInt(0L),
-                codegen.context.LongInt(LLVMStoreSizeOfType(codegen.runtime.targetData, blockLiteralType)),
+                codegen.LongInt(0L),
+                codegen.LongInt(LLVMStoreSizeOfType(codegen.runtime.targetData, blockLiteralType)),
                 constPointer(copyHelper),
                 constPointer(disposeHelper),
                 codegen.staticData.cStringLiteral(signature),

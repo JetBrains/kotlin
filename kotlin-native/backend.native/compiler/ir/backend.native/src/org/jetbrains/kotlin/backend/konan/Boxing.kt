@@ -167,13 +167,13 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
  * Initialize static boxing.
  * If output target is native binary then the cache is created.
  */
-internal fun initializeCachedBoxes(context: Context) {
+internal fun initializeCachedBoxes(context: Context, codegen: CodeGenerator) {
     if (context.producedLlvmModuleContainsStdlib) {
         BoxCache.values().forEach { cache ->
             val cacheName = "${cache.name}_CACHE"
             val rangeStart = "${cache.name}_RANGE_FROM"
             val rangeEnd = "${cache.name}_RANGE_TO"
-            initCache(cache, context, cacheName, rangeStart, rangeEnd)
+            initCache(cache, context, codegen, cacheName, rangeStart, rangeEnd)
         }
     }
 }
@@ -181,11 +181,11 @@ internal fun initializeCachedBoxes(context: Context) {
 /**
  * Adds global that refers to the cache.
  */
-private fun initCache(cache: BoxCache, context: Context, cacheName: String,
-                      rangeStartName: String, rangeEndName: String) {
+private fun initCache(cache: BoxCache, context: Context, codegen: CodeGenerator,
+                      cacheName: String, rangeStartName: String, rangeEndName: String) {
 
     val kotlinType = context.irBuiltIns.getKotlinClass(cache)
-    val staticData = context.llvm.staticData
+    val staticData = codegen.llvm.staticData
     val llvmType = staticData.getLLVMType(kotlinType.defaultType)
 
     val (start, end) = context.config.target.getBoxCacheRange(cache)
@@ -196,7 +196,7 @@ private fun initCache(cache: BoxCache, context: Context, cacheName: String,
     staticData.placeGlobal(rangeEndName, createConstant(llvmType, end), true)
             .setConstant(true)
     val values = (start..end).map { staticData.createInitializer(kotlinType, createConstant(llvmType, it)) }
-    val llvmBoxType = structType(context.llvm.runtime.objHeaderType, llvmType)
+    val llvmBoxType = structType(codegen.llvm.runtime.objHeaderType, llvmType)
     staticData.placeGlobalConstArray(cacheName, llvmBoxType, values, true).llvm
 }
 

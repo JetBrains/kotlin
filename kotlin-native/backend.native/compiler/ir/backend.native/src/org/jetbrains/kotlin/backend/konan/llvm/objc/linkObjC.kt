@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 
-internal fun linkObjC(context: Context) {
+internal fun linkObjC(context: Context, target: LLVMModuleRef) {
     val config = context.config
     if (!(config.produce.isFinalBinary && config.target.family.isAppleFamily)) return
 
@@ -25,7 +25,7 @@ internal fun linkObjC(context: Context) {
 
     patchBuilder.buildAndApply(parsedModule)
 
-    val failed = llvmLinkModules2(context, context.llvmModule!!, parsedModule)
+    val failed = llvmLinkModules2(context, target, parsedModule)
     if (failed != 0) {
         throw Error("failed to link $bitcodeFile")
     }

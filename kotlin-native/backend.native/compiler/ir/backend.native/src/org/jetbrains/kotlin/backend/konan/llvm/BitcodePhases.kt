@@ -43,29 +43,31 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
                         val moduleId = irFile.path.replace('/', '_')
                         val llvmModule = LLVMModuleCreateWithNameInContext(moduleId, llvmContext)!!
                         irFileToModule[irFile] = llvmModule
-                        moduleToDebugInfo[llvmModule] = DebugInfo(context, llvmModule)
-                        moduleToSpecification[llvmModule] = FileLlvmModuleSpecification(irFile)
                         moduleToLlvm[llvmModule] = Llvm(context, llvmModule)
+                        moduleToSpecification[llvmModule] = FileLlvmModuleSpecification(irFile)
+
+                        // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
+                        // clashing, which happens on linking with libraries produced from intercepting sources.
+                        val filePath = moduleId // TODO()
+                        val debugInfo = DebugInfo(context, llvmModule)
+                        debugInfo.compilationUnit = if (context.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
+                                builder = debugInfo.builder,
+                                lang = DWARF.language(context.config),
+                                File = filePath,
+                                dir = "",
+                                producer = DWARF.producer,
+                                isOptimized = 0,
+                                flags = "",
+                                rv = DWARF.runtimeVersion(context.config)).cast()
+                        else null
+                        moduleToDebugInfo[llvmModule] = debugInfo
                     }
 
             val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
             context.llvmModule = llvmModule
-            context.debugInfo.builder = LLVMCreateDIBuilder(llvmModule)!!
-
-            // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
-            // clashing, which happens on linking with libraries produced from intercepting sources.
-            val filePath = context.config.outputFile.toFileAndFolder(context).path()
-
-            context.debugInfo.compilationUnit = if (context.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
-                    builder = context.debugInfo.builder,
-                    lang = DWARF.language(context.config),
-                    File = filePath,
-                    dir = "",
-                    producer = DWARF.producer,
-                    isOptimized = 0,
-                    flags = "",
-                    rv = DWARF.runtimeVersion(context.config)).cast()
-            else null
+            moduleToLlvm[llvmModule] = context.llvm
+            moduleToSpecification[llvmModule] = RootSpec()
+//            moduleToDebugInfo
         }
 )
 
@@ -75,11 +77,13 @@ internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
         prerequisite = setOf(contextLLVMSetupPhase),
         op = { context, irModule ->
             context.lifetimes = mutableMapOf()
-            irModule.files.forEach { irFile ->
-                val module = irFileToModule.getValue(irFile)
+            irModule.files.filter { it.declarations.isNotEmpty() }.forEach { irFile ->
+                val module = irFileToModule[irFile]
+                        ?: error("${irFile.path} is missing")
                 moduleToLlvmDeclarations[module] = createLlvmDeclarations(context, irFile)
                 irFileToCodegenVisitor[irFile] = CodeGeneratorVisitor(context, context.lifetimes, module)
             }
+            moduleToLlvmDeclarations[context.llvmModule!!] = LlvmDeclarations(emptyMap())
         }
 )
 
@@ -107,8 +111,10 @@ internal val RTTIPhase = makeKonanModuleOpPhase(
         name = "RTTI",
         description = "RTTI generation",
         op = { context, irModule ->
-            irModule.files.forEach { irFile ->
-                val visitor = RTTIGeneratorVisitor(context, irFileToModule.getValue(irFile))
+            irModule.files.filter { it.declarations.isNotEmpty() }.forEach { irFile ->
+                val llvmModule = irFileToModule[irFile]
+                        ?: error("${irFile.path} is missing")
+                val visitor = RTTIGeneratorVisitor(context, llvmModule)
                 irFile.acceptVoid(visitor)
                 visitor.dispose()
             }
@@ -119,7 +125,7 @@ internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(
         name = "GenerateDebugInfoHeader",
         description = "Generate debug info header",
         op = { context, module ->
-            module.files.forEach {
+            module.files.filter { it.declarations.isNotEmpty() }.forEach {
                 generateDebugInfoHeader(context, irFileToModule.getValue(it))
             }
         }
@@ -336,10 +342,11 @@ internal val codegenPhase = makeKonanModuleOpPhase(
         name = "Codegen",
         description = "Code generation",
         op = { context, irModule ->
-            irModule.files.forEach { irFile ->
+            irModule.files.filter { it.declarations.isNotEmpty() }.forEach { irFile ->
                 val visitor = irFileToCodegenVisitor.getValue(irFile)
                 irFile.acceptVoid(visitor)
             }
+            CodeGeneratorVisitor(context, context.lifetimes, context.llvmModule!!).visitModuleFragment(irModule)
         }
 )
 
@@ -348,7 +355,7 @@ internal val finalizeDebugInfoPhase = makeKonanModuleOpPhase(
         description = "Finalize debug info",
         op = { context, _ ->
             if (context.shouldContainAnyDebugInfo()) {
-                DIFinalize(context.debugInfo.builder)
+//                DIFinalize(context.debugInfo.builder)
             }
         }
 )
@@ -368,7 +375,7 @@ internal val linkBitcodeDependenciesPhase = makeKonanModuleOpPhase(
 internal val checkExternalCallsPhase = makeKonanModuleOpPhase(
         name = "CheckExternalCalls",
         description = "Check external calls",
-        op = { context, module ->
+        op = { _, module ->
             module.files.forEach {
 //                checkLlvmModuleExternalCalls(context, it)
             }
@@ -378,7 +385,7 @@ internal val checkExternalCallsPhase = makeKonanModuleOpPhase(
 internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase(
         name = "RewriteExternalCallsCheckerGlobals",
         description = "Rewrite globals for external calls checker after optimizer run",
-        op = { context, _ ->
+        op = { _, _ ->
 //            addFunctionsListSymbolForChecker(context)
         }
 )

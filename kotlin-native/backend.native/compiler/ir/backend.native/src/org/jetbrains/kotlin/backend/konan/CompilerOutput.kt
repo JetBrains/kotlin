@@ -58,25 +58,39 @@ internal fun produceCStubs(context: Context) {
 private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<String>) {
     val config = context.config
 
+    val llvmModule = context.llvmModule!!
+
+    programBitcode().forEach { fileBitcode ->
+        val failed = llvmLinkModules2(context, llvmModule, fileBitcode)
+        if (failed != 0) {
+            throw Error("failed to link x") // TODO: retrieve error message from LLVM.
+        }
+    }
+
+    val failed = llvmLinkModules2(context, llvmModule, context.llvm.runtime.llvmModule)
+    if (failed != 0) {
+        throw Error("failed to link runtime") // TODO: retrieve error message from LLVM.
+    }
+
     val runtimeNativeLibraries = config.runtimeNativeLibraries
             .takeIf { context.producedLlvmModuleContainsStdlib }.orEmpty()
 
     val launcherNativeLibraries = config.launcherNativeLibraries
             .takeIf { config.produce == CompilerOutputKind.PROGRAM }.orEmpty()
 
-    linkObjC(context)
+    linkObjC(context, llvmModule)
 
     val nativeLibraries = config.nativeLibraries + runtimeNativeLibraries + launcherNativeLibraries
 
-    val bitcodeLibraries = context.llvm.bitcodeToLink.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
+    val allLlvm = programBitcode().asSequence().map { moduleToLlvm.getValue(it).bitcodeToLink }.flatten().map { it.bitcodePaths }.flatten().filter { it.isBitcode }.toList()
+    val bitcodeLibraries = allLlvm.toSet()
     val additionalBitcodeFilesToLink = context.llvm.additionalProducedBitcodeFiles
     val exceptionsSupportNativeLibrary = config.exceptionsSupportNativeLibrary
     val bitcodeFiles = (nativeLibraries + generatedBitcodeFiles + additionalBitcodeFilesToLink + bitcodeLibraries).toMutableSet()
     if (config.produce == CompilerOutputKind.DYNAMIC_CACHE)
         bitcodeFiles += exceptionsSupportNativeLibrary
-
-    val llvmModule = context.llvmModule!!
     bitcodeFiles.forEach {
+        println("Linking $it")
         parseAndLinkBitcodeFile(context, llvmModule, it)
     }
 }
@@ -85,10 +99,10 @@ private fun insertAliasToEntryPoint(context: Context) {
     val nomain = context.config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (context.config.produce != CompilerOutputKind.PROGRAM || nomain)
         return
-    irFileToModule.values.forEach { module ->
-        LLVMGetNamedFunction(module, "Konan_main")?.let { entryPoint ->
-            LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
-        }
+
+    val module = context.llvmModule!!
+    LLVMGetNamedFunction(module, "Konan_main")?.let { entryPoint ->
+        LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
     }
 }
 

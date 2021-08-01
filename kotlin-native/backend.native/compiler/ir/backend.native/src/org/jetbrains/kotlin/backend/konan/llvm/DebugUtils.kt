@@ -74,18 +74,19 @@ internal class DebugInfo internal constructor(
     var objHeaderPointerType: DITypeOpaqueRef? = null
     var types = mutableMapOf<IrType, DITypeOpaqueRef>()
 
-    val llvmTypes = mapOf<IrType, LLVMTypeRef>(
-            context.irBuiltIns.booleanType to context.llvm.llvmInt8,
-            context.irBuiltIns.byteType    to context.llvm.llvmInt8,
-            context.irBuiltIns.charType    to context.llvm.llvmInt16,
-            context.irBuiltIns.shortType   to context.llvm.llvmInt16,
-            context.irBuiltIns.intType     to context.llvm.llvmInt32,
-            context.irBuiltIns.longType    to context.llvm.llvmInt64,
-            context.irBuiltIns.floatType   to context.llvm.llvmFloat,
-            context.irBuiltIns.doubleType  to context.llvm.llvmDouble)
+    val llvmTypes = mapOf(
+            context.irBuiltIns.booleanType to llvm.llvmInt8,
+            context.irBuiltIns.byteType    to llvm.llvmInt8,
+            context.irBuiltIns.charType    to llvm.llvmInt16,
+            context.irBuiltIns.shortType   to llvm.llvmInt16,
+            context.irBuiltIns.intType     to llvm.llvmInt32,
+            context.irBuiltIns.longType    to llvm.llvmInt64,
+            context.irBuiltIns.floatType   to llvm.llvmFloat,
+            context.irBuiltIns.doubleType  to llvm.llvmDouble
+    )
+    val otherLlvmType = LLVMPointerType(int64Type, 0)!!
     val llvmTypeSizes = llvmTypes.map { it.key to LLVMSizeOfTypeInBits(llvmTargetData, it.value) }.toMap()
     val llvmTypeAlignments = llvmTypes.map {it.key to LLVMPreferredAlignmentOfType(llvmTargetData, it.value)}.toMap()
-    val otherLlvmType = LLVMPointerType(int64Type, 0)!!
     val otherTypeSize = LLVMSizeOfTypeInBits(llvmTargetData, otherLlvmType)
     val otherTypeAlignment = LLVMPreferredAlignmentOfType(llvmTargetData, otherLlvmType)
 
@@ -187,14 +188,14 @@ internal fun generateDebugInfoHeader(context: Context, llvmModule: LLVMModuleRef
                 elements      = null,
                 elementsCount = 0,
                 refPlace      = null).cast<DITypeOpaqueRef>()
-        debugInfo.objHeaderPointerType = dwarfPointerType(context, objHeaderType)
+        debugInfo.objHeaderPointerType = dwarfPointerType(debugInfo, objHeaderType)
     }
 }
 
 @Suppress("UNCHECKED_CAST")
 internal fun IrType.dwarfType(debugInfo: DebugInfo, targetData: LLVMTargetDataRef): DITypeOpaqueRef {
     when {
-        this.computePrimitiveBinaryTypeOrNull() != null -> return debugInfoBaseType(debugInfo, targetData, this.render(), llvmType(debugInfo), encoding().value.toInt())
+        this.computePrimitiveBinaryTypeOrNull() != null -> return debugInfoBaseType(debugInfo, targetData, this.render(), llvmType(debugInfo.llvm), encoding().value.toInt())
         else -> {
             return when {
                 classOrNull != null || this.isTypeParameter() -> debugInfo.objHeaderPointerType!!
@@ -225,8 +226,7 @@ internal fun IrType.size(debugInfo: DebugInfo) = debugInfo.llvmTypeSizes.getOrDe
 
 internal fun IrType.alignment(debugInfo: DebugInfo) = debugInfo.llvmTypeAlignments.getOrDefault(this, debugInfo.otherTypeAlignment).toLong()
 
-internal fun IrType.llvmType(debugInfo: DebugInfo): LLVMTypeRef = debugInfo.llvmTypes.getOrElse(this) {
-    val llvm = moduleToLlvm.getValue(debugInfo.llvmModule)
+internal fun IrType.llvmType(llvm: Llvm): LLVMTypeRef = llvm.llvmTypes.getOrElse(this) {
     when(computePrimitiveBinaryTypeOrNull()) {
         PrimitiveBinaryType.BYTE -> llvm.llvmInt8
         PrimitiveBinaryType.SHORT -> llvm.llvmInt16
@@ -235,7 +235,7 @@ internal fun IrType.llvmType(debugInfo: DebugInfo): LLVMTypeRef = debugInfo.llvm
         PrimitiveBinaryType.FLOAT -> llvm.llvmFloat
         PrimitiveBinaryType.DOUBLE -> llvm.llvmDouble
         PrimitiveBinaryType.VECTOR128 -> llvm.llvmVector128
-        else -> debugInfo.otherLlvmType
+        else -> llvm.otherLlvmType
     }
 }
 
@@ -267,8 +267,8 @@ internal fun subroutineType(debugInfo: DebugInfo, llvmTargetData: LLVMTargetData
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun dwarfPointerType(context: Context, type: DITypeOpaqueRef) =
-        DICreatePointerType(context.debugInfo.builder, type) as DITypeOpaqueRef
+private fun dwarfPointerType(debugInfo: DebugInfo, type: DITypeOpaqueRef) =
+        DICreatePointerType(debugInfo.builder, type) as DITypeOpaqueRef
 
 internal fun setupBridgeDebugInfo(context: Context, debugInfo: DebugInfo, function: LLVMValueRef): LocationInfo? {
     if (!context.shouldContainLocationDebugInfo()) {
@@ -276,16 +276,17 @@ internal fun setupBridgeDebugInfo(context: Context, debugInfo: DebugInfo, functi
     }
 
     val file = debugInfo.compilerGeneratedFile
+    val llvm = moduleToLlvm.getValue(debugInfo.llvmModule)
 
     // TODO: can we share the scope among all bridges?
     val scope: DIScopeOpaqueRef = DICreateFunction(
-            builder = context.debugInfo.builder,
+            builder = debugInfo.builder,
             scope = file.reinterpret(),
             name = function.name,
             linkageName = function.name,
             file = file,
             lineNo = 0,
-            type = subroutineType(debugInfo, context.llvm.runtime.targetData, emptyList()), // TODO: use proper type.
+            type = subroutineType(debugInfo, llvm.runtime.targetData, emptyList()), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
             scopeLine = 0
