@@ -6,8 +6,8 @@ class B: A()
 
 class C: A() {
     fun bar() {
-        A().<!INVISIBLE_REFERENCE!>foo<!>()
-        B().<!INVISIBLE_REFERENCE!>foo<!>()
+        A().foo()
+        B().foo()
     }
 }
 

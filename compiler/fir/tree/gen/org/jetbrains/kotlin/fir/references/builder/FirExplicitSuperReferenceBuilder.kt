@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -25,7 +24,6 @@ class FirExplicitSuperReferenceBuilder {
     var labelName: String? = null
     lateinit var superTypeRef: FirTypeRef
 
-    @OptIn(FirImplementationDetail::class)
     fun build(): FirSuperReference {
         return FirExplicitSuperReference(
             source,

@@ -60,7 +60,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
         get() = setOf(
-            FirReassignmentAndInvisibleSetterChecker,
+            FirValReassignmentChecker,
             FirAssignmentTypeMismatchChecker
         )
 

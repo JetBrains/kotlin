@@ -11,11 +11,11 @@ class Derived : Base() {
     override fun bar() { }
 
     protected fun baz(x: Base) {
-        x.<!INVISIBLE_REFERENCE!>foo<!>()
-        x.<!INVISIBLE_REFERENCE!>bar<!>()
+        x.foo()
+        x.bar()
 
-        x.<!INVISIBLE_REFERENCE!>x<!> = x.<!INVISIBLE_REFERENCE!>x<!> + 1
-        <!INVISIBLE_SETTER!>x.y<!> = x.y + 1
+        x.x = x.x + 1
+        x.y = x.y + 1
 
         if (x is Derived) {
             x.foo()

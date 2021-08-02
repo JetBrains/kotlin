@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_N
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.COLLECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODULE_DATA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTION_PARAMETERS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NOT_RENDERED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULLABLE_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
@@ -233,7 +232,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_CHARACTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IS_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE
@@ -494,7 +492,6 @@ class FirDefaultErrorMessages {
 
             // Unresolved
             map.put(INVISIBLE_REFERENCE, "Symbol {0} is invisible", SYMBOL)
-            map.put(INVISIBLE_SETTER, "Cannot access ''{0}'': it is {1} in {2}", VARIABLE_NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE)
             map.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", NULLABLE_STRING)
             map.put(UNRESOLVED_LABEL, "Unresolved label")
             map.put(DESERIALIZATION_ERROR, "Deserialization error")

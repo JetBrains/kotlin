@@ -13,14 +13,16 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.render
-import org.jetbrains.kotlin.name.CallableId
 
 object FirDiagnosticRenderers {
     val NULLABLE_STRING = Renderer<String?> { it ?: "null" }
@@ -132,15 +134,6 @@ object FirDiagnosticRenderers {
 
     val MODULE_DATA = Renderer<FirModuleData> {
         "Module ${it.name}"
-    }
-
-    val NAME_OF_CONTAINING_DECLARATION_OR_FILE = Renderer { symbol: CallableId ->
-        val classId = symbol.classId
-        if (classId == null) {
-            "file"
-        } else {
-            "'${classId}'"
-        }
     }
 
     @Suppress("FunctionName")

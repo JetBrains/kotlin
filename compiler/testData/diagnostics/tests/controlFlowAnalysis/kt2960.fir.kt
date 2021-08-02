@@ -8,11 +8,11 @@ class P {
 }
 
 val p = P()
-var f = { -> <!INVISIBLE_SETTER!>p.x<!> = 32 }
+var f = { -> p.x = 32 }
 
 val o = object {
     fun run() {
-        <!INVISIBLE_SETTER!>p.x<!> = 4
+        p.x = 4
 
         val z : Int
         doSmth(<!UNINITIALIZED_VARIABLE!>z<!>)

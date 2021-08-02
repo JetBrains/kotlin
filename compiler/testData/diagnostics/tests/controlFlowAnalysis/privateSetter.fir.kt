@@ -6,7 +6,7 @@ open class X(s : String) {
 
 class Z : X("subclass") {
     fun print(): String {
-        <!INVISIBLE_SETTER!>n<!> = n
+        n = n
         return n;
     }
 }

@@ -401,9 +401,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(superReference, "FirExplicitSuperReference") {
-            publicImplementation()
-        }
+        impl(superReference, "FirExplicitSuperReference")
 
         noImpl(controlFlowGraphReference)
 

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -281,16 +280,6 @@ internal class ValOrVarOnSecondaryConstructorParameterImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ValOrVarOnSecondaryConstructorParameter(), KtAbstractFirDiagnostic<KtParameter> {
-    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
-}
-
-internal class InvisibleSetterImpl(
-    override val property: KtVariableSymbol,
-    override val visibility: Visibility,
-    override val callableId: CallableId,
-    firDiagnostic: FirPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.InvisibleSetter(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 

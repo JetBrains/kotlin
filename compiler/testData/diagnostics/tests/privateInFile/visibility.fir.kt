@@ -40,7 +40,7 @@ fun test() {
     val po = <!INVISIBLE_REFERENCE!>PO<!>
 
     val v = xx
-    <!INVISIBLE_SETTER("xx; private; file")!>xx<!> = 40
+    xx = 40
 }
 
 class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE!>A<!>() {}

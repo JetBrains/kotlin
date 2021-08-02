@@ -23,23 +23,23 @@ class P {
 
 fun foo() {
     val p = P()
-    <!INVISIBLE_SETTER!>p.x<!> = 34 //should be an error here
+    p.x = 34 //should be an error here
     p.y = 23
 
     fun inner() {
-        <!INVISIBLE_SETTER!>p.x<!> = 44
+        p.x = 44
     }
 }
 
 class R {
     val p = P();
     init {
-        <!INVISIBLE_SETTER!>p.x<!> = 42
+        p.x = 42
     }
 
     val testInGetterInOtherClass : Int
         get() {
-            <!INVISIBLE_SETTER!>p.x<!> = 33
+            p.x = 33
             return 3
         }
 }

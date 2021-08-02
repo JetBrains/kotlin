@@ -13,6 +13,6 @@ class B {
 
 class C: A() {
     init {
-        B.<!INVISIBLE_REFERENCE!>foo<!>() // Error: receiver is not suitable
+        B.foo() // Error: receiver is not suitable
     }
 }
