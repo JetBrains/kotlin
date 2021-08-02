@@ -13,5 +13,9 @@ import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 class ReportStatisticsToBuildScan(val buildScan: BuildScanExtension) : ReportStatistics {
     override fun report(data: CompileStatData) {
         buildScan.value(data.taskName, Gson().toJson(data).toString())
+        val keys = data.nonIncrementalAttributes.filterValues { it > 0 }.keys.joinToString()
+        if (keys.isNotEmpty()) {
+            buildScan.value("${data.taskName}_nonIncremental", keys)
+        }
     }
 }

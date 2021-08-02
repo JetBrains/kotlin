@@ -66,7 +66,8 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics : 
         val compileStatData = CompileStatData(
             duration = duration, taskResult = taskResult.name, label = label,
             statData = statData, projectName = projectName, taskName = taskPath, changes = changes,
-            tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList()
+            tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList(),
+            nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?.mapKeys { (key, _) -> key.name }?: emptyMap()
         )
         reportStatistics.forEach { it.report(compileStatData) }
     }

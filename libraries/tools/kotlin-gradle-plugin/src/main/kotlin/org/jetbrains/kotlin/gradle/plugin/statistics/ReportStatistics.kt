@@ -14,6 +14,7 @@ data class CompileStatData(
     val duration: Long,
     val tags: List<String>,
     val changes: List<String>,
+    val nonIncrementalAttributes: Map<String, Int>,
     val statData: Map<String, Long>
 )
 
