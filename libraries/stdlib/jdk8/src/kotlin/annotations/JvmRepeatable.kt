@@ -14,6 +14,5 @@ package kotlin.jvm
  *
  * @property value the container annotation class, used to hold repeated entries of the annotation in the JVM bytecode.
  */
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("1.6")
 public typealias JvmRepeatable = java.lang.annotation.Repeatable

@@ -3,18 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-
 package kotlin.jvm.internal
 
 import kotlin.reflect.*
 
 @SinceKotlin("1.4")
-public class TypeReference /* @SinceKotlin("1.6") constructor */(
+public class TypeReference @SinceKotlin("1.6") constructor(
     override val classifier: KClassifier,
     override val arguments: List<KTypeProjection>,
-    /* @SinceKotlin("1.6") */ internal val platformTypeUpperBound: KType?,
-    /* @SinceKotlin("1.6") */ internal val flags: Int,
+    @SinceKotlin("1.6") internal val platformTypeUpperBound: KType?,
+    @SinceKotlin("1.6") internal val flags: Int,
 ) : KType {
     constructor(
         classifier: KClassifier,
