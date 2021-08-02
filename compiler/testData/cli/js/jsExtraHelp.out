@@ -81,6 +81,7 @@ where advanced options include:
   -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xreport-output-files      Report source to output files mapping
   -Xreport-perf              Report detailed performance statistics
+  -Xself-upper-bound-inference Support inferring type arguments based on only self upper bounds of the corresponding type parameters
   -Xskip-metadata-version-check Allow to load classes with bad metadata version and pre-release classes
   -Xskip-prerelease-check    Allow to load pre-release classes
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent or experimental language or API versions
