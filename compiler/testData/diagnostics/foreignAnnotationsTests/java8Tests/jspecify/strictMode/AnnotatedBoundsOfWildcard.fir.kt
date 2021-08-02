@@ -60,22 +60,34 @@ fun main(
     b.superNullable(aAnyNotNullNullNull)
 
     b.extendsAsIs(aNotNullNotNullNotNull)
-    b.extendsAsIs(aNotNullNotNullNull)
-    b.extendsAsIs(aNotNullNullNotNull)
-    b.extendsAsIs(aNotNullNullNull)
+    // jspecify_nullness_mismatch
+    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    // jspecify_nullness_mismatch
+    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.extendsNotNull(aNotNullNotNullNotNull)
-    b.extendsNotNull(aNotNullNotNullNull)
-    b.extendsNotNull(aNotNullNullNotNull)
-    b.extendsNotNull(aNotNullNullNull)
+    // jspecify_nullness_mismatch
+    b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    // jspecify_nullness_mismatch
+    b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.extendsNullable(aNotNullNotNullNotNull)
-    b.extendsNullable(aNotNullNotNullNull)
-    b.extendsNullable(aNotNullNullNotNull)
-    b.extendsNullable(aNotNullNullNull)
+    // jspecify_nullness_mismatch
+    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    // jspecify_nullness_mismatch
+    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.noBounds(aNotNullNotNullNotNull)
-    b.noBounds(aNotNullNotNullNull)
-    b.noBounds(aNotNullNullNotNull)
-    b.noBounds(aNotNullNullNull)
+    // jspecify_nullness_mismatch
+    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    // jspecify_nullness_mismatch
+    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 }
