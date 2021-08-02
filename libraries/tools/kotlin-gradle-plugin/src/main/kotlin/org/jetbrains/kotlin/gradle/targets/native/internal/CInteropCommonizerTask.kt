@@ -99,14 +99,14 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     @Nested
     internal fun getAllInteropsGroups(): Set<CInteropCommonizerGroup> {
         val dependents = getAllDependents()
-        val allScopes = dependents.map { it.scopes }.toSet()
-        val rootScopes = allScopes.filter { scopes ->
-            allScopes.none { otherScopes -> otherScopes != scopes && otherScopes.containsAll(scopes) }
+        val allScopeSets = dependents.map { it.scopes }.toSet()
+        val rootScopeSets = allScopeSets.filter { scopeSet ->
+            allScopeSets.none { otherScopeSet -> otherScopeSet != scopeSet && otherScopeSet.containsAll(scopeSet) }
         }
 
-        return rootScopes.map { scopes ->
+        return rootScopeSets.map { scopeSet ->
             val dependentsForScopes = dependents.filter { dependent ->
-                scopes.containsAll(dependent.scopes)
+                scopeSet.containsAll(dependent.scopes)
             }
 
             CInteropCommonizerGroup(
