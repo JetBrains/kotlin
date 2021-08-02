@@ -40,9 +40,11 @@ internal class HierarchicalStructureOptInMigrationArtifactContentIT : BaseGradle
                 add("publish")
                 when (mode) {
                     FLIPPED_DISABLE, FLIPPED_DEFAULT -> add("-Pkotlin.internal.mpp.hierarchicalStructureByDefault=true")
+                    NON_FLIPPED_DEFAULT -> {}
                 }
                 when (mode) {
                     FLIPPED_DISABLE -> add("-Pkotlin.mpp.hierarchicalStructureSupport=false")
+                    FLIPPED_DEFAULT, NON_FLIPPED_DEFAULT -> {}
                 }
             }.toTypedArray(),
         ) {
