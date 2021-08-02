@@ -3,12 +3,15 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
 import org.junit.Test
 import java.io.File
+import java.util.zip.ZipFile
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
@@ -427,6 +430,23 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
             assertSuccessful()
         }
     }
+
+    @Test
+    fun `test KotlinToolingMetadataArtifact is bundled into apk`(): Unit = with(Project("kotlinToolingMetadataAndroid")) {
+        build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
+            val debugApk = project.projectDir.resolve("build/outputs/apk/debug/project-debug.apk")
+            val releaseApk = project.projectDir.resolve("build/outputs/apk/release/project-release-unsigned.apk")
+
+            listOf(debugApk, releaseApk).forEach { apk ->
+                assertTrue(apk.exists(), "Missing apk ${apk.path}")
+                ZipFile(apk).use { zip ->
+                    assertNotNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata being packaged into apk")
+                }
+            }
+        }
+    }
 }
 
 open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
@@ -559,7 +579,7 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
                 "kotlin-stdlib:\$kotlin_version",
                 "kotlin-stdlib"
             ) + "\n" +
-                """
+                    """
                 apply plugin: 'maven-publish'
 
                 android {
