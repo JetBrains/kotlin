@@ -1,7 +1,7 @@
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
   return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
-    val collector: FlowCollector<Nothing> = <this>
+    val collector: FlowCollector<R> = <this>
     flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
       block.invoke(p1 = <this>, p2 = collector)
     }
@@ -12,7 +12,7 @@ fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType Suspen
 
 fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>): Flow<T> {
   return unsafeFlow<T>(block = local suspend fun FlowCollector<T>.<anonymous>() {
-    val safeCollector: SafeCollector<Any?> = SafeCollector<T>(collector = <this>)
+    val safeCollector: SafeCollector<T> = SafeCollector<T>(collector = <this>)
     safeCollector.invokeSafely<T>(action = action)
   }
 )
@@ -27,11 +27,11 @@ inline fun <T : Any?> unsafeFlow(@BuilderInference crossinline block: @Extension
 }
 
 @Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel.HIDDEN)
-fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<Throwable?, Unit>): ErrorType {
-  return error("") /* ErrorCallExpression */local fun <anonymous>() {
-    action.invoke(p1 = error("") /* ErrorCallExpression */)
+fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<Throwable?, Unit>): Flow<T> {
+  return <this>.onCompletion<T>(action = local suspend fun FlowCollector<T>.<anonymous>(it: Throwable?) {
+    action.invoke(p1 = it)
   }
-;
+)
 }
 
 private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> {
@@ -113,12 +113,12 @@ interface CoroutineScope {
 }
 
 interface Flow<out T : Any?> {
-  abstract suspend fun collect(collector: FlowCollector<T>)
+  abstract suspend fun collect(collector: FlowCollector<T>) 
 
 }
 
 interface FlowCollector<in T : Any?> {
-  abstract suspend fun emit(value: T)
+  abstract suspend fun emit(value: T) 
 
 }
 
@@ -138,7 +138,7 @@ interface ProducerScope<in E : Any?> : CoroutineScope, SendChannel<E> {
 }
 
 interface SendChannel<in E : Any?> {
-  abstract suspend fun send(e: E)
+  abstract suspend fun send(e: E) 
 
 }
 

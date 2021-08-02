@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractOverrideChecker() {
-    private val context: ConeTypeContext = session.typeContext
+    private val context = session.typeContext
 
     private fun isEqualTypes(substitutedCandidateType: ConeKotlinType, substitutedBaseType: ConeKotlinType): Boolean {
         return with(context) {
@@ -45,14 +45,9 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
     }
 
     private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
-        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType).unwrapDefinitelyNotNullType()
-        val substitutedBaseType = substitutor.substituteOrSelf(baseType).unwrapDefinitelyNotNullType()
+        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
+        val substitutedBaseType = substitutor.substituteOrSelf(baseType)
         return isEqualTypes(substitutedCandidateType, substitutedBaseType)
-    }
-
-    private fun ConeKotlinType.unwrapDefinitelyNotNullType(): ConeKotlinType = when (this) {
-        is ConeDefinitelyNotNullType -> original
-        else -> this
     }
 
     fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor): Boolean {
