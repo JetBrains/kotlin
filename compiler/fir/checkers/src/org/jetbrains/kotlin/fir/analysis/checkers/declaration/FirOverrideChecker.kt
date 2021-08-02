@@ -151,6 +151,7 @@ object FirOverrideChecker : FirClassChecker() {
             }
         }
 
+        if (this is FirPropertyAccessorSymbol) return
         val file = context.findClosest<FirFile>() ?: return
         val containingDeclarations = context.containingDeclarations + containingClass
         val visibilityChecker = context.session.visibilityChecker
