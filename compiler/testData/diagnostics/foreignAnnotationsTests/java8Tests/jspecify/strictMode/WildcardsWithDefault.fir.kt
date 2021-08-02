@@ -1,4 +1,4 @@
-// JSPECIFY_STATE: warn
+// JSPECIFY_STATE: strict
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: WildcardsWithDefault.java
@@ -29,7 +29,10 @@ fun main(
     b.noBoundsNotNull(aNotNullNullNull)
 
     b.noBoundsNullable(aNotNullNotNullNotNull)
-    b.noBoundsNullable(aNotNullNotNullNull)
-    b.noBoundsNullable(aNotNullNullNotNull)
-    b.noBoundsNullable(aNotNullNullNull)
+    // jspecify_nullness_mismatch
+    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    // jspecify_nullness_mismatch
+    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 }
