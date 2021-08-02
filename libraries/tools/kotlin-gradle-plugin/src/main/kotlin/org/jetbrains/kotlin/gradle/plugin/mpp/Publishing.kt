@@ -52,7 +52,7 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
 private fun MavenPublication.addKotlinToolingMetadataArtifactIfNeeded(project: Project) {
     val buildKotlinToolingMetadataTask = project.buildKotlinToolingMetadataTask ?: return
 
-    artifact(buildKotlinToolingMetadataTask.flatMap { it.outputFile }) { artifact ->
+    artifact(buildKotlinToolingMetadataTask.map { it.outputFile }) { artifact ->
         artifact.classifier = "kotlin-tooling-metadata"
         artifact.builtBy(buildKotlinToolingMetadataTask)
     }

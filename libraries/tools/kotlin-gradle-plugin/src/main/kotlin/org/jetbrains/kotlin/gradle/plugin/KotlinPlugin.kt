@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.gradle.targets.js.jsPluginDeprecationMessage
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.net.URL
@@ -839,6 +840,8 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
             addKotlinDependenciesToAndroidSourceSets(project, kotlinAndroidTarget)
         }
+
+        project.includeKotlinToolingMetadataInApk()
     }
 
     /**
