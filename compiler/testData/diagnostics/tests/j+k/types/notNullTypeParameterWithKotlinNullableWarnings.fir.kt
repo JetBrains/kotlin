@@ -19,7 +19,7 @@ public interface SLRUMap<V> {
 
 fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>) {
     takeV(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
-    takeVList(l)
+    takeVList(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
 
     takeE(value)
     takeEList(l)

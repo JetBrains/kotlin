@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.java.toConeKotlinTypeWithoutEnhancement
 import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
@@ -94,32 +95,27 @@ internal class EnhancementSignatureParts(
         val list = ArrayList<TypeAndDefaultQualifiers>(1)
 
         fun add(type: FirTypeRef?) {
+            // TODO: should use the context from parent type
             val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, type?.annotations.orEmpty())
+            list.add(TypeAndDefaultQualifiers(type, c.defaultTypeQualifiers?.get(AnnotationQualifierApplicabilityType.TYPE_USE)))
 
-            list.add(
-                TypeAndDefaultQualifiers(
-                    type,
-                    c.defaultTypeQualifiers
-                        ?.get(AnnotationQualifierApplicabilityType.TYPE_USE)
-                )
-            )
-
-            if (type is FirJavaTypeRef) {
-                for (arg in type.type.typeArguments()) {
-                    if (arg is JavaWildcardType || arg == null) {
-                        add(null)
-                    } else {
-                        add(arg.toFirJavaTypeRef(context.session, javaTypeParameterStack))
+            when (type) {
+                is FirJavaTypeRef -> {
+                    for (arg in type.type.typeArguments()) {
+                        add(arg.takeIf { it !is JavaWildcardType }?.toFirJavaTypeRef(context.session, javaTypeParameterStack))
                     }
                 }
-            } else if (type != null) {
-                for (arg in type.typeArguments()) {
-                    if (arg is FirStarProjection) {
-                        add(null)
-                    } else if (arg is FirTypeProjectionWithVariance) {
-                        add(arg.typeRef)
+                is FirUserTypeRef -> {
+                    for (arg in type.qualifier.lastOrNull()?.typeArgumentList?.typeArguments.orEmpty()) {
+                        add((arg as? FirTypeProjectionWithVariance)?.typeRef)
                     }
                 }
+                is FirResolvedTypeRef -> {
+                    for (arg in type.type.typeArguments) {
+                        add(arg.type?.let { buildResolvedTypeRef { this.type = it } })
+                    }
+                }
+                else -> Unit
             }
         }
 

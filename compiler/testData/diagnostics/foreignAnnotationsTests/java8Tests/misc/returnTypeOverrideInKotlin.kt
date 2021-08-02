@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SOURCE_RETENTION_ANNOTATIONS
 // FILE: Base.java
 public interface Base<T> {}
