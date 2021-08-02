@@ -33,8 +33,6 @@ import java.io.File
 import java.util.*
 
 internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinCompile<*>) {
-    useFallbackCompilerSearch?.let { task.useFallbackCompilerSearch = it }
-
     if (task is KotlinCompile) {
         incrementalJvm?.let { task.incremental = it }
         usePreciseJavaTracking?.let {
@@ -121,20 +119,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val useFir: Boolean?
         get() = booleanProperty("kotlin.useFir")
-
-    private val useFallbackCompilerSearchPropName = "kotlin.useFallbackCompilerSearch"
-
-    @Deprecated("Unsupported and will be removed in next major releases")
-    val useFallbackCompilerSearch: Boolean?
-        get() {
-            if (property(useFallbackCompilerSearchPropName) != null) {
-                SingleWarningPerBuild.show(
-                    project,
-                    "Project property '$useFallbackCompilerSearchPropName' is deprecated."
-                )
-            }
-            return booleanProperty(useFallbackCompilerSearchPropName)
-        }
 
     val keepMppDependenciesIntactInPoms: Boolean?
         get() = booleanProperty("kotlin.mpp.keepMppDependenciesIntactInPoms")

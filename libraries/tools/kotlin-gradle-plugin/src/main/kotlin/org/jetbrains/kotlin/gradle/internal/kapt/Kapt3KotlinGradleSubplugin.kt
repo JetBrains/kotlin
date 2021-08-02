@@ -26,6 +26,7 @@ import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
@@ -54,6 +55,12 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         target.configurations.create(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
             val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:${target.getKotlinPluginVersion()}" }
             dependencies.add(target.dependencies.create(kaptDependency))
+            dependencies.add(
+                target.kotlinDependency(
+                    "kotlin-stdlib",
+                    target.kotlinExtension.coreLibrariesVersion
+                )
+            )
         }
 
         registry.register(KaptModelBuilder())

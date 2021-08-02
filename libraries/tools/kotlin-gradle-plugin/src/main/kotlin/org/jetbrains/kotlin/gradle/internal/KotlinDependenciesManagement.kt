@@ -15,7 +15,6 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.junit.JUnitOptions
@@ -35,12 +34,13 @@ import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+
+internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
+internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
 
 internal fun customizeKotlinDependencies(project: Project) {
     configureStdlibDefaultDependency(project)
@@ -380,7 +380,7 @@ private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(byCompilation:
 }
 //endregion
 
-private fun Project.kotlinDependency(moduleName: String, versionOrNull: String?) =
+internal fun Project.kotlinDependency(moduleName: String, versionOrNull: String?) =
     project.dependencies.create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
 
 private fun Project.tryWithDependenciesIfUnresolved(configuration: Configuration, action: (DependencySet) -> Unit) {

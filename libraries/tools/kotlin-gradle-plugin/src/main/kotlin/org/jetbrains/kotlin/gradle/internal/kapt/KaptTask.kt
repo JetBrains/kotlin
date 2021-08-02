@@ -46,7 +46,7 @@ abstract class KaptTask @Inject constructor(
             val objectFactory = task.project.objects
             val providerFactory = task.project.providers
 
-            task.compilerClasspath.from({ kotlinCompileTask.computedCompilerClasspath })
+            task.compilerClasspath.from({ kotlinCompileTask.defaultCompilerClasspath })
             task.classpath.from(kotlinCompileTask.classpath)
             task.kotlinSourceRoots.value(
                 providerFactory.provider { kotlinCompileTask.sourceRootsContainer.sourceRoots }

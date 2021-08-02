@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
 import com.google.gson.Gson
-import org.jetbrains.kotlin.gradle.tasks.findJarByClass
 import org.junit.Test
+import java.io.File
+import java.net.URLDecoder
+import java.nio.charset.Charset
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 
@@ -76,5 +78,18 @@ class ClassLoadersCacheTest {
             cl2.loadClass(otherClass.name),
             "Bottom ClassLoader should be recreated as class path changed"
         )
+    }
+
+    private fun findJarByClass(klass: Class<*>): File? {
+        val classFileName = klass.name.substringAfterLast(".") + ".class"
+        val resource = klass.getResource(classFileName) ?: return null
+        val uri = resource.toString()
+        if (!uri.startsWith("jar:file:")) return null
+
+        val fileName = URLDecoder.decode(
+            uri.removePrefix("jar:file:").substringBefore("!"),
+            Charset.defaultCharset().name()
+        )
+        return File(fileName)
     }
 }
