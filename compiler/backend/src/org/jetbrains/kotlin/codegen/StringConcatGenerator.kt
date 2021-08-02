@@ -87,7 +87,7 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
             paramTypes.add(type)
             paramSlots += type.size
             template.append("\u0001")
-            if (paramSlots >= 200) {
+            if (paramSlots >= 199) {
                 // Concatenate current arguments into string
                 // because of `StringConcatFactory` limitation add use it as new argument for further processing:
                 // "The number of parameter slots in {@code concatType} is less than or equal to 200"

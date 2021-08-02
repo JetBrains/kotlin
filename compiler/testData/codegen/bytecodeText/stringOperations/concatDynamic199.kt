@@ -13,9 +13,9 @@ fun box() {
             z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
             z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
             z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z +
-            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z   //200
+            z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z + z   //199
 }
 
-// 2 INVOKEDYNAMIC makeConcatWithConstants
+// 1 INVOKEDYNAMIC makeConcatWithConstants
 // 0 append
 // 0 stringPlus
