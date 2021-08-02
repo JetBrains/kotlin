@@ -9,7 +9,6 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.internal.GeneratedSubclass
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -55,9 +54,11 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
         const val defaultTaskName: String = "buildKotlinToolingMetadata"
     }
 
+    @get:OutputDirectory
+    val outputDirectory: File = project.buildDir.resolve("kotlinToolingMetadata")
+
     @get:OutputFile
-    val outputFile: Property<File> = project.objects.property(File::class.java)
-        .convention(project.buildDir.resolve("kotlinToolingMetadata").resolve("kotlin-tooling-metadata.json"))
+    val outputFile: File = outputDirectory.resolve("kotlin-tooling-metadata.json")
 
     @get:Internal
     internal val kotlinToolingMetadata by lazy {
@@ -70,8 +71,7 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
 
     @TaskAction
     internal fun createToolingMetadataFile() {
-        val outputFile = outputFile.orNull ?: return
-        outputFile.parentFile.mkdirs()
+        outputDirectory.mkdirs()
         outputFile.writeText(kotlinToolingMetadataJson)
     }
 }
