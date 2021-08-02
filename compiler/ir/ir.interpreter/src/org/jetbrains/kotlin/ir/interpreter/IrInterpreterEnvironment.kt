@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.ir.interpreter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.state.Complex
+import org.jetbrains.kotlin.ir.interpreter.state.Primitive
+import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 
 class IrInterpreterEnvironment(
@@ -23,6 +29,7 @@ class IrInterpreterEnvironment(
     internal val irExceptions = mutableListOf<IrClass>()
     internal var mapOfEnums = mutableMapOf<IrSymbol, Complex>()
     internal var mapOfObjects = mutableMapOf<IrSymbol, Complex>()
+    internal var javaClassToIrClass = mutableMapOf<Class<*>, IrClass>()
 
     private data class CacheFunctionSignature(
         val symbol: IrFunctionSymbol,
@@ -79,5 +86,20 @@ class IrInterpreterEnvironment(
     ): IrFunctionSymbol {
         functionCache[CacheFunctionSignature(symbol, hasDispatchReceiver, hasExtensionReceiver, fromDelegatingCall)] = newFunction
         return newFunction
+    }
+
+    /**
+     * Convert object from outer world to state
+     */
+    internal fun convertToState(value: Any?, irType: IrType): State {
+        return when (value) {
+            is Proxy -> value.state
+            is State -> value
+            is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
+            is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(value, irType)
+            null -> Primitive.nullStateOfType(irType)
+            else -> irType.classOrNull?.owner?.let { Wrapper(value, it, this) }
+                ?: Wrapper(value, this.javaClassToIrClass[value::class.java]!!, this)
+        }
     }
 }

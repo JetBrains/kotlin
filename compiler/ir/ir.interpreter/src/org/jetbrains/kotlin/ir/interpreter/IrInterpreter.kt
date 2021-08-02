@@ -463,17 +463,18 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             }
             IrTypeOperator.SAFE_CAST -> {
                 when {
-                    !isErased && !state.isSubtypeOf(typeOperand) -> callStack.pushState(null.toState(irBuiltIns.nothingNType))
+                    !isErased && !state.isSubtypeOf(typeOperand) ->
+                        callStack.pushState(environment.convertToState(null, irBuiltIns.nothingNType))
                     else -> callStack.pushState(state)
                 }
             }
             IrTypeOperator.INSTANCEOF -> {
                 val isInstance = isErased || state.isSubtypeOf(typeOperand)
-                callStack.pushState(isInstance.toState(irBuiltIns.booleanType))
+                callStack.pushState(environment.convertToState(isInstance, irBuiltIns.booleanType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
                 val isInstance = isErased || state.isSubtypeOf(typeOperand)
-                callStack.pushState((!isInstance).toState(irBuiltIns.booleanType))
+                callStack.pushState(environment.convertToState((!isInstance), irBuiltIns.booleanType))
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {
                 when {
@@ -564,7 +565,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             }
         }
 
-        callStack.pushState(result.reversed().joinToString(separator = "").toState(expression.type))
+        callStack.pushState(environment.convertToState(result.reversed().joinToString(separator = ""), expression.type))
     }
 
     private fun interpretFunctionExpression(expression: IrFunctionExpression) {

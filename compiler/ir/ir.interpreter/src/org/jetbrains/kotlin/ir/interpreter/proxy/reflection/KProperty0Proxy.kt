@@ -5,20 +5,19 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
+import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
-import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.getExtensionReceiver
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.isNull
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import kotlin.reflect.*
 
 internal open class KProperty0Proxy(
-    override val state: KPropertyState, override val callInterceptor: CallInterceptor
+    state: KPropertyState, callInterceptor: CallInterceptor
 ) : AbstractKPropertyProxy(state, callInterceptor), KProperty0<Any?> {
     override val getter: KProperty0.Getter<Any?>
         get() = object : Getter(state.property.getter!!), KProperty0.Getter<Any?> {
@@ -34,7 +33,7 @@ internal open class KProperty0Proxy(
                 return when {
                     // null value <=> property is extension or Primitive; receiver.isNull() <=> nullable extension
                     value == null || receiver.isNull() -> {
-                        val receiverSymbol = getter.getDispatchReceiver() ?: getter.getExtensionReceiver()
+                        val receiverSymbol = getter.getReceiver()
                         val receiverVariable = receiverSymbol?.let { Variable(it, receiver) }
                         callInterceptor.interceptProxy(getter, listOfNotNull(receiverVariable))
                     }
@@ -57,7 +56,7 @@ internal open class KProperty0Proxy(
 }
 
 internal class KMutableProperty0Proxy(
-    override val state: KPropertyState, override val callInterceptor: CallInterceptor
+    state: KPropertyState, callInterceptor: CallInterceptor
 ) : KProperty0Proxy(state, callInterceptor), KMutableProperty0<Any?> {
     override val setter: KMutableProperty0.Setter<Any?> =
         object : Setter(state.property.setter!!), KMutableProperty0.Setter<Any?> {
@@ -69,7 +68,7 @@ internal class KMutableProperty0Proxy(
                 verify(state.receiver != null) { "Cannot interpret set method on top level properties" }
                 verify(state.receiver?.irClass?.isObject != true) { "Cannot interpret set method on property of object" }
                 val receiver = state.receiver!!
-                val newValue = args.single().toState(propertyType)
+                val newValue = environment.convertToState(args.single(), propertyType)
                 setter.getExtensionReceiver()
                     ?.let {
                         val fieldSymbol = setter.valueParameters.single().symbol

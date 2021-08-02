@@ -44,7 +44,7 @@ internal object EmptyArray : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val returnType = environment.callStack.getState(irFunction.symbol) as KTypeState
-        environment.callStack.pushState(emptyArray<Any?>().toState(returnType.irType))
+        environment.callStack.pushState(environment.convertToState(emptyArray<Any?>(), returnType.irType))
     }
 }
 
@@ -73,7 +73,7 @@ internal object ArrayOfNulls : IntrinsicBase() {
             arguments = listOf(makeTypeProjection(typeArgument.irType, Variance.INVARIANT))
         }
 
-        environment.callStack.pushState(array.toState(returnType))
+        environment.callStack.pushState(environment.convertToState(array, returnType))
     }
 }
 
@@ -103,7 +103,7 @@ internal object EnumValues : IntrinsicBase() {
         val enumClass = getEnumClass(irFunction, environment)
 
         val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>().map { environment.mapOfEnums[it.symbol] }
-        environment.callStack.pushState(enumEntries.toTypedArray().toState(irFunction.returnType))
+        environment.callStack.pushState(environment.convertToState(enumEntries.toTypedArray(), irFunction.returnType))
     }
 }
 
@@ -169,14 +169,14 @@ internal object EnumIntrinsics : IntrinsicBase() {
                 val ordinalSymbol = enumEntry.irClass.getOriginalPropertyByName("ordinal").symbol
                 val other = callStack.getState(irFunction.valueParameters.single().symbol)
                 val compareTo = enumEntry.getField(ordinalSymbol)!!.asInt().compareTo(other.getField(ordinalSymbol)!!.asInt())
-                callStack.pushState(compareTo.toState(irFunction.returnType))
+                callStack.pushState(environment.convertToState(compareTo, irFunction.returnType))
             }
             // TODO "clone" -> throw exception
             "equals" -> {
                 val other = callStack.getState(irFunction.valueParameters.single().symbol)
-                callStack.pushState((enumEntry === other).toState(irFunction.returnType))
+                callStack.pushState(environment.convertToState((enumEntry === other), irFunction.returnType))
             }
-            "hashCode" -> callStack.pushState(enumEntry.hashCode().toState(irFunction.returnType))
+            "hashCode" -> callStack.pushState(environment.convertToState(enumEntry.hashCode(), irFunction.returnType))
             "toString" -> {
                 val nameSymbol = enumEntry.irClass.getOriginalPropertyByName("name").symbol
                 callStack.pushState(enumEntry.getField(nameSymbol)!!)
@@ -197,11 +197,11 @@ internal object JsPrimitives : IntrinsicBase() {
             "kotlin.Long.<init>" -> {
                 val low = environment.callStack.getState(irFunction.valueParameters[0].symbol).asInt()
                 val high = environment.callStack.getState(irFunction.valueParameters[1].symbol).asInt()
-                environment.callStack.pushState((high.toLong().shl(32) + low).toState(irFunction.returnType))
+                environment.callStack.pushState(environment.convertToState((high.toLong().shl(32) + low), irFunction.returnType))
             }
             "kotlin.Char.<init>" -> {
                 val value = environment.callStack.getState(irFunction.valueParameters[0].symbol).asInt()
-                environment.callStack.pushState(value.toChar().toState(irFunction.returnType))
+                environment.callStack.pushState(environment.convertToState(value.toChar(), irFunction.returnType))
             }
         }
     }
@@ -276,7 +276,7 @@ internal object SourceLocation : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        environment.callStack.pushState(environment.callStack.getFileAndPositionInfo().toState(irFunction.returnType))
+        environment.callStack.pushState(environment.convertToState(environment.callStack.getFileAndPositionInfo(), irFunction.returnType))
     }
 }
 
@@ -329,6 +329,6 @@ internal object DataClassArrayToString : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val array = environment.callStack.getState(irFunction.valueParameters.single().symbol) as Primitive<*>
-        environment.callStack.pushState(arrayToString(array.value).toState(irFunction.returnType))
+        environment.callStack.pushState(environment.convertToState(arrayToString(array.value), irFunction.returnType))
     }
 }

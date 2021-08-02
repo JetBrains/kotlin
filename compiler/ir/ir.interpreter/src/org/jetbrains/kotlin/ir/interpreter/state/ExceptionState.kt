@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.interpreter.state
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.interpreter.getOriginalPropertyByName
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
-import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import kotlin.math.min
 
@@ -104,7 +103,7 @@ internal class ExceptionState private constructor(
             val messageProperty = irClass.getOriginalPropertyByName("message")
             val causeProperty = irClass.getOriginalPropertyByName("cause")
 
-            val messageVar = Variable(messageProperty.symbol, exception.message.toState(messageProperty.getter!!.returnType))
+            val messageVar = Variable(messageProperty.symbol, Primitive(exception.message, messageProperty.getter!!.returnType))
             val causeVar = exception.cause?.let {
                 Variable(causeProperty.symbol, ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" }))
             }

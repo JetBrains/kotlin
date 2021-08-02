@@ -103,7 +103,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val objectClass = expression.symbol.owner
         when {
             Wrapper.mustBeHandledWithWrapper(objectClass) -> {
-                val result = Wrapper.getCompanionObject(objectClass)
+                val result = Wrapper.getCompanionObject(objectClass, environment)
                 environment.mapOfObjects[expression.symbol] = result
                 callStack.pushState(result)
             }
@@ -115,7 +115,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val enumClass = enumEntry.symbol.owner.parentAsClass
         when {
             Wrapper.mustBeHandledWithWrapper(enumClass) -> {
-                val enumEntryName = enumEntry.name.asString().toState(environment.irBuiltIns.stringType)
+                val enumEntryName = environment.convertToState(enumEntry.name.asString(), environment.irBuiltIns.stringType)
                 val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
                 Wrapper.getEnumEntry(enumClass).invokeMethod(valueOfFun, listOf(enumEntryName))
                 environment.mapOfEnums[enumEntry.symbol] = callStack.popState() as Complex
@@ -128,7 +128,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val field = expression.symbol.owner
         verify(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
         verify(field.initializer?.expression !is IrConst<*>)
-        callStack.pushState(Wrapper.getStaticGetter(field).invokeWithArguments().toState(field.type))
+        callStack.pushState(environment.convertToState(Wrapper.getStaticGetter(field).invokeWithArguments(), field.type))
     }
 
     private fun MethodHandle?.invokeMethod(irFunction: IrFunction, args: List<State>) {
@@ -136,7 +136,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(this@DefaultCallInterceptor, this.type(), args)
         withExceptionHandler(environment) {
             val result = this.invokeWithArguments(argsForMethodInvocation) // TODO if null return Unit
-            callStack.pushState(result.toState(result.getType(irFunction.returnType)))
+            callStack.pushState(environment.convertToState(result, result.getType(irFunction.returnType)))
         }
     }
 
@@ -173,7 +173,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin function: $methodName")
             }
             // TODO check "result is Unit"
-            callStack.pushState(result.toState(result.getType(irFunction.returnType)))
+            callStack.pushState(environment.convertToState(result, result.getType(irFunction.returnType)))
         }
     }
 

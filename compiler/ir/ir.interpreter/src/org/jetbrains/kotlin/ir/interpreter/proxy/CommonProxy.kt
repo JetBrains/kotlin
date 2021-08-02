@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.state.State
-import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
 
 internal class CommonProxy private constructor(override val state: Common, override val callInterceptor: CallInterceptor) : Proxy {
@@ -84,8 +83,9 @@ internal class CommonProxy private constructor(override val state: Common, overr
                             ?: return@newProxyInstance commonProxy.fallbackIfMethodNotFound(method)
                         val valueArguments = mutableListOf<Variable>()
                         valueArguments += Variable(irFunction.getDispatchReceiver()!!, commonProxy.state)
-                        valueArguments += irFunction.valueParameters
-                            .mapIndexed { index, parameter -> Variable(parameter.symbol, args[index].toState(parameter.type)) }
+                        valueArguments += irFunction.valueParameters.mapIndexed { index, parameter ->
+                            Variable(parameter.symbol, callInterceptor.environment.convertToState(args[index], parameter.type))
+                        }
                         callInterceptor.interceptProxy(irFunction, valueArguments, method.returnType)
                     }
                 }

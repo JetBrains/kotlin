@@ -22,7 +22,7 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashMap
 
-internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex {
+internal class Wrapper(val value: Any, override val irClass: IrClass, environment: IrInterpreterEnvironment) : Complex {
     override val fields: MutableList<Variable> = mutableListOf()
 
     override var superWrapperClass: Wrapper? = null
@@ -37,28 +37,27 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
                 val nodeClass = javaClass.declaredClasses.single { it.name.contains("\$Node") }
                 val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }
                     .single { it.name == StandardNames.FqNames.mutableMap.shortName() }
-                javaClassToIrClass += nodeClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
+                environment.javaClassToIrClass += nodeClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
             }
             javaClass == LinkedHashMap::class.java -> {
                 val entryClass = javaClass.declaredClasses.single { it.name.contains("\$Entry") }
                 val mutableMap = irClass.superTypes.mapNotNull { it.classOrNull?.owner }
                     .single { it.name == StandardNames.FqNames.mutableMap.shortName() }
-                javaClassToIrClass += entryClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
+                environment.javaClassToIrClass += entryClass to mutableMap.declarations.filterIsInstance<IrClass>().single()
             }
             javaClass.canonicalName == "java.util.Collections.SingletonMap" -> {
-                javaClassToIrClass += AbstractMap.SimpleEntry::class.java to irClass.declarations.filterIsInstance<IrClass>().single()
-                javaClassToIrClass += AbstractMap.SimpleImmutableEntry::class.java to irClass.declarations.filterIsInstance<IrClass>().single()
+                val irClassMapEntry = irClass.declarations.filterIsInstance<IrClass>().single()
+                environment.javaClassToIrClass += AbstractMap.SimpleEntry::class.java to irClassMapEntry
+                environment.javaClassToIrClass += AbstractMap.SimpleImmutableEntry::class.java to irClassMapEntry
             }
         }
-        if (javaClassToIrClass[value::class.java].let { it == null || irClass.isSubclassOf(it) }) {
+        if (environment.javaClassToIrClass[value::class.java].let { it == null || irClass.isSubclassOf(it) }) {
             // second condition guarantees that implementation class will not be replaced with its interface
             // for example: map will store ArrayList instead of just List
             // this is needed for parallel calculations
-            javaClassToIrClass[value::class.java] = irClass
+            environment.javaClassToIrClass[value::class.java] = irClass
         }
     }
-
-    constructor(value: Any) : this(value, javaClassToIrClass[value::class.java]!!)
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
 
@@ -91,7 +90,6 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
 
     companion object {
         private val companionObjectValue = mapOf<String, Any>("kotlin.text.Regex\$Companion" to Regex.Companion)
-        private val javaClassToIrClass = mutableMapOf<Class<*>, IrClass>()
 
         // TODO remove later; used for tests only
         private val intrinsicClasses = setOf(
@@ -109,10 +107,6 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
             "Array.kotlin.collections.toMutableList()" to "kotlin.collections.ArraysKt",
             "Array.kotlin.collections.copyToArrayOfAny(Boolean)" to "kotlin.collections.CollectionsKt",
         )
-
-        fun associateJavaClassWithIrClass(javaClass: Class<*>, irClass: IrClass) {
-            javaClassToIrClass += javaClass to irClass
-        }
 
         private fun IrDeclarationWithName.getSignature(): String {
             val fqName = this.fqName
@@ -154,10 +148,10 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex 
             return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
         }
 
-        fun getCompanionObject(irClass: IrClass): Wrapper {
+        fun getCompanionObject(irClass: IrClass, environment: IrInterpreterEnvironment): Wrapper {
             val objectName = irClass.internalName()
             val objectValue = companionObjectValue[objectName] ?: throw InternalError("Companion object $objectName cannot be interpreted")
-            return Wrapper(objectValue, irClass)
+            return Wrapper(objectValue, irClass, environment)
         }
 
         fun getConstructorMethod(irConstructor: IrFunction): MethodHandle? {

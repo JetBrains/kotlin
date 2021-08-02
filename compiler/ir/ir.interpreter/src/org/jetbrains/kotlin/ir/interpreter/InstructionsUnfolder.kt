@@ -366,7 +366,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
                         is Int -> value.toUInt().toString()
                         else -> (value as Number).toLong().toULong().toString()
                     }
-                    return callStack.pushState(result.toState(environment.irBuiltIns.stringType))
+                    return callStack.pushState(environment.convertToState(result, environment.irBuiltIns.stringType))
                 }
                 val toStringCall = state.createToStringIrCall()
                 callStack.addInstruction(SimpleInstruction(toStringCall))

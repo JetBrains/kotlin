@@ -19,6 +19,8 @@ import java.lang.invoke.MethodType
 internal interface Proxy {
     val state: State
     val callInterceptor: CallInterceptor
+    val environment
+        get() = callInterceptor.environment
 
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int

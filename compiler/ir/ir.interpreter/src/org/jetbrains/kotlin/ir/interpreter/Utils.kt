@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
-import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.*
@@ -42,20 +41,6 @@ internal fun IrFunction.getExtensionReceiver(): IrValueParameterSymbol? = this.e
 internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?: this.getExtensionReceiver()
 
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
-
-/**
- * Convert object from outer world to state
- */
-internal fun Any?.toState(irType: IrType): State {
-    return when (this) {
-        is Proxy -> this.state
-        is State -> this
-        is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
-        is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(this, irType)
-        null -> Primitive.nullStateOfType(irType)
-        else -> irType.classOrNull?.owner?.let { Wrapper(this, it) } ?: Wrapper(this)
-    }
-}
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> = when {

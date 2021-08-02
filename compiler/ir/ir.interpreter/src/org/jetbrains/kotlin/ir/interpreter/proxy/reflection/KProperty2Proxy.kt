@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.toState
 import kotlin.reflect.*
 
 internal open class KProperty2Proxy(
-    override val state: KPropertyState, override val callInterceptor: CallInterceptor
+    state: KPropertyState, callInterceptor: CallInterceptor
 ) : AbstractKPropertyProxy(state, callInterceptor), KProperty2<Any?, Any?, Any?> {
     override val getter: KProperty2.Getter<Any?, Any?, Any?>
         get() = object : Getter(state.property.getter!!), KProperty2.Getter<Any?, Any?, Any?> {
@@ -20,8 +19,10 @@ internal open class KProperty2Proxy(
 
             override fun call(vararg args: Any?): Any? {
                 checkArguments(2, args.size)
-                val dispatch = Variable(getter.dispatchReceiverParameter!!.symbol, args[0].toState(getter.dispatchReceiverParameter!!.type))
-                val extension = Variable(getter.extensionReceiverParameter!!.symbol, args[1].toState(getter.extensionReceiverParameter!!.type))
+                val dispatchParameter = getter.dispatchReceiverParameter!!
+                val extensionReceiverParameter = getter.extensionReceiverParameter!!
+                val dispatch = Variable(dispatchParameter.symbol, environment.convertToState(args[0], dispatchParameter.type))
+                val extension = Variable(extensionReceiverParameter.symbol, environment.convertToState(args[1], extensionReceiverParameter.type))
                 return callInterceptor.interceptProxy(getter, listOf(dispatch, extension))
             }
 
@@ -40,7 +41,7 @@ internal open class KProperty2Proxy(
 }
 
 internal class KMutableProperty2Proxy(
-    override val state: KPropertyState, override val callInterceptor: CallInterceptor
+    state: KPropertyState, callInterceptor: CallInterceptor
 ) : KProperty2Proxy(state, callInterceptor), KMutableProperty2<Any?, Any?, Any?> {
     override val setter: KMutableProperty2.Setter<Any?, Any?, Any?>
         get() = object : Setter(state.property.setter!!), KMutableProperty2.Setter<Any?, Any?, Any?> {

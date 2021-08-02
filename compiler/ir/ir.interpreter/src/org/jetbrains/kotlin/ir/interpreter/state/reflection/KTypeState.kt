@@ -36,7 +36,7 @@ internal class KTypeState(val irType: IrType, override val irClass: IrClass) : R
 
     fun getArguments(callInterceptor: CallInterceptor): List<KTypeProjection> {
         if (_arguments != null) return _arguments!!
-        Wrapper.associateJavaClassWithIrClass(KTypeProjection::class.java, irClass.getIrClassOfReflectionFromList("arguments"))
+        callInterceptor.environment.javaClassToIrClass += KTypeProjection::class.java to irClass.getIrClassOfReflectionFromList("arguments")
         _arguments = (irType as IrSimpleType).arguments
             .map {
                 when (it.getVariance()) {
