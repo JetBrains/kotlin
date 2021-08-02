@@ -10,6 +10,7 @@
 
 extern "C" OBJ_GETTER(Kotlin_Throwable_getStackTrace, KRef throwable);
 
+// TODO: Consider refactoring to `FormatToSpan`.
 static void writeStackTraceToBuffer(KRef throwable, char* buffer, unsigned long bufferSize) {
   if (bufferSize < 2) return;
 
