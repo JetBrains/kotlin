@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.extractRadix
 
 internal class IndexedJavaTypeQualifiers(private val data: Array<JavaTypeQualifiers>) {
@@ -55,7 +56,7 @@ internal fun FirJavaTypeRef.enhance(
 ): FirResolvedTypeRef =
     buildResolvedTypeRef {
         val subtreeSizes = mutableListOf<Int>().apply { typeWithoutEnhancement.computeSubtreeSizes(this) }
-        type = typeWithoutEnhancement.enhanceConeKotlinType(session, qualifiers, 0, subtreeSizes)
+        type = typeWithoutEnhancement.enhanceConeKotlinType(session, qualifiers, 0, subtreeSizes) ?: typeWithoutEnhancement
         annotations += this@enhance.annotations
     }
 
@@ -79,11 +80,10 @@ private fun ConeKotlinType.enhanceConeKotlinType(
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int,
     subtreeSizes: List<Int>
-): ConeKotlinType {
+): ConeKotlinType? {
     return when (this) {
         is ConeFlexibleType -> {
             val isRawType = this is ConeRawType
-
             val lowerResult = lowerBound.enhanceInflexibleType(
                 session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index, subtreeSizes, isRawType
             )
@@ -92,17 +92,18 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             )
 
             when {
-                lowerResult === lowerBound && upperResult === upperBound -> this
-                this is ConeRawType -> ConeRawType(lowerResult, upperResult)
+                lowerResult == null && upperResult == null -> null
+                isRawType -> ConeRawType(lowerResult ?: lowerBound, upperResult ?: upperBound)
                 else -> coneFlexibleOrSimpleType(
-                    session, lowerResult, upperResult, isNotNullTypeParameter = qualifiers(index).isNotNullTypeParameter
+                    session, lowerResult ?: lowerBound, upperResult ?: upperBound,
+                    isNotNullTypeParameter = qualifiers(index).isNotNullTypeParameter
                 )
             }
         }
         is ConeSimpleKotlinType -> enhanceInflexibleType(
             session, TypeComponentPosition.INFLEXIBLE, qualifiers, index, subtreeSizes, isBoundOfRawType = false
         )
-        else -> this
+        else -> null
     }
 }
 
@@ -159,68 +160,43 @@ private fun ConeKotlinType.enhanceInflexibleType(
     index: Int,
     subtreeSizes: List<Int>,
     @Suppress("UNUSED_PARAMETER") isBoundOfRawType: Boolean,
-): ConeKotlinType {
+): ConeKotlinType? {
     require(this !is ConeFlexibleType) { "$this should not be flexible" }
     val shouldEnhance = position.shouldEnhance()
-    if (!shouldEnhance && typeArguments.isEmpty() || this !is ConeLookupTagBasedType) {
-        return this
+    if ((!shouldEnhance && typeArguments.isEmpty()) || this !is ConeLookupTagBasedType) {
+        return null
     }
 
-    val originalTag = lookupTag
-
     val effectiveQualifiers = qualifiers(index)
-    val enhancedTag = originalTag.enhanceMutability(effectiveQualifiers, position)
+    val enhancedTag = lookupTag.enhanceMutability(effectiveQualifiers, position)
 
-    var wereChangesInArgs = false
+    val nullabilityFromQualifiers = effectiveQualifiers.nullability.takeIf { shouldEnhance }
+    val enhancedNullability = when (nullabilityFromQualifiers) {
+        NullabilityQualifier.NULLABLE -> true
+        NullabilityQualifier.NOT_NULL -> false
+        else -> isNullable
+    }
 
     var globalArgIndex = index + 1
     val enhancedArguments = typeArguments.map { arg ->
-        if (arg.kind != ProjectionKind.INVARIANT) {
-            globalArgIndex++
-            arg
-        } else {
-            require(arg is ConeKotlinType) { "Should be invariant type: $arg" }
-            val enhanced = arg.enhanceConeKotlinType(session, qualifiers, globalArgIndex, subtreeSizes)
-            globalArgIndex += subtreeSizes[globalArgIndex]
-            wereChangesInArgs = wereChangesInArgs || enhanced !== arg
-            enhanced.type
+        val argIndex = globalArgIndex.also { globalArgIndex += subtreeSizes[it] }
+        val variance = when (arg.kind) {
+            ProjectionKind.IN -> Variance.IN_VARIANCE
+            ProjectionKind.OUT -> Variance.OUT_VARIANCE
+            ProjectionKind.INVARIANT, ProjectionKind.STAR -> Variance.INVARIANT
         }
-    }.toTypedArray()
-
-    val (enhancedNullability, enhancedNullabilityAttribute) = getEnhancedNullability(effectiveQualifiers, position)
-    wereChangesInArgs = wereChangesInArgs || (enhancedNullabilityAttribute != null && !this.hasEnhancedNullability)
-
-    if (!wereChangesInArgs && originalTag == enhancedTag && enhancedNullability == isNullable) {
-        return this
+        arg.type?.enhanceConeKotlinType(session, qualifiers, argIndex, subtreeSizes)?.toTypeProjection(variance)
     }
 
-    var attributes = this.attributes
-    enhancedNullabilityAttribute?.let { attributes += it }
-
-    // TODO: why all of these is needed
-//    val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
-//    val nullabilityForWarning = nullabilityChanged && effectiveQualifiers.isNullabilityQualifierForWarning
-//    val result = if (nullabilityForWarning) wrapEnhancement(enhancement) else enhancement
-
-    return enhancedTag.constructType(enhancedArguments, enhancedNullability, attributes)
-}
-
-private data class EnhancementResult<out T>(val result: T, val enhancementAttribute: ConeAttribute<*>?)
-
-private fun <T> T.noChange(): EnhancementResult<T> = EnhancementResult(this, null)
-private fun <T> T.enhancedNullability(): EnhancementResult<T> = EnhancementResult(this, CompilerConeAttributes.EnhancedNullability)
-
-private fun ConeKotlinType.getEnhancedNullability(
-    qualifiers: JavaTypeQualifiers,
-    position: TypeComponentPosition
-): EnhancementResult<Boolean> {
-    if (!position.shouldEnhance()) return this.isMarkedNullable.noChange()
-
-    return when (qualifiers.nullability) {
-        NullabilityQualifier.NULLABLE -> true.noChange()
-        NullabilityQualifier.NOT_NULL -> false.enhancedNullability()
-        else -> this.isMarkedNullable.noChange()
+    val shouldAddAttribute = nullabilityFromQualifiers == NullabilityQualifier.NOT_NULL && !hasEnhancedNullability
+    if (lookupTag == enhancedTag && enhancedNullability == isNullable && !shouldAddAttribute && enhancedArguments.all { it == null }) {
+        return null // absolutely no changes
     }
+
+    // TODO: val nullabilityForWarning = enhancedNullabilityAttribute != null && effectiveQualifiers.isNullabilityQualifierForWarning
+    val mergedArguments = Array(typeArguments.size) { enhancedArguments[it] ?: typeArguments[it] }
+    val mergedAttributes = if (shouldAddAttribute) attributes + CompilerConeAttributes.EnhancedNullability else attributes
+    return enhancedTag.constructType(mergedArguments, enhancedNullability, mergedAttributes)
 }
 
 private fun ConeClassifierLookupTag.enhanceMutability(

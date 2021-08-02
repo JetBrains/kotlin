@@ -29,7 +29,7 @@ fun main(
     b.noBoundsNotNull(aNotNullNullNull)
 
     b.noBoundsNullable(aNotNullNotNullNotNull)
-    b.noBoundsNullable(aNotNullNotNullNull)
-    b.noBoundsNullable(aNotNullNullNotNull)
-    b.noBoundsNullable(aNotNullNullNull)
+    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
+    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
+    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 }
