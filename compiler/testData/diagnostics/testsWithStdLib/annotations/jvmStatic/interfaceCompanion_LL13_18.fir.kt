@@ -53,10 +53,10 @@ interface B {
         public var foo9 = 1
         <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic private set<!>
 
-        @JvmStatic
-        val foo10: Int external get
+        <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic
+        val foo10: Int<!> external get
 
-        val foo11: Int @JvmStatic external get
+        val foo11: Int <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external get<!>
     }
 
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.isInterface
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -40,70 +41,121 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
             return
         }
 
+        if (declaration is FirPropertyAccessor) {
+            return
+        }
+
+        val declarationAnnotation = declaration.findAnnotation(StandardClassIds.JvmStatic)
+
+        if (declarationAnnotation != null) {
+            checkAnnotated(declaration, context, reporter, declaration.source)
+        }
+
+        fun checkIfAnnotated(it: FirAnnotatedDeclaration) {
+            if (!it.hasAnnotation(StandardClassIds.JvmStatic)) {
+                return
+            }
+            val targetSource = it.source ?: declaration.source
+            checkAnnotated(it, context, reporter, targetSource, declaration as? FirProperty)
+        }
+
+        if (declaration is FirProperty) {
+            declaration.getter?.let { checkIfAnnotated(it) }
+            declaration.setter?.let { checkIfAnnotated(it) }
+        }
+    }
+
+    private fun checkAnnotated(
+        declaration: FirAnnotatedDeclaration,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        targetSource: FirSourceElement?,
+        outerProperty: FirProperty? = null,
+    ) {
         if (declaration !is FirMemberDeclaration) {
             return
         }
 
-        val annotatedParts = declaration.getAnnotatedParts()
+        val container = context.getContainerAt(0) ?: return
+        val supportsJvmStaticInInterface = context.supports(LanguageFeature.JvmStaticInInterface)
+        val containerIsAnonymous = container.classId.shortClassName == SpecialNames.ANONYMOUS
 
-        checkOverrideCannotBeStatic(declaration, context, reporter, annotatedParts)
-        checkStaticNotInProperObject(context, reporter, annotatedParts)
-        checkStaticNonPublicOrExternal(declaration, context, reporter, annotatedParts)
-        checkStaticOnConstOrJvmField(context, reporter, annotatedParts)
-    }
-
-    private fun checkStaticOnConstOrJvmField(
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-        annotatedParts: List<FirAnnotatedDeclaration>,
-    ) {
-        annotatedParts.forEach {
-            if (
-                it is FirProperty && it.isConst ||
-                it.hasAnnotationNamedAs(StandardClassIds.JvmField)
-            ) {
-                reporter.reportOn(it.source, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD, context)
+        if (
+            container.classKind != ClassKind.OBJECT ||
+            !container.isCompanion() && containerIsAnonymous
+        ) {
+            reportStaticNotInProperObject(context, reporter, supportsJvmStaticInInterface, targetSource)
+        } else if (
+            container.isCompanion() &&
+            context.containerIsInterface(1)
+        ) {
+            if (supportsJvmStaticInInterface) {
+                checkForInterface(declaration, context, reporter, targetSource)
+            } else {
+                reportStaticNotInProperObject(context, reporter, supportsJvmStaticInInterface, targetSource)
             }
         }
+
+        checkOverrideCannotBeStatic(declaration, context, reporter, targetSource, outerProperty)
+        checkStaticOnConstOrJvmField(declaration, context, reporter, targetSource)
     }
 
-    private fun checkStaticNonPublicOrExternal(
-        declaration: FirMemberDeclaration,
+    private fun reportStaticNotInProperObject(
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        annotatedParts: List<FirAnnotatedDeclaration>,
+        supportsJvmStaticInInterface: Boolean,
+        targetSource: FirSourceElement?,
     ) {
-        val containingClassSymbol = context.getContainerAt(0) ?: return
-        var shouldCheck = false
-
-        if (containingClassSymbol.classKind != ClassKind.OBJECT) {
-            shouldCheck = true
+        val properDiagnostic = if (supportsJvmStaticInInterface) {
+            FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
         } else {
-            if (context.containerIsInterface(1)) {
-                shouldCheck = true
-            }
+            FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION
         }
 
-        if (!shouldCheck) {
+        reporter.reportOn(targetSource, properDiagnostic, context)
+    }
+
+    private fun checkForInterface(
+        declaration: FirAnnotatedDeclaration,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        targetSource: FirSourceElement?,
+    ) {
+        if (declaration !is FirCallableDeclaration) {
             return
         }
 
-        val minVisibility = declaration.getMinimumVisibility()
+        val visibility = if (declaration is FirProperty) {
+            declaration.getMinimumVisibility()
+        } else {
+            declaration.visibility
+        }
 
-        if (minVisibility != Visibilities.Public) {
-            annotatedParts.forEach {
-                reporter.reportOn(it.source, FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER, context)
-            }
-        } else if (declaration.isExternal) {
-            annotatedParts.forEach {
-                reporter.reportOn(it.source, FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE, context)
-            }
+        val isExternal = if (declaration is FirProperty) {
+            declaration.hasExternalParts()
+        } else {
+            declaration.isExternal
+        }
+
+        if (visibility != Visibilities.Public) {
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER, context)
+        } else if (isExternal) {
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE, context)
         }
     }
 
-    private fun FirMemberDeclaration.getMinimumVisibility() = when (this) {
-        is FirProperty -> getMinimumVisibility()
-        else -> this.visibility
+    private fun FirProperty.hasExternalParts(): Boolean {
+        var hasExternal = isExternal
+
+        getter?.let {
+            hasExternal = hasExternal || it.isExternal
+        }
+
+        setter?.let {
+            hasExternal = hasExternal || it.isExternal
+        }
+
+        return hasExternal
     }
 
     private fun FirProperty.getMinimumVisibility(): Visibility {
@@ -129,83 +181,34 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkStaticNotInProperObject(
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-        annotatedParts: List<FirAnnotatedDeclaration>,
-    ) {
-        val containingClassSymbol = context.getContainerAt(0) ?: return
-        val supportJvmStaticInInterface = context.session.languageVersionSettings.supportsFeature(LanguageFeature.JvmStaticInInterface)
-
-        val properDiagnostic = if (supportJvmStaticInInterface) {
-            FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
-        } else {
-            FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION
-        }
-
-        var shouldReport = false
-
-        if (containingClassSymbol.classKind != ClassKind.OBJECT) {
-            shouldReport = true
-        } else if (
-            containingClassSymbol is FirRegularClassSymbol &&
-            containingClassSymbol.isCompanion &&
-            context.containerIsInterface(1) &&
-            !supportJvmStaticInInterface
-        ) {
-            shouldReport = true
-        }
-
-        if (!shouldReport) {
-            return
-        }
-
-        annotatedParts.forEach {
-            reporter.reportOn(it.source, properDiagnostic, context)
-        }
-    }
-
     private fun checkOverrideCannotBeStatic(
         declaration: FirMemberDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        annotatedParts: List<FirAnnotatedDeclaration>,
+        targetSource: FirSourceElement?,
+        outerProperty: FirProperty? = null,
     ) {
-        if (!declaration.isOverride || !context.containerIsNonCompanionObject(0)) {
+        val isOverride = outerProperty?.isOverride ?: declaration.isOverride
+
+        if (!isOverride || !context.containerIsNonCompanionObject(0)) {
             return
         }
 
-        annotatedParts.forEach {
-            reporter.reportOn(it.source, FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC, context)
-        }
+        reporter.reportOn(targetSource, FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC, context)
     }
 
-    private fun FirAnnotatedDeclaration.getAnnotatedParts(): List<FirAnnotatedDeclaration> {
-        return getReportableParts().filter {
-            it.hasAnnotationNamedAs(StandardClassIds.JvmStatic)
+    private fun checkStaticOnConstOrJvmField(
+        declaration: FirAnnotatedDeclaration,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        targetSource: FirSourceElement?,
+    ) {
+        if (
+            declaration is FirProperty && declaration.isConst ||
+            declaration.hasAnnotationNamedAs(StandardClassIds.JvmField)
+        ) {
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD, context)
         }
-    }
-
-    private fun FirAnnotatedDeclaration.getReportableParts(): List<FirAnnotatedDeclaration> {
-        val parts = mutableListOf(this)
-
-        if (this is FirProperty) {
-            fun takeIfNecessary(it: FirPropertyAccessor) {
-                if (it.visibility.compatibleAndLesser(this.visibility)) {
-                    parts.add(it)
-                }
-            }
-
-            this.getter?.let(::takeIfNecessary)
-            this.setter?.let(::takeIfNecessary)
-        }
-
-        return parts
-    }
-
-    private fun Visibility.compatibleAndLesser(other: Visibility): Boolean {
-        val difference = this.compareTo(other) ?: return false
-        return difference <= 0
     }
 
     private fun CheckerContext.containerIsInterface(outerLevel: Int): Boolean {
@@ -222,7 +225,12 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
     }
 
     private fun CheckerContext.getContainerAt(outerLevel: Int): FirClassLikeSymbol<*>? {
-        val last = this.containingDeclarations.asReversed().getOrNull(outerLevel)
+        val correction = if (this.containingDeclarations.lastOrNull() is FirProperty) {
+            1
+        } else {
+            0
+        }
+        val last = this.containingDeclarations.asReversed().getOrNull(outerLevel + correction)
         return if (last is FirClassLikeDeclaration) {
             last.symbol
         } else {
@@ -230,13 +238,17 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         }
     }
 
+    private fun CheckerContext.supports(feature: LanguageFeature) = session.languageVersionSettings.supportsFeature(feature)
+
+    private fun FirClassLikeSymbol<*>.isCompanion() = safeAs<FirRegularClassSymbol>()?.isCompanion == true
+
     private fun FirAnnotatedDeclaration.hasAnnotationNamedAs(classId: ClassId): Boolean {
-        return findAnnotation(classId.shortClassName) != null
+        return findAnnotation(classId) != null
     }
 
-    private fun FirAnnotatedDeclaration.findAnnotation(name: Name): FirAnnotationCall? {
+    private fun FirAnnotatedDeclaration.findAnnotation(classId: ClassId): FirAnnotationCall? {
         return annotations.firstOrNull {
-            it.calleeReference.safeAs<FirResolvedNamedReference>()?.name == name
+            it.calleeReference.safeAs<FirResolvedNamedReference>()?.name == classId.shortClassName
         }
     }
 }
