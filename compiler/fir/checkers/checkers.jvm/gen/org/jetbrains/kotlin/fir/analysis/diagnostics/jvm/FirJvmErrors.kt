@@ -27,6 +27,7 @@ object FirJvmErrors {
     val JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val JVM_STATIC_ON_NON_PUBLIC_MEMBER by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val JVM_STATIC_ON_CONST_OR_JVM_FIELD by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val JVM_STATIC_ON_EXTERNAL_IN_INTERFACE by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val INAPPLICABLE_JVM_NAME by error0<PsiElement>()
     val ILLEGAL_JVM_NAME by error0<PsiElement>()
 

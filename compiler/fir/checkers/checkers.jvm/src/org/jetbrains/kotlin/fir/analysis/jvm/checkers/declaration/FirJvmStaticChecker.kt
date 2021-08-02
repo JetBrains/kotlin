@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -51,7 +48,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
 
         checkOverrideCannotBeStatic(declaration, context, reporter, annotatedParts)
         checkStaticNotInProperObject(context, reporter, annotatedParts)
-        checkStaticNonPublic(declaration, context, reporter, annotatedParts)
+        checkStaticNonPublicOrExternal(declaration, context, reporter, annotatedParts)
         checkStaticOnConstOrJvmField(context, reporter, annotatedParts)
     }
 
@@ -70,7 +67,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkStaticNonPublic(
+    private fun checkStaticNonPublicOrExternal(
         declaration: FirMemberDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter,
@@ -93,12 +90,14 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
 
         val minVisibility = declaration.getMinimumVisibility()
 
-        if (minVisibility == Visibilities.Public) {
-            return
-        }
-
-        annotatedParts.forEach {
-            reporter.reportOn(it.source, FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER, context)
+        if (minVisibility != Visibilities.Public) {
+            annotatedParts.forEach {
+                reporter.reportOn(it.source, FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER, context)
+            }
+        } else if (declaration.isExternal) {
+            annotatedParts.forEach {
+                reporter.reportOn(it.source, FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE, context)
+            }
         }
     }
 

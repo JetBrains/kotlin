@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.LOCAL_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_DATA_CLASS_JVM_RECORD
@@ -117,6 +118,10 @@ object FirJvmDefaultErrorMessages {
             map.put(
                 JVM_STATIC_ON_CONST_OR_JVM_FIELD,
                 "'@JvmStatic' annotation is useless for const or '@JvmField' properties",
+            )
+            map.put(
+                JVM_STATIC_ON_EXTERNAL_IN_INTERFACE,
+                "'@JvmStatic' annotation cannot be used on 'external' members of interface companions"
             )
 
             map.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration")

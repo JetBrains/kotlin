@@ -18,7 +18,7 @@ interface B {
 
         }
 
-        <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic external fun a5()<!>
+        <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION, JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external fun a5()<!>
 
         <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic
         var foo<!> = 1

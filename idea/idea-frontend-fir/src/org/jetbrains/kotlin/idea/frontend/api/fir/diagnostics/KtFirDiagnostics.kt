@@ -2570,6 +2570,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmStaticOnConstOrJvmField::class
     }
 
+    abstract class JvmStaticOnExternalInInterface : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmStaticOnExternalInInterface::class
+    }
+
     abstract class InapplicableJvmName : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = InapplicableJvmName::class
     }

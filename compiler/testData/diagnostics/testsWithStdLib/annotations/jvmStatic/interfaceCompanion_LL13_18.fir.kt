@@ -19,7 +19,7 @@ interface B {
 
         }
 
-        @JvmStatic external fun a5()
+        <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external fun a5()<!>
 
         @JvmStatic
         var foo = 1
