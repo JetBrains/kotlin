@@ -51,7 +51,7 @@ private fun checkOuterClassArgumentsRequired(
             for (index in typeArguments.size until typeParameters.size) {
                 val typeParameter = typeParameters[index]
                 if (!isValidTypeParameterFromOuterClass(typeParameter, declaration, context.session)) {
-                    val outerClass = typeParameter.containingDeclarationSymbol as FirRegularClassSymbol
+                    val outerClass = typeParameter.containingDeclarationSymbol as? FirRegularClassSymbol ?: break
                     reporter.reportOn(typeRef.source, FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED, outerClass, context)
                     break
                 }
