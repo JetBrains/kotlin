@@ -28,7 +28,7 @@ class A {
 
 interface B {
     companion object {
-        @JvmStatic fun a1() {
+        <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a1()<!> {
 
         }
     }
