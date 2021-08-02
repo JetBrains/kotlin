@@ -116,7 +116,7 @@ class SerializableCompanionIrGenerator(
         }
 
         irClass.contributeFunction(methodDescriptor) {
-            +irReturn(getLazyValueExpression(irClass, property))
+            +irReturn(getLazyValueExpression(it.dispatchReceiverParameter!!, property, targetIrType))
         }
         generateSerializerFactoryIfNeeded(methodDescriptor)
     }

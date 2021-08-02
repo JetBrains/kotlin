@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
@@ -41,7 +39,6 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.FUNCTION0_FQ
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.KPROPERTY1_FQ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_FQ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_FUNC_FQ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_MODE_FQ
@@ -128,24 +125,17 @@ interface IrBuilderExtension {
         val publicationEntryDescriptor = lazySafeModeClassDescriptor.enumEntries().single { it.name == LAZY_PUBLICATION_MODE_NAME }
 
         val lazyIrClass = compilerContext.referenceClass(LAZY_FQ)!!.owner
-        val lazyKotlinType = lazyIrClass.defaultType.substitute(mapOf(lazyIrClass.typeParameters[0].symbol to targetIrType)).toKotlinType()
-
-        val kPropertyIrClass = compilerContext.referenceClass(KPROPERTY1_FQ)!!.owner
-        val kPropertyKotlinType = kPropertyIrClass.defaultType.substitute(
-            mapOf(
-                kPropertyIrClass.typeParameters[0].symbol to targetIrType,
-                kPropertyIrClass.typeParameters[1].symbol to containingClass.defaultType,
-            )
-        ).toKotlinType()
-
-        val targetKotlinType = targetIrType.toKotlinType()
+        val lazyIrType = lazyIrClass.defaultType.substitute(mapOf(lazyIrClass.typeParameters[0].symbol to targetIrType))
 
         val propertyDescriptor =
-            KSerializerDescriptorResolver.createValPropertyDescriptor(name, containingClass.descriptor, targetKotlinType)
+            KSerializerDescriptorResolver.createValPropertyDescriptor(
+                Name.identifier(name.asString() + "\$delegate"),
+                containingClass.descriptor,
+                lazyIrType.toKotlinType(),
+                createGetter = true
+            )
 
-        val delegate = IrPropertyDelegateDescriptorImpl(propertyDescriptor, lazyKotlinType, kPropertyKotlinType)
-
-        return generateSimplePropertyWithBackingField(delegate, containingClass, delegate.name).apply {
+        return generateSimplePropertyWithBackingField(propertyDescriptor, containingClass).apply {
             val builder = DeclarationIrBuilder(compilerContext, containingClass.symbol, startOffset, endOffset)
             val initializerBody = builder.run {
                 val enumElement = IrGetEnumValueImpl(
@@ -158,7 +148,7 @@ interface IrBuilderExtension {
                 val lambdaExpression = containingClass.createLambdaExpression(targetIrType, initializerBuilder)
 
                 irExprBody(
-                    irInvoke(null, lazyFunctionSymbol, listOf(targetIrType), listOf(enumElement, lambdaExpression), targetIrType)
+                    irInvoke(null, lazyFunctionSymbol, listOf(targetIrType), listOf(enumElement, lambdaExpression), lazyIrType)
                 )
             }
             backingField!!.initializer = initializerBody
@@ -195,15 +185,16 @@ interface IrBuilderExtension {
         }
     }
 
-    fun IrBlockBodyBuilder.getLazyValueExpression(companionClass: IrClass, property: IrProperty): IrExpression {
+    fun IrBlockBodyBuilder.getLazyValueExpression(thisParam: IrValueParameter, property: IrProperty, type: IrType): IrExpression {
         val lazyIrClass = compilerContext.referenceClass(LAZY_FQ)!!.owner
         val valueGetter = lazyIrClass.getPropertyGetter("value")!!
 
-        val backingField = property.backingField!!
-        return irGet(
-            backingField.type,
-            irGetField(irGetObject(companionClass), backingField),
-            valueGetter
+        val propertyGetter = property.getter!!
+
+        return irInvoke(
+            irGet(propertyGetter.returnType, irGet(thisParam), propertyGetter.symbol),
+            valueGetter,
+            typeHint = type
         )
     }
 
