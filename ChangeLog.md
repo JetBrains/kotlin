@@ -11,7 +11,6 @@
 
 #### New Features
 
-- [`KT-12794`](https://youtrack.jetbrains.com/issue/KT-12794) Allow runtime retention repeatable annotations when compiling under Java 8
 - [`KT-47709`](https://youtrack.jetbrains.com/issue/KT-47709) Make when statements with enum, sealed, and Boolean subjects exhaustive by default
 - [`KT-47699`](https://youtrack.jetbrains.com/issue/KT-47699) Support programmatic creation of class annotations and corresponding feature flag on JVM
 
