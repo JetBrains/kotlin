@@ -165,23 +165,22 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         val configurations = project.configurations
 
-        val defaultConfiguration = configurations.maybeCreate(target.defaultConfigurationName).apply {
-            setupAsLocalTargetSpecificConfigurationIfSupported(target)
-        }
-
         val mainCompilation = target.compilations.maybeCreate(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         val compileConfiguration = configurations.findByName(mainCompilation.deprecatedCompileConfigurationName)
         val implementationConfiguration = configurations.maybeCreate(mainCompilation.implementationConfigurationName)
 
-        val runtimeOnlyConfiguration = configurations.maybeCreate(mainCompilation.runtimeOnlyConfigurationName)
+        val runtimeOnlyConfiguration = when (mainCompilation) {
+            is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreate(mainCompilation.runtimeOnlyConfigurationName)
+            else -> null
+        }
 
-        val apiElementsConfiguration = configurations.maybeCreate(target.apiElementsConfigurationName).apply {
+        configurations.maybeCreate(target.apiElementsConfigurationName).apply {
             description = "API elements for main."
             isVisible = false
             isCanBeResolved = false
             isCanBeConsumed = true
-            attributes.attribute<Usage>(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
             extendsFrom(configurations.maybeCreate(mainCompilation.apiConfigurationName))
             if (mainCompilation is KotlinCompilationToRunnableFiles) {
                 val runtimeConfiguration = configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
@@ -192,32 +191,34 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
 
         if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
-            val runtimeElementsConfiguration = configurations.maybeCreate(target.runtimeElementsConfigurationName).apply {
+            configurations.maybeCreate(target.runtimeElementsConfigurationName).apply {
                 description = "Elements of runtime for main."
                 isVisible = false
                 isCanBeConsumed = true
                 isCanBeResolved = false
-                attributes.attribute<Usage>(USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
+                attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
                 val runtimeConfiguration = configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
-                extendsFrom(implementationConfiguration, runtimeOnlyConfiguration)
+                extendsFrom(implementationConfiguration)
+                if (runtimeOnlyConfiguration != null)
+                    extendsFrom(runtimeOnlyConfiguration)
                 runtimeConfiguration?.let { extendsFrom(it) }
                 usesPlatformOf(target)
                 setupAsPublicConfigurationIfSupported(target)
             }
-            defaultConfiguration.extendsFrom(runtimeElementsConfiguration)
-        } else {
-            defaultConfiguration.extendsFrom(apiElementsConfiguration)
         }
 
         if (createTestCompilation) {
             val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
             val compileTestsConfiguration = configurations.findByName(testCompilation.deprecatedCompileConfigurationName)
             val testImplementationConfiguration = configurations.maybeCreate(testCompilation.implementationConfigurationName)
-            val testRuntimeOnlyConfiguration = configurations.maybeCreate(testCompilation.runtimeOnlyConfigurationName)
+            val testRuntimeOnlyConfiguration = when (testCompilation) {
+                is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreate(testCompilation.runtimeOnlyConfigurationName)
+                else -> null
+            }
 
             compileConfiguration?.let { compileTestsConfiguration?.extendsFrom(it) }
             testImplementationConfiguration.extendsFrom(implementationConfiguration)
-            testRuntimeOnlyConfiguration.extendsFrom(runtimeOnlyConfiguration)
+            testRuntimeOnlyConfiguration?.extendsFrom(runtimeOnlyConfiguration)
 
             if (mainCompilation is KotlinCompilationToRunnableFiles && testCompilation is KotlinCompilationToRunnableFiles) {
                 val runtimeConfiguration = configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
