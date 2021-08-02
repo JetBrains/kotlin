@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.toKStringFromUtf8
+import llvm.LLVMGetModuleIdentifier
 import llvm.LLVMModuleRef
+import llvm.size_tVar
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.file
@@ -39,4 +45,13 @@ internal class FileLlvmModuleSpecification(
 ) : Spec() {
     override fun containsDeclaration(declaration: IrDeclaration): Boolean =
             declaration.file == irFile
+}
+
+fun stableModuleName(llvmModule: LLVMModuleRef): String = memScoped {
+    val sizeVar = alloc<size_tVar>()
+    LLVMGetModuleIdentifier(llvmModule, sizeVar.ptr)?.toKStringFromUtf8()!!
+}
+
+class SeparateCompilation {
+    fun 
 }

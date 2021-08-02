@@ -349,6 +349,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             llvm = Llvm(this, module)
         }
 
+    val optimizerInput: MutableList<LLVMModuleRef> = mutableListOf()
+    val bitcodeFiles: MutableList<BitcodeFile> = mutableListOf()
+    val objectFiles: MutableList<ObjectFile> = mutableListOf()
+
     lateinit var llvm: Llvm
     val llvmImports: LlvmImports by lazy { Llvm.ImportsImpl(librariesWithDependencies.toSet()) }
     lateinit var bitcodeFileName: String
@@ -438,8 +442,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun shouldProfilePhases() = config.phaseConfig.needProfiling
 
     fun shouldContainDebugInfo() = config.debug
-    fun shouldContainLocationDebugInfo() = shouldContainDebugInfo() || config.lightDebug
-    fun shouldContainAnyDebugInfo() = shouldContainDebugInfo() || shouldContainLocationDebugInfo()
+    fun shouldContainLocationDebugInfo() = false // shouldContainDebugInfo() || config.lightDebug
+    fun shouldContainAnyDebugInfo() = false // shouldContainDebugInfo() || shouldContainLocationDebugInfo()
 
     fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized

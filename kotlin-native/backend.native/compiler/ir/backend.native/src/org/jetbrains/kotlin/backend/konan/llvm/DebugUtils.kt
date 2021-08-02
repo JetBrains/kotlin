@@ -68,7 +68,7 @@ internal class DebugInfo internal constructor(
     val subprograms = mutableMapOf<LLVMValueRef, DISubprogramRef>()
     /* Some functions are inlined on all callsites and body is eliminated by DCE, so there's no LLVM value */
     val inlinedSubprograms = mutableMapOf<IrFunction, DISubprogramRef>()
-    var builder: DIBuilderRef = LLVMCreateDIBuilder(llvmModule)!!
+    val builder: DIBuilderRef = LLVMCreateDIBuilder(llvmModule)!!
     var module: DIModuleRef? = null
     var compilationUnit: DIScopeOpaqueRef? = null
     var objHeaderPointerType: DITypeOpaqueRef? = null
@@ -135,9 +135,8 @@ internal fun String?.toFileAndFolder(context: Context):FileAndFolder {
     return FileAndFolder(file.name, parent)
 }
 
-internal fun generateDebugInfoHeader(context: Context, llvmModule: LLVMModuleRef) {
+internal fun generateDebugInfoHeader(context: Context, llvmModule: LLVMModuleRef, debugInfo: DebugInfo) {
     if (context.shouldContainAnyDebugInfo()) {
-        val debugInfo = moduleToDebugInfo.getValue(llvmModule)
         val path = context.config.outputFile
             .toFileAndFolder(context)
         @Suppress("UNCHECKED_CAST")
@@ -211,10 +210,11 @@ internal fun IrType.diType(debugInfo: DebugInfo, llvmTargetData: LLVMTargetDataR
         }
 
 @Suppress("UNCHECKED_CAST")
-private fun debugInfoBaseType(debugInfo: DebugInfo, targetData:LLVMTargetDataRef, typeName:String, type:LLVMTypeRef, encoding:Int) = DICreateBasicType(
+private fun debugInfoBaseType(debugInfo: DebugInfo, targetData: LLVMTargetDataRef, typeName: String, type: LLVMTypeRef, encoding: Int) = DICreateBasicType(
         debugInfo.builder, typeName,
         LLVMSizeOfTypeInBits(targetData, type),
-        LLVMPreferredAlignmentOfType(targetData, type).toLong(), encoding) as DITypeOpaqueRef
+        LLVMPreferredAlignmentOfType(targetData, type).toLong(), encoding
+) as DITypeOpaqueRef
 
 internal val IrFunction.types:List<IrType>
     get() {

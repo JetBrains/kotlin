@@ -48,12 +48,11 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
 
                         // we don't split path to filename and directory to provide enough level uniquely for dsymutil to avoid symbol
                         // clashing, which happens on linking with libraries produced from intercepting sources.
-                        val filePath = moduleId // TODO()
                         val debugInfo = DebugInfo(context, llvmModule)
                         debugInfo.compilationUnit = if (context.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
                                 builder = debugInfo.builder,
                                 lang = DWARF.language(context.config),
-                                File = filePath,
+                                File = moduleId,
                                 dir = "",
                                 producer = DWARF.producer,
                                 isOptimized = 0,
@@ -67,7 +66,20 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
             context.llvmModule = llvmModule
             moduleToLlvm[llvmModule] = context.llvm
             moduleToSpecification[llvmModule] = RootSpec()
-//            moduleToDebugInfo
+            val path = context.config.outputFile
+                    .toFileAndFolder(context)
+            val debugInfo = DebugInfo(context, llvmModule)
+            debugInfo.compilationUnit = if (context.shouldContainLocationDebugInfo()) DICreateCompilationUnit(
+                    builder = debugInfo.builder,
+                    lang = DWARF.language(context.config),
+                    File = path.path(),
+                    dir = "",
+                    producer = DWARF.producer,
+                    isOptimized = 0,
+                    flags = "",
+                    rv = DWARF.runtimeVersion(context.config)).cast()
+            else null
+            moduleToDebugInfo[llvmModule] = debugInfo
         }
 )
 
@@ -124,9 +136,9 @@ internal val RTTIPhase = makeKonanModuleOpPhase(
 internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(
         name = "GenerateDebugInfoHeader",
         description = "Generate debug info header",
-        op = { context, module ->
-            module.files.filter { it.declarations.isNotEmpty() }.forEach {
-                generateDebugInfoHeader(context, irFileToModule.getValue(it))
+        op = { context, _ ->
+            moduleToDebugInfo.entries.forEach { (llvmModule, debugInfo) ->
+                generateDebugInfoHeader(context, llvmModule, debugInfo)
             }
         }
 )
@@ -355,7 +367,9 @@ internal val finalizeDebugInfoPhase = makeKonanModuleOpPhase(
         description = "Finalize debug info",
         op = { context, _ ->
             if (context.shouldContainAnyDebugInfo()) {
-//                DIFinalize(context.debugInfo.builder)
+                moduleToDebugInfo.values.forEach { debugInfo ->
+                    DIFinalize(debugInfo.builder)
+                }
             }
         }
 )
@@ -390,12 +404,17 @@ internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase(
         }
 )
 
-
-
 internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
-        op = { context, _ -> runLlvmOptimizationPipeline(context) }
+        op = { context, _ ->
+            context.optimizerInput.forEach { module ->
+                runLlvmOptimizationPipeline(context, module)
+                val output = context.config.tempFiles.create(stableModuleName(module), ".bc")
+                LLVMWriteBitcodeToFile(module, output.absolutePath)
+                context.bitcodeFiles += output.absolutePath
+            }
+        }
 )
 
 internal val produceOutputPhase = namedUnitPhase(

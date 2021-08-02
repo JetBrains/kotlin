@@ -111,8 +111,16 @@ private class LlvmPipelineConfiguration(context: Context) {
     }
 }
 
-internal fun runLlvmOptimizationPipeline(context: Context) {
-    val llvmModule = context.llvmModule!!
+private fun insertEntryPoint(context: Context, module: LLVMModuleRef) {
+    val nomain = context.config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
+    if (context.config.produce != CompilerOutputKind.PROGRAM || nomain)
+        return
+    LLVMGetNamedFunction(module, "Konan_main")?.let { entryPoint ->
+        LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
+    }
+}
+
+internal fun runLlvmOptimizationPipeline(context: Context, llvmModule: LLVMModuleRef) {
     val config = LlvmPipelineConfiguration(context)
     context.log {
         """
@@ -153,7 +161,8 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
         if (context.llvmModuleSpecification.isFinal) {
             // Since we are in a "closed world" internalization can be safely used
             // to reduce size of a bitcode with global dce.
-            LLVMAddInternalizePass(modulePasses, 0)
+//            LLVMAddInternalizePass(modulePasses, 0)
+            makeVisibilityHiddenLikeLlvmInternalizePass(llvmModule)
         } else if (context.config.produce == CompilerOutputKind.STATIC_CACHE) {
             // Hidden visibility makes symbols internal when linking the binary.
             // When producing dynamic library, this enables stripping unused symbols from binary with -dead_strip flag,
@@ -179,6 +188,7 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
     if (shouldRunLateBitcodePasses(context)) {
         runLateBitcodePasses(context, llvmModule)
     }
+    insertEntryPoint(context, llvmModule)
 }
 
 internal fun RelocationModeFlags.currentRelocationMode(context: Context): RelocationModeFlags.Mode =

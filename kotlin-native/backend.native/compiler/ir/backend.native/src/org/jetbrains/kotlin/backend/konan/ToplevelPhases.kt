@@ -173,7 +173,7 @@ internal val serializerPhase = konanUnitPhase(
 )
 
 internal val objectFilesPhase = konanUnitPhase(
-        op = { compilerOutput = BitcodeCompiler(this).makeObjectFiles(bitcodeFileName) },
+        op = { compilerOutput = BitcodeCompiler(this).makeObjectFiles(bitcodeFiles) },
         name = "ObjectFiles",
         description = "Bitcode to object file"
 )

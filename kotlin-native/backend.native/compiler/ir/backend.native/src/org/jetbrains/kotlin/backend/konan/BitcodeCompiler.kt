@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.konan.exec.Command
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
 
 typealias BitcodeFile = String
@@ -48,7 +49,7 @@ internal class BitcodeCompiler(val context: Context) {
     }
 
     private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
-        val objectFile = temporary("result", ".o")
+        val objectFile = temporary(File(file).name, ".o")
 
         val targetTriple = if (configurables is AppleConfigurables) {
             platform.targetTriple.withOSVersion(configurables.osVersionMin)
@@ -84,9 +85,11 @@ internal class BitcodeCompiler(val context: Context) {
         RelocationModeFlags.Mode.DEFAULT -> emptyList()
     }
 
-    fun makeObjectFiles(bitcodeFile: BitcodeFile): List<ObjectFile> =
-            listOf(when (val configurables = platform.configurables) {
-                is ClangFlags -> clang(configurables, bitcodeFile)
+    fun makeObjectFiles(bitcodeFiles: List<BitcodeFile>): List<ObjectFile> =
+            when (val configurables = platform.configurables) {
+                is ClangFlags -> bitcodeFiles.map {
+                    clang(configurables, it)
+                }
                 else -> error("Unsupported configurables kind: ${configurables::class.simpleName}!")
-            })
+            }
 }

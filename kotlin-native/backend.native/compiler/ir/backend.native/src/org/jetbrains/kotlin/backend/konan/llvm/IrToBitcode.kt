@@ -2041,7 +2041,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     private fun debugFieldDeclaration(expression: IrField) {
         val scope = currentCodeContext.classScope() as? ClassScope ?: return
-        if (!scope.isExported || !context.shouldContainDebugInfo()) return
+        if (!scope.isExported || true) return // !context.shouldContainDebugInfo()
         val irFile = (currentCodeContext.fileScope() as FileScope).file
         val sizeInBits = expression.type.size(codegen.debugInfo)
         scope.offsetInBits += sizeInBits
