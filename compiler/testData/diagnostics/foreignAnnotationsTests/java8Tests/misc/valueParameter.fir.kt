@@ -37,14 +37,14 @@ fun <R> main(a: ValueParameter<R>) {
     a.foo1(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
     a.foo1(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
 
-    a.foo2(getNotNullStringAndKNullable())
+    a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
     a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
     a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
-    a.foo2(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
+    a.foo2(getNullableStringAndNotNullK())
 
-    a.foo3(getNotNullStringAndKNullable())
+    a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
     a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
-    a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
+    a.foo3(getNotNullStringAndNotNullK())
     a.foo3(<!ARGUMENT_TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
 
     a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNotNullString()<!>)

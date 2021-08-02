@@ -32,23 +32,23 @@ fun <K: Any> takeArrayOfNotNullK(x: Array<K>) {}
 fun <K> takeArrayOfNullableK(x: Array<K?>) {}
 
 fun <R> main(a: ReturnType<R>) {
-    val x1 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnType.A<kotlin.String?, R..R?!>..ReturnType.A<kotlin.String?, R..R?!>?!")!>a.foo1()<!>
+    val x1 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnType.A<kotlin.String?, R?>..ReturnType.A<kotlin.String?, R?>?!")!>a.foo1()<!>
     takeNotNullStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x1<!>)
     takeNullableStringAndKNullable(x1)
     takeNotNullStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x1<!>)
     takeNullableStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x1<!>)
-    takeNotNullString(a.foo41.foo411)
+    takeNotNullString(<!ARGUMENT_TYPE_MISMATCH!>a.foo41.foo411<!>)
 
-    val x2 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnType.A<kotlin.String, R..R?!>..ReturnType.A<kotlin.String, R..R?!>?!")!>a.foo2()<!>
-    takeNotNullStringAndKNullable(x2)
+    val x2 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnType.A<kotlin.String?, R!!>..ReturnType.A<kotlin.String?, R!!>?!")!>a.foo2()<!>
+    takeNotNullStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)
     takeNullableStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)
     takeNotNullStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)
-    takeNullableStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)
+    takeNullableStringAndNotNullK(x2)
 
-    val x3 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnType.A<kotlin.String, R..R?!>..ReturnType.A<kotlin.String, R..R?!>?!")!>a.foo3<!>
-    takeNotNullStringAndKNullable(x3)
+    val x3 = <!DEBUG_INFO_EXPRESSION_TYPE("ReturnType.A<kotlin.String, R!!>..ReturnType.A<kotlin.String, R!!>?!")!>a.foo3<!>
+    takeNotNullStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x3<!>)
     takeNullableStringAndKNullable(<!ARGUMENT_TYPE_MISMATCH!>x3<!>)
-    takeNotNullStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x3<!>)
+    takeNotNullStringAndNotNullK(x3)
     takeNullableStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x3<!>)
 
     val x4 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<R..R?!>..kotlin.Array<out R..R?!>")!>a.foo4<!>

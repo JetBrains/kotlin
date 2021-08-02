@@ -59,30 +59,30 @@ fun test1() {
 }
 
 fun test2() {
-  val <destruct>: @FlexibleNullability Q<@EnhancedNullability String, @FlexibleNullability String?>? = notNullComponents()
+  val <destruct>: @FlexibleNullability Q<@EnhancedNullability String, @EnhancedNullability String>? = notNullComponents()
   val x: String = <destruct>.component1() /*!! String */
-  val y: @FlexibleNullability String? = <destruct>.component2()
-  use(x = x, y = y /*!! @FlexibleNullability String */)
+  val y: String = <destruct>.component2() /*!! String */
+  use(x = x, y = y)
 }
 
 fun test2Desugared() {
-  val tmp: @FlexibleNullability Q<@EnhancedNullability String, @FlexibleNullability String?>? = notNullComponents()
+  val tmp: @FlexibleNullability Q<@EnhancedNullability String, @EnhancedNullability String>? = notNullComponents()
   val x: String = tmp.component1() /*!! String */
-  val y: @FlexibleNullability String? = tmp.component2()
-  use(x = x, y = y /*!! @FlexibleNullability String */)
+  val y: String = tmp.component2() /*!! String */
+  use(x = x, y = y)
 }
 
 fun test3() {
-  val <destruct>: Q<@EnhancedNullability String, @FlexibleNullability String?> = notNullQAndComponents() /*!! Q<@EnhancedNullability String, @FlexibleNullability String?> */
+  val <destruct>: Q<@EnhancedNullability String, @EnhancedNullability String> = notNullQAndComponents() /*!! Q<@EnhancedNullability String, @EnhancedNullability String> */
   val x: String = <destruct>.component1() /*!! String */
-  val y: @FlexibleNullability String? = <destruct>.component2()
-  use(x = x, y = y /*!! @FlexibleNullability String */)
+  val y: String = <destruct>.component2() /*!! String */
+  use(x = x, y = y)
 }
 
 fun test4() {
-  val <destruct>: IndexedValue<@FlexibleNullability P?> = listOfNotNull() /*!! @FlexibleNullability List<@FlexibleNullability P?> */.withIndex<@FlexibleNullability P?>().first<IndexedValue<@FlexibleNullability P?>>()
+  val <destruct>: IndexedValue<@EnhancedNullability P> = listOfNotNull() /*!! @FlexibleNullability List<@EnhancedNullability P> */.withIndex<@EnhancedNullability P>().first<IndexedValue<@EnhancedNullability P>>()
   val x: Int = <destruct>.component1()
-  val y: @FlexibleNullability P? = <destruct>.component2()
-  use(x = x, y = y /*!! @FlexibleNullability P */)
+  val y: P = <destruct>.component2() /*!! P */
+  use(x = x, y = y)
 }
 
