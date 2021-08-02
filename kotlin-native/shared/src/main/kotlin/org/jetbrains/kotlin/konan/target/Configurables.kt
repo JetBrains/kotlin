@@ -113,6 +113,10 @@ interface MingwConfigurables : Configurables, ClangFlags {
 
     val windowsKitParts get() = hostString("windowsKitParts")!!
     val msvcParts get() = hostString("msvcParts")!!
+
+    val crtFilesLocation get() = targetString("crtFilesLocation")!!
+    val absoluteCrtFilesLocation get() = absolute(crtFilesLocation)
+    val defaultLinkDirectories get() = targetList("defaultLinkDirectories")
 }
 
 interface GccConfigurables : Configurables, ClangFlags {

@@ -423,9 +423,9 @@ class MingwLinker(targetProperties: MingwConfigurables)
     : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
 
     private val ar = "$absoluteTargetToolchain/bin/ar"
-    private val linker = "$absoluteLlvmHome/bin/clang++"
+    private val linker = absoluteLldLocation
 
-    override val useCompilerDriverAsLinker: Boolean get() = true
+    override val useCompilerDriverAsLinker: Boolean get() = false
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isWindowsStaticLib || it.isUnixStaticLib }
 
@@ -455,14 +455,29 @@ class MingwLinker(targetProperties: MingwConfigurables)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
 
+        val mode = if (target.architecture == Architecture.X64) {
+            "i386pep"
+        } else {
+            "i386pe"
+        }
+
+        val crt2 = if (dynamic) "$absoluteCrtFilesLocation/dllcrt2.o" else "$absoluteCrtFilesLocation/crt2.o"
+        val crtbegin = "$absoluteCrtFilesLocation/crtbegin.o"
+        val crtend = "$absoluteCrtFilesLocation/crtend.o"
+
+        val defaultLinkDirectories = defaultLinkDirectories.map { "-L$absoluteTargetSysRoot/$it" }
+
         fun Command.constructLinkerArguments(
                 additionalArguments: List<String> = listOf(),
                 skipDefaultArguments: List<String> = listOf()
         ): Command = apply {
-            +listOf("--sysroot", absoluteTargetSysRoot)
-            +listOf("-target", targetTriple.toString())
+            +listOf("--sysroot=$absoluteTargetSysRoot")
+            +listOf("-m", mode)
+            if (dynamic) +listOf("-e", "DllMainCRTStartup", "--enable-auto-image-base")
             +listOf("-o", executable)
+            +listOf(crt2, crtbegin)
             +objectFiles
+            +defaultLinkDirectories
             // --gc-sections flag may affect profiling.
             // See https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#drawbacks-and-limitations.
             // TODO: switching to lld may help.
@@ -475,14 +490,10 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +linkerKonanFlags.filterNot { it in skipDefaultArguments }
             if (mimallocEnabled) +mimallocLinkerDependencies
             +additionalArguments
+            +listOf(crtend)
         }
 
-        return listOf(when {
-            HostManager.hostIsMingw -> Command(linker)
-            else -> Command("wine64", "$linker.exe")
-        }.constructLinkerArguments(
-                additionalArguments = listOf("-fuse-ld=$absoluteLldLocation")
-        ))
+        return listOf(Command(linker).constructLinkerArguments())
     }
 }
 
