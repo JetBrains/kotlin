@@ -19,3 +19,13 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+tasks {
+    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+        kotlinOptions {
+            // Workaround for KT-48445.
+            languageVersion = "1.5"
+            apiVersion = "1.5"
+        }
+    }
+}

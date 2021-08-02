@@ -63,7 +63,7 @@ val kotlinVersion by extra(
         } ?: buildNumber
 )
 
-val kotlinLanguageVersion by extra("1.5")
+val kotlinLanguageVersion by extra("1.6")
 
 allprojects {
     group = "org.jetbrains.kotlin"

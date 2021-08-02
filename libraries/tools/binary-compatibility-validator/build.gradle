@@ -6,7 +6,7 @@ configurations {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlinx:binary-compatibility-validator:0.5.0")
+    compile("org.jetbrains.kotlinx:binary-compatibility-validator:0.7.1")
 
     testCompile project(':kotlin-test:kotlin-test-junit')
 
