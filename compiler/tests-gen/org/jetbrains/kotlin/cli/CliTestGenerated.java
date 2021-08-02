@@ -756,6 +756,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/sanitized-name.clash.args");
         }
 
+        @TestMetadata("selfUpperBoundInference.args")
+        public void testSelfUpperBoundInference() throws Exception {
+            runTest("compiler/testData/cli/jvm/selfUpperBoundInference.args");
+        }
+
         @TestMetadata("signatureClash.args")
         public void testSignatureClash() throws Exception {
             runTest("compiler/testData/cli/jvm/signatureClash.args");
