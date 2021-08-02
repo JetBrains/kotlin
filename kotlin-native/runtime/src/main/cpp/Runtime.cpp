@@ -436,12 +436,16 @@ void CallInitGlobalPossiblyLock(int volatile* state, void (*init)(bool)) {
     }
     if (compareAndSwap(state, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
         // actual initialization
+#if KONAN_NO_EXCEPTIONS
+        init(threadId == mainThreadId);
+#else
         try {
             init(threadId == mainThreadId);
         } catch (...) {
             *state = FILE_FAILED_TO_INITIALIZE;
             throw;
         }
+#endif
         *state = FILE_INITIALIZED;
     } else {
         do {
@@ -456,12 +460,16 @@ void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init
     if (*localState == FILE_FAILED_TO_INITIALIZE || (globalState != nullptr && *globalState == FILE_FAILED_TO_INITIALIZE))
         ThrowFileFailedToInitializeException();
     *localState = FILE_INITIALIZED;
+#if KONAN_NO_EXCEPTIONS
+    init(konan::currentThreadId() == mainThreadId);
+#else
     try {
         init(konan::currentThreadId() == mainThreadId);
     } catch(...) {
         *localState = FILE_FAILED_TO_INITIALIZE;
         throw;
     }
+#endif
 }
 
 }  // extern "C"
