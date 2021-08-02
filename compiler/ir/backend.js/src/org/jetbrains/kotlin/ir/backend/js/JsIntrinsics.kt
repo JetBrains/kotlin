@@ -163,9 +163,12 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         get() = context.ir.symbols.coroutineContextGetter
 
     val jsGetContinuation = getInternalFunction("getContinuation")
-    val jsInvokeSuspendFunction = getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendFunction")
-    val jsInvokeSuspendFunctionWithReceiver = getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendFunctionWithReceiver")
-    val jsInvokeSuspendFunctionWithReceiverAndParam = getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendFunctionWithReceiverAndParam")
+    val jsInvokeSuspendSuperType =
+        getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperType")
+    val jsInvokeSuspendSuperTypeWithReceiver =
+        getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiver")
+    val jsInvokeSuspendSuperTypeWithReceiverAndParam =
+        getInternalWithoutPackage("kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiverAndParam")
     val jsGetKClass = getInternalWithoutPackage("getKClass")
     val jsGetKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
 

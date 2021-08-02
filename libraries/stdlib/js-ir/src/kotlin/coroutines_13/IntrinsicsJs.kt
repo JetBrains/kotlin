@@ -10,23 +10,41 @@ package kotlin.coroutines.intrinsics
 import kotlin.coroutines.*
 import kotlin.internal.InlineOnly
 
-@SinceKotlin("1.3")
-public fun <T> (suspend () -> T).invokeSuspendFunction(
+/**
+ * Invoke 'invoke' method of suspend super type
+ * Because callable references translated with local classes,
+ * necessary to call it in special way, not in synamic way
+ */
+@Suppress("UNUSED_PARAMETER", "unused")
+@SinceKotlin("1.5")
+public fun <T> (suspend () -> T).invokeSuspendSuperType(
     completion: Continuation<T>
 ): Any? {
     throw NotImplementedError("It is intrinsic method")
 }
 
-@SinceKotlin("1.3")
-public fun <R, T> (suspend R.() -> T).invokeSuspendFunctionWithReceiver(
+/**
+ * Invoke 'invoke' method of suspend super type with receiver
+ * Because callable references translated with local classes,
+ * necessary to call it in special way, not in synamic way
+ */
+@Suppress("UNUSED_PARAMETER", "unused")
+@SinceKotlin("1.5")
+public fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
     receiver: R,
     completion: Continuation<T>
 ): Any? {
     throw NotImplementedError("It is intrinsic method")
 }
 
-@SinceKotlin("1.3")
-public fun <R, P, T> (suspend R.(P) -> T).invokeSuspendFunctionWithReceiverAndParam(
+/**
+ * Invoke 'invoke' method of suspend super type with receiver and param
+ * Because callable references translated with local classes,
+ * necessary to call it in special way, not in synamic way
+ */
+@Suppress("UNUSED_PARAMETER", "unused")
+@SinceKotlin("1.5")
+public fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAndParam(
     receiver: R,
     param: P,
     completion: Continuation<T>
@@ -46,14 +64,14 @@ public fun <R, P, T> (suspend R.(P) -> T).invokeSuspendFunctionWithReceiverAndPa
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of a suspended
  * coroutine using a reference to the suspending function.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.5")
 @InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(completion)
-    else ::invoke.invokeSuspendFunction(completion)
+    else ::invoke.invokeSuspendSuperType(completion)
 }
 
 /**
@@ -68,7 +86,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of a suspended
  * coroutine using a reference to the suspending function.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.5")
 @InlineOnly
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
@@ -76,7 +94,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, completion)
-    else ::invoke.invokeSuspendFunctionWithReceiver(receiver, completion)
+    else ::invoke.invokeSuspendSuperTypeWithReceiver(receiver, completion)
 }
 
 @InlineOnly
@@ -87,7 +105,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, param, completion)
-    else ::invoke.invokeSuspendFunctionWithReceiverAndParam(receiver, param, completion)
+    else ::invoke.invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, completion)
 }
 
 /**
@@ -106,14 +124,14 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
  * Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.5")
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
     createCoroutineFromSuspendFunction(completion) {
         val a = this.asDynamic()
         if (jsTypeOf(a) == "function") a(completion)
-        else ::invoke.invokeSuspendFunction(completion)
+        else ::invoke.invokeSuspendSuperType(completion)
     }
 
 /**
@@ -132,7 +150,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
  * Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.5")
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
@@ -140,13 +158,13 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     createCoroutineFromSuspendFunction(completion) {
         val a = this.asDynamic()
         if (jsTypeOf(a) == "function") a(receiver, completion)
-        else ::invoke.invokeSuspendFunctionWithReceiver(receiver, completion)
+        else ::invoke.invokeSuspendSuperTypeWithReceiver(receiver, completion)
     }
 
 /**
  * Intercepts this continuation with [ContinuationInterceptor].
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.5")
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
     (this as? CoroutineImpl)?.intercepted() ?: this
 

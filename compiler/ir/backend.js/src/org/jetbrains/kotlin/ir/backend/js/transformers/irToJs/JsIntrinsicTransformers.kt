@@ -13,15 +13,15 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getClassRef
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
+import java.lang.IllegalArgumentException
 
 typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
 
@@ -233,16 +233,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 // Because it is intrinsic, we know everything about this function
                 // There is callable reference as extension receiver
                 val invokeFun = (call.extensionReceiver as IrCall)
-                    // Single parameter is field
-                    .getValueArgument(0)
-                    .let { it as IrGetField }
-                    .symbol
-                    .owner
-                    // It should be SuspendFunctionN
+                    .getValueArgument(0)!!
                     .type
-                    .classifierOrFail
-                    .owner
-                    .let { it as IrClass }
+                    .getClass()!!
                     .declarations
                     .filterIsInstance<IrSimpleFunction>()
                     .single { it.name.asString() == "invoke" }
@@ -280,9 +273,9 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsInvocation(jsExtensionReceiver, args)
             }
 
-            add(intrinsics.jsInvokeSuspendFunction, suspendInvokeTransform)
-            add(intrinsics.jsInvokeSuspendFunctionWithReceiver, suspendInvokeTransform)
-            add(intrinsics.jsInvokeSuspendFunctionWithReceiverAndParam, suspendInvokeTransform)
+            add(intrinsics.jsInvokeSuspendSuperType, suspendInvokeTransform)
+            add(intrinsics.jsInvokeSuspendSuperTypeWithReceiver, suspendInvokeTransform)
+            add(intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam, suspendInvokeTransform)
         }
     }
 
