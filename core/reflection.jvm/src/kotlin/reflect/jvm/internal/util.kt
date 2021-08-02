@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import java.lang.reflect.Type
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
-import kotlin.jvm.internal.RepeatableContainer
 import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
@@ -131,7 +130,9 @@ private fun List<Annotation>.unwrapRepeatableAnnotations(): List<Annotation> =
         flatMap {
             val klass = it.annotationClass.java
             if (klass.simpleName == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME &&
-                klass.getAnnotation(RepeatableContainer::class.java) != null
+                // Temporary fix for JPS build.
+                klass.annotations.any { a -> a.annotationClass.java.name == "kotlin.jvm.internal.RepeatableContainer" }
+            // klass.getAnnotation(RepeatableContainer::class.java) != null
             )
                 @Suppress("UNCHECKED_CAST")
                 (klass.getDeclaredMethod("value").invoke(it) as Array<out Annotation>).asList()
