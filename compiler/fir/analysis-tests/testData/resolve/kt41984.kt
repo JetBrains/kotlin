@@ -16,8 +16,8 @@ public abstract class A<T, V> {
 
 class Inv<T>
 
-open class B<V> : A<Any, V>() {
-    override fun take(value: V): String {
+open <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class B<!><V> : A<Any, V>() {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun take(value: V): String {
         return ""
     }
 
@@ -25,7 +25,7 @@ open class B<V> : A<Any, V>() {
 }
 
 fun test_1(b: B<Int>, x: Int, inv: Inv<Int>) {
-    b.take(x)
-    b.take(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>take<!>(x)
+    b.<!NONE_APPLICABLE!>take<!>(null)
     b.takeInv(inv)
 }
