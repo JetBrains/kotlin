@@ -58,5 +58,8 @@ class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
             File(dir, "$prefix$suffix").also {
                 if (deleteOnExit) it.deleteOnExit()
             }
+
+    fun lookup(name: String): File? =
+            if (File(dir, name).exists) File(dir, name) else null
 }
 

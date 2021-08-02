@@ -12,6 +12,7 @@ import kotlinx.cinterop.toKStringFromUtf8
 import llvm.LLVMGetModuleIdentifier
 import llvm.LLVMModuleRef
 import llvm.size_tVar
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.file
@@ -29,11 +30,12 @@ internal val irFileToCodegenVisitor = mutableMapOf<IrFile, CodeGeneratorVisitor>
 
 internal fun programBitcode(): List<LLVMModuleRef> = irFileToModule.values.toList()
 
-
+// TODO: Class, that accepts rule.
 sealed class Spec {
     abstract fun containsDeclaration(declaration: IrDeclaration): Boolean
 }
 
+// TODO: Rule: NOT in IrFiles
 internal class RootSpec : Spec() {
     override fun containsDeclaration(declaration: IrDeclaration): Boolean {
         return false
@@ -52,6 +54,11 @@ fun stableModuleName(llvmModule: LLVMModuleRef): String = memScoped {
     LLVMGetModuleIdentifier(llvmModule, sizeVar.ptr)?.toKStringFromUtf8()!!
 }
 
-class SeparateCompilation {
-    fun 
+internal class SeparateCompilation(val context: Context) {
+    fun shouldRecompile(llvmModule: LLVMModuleRef): Boolean {
+        val moduleName = stableModuleName(llvmModule)
+        val cachedModule = context.config.tempFiles.lookup("$moduleName.bc")
+                ?: return false
+        return true
+    }
 }

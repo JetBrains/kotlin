@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.*
+import java.util.stream.Collectors
 
 typealias BitcodeFile = String
 typealias ObjectFile = String
@@ -87,9 +88,9 @@ internal class BitcodeCompiler(val context: Context) {
 
     fun makeObjectFiles(bitcodeFiles: List<BitcodeFile>): List<ObjectFile> =
             when (val configurables = platform.configurables) {
-                is ClangFlags -> bitcodeFiles.map {
+                is ClangFlags -> bitcodeFiles.parallelStream().map {
                     clang(configurables, it)
-                }
+                }.collect(Collectors.toList())
                 else -> error("Unsupported configurables kind: ${configurables::class.simpleName}!")
             }
 }
