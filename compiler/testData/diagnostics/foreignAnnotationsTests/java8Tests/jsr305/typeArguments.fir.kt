@@ -77,7 +77,7 @@ import test.L
 
 fun main(a: test.A, l: L<Map<String, Int>, Int?>, l1: L<Map<String, Int>, Int>) {
     a.foo(l)
-    a.foo(l as L<Map<String, Int>, Int>)
+    a.foo(<!ARGUMENT_TYPE_MISMATCH!>l as L<Map<String, Int>, Int><!>)
     a.foo(l as L<Map<String, Int?>, Int?>)
 
     a.bar(l1)

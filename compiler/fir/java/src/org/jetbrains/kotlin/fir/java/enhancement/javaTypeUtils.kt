@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -40,7 +38,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.extractRadix
 
 internal class IndexedJavaTypeQualifiers(private val data: Array<JavaTypeQualifiers>) {
@@ -55,42 +52,43 @@ internal fun FirJavaTypeRef.enhance(
     session: FirSession,
     qualifiers: IndexedJavaTypeQualifiers,
     typeWithoutEnhancement: ConeKotlinType,
-): FirResolvedTypeRef {
-    return typeWithoutEnhancement.enhancePossiblyFlexible(session, annotations, qualifiers, 0)
-}
-
-// The index in the lambda is the position of the type component:
-// Example: for `A<B, C<D, E>>`, indices go as follows: `0 - A<...>, 1 - B, 2 - C<D, E>, 3 - D, 4 - E`,
-// which corresponds to the left-to-right breadth-first walk of the tree representation of the type.
-// For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
-private fun ConeKotlinType.enhancePossiblyFlexible(
-    session: FirSession,
-    annotations: List<FirAnnotationCall>,
-    qualifiers: IndexedJavaTypeQualifiers,
-    index: Int
-): FirResolvedTypeRef {
-    val enhanced = enhanceConeKotlinType(session, qualifiers, index)
-
-    return buildResolvedTypeRef {
-        this.type = enhanced
-        this.annotations += annotations
+): FirResolvedTypeRef =
+    buildResolvedTypeRef {
+        val subtreeSizes = mutableListOf<Int>().apply { typeWithoutEnhancement.computeSubtreeSizes(this) }
+        type = typeWithoutEnhancement.enhanceConeKotlinType(session, qualifiers, 0, subtreeSizes)
+        annotations += this@enhance.annotations
     }
+
+// The index in the lambda is the position of the type component in a depth-first walk of the tree.
+// Example: A<B<C, D>, E<F>> - 0<1<2, 3>, 4<5>>. For flexible types, the number of nodes in the lower
+// and upper bounds should be the same, and their indices match: (A<B>..C<D>) -> (0<1>..0<1>).
+// This function precomputes the size of each subtree so that we can quickly skip to the next
+// type argument; e.g. subtreeSizes[1] will give 3 for B<C, D>, indicating that E<F> is at 1 + 3 = 4.
+private fun ConeKotlinType.computeSubtreeSizes(result: MutableList<Int>): Int {
+    val index = result.size
+    result.add(0) // reserve space at index
+    result[index] = 1 + typeArguments.sumOf {
+        // Star projections take up one (empty) entry.
+        it.type?.computeSubtreeSizes(result) ?: 1.also { result.add(1) }
+    }
+    return result[index]
 }
 
 private fun ConeKotlinType.enhanceConeKotlinType(
     session: FirSession,
     qualifiers: IndexedJavaTypeQualifiers,
-    index: Int
+    index: Int,
+    subtreeSizes: List<Int>
 ): ConeKotlinType {
     return when (this) {
         is ConeFlexibleType -> {
             val isRawType = this is ConeRawType
 
             val lowerResult = lowerBound.enhanceInflexibleType(
-                session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index, isRawType
+                session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index, subtreeSizes, isRawType
             )
             val upperResult = upperBound.enhanceInflexibleType(
-                session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index, isRawType
+                session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index, subtreeSizes, isRawType
             )
 
             when {
@@ -102,14 +100,10 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             }
         }
         is ConeSimpleKotlinType -> enhanceInflexibleType(
-            session, TypeComponentPosition.INFLEXIBLE, qualifiers, index, isBoundOfRawType = false
+            session, TypeComponentPosition.INFLEXIBLE, qualifiers, index, subtreeSizes, isBoundOfRawType = false
         )
         else -> this
     }
-}
-
-private fun ConeKotlinType.subtreeSize(): Int {
-    return 1 + typeArguments.sumOf { ((it as? ConeKotlinType)?.subtreeSize() ?: 0) + 1 }
 }
 
 private fun coneFlexibleOrSimpleType(
@@ -163,6 +157,7 @@ private fun ConeKotlinType.enhanceInflexibleType(
     position: TypeComponentPosition,
     qualifiers: IndexedJavaTypeQualifiers,
     index: Int,
+    subtreeSizes: List<Int>,
     @Suppress("UNUSED_PARAMETER") isBoundOfRawType: Boolean,
 ): ConeKotlinType {
     require(this !is ConeFlexibleType) { "$this should not be flexible" }
@@ -185,9 +180,8 @@ private fun ConeKotlinType.enhanceInflexibleType(
             arg
         } else {
             require(arg is ConeKotlinType) { "Should be invariant type: $arg" }
-            globalArgIndex += arg.subtreeSize()
-
-            val enhanced = arg.enhanceConeKotlinType(session, qualifiers, globalArgIndex)
+            val enhanced = arg.enhanceConeKotlinType(session, qualifiers, globalArgIndex, subtreeSizes)
+            globalArgIndex += subtreeSizes[globalArgIndex]
             wereChangesInArgs = wereChangesInArgs || enhanced !== arg
             enhanced.type
         }
@@ -260,35 +254,6 @@ internal data class TypeAndDefaultQualifiers(
     val type: FirTypeRef?, // null denotes '*' here
     val defaultQualifiers: JavaDefaultQualifiers?
 )
-
-internal fun FirTypeRef.typeArguments(): List<FirTypeProjection> = when (this) {
-    is FirUserTypeRef -> qualifier.lastOrNull()?.typeArgumentList?.typeArguments.orEmpty()
-    is FirResolvedTypeRef -> type.typeArguments.map {
-        when (it) {
-            is ConeStarProjection -> buildStarProjection {}
-            else -> {
-                val kind = it.kind
-                val type = when (it) {
-                    is ConeKotlinTypeProjection -> it.type
-                    is ConeKotlinType -> it
-                    else -> error("Should not be here")
-                }
-                buildTypeProjectionWithVariance {
-                    variance = when (kind) {
-                        ProjectionKind.IN -> Variance.IN_VARIANCE
-                        ProjectionKind.OUT -> Variance.OUT_VARIANCE
-                        ProjectionKind.INVARIANT -> Variance.INVARIANT
-                        else -> error("Should not be here")
-                    }
-                    typeRef = buildResolvedTypeRef {
-                        this.type = type
-                    }
-                }
-            }
-        }
-    }
-    else -> emptyList()
-}
 
 internal fun JavaType.typeArguments(): List<JavaType?> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
 
