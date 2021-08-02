@@ -76,8 +76,13 @@ object JUnit5Assertions : AssertionsService() {
     }
 
     private object FileComparisonFailureFirst : Comparator<Throwable> {
-        override fun compare(o1: Throwable?, o2: Throwable?): Int {
-            return if (o1 is FileComparisonFailure) -1 else 0
+        override fun compare(o1: Throwable, o2: Throwable): Int {
+            return when {
+                o1 is FileComparisonFailure && o2 is FileComparisonFailure -> 0
+                o1 is FileComparisonFailure -> -1
+                o2 is FileComparisonFailure -> 1
+                else -> 0
+            }
         }
     }
 }
