@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -51,6 +52,22 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         checkOverrideCannotBeStatic(declaration, context, reporter, annotatedParts)
         checkStaticNotInProperObject(context, reporter, annotatedParts)
         checkStaticNonPublic(declaration, context, reporter, annotatedParts)
+        checkStaticOnConstOrJvmField(context, reporter, annotatedParts)
+    }
+
+    private fun checkStaticOnConstOrJvmField(
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        annotatedParts: List<FirAnnotatedDeclaration>,
+    ) {
+        annotatedParts.forEach {
+            if (
+                it is FirProperty && it.isConst ||
+                it.hasAnnotationNamedAs(StandardClassIds.JvmField)
+            ) {
+                reporter.reportOn(it.source, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD, context)
+            }
+        }
     }
 
     private fun checkStaticNonPublic(
