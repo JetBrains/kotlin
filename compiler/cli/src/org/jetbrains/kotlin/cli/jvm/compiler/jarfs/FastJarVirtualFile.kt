@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import com.intellij.openapi.util.Couple
 import com.intellij.openapi.util.io.BufferExposingByteArrayInputStream
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -17,7 +16,8 @@ internal class FastJarVirtualFile(
     private val myHandler: FastJarHandler,
     private val myName: CharSequence,
     private val myLength: Int,
-    private val myParent: FastJarVirtualFile?
+    private val myParent: FastJarVirtualFile?,
+    private val entryDescription: ZipEntryDescription?,
 ) : VirtualFile() {
 
     private var myChildrenArray = EMPTY_ARRAY
@@ -85,10 +85,8 @@ internal class FastJarVirtualFile(
 
     @Throws(IOException::class)
     override fun contentsToByteArray(): ByteArray {
-        val pair: Couple<String> = FastJarFileSystem.splitPath(
-            path
-        )
-        return myHandler.contentsToByteArray(pair.second)
+        if (entryDescription == null) return EMPTY_BYTE_ARRAY
+        return myHandler.contentsToByteArray(entryDescription)
     }
 
     override fun getTimeStamp(): Long = 0
@@ -106,3 +104,5 @@ internal class FastJarVirtualFile(
         return 0
     }
 }
+
+private val EMPTY_BYTE_ARRAY = ByteArray(0)
