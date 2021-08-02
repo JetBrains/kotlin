@@ -3289,6 +3289,24 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("noFakeVariableForInlineOnlyFunFromStdlib.kt")
+        public void testNoFakeVariableForInlineOnlyFunFromStdlib() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/noFakeVariableForInlineOnlyFunFromStdlib.kt");
+        }
+
+        @Test
+        @TestMetadata("noFakeVariableForInlineOnlyFunMap.kt")
+        public void testNoFakeVariableForInlineOnlyFunMap() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/noFakeVariableForInlineOnlyFunMap.kt");
+        }
+
+        @Test
+        @TestMetadata("noFakeVariableForInlineOnlyFunWithLambda.kt")
+        public void testNoFakeVariableForInlineOnlyFunWithLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/noFakeVariableForInlineOnlyFunWithLambda.kt");
+        }
+
+        @Test
         @TestMetadata("noSynAccessor.kt")
         public void testNoSynAccessor() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/noSynAccessor.kt");

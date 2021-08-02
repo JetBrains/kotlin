@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
 @BuilderInference
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
-// 1 LINENUMBER 9 L19
-// 1 LOCALVARIABLE a I L[0-9]+ L18
+// 1 LINENUMBER 9 L18
+// 1 LOCALVARIABLE a I L[0-9]+ L17
 
 // IGNORE_BACKEND_FIR: JVM_IR

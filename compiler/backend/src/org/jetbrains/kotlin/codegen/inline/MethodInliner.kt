@@ -13,12 +13,8 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspen
 import org.jetbrains.kotlin.codegen.inline.coroutines.surroundInvokesWithSuspendMarkersIfNeeded
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.*
-import org.jetbrains.kotlin.codegen.optimization.fixStack.FastStackAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -747,6 +743,8 @@ class MethodInliner(
             ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
         }
 
+        removeFakeVariablesInitializationIfPresent(node)
+
         val frames = FastStackAnalyzer("<fake>", node, FixStackInterpreter()).analyze()
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
@@ -767,6 +765,73 @@ class MethodInliner(
         }
 
         localReturnsNormalizer.transform(node)
+    }
+
+    private fun removeFakeVariablesInitializationIfPresent(node: MethodNode) {
+        // Before 1.6, we generated fake variable initialization instructions
+        //      ICONST_0
+        //      ISTORE x
+        // for all inline functions. Original intent was to mark inline function body for the debugger with corresponding LVT entry.
+        // However, for @InlineOnly functions corresponding LVT entries were not copied (assuming that nobody is actually debugging
+        // @InlineOnly functions).
+        // Since 1.6, we no longer generate fake variables for @InlineOnly functions
+        // Here we erase fake variable initialization for @InlineOnly functions inlined into existing bytecode (e.g., inline function
+        // inside third-party library).
+        // We consider a sequence of instructions 'ICONST_0; ISTORE x' a fake variable initialization if the corresponding variable 'x'
+        // is not used in the bytecode (see below).
+
+        val insnArray = node.instructions.toArray()
+
+        // Very conservative variable usage check.
+        // Here we look at integer variables only (this includes integral primitive types: byte, char, short, boolean).
+        // Variable is considered "used" if:
+        //  - it's loaded with ILOAD instruction
+        //  - it's incremented with IINC instruction
+        //  - there's a local variable table entry for this variable
+        val usedIntegerVar = BooleanArray(node.maxLocals)
+        for (insn in insnArray) {
+            if (insn.type == AbstractInsnNode.VAR_INSN && insn.opcode == Opcodes.ILOAD) {
+                usedIntegerVar[(insn as VarInsnNode).`var`] = true
+            } else if (insn.type == AbstractInsnNode.IINC_INSN) {
+                usedIntegerVar[(insn as IincInsnNode).`var`] = true
+            }
+        }
+        for (localVariable in node.localVariables) {
+            val d0 = localVariable.desc[0]
+            // byte || char || short || int || boolean
+            if (d0 == 'B' || d0 == 'C' || d0 == 'S' || d0 == 'I' || d0 == 'Z') {
+                usedIntegerVar[localVariable.index] = true
+            }
+        }
+
+        // Looking for sequences of instructions:
+        //  p0: ICONST_0
+        //  p1: ISTORE x
+        //  p2: <label>
+        // If variable 'x' is not "used" (see above), remove p0 and p1 instructions.
+        var changes = false
+        for (p0 in insnArray) {
+            if (p0.opcode != Opcodes.ICONST_0) continue
+
+            val p1 = p0.next ?: break
+            if (p1.opcode != Opcodes.ISTORE) continue
+
+            val p2 = p1.next ?: break
+            if (p2.type != AbstractInsnNode.LABEL) continue
+
+            val varIndex = (p1 as VarInsnNode).`var`
+            if (!usedIntegerVar[varIndex]) {
+                changes = true
+                node.instructions.remove(p0)
+                node.instructions.remove(p1)
+            }
+        }
+
+        if (changes) {
+            // If we removed some instructions, some TCBs could (in theory) become empty.
+            // Remove empty TCBs if there are any.
+            node.removeEmptyCatchBlocks()
+        }
     }
 
     private fun isAnonymousClassThatMustBeRegenerated(type: Type?): Boolean {

@@ -16,5 +16,5 @@ fun box(): String {
 // 0 component1
 // 0 component2
 
-// The 1st ICONST_0 is for initializing the list. 2nd is for initializing the index in the lowered for-loop.
-// 2 ICONST_0
+// - Initializing the index in the lowered for-loop.
+// 1 ICONST_0
