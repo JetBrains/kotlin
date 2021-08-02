@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
@@ -19,14 +21,27 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractOverrideChecker() {
-    private val context: ConeTypeContext = session.typeContext
+    private val context = session.typeContext
+
+    // TODO: this looks suspicious - are we sure definitely not null type parameters should be erased at such a late stage?
+    private val typePreparator =
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
+            ConeTypePreparator.getDefault(session)
+        else
+            object : ConeTypePreparator(session) {
+                override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker =
+                    super.prepareType(type).let { (it as? ConeDefinitelyNotNullType)?.original ?: it }
+            }
+
+    private val checkerContext =
+        ConeTypeCheckerContext(isErrorTypeEqualsToAnything = true, isStubTypeEqualsToAnything = true, context, typePreparator)
 
     private fun isEqualTypes(substitutedCandidateType: ConeKotlinType, substitutedBaseType: ConeKotlinType): Boolean {
         return with(context) {
             val baseIsFlexible = substitutedBaseType.isFlexible()
             val candidateIsFlexible = substitutedCandidateType.isFlexible()
             if (baseIsFlexible == candidateIsFlexible) {
-                return AbstractTypeChecker.equalTypes(context, substitutedCandidateType, substitutedBaseType)
+                return AbstractTypeChecker.equalTypes(checkerContext, substitutedCandidateType, substitutedBaseType)
             }
             val lowerBound: SimpleTypeMarker
             val upperBound: SimpleTypeMarker
@@ -40,19 +55,15 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
                 upperBound = substitutedCandidateType.upperBoundIfFlexible()
                 type = substitutedBaseType
             }
-            AbstractTypeChecker.isSubtypeOf(context, lowerBound, type) && AbstractTypeChecker.isSubtypeOf(context, type, upperBound)
+            AbstractTypeChecker.isSubtypeOf(checkerContext, lowerBound, type) &&
+                    AbstractTypeChecker.isSubtypeOf(checkerContext, type, upperBound)
         }
     }
 
     private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
-        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType).unwrapDefinitelyNotNullType()
-        val substitutedBaseType = substitutor.substituteOrSelf(baseType).unwrapDefinitelyNotNullType()
+        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
+        val substitutedBaseType = substitutor.substituteOrSelf(baseType)
         return isEqualTypes(substitutedCandidateType, substitutedBaseType)
-    }
-
-    private fun ConeKotlinType.unwrapDefinitelyNotNullType(): ConeKotlinType = when (this) {
-        is ConeDefinitelyNotNullType -> original
-        else -> this
     }
 
     fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor): Boolean {

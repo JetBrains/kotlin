@@ -13,12 +13,12 @@ public interface A<T> {
 
 interface B<T1> : A<T1> {
     override fun foo(x: T1): T1
-    override fun bar(x: T1!!): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>T1!!<!>
+    <!NOTHING_TO_OVERRIDE!>override<!> fun bar(x: T1!!): T1!!
 }
 
 interface C<T2> : A<T2> {
     override fun foo(x: T2!!): T2!!
-    override fun bar(x: T2): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>T2<!>
+    <!NOTHING_TO_OVERRIDE!>override<!> fun bar(x: T2): T2
 }
 
 interface D : A<String?> {

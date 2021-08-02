@@ -1,5 +1,5 @@
 // ISSUE: KT-41984
-
+// !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // FILE: A.java
 
 import org.jetbrains.annotations.NotNull;
