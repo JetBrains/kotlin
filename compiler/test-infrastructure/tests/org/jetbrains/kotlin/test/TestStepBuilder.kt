@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 
-sealed class TestStepBuilder<I : ResultingArtifact<I>, out O : ResultingArtifact<out O>> {
+sealed class TestStepBuilder<I : ResultingArtifact<I>, O : ResultingArtifact<O>> {
     @TestInfrastructureInternals
     abstract fun createTestStep(testServices: TestServices): TestStep<I, O>
 }

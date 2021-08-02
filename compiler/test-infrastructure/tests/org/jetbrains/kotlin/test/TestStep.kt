@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.test.TestRunner.Companion.shouldRun
 import org.jetbrains.kotlin.test.model.*
 
-sealed class TestStep<I : ResultingArtifact<I>, out O : ResultingArtifact<out O>> {
+sealed class TestStep<I : ResultingArtifact<I>, O : ResultingArtifact<O>> {
     abstract val inputArtifactKind: TestArtifactKind<I>
 
     open fun shouldProcessModule(module: TestModule, inputArtifact: ResultingArtifact<*>): Boolean {
@@ -70,7 +70,7 @@ sealed class TestStep<I : ResultingArtifact<I>, out O : ResultingArtifact<out O>
     }
 
     sealed class StepResult<out O : ResultingArtifact<out O>> {
-        class Artifact<out O : ResultingArtifact<out O>>(val outputArtifact: O, ) : StepResult<O>()
+        class Artifact<out O : ResultingArtifact<out O>>(val outputArtifact: O) : StepResult<O>()
         class ErrorFromFacade<O : ResultingArtifact<O>>(val exception: WrappedException) : StepResult<O>()
         data class HandlersResult(
             val exceptionsFromHandlers: Collection<WrappedException>,
