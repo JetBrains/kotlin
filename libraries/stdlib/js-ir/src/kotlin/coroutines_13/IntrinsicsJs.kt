@@ -10,6 +10,30 @@ package kotlin.coroutines.intrinsics
 import kotlin.coroutines.*
 import kotlin.internal.InlineOnly
 
+@SinceKotlin("1.3")
+public fun <T> (suspend () -> T).invokeSuspendFunction(
+    completion: Continuation<T>
+): Any? {
+    throw NotImplementedError("It is intrinsic method")
+}
+
+@SinceKotlin("1.3")
+public fun <R, T> (suspend R.() -> T).invokeSuspendFunctionWithReceiver(
+    receiver: R,
+    completion: Continuation<T>
+): Any? {
+    throw NotImplementedError("It is intrinsic method")
+}
+
+@SinceKotlin("1.3")
+public fun <R, P, T> (suspend R.(P) -> T).invokeSuspendFunctionWithReceiverAndParam(
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Any? {
+    throw NotImplementedError("It is intrinsic method")
+}
+
 /**
  * Starts unintercepted coroutine without receiver and with result type [T] and executes it until its first suspension.
  * Returns the result of the coroutine or throws its exception if it does not suspend or [COROUTINE_SUSPENDED] if it suspends.
@@ -29,7 +53,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(completion)
-    else ::invoke.asDynamic()(completion)
+    else ::invoke.invokeSuspendFunction(completion)
 }
 
 /**
@@ -52,7 +76,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, completion)
-    else ::invoke.asDynamic()(receiver, completion)
+    else ::invoke.invokeSuspendFunctionWithReceiver(receiver, completion)
 }
 
 @InlineOnly
@@ -63,7 +87,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, param, completion)
-    else ::invoke.asDynamic()(receiver, param, completion)
+    else ::invoke.invokeSuspendFunctionWithReceiverAndParam(receiver, param, completion)
 }
 
 /**
@@ -89,7 +113,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     createCoroutineFromSuspendFunction(completion) {
         val a = this.asDynamic()
         if (jsTypeOf(a) == "function") a(completion)
-        else ::invoke.asDynamic()(completion)
+        else ::invoke.invokeSuspendFunction(completion)
     }
 
 /**
@@ -116,7 +140,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     createCoroutineFromSuspendFunction(completion) {
         val a = this.asDynamic()
         if (jsTypeOf(a) == "function") a(receiver, completion)
-        else ::invoke.asDynamic()(receiver, completion)
+        else ::invoke.invokeSuspendFunctionWithReceiver(receiver, completion)
     }
 
 /**

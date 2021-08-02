@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.getClassRef
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -226,6 +228,61 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsUndefined) { _, _ ->
                 JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
             }
+
+            val suspendInvokeTransform: (IrCall, JsGenerationContext) -> JsExpression = { call, context: JsGenerationContext ->
+                // Because it is intrinsic, we know everything about this function
+                // There is callable reference as extension receiver
+                val invokeFun = (call.extensionReceiver as IrCall)
+                    // Single parameter is field
+                    .getValueArgument(0)
+                    .let { it as IrGetField }
+                    .symbol
+                    .owner
+                    // It should be SuspendFunctionN
+                    .type
+                    .classifierOrFail
+                    .owner
+                    .let { it as IrClass }
+                    .declarations
+                    .filterIsInstance<IrSimpleFunction>()
+                    .single { it.name.asString() == "invoke" }
+
+                val jsInvokeFunName = context.getNameForMemberFunction(invokeFun)
+
+                val jsExtensionReceiver = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!! as JsInvocation
+                val args = translateCallArguments(call, context)
+                val jsArgsForClosureFun = args.mapIndexed { index, _ -> JsName("${"$"}p$index") }
+
+                // Function to make closure for invoke to avoid losing this
+                jsExtensionReceiver.arguments[0] = JsInvocation(
+                    JsNameRef(
+                        Namer.BIND_FUNCTION,
+                        JsFunction(
+                            emptyScope,
+                            JsBlock(
+                                JsReturn(
+                                    JsInvocation(
+                                        JsNameRef(
+                                            jsInvokeFunName,
+                                            jsExtensionReceiver.arguments[0]
+                                        ),
+                                        jsArgsForClosureFun.map { it.makeRef() }
+                                    )
+                                )
+                            ),
+                            "Function to make closure for invoke to avoid losing this"
+                        ).also { func ->
+                            func.parameters.addAll(jsArgsForClosureFun.map { JsParameter(it) })
+                        }
+                    ), JsThisRef()
+                )
+
+                JsInvocation(jsExtensionReceiver, args)
+            }
+
+            add(intrinsics.jsInvokeSuspendFunction, suspendInvokeTransform)
+            add(intrinsics.jsInvokeSuspendFunctionWithReceiver, suspendInvokeTransform)
+            add(intrinsics.jsInvokeSuspendFunctionWithReceiverAndParam, suspendInvokeTransform)
         }
     }
 
