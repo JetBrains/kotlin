@@ -1282,7 +1282,11 @@ open class IrFileSerializer(
         val proto = ProtoField.newBuilder()
             .setBase(serializeIrDeclarationBase(field, FieldFlags.encode(field)))
             .setNameType(serializeNameAndType(field.name, field.type))
-        if (!skipMutableState && !(bodiesOnlyForInlines && (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL)) {
+        if (!skipMutableState &&
+            !(bodiesOnlyForInlines &&
+                    (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL &&
+                    (field.initializer?.expression !is IrConst<*>))
+        ) {
             val initializer = field.initializer?.expression
             if (initializer != null) {
                 proto.initializer = serializeIrExpressionBody(initializer)
