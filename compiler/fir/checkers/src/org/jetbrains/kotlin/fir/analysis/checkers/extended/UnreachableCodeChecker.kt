@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
@@ -27,11 +26,6 @@ object UnreachableCodeChecker : FirControlFlowChecker() {
         val unreachableElements = unreachableNodes.map { it.fir }
         val innerNodes = mutableSetOf<FirElement>()
         unreachableElements.forEach { it.collectInnerNodes(innerNodes) }
-        //todo cfg is broken in catch and finally blocks, so exclude reporting anything
-        nodes.mapNotNull { it.fir as? FirTryExpression }.distinct().forEach { tryNode ->
-            tryNode.finallyBlock?.collectInnerNodes(innerNodes)
-            tryNode.catches.forEach { it.collectInnerNodes(innerNodes) }
-        }
         unreachableElements.distinctBy { it.source }.forEach { element ->
             if (element !in innerNodes) {
                 reporter.reportOn(element.source, FirErrors.UNREACHABLE_CODE, reachableSources, unreachableSources, context)

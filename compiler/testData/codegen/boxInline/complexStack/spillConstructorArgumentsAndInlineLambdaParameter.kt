@@ -1,4 +1,3 @@
-// IGNORE_FIR_DIAGNOSTICS
 // FILE: 1.kt
 class A(val s: String)
 

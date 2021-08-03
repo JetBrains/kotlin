@@ -113,7 +113,7 @@ fun t7() : Int {
   catch (<!THROWABLE_TYPE_MISMATCH!>e : Any<!>) {
     2
   }
-  <!UNREACHABLE_CODE!>return 1<!> // this is OK, like in Java
+  return 1 // this is OK, like in Java
 }
 
 fun t8() : Int {
@@ -123,7 +123,7 @@ fun t8() : Int {
   }
   catch (<!THROWABLE_TYPE_MISMATCH!>e : Any<!>) {
     return 1
-    2
+    <!UNREACHABLE_CODE!>2<!>
   }
   <!UNREACHABLE_CODE!>return 1<!>
 }
