@@ -36,6 +36,12 @@ inline fun <reified P : PsiElement, A, B, C> warning3(
     return DiagnosticFactory3DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
 }
 
+inline fun <reified P : PsiElement, A, B, C, D> warning4(
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory4DelegateProvider<A, B, C, D> {
+    return DiagnosticFactory4DelegateProvider(Severity.WARNING, positioningStrategy, P::class)
+}
+
 inline fun <reified P : PsiElement> error0(
     positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory0DelegateProvider {

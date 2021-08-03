@@ -349,7 +349,7 @@ object FirErrors {
     val DYNAMIC_UPPER_BOUND by error0<KtTypeReference>()
     val INCOMPATIBLE_TYPES by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val INCOMPATIBLE_TYPES_WARNING by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
-    val TYPE_VARIANCE_CONFLICT by error4<PsiElement, FirTypeParameterSymbol, Variance, Variance, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val TYPE_VARIANCE_CONFLICT by warning4<PsiElement, FirTypeParameterSymbol, Variance, Variance, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE by error4<PsiElement, FirTypeParameterSymbol, Variance, Variance, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val SMARTCAST_IMPOSSIBLE by error3<KtExpression, ConeKotlinType, FirExpression, String>()
 
