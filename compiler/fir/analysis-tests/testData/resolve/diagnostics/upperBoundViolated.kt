@@ -66,3 +66,9 @@ class Test8<S8 : Test7<S8, <!UPPER_BOUND_VIOLATED!>in Any<!>>>
 class Class<V : Any>
 typealias Alias <V1> = (Class<V1>) -> Boolean
 
+/* TODO: Should not be errors. Uncomment after fixing of https://youtrack.jetbrains.com/issue/KT-48044
+abstract class Base<T : Base<T>> {}
+class DerivedOut<out O : Base<out O>> {}
+class DerivedIn<in I : Base<in I>> {}*/
+
+
