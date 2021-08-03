@@ -62,9 +62,11 @@ fun MappedByteBuffer.contentsToByteArray(
 fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
     order(ByteOrder.LITTLE_ENDIAN)
 
-    val endOfCentralDirectoryOffset = (capacity() - END_OF_CENTRAL_DIR_SIZE downTo 0).first { offset ->
+    var endOfCentralDirectoryOffset = capacity() - END_OF_CENTRAL_DIR_SIZE
+    while (endOfCentralDirectoryOffset >= 0) {
         // header of "End of central directory"
-        getInt(offset) == 0x06054b50
+        if (getInt(endOfCentralDirectoryOffset) == 0x06054b50) break
+        endOfCentralDirectoryOffset--
     }
 
     val entriesNumber = getUnsignedShort(endOfCentralDirectoryOffset + 10)
