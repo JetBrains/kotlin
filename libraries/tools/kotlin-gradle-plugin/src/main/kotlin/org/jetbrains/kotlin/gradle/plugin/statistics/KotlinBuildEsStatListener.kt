@@ -73,7 +73,7 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics : 
     }
 
     private fun availableForStat(taskPath: String): Boolean {
-        return taskPath.contains("compileKotlin")
+        return taskPath.contains("Kotlin")
     }
 
     override fun afterExecute(task: Task, taskState: TaskState) {

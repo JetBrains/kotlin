@@ -253,8 +253,6 @@ private fun stdlibModuleForJvmCompilations(compilations: Iterable<KotlinCompilat
 
 //region kotlin-test
 internal fun configureKotlinTestDependency(project: Project) {
-    if (!isGradleVersionAtLeast(6, 0))
-        return
     if (!PropertiesProvider(project).kotlinTestInferJvmVariant)
         return
 
