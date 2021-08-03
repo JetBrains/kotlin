@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.build
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.isPreRelease
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import kotlin.reflect.KClass
 
@@ -43,7 +42,7 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
         val languageVersion = args.languageVersion?.let { LanguageVersion.fromVersionString(it) } ?: LanguageVersion.LATEST_STABLE
 
         return create(
-            isEAP = languageVersion.isPreRelease(),
+            isEAP = !languageVersion.isStable,
             compilerBuildVersion = KotlinCompilerVersion.VERSION,
             languageVersionString = languageVersion.versionString,
             apiVersionString = args.apiVersion ?: languageVersion.versionString,

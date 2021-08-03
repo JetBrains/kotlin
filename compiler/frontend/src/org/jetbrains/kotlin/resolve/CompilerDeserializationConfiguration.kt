@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
@@ -17,7 +16,7 @@ class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVers
     override val skipPrereleaseCheck = languageVersionSettings.getFlag(AnalysisFlags.skipPrereleaseCheck)
 
     override val reportErrorsOnPreReleaseDependencies =
-        !skipPrereleaseCheck && !languageVersionSettings.isPreRelease() && !KotlinCompilerVersion.isPreRelease()
+        !skipPrereleaseCheck && !languageVersionSettings.isPreRelease()
 
     override val allowUnstableDependencies = languageVersionSettings.getFlag(AnalysisFlags.allowUnstableDependencies)
 
