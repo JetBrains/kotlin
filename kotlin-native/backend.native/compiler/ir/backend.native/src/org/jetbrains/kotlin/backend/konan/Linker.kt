@@ -141,10 +141,10 @@ internal class Linker(val context: Context) {
         val linkerInput = determineLinkerInput(objectFiles, linkerOutput)
         try {
             File(executable).delete()
-            val linkerArgs = asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
+            val linkerArgs = asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS) +
                     BitcodeEmbedding.getLinkerOptions(context.config) +
                     linkerInput.caches.dynamic +
-                    libraryProvidedLinkerFlags + additionalLinkerArgs
+                    libraryProvidedLinkerFlags + additionalLinkerArgs)
 
             val finalOutputCommands = linker.finalLinkCommands(
                     objectFiles = linkerInput.objectFiles,

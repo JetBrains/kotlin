@@ -511,7 +511,7 @@ open class KonanDynamicTest : KonanStandaloneTest() {
             // rpath is meaningless on Windows (and isn't supported by LLD).
             // --allow-multiple-definition is needed because finalLinkCommands statically links a lot of MinGW-specific libraries,
             // that are already included in DLL produced by Kotlin/Native.
-            Family.MINGW -> listOf("-L", artifactsDir, "-Wl,--allow-multiple-definition")
+            Family.MINGW -> listOf("-L", artifactsDir, "--allow-multiple-definition")
             else -> listOf("-L", artifactsDir, "-rpath", artifactsDir)
         }
         val commands = linker.finalLinkCommands(
