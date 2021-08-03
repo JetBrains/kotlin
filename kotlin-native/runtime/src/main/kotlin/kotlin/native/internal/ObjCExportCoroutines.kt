@@ -59,8 +59,8 @@ internal fun interceptedContinuation(continuation: Continuation<Any?>): Continua
 
 @FilterExceptions
 @SymbolName("Kotlin_ObjCExport_runCompletionSuccess")
-private external fun runCompletionSuccess(completionHolder: Any, result: Any?)
+private fun runCompletionSuccess(completionHolder: Any, result: Any?) {}
 
 @FilterExceptions
 @SymbolName("Kotlin_ObjCExport_runCompletionFailure")
-private external fun runCompletionFailure(completionHolder: Any, exception: Throwable, exceptionTypes: NativePtr)
+private fun runCompletionFailure(completionHolder: Any, exception: Throwable, exceptionTypes: NativePtr) {}
