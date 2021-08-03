@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -89,7 +90,6 @@ internal class KtFirKotlinPropertySymbol(
 
     override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()
 
-
     override val getter: KtPropertyGetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
         property.getter?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertyGetterSymbol
     }
@@ -104,6 +104,10 @@ internal class KtFirKotlinPropertySymbol(
 
     override val isConst: Boolean get() = firRef.withFir { it.isConst }
 
+    override val isFromPrimaryConstructor: Boolean
+        get() = firRef.withFir {
+            it.fromPrimaryConstructor == true || it.source?.kind == FirFakeSourceElementKind.PropertyFromParameter
+        }
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
     override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
 

@@ -60,6 +60,7 @@ KtFirKotlinPropertySymbol:
   initializer: null
   isConst: false
   isExtension: false
+  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: true
   isStatic: false
@@ -95,6 +96,7 @@ KtFirKotlinPropertySymbol:
   initializer: null
   isConst: false
   isExtension: false
+  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false

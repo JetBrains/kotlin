@@ -73,6 +73,7 @@ KtFirSyntheticJavaPropertySymbol:
   hasSetter: false
   initializer: null
   isExtension: false
+  isFromPrimaryConstructor: false
   isOverride: false
   isStatic: false
   isVal: true

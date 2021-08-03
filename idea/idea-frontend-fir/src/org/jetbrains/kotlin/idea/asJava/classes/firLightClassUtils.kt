@@ -142,11 +142,12 @@ internal fun FirLightClassBase.createMethods(
     isTopLevel: Boolean = false,
     suppressStaticForMethods: Boolean = false
 ) {
-    for (declaration in declarations) {
+    val declarationGroups = declarations.groupBy { it is KtPropertySymbol && it.isFromPrimaryConstructor }
 
+    fun handleDeclaration(declaration: KtCallableSymbol) {
         when (declaration) {
             is KtFunctionSymbol -> {
-                if (declaration.isInline || declaration.isHiddenOrSynthetic()) continue
+                if (declaration.isInline || declaration.isHiddenOrSynthetic()) return
 
                 var methodIndex = METHOD_INDEX_BASE
                 result.add(
@@ -184,14 +185,14 @@ internal fun FirLightClassBase.createMethods(
             }
             is KtPropertySymbol -> {
 
-                if (declaration is KtKotlinPropertySymbol && declaration.isConst) continue
+                if (declaration is KtKotlinPropertySymbol && declaration.isConst) return
 
                 if (declaration.visibility.isPrivateOrPrivateToThis() &&
                     declaration.getter?.hasBody == false &&
                     declaration.setter?.hasBody == false
-                ) continue
+                ) return
 
-                if (declaration.hasJvmFieldAnnotation()) continue
+                if (declaration.hasJvmFieldAnnotation()) return
 
                 fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
                     if (isInline) return false
@@ -235,6 +236,15 @@ internal fun FirLightClassBase.createMethods(
             }
             is KtConstructorSymbol -> error("Constructors should be handled separately and not passed to this function")
         }
+    }
+
+    // Regular members
+    declarationGroups[false]?.forEach {
+        handleDeclaration(it)
+    }
+    // Then, properties from the primary constructor parameters
+    declarationGroups[true]?.forEach {
+        handleDeclaration(it)
     }
 }
 

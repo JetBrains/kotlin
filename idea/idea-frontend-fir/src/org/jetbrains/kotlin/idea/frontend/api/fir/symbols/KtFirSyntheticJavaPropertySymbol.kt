@@ -71,7 +71,6 @@ internal class KtFirSyntheticJavaPropertySymbol(
 
     override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()
 
-
     override val getter: KtPropertyGetterSymbol by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
         property.getter.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as KtPropertyGetterSymbol
     }
@@ -83,6 +82,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
     override val javaGetterName: Name get() = firRef.withFir { it.getter.delegate.name }
     override val javaSetterName: Name? get() = firRef.withFir { it.setter?.delegate?.name }
 
+    override val isFromPrimaryConstructor: Boolean get() = false
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
     override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
 

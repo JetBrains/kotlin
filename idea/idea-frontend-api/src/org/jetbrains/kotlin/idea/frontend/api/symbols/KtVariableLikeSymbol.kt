@@ -91,6 +91,7 @@ public sealed class KtPropertySymbol : KtVariableSymbol(),
 
     public abstract val hasBackingField: Boolean
 
+    public abstract val isFromPrimaryConstructor: Boolean
     public abstract val isOverride: Boolean
     public abstract val isStatic: Boolean
 
