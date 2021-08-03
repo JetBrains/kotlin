@@ -1,5 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 // TARGET_BACKEND: JS
+// IGNORE_BACKEND: JS
 // !LANGUAGE: +SuspendFunctionAsSupertype
 
 import kotlin.coroutines.*
