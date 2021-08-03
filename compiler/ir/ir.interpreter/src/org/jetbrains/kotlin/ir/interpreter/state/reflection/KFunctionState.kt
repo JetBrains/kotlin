@@ -118,7 +118,7 @@ internal class KFunctionState(
 
     fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
         if (_parameters != null) return _parameters!!
-        val kParameterIrClass = irClass.getIrClassOfReflectionFromList("parameters")
+        val kParameterIrClass = callInterceptor.environment.kParameterClass.owner
         var index = 0
         val instanceParameter = irFunction.dispatchReceiverParameter
             ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), callInterceptor) }
@@ -131,14 +131,14 @@ internal class KFunctionState(
 
     fun getReturnType(callInterceptor: CallInterceptor): KType {
         if (_returnType != null) return _returnType!!
-        val kTypeIrClass = irClass.getIrClassOfReflection("returnType")
+        val kTypeIrClass = callInterceptor.environment.kTypeClass.owner
         _returnType = KTypeProxy(KTypeState(irFunction.returnType, kTypeIrClass), callInterceptor)
         return _returnType!!
     }
 
     fun getTypeParameters(callInterceptor: CallInterceptor): List<KTypeParameter> {
         if (_typeParameters != null) return _typeParameters!!
-        val kTypeParametersIrClass = irClass.getIrClassOfReflectionFromList("typeParameters")
+        val kTypeParametersIrClass = callInterceptor.environment.kTypeParameterClass.owner
         _typeParameters = irClass.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParametersIrClass), callInterceptor) }
         return _typeParameters!!
     }

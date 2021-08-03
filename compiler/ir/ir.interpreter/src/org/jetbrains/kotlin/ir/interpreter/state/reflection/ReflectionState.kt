@@ -27,18 +27,6 @@ internal abstract class ReflectionState : State {
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
 
-    protected fun IrClass.getIrClassOfReflectionFromList(name: String): IrClass {
-        val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
-        val list = property.getter!!.returnType as IrSimpleType
-        return list.arguments.single().typeOrNull!!.classOrNull!!.owner
-    }
-
-    protected fun IrClass.getIrClassOfReflection(name: String): IrClass {
-        val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
-        val type = property.getter!!.returnType as IrSimpleType
-        return type.classOrNull!!.owner
-    }
-
     private fun renderReceivers(dispatchReceiver: IrType?, extensionReceiver: IrType?): String {
         return buildString {
             if (dispatchReceiver != null) {

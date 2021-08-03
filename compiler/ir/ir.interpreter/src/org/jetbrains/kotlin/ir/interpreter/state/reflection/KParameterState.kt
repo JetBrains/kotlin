@@ -18,7 +18,7 @@ internal class KParameterState(
 
     fun getType(callInterceptor: CallInterceptor): KType {
         if (_type != null) return _type!!
-        val kTypeIrClass = irClass.getIrClassOfReflection("type")
+        val kTypeIrClass = callInterceptor.environment.kTypeClass.owner
         _type = KTypeProxy(KTypeState(irParameter.type, kTypeIrClass), callInterceptor)
         return _type!!
     }

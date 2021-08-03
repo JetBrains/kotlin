@@ -88,7 +88,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             }
             irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray() -> {
                 // array constructor doesn't have body so must be treated separately
-                callStack.addVariable(Variable(irConstructor.symbol, KTypeState(constructorCall.type, irBuiltIns.anyClass.owner)))
+                callStack.addVariable(Variable(irConstructor.symbol, KTypeState(constructorCall.type, environment.kTypeClass.owner)))
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {

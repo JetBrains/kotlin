@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KClassProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
-import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClassifier
@@ -26,7 +25,7 @@ internal class KTypeState(val irType: IrType, override val irClass: IrClass) : R
         _classifier = when (val classifier = irType.classifierOrFail.owner) {
             is IrClass -> KClassProxy(KClassState(classifier, callInterceptor.irBuiltIns.kClassClass.owner), callInterceptor)
             is IrTypeParameter -> {
-                val kTypeParameterIrClass = callInterceptor.irBuiltIns.kClassClass.owner.getIrClassOfReflectionFromList("typeParameters")
+                val kTypeParameterIrClass = callInterceptor.environment.kTypeParameterClass.owner
                 KTypeParameterProxy(KTypeParameterState(classifier, kTypeParameterIrClass), callInterceptor)
             }
             else -> TODO()
@@ -36,7 +35,7 @@ internal class KTypeState(val irType: IrType, override val irClass: IrClass) : R
 
     fun getArguments(callInterceptor: CallInterceptor): List<KTypeProjection> {
         if (_arguments != null) return _arguments!!
-        callInterceptor.environment.javaClassToIrClass += KTypeProjection::class.java to irClass.getIrClassOfReflectionFromList("arguments")
+        callInterceptor.environment.javaClassToIrClass += KTypeProjection::class.java to callInterceptor.environment.kTypeProjectionClass.owner
         _arguments = (irType as IrSimpleType).arguments
             .map {
                 when (it.getVariance()) {

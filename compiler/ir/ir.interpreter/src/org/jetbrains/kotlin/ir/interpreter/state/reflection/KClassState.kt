@@ -74,14 +74,14 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
 
     fun getTypeParameters(callInterceptor: CallInterceptor): List<KTypeParameter> {
         if (_typeParameters != null) return _typeParameters!!
-        val kTypeParameterIrClass = irClass.getIrClassOfReflectionFromList("typeParameters")
+        val kTypeParameterIrClass = callInterceptor.environment.kTypeParameterClass.owner
         _typeParameters = classReference.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParameterIrClass), callInterceptor) }
         return _typeParameters!!
     }
 
     fun getSupertypes(callInterceptor: CallInterceptor): List<KType> {
         if (_supertypes != null) return _supertypes!!
-        val kTypeIrClass = irClass.getIrClassOfReflectionFromList("supertypes")
+        val kTypeIrClass = callInterceptor.environment.kTypeClass.owner
         _supertypes = (classReference.superTypes.map { it } + callInterceptor.irBuiltIns.anyType).toSet()
             .map { KTypeProxy(KTypeState(it, kTypeIrClass), callInterceptor) }
         return _supertypes!!

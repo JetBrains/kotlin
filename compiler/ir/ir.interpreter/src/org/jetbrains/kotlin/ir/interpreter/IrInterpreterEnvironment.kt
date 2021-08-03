@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.Common
@@ -15,11 +16,15 @@ import org.jetbrains.kotlin.ir.interpreter.state.Complex
 import org.jetbrains.kotlin.ir.interpreter.state.Primitive
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.isSubclassOf
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
 class IrInterpreterEnvironment(
     val irBuiltIns: IrBuiltIns,
@@ -30,6 +35,20 @@ class IrInterpreterEnvironment(
     internal var mapOfEnums = mutableMapOf<IrSymbol, Complex>()
     internal var mapOfObjects = mutableMapOf<IrSymbol, Complex>()
     internal var javaClassToIrClass = mutableMapOf<Class<*>, IrClass>()
+    private var functionCache = mutableMapOf<CacheFunctionSignature, IrFunctionSymbol>()
+
+    internal val kTypeParameterClass by lazy { irBuiltIns.kClassClass.getIrClassOfReflectionFromList("typeParameters")!! }
+    internal val kParameterClass by lazy { irBuiltIns.kFunctionClass.getIrClassOfReflectionFromList("parameters")!! }
+    internal val kTypeProjectionClass by lazy { kTypeClass.getIrClassOfReflectionFromList("arguments")!! }
+    internal val kTypeClass: IrClassSymbol by lazy {
+        // here we use fallback to `Any` because `KType` cannot be found on JS/Native by this way
+        // but still this class is used to represent type arguments in interpreter
+        irBuiltIns.kClassClass.getIrClassOfReflectionFromList("supertypes") ?: irBuiltIns.anyClass
+    }
+
+    init {
+        mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)
+    }
 
     private data class CacheFunctionSignature(
         val symbol: IrFunctionSymbol,
@@ -42,12 +61,6 @@ class IrInterpreterEnvironment(
         // their symbols are the same but calls are different, so default function must return different calls
         val fromDelegatingCall: Boolean
     )
-
-    private var functionCache = mutableMapOf<CacheFunctionSignature, IrFunctionSymbol>()
-
-    init {
-        mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)
-    }
 
     private constructor(environment: IrInterpreterEnvironment) : this(environment.irBuiltIns, configuration = environment.configuration) {
         irExceptions.addAll(environment.irExceptions)
@@ -101,5 +114,11 @@ class IrInterpreterEnvironment(
             else -> irType.classOrNull?.owner?.let { Wrapper(value, it, this) }
                 ?: Wrapper(value, this.javaClassToIrClass[value::class.java]!!, this)
         }
+    }
+
+    private fun IrClassSymbol.getIrClassOfReflectionFromList(name: String): IrClassSymbol? {
+        val property = this.owner.declarations.singleOrNull { it.nameForIrSerialization.asString() == name } as? IrProperty
+        val list = property?.getter?.returnType as? IrSimpleType
+        return list?.arguments?.single()?.typeOrNull?.classOrNull
     }
 }

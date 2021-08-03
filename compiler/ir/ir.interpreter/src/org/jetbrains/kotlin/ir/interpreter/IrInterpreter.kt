@@ -176,7 +176,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val reifiedTypeArguments = irFunction.typeParameters.filter { it.isReified }
             .map {
                 val reifiedType = call.getTypeArgument(it.index)!!.getTypeIfReified(callStack)
-                Variable(it.symbol, KTypeState(reifiedType, irBuiltIns.anyClass.owner))
+                Variable(it.symbol, KTypeState(reifiedType, environment.kTypeClass.owner))
             }
 
         callStack.newFrame(irFunction)
@@ -191,9 +191,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> callStack.addVariable(Variable(it, receiver)) } }
         irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: callStack.getState(it))) }
         irFunction.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
-        // TODO: if using KTypeState then it's class must be corresponding
         // `call.type` is used in check cast and emptyArray
-        callStack.addVariable(Variable(irFunction.symbol, KTypeState(call.type, irBuiltIns.anyClass.owner)))
+        callStack.addVariable(Variable(irFunction.symbol, KTypeState(call.type, environment.kTypeClass.owner)))
 
         // 6. store reified type parameters
         reifiedTypeArguments.forEach { callStack.addVariable(it) }
@@ -597,7 +596,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         fun List<IrTypeParameter>.addToFields() {
             (0 until propertyReference.typeArgumentsCount).forEach { index ->
-                val kTypeState = KTypeState(propertyReference.getTypeArgument(index)!!, irBuiltIns.anyClass.owner)
+                val kTypeState = KTypeState(propertyReference.getTypeArgument(index)!!, environment.kTypeClass.owner)
                 propertyState.fields += Variable(this[index].symbol, kTypeState)
             }
         }
