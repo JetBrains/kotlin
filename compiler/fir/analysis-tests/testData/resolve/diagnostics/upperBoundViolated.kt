@@ -66,3 +66,6 @@ class Test8<S8 : Test7<S8, <!UPPER_BOUND_VIOLATED!>in Any<!>>>
 class Class<V : Any>
 typealias Alias <V1> = (Class<V1>) -> Boolean
 
+abstract class Base<T : Base<T>> {}
+class DerivedOut<out O : Base<out O>> {}
+class DerivedIn<in I : Base<in I>> {}

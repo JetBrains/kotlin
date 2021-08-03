@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.CaptureStatus
 
 /**
  * Recursively analyzes type parameters and reports the diagnostic on the given source calculated using typeRef
@@ -81,7 +82,13 @@ fun checkUpperBoundViolated(
             substitution[typeParameterSymbol] = typeArgument.type
         } else if (typeArgument is ConeTypeProjection) {
             val typeArgumentType = typeArgument.type
+
             if (typeArgumentType != null) {
+                /*if (typeArgument is ConeKotlinTypeProjection) {
+                    substitution[typeParameterSymbol] = ConeCapturedType(CaptureStatus.FOR_SUBTYPING, null, typeArgument, typeParameterSymbol.toLookupTag())
+                } else {
+                    substitution[typeParameterSymbol] = typeArgumentType
+                }*/
                 substitution[typeParameterSymbol] = typeArgumentType
             } else {
                 substitution[typeParameterSymbol] =
@@ -115,6 +122,8 @@ fun checkUpperBoundViolated(
                 typeArgument = localTypeArgument
             } else if (localTypeArgument is ConeKotlinTypeProjection) {
                 typeArgument = localTypeArgument.type
+                //typeArgument =
+                //    ConeCapturedType(CaptureStatus.FOR_SUBTYPING, null, localTypeArgument, typeParameterSymbols[index].toLookupTag())
             }
             val typeArgumentRefAndSource = typeArgumentRefsAndSources?.elementAtOrNull(index)
             if (typeArgumentRefAndSource != null) {
@@ -137,7 +146,7 @@ fun checkUpperBoundViolated(
                     val upperBound = substitutor.substituteOrSelf(intersection)
                     if (!AbstractTypeChecker.isSubtypeOf(
                             typeSystemContext,
-                            typeArgument.type,
+                            typeArgument,
                             upperBound,
                             stubTypesEqualToAnything = true
                         )

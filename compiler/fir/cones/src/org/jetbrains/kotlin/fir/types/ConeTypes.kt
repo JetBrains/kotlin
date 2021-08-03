@@ -177,7 +177,8 @@ data class ConeCapturedType(
         lowerType,
         constructor = ConeCapturedTypeConstructor(
             projection,
-            typeParameterMarker = typeParameterMarker
+            typeParameterMarker = typeParameterMarker,
+            supertypes = listOf()
         )
     )
 
