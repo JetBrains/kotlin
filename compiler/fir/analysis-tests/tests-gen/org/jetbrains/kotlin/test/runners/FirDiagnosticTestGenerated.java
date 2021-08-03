@@ -5013,6 +5013,22 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Intellij {
+            @Test
+            public void testAllFilesPresentInIntellij() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("DailyAggregatedDoubleFactor.kt")
+            public void testDailyAggregatedDoubleFactor() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/DailyAggregatedDoubleFactor.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k")
         @TestDataPath("$PROJECT_ROOT")
         public class J_k {

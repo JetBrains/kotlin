@@ -1,0 +1,9 @@
+FILE: DailyAggregatedDoubleFactor.kt
+    public abstract interface DailyAggregatedDoubleFactor : R|kotlin/Any| {
+    }
+    private final fun R|DailyAggregatedDoubleFactor|.aggregateBy(reduce: R|(kotlin/Double, kotlin/Double) -> kotlin/Double|): R|kotlin/collections/Map<kotlin/String, kotlin/Double>| {
+        ^aggregateBy R|kotlin/collections/mutableMapOf|<R|kotlin/String|, R|kotlin/Double|>()
+    }
+    public final fun R|DailyAggregatedDoubleFactor|.aggregateMin(): R|kotlin/collections/Map<kotlin/String, kotlin/Double>| {
+        ^aggregateMin this@R|/aggregateMin|.R|/aggregateBy|(::<Ambiguity: minOf, [kotlin/comparisons/minOf, kotlin/comparisons/minOf]>#)
+    }
