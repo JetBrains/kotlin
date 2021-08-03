@@ -423,7 +423,6 @@ class MingwLinker(targetProperties: MingwConfigurables)
     : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
 
     private val ar = "$absoluteTargetToolchain/bin/ar"
-    private val linker = absoluteLldLocation
 
     override val useCompilerDriverAsLinker: Boolean get() = false
 
@@ -493,7 +492,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +listOf(crtend)
         }
 
-        return listOf(Command(linker).constructLinkerArguments())
+        return listOf(Command(absoluteLinker).constructLinkerArguments())
     }
 }
 
