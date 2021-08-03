@@ -30,7 +30,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
             }
         }
 
-        myRoot = FastJarVirtualFile(this, "", -1, myParent = null, entryDescription = null)
+        myRoot = FastJarVirtualFile(this, "", -1, parent = null, entryDescription = null)
 
         // ByteArrayCharSequence should not be used instead of String
         // because the former class does not support equals/hashCode properly
