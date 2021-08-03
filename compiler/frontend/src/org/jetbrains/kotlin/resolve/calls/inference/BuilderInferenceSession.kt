@@ -94,7 +94,7 @@ class BuilderInferenceSession(
             return subResolvedAtoms?.any { it.hasPostponed() } == true
         }
 
-        if (!candidate.isSuitableForBuilderInference()) {
+        if (!candidate.resolvedCall.isSuitableForBuilderInference()) {
             return true
         }
 
@@ -108,13 +108,18 @@ class BuilderInferenceSession(
         } || candidate.getSubResolvedAtoms().any { it.hasPostponed() }
     }
 
-    private fun KotlinResolutionCandidate.isSuitableForBuilderInference(): Boolean {
-        val extensionReceiver = resolvedCall.extensionReceiverArgument
-        val dispatchReceiver = resolvedCall.dispatchReceiverArgument
+    private fun ResolvedCallAtom.isSuitableForBuilderInference(): Boolean {
+        val extensionReceiver = extensionReceiverArgument
+        val dispatchReceiver = dispatchReceiverArgument
+        val resolvedAtoms = subResolvedAtoms
+
         return when {
+            resolvedAtoms != null && resolvedAtoms.map { it.atom }.filterIsInstance<SubKotlinCallArgument>().any {
+                it.callResult.resultCallAtom.isSuitableForBuilderInference()
+            } -> true
             extensionReceiver == null && dispatchReceiver == null -> false
             dispatchReceiver?.receiver?.stableType?.containsStubType() == true -> true
-            extensionReceiver?.receiver?.stableType?.containsStubType() == true -> resolvedCall.candidateDescriptor.hasBuilderInferenceAnnotation()
+            extensionReceiver?.receiver?.stableType?.containsStubType() == true -> candidateDescriptor.hasBuilderInferenceAnnotation()
             else -> false
         }
     }
