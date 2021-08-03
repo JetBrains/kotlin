@@ -28,7 +28,7 @@ internal fun StringBuilder.renderAnnotations(
 }
 
 private fun FirAnnotationCall.isParameterName(): Boolean {
-    return toAnnotationClassId().asSingleFqName() == StandardNames.FqNames.parameterName
+    return toAnnotationClassId()?.asSingleFqName() == StandardNames.FqNames.parameterName
 }
 
 private fun renderAnnotation(annotation: FirAnnotationCall, coneTypeIdeRenderer: ConeTypeIdeRenderer, session: FirSession): String {

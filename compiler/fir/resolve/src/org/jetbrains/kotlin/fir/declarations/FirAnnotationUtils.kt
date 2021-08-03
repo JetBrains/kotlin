@@ -26,14 +26,15 @@ private val RETENTION_CLASS_ID = ClassId.fromString("kotlin/annotation/Retention
 private val TARGET_CLASS_ID = ClassId.fromString("kotlin/annotation/Target")
 private val JVM_FIELD_CLASS_ID = ClassId.fromString("kotlin/jvm/JvmField")
 
-private fun FirAnnotationCall.toAnnotationLookupTag(): ConeClassLikeLookupTag =
-    (annotationTypeRef.coneType as ConeClassLikeType).lookupTag
+private fun FirAnnotationCall.toAnnotationLookupTag(): ConeClassLikeLookupTag? =
+    // this cast fails when we have generic-typed annotations @T
+    (annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag
 
-fun FirAnnotationCall.toAnnotationClassId(): ClassId =
-    toAnnotationLookupTag().classId
+fun FirAnnotationCall.toAnnotationClassId(): ClassId? =
+    toAnnotationLookupTag()?.classId
 
 private fun FirAnnotationCall.toAnnotationClass(session: FirSession): FirRegularClass? =
-    toAnnotationLookupTag().toSymbol(session)?.fir as? FirRegularClass
+    toAnnotationLookupTag()?.toSymbol(session)?.fir as? FirRegularClass
 
 // TODO: this is temporary solution, we need something better
 private val FirExpression.callableNameOfMetaAnnotationArgument: Name?
