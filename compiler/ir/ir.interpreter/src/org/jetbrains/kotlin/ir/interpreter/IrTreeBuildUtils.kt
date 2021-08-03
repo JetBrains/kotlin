@@ -65,15 +65,6 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffse
     toIrConstOrNull(irType, startOffset, endOffset)
         ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
 
-fun Any?.toIrConst(
-    irType: IrType, irBuiltIns: IrBuiltIns,
-    startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET
-): IrConst<*> =
-    toIrConstOrNull(irType, startOffset, endOffset) ?: run {
-        if (irType == irBuiltIns.stringType) IrConstImpl.string(startOffset, endOffset, irType.makeNotNull(), this as String)
-        else throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
-    }
-
 internal fun State.toIrExpression(expression: IrExpression): IrExpression {
     val start = expression.startOffset
     val end = expression.endOffset
