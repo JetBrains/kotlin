@@ -111,7 +111,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
         val result = KotlinLibraryResolverResultImpl(rootLibraries)
 
         val cache = mutableMapOf<File, KotlinResolvedLibrary>()
-        cache.putAll(rootLibraries.map { it.library.libraryFile.absoluteFile to it })
+        cache.putAll(rootLibraries.map { it.library.libraryFile.canonicalFile to it })
 
         var newDependencies = rootLibraries
         do {
@@ -121,12 +121,12 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
                         .filterNot { searchPathResolver.isProvidedByDefault(it) }
                         .mapNotNull { searchPathResolver.resolve(it)?.let(::KotlinResolvedLibraryImpl) }
                         .map { resolved ->
-                            val absoluteFile = resolved.library.libraryFile.absoluteFile
-                            if (absoluteFile in cache) {
-                                library.addDependency(cache[absoluteFile]!!)
+                            val canonicalFile = resolved.library.libraryFile.canonicalFile
+                            if (canonicalFile in cache) {
+                                library.addDependency(cache[canonicalFile]!!)
                                 null
                             } else {
-                                cache.put(absoluteFile, resolved)
+                                cache.put(canonicalFile, resolved)
                                 library.addDependency(resolved)
                                 resolved
                             }
