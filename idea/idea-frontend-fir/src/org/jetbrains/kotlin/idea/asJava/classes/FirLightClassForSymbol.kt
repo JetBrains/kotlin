@@ -88,8 +88,6 @@ internal class FirLightClassForSymbol(
         analyzeWithSymbolAsContext(classOrObjectSymbol) {
             val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
 
-            createConstructors(declaredMemberScope.getConstructors(), result)
-
             val visibleDeclarations = declaredMemberScope.getCallableSymbols().applyIf(isEnum) {
                 filterNot { function ->
                     function is KtFunctionSymbol && function.name.asString().let { it == "values" || it == "valueOf" }
@@ -102,6 +100,8 @@ internal class FirLightClassForSymbol(
 
             val suppressStatic = classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT
             createMethods(visibleDeclarations, result, suppressStaticForMethods = suppressStatic)
+
+            createConstructors(declaredMemberScope.getConstructors(), result)
         }
 
         addMethodsFromCompanionIfNeeded(result)
