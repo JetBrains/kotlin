@@ -443,6 +443,12 @@ allprojects {
         project.configureShadowJarSubstitutionInCompileClasspath()
     }
 
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.add("-Xlint:deprecation")
+        options.compilerArgs.add("-Xlint:unchecked")
+        options.compilerArgs.add("-Werror")
+    }
+
     val commonCompilerArgs = listOfNotNull(
         "-Xopt-in=kotlin.RequiresOptIn",
         "-progressive".takeIf { hasProperty("test.progressive.mode") }

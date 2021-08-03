@@ -1090,10 +1090,12 @@ public class DefaultErrorMessages {
     }
 
     // Those methods are needed to fix problems with java type system and kotlin variance
+    @SuppressWarnings("unchecked")
     public static DiagnosticParameterRenderer<Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>> adaptGenerics1(DiagnosticParameterRenderer<Map<Incompatible<? extends MemberDescriptor>, ? extends Collection<? extends MemberDescriptor>>> renderer) {
         return (obj, renderingContext) -> renderer.render((Map)obj, renderingContext);
     }
 
+    @SuppressWarnings("unchecked")
     public static DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>> adaptGenerics2(DiagnosticParameterRenderer<List<? extends Pair<? extends MemberDescriptor, ? extends Map<ExpectActualCompatibility.Incompatible<? extends MemberDescriptor>, ? extends Collection<? extends MemberDescriptor>>>>> renderer) {
         return (obj, renderingContext) -> renderer.render((List)obj, renderingContext);
     }

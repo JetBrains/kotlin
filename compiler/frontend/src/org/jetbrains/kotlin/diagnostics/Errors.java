@@ -1242,6 +1242,7 @@ public interface Errors {
             }
         }
 
+        @SuppressWarnings("unchecked")
         private static void initializeNameAndRenderer(DiagnosticFactoryToRendererMap diagnosticToRendererMap, String name, DiagnosticFactory<?> factory) {
             factory.initializeName(name);
             factory.setDefaultRenderer((DiagnosticRenderer) diagnosticToRendererMap.get(factory));
