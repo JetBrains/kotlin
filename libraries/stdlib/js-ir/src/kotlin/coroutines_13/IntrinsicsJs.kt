@@ -7,7 +7,10 @@
 
 package kotlin.coroutines.intrinsics
 
-import kotlin.coroutines.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.ContinuationInterceptor
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.CoroutineImpl
 import kotlin.internal.InlineOnly
 
 /**
@@ -16,8 +19,8 @@ import kotlin.internal.InlineOnly
  * necessary to call it in special way, not in synamic way
  */
 @Suppress("UNUSED_PARAMETER", "unused")
-@SinceKotlin("1.5")
-public fun <T> (suspend () -> T).invokeSuspendSuperType(
+@PublishedApi
+internal fun <T> (suspend () -> T).invokeSuspendSuperType(
     completion: Continuation<T>
 ): Any? {
     throw NotImplementedError("It is intrinsic method")
@@ -29,8 +32,8 @@ public fun <T> (suspend () -> T).invokeSuspendSuperType(
  * necessary to call it in special way, not in synamic way
  */
 @Suppress("UNUSED_PARAMETER", "unused")
-@SinceKotlin("1.5")
-public fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
+@PublishedApi
+internal fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
     receiver: R,
     completion: Continuation<T>
 ): Any? {
@@ -43,8 +46,8 @@ public fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
  * necessary to call it in special way, not in synamic way
  */
 @Suppress("UNUSED_PARAMETER", "unused")
-@SinceKotlin("1.5")
-public fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAndParam(
+@PublishedApi
+internal fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAndParam(
     receiver: R,
     param: P,
     completion: Continuation<T>
@@ -64,7 +67,7 @@ public fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAndP
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of a suspended
  * coroutine using a reference to the suspending function.
  */
-@SinceKotlin("1.5")
+@SinceKotlin("1.3")
 @InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
@@ -86,7 +89,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of a suspended
  * coroutine using a reference to the suspending function.
  */
-@SinceKotlin("1.5")
+@SinceKotlin("1.3")
 @InlineOnly
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
@@ -124,7 +127,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
  * Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
-@SinceKotlin("1.5")
+@SinceKotlin("1.3")
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
@@ -150,7 +153,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
  * Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
-@SinceKotlin("1.5")
+@SinceKotlin("1.3")
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
@@ -164,7 +167,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
 /**
  * Intercepts this continuation with [ContinuationInterceptor].
  */
-@SinceKotlin("1.5")
+@SinceKotlin("1.3")
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
     (this as? CoroutineImpl)?.intercepted() ?: this
 
