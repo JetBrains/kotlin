@@ -812,9 +812,9 @@ class FirDefaultErrorMessages {
             map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION, "Redundant spread (*) operator");
             map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION, "Redundant spread (*) operator");
 
-            map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING)
-            map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", TO_STRING)
-            map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", TO_STRING)
+            map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING, NOT_RENDERED)
+            map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", TO_STRING, NOT_RENDERED)
+            map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", TO_STRING, NOT_RENDERED)
             map.put(
                 ARGUMENT_TYPE_MISMATCH,
                 "Argument type mismatch: actual type is {1} but {0} was expected",
@@ -822,12 +822,12 @@ class FirDefaultErrorMessages {
                 RENDER_TYPE,
                 NOT_RENDERED
             )
-            map.put(ASSIGNMENT_TYPE_MISMATCH, "Assignment type mismatch: actual type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE)
+            map.put(ASSIGNMENT_TYPE_MISMATCH, "Assignment type mismatch: actual type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
             map.put(
                 RESULT_TYPE_MISMATCH,
                 "Function return type mismatch: actual type is {1} but {0} was expected",
                 RENDER_TYPE,
-                RENDER_TYPE
+                RENDER_TYPE,
             )
 
             // Ambiguity
@@ -921,7 +921,8 @@ class FirDefaultErrorMessages {
                 "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}",
                 RENDER_TYPE,
                 FIR,
-                TO_STRING
+                TO_STRING,
+                NOT_RENDERED
             )
 
             map.put(
@@ -966,7 +967,7 @@ class FirDefaultErrorMessages {
 
             map.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression required in a function with a block body ('{...}')")
 
-            map.put(RETURN_TYPE_MISMATCH, "Return type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
+            map.put(RETURN_TYPE_MISMATCH, "Return type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED, NOT_RENDERED)
 
             map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds")
 
@@ -1279,7 +1280,7 @@ class FirDefaultErrorMessages {
                 RENDER_TYPE,
                 RENDER_TYPE
             )
-            map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
+            map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
             map.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility")
             map.put(
                 SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,

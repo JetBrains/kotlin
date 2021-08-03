@@ -96,6 +96,8 @@ public abstract class KtBuiltinTypes : ValidityTokenOwner {
     public abstract val NOTHING: KtType
     public abstract val ANY: KtType
 
+    public abstract val THROWABLE: KtType
+
     public abstract val NULLABLE_ANY: KtType
     public abstract val NULLABLE_NOTHING: KtType
 }

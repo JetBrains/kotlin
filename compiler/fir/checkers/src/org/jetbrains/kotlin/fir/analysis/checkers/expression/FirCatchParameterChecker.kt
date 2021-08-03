@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
 
@@ -42,7 +44,16 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
 
             val session = context.session
             if (!coneType.isSubtypeOfThrowable(session)) {
-                reporter.reportOn(source, FirErrors.THROWABLE_TYPE_MISMATCH, coneType, context)
+                reporter.reportOn(
+                    source,
+                    FirErrors.THROWABLE_TYPE_MISMATCH,
+                    coneType,
+                    context.session.inferenceComponents.ctx.isTypeMismatchDueToNullability(
+                        coneType,
+                        session.builtinTypes.throwableType.type
+                    ),
+                    context
+                )
             }
         }
     }

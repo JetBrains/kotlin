@@ -576,7 +576,14 @@ fun checkTypeMismatch(
                 reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
             }
             isInitializer -> {
-                reporter.reportOn(source, FirErrors.INITIALIZER_TYPE_MISMATCH, lValueType, rValueType, context)
+                reporter.reportOn(
+                    source,
+                    FirErrors.INITIALIZER_TYPE_MISMATCH,
+                    lValueType,
+                    rValueType,
+                    context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType),
+                    context
+                )
             }
             source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
                 if (!lValueType.isNullable && rValueType.isNullable) {
@@ -591,7 +598,14 @@ fun checkTypeMismatch(
                 }
             }
             else -> {
-                reporter.reportOn(source, FirErrors.ASSIGNMENT_TYPE_MISMATCH, lValueType, rValueType, context)
+                reporter.reportOn(
+                    source,
+                    FirErrors.ASSIGNMENT_TYPE_MISMATCH,
+                    lValueType,
+                    rValueType,
+                    context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType),
+                    context
+                )
             }
         }
     }
@@ -603,7 +617,13 @@ internal fun checkCondition(condition: FirExpression, context: CheckerContext, r
         coneType !is ConeKotlinErrorType &&
         !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.type)
     ) {
-        reporter.reportOn(condition.source, FirErrors.CONDITION_TYPE_MISMATCH, coneType, context)
+        reporter.reportOn(
+            condition.source,
+            FirErrors.CONDITION_TYPE_MISMATCH,
+            coneType,
+            coneType.isNullableBoolean,
+            context
+        )
     }
 }
 

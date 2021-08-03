@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -549,3 +550,15 @@ fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirCl
 
     return null
 }
+
+fun ConeTypeContext.isTypeMismatchDueToNullability(
+    actualType: ConeKotlinType,
+    expectedType: ConeKotlinType
+): Boolean {
+    return actualType.isNullableType() && !expectedType.isNullableType() && AbstractTypeChecker.isSubtypeOf(
+        this,
+        actualType,
+        expectedType.withNullability(ConeNullability.NULLABLE, this)
+    )
+}
+

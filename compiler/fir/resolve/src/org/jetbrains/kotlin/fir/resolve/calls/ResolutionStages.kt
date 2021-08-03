@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
@@ -121,7 +122,16 @@ object CheckDispatchReceiver : ResolutionStage() {
             !explicitReceiverExpression.isStable &&
             (isCandidateFromUnstableSmartcast || (isReceiverNullable && !explicitReceiverExpression.smartcastType.canBeNull))
         ) {
-            sink.yieldDiagnostic(UnstableSmartCast(explicitReceiverExpression, explicitReceiverExpression.smartcastType.coneType))
+            sink.yieldDiagnostic(
+                UnstableSmartCast(
+                    explicitReceiverExpression,
+                    explicitReceiverExpression.smartcastType.coneType,
+                    context.session.typeContext.isTypeMismatchDueToNullability(
+                        explicitReceiverExpression.originalType.coneType,
+                        explicitReceiverExpression.smartcastType.coneType
+                    )
+                )
+            )
         } else if (isReceiverNullable) {
             sink.yieldDiagnostic(UnsafeCall(dispatchReceiverValueType))
         }

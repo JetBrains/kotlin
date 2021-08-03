@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.typeContext
@@ -60,7 +61,8 @@ private fun ConeDiagnostic.toFirDiagnostic(
                 unstableSmartcast.argument.source,
                 unstableSmartcast.targetType,
                 unstableSmartcast.argument,
-                unstableSmartcast.argument.smartcastStability.description
+                unstableSmartcast.argument.smartcastStability.description,
+                unstableSmartcast.isCastToNotNull
             )
         }
         else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
@@ -203,7 +205,8 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source,
                 rootCause.targetType,
                 rootCause.argument,
-                rootCause.argument.smartcastStability.description
+                rootCause.argument.smartcastStability.description,
+                rootCause.isCastToNotNull
             )
             else -> genericDiagnostic
         }
@@ -278,12 +281,13 @@ private fun ConstraintSystemError.toDiagnostic(
                     else -> null
                 }
 
+            val typeMismatchDueToNullability = typeContext.isTypeMismatchDueToNullability(lowerConeType, upperConeType)
             argument?.let {
                 return FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     it.source ?: source,
                     lowerConeType,
                     upperConeType,
-                    isArgumentTypeMismatchDueToNullability(lowerConeType, upperConeType, typeContext)
+                    typeMismatchDueToNullability
                 )
             }
 
@@ -299,7 +303,12 @@ private fun ConstraintSystemError.toDiagnostic(
                         else
                             upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
 
-                    FirErrors.TYPE_MISMATCH.createOn(qualifiedAccessSource ?: source, upperConeType, inferredType)
+                    FirErrors.TYPE_MISMATCH.createOn(
+                        qualifiedAccessSource ?: source,
+                        upperConeType,
+                        inferredType,
+                        typeMismatchDueToNullability
+                    )
                 }
                 is ExplicitTypeParameterConstraintPosition<*>,
                 is DelegatedPropertyConstraintPosition<*> -> {
@@ -417,4 +426,15 @@ private fun <A, B, C> FirDiagnosticFactory3<A, B, C>.createOn(
     c: C
 ): FirDiagnosticWithParameters3<A, B, C>? {
     return element?.let { on(it, a, b, c, positioningStrategy = null) }
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+private fun <A, B, C, D> FirDiagnosticFactory4<A, B, C, D>.createOn(
+    element: FirSourceElement?,
+    a: A,
+    b: B,
+    c: C,
+    d: D
+): FirDiagnosticWithParameters4<A, B, C, D>? {
+    return element?.let { on(it, a, b, c, d, positioningStrategy = null) }
 }

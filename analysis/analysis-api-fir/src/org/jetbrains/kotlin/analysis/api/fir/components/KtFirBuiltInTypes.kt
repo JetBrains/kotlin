@@ -36,7 +36,7 @@ internal class KtFirBuiltInTypes(builtinTypes: BuiltinTypes, builder: KtSymbolBy
     override val NOTHING: KtType by cachedBuiltin(builtinTypes.nothingType)
     override val ANY: KtType by cachedBuiltin(builtinTypes.anyType)
 
-
+    override val THROWABLE: KtType by cachedBuiltin(builtinTypes.throwableType)
     override val NULLABLE_ANY: KtType by cachedBuiltin(builtinTypes.nullableAnyType)
     override val NULLABLE_NOTHING: KtType by cachedBuiltin(builtinTypes.nullableNothingType)
 

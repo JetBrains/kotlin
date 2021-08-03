@@ -78,7 +78,7 @@ object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RES
 
 object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(RESOLVED)
 
-class UnstableSmartCast(val argument: FirExpressionWithSmartcast, val targetType: ConeKotlinType) : ResolutionDiagnostic(UNSTABLE_SMARTCAST)
+class UnstableSmartCast(val argument: FirExpressionWithSmartcast, val targetType: ConeKotlinType, val isCastToNotNull: Boolean) : ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 
 class ArgumentTypeMismatch(
     val expectedType: ConeKotlinType,
