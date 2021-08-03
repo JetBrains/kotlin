@@ -253,6 +253,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     CHECK_DEPENDENCIES,
                     configuration.kotlinSourceRoots.isNotEmpty()
                             || !arguments.includes.isNullOrEmpty()
+                            || outputKind.isCache
                             || arguments.checkDependencies
                 )
                 if (arguments.friendModules != null)
