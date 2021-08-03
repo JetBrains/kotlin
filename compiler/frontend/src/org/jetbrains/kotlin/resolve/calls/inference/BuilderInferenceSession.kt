@@ -94,10 +94,7 @@ class BuilderInferenceSession(
             return subResolvedAtoms?.any { it.hasPostponed() } == true
         }
 
-        val isUnrestrictedBuilderInferenceSupported =
-            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.UnrestrictedBuilderInference)
-
-        if (!isUnrestrictedBuilderInferenceSupported && !candidate.isSuitableForBuilderInference()) {
+        if (!candidate.isSuitableForBuilderInference()) {
             return true
         }
 
