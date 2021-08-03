@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
@@ -71,13 +75,15 @@ class FirFrontendFacade(
             module.targetPlatform,
             module.targetPlatform.getAnalyzerServices(),
             moduleInfoProvider.firSessionProvider,
-            project,
+            PsiBasedProjectEnvironment(
+                project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                { packagePartProviderFactory.invoke(it) }
+            ),
             languageVersionSettings,
-            sourcesScope,
-            librariesScope,
+            PsiBasedProjectFileSearchScope(sourcesScope),
+            PsiBasedProjectFileSearchScope(librariesScope),
             lookupTracker = null,
             providerAndScopeForIncrementalCompilation = null,
-            getPackagePartProvider = packagePartProviderFactory,
             dependenciesConfigurator = {
                 dependencies(configuration.jvmModularRoots.map { it.toPath() })
                 dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
@@ -87,13 +93,12 @@ class FirFrontendFacade(
                 sourceDependencies(moduleInfoProvider.getRegularDependentSourceModules(module))
                 sourceFriendsDependencies(moduleInfoProvider.getDependentFriendSourceModules(module))
                 sourceDependsOnDependencies(moduleInfoProvider.getDependentDependsOnSourceModules(module))
-            },
-            sessionConfigurator = {
-                if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
-                    registerExtendedCommonCheckers()
-                }
             }
-        )
+        ) {
+            if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
+                registerExtendedCommonCheckers()
+            }
+        }
 
         moduleInfoProvider.registerModuleData(module, session.moduleData)
 

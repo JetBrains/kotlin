@@ -14,11 +14,8 @@ import com.sun.jna.Native
 import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.common.profiling.AsyncProfilerHelper
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.fir.analysis.FirCheckersResolveProcessor
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -128,9 +125,9 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
         val session = createSessionForTests(
-            environment,
-            scope,
-            librariesScope,
+            environment.toAbstractProjectEnvironment(),
+            scope.toAbstractProjectFileSearchScope(),
+            librariesScope.toAbstractProjectFileSearchScope(),
             moduleData.qualifiedName,
             moduleData.friendDirs.map { it.toPath() }
         )

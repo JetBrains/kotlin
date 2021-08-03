@@ -101,7 +101,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             return ExitCode.COMPILATION_ERROR
         }
 
-        checkKotlinPackageUsage(environment, environment.getSourceFiles())
+        checkKotlinPackageUsage(environment.configuration, environment.getSourceFiles())
 
         try {
             val metadataVersion =

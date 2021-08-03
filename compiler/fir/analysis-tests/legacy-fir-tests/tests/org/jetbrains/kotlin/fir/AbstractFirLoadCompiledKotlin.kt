@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetModule
 import org.jetbrains.kotlin.name.FqName
@@ -41,7 +42,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirLoadBinariesTest() {
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         prepareProjectExtensions(environment.project)
-        val sessionWithDependency = createSessionForTests(environment, GlobalSearchScope.EMPTY_SCOPE)
+        val sessionWithDependency = createSessionForTests(environment.toAbstractProjectEnvironment(), AbstractProjectFileSearchScope.EMPTY)
 
         val testDataDirectoryPath =
             "compiler/fir/analysis-tests/testData/loadCompiledKotlin/" +

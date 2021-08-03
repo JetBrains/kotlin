@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
@@ -29,8 +30,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 fun Module.getSourceFiles(
-    environment: KotlinCoreEnvironment,
-    localFileSystem: VirtualFileSystem,
+    allSourceFiles: List<KtFile>,
+    localFileSystem: VirtualFileSystem?,
     multiModuleChunk: Boolean,
     buildFile: File?
 ): List<KtFile> {
@@ -39,17 +40,17 @@ fun Module.getSourceFiles(
         assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
         val (moduleSourceDirs, moduleSourceFiles) =
             getBuildFilePaths(buildFile, getSourceFiles())
-                .mapNotNull(localFileSystem::findFileByPath)
+                .mapNotNull(localFileSystem!!::findFileByPath)
                 .partition(VirtualFile::isDirectory)
 
-        environment.getSourceFiles().filter { file ->
+        allSourceFiles.filter { file ->
             val virtualFile = file.virtualFile
             virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
                 VfsUtilCore.isAncestor(dir, virtualFile, true)
             }
         }
     } else {
-        environment.getSourceFiles()
+        allSourceFiles
     }
 }
 
@@ -115,7 +116,7 @@ fun writeOutput(
 }
 
 fun writeOutputs(
-    environment: KotlinCoreEnvironment,
+    project: Project?,
     projectConfiguration: CompilerConfiguration,
     chunk: List<Module>,
     outputs: Map<Module, GenerationState>,
@@ -133,7 +134,7 @@ fun writeOutputs(
     if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
         val singleModule = chunk.singleOrNull()
         if (singleModule != null) {
-            return JavacWrapper.getInstance(environment.project).use {
+            return JavacWrapper.getInstance(project!!).use {
                 it.compile(File(singleModule.getOutputDirectory()))
             }
         } else {
@@ -142,7 +143,6 @@ fun writeOutputs(
                 "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
                         "-Xuse-javac option couldn't be used to compile java files"
             )
-            JavacWrapper.getInstance(environment.project).close()
         }
     }
 

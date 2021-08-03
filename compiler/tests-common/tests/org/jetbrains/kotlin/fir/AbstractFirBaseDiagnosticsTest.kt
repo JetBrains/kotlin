@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
@@ -19,6 +21,8 @@ import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -85,13 +89,15 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 info.platform,
                 info.analyzerServices,
                 externalSessionProvider = sessionProvider,
-                project,
+                PsiBasedProjectEnvironment(
+                    project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                    { environment.createPackagePartProvider(it) }
+                ),
                 config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT,
-                sourceScope = scope,
-                librariesScope = allProjectScope,
+                sourceScope = PsiBasedProjectFileSearchScope(scope),
+                librariesScope = PsiBasedProjectFileSearchScope(allProjectScope),
                 lookupTracker = null,
                 providerAndScopeForIncrementalCompilation = null,
-                getPackagePartProvider = { environment.createPackagePartProvider(it) },
             ) {
                 configureSession()
                 getFirExtensions()?.let {

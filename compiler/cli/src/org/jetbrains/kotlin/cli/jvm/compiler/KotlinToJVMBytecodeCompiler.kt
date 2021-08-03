@@ -84,7 +84,19 @@ object KotlinToJVMBytecodeCompiler {
         val projectConfiguration = environment.configuration
         if (projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
             val extendedAnalysisMode = projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
-            return FirKotlinToJvmBytecodeCompiler.compileModulesUsingFrontendIR(environment, buildFile, chunk, extendedAnalysisMode)
+            val projectEnvironment =
+                PsiBasedProjectEnvironment(
+                    environment.project,
+                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                    { environment.createPackagePartProvider(it) }
+                )
+            return FirKotlinToJvmBytecodeCompiler.compileModulesUsingFrontendIR(
+                projectEnvironment,
+                environment.configuration,
+                environment.messageCollector,
+                environment.getSourceFiles(),
+                buildFile, chunk, extendedAnalysisMode
+            )
         }
 
         val result = repeatAnalysisIfNeeded(analyze(environment), environment)
@@ -106,14 +118,14 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-            val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
-            if (!checkKotlinPackageUsage(environment, ktFiles)) return false
+            val ktFiles = module.getSourceFiles(environment.getSourceFiles(), localFileSystem, chunk.size > 1, buildFile)
+            if (!checkKotlinPackageUsage(environment.configuration, ktFiles)) return false
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
             outputs[module] = generate(environment, moduleConfiguration, result, ktFiles, module)
         }
 
-        return writeOutputs(environment, projectConfiguration, chunk, outputs, mainClassFqName)
+        return writeOutputs(environment.project, projectConfiguration, chunk, outputs, mainClassFqName)
     }
 
 
@@ -171,7 +183,7 @@ object KotlinToJVMBytecodeCompiler {
             moduleVisibilityManager.addFriendPath(path)
         }
 
-        if (!checkKotlinPackageUsage(environment, environment.getSourceFiles())) return false
+        if (!checkKotlinPackageUsage(environment.configuration, environment.getSourceFiles())) return false
 
         val generationState = analyzeAndGenerate(environment) ?: return false
 

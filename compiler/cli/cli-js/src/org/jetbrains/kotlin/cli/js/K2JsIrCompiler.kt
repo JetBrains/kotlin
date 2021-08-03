@@ -139,7 +139,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configurationJs.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
 
-        if (!checkKotlinPackageUsage(environmentForJS, sourcesFiles)) return ExitCode.COMPILATION_ERROR
+        if (!checkKotlinPackageUsage(environmentForJS.configuration, sourcesFiles)) return ExitCode.COMPILATION_ERROR
 
         val outputFilePath = arguments.outputFile
         if (outputFilePath == null) {
