@@ -148,6 +148,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -895,7 +897,8 @@ class ComposableFunctionBodyTransformer(
         // we know we will never be mutating this variable _after_ it gets captured, we can
         // safely mark this as `isVar = false`.
             changedParam.irCopyToTemporary(
-                isVar = false,
+                // LLVM validation doesn't allow us to have val here.
+                isVar = if (context.platform.isJvm() || context.platform.isJs()) false else true,
                 nameHint = "\$dirty",
                 exactName = true
             )
@@ -1009,7 +1012,8 @@ class ComposableFunctionBodyTransformer(
         // safely mark this as `isVar = false`.
         val dirty = if (scope.allTrackedParams.isNotEmpty())
             changedParam.irCopyToTemporary(
-                isVar = false,
+                // LLVM validation doesn't allow us to have val here.
+                isVar = if (context.platform.isJvm() || context.platform.isJs()) false else true,
                 nameHint = "\$dirty",
                 exactName = true
             )
