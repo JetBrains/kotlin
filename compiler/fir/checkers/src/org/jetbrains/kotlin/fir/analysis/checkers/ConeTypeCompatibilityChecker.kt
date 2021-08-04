@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.Variance
  * covariant and contravariant bounds is empty. For example, a range like `[Collection, List]` is empty and hence invalid because `List` is
  * not a super class/interface of `Collection`
  */
-internal object ConeTypeCompatibilityChecker {
+object ConeTypeCompatibilityChecker {
 
     /**
      * The result returned by [ConeTypeCompatibilityChecker]. Note the order of enum entries matters.
@@ -63,6 +63,8 @@ internal object ConeTypeCompatibilityChecker {
     }
 
     fun ConeInferenceContext.isCompatible(a: ConeKotlinType, b: ConeKotlinType): Compatibility {
+        // Don't report explicit comparison with `Nothing`
+        if (a.isNothing || b.isNothing) return Compatibility.COMPATIBLE
         if (a is ConeIntersectionType) {
             return a.intersectedTypes.minOf { isCompatible(it, b) }
         }
@@ -70,11 +72,13 @@ internal object ConeTypeCompatibilityChecker {
             return b.intersectedTypes.minOf { isCompatible(a, it) }
         }
 
-        val intersectionType = intersectTypesOrNull(listOf(a, b)) as? ConeIntersectionType ?: return Compatibility.COMPATIBLE
-        return intersectionType.intersectedTypes.areCompatible(this)
+        return when (val intersectionType = intersectTypesOrNull(listOf(a, b))) {
+            is ConeIntersectionType -> intersectionType.intersectedTypes.getCompatibility(this)
+            else -> if (intersectionType?.isNothing == true) Compatibility.HARD_INCOMPATIBLE else Compatibility.COMPATIBLE
+        }
     }
 
-    private fun Collection<ConeKotlinType>.areCompatible(ctx: ConeInferenceContext): Compatibility {
+    private fun Collection<ConeKotlinType>.getCompatibility(ctx: ConeInferenceContext): Compatibility {
         // If all types are nullable, then `null` makes the given types compatible.
         if (all { with(ctx) { it.isNullableType() } }) return Compatibility.COMPATIBLE
 
@@ -90,7 +94,7 @@ internal object ConeTypeCompatibilityChecker {
             // This is to stay compatible with FE1.0.
             else -> Compatibility.SOFT_INCOMPATIBLE
         }
-        return ctx.areCompatible(flatMap { it.collectUpperBounds() }.toSet(), emptySet(), compatibilityUpperBound)
+        return ctx.getCompatibility(flatMap { it.collectUpperBounds() }.toSet(), emptySet(), compatibilityUpperBound)
     }
 
     private fun ConeKotlinType.isConcreteType(): Boolean {
@@ -110,7 +114,7 @@ internal object ConeTypeCompatibilityChecker {
      * `MyCustom<out Int>`, we let them do so since we do not know what class `MyCustom` uses the type parameter for. Empty containers are
      * another example: `emptyList<Int>() == emptyList<String>()`.
      */
-    private fun ConeInferenceContext.areCompatible(
+    private fun ConeInferenceContext.getCompatibility(
         upperBounds: Set<ConeClassLikeType>,
         lowerBounds: Set<ConeClassLikeType>,
         compatibilityUpperBound: Compatibility,
@@ -146,7 +150,7 @@ internal object ConeTypeCompatibilityChecker {
 
         val typeArgumentMapping = mutableMapOf<FirTypeParameterSymbol, BoundTypeArguments>().apply {
             for (type in upperBounds) {
-                collectTypeArgumentMapping(type, this@areCompatible, compatibilityUpperBound)
+                collectTypeArgumentMapping(type, this@getCompatibility, compatibilityUpperBound)
             }
         }
         var result = Compatibility.COMPATIBLE
@@ -158,7 +162,7 @@ internal object ConeTypeCompatibilityChecker {
                     Compatibility.COMPATIBLE
                 } else {
                     checkedTypeParameters.add(paramRef)
-                    areCompatible(upper, lower, compatibility, checkedTypeParameters)
+                    getCompatibility(upper, lower, compatibility, checkedTypeParameters)
                 }
             }
         for (compatibility in typeArgsCompatibility) {
