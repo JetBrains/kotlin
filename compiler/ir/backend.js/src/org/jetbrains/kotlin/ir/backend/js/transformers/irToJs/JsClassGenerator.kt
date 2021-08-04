@@ -234,9 +234,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun isCoroutineClass(): Boolean = irClass.superTypes.any { it.isSuspendFunctionTypeOrSubtype() }
 
-    private fun generateSuspendArity(): JsPropertyInitializer? {
-        val arity = context.staticContext.backendContext.suspendArityStore
-            .getValue(irClass)
+    private fun generateSuspendArity(): JsPropertyInitializer {
+        val arity = context.staticContext.backendContext.mapping.suspendArityStore[irClass]!!
+            .map { it.valueParameters.size }
+            .distinct()
             .map { JsIntLiteral(it) }
 
         return JsPropertyInitializer(JsNameRef(Namer.METADATA_SUSPEND_ARITY), JsArrayLiteral(arity))

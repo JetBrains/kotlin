@@ -10,18 +10,19 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import kotlin.collections.set
 
-class JsSuspendArityStoreLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
+class JsSuspendArityStoreLowering(context: JsIrBackendContext) : DeclarationTransformer {
+
+    private var IrClass.suspendArityStore by context.mapping.suspendArityStore
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass) return null
 
         declaration.declarations
             .filterIsInstance<IrSimpleFunction>()
             .filter { it.isSuspend }
-            .map { it.valueParameters.size }
             .let {
-                context.suspendArityStore[declaration] = it.toSet()
+                declaration.suspendArityStore = it
             }
 
         return null
