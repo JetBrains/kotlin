@@ -26,6 +26,7 @@ public interface KtStubElementTypes {
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
     KtPropertyAccessorElementType PROPERTY_ACCESSOR = new KtPropertyAccessorElementType("PROPERTY_ACCESSOR");
+    KtPropertyFieldDeclarationElementType PROPERTY_FIELD_DECLARATION = new KtPropertyFieldDeclarationElementType("PROPERTY_FIELD_DECLARATION");
     KtTypeAliasElementType TYPEALIAS = new KtTypeAliasElementType("TYPEALIAS");
 
     KtClassElementType ENUM_ENTRY = new KtClassElementType("ENUM_ENTRY");

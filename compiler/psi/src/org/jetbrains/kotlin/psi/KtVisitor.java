@@ -358,6 +358,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitDeclaration(accessor, data);
     }
 
+    public R visitPropertyFieldDeclaration(@NotNull KtPropertyFieldDeclaration accessor, D data) {
+        return visitDeclaration(accessor, data);
+    }
+
     public R visitTypeConstraintList(@NotNull KtTypeConstraintList list, D data) {
         return visitKtElement(list, data);
     }
