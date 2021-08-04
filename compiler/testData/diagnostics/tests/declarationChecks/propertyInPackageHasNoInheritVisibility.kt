@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package d
 
 <!WRONG_MODIFIER_TARGET!>override<!> val f : ()-> Int = { 12 }

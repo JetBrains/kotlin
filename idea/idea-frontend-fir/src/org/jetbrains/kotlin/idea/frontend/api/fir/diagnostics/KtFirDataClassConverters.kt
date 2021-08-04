@@ -1083,6 +1083,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION) { firDiagnostic ->
+        WrongModifierContainingDeclarationImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION) { firDiagnostic ->
+        DeprecatedModifierContainingDeclarationImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INLINE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
         InlineClassNotTopLevelImpl(
             firDiagnostic as FirPsiDiagnostic,

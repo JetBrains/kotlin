@@ -264,6 +264,8 @@ object FirErrors {
     val WRONG_MODIFIER_TARGET by error2<PsiElement, String, String>()
     val OPERATOR_MODIFIER_REQUIRED by error2<PsiElement, FirNamedFunctionSymbol, String>()
     val INFIX_MODIFIER_REQUIRED by error1<PsiElement, FirNamedFunctionSymbol>()
+    val WRONG_MODIFIER_CONTAINING_DECLARATION by error2<PsiElement, String, String>()
+    val DEPRECATED_MODIFIER_CONTAINING_DECLARATION by warning2<PsiElement, String, String>()
 
     // Inline classes
     val INLINE_CLASS_NOT_TOP_LEVEL by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)

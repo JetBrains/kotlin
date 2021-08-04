@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -55,6 +56,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override var delegatedConstructor: FirDelegatedConstructorCall? = null
     override var body: FirBlock? = null
 
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirConstructor {
         return FirPrimaryConstructor(
             source,

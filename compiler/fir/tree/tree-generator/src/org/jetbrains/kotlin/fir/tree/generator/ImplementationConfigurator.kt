@@ -22,6 +22,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(constructor, "FirPrimaryConstructor") {
+            publicImplementation()
             defaultTrue("isPrimary", withGetter = true)
         }
 

@@ -9,9 +9,9 @@ class A {
 }
 
 object O {
-    companion object A
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object A
 
-    <!MANY_COMPANION_OBJECTS!>companion<!> object B
+    <!MANY_COMPANION_OBJECTS, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object B
 
-    <!MANY_COMPANION_OBJECTS!>companion<!> object C
+    <!MANY_COMPANION_OBJECTS, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object C
 }

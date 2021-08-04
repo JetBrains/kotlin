@@ -1243,6 +1243,24 @@ internal class InfixModifierRequiredImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class WrongModifierContainingDeclarationImpl(
+    override val modifier: String,
+    override val target: String,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.WrongModifierContainingDeclaration(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class DeprecatedModifierContainingDeclarationImpl(
+    override val modifier: String,
+    override val target: String,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DeprecatedModifierContainingDeclaration(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class InlineClassNotTopLevelImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

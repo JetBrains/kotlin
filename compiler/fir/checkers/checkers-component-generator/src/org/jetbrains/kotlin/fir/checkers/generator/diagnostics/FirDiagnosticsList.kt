@@ -339,6 +339,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INFIX_MODIFIER_REQUIRED by error<PsiElement> {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
         }
+        val WRONG_MODIFIER_CONTAINING_DECLARATION by error<PsiElement> {
+            parameter<String>("modifier")
+            parameter<String>("target")
+        }
+        val DEPRECATED_MODIFIER_CONTAINING_DECLARATION by warning<PsiElement> {
+            parameter<String>("modifier")
+            parameter<String>("target")
+        }
     }
 
     val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {

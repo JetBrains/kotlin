@@ -14,6 +14,6 @@ enum class Enum {
             OTHER_ENTRY
         }
 
-        companion object {}
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {}
     }
 }

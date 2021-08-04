@@ -4,7 +4,7 @@ annotation class Ann
 
 var <!REDECLARATION!>x<!>: Int
     get() = 1
-    set(@Ann private x) { }
+    set(@Ann <!WRONG_MODIFIER_TARGET!>private<!> x) { }
 
 
 var <!REDECLARATION!>x<!>: String = ""

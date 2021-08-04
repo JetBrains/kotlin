@@ -783,6 +783,18 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val functionSymbol: KtFunctionLikeSymbol
     }
 
+    abstract class WrongModifierContainingDeclaration : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = WrongModifierContainingDeclaration::class
+        abstract val modifier: String
+        abstract val target: String
+    }
+
+    abstract class DeprecatedModifierContainingDeclaration : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DeprecatedModifierContainingDeclaration::class
+        abstract val modifier: String
+        abstract val target: String
+    }
+
     abstract class InlineClassNotTopLevel : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = InlineClassNotTopLevel::class
     }

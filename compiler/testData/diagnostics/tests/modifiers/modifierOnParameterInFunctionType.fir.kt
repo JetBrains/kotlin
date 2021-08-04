@@ -2,11 +2,11 @@
 
 fun f(vararg x: Int) {}
 
-val inVal: (vararg x: Int)->Unit = {}
+val inVal: (<!WRONG_MODIFIER_CONTAINING_DECLARATION!>vararg<!> x: Int)->Unit = {}
 
-fun inParam(fn: (vararg x: Int)->Unit) {}
+fun inParam(fn: (<!WRONG_MODIFIER_CONTAINING_DECLARATION!>vararg<!> x: Int)->Unit) {}
 
-fun inParamNested(fn1: (fn2: (vararg n: Int)->Unit)->Unit) {}
+fun inParamNested(fn1: (fn2: (<!WRONG_MODIFIER_CONTAINING_DECLARATION!>vararg<!> n: Int)->Unit)->Unit) {}
 
 fun inReturn(): (vararg x: Int)->Unit = {}
 
@@ -16,7 +16,7 @@ class A : (vararg Int)->Unit {
     }
 
     val prop: (vararg x: Int)->Unit
-        get(): (vararg x: Int)->Unit = {}
+        get(): (<!WRONG_MODIFIER_CONTAINING_DECLARATION, WRONG_MODIFIER_CONTAINING_DECLARATION!>vararg<!> x: Int)->Unit = {}
 }
 
 val allProhibited: (<!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET!>abstract<!>
@@ -44,7 +44,7 @@ val allProhibited: (<!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET!>abstract<!>
                     <!WRONG_MODIFIER_TARGET!>reified<!>
                     <!INCOMPATIBLE_MODIFIERS!>sealed<!>
                     <!WRONG_MODIFIER_TARGET!>tailrec<!>
-                    vararg
+                    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>vararg<!>
 
                     x: Int)->Unit = {}
 

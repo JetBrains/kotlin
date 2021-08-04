@@ -3,8 +3,8 @@
 //FILE:a.kt
 package test_visibility
 
-protected class ProtectedClass
-protected interface ProtectedTrait
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> class ProtectedClass
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> interface ProtectedTrait
 
 <!WRONG_MODIFIER_TARGET!>protected<!> val protected_val : Int = 4
 <!WRONG_MODIFIER_TARGET!>protected<!> fun protected_fun() {}

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface My {
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>internal<!> val x: Int
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>internal<!> val xxx: Int
