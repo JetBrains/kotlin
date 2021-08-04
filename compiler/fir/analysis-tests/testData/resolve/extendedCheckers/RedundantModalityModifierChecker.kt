@@ -82,4 +82,4 @@ abstract interface AbstractInterface
 // Redundant final object
 <!REDUNDANT_MODALITY_MODIFIER!>final<!> object FinalObject
 // Open interface
-open interface OpenInterface
+<!REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface OpenInterface

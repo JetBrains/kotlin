@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 <!WRONG_MODIFIER_TARGET!>companion<!> class A {
     companion object {
 

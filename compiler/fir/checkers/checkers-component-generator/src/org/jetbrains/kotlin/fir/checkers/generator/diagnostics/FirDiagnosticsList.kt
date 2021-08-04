@@ -307,9 +307,21 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("redundantModifier")
             parameter<String>("conflictingModifier")
         }
+        val DEPRECATED_MODIFIER by warning<PsiElement> {
+            parameter<String>("deprecatedModifier")
+            parameter<String>("actualModifier")
+        }
         val DEPRECATED_MODIFIER_PAIR by error<PsiElement> {
             parameter<String>("deprecatedModifier")
             parameter<String>("conflictingModifier")
+        }
+        val DEPRECATED_MODIFIER_FOR_TARGET by warning<PsiElement> {
+            parameter<String>("deprecatedModifier")
+            parameter<String>("target")
+        }
+        val REDUNDANT_MODIFIER_FOR_TARGET by warning<PsiElement> {
+            parameter<String>("redundantModifier")
+            parameter<String>("target")
         }
         val INCOMPATIBLE_MODIFIERS by error<PsiElement> {
             parameter<String>("modifier1")

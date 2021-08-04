@@ -5,61 +5,65 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
-import org.jetbrains.kotlin.fir.analysis.checkers.getKeywordType
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory2
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.resolve.Compatibility
-import org.jetbrains.kotlin.resolve.KeywordType
-import org.jetbrains.kotlin.resolve.compatibility
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.hasBody
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.resolve.*
 
 object FirModifierChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirFile) return
 
         val source = declaration.source ?: return
-        if (!isDeclarationMappedToSourceCorrectly(declaration, source)) return
-        if (context.containingDeclarations.last() is FirDefaultPropertyAccessor) return
+        if (source.kind is FirFakeSourceElementKind) return
 
-        val modifierList = source.getModifierList()
-        modifierList?.let { checkModifiers(it, declaration, reporter, context) }
-    }
+        if (declaration is FirProperty) {
+            fun checkPropertyAccessor(propertyAccessor: FirPropertyAccessor?) {
+                if (propertyAccessor != null && !propertyAccessor.hasBody) {
+                    check(propertyAccessor, context, reporter)
+                }
+            }
 
-    private fun isDeclarationMappedToSourceCorrectly(declaration: FirDeclaration, source: FirSourceElement): Boolean =
-        when (source.elementType) {
-            KtNodeTypes.CLASS -> declaration is FirClass
-            KtNodeTypes.OBJECT_DECLARATION -> declaration is FirClass
-            KtNodeTypes.PROPERTY -> declaration is FirProperty
-            KtNodeTypes.VALUE_PARAMETER -> declaration is FirValueParameter
-            // TODO more FIR-PSI relations possibly have to be added
-            else -> true
+            checkPropertyAccessor(declaration.getter)
+            checkPropertyAccessor(declaration.setter)
         }
+
+        source.getModifierList()?.let { checkModifiers(it, declaration, context, reporter) }
+    }
 
     private fun checkModifiers(
         list: FirModifierList,
         owner: FirDeclaration,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
+        context: CheckerContext,
+        reporter: DiagnosticReporter
     ) {
         // general strategy: report no more than one error and any number of warnings
         // therefore, a track of nodes with already reported errors should be kept
         val reportedNodes = hashSetOf<FirModifier<*>>()
+        val actualTargets = getActualTargetList(owner).defaultTargets
 
         val modifiers = list.modifiers
-        for (secondModifier in modifiers) {
-            for (firstModifier in modifiers) {
-                if (firstModifier == secondModifier) {
-                    break
+        for ((secondIndex, secondModifier) in modifiers.withIndex()) {
+            for (firstIndex in 0 until secondIndex) {
+                checkCompatibilityType(modifiers[firstIndex], secondModifier, reporter, reportedNodes, owner, context)
+            }
+            if (secondModifier !in reportedNodes) {
+                when {
+                    !checkTarget(modifierSource, modifierType, actualTargets, parent, context, reporter) -> reportedNodes += secondModifier
+                    !checkParent(modifierSource, modifierType, actualParents, context, reporter) -> reportedNodes += secondModifier
                 }
-                checkCompatibilityType(firstModifier, secondModifier, reporter, reportedNodes, owner, context)
             }
         }
     }
@@ -141,7 +145,68 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun KeywordType.render(): String {
-        return this.toString().lowercase()
+    private fun checkTarget(
+        modifier: FirModifier<*>,
+        actualTargets: List<KotlinTarget>,
+        parent: FirDeclaration?,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ): Boolean {
+        val modifierType = getKeywordType(modifier)
+
+        fun checkModifier(factory: FirDiagnosticFactory2<String, String>): Boolean {
+            val map = when (factory) {
+                FirErrors.WRONG_MODIFIER_TARGET -> possibleTargetMap
+                FirErrors.DEPRECATED_MODIFIER_FOR_TARGET -> deprecatedTargetMap
+                else -> redundantTargetMap
+            }
+            val set = map[modifierType] ?: emptySet()
+            val checkResult = if (factory == FirErrors.WRONG_MODIFIER_TARGET) {
+                actualTargets.none { it in set }
+            } else {
+                actualTargets.any { it in set }
+            }
+            if (checkResult) {
+                reporter.reportOn(
+                    modifier.source,
+                    factory,
+                    modifierType.render(),
+                    actualTargets.firstOrThis(),
+                    context
+                )
+                return false
+            }
+            return true
+        }
+
+        if (!checkModifier(FirErrors.WRONG_MODIFIER_TARGET)) {
+            return false
+        }
+
+        if (parent is FirRegularClass) {
+            if (modifierType == KeywordType.Expect || modifierType == KeywordType.Header) {
+                reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifierType.render(), "nested class", context)
+                return false
+            }
+        }
+
+        val deprecatedModifierReplacement = deprecatedModifierMap[modifierType]
+        if (deprecatedModifierReplacement != null) {
+            reporter.reportOn(
+                modifier.source,
+                FirErrors.DEPRECATED_MODIFIER,
+                modifierType.render(),
+                deprecatedModifierReplacement.render(),
+                context
+            )
+        } else if (checkModifier(FirErrors.DEPRECATED_MODIFIER_FOR_TARGET)) {
+            checkModifier(FirErrors.REDUNDANT_MODIFIER_FOR_TARGET)
+        }
+
+        return true
+    }
+
+    private fun List<KotlinTarget>.firstOrThis(): String {
+        return firstOrNull()?.description ?: "this"
     }
 }

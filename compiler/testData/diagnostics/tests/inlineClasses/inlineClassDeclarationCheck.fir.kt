@@ -29,7 +29,7 @@ object B2 {
 }
 
 fun foo() {
-    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C4(val x: Int)
+    <!INLINE_CLASS_NOT_TOP_LEVEL, WRONG_MODIFIER_TARGET!>inline<!> class C4(val x: Int)
 }
 
 final inline class D0(val x: Int)

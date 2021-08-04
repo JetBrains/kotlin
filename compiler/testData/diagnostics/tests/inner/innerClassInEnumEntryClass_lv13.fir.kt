@@ -10,7 +10,7 @@ enum class Enum {
 
         <!LOCAL_OBJECT_NOT_ALLOWED!>object TestObject<!>
 
-        enum class TestEnumClass {
+        <!WRONG_MODIFIER_TARGET!>enum<!> class TestEnumClass {
             OTHER_ENTRY
         }
 

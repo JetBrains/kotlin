@@ -1379,7 +1379,7 @@ class DeclarationsConverter(
         }
 
         return buildValueParameter {
-            source = setterParameter.toFirSourceElement()
+            source = firValueParameter.source
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef

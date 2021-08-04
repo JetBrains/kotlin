@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
@@ -33,13 +34,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.resolve.AnnotationTargetList
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -671,3 +671,80 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
 
     return true
 }
+
+fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
+    fun CallableId.isMember(): Boolean {
+        return classId != null || isLocal // TODO: Replace with .containingClass (after fixing)
+    }
+
+    return when (annotated) {
+        is FirRegularClass -> {
+            AnnotationTargetList(
+                KotlinTarget.classActualTargets(annotated.classKind, annotated.isInner, annotated.isCompanion, annotated.isLocal)
+            )
+        }
+        is FirEnumEntry -> AnnotationTargetList(
+            KotlinTarget.classActualTargets(ClassKind.ENUM_ENTRY, annotated.isInner, isCompanionObject = false, isLocalClass = false)
+        )
+        is FirProperty -> {
+            when {
+                annotated.isLocal ->
+                    if (annotated.source?.kind == FirFakeSourceElementKind.DesugaredComponentFunctionCall) {
+                        TargetLists.T_DESTRUCTURING_DECLARATION
+                    } else {
+                        TargetLists.T_LOCAL_VARIABLE
+                    }
+                annotated.symbol.callableId.isMember() ->
+                    if (annotated.source?.kind == FirFakeSourceElementKind.PropertyFromParameter) {
+                        TargetLists.T_VALUE_PARAMETER_WITH_VAL
+                    } else {
+                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
+                    }
+                else ->
+                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
+            }
+        }
+        is FirValueParameter -> {
+            when {
+                annotated.hasValOrVar -> TargetLists.T_VALUE_PARAMETER_WITH_VAL
+                else -> TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
+            }
+        }
+        is FirConstructor -> TargetLists.T_CONSTRUCTOR
+        is FirAnonymousFunction -> {
+            TargetLists.T_FUNCTION_EXPRESSION
+        }
+        is FirSimpleFunction -> {
+            when {
+                annotated.isLocal -> TargetLists.T_LOCAL_FUNCTION
+                annotated.symbol.callableId.isMember() -> TargetLists.T_MEMBER_FUNCTION
+                else -> TargetLists.T_TOP_LEVEL_FUNCTION
+            }
+        }
+        is FirTypeAlias -> TargetLists.T_TYPEALIAS
+        is FirPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
+        is FirFile -> TargetLists.T_FILE
+        is FirTypeParameter -> TargetLists.T_TYPE_PARAMETER
+        is FirAnonymousInitializer -> TargetLists.T_INITIALIZER
+        is FirAnonymousObject ->
+            if (annotated.source?.kind == FirFakeSourceElementKind.EnumInitializer) {
+                AnnotationTargetList(
+                    KotlinTarget.classActualTargets(
+                        ClassKind.ENUM_ENTRY,
+                        isInnerClass = false,
+                        isCompanionObject = false,
+                        isLocalClass = false
+                    )
+                )
+            } else {
+                TargetLists.T_OBJECT_LITERAL
+            }
+//            TODO: properly implement those cases
+//            is KtDestructuringDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
+//            is KtDestructuringDeclaration -> TargetLists.T_DESTRUCTURING_DECLARATION
+//            is KtLambdaExpression -> TargetLists.T_FUNCTION_LITERAL
+        else -> TargetLists.EMPTY
+    }
+}
+
+private typealias TargetLists = AnnotationTargetLists

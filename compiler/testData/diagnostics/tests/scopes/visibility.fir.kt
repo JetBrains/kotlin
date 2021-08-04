@@ -6,8 +6,8 @@ package test_visibility
 protected class ProtectedClass
 protected interface ProtectedTrait
 
-protected val protected_val : Int = 4
-protected fun protected_fun() {}
+<!WRONG_MODIFIER_TARGET!>protected<!> val protected_val : Int = 4
+<!WRONG_MODIFIER_TARGET!>protected<!> fun protected_fun() {}
 
 private val private_val : Int = 4
 private fun private_fun() {}

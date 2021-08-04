@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
+import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -198,72 +199,5 @@ object FirAnnotationChecker : FirAnnotatedDeclarationChecker() {
             }
         }
     }
-
-    private fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
-        return when (annotated) {
-            is FirRegularClass -> {
-                AnnotationTargetList(
-                    KotlinTarget.classActualTargets(annotated.classKind, annotated.isInner, annotated.isCompanion, annotated.isLocal)
-                )
-            }
-            is FirEnumEntry -> AnnotationTargetList(
-                KotlinTarget.classActualTargets(ClassKind.ENUM_ENTRY, annotated.isInner, isCompanionObject = false, isLocalClass = false)
-            )
-            is FirProperty -> {
-                when {
-                    annotated.isLocal ->
-                        if (annotated.source?.kind == FirFakeSourceElementKind.DesugaredComponentFunctionCall) {
-                            TargetLists.T_DESTRUCTURING_DECLARATION
-                        } else {
-                            TargetLists.T_LOCAL_VARIABLE
-                        }
-                    annotated.symbol.callableId.classId != null ->
-                        if (annotated.source?.kind == FirFakeSourceElementKind.PropertyFromParameter) {
-                            TargetLists.T_VALUE_PARAMETER_WITH_VAL
-                        } else {
-                            TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
-                        }
-                    else ->
-                        TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
-                }
-            }
-            is FirValueParameter -> TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
-            is FirConstructor -> TargetLists.T_CONSTRUCTOR
-            is FirAnonymousFunction -> {
-                TargetLists.T_FUNCTION_EXPRESSION
-            }
-            is FirSimpleFunction -> {
-                when {
-                    annotated.isLocal -> TargetLists.T_LOCAL_FUNCTION
-                    annotated.symbol.callableId.classId != null -> TargetLists.T_MEMBER_FUNCTION
-                    else -> TargetLists.T_TOP_LEVEL_FUNCTION
-                }
-            }
-            is FirTypeAlias -> TargetLists.T_TYPEALIAS
-            is FirPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
-            is FirFile -> TargetLists.T_FILE
-            is FirTypeParameter -> TargetLists.T_TYPE_PARAMETER
-            is FirAnonymousInitializer -> TargetLists.T_INITIALIZER
-            is FirAnonymousObject ->
-                if (annotated.source?.kind == FirFakeSourceElementKind.EnumInitializer) {
-                    AnnotationTargetList(
-                        KotlinTarget.classActualTargets(
-                            ClassKind.ENUM_ENTRY,
-                            isInnerClass = false,
-                            isCompanionObject = false,
-                            isLocalClass = false
-                        )
-                    )
-                } else {
-                    TargetLists.T_OBJECT_LITERAL
-                }
-//            TODO: properly implement those cases
-//            is KtDestructuringDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
-//            is KtDestructuringDeclaration -> TargetLists.T_DESTRUCTURING_DECLARATION
-//            is KtLambdaExpression -> TargetLists.T_FUNCTION_LITERAL
-            else -> TargetLists.EMPTY
-        }
-    }
 }
 
-private typealias TargetLists = AnnotationTargetLists

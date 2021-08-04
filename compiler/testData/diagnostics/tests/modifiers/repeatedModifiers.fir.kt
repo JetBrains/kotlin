@@ -11,7 +11,7 @@ class Bzz(public <!REPEATED_MODIFIER!>public<!> val q: Int = 1) {
         public <!REPEATED_MODIFIER!>public<!> get() = 3
 
     val z: Int
-        <!INCOMPATIBLE_MODIFIERS!>open<!> <!INCOMPATIBLE_MODIFIERS!>final<!> get() = 4
+        <!WRONG_MODIFIER_TARGET!>open<!> <!INCOMPATIBLE_MODIFIERS!>final<!> get() = 4
 
     public <!REPEATED_MODIFIER!>public<!> class B(public <!REPEATED_MODIFIER!>public<!> val z: Int = 1) {
         public <!REPEATED_MODIFIER!>public<!> val y: Int = 2
@@ -31,7 +31,7 @@ public <!REPEATED_MODIFIER!>public<!> val bar: Int = 1
 public <!REPEATED_MODIFIER!>public<!> fun foo(): Int = 1
 
 fun test() {
-    public <!REPEATED_MODIFIER!>public<!> class B(public <!REPEATED_MODIFIER!>public<!> val z: Int = 1) {
+    <!WRONG_MODIFIER_TARGET!>public<!> <!REPEATED_MODIFIER!>public<!> class B(public <!REPEATED_MODIFIER!>public<!> val z: Int = 1) {
         public <!REPEATED_MODIFIER!>public<!> val y: Int = 2
 
         public val x: Int

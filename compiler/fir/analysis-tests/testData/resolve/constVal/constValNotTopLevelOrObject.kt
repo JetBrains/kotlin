@@ -38,5 +38,5 @@ object F {
 }
 
 fun foo() {
-    const val a = "2"
+    <!WRONG_MODIFIER_TARGET!>const<!> val a = "2"
 }

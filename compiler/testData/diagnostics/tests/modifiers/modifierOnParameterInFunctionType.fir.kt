@@ -19,31 +19,31 @@ class A : (vararg Int)->Unit {
         get(): (vararg x: Int)->Unit = {}
 }
 
-val allProhibited: (<!INCOMPATIBLE_MODIFIERS, REDUNDANT_MODIFIER!>abstract<!>
-                    annotation
-                    companion
+val allProhibited: (<!REDUNDANT_MODIFIER, WRONG_MODIFIER_TARGET!>abstract<!>
+                    <!WRONG_MODIFIER_TARGET!>annotation<!>
+                    <!WRONG_MODIFIER_TARGET!>companion<!>
                     <!INCOMPATIBLE_MODIFIERS!>const<!>
                     <!INCOMPATIBLE_MODIFIERS!>crossinline<!>
                     <!INCOMPATIBLE_MODIFIERS!>data<!>
-                    enum
-                    external
+                    <!WRONG_MODIFIER_TARGET!>enum<!>
+                    <!WRONG_MODIFIER_TARGET!>external<!>
                     <!INCOMPATIBLE_MODIFIERS!>final<!>
-                    <!INCOMPATIBLE_MODIFIERS!>in<!>
+                    <!WRONG_MODIFIER_TARGET!>in<!>
                     <!INCOMPATIBLE_MODIFIERS!>inline<!>
                     <!INCOMPATIBLE_MODIFIERS!>inner<!>
-                    <!INCOMPATIBLE_MODIFIERS!>internal<!>
-                    lateinit
+                    <!WRONG_MODIFIER_TARGET!>internal<!>
+                    <!WRONG_MODIFIER_TARGET!>lateinit<!>
                     <!INCOMPATIBLE_MODIFIERS!>noinline<!>
                     <!INCOMPATIBLE_MODIFIERS, REDUNDANT_MODIFIER!>open<!>
-                    operator
+                    <!WRONG_MODIFIER_TARGET!>operator<!>
                     <!INCOMPATIBLE_MODIFIERS!>out<!>
                     <!INCOMPATIBLE_MODIFIERS!>override<!>
                     <!INCOMPATIBLE_MODIFIERS!>private<!>
                     <!INCOMPATIBLE_MODIFIERS!>protected<!>
                     <!INCOMPATIBLE_MODIFIERS!>public<!>
-                    reified
+                    <!WRONG_MODIFIER_TARGET!>reified<!>
                     <!INCOMPATIBLE_MODIFIERS!>sealed<!>
-                    tailrec
+                    <!WRONG_MODIFIER_TARGET!>tailrec<!>
                     vararg
 
                     x: Int)->Unit = {}

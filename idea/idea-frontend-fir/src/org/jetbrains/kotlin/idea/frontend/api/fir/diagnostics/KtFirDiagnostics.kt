@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -733,16 +732,34 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val conflictingModifier: String
     }
 
+    abstract class DeprecatedModifier : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DeprecatedModifier::class
+        abstract val deprecatedModifier: String
+        abstract val actualModifier: String
+    }
+
     abstract class DeprecatedModifierPair : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = DeprecatedModifierPair::class
         abstract val deprecatedModifier: String
         abstract val conflictingModifier: String
     }
 
+    abstract class DeprecatedModifierForTarget : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DeprecatedModifierForTarget::class
+        abstract val deprecatedModifier: String
+        abstract val target: String
+    }
+
+    abstract class RedundantModifierForTarget : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = RedundantModifierForTarget::class
+        abstract val redundantModifier: String
+        abstract val target: String
+    }
+
     abstract class IncompatibleModifiers : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = IncompatibleModifiers::class
-        abstract val modifier1: KtModifierKeywordToken
-        abstract val modifier2: KtModifierKeywordToken
+        abstract val modifier1: String
+        abstract val modifier2: String
     }
 
     abstract class RedundantOpenInInterface : KtFirDiagnostic<KtModifierListOwner>() {
@@ -751,7 +768,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class WrongModifierTarget : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = WrongModifierTarget::class
-        abstract val modifier: KtModifierKeywordToken
+        abstract val modifier: String
         abstract val target: String
     }
 

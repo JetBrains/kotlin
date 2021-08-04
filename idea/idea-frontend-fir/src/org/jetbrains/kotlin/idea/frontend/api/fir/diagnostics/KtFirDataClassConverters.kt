@@ -1014,8 +1014,32 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DEPRECATED_MODIFIER) { firDiagnostic ->
+        DeprecatedModifierImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DEPRECATED_MODIFIER_PAIR) { firDiagnostic ->
         DeprecatedModifierPairImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DEPRECATED_MODIFIER_FOR_TARGET) { firDiagnostic ->
+        DeprecatedModifierForTargetImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.REDUNDANT_MODIFIER_FOR_TARGET) { firDiagnostic ->
+        RedundantModifierForTargetImpl(
             firDiagnostic.a,
             firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic,

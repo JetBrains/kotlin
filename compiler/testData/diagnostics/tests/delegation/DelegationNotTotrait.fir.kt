@@ -8,7 +8,7 @@ interface T {}
 
 class Br(t : T) : T by t {}
 
-open enum class EN() {
+<!WRONG_MODIFIER_TARGET!>open<!> enum class EN() {
   A
 }
 
