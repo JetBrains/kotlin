@@ -10,26 +10,20 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyFieldDeclarationImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyFieldDeclarationSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /*
  * This file was generated automatically
@@ -44,19 +38,13 @@ class FirPropertyFieldDeclarationBuilder : FirAnnotationContainerBuilder {
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
-    lateinit var status: FirDeclarationStatus
-    var receiverTypeRef: FirTypeRef? = null
-    var deprecation: DeprecationsPerUseSite? = null
-    var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeKotlinType? = null
-    val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    var body: FirBlock? = null
-    lateinit var contractDescription: FirContractDescription
     lateinit var symbol: FirPropertyFieldDeclarationSymbol
     var backingFieldSymbol: FirBackingFieldSymbol? = null
     var propertySymbol: FirPropertySymbol? = null
+    var initializer: FirExpression? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    lateinit var status: FirDeclarationStatus
 
     override fun build(): FirPropertyFieldDeclaration {
         return FirPropertyFieldDeclarationImpl(
@@ -66,19 +54,13 @@ class FirPropertyFieldDeclarationBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             returnTypeRef,
-            status,
-            receiverTypeRef,
-            deprecation,
-            containerSource,
-            dispatchReceiverType,
-            valueParameters,
-            body,
-            contractDescription,
             symbol,
             backingFieldSymbol,
             propertySymbol,
+            initializer,
             annotations,
             typeParameters,
+            status,
         )
     }
 

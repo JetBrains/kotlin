@@ -338,8 +338,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("propertySymbol", firPropertySymbolType, nullable = true).apply {
                 withBindThis = false
             }
+            +initializer.withTransform().withReplace()
             +annotations
             +typeParameters
+            +status.withTransform()
         }
 
         declarationStatus.configure {

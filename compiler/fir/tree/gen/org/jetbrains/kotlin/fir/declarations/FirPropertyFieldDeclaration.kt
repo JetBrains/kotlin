@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyFieldDeclarationSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -25,27 +22,20 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirPropertyFieldDeclaration : FirFunction(), FirContractDescriptionOwner, FirTypeParametersOwner {
+abstract class FirPropertyFieldDeclaration : FirTypedDeclaration(), FirTypeParametersOwner, FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
-    abstract override val status: FirDeclarationStatus
-    abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val deprecation: DeprecationsPerUseSite?
-    abstract override val containerSource: DeserializedContainerSource?
-    abstract override val dispatchReceiverType: ConeKotlinType?
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract override val valueParameters: List<FirValueParameter>
-    abstract override val body: FirBlock?
-    abstract override val contractDescription: FirContractDescription
     abstract override val symbol: FirPropertyFieldDeclarationSymbol
     abstract val backingFieldSymbol: FirBackingFieldSymbol?
     abstract val propertySymbol: FirPropertySymbol?
+    abstract val initializer: FirExpression?
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeParameters: List<FirTypeParameter>
+    abstract val status: FirDeclarationStatus
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPropertyFieldDeclaration(this, data)
 
@@ -57,31 +47,15 @@ abstract class FirPropertyFieldDeclaration : FirFunction(), FirContractDescripti
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
-    abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
-
-    abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
-
-    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
-
-    abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
-
-    abstract override fun replaceBody(newBody: FirBlock?)
-
-    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
+    abstract fun replaceInitializer(newInitializer: FirExpression?)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
-
-    abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
-
-    abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
-
-    abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
+    abstract fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
+
+    abstract fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclaration
 }
