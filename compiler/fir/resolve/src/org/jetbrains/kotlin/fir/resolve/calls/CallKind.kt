@@ -83,6 +83,11 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         EagerResolveOfCallableReferences
     )
 
+    object CollectionLiteral : CallKind(
+        // TODO CL add more checks
+        CheckVisibility
+    )
+
     internal class CustomForIde(vararg resolutionSequence: ResolutionStage) : CallKind(*resolutionSequence)
 
     val resolutionSequence: List<ResolutionStage> = resolutionSequence.toList()

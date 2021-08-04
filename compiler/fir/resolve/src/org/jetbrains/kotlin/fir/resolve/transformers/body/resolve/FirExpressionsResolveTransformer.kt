@@ -315,55 +315,65 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
-        when (data) {
-            is ResolutionMode.WithExpectedType -> {
-                collectionLiteral.transformChildren(transformer, data)
-                when (data.expectedTypeRef) {
-                    is FirImplicitTypeRef -> {
-                        collectionLiteral.resultType = buildResolvedTypeRef {
-                            type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
-                        }
-                    }
-                    else -> {
-                        collectionLiteral.resultType = data.expectedTypeRef
-                    }
-                }
-            }
-            is ResolutionMode.WithExpectedArgumentsType -> {
-                collectionLiteral.transformChildren(transformer, data)
-                collectionLiteral.resultType = data.argumentMapping[collectionLiteral]?.returnTypeRef ?: buildResolvedTypeRef {
-                    type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
-                }
-            }
-            ResolutionMode.ContextDependent,
-            ResolutionMode.ContextDependentDelegate,
-            ResolutionMode.ContextIndependent,
-            is ResolutionMode.LambdaResolution,
-            is ResolutionMode.WithExpectedTypeFromCast,
-            is ResolutionMode.WithStatus -> {
-                collectionLiteral.transformChildren(transformer, data)
-                return collectionLiteral
-            }
-        }
-        val resultType = collectionLiteral.resultType
-        if (resultType is FirResolvedTypeRef) {
-            val builder = buildFunctionCall {
-                source = collectionLiteral.source
-                typeRef = resultType // TODO Билдер может вернуть другой тип?
-                calleeReference = buildSimpleNamedReference {
-                    this.source = collectionLiteral.source // TODO а точно тот же сорс?
-                    this.name = Name.identifier("build") // FIXME имя нужно брать откуда-то типа СтандартныеИмена
-                }
-                this.explicitReceiver = buildQualifiedAccessExpression {
-                    this.source = collectionLiteral.source
-                    this.calleeReference = buildSimpleNamedReference {
-                        this.source = collectionLiteral.source
-                        this.name = resultType.coneType.classId!!.shortClassName
-                    }
-                }
-            }
-            return transformer.transformFunctionCall(builder, data)
-        }
+        collectionLiteral.transformChildren(transformer, data)
+
+        val possibleTypes = callResolver.collectAvailableBuildersForCollectionLiteral(collectionLiteral)
+            .filterIsInstance<FirSimpleFunction>()
+            .map { it.returnTypeRef.coneType }
+            .filterIsInstance<ConeClassLikeType>()
+            .toSet()
+        val type = ConeCollectionLiteralTypeImpl(ConeNullability.NOT_NULL, possibleTypes)
+        collectionLiteral.resultType = collectionLiteral.resultType.resolvedTypeFromPrototype(type)
+//        when (data) {
+//            is ResolutionMode.WithExpectedType -> {
+//                when (data.expectedTypeRef) {
+//                    is FirImplicitTypeRef -> {
+////                        collectionLiteral.resultType = buildResolvedTypeRef {
+////                            this.type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
+////                        }
+//                        collectionLiteral.resultType = collectionLiteral.resultType.resolvedTypeFromPrototype(type)
+//                    }
+//                    else -> {
+//                        collectionLiteral.resultType = data.expectedTypeRef
+//                    }
+//                }
+//            }
+////            is ResolutionMode.WithExpectedArgumentsType -> {
+////                collectionLiteral.resultType = data.argumentMapping[collectionLiteral]?.returnTypeRef ?: buildResolvedTypeRef {
+////                    this.type = StandardClassIds.List.constructClassLikeType(arrayOf(builtinTypes.anyType.coneType), false)
+////                }
+////            }
+//            is ResolutionMode.WithExpectedArgumentsType,
+//            ResolutionMode.ContextDependent,
+//            ResolutionMode.ContextDependentDelegate,
+//            ResolutionMode.ContextIndependent,
+//            is ResolutionMode.LambdaResolution,
+//            is ResolutionMode.WithExpectedTypeFromCast,
+//            is ResolutionMode.WithStatus -> {
+//                collectionLiteral.resultType = collectionLiteral.resultType.resolvedTypeFromPrototype(type)
+////                collectionLiteral.transformChildren(transformer, data)
+////                return collectionLiteral
+//            }
+//        }
+//        val resultType = collectionLiteral.resultType
+//        if (resultType is FirResolvedTypeRef) {
+//            val builder = buildFunctionCall {
+//                source = collectionLiteral.source
+//                typeRef = resultType // TODO Билдер может вернуть другой тип?
+//                calleeReference = buildSimpleNamedReference {
+//                    this.source = collectionLiteral.source // TODO а точно тот же сорс?
+//                    this.name = Name.identifier("build") // FIXME имя нужно брать откуда-то типа СтандартныеИмена
+//                }
+//                this.explicitReceiver = buildQualifiedAccessExpression {
+//                    this.source = collectionLiteral.source
+//                    this.calleeReference = buildSimpleNamedReference {
+//                        this.source = collectionLiteral.source
+//                        this.name = resultType.coneType.classId!!.shortClassName
+//                    }
+//                }
+//            }
+//            return transformer.transformFunctionCall(builder, data)
+//        }
         return collectionLiteral
     }
 

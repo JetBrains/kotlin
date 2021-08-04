@@ -79,6 +79,7 @@ class CandidateFactory private constructor(
             is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
             is CallKind.Function,
             is CallKind.DelegatingConstructorCall,
+            is CallKind.CollectionLiteral,
             is CallKind.CallableReference -> createErrorFunctionSymbol(diagnostic)
             is CallKind.SyntheticSelect -> throw IllegalStateException()
             is CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()

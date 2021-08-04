@@ -56,6 +56,9 @@ internal class TowerLevelHandler {
                 processResult += towerLevel.processFunctionsByName(info, processor)
                 processResult += towerLevel.processPropertiesByName(info, processor)
             }
+            CallKind.CollectionLiteral -> {
+                processResult += towerLevel.processFunctionsByName(info, processor)
+            }
             else -> {
                 throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")
             }

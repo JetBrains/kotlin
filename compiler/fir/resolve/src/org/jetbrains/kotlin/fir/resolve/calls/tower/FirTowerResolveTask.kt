@@ -10,11 +10,15 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -250,6 +254,19 @@ internal open class FirTowerResolveTask(
             },
             onImplicitReceiver = { implicitReceiverValue, group ->
                 processCombinationOfReceivers(implicitReceiverValue, explicitReceiverValue, info, group)
+            }
+        )
+    }
+
+    suspend fun runResolverForAnyCompanionReceiver(
+        info: CallInfo
+    ) {
+        enumerateTowerLevels(
+            onScope = { scope, group ->
+                processLevel(scope.toScopeTowerLevel(), info, group)
+            },
+            onImplicitReceiver = { _, _ ->
+//                processLevel(receiver.toMemberScopeTowerLevel(), info, group, ExplicitReceiverKind.DISPATCH_RECEIVER)
             }
         )
     }

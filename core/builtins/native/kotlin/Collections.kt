@@ -171,7 +171,11 @@ public interface List<out E> : Collection<E> {
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 
-    companion object
+    companion object {
+        fun <T> build(size: Int): Set<T> {
+            return TODO()
+        }
+    }
 }
 
 /**
@@ -256,7 +260,11 @@ public interface Set<out E> : Collection<E> {
     // Bulk Operations
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
-    companion object
+    companion object {
+        fun <T> build(size: Int): Set<T> {
+            return TODO()
+        }
+    }
 }
 
 /**

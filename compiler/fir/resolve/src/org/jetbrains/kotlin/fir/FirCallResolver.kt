@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
@@ -44,7 +45,9 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -73,21 +76,21 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
         qualifiedResolver.reset()
 
-        @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE") var hasCollectionLiteral = false
+//        @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE") var hasCollectionLiteral = false
 
         @Suppress("NAME_SHADOWING")
         val functionCall = if (needTransformArguments) {
-            if (functionCall.argumentList.arguments.any { it is FirCollectionLiteral }) {
-                @Suppress("UNUSED_VALUE")
-                hasCollectionLiteral = true
-                functionCall
-            } else {
-                functionCall.transformExplicitReceiver()
-                    .also {
-                        components.dataFlowAnalyzer.enterQualifiedAccessExpression()
-                        functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
-                    }
-            }
+//            if (functionCall.argumentList.arguments.any { it is FirCollectionLiteral }) {
+//                @Suppress("UNUSED_VALUE")
+//                hasCollectionLiteral = true
+//                functionCall
+//            }
+            functionCall.transformExplicitReceiver()
+                .also {
+                    components.dataFlowAnalyzer.enterQualifiedAccessExpression()
+                    functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+                }
+//            }
         } else {
             functionCall
         }
@@ -117,12 +120,12 @@ class FirCallResolver(
         val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
 
-        if (hasCollectionLiteral) {
-            functionCall.argumentList.transformArguments(
-                transformer,
-                ResolutionMode.WithExpectedArgumentsType(candidate?.argumentMapping ?: emptyMap())
-            )
-        }
+//        if (hasCollectionLiteral) {
+//            functionCall.argumentList.transformArguments(
+//                transformer,
+//                ResolutionMode.WithExpectedArgumentsType(candidate?.argumentMapping ?: emptyMap())
+//            )
+//        }
 
         val resolvedReceiver = functionCall.explicitReceiver
         if (candidate != null && resolvedReceiver is FirResolvedQualifier) {
@@ -164,6 +167,35 @@ class FirCallResolver(
     private data class ResolutionResult(
         val info: CallInfo, val applicability: CandidateApplicability, val candidates: Collection<Candidate>,
     )
+
+    fun collectAvailableBuildersForCollectionLiteral(collectionLiteral: FirCollectionLiteral): List<Candidate> {
+        val info = CallInfo(
+            collectionLiteral,
+            CallKind.CollectionLiteral,
+            OperatorNameConventions.BUILD_CL,
+            null,
+            buildArgumentList {
+                this.arguments.add(0, buildConstExpression(null, ConstantValueKind.Int, collectionLiteral.expressions.size))
+            },
+            isPotentialQualifierPart = false,
+            isImplicitInvoke = false,
+            listOf(buildTypeProjectionWithVariance {
+                this.typeRef = buildImplicitTypeRef()
+                this.variance = Variance.INVARIANT // TODO возможны ли in out?
+            }),
+            session,
+            components.file,
+            transformer.components.containingDeclarations
+        )
+        towerResolver.reset()
+        val result = towerResolver.runResolver(info, transformer.resolutionContext)
+        val bestCandidates = result.bestCandidates()
+
+        // TODO check that this is operators
+
+        return bestCandidates
+    }
+
 
     private fun <T : FirQualifiedAccess> collectCandidates(
         qualifiedAccess: T,

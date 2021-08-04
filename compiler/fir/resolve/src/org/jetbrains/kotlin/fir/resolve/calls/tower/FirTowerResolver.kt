@@ -59,8 +59,12 @@ class FirTowerResolver(
                 invokeResolveTowerExtension.enqueueResolveTasksForQualifier(info, receiver)
             }
             null -> {
-                manager.enqueueResolverTask { mainTask.runResolverForNoReceiver(info) }
-                invokeResolveTowerExtension.enqueueResolveTasksForNoReceiver(info)
+                if (info.callKind is CallKind.CollectionLiteral) {
+                    manager.enqueueResolverTask { mainTask.runResolverForAnyCompanionReceiver(info) }
+                } else {
+                    manager.enqueueResolverTask { mainTask.runResolverForNoReceiver(info) }
+                    invokeResolveTowerExtension.enqueueResolveTasksForNoReceiver(info)
+                }
             }
             else -> {
                 if (receiver is FirQualifiedAccessExpression) {

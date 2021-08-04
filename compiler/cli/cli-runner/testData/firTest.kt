@@ -5,25 +5,46 @@
 
 package org.jetbrains.kotlin.runner
 
-//class A<T>(val a: T) {
+//open class A<T>(val a: T) {
 //    companion object
 //}
 //
+//class B<T>(a: T) : A<T>(a) {
+//
+//}
+
 //operator fun <T> A<T>.invoke(): T {
 //    return a
 //}
 
 
-operator fun List.Companion.build(): List<Any> {
-    return TODO()
-}
+//operator fun List.Companion.build(): List<Any> {
+//    return TODO()
+//}
+//
+//operator fun Set.Companion.build(): Set<Any> {
+//    return TODO()
+//}
 
-operator fun Set.Companion.build(): Set<Any> {
-    return TODO()
+
+// ВАЖНО Посмотреть где именно ILT превратится в шорт
+//fun foo(s: Short) {
+//    TODO(s.toString())
+//}
+//
+//fun main() {
+//    foo(2)
+//}
+
+import kotlin.collections.Set.Companion.build
+import kotlin.collections.List.Companion.build
+
+fun foo(set: Set<Int>) {
+//    TODO()
 }
 
 fun main() {
-    val a: Set<Any> = [1, 2, 3]
-    println(a)
+    foo([1, 2, 3])
+//    Set.build<Int>(2)
+//    build<Int>(2)
 }
-
