@@ -43,7 +43,7 @@ internal class KtFirUsualClassType(
         }
     }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.canBeNull) }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
@@ -66,7 +66,7 @@ internal class KtFirFunctionalType(
         }
     }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.canBeNull) }
 
     override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendFunctionType(builder.rootSession) }
     override val arity: Int
@@ -129,8 +129,6 @@ internal class KtFirDefinitelyNotNullType(
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
-
-
 internal class KtFirTypeParameterType(
     _coneType: ConeTypeParameterType,
     override val token: ValidityToken,
@@ -145,7 +143,7 @@ internal class KtFirTypeParameterType(
             ?: error("Type parameter ${coneType.lookupTag} was not found")
     }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.canBeNull) }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
