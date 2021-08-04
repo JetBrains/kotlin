@@ -400,7 +400,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         explicitReceiver = receiver
         calleeReference = buildSimpleNamedReference {
             source = fakeSource
-            name = PROVIDE_DELEGATE
+            name = OperatorNameConventions.PROVIDE_DELEGATE
         }
         argumentList = buildBinaryArgumentList(thisRef(forDispatchReceiver = true), propertyRef())
         origin = FirFunctionCallOrigin.Operator
@@ -428,7 +428,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                         explicitReceiver = delegateAccess()
                         calleeReference = buildSimpleNamedReference {
                             source = fakeSource
-                            name = GET_VALUE
+                            name = OperatorNameConventions.GET_VALUE
                         }
                         argumentList = buildBinaryArgumentList(thisRef(), propertyRef())
                         origin = FirFunctionCallOrigin.Operator
@@ -473,7 +473,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     explicitReceiver = delegateAccess()
                     calleeReference = buildSimpleNamedReference {
                         source = fakeSource
-                        name = SET_VALUE
+                        name = OperatorNameConventions.SET_VALUE
                     }
                     argumentList = buildArgumentList {
                         arguments += thisRef()
@@ -496,9 +496,6 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     }
 }
 
-private val GET_VALUE = Name.identifier("getValue")
-private val SET_VALUE = Name.identifier("setValue")
-private val PROVIDE_DELEGATE = Name.identifier("provideDelegate")
 private val DELEGATED_SETTER_PARAM = Name.special("<set-?>")
 
 fun FirBlock?.extractContractDescriptionIfPossible(): Pair<FirBlock?, FirContractDescription?> {
