@@ -383,6 +383,7 @@ if (attachedIntellijVersion != null) {
     kotlinIde "jvm-debugger/sequence/kotlin.jvm-debugger.sequence.iml"
     kotlinIde "jvm-debugger/test/kotlin.jvm-debugger.test.iml"
     kotlinIde "jvm-debugger/util/kotlin.jvm-debugger.util.iml"
+    kotlinIde "jvm-run-configurations/kotlin.jvm-run-configurations.iml"
     kotlinIde "jvm/kotlin.jvm.iml"
     kotlinIde "kotlin.all-tests/kotlin.all-tests.iml"
     kotlinIde "kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml"
