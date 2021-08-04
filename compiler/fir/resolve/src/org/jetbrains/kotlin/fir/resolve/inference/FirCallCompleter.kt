@@ -133,7 +133,7 @@ class FirCallCompleter(
                         ),
                         null
                     )
-                    inferenceSession.addCompetedCall(completedCall, candidate)
+                    inferenceSession.addCompletedCall(completedCall, candidate)
                     CompletionResult(completedCall, true)
                 } else {
                     inferenceSession.addPartiallyResolvedCall(call)

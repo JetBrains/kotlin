@@ -81,7 +81,7 @@ class FirBuilderInferenceSession(
         return postponedAtoms.any { !it.analyzed }
     }
 
-    override fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
+    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
         if (skipCall(call)) return
         commonCalls += call to candidate
     }
