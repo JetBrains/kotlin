@@ -191,6 +191,15 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return null;
     }
 
+    @Nullable
+    public KtPropertyFieldDeclaration getFieldDeclaration() {
+        for (KtPropertyFieldDeclaration accessor : getStubOrPsiChildrenAsList(KtStubElementTypes.PROPERTY_FIELD_DECLARATION)) {
+            return accessor;
+        }
+
+        return null;
+    }
+
     public boolean hasDelegate() {
         KotlinPropertyStub stub = getStub();
         if (stub != null) {
