@@ -732,6 +732,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("nestedClassInAnnotationArgument.kt")
+            public void testNestedClassInAnnotationArgument() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/arguments/nestedClassInAnnotationArgument.kt");
+            }
+
+            @Test
             @TestMetadata("noParameterForName.kt")
             public void testNoParameterForName() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/arguments/noParameterForName.kt");

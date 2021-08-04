@@ -621,6 +621,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/namedArrayInAnnotation.kt");
         }
 
+        @TestMetadata("nestedClassInAnnotationArgument.kt")
+        public void testNestedClassInAnnotationArgument() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/nestedClassInAnnotationArgument.kt");
+        }
+
         @TestMetadata("noParameterForName.kt")
         public void testNoParameterForName() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/noParameterForName.kt");
