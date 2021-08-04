@@ -724,19 +724,19 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class RepeatedModifier : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = RepeatedModifier::class
-        abstract val modifier: KtModifierKeywordToken
+        abstract val modifier: String
     }
 
     abstract class RedundantModifier : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = RedundantModifier::class
-        abstract val redundantModifier: KtModifierKeywordToken
-        abstract val conflictingModifier: KtModifierKeywordToken
+        abstract val redundantModifier: String
+        abstract val conflictingModifier: String
     }
 
     abstract class DeprecatedModifierPair : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = DeprecatedModifierPair::class
-        abstract val deprecatedModifier: KtModifierKeywordToken
-        abstract val conflictingModifier: KtModifierKeywordToken
+        abstract val deprecatedModifier: String
+        abstract val conflictingModifier: String
     }
 
     abstract class IncompatibleModifiers : KtFirDiagnostic<PsiElement>() {

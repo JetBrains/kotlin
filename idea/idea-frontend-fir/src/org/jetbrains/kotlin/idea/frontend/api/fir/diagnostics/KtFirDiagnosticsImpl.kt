@@ -1150,7 +1150,7 @@ internal class InapplicableInfixModifierImpl(
 }
 
 internal class RepeatedModifierImpl(
-    override val modifier: KtModifierKeywordToken,
+    override val modifier: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RepeatedModifier(), KtAbstractFirDiagnostic<PsiElement> {
@@ -1158,8 +1158,8 @@ internal class RepeatedModifierImpl(
 }
 
 internal class RedundantModifierImpl(
-    override val redundantModifier: KtModifierKeywordToken,
-    override val conflictingModifier: KtModifierKeywordToken,
+    override val redundantModifier: String,
+    override val conflictingModifier: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RedundantModifier(), KtAbstractFirDiagnostic<PsiElement> {
@@ -1167,8 +1167,8 @@ internal class RedundantModifierImpl(
 }
 
 internal class DeprecatedModifierPairImpl(
-    override val deprecatedModifier: KtModifierKeywordToken,
-    override val conflictingModifier: KtModifierKeywordToken,
+    override val deprecatedModifier: String,
+    override val conflictingModifier: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.DeprecatedModifierPair(), KtAbstractFirDiagnostic<PsiElement> {
@@ -1176,8 +1176,8 @@ internal class DeprecatedModifierPairImpl(
 }
 
 internal class IncompatibleModifiersImpl(
-    override val modifier1: KtModifierKeywordToken,
-    override val modifier2: KtModifierKeywordToken,
+    override val modifier1: String,
+    override val modifier2: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.IncompatibleModifiers(), KtAbstractFirDiagnostic<PsiElement> {

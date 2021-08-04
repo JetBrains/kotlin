@@ -725,12 +725,12 @@ class FirDefaultErrorMessages {
 
             // Modifiers
             map.put(INAPPLICABLE_INFIX_MODIFIER, "''infix'' modifier is inapplicable on this function")
-            map.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING)
-            map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING)
-            map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING)
-            map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING)
+            map.put(REPEATED_MODIFIER, "Repeated ''{0}''", STRING)
+            map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", STRING, STRING)
+            map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", STRING, STRING)
+            map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", STRING, STRING)
             map.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members")
-            map.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, TO_STRING)
+            map.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", STRING, STRING)
             map.put(INFIX_MODIFIER_REQUIRED, "''infix'' modifier is required on ''{0}''", TO_STRING)
 
             // Classes and interfaces

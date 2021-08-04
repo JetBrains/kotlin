@@ -254,12 +254,12 @@ object FirErrors {
 
     // Modifiers
     val INAPPLICABLE_INFIX_MODIFIER by error0<PsiElement>()
-    val REPEATED_MODIFIER by error1<PsiElement, KtModifierKeywordToken>()
-    val REDUNDANT_MODIFIER by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
-    val DEPRECATED_MODIFIER_PAIR by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
-    val INCOMPATIBLE_MODIFIERS by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val REPEATED_MODIFIER by error1<PsiElement, String>()
+    val REDUNDANT_MODIFIER by error2<PsiElement, String, String>()
+    val DEPRECATED_MODIFIER_PAIR by error2<PsiElement, String, String>()
+    val INCOMPATIBLE_MODIFIERS by error2<PsiElement, String, String>()
     val REDUNDANT_OPEN_IN_INTERFACE by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.OPEN_MODIFIER)
-    val WRONG_MODIFIER_TARGET by error2<PsiElement, KtModifierKeywordToken, String>()
+    val WRONG_MODIFIER_TARGET by error2<PsiElement, String, String>()
     val OPERATOR_MODIFIER_REQUIRED by error2<PsiElement, FirNamedFunctionSymbol, String>()
     val INFIX_MODIFIER_REQUIRED by error1<PsiElement, FirNamedFunctionSymbol>()
 

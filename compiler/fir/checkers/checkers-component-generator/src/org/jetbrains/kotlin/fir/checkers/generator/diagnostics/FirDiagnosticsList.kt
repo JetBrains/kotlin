@@ -301,23 +301,23 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val MODIFIERS by object : DiagnosticGroup("Modifiers") {
         val INAPPLICABLE_INFIX_MODIFIER by error<PsiElement>()
         val REPEATED_MODIFIER by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier")
+            parameter<String>("modifier")
         }
         val REDUNDANT_MODIFIER by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("redundantModifier")
-            parameter<KtModifierKeywordToken>("conflictingModifier")
+            parameter<String>("redundantModifier")
+            parameter<String>("conflictingModifier")
         }
         val DEPRECATED_MODIFIER_PAIR by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("deprecatedModifier")
-            parameter<KtModifierKeywordToken>("conflictingModifier")
+            parameter<String>("deprecatedModifier")
+            parameter<String>("conflictingModifier")
         }
         val INCOMPATIBLE_MODIFIERS by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier1")
-            parameter<KtModifierKeywordToken>("modifier2")
+            parameter<String>("modifier1")
+            parameter<String>("modifier2")
         }
         val REDUNDANT_OPEN_IN_INTERFACE by warning<KtModifierListOwner>(PositioningStrategy.OPEN_MODIFIER)
         val WRONG_MODIFIER_TARGET by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier")
+            parameter<String>("modifier")
             parameter<String>("target")
         }
         val OPERATOR_MODIFIER_REQUIRED by error<PsiElement> {
