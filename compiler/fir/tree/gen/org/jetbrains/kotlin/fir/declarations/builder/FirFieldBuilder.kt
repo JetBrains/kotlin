@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
@@ -51,6 +52,7 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
     open lateinit var name: Name
     open var initializer: FirExpression? = null
     open var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    open var backingField: FirPropertyFieldDeclaration? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     open lateinit var symbol: FirFieldSymbol
 
@@ -71,6 +73,7 @@ open class FirFieldBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilde
             name,
             initializer,
             isVar,
+            backingField,
             annotations,
             symbol,
         )

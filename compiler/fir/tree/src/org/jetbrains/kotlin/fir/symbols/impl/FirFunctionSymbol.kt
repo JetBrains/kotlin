@@ -67,4 +67,6 @@ class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunc
 
 class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(Name.identifier("accessor"))
 
+class FirPropertyFieldDeclarationSymbol : FirFunctionWithoutNameSymbol<FirPropertyFieldDeclaration>(Name.identifier("field-declaration"))
+
 class FirErrorFunctionSymbol : FirFunctionWithoutNameSymbol<FirErrorFunction>(Name.identifier("error"))

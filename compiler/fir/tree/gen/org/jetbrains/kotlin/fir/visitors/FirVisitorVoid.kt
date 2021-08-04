@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.FirPackageDirective
@@ -276,6 +277,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
         visitElement(propertyAccessor)
+    }
+
+    open fun visitPropertyFieldDeclaration(propertyFieldDeclaration: FirPropertyFieldDeclaration) {
+        visitElement(propertyFieldDeclaration)
     }
 
     open fun visitConstructor(constructor: FirConstructor) {
@@ -788,6 +793,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
         visitPropertyAccessor(propertyAccessor)
+    }
+
+    final override fun visitPropertyFieldDeclaration(propertyFieldDeclaration: FirPropertyFieldDeclaration, data: Nothing?) {
+        visitPropertyFieldDeclaration(propertyFieldDeclaration)
     }
 
     final override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {

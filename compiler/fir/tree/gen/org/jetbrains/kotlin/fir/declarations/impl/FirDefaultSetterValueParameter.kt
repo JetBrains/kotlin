@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -49,6 +50,7 @@ internal class FirDefaultSetterValueParameter(
     override val isVal: Boolean,
     override var getter: FirPropertyAccessor?,
     override var setter: FirPropertyAccessor?,
+    override var backingField: FirPropertyFieldDeclaration?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val symbol: FirValueParameterSymbol,
     override var defaultValue: FirExpression?,
@@ -73,6 +75,7 @@ internal class FirDefaultSetterValueParameter(
         delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
+        backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         defaultValue?.accept(visitor, data)
@@ -86,6 +89,7 @@ internal class FirDefaultSetterValueParameter(
         transformDelegate(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
+        transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -126,6 +130,11 @@ internal class FirDefaultSetterValueParameter(
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
         setter = setter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+        backingField = backingField?.transform(transformer, data)
         return this
     }
 

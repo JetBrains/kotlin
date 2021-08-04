@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -43,6 +44,7 @@ internal class FirValueParameterImpl(
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
     override val name: Name,
+    override var backingField: FirPropertyFieldDeclaration?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val symbol: FirValueParameterSymbol,
     override var defaultValue: FirExpression?,
@@ -68,6 +70,7 @@ internal class FirValueParameterImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         status.accept(visitor, data)
+        backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         defaultValue?.accept(visitor, data)
@@ -76,6 +79,7 @@ internal class FirValueParameterImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
         transformReturnTypeRef(transformer, data)
         transformStatus(transformer, data)
+        transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -111,6 +115,11 @@ internal class FirValueParameterImpl(
     }
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+        return this
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
+        backingField = backingField?.transform(transformer, data)
         return this
     }
 

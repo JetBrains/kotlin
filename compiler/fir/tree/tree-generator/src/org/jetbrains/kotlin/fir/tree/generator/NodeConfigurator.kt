@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameters
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeRefField
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.valueParameters
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.visibility
+import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.configure
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.context.type
@@ -329,6 +330,18 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +typeParameters
         }
 
+        propertyFieldDeclaration.configure {
+            +symbol("FirPropertyFieldDeclarationSymbol")
+            +field("backingFieldSymbol", backingFieldSymbolType, nullable = true).apply {
+                withBindThis = false
+            }
+            +field("propertySymbol", firPropertySymbolType, nullable = true).apply {
+                withBindThis = false
+            }
+            +annotations
+            +typeParameters
+        }
+
         declarationStatus.configure {
             +visibility
             +modality
@@ -373,6 +386,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             generateBooleanFields("var", "val")
             +field("getter", propertyAccessor, nullable = true).withTransform()
             +field("setter", propertyAccessor, nullable = true).withTransform()
+            +field("backingField", propertyFieldDeclaration, nullable = true).withTransform()
             +annotations
             needTransformOtherChildren()
         }

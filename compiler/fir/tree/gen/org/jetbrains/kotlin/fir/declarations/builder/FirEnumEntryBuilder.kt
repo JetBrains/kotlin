@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
@@ -48,6 +49,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     var dispatchReceiverType: ConeKotlinType? = null
     lateinit var name: Name
     var initializer: FirExpression? = null
+    var backingField: FirPropertyFieldDeclaration? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var symbol: FirEnumEntrySymbol
 
@@ -66,6 +68,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             dispatchReceiverType,
             name,
             initializer,
+            backingField,
             annotations,
             symbol,
         )

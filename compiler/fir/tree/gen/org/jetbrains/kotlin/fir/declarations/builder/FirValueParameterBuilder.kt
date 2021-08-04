@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -47,6 +48,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open var containerSource: DeserializedContainerSource? = null
     open var dispatchReceiverType: ConeKotlinType? = null
     open lateinit var name: Name
+    open var backingField: FirPropertyFieldDeclaration? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     open lateinit var symbol: FirValueParameterSymbol
     open var defaultValue: FirExpression? = null
@@ -66,6 +68,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             containerSource,
             dispatchReceiverType,
             name,
+            backingField,
             annotations,
             symbol,
             defaultValue,
@@ -101,6 +104,7 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.name = original.name
+    copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.symbol = original.symbol
     copyBuilder.defaultValue = original.defaultValue

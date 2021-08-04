@@ -10,26 +10,25 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.impl.FirErrorPropertyImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyFieldDeclarationImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyFieldDeclarationSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /*
@@ -38,45 +37,57 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  */
 
 @FirBuilderDsl
-class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
+class FirPropertyFieldDeclarationBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    lateinit var returnTypeRef: FirTypeRef
+    lateinit var status: FirDeclarationStatus
+    var receiverTypeRef: FirTypeRef? = null
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeKotlinType? = null
-    lateinit var name: Name
-    var backingField: FirPropertyFieldDeclaration? = null
+    val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    var body: FirBlock? = null
+    lateinit var contractDescription: FirContractDescription
+    lateinit var symbol: FirPropertyFieldDeclarationSymbol
+    var backingFieldSymbol: FirBackingFieldSymbol? = null
+    var propertySymbol: FirPropertySymbol? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    lateinit var diagnostic: ConeDiagnostic
-    lateinit var symbol: FirErrorPropertySymbol
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
-    override fun build(): FirErrorProperty {
-        return FirErrorPropertyImpl(
+    override fun build(): FirPropertyFieldDeclaration {
+        return FirPropertyFieldDeclarationImpl(
             source,
             moduleData,
             resolvePhase,
             origin,
             attributes,
+            returnTypeRef,
+            status,
+            receiverTypeRef,
             deprecation,
             containerSource,
             dispatchReceiverType,
-            name,
-            backingField,
-            annotations,
-            diagnostic,
+            valueParameters,
+            body,
+            contractDescription,
             symbol,
+            backingFieldSymbol,
+            propertySymbol,
+            annotations,
+            typeParameters,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildErrorProperty(init: FirErrorPropertyBuilder.() -> Unit): FirErrorProperty {
+inline fun buildPropertyFieldDeclaration(init: FirPropertyFieldDeclarationBuilder.() -> Unit): FirPropertyFieldDeclaration {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirErrorPropertyBuilder().apply(init).build()
+    return FirPropertyFieldDeclarationBuilder().apply(init).build()
 }

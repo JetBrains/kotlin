@@ -7,24 +7,23 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyFieldDeclarationSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirPropertyImpl(
+internal class FirPropertyFieldDeclarationImpl(
     override val source: FirSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
@@ -46,111 +45,83 @@ internal class FirPropertyImpl(
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeKotlinType?,
-    override val name: Name,
-    override var initializer: FirExpression?,
-    override var delegate: FirExpression?,
-    override val isVar: Boolean,
-    override var getter: FirPropertyAccessor?,
-    override var setter: FirPropertyAccessor?,
-    override var backingField: FirPropertyFieldDeclaration?,
+    override val valueParameters: MutableList<FirValueParameter>,
+    override var body: FirBlock?,
+    override var contractDescription: FirContractDescription,
+    override val symbol: FirPropertyFieldDeclarationSymbol,
+    override val backingFieldSymbol: FirBackingFieldSymbol?,
+    override val propertySymbol: FirPropertySymbol?,
     override val annotations: MutableList<FirAnnotationCall>,
-    override val symbol: FirPropertySymbol,
-    override val delegateFieldSymbol: FirDelegateFieldSymbol?,
-    override val isLocal: Boolean,
-    override var initializerAndAccessorsAreResolved: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
-) : FirProperty() {
-    override val isVal: Boolean get() = !isVar
+) : FirPropertyFieldDeclaration() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
 
     init {
         symbol.bind(this)
-        backingFieldSymbol.bind(this)
-        delegateFieldSymbol?.bind(this)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         status.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        initializer?.accept(visitor, data)
-        delegate?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
-        backingField?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
+        valueParameters.forEach { it.accept(visitor, data) }
+        body?.accept(visitor, data)
+        contractDescription.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
         transformReturnTypeRef(transformer, data)
         transformStatus(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        transformInitializer(transformer, data)
-        transformDelegate(transformer, data)
-        transformGetter(transformer, data)
-        transformSetter(transformer, data)
-        transformBackingField(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
+        transformValueParameters(transformer, data)
+        transformBody(transformer, data)
+        transformContractDescription(transformer, data)
+        transformAnnotations(transformer, data)
         transformTypeParameters(transformer, data)
-        transformOtherChildren(transformer, data)
         return this
     }
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
         returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
         status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
         receiverTypeRef = receiverTypeRef?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        initializer = initializer?.transform(transformer, data)
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        valueParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        delegate = delegate?.transform(transformer, data)
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        body = body?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        getter = getter?.transform(transformer, data)
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        contractDescription = contractDescription.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        setter = setter?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        backingField = backingField?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
         typeParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         return this
     }
 
@@ -170,15 +141,20 @@ internal class FirPropertyImpl(
         deprecation = newDeprecation
     }
 
-    override fun replaceInitializer(newInitializer: FirExpression?) {
-        initializer = newInitializer
-    }
-
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }
 
-    override fun replaceInitializerAndAccessorsAreResolved(newInitializerAndAccessorsAreResolved: Boolean) {
-        initializerAndAccessorsAreResolved = newInitializerAndAccessorsAreResolved
+    override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
+        valueParameters.clear()
+        valueParameters.addAll(newValueParameters)
+    }
+
+    override fun replaceBody(newBody: FirBlock?) {
+        body = newBody
+    }
+
+    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+        contractDescription = newContractDescription
     }
 }
