@@ -1,3 +1,7 @@
+// this hack is used to ensure that iterator will be resolved first
+@CompileTimeCalculation internal class LongProgressionIterator(first: Long, last: Long, val step: Long) : LongIterator()
+@CompileTimeCalculation public class LongRange(start: Long, endInclusive: Long) : LongProgression(start, endInclusive, 1), ClosedRange<Long>
+
 @CompileTimeCalculation fun compareTo(value: Long, other: Byte) = value.compareTo(other)
 @CompileTimeCalculation fun compareTo(value: Long, other: Short) = value.compareTo(other)
 @CompileTimeCalculation fun compareTo(value: Long, other: Int) = value.compareTo(other)

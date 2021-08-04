@@ -1,4 +1,7 @@
-// IGNORE_BACKEND: JVM_IR
+// this hack is used to ensure that iterator will be resolved first
+@CompileTimeCalculation internal class IntProgressionIterator(first: Int, last: Int, val step: Int) : IntIterator()
+@CompileTimeCalculation public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, endInclusive, 1), ClosedRange<Int>
+
 @CompileTimeCalculation
 fun varargSum(quantityToSum: Int, vararg num: Int): Int {
     var sum = 0

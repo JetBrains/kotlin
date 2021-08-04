@@ -1,3 +1,7 @@
+// this hack is used to ensure that iterator will be resolved first
+@CompileTimeCalculation internal class CharProgressionIterator(first: Char, last: Char, val step: Int) : CharIterator()
+@CompileTimeCalculation public class CharRange(start: Char, endInclusive: Char) : CharProgression(start, endInclusive, 1), ClosedRange<Char>
+
 fun compareTo(first: Char, second: Char) = first.compareTo(second)
 
 fun plus(first: Char, second: Int) = first.plus(second)
