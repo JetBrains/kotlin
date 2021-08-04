@@ -190,9 +190,9 @@ digraph delegateWithAnonymousObject_kt {
         70 [label="Enter property" style="filled" fillcolor=red];
         71 [label="Postponed enter to lambda"];
         72 [label="Postponed exit from lambda"];
-        73 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
+        73 [label="Function call: R?C|/delegate|(...)"];
         74 [label="Access variable this@R|/IssuesListUserProfile|"];
-        75 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)"];
+        75 [label="Function call: R?C|/delegate|(...).R?C|special/error|(...)"];
         76 [label="Postponed enter to lambda"];
         subgraph cluster_19 {
             color=blue
@@ -216,8 +216,7 @@ digraph delegateWithAnonymousObject_kt {
         79 [label="Exit property" style="filled" fillcolor=red];
     }
     70 -> {71};
-    71 -> {72};
-    71 -> {} [style=dashed];
+    71 -> {72} [color=red];
     72 -> {73};
     73 -> {74};
     74 -> {75};

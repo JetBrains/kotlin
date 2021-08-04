@@ -35,6 +35,8 @@ abstract class FirInferenceSession {
     abstract fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement
     abstract fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement
     abstract fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement
+
+    abstract fun clear()
 }
 
 abstract class FirStubInferenceSession : FirInferenceSession() {
@@ -56,4 +58,7 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false
     override fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement = false
     override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+
+    override fun clear() {
+    }
 }

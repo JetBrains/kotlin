@@ -18,7 +18,7 @@ abstract class BaseState {
 }
 
 abstract class Some : BaseState() {
-    val hideBySeverityDerived: MutableSet<Int> by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>propertyDerived<!>(mutableSetOf())
+    val hideBySeverityDerived: MutableSet<Int> by propertyDerived(mutableSetOf())
 
     val hideBySeverityBase: MutableSet<Int> by propertyBase(mutableSetOf())
 }

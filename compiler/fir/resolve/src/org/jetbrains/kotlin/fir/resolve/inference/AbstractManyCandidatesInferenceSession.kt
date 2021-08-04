@@ -48,4 +48,10 @@ abstract class AbstractManyCandidatesInferenceSession(
 
     protected val FirResolvable.candidate: Candidate
         get() = candidate()!!
+
+    override fun clear() {
+        errorCalls.clear()
+        partiallyResolvedCalls.clear()
+        completedCalls.clear()
+    }
 }

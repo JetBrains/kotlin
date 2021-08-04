@@ -4,7 +4,7 @@
 import kotlin.reflect.KProperty
 
 abstract class MainActivity : DIAware1() {
-    val bar: Bar by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>instance1<!>()
+    val bar: Bar by instance1()
 }
 
 class Bar
