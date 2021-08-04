@@ -1415,9 +1415,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
             myBuilder.restoreNewlinesState();
 
             if (!hasNewLineWithSemicolon) {
-                AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
-                if (accessorKind != null) {
-                    parsePropertyGetterOrSetter(accessorKind);
+                PropertyComponentKind.Collector alreadyRead = new PropertyComponentKind.Collector();
+                PropertyComponentKind propertyComponentKind = parsePropertyComponent(alreadyRead);
+
+                while (propertyComponentKind != null) {
+                    alreadyRead.collect(propertyComponentKind);
+                    propertyComponentKind = parsePropertyComponent(alreadyRead);
                 }
 
                 if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
@@ -1504,78 +1507,102 @@ public class KotlinParsing extends AbstractKotlinParsing {
         myBuilder.restoreNewlinesState();
     }
 
-    private enum AccessorKind { GET, SET}
+    private enum PropertyComponentKind {
+        GET,
+        SET,
+        FIELD;
+
+        static class Collector {
+            private final boolean[] collected = { false, false, false };
+
+            public void collect(PropertyComponentKind kind) {
+                collected[kind.ordinal()] = true;
+            }
+
+            public boolean contains(PropertyComponentKind kind) {
+                return collected[kind.ordinal()];
+            }
+        }
+    }
 
     /*
-     * getterOrSetter
+     * propertyComponent
      *   : modifiers ("get" | "set")
      *   :
      *        (     "get" "(" ")"
      *           |
      *              "set" "(" modifiers parameter ")"
+     *           |
+     *              "field"
      *        ) functionBody
      *   ;
      */
     @Nullable
-    private AccessorKind parsePropertyGetterOrSetter(@Nullable AccessorKind notAllowedKind) {
-        PsiBuilder.Marker getterOrSetter = mark();
+    private PropertyComponentKind parsePropertyComponent(PropertyComponentKind.Collector notAllowedKind) {
+        PsiBuilder.Marker propertyComponent = mark();
 
         parseModifierList(DEFAULT, TokenSet.EMPTY);
 
-        AccessorKind accessorKind;
+        PropertyComponentKind propertyComponentKind;
         if (at(GET_KEYWORD)) {
-            accessorKind = AccessorKind.GET;
+            propertyComponentKind = PropertyComponentKind.GET;
         }
         else if (at(SET_KEYWORD)) {
-            accessorKind = AccessorKind.SET;
+            propertyComponentKind = PropertyComponentKind.SET;
+        }
+        else if (at(FIELD_KEYWORD)) {
+            propertyComponentKind = PropertyComponentKind.FIELD;
         }
         else {
-            getterOrSetter.rollbackTo();
+            propertyComponent.rollbackTo();
             return null;
         }
 
-        if (accessorKind == notAllowedKind) {
-            getterOrSetter.rollbackTo();
+        if (notAllowedKind.contains(propertyComponentKind)) {
+            propertyComponent.rollbackTo();
             return null;
         }
 
-        advance(); // GET_KEYWORD or SET_KEYWORD
+        advance(); // GET_KEYWORD, SET_KEYWORD or FIELD_KEYWORD
 
-        if (!at(LPAR)) {
+        if (!at(LPAR) && propertyComponentKind != PropertyComponentKind.FIELD) {
             // Account for Jet-114 (val a : int get {...})
-            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
+            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, FIELD_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
             if (!atSet(ACCESSOR_FIRST_OR_PROPERTY_END)) {
                 errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
             }
             else {
-                closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, true);
-                return accessorKind;
+                closeDeclarationWithCommentBinders(propertyComponent, PROPERTY_ACCESSOR, true);
+                return propertyComponentKind;
             }
         }
 
         myBuilder.disableNewlines();
-        expect(LPAR, "Expecting '('", TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ));
-        if (accessorKind == AccessorKind.SET) {
-            PsiBuilder.Marker parameterList = mark();
-            PsiBuilder.Marker setterParameter = mark();
-            parseModifierList(DEFAULT, TokenSet.create(COMMA, COLON, RPAR));
-            expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(RPAR, COLON, LBRACE, EQ));
 
-            if (at(COLON)) {
-                advance(); // COLON
-                parseTypeRef();
+        if (propertyComponentKind != PropertyComponentKind.FIELD) {
+            expect(LPAR, "Expecting '('", TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ));
+            if (propertyComponentKind == PropertyComponentKind.SET) {
+                PsiBuilder.Marker parameterList = mark();
+                PsiBuilder.Marker setterParameter = mark();
+                parseModifierList(DEFAULT, TokenSet.create(COMMA, COLON, RPAR));
+                expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(RPAR, COLON, LBRACE, EQ));
+
+                if (at(COLON)) {
+                    advance(); // COLON
+                    parseTypeRef();
+                }
+                setterParameter.done(VALUE_PARAMETER);
+                if (at(COMMA)) {
+                    advance(); // COMMA
+                }
+                parameterList.done(VALUE_PARAMETER_LIST);
             }
-            setterParameter.done(VALUE_PARAMETER);
-            if (at(COMMA)) {
-                advance(); // COMMA
+            if (!at(RPAR)) {
+                errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, RBRACE, EQ, EOL_OR_SEMICOLON));
             }
-            parameterList.done(VALUE_PARAMETER_LIST);
-        }
-        if (!at(RPAR)) {
-            errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, RBRACE, EQ, EOL_OR_SEMICOLON));
-        }
-        if (at(RPAR)) {
-            advance();
+            if (at(RPAR)) {
+                advance();
+            }
         }
         myBuilder.restoreNewlinesState();
 
@@ -1585,13 +1612,22 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTypeRef();
         }
 
-        parseFunctionContract();
+        if (propertyComponentKind != PropertyComponentKind.FIELD) {
+            parseFunctionContract();
+            parseFunctionBody();
+        } else if (at(EQ)) {
+            advance();
+            myExpressionParsing.parseExpression();
+            consumeIf(SEMICOLON);
+        }
 
-        parseFunctionBody();
+        if (propertyComponentKind == PropertyComponentKind.FIELD) {
+            closeDeclarationWithCommentBinders(propertyComponent, BACKING_FIELD, true);
+        } else {
+            closeDeclarationWithCommentBinders(propertyComponent, PROPERTY_ACCESSOR, true);
+        }
 
-        closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, true);
-
-        return accessorKind;
+        return propertyComponentKind;
     }
 
     @NotNull

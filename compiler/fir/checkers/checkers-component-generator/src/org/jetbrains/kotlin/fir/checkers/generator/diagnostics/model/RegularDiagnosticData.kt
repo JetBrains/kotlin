@@ -106,6 +106,8 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     OPERATOR_MODIFIER,
     NON_FINAL_MODIFIER_OR_NAME,
     ENUM_MODIFIER,
+    FIELD_KEYWORD,
+
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"

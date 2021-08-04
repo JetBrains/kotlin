@@ -379,6 +379,25 @@ object LightTreePositioningStrategies {
     val ENUM_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.ENUM_KEYWORD))
 
+    val FIELD_KEYWORD: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val fieldKeyword = tree.fieldKeyword(node)
+            if (fieldKeyword != null) {
+                return markElement(fieldKeyword, startOffset, endOffset, tree, node)
+            }
+            return DEFAULT.mark(node, startOffset, endOffset, tree)
+        }
+
+        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
+            return tree.fieldKeyword(node) != null
+        }
+    }
+
     val INLINE_PARAMETER_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD))
 
@@ -991,6 +1010,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.elseKeyword(node: Ligh
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.returnKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RETURN_KEYWORD)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.fieldKeyword(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.FIELD_KEYWORD)
 
 internal fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IDENTIFIER)

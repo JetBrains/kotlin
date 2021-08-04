@@ -319,4 +319,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.ENUM_MODIFIER,
         PositioningStrategies.ENUM_MODIFIER
     )
+
+    val FIELD_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.FIELD_KEYWORD,
+        PositioningStrategies.FIELD_KEYWORD
+    )
 }
