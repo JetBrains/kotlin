@@ -169,6 +169,23 @@ TEST(ThreadStateDeathTest, StateAsserts) {
     });
 }
 
+TEST(ThreadStateDeathTest, StateAssertsForDetachedThread) {
+    EXPECT_DEATH(AssertThreadState(static_cast<MemoryState*>(nullptr), ThreadState::kNative),
+                 "runtime assert: thread must not be nullptr");
+    EXPECT_DEATH(AssertThreadState(static_cast<mm::ThreadData*>(nullptr), ThreadState::kNative),
+                 "runtime assert: threadData must not be nullptr");
+    EXPECT_DEATH(AssertThreadState(ThreadState::kNative),
+                 "runtime assert: thread must not be nullptr");
+
+    EXPECT_DEATH(AssertThreadState(static_cast<MemoryState*>(nullptr), {ThreadState::kNative}),
+                 "runtime assert: thread must not be nullptr");
+    EXPECT_DEATH(AssertThreadState(static_cast<mm::ThreadData*>(nullptr), {ThreadState::kNative}),
+                 "runtime assert: threadData must not be nullptr");
+    EXPECT_DEATH(AssertThreadState({ThreadState::kNative}),
+                 "runtime assert: thread must not be nullptr");
+
+}
+
 TEST(ThreadStateDeathTest, IncorrectStateSwitchWithDifferentFunctions) {
     RunInNewThread([](MemoryState* memoryState) {
         auto* threadData = memoryState->GetThreadData();
@@ -202,6 +219,14 @@ TEST(ThreadStateDeathTest, StateSwitchCorrectness) {
                  "runtime assert: Illegal thread state switch. Old state: NATIVE. New state: NATIVE");
 }
 
+TEST(ThreadStateDeathTest, StateSwitchForDetachedThread) {
+    EXPECT_DEATH(SwitchThreadState(static_cast<MemoryState*>(nullptr), ThreadState::kNative), "thread must not be nullptr");
+    EXPECT_DEATH(SwitchThreadState(static_cast<mm::ThreadData*>(nullptr), ThreadState::kNative), "threadData must not be nullptr");
+
+    EXPECT_DEATH(Kotlin_mm_switchThreadStateNative(), "threadData must not be nullptr");
+    EXPECT_DEATH(Kotlin_mm_switchThreadStateRunnable(), "threadData must not be nullptr" );
+}
+
 TEST(ThreadStateDeathTest, ReentrantStateSwitch) {
     RunInNewThread([](MemoryState* memoryState) {
         auto* threadData = memoryState->GetThreadData();
@@ -233,4 +258,17 @@ TEST(ThreadStateDeathTest, MovingReentrantGuard) {
                     testing::ExitedWithCode(0),
                     testing::Not(testing::ContainsRegex("runtime assert: Illegal thread state switch.")));
     });
+}
+
+TEST(ThreadStateDeathTest, GuardForDetachedThread) {
+    auto expectedError = "thread must not be nullptr";
+    EXPECT_DEATH({ ThreadStateGuard guard(nullptr, ThreadState::kRunnable, false); }, expectedError);
+    EXPECT_DEATH({ ThreadStateGuard guard(nullptr, ThreadState::kNative, false); }, expectedError);
+    EXPECT_DEATH({ ThreadStateGuard guard(nullptr, ThreadState::kRunnable, true); }, expectedError);
+    EXPECT_DEATH({ ThreadStateGuard guard(nullptr, ThreadState::kNative, true); }, expectedError);
+
+    EXPECT_DEATH({ ThreadStateGuard guard(ThreadState::kRunnable, false); }, expectedError);
+    EXPECT_DEATH({ ThreadStateGuard guard(ThreadState::kNative, false); }, expectedError);
+    EXPECT_DEATH({ ThreadStateGuard guard(ThreadState::kRunnable, true); }, expectedError);
+    EXPECT_DEATH({ ThreadStateGuard guard(ThreadState::kNative, true); }, expectedError);
 }
