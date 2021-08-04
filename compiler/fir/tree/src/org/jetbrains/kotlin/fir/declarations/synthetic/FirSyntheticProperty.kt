@@ -30,6 +30,7 @@ class FirSyntheticProperty(
     override var resolvePhase: FirResolvePhase,
     override val getter: FirSyntheticPropertyAccessor,
     override val setter: FirSyntheticPropertyAccessor? = null,
+    override val backingField: FirBackingField? = null,
     override val deprecation: DeprecationsPerUseSite? = null
 ) : FirProperty() {
     init {
@@ -119,6 +120,10 @@ class FirSyntheticProperty(
     }
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
+        throw AssertionError("Transformation of synthetic property isn't supported")
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirSyntheticProperty {
         throw AssertionError("Transformation of synthetic property isn't supported")
     }
 

@@ -44,6 +44,7 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
     abstract val isVal: Boolean
     abstract val getter: FirPropertyAccessor?
     abstract val setter: FirPropertyAccessor?
+    abstract val backingField: FirBackingField?
     abstract override val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariable(this, data)
@@ -77,6 +78,8 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
     abstract fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirVariable
 
     abstract fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable
+
+    abstract fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirVariable
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariable
 

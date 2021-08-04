@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -53,6 +54,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var isVal: Boolean = true
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
+    var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var symbol: FirValueParameterSymbol
     var defaultValue: FirExpression? = null
@@ -78,6 +80,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             isVal,
             getter,
             setter,
+            backingField,
             annotations,
             symbol,
             defaultValue,

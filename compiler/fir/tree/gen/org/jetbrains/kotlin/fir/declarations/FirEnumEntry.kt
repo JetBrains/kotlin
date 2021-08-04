@@ -42,6 +42,7 @@ abstract class FirEnumEntry : FirVariable() {
     abstract override val isVal: Boolean
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
+    abstract override val backingField: FirBackingField?
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val symbol: FirEnumEntrySymbol
 
@@ -76,6 +77,8 @@ abstract class FirEnumEntry : FirVariable() {
     abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirEnumEntry
 
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirEnumEntry
+
+    abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirEnumEntry
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEnumEntry
 

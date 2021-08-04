@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -46,6 +47,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override val name: Name,
     override var initializer: FirExpression?,
     override val isVar: Boolean,
+    override var backingField: FirBackingField?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val symbol: FirFieldSymbol,
 ) : FirField() {
@@ -64,6 +66,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
         initializer?.accept(visitor, data)
+        backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
@@ -72,6 +75,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformInitializer(transformer, data)
+        transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -109,6 +113,11 @@ class FirFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        return this
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        backingField = backingField?.transform(transformer, data)
         return this
     }
 

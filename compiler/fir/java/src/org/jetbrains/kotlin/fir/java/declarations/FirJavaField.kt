@@ -55,6 +55,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
+    override val backingField: FirBackingField? = null
 
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
@@ -75,6 +76,10 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirField {
+        return this
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirField {
         return this
     }
 
