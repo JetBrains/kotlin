@@ -1389,21 +1389,16 @@ class ControlFlowGraphBuilder {
                     addBackEdge(node, targetNode, label = label)
                 }
             } else {
-                //TODO this supports single try-finally block only
-                //need to get all try-finally up to target
+                //go through all final nodes between node and target
                 val finallyNodes = finallyBefore(targetNode)
-                if (finallyNodes != null) {
-                    val (finallyEnter, finallyExit) = finallyNodes
-                    addEdge(node, finallyEnter, propagateDeadness = false, label = label)
-                    if (!finallyExit.followingNodes.contains(targetNode)) {
-                        addEdge(finallyExit, targetNode, propagateDeadness = false, label = label)
-                    }
-                    if (trackJump) {
-                        //actually we can store all returns like this, but not sure if it make anything better
-                        nonDirectJumps.put(targetNode, node)
-                    }
-                } else {
-                    addEdge(node, targetNode, propagateDeadness = false, label = label)
+                val finalFrom = finallyNodes.fold(node) { from, (finallyEnter, tryExit) ->
+                    addEdgeIfNotExist(from, finallyEnter, propagateDeadness = false, label = label)
+                    tryExit
+                }
+                addEdgeIfNotExist(finalFrom, targetNode, propagateDeadness = false, label = label)
+                if (trackJump && finallyNodes.isNotEmpty()) {
+                    //actually we can store all returns like this, but not sure if it makes anything better
+                    nonDirectJumps.put(targetNode, node)
                 }
             }
         }
@@ -1428,12 +1423,27 @@ class ControlFlowGraphBuilder {
         lastNodes.push(stub)
     }
 
-    private fun finallyBefore(target: CFGNode<*>): Pair<FinallyBlockEnterNode, TryExpressionExitNode>? {
-        return finallyEnterNodes.topOrNull()?.takeIf { it.level > target.level }?.let { it to tryExitNodes.top() }
+    private fun finallyBefore(target: CFGNode<*>): List<Pair<FinallyBlockEnterNode, TryExpressionExitNode>> {
+        return finallyEnterNodes.all().takeWhile { it.level > target.level }.map {
+            it to tryExitNodes[it.fir]!!
+        }
     }
 
     private fun popAndAddEdge(to: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
         addEdge(lastNodes.pop(), to, preferredKind = preferredKind)
+    }
+
+    private fun addEdgeIfNotExist(
+        from: CFGNode<*>,
+        to: CFGNode<*>,
+        propagateDeadness: Boolean = true,
+        isDead: Boolean = false,
+        preferredKind: EdgeKind = EdgeKind.Forward,
+        label: EdgeLabel = NormalPath
+    ) {
+        if (!from.followingNodes.contains(to)) {
+            addEdge(from, to, propagateDeadness, isDead, preferredKind = preferredKind, label = label)
+        }
     }
 
     private fun addEdge(
