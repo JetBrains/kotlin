@@ -40,7 +40,7 @@ fun calculateDirHash(dir: File): String? {
     val md = MessageDigest.getInstance("MD5")
     dir.walk()
         .forEach { file ->
-            md.update(file.absolutePath.toByteArray())
+            md.update(file.toRelativeString(dir).toByteArray())
             if (file.isFile) {
                 file.inputStream().use {
                     md.update(it.readBytes())

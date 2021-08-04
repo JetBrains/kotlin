@@ -2,7 +2,9 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
@@ -44,10 +46,6 @@ abstract class NodeJsSetupTask : DefaultTask() {
     @get:Internal
     internal lateinit var configuration: Provider<Configuration>
 
-    private val _nodeJsDist by lazy {
-        configuration.get().files.single()
-    }
-
     @get:Classpath
     val nodeJsDist: File by lazy {
         val repo = project.repositories.ivy { repo ->
@@ -61,7 +59,7 @@ abstract class NodeJsSetupTask : DefaultTask() {
             repo.content { it.includeModule("org.nodejs", "node") }
         }
         val startDownloadTime = System.currentTimeMillis()
-        val dist = _nodeJsDist
+        val dist = configuration.get().files.single()
         val downloadDuration = System.currentTimeMillis() - startDownloadTime
         if (downloadDuration > 0) {
             KotlinBuildStatsService.getInstance()
@@ -82,21 +80,30 @@ abstract class NodeJsSetupTask : DefaultTask() {
     fun exec() {
         logger.kotlinInfo("Using node distribution from '$nodeJsDist'")
 
+        var dirHash: String? = null
         val upToDate = destinationHashFile.let { file ->
             if (file.exists()) {
                 file.useLines {
-                    it.single() == calculateDirHash(destination)
+                    it.single() == (calculateDirHash(destination).also { dirHash = it })
                 }
             } else false
         }
 
-        if (upToDate) return
+        val tmpDir = temporaryDir
+        unpackNodeArchive(nodeJsDist, tmpDir)
+
+        if (upToDate && calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
 
         if (destination.isDirectory) {
             destination.deleteRecursively()
         }
 
-        unpackNodeArchive(nodeJsDist, destination.parentFile) // parent because archive contains name already
+        fs.copy {
+            it.from(tmpDir)
+            it.into(destination.parentFile)
+        }
+
+        tmpDir.deleteRecursively()
 
         if (!env.isWindows) {
             File(env.nodeExecutable).setExecutable(true)
@@ -110,19 +117,17 @@ abstract class NodeJsSetupTask : DefaultTask() {
     private fun unpackNodeArchive(archive: File, destination: File) {
         logger.kotlinInfo("Unpacking $archive to $destination")
 
-        when {
-            archive.name.endsWith("zip") -> fs.copy {
-                it.from(archiveOperations.zipTree(archive))
-                it.into(destination)
-            }
-            else -> {
-                fs.copy {
-                    it.from(archiveOperations.tarTree(archive))
-                    it.into(destination)
-                }
-            }
+        fs.copy {
+            it.from(fileTree(archive))
+            it.into(destination)
         }
     }
+
+    private fun fileTree(archive: File): FileTree =
+        when {
+            archive.name.endsWith("zip") -> archiveOperations.zipTree(archive)
+            else -> archiveOperations.tarTree(archive)
+        }
 
     companion object {
         const val NAME: String = "kotlinNodeJsSetup"

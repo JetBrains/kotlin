@@ -57,10 +57,6 @@ open class YarnSetupTask : DefaultTask() {
     @get:Internal
     internal lateinit var configuration: Provider<Configuration>
 
-    private val _yarnDist by lazy {
-        configuration.get().files.single()
-    }
-
     @get:Classpath
     val yarnDist: File by lazy {
         val repo = project.repositories.ivy { repo ->
@@ -73,7 +69,7 @@ open class YarnSetupTask : DefaultTask() {
             repo.content { it.includeModule("com.yarnpkg", "yarn") }
         }
         val startDownloadTime = System.currentTimeMillis()
-        val dist = _yarnDist
+        val dist = configuration.get().files.single()
         val downloadDuration = System.currentTimeMillis() - startDownloadTime
         if (downloadDuration > 0) {
             KotlinBuildStatsService.getInstance()
@@ -93,21 +89,30 @@ open class YarnSetupTask : DefaultTask() {
     fun setup() {
         logger.kotlinInfo("Using yarn distribution from '$yarnDist'")
 
+        var dirHash: String? = null
         val upToDate = destinationHashFile.let { file ->
             if (file.exists()) {
                 file.useLines {
-                    it.single() == calculateDirHash(destination)
+                    it.single() == (calculateDirHash(destination).also { dirHash = it })
                 }
             } else false
         }
 
-        if (upToDate) return
+        val tmpDir = temporaryDir
+        extract(yarnDist, tmpDir) // parent because archive contains name already
+
+        if (upToDate && calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
 
         if (destination.isDirectory) {
             destination.deleteRecursively()
         }
 
-        extract(yarnDist, destination.parentFile) // parent because archive contains name already
+        fs.copy {
+            it.from(tmpDir)
+            it.into(destination.parentFile)
+        }
+
+        tmpDir.deleteRecursively()
 
         destinationHashFile.writeText(
             calculateDirHash(destination)!!
