@@ -83,19 +83,14 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     if (jsTypeOf(obj) == "object" && jsIn("${'$'}metadata${'$'}", obj.constructor)) {
         @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
         return obj.constructor.unsafeCast<Ctor>().`$metadata$`?.suspendArity?.let {
-            val result = js("{result: false}")
-            js(
-                """
-                for (var i = 0; i < it.length; i++) {
-                    if (arity === it[i]) {
-                       result.result = true;
-                       break;
-                    }
-                    result.result = false;
+            var result = false
+            for (item in it) {
+                if (arity == item) {
+                    result = true
+                    break
                 }
-                """
-            )
-            return result.result
+            }
+            return result
         } ?: false
     }
 
