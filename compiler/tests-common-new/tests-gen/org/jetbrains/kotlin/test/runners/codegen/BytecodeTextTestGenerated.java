@@ -725,6 +725,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("safeCallWithElvisMultipleFiles.kt")
+        public void testSafeCallWithElvisMultipleFiles() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/safeCallWithElvisMultipleFiles.kt");
+        }
+
+        @Test
         @TestMetadata("severalInlines.kt")
         public void testSeveralInlines() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/severalInlines.kt");

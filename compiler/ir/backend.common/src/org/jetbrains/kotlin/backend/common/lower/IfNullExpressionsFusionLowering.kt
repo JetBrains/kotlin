@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isTrivial
 import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -33,10 +32,10 @@ val ifNullExpressionsFusionPhase =
 
 class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(Transformer(irFile))
+        irFile.transformChildrenVoid(Transformer())
     }
 
-    private inner class Transformer(private val currentFile: IrFile) : IrElementTransformerVoid() {
+    private inner class Transformer : IrElementTransformerVoid() {
         override fun visitBlock(expression: IrBlock): IrExpression =
             visitExpression(expression.fuseIfNull())
 
@@ -131,30 +130,34 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
 
         private fun IrExpression.isNull(knownVariableSymbol: IrVariableSymbol, knownVariableIsNull: Boolean): Boolean? =
             when (this) {
-                is IrConst<*> -> value == null
-                is IrGetValue -> when {
-                    symbol == knownVariableSymbol -> knownVariableIsNull
-                    !type.isNullable() -> false
-                    else -> null
-                }
+                is IrConst<*> ->
+                    value == null
+                is IrGetValue ->
+                    when {
+                        symbol == knownVariableSymbol -> knownVariableIsNull
+                        !type.isNullable() -> false
+                        else -> null
+                    }
                 is IrConstructorCall,
                 is IrGetSingletonValue,
                 is IrFunctionExpression,
                 is IrCallableReference<*>,
                 is IrClassReference,
-                is IrGetClass -> false
+                is IrGetClass ->
+                    false
                 is IrCall ->
-                    if (!type.isNullable() && symbol.owner.isStable()) false else null
+                    if (!type.isNullable()) false else null
                 is IrGetField ->
-                    if (!type.isNullable() && symbol.owner.isStable()) false else null
-                is IrBlock ->
-                    (statements.singleOrNull() as IrExpression?)?.takeIf { it.type == type }?.isNull(knownVariableSymbol, knownVariableIsNull)
+                    if (!type.isNullable()) false else null
+                is IrBlock -> {
+                    val singleExpr = statements.singleOrNull()
+                    if (singleExpr is IrExpression && singleExpr.type == type)
+                        singleExpr.isNull(knownVariableSymbol, knownVariableIsNull)
+                    else
+                        null
+                }
                 else -> null
             }
-
-        // TODO make calls to the declarations within the same module "stable"
-        private fun IrDeclaration.isStable() =
-            fileOrNull == currentFile
     }
 
     private class IfNullExpr(

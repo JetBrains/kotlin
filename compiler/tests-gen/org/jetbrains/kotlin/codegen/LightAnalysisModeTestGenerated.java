@@ -1555,6 +1555,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/boxingOptimization/safeCallWithElvis.kt");
         }
 
+        @TestMetadata("safeCallWithElvisAndEnhancedNullability.kt")
+        public void testSafeCallWithElvisAndEnhancedNullability() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/safeCallWithElvisAndEnhancedNullability.kt");
+        }
+
+        @TestMetadata("safeCallWithElvisMultipleFiles.kt")
+        public void testSafeCallWithElvisMultipleFiles() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/safeCallWithElvisMultipleFiles.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/box/boxingOptimization/simple.kt");

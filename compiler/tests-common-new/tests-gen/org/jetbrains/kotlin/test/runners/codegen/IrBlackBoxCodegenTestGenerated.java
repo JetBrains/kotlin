@@ -1851,6 +1851,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("safeCallWithElvisAndEnhancedNullability.kt")
+        public void testSafeCallWithElvisAndEnhancedNullability() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/safeCallWithElvisAndEnhancedNullability.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallWithElvisMultipleFiles.kt")
+        public void testSafeCallWithElvisMultipleFiles() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/safeCallWithElvisMultipleFiles.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/box/boxingOptimization/simple.kt");
