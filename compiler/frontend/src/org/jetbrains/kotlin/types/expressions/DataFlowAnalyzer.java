@@ -305,8 +305,11 @@ public class DataFlowAnalyzer {
         }
 
         if (expression instanceof KtWhenExpression) {
-            // No need in additional check because type mismatch is already reported for entries
-            return expressionType;
+            KtWhenExpression whenExpression = (KtWhenExpression) expression;
+            if (!whenExpression.getEntries().isEmpty()) {
+                // No need in additional check because type mismatch is already reported for entries
+                return expressionType;
+            }
         }
 
         SmartCastResult castResult = checkPossibleCast(expressionType, expression, c);

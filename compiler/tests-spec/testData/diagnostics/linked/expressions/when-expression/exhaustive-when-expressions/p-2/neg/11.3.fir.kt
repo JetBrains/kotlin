@@ -33,7 +33,7 @@ fun case_3(value_1: EnumClass?): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
 }
 
 // TESTCASE NUMBER: 4
-fun case_4(value_1: EnumClassSingle): Int = <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(value_1) {}<!>
+fun case_4(value_1: EnumClassSingle): Int = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {}
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: EnumClassSingle?): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
