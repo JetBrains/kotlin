@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -542,7 +543,7 @@ class PSICallResolver(
                 dataFlowValueFactory.createDataFlowValue(variableReceiver, temporaryTrace.bindingContext, context.scope.ownerDescriptor)
             return ReceiverValueWithSmartCastInfo(
                 variableReceiver,
-                context.dataFlowInfo.getCollectedTypes(dataFlowValue, context.languageVersionSettings),
+                context.dataFlowInfo.getCollectedTypes(dataFlowValue, context.languageVersionSettings).compactIfPossible(),
                 dataFlowValue.isStable
             ).prepareReceiverRegardingCaptureTypes()
         }

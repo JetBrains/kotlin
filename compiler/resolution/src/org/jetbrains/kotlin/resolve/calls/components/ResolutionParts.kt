@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckVisibility : ResolutionPart() {
@@ -96,7 +97,7 @@ internal object ArgumentsToCandidateParameterDescriptor : ResolutionPart() {
                 map[argument] = valueParameter
             }
         }
-        resolvedCall.argumentToCandidateParameter = map
+        resolvedCall.argumentToCandidateParameter = map.compactIfPossible()
     }
 }
 

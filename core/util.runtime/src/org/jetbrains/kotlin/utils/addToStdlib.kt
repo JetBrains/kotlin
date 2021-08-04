@@ -185,6 +185,20 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
     }
 }
 
+fun <T> Set<T>.compactIfPossible(): Set<T> =
+    when (size) {
+        0 -> emptySet()
+        1 -> setOf(single())
+        else -> this
+    }
+
+fun <K, V> Map<K, V>.compactIfPossible(): Map<K, V> =
+    when (size) {
+        0 -> emptyMap()
+        1 -> Collections.singletonMap(keys.single(), values.single())
+        else -> this
+    }
+
 inline fun <T> T.applyIf(`if`: Boolean, body: T.() -> T): T =
     if (`if`) body() else this
 

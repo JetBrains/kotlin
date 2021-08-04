@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -64,9 +63,8 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
-import kotlin.collections.LinkedHashMap
 
 class KotlinToResolvedCallTransformer(
     private val callCheckers: Iterable<CallChecker>,
@@ -677,7 +675,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
                     result[parameter] = argument
                 }
             }
-        }
+        }.compactIfPossible()
 
 }
 

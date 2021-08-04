@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.*
-import java.util.*
+import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 
 class ArgumentsToParametersMapper(
     languageVersionSettings: LanguageVersionSettings
@@ -63,7 +63,7 @@ class ArgumentsToParametersMapper(
             }
             processor.processDefaultsAndRunChecks()
 
-            return ArgumentMapping(processor.result, processor.getDiagnostics())
+            return ArgumentMapping(processor.result.compactIfPossible(), processor.getDiagnostics())
         }
     }
 
