@@ -466,7 +466,13 @@ class MingwLinker(targetProperties: MingwConfigurables)
             // --gc-sections flag may affect profiling.
             // See https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#drawbacks-and-limitations.
             // TODO: switching to lld may help.
-            if (optimize && !needsProfileLibrary) +linkerOptimizationFlags
+            if (optimize && !needsProfileLibrary) {
+                // TODO: Can be removed after LLD update.
+                //  See KT-48085.
+                if (!dynamic) {
+                    +linkerOptimizationFlags
+                }
+            }
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +libraries
