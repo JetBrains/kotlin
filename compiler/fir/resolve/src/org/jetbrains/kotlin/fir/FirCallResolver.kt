@@ -365,7 +365,7 @@ class FirCallResolver(
         val reducedCandidates = if (noSuccessfulCandidates) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
         }
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(

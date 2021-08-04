@@ -4,4 +4,4 @@ private fun DailyAggregatedDoubleFactor.aggregateBy(reduce: (Double, Double) -> 
     return mutableMapOf<String, Double>()
 }
 
-fun DailyAggregatedDoubleFactor.aggregateMin(): Map<String, Double> = aggregateBy(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>minOf<!>)
+fun DailyAggregatedDoubleFactor.aggregateMin(): Map<String, Double> = aggregateBy(::minOf)
