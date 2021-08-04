@@ -81,15 +81,15 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         }
 
         @Test
-        @TestMetadata("kt47920.kt")
-        public void testKt47920() throws Exception {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47920.kt");
-        }
-
-        @Test
         @TestMetadata("kt47833.kt")
         public void testKt47833() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47833.kt");
+        }
+
+        @Test
+        @TestMetadata("kt47920.kt")
+        public void testKt47920() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/kt47920.kt");
         }
 
         @Test

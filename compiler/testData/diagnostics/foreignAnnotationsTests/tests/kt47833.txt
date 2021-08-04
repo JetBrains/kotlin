@@ -1,0 +1,35 @@
+package
+
+public fun example(): Single<out ClientBootResult>
+
+public sealed class ClientBootResult {
+    protected constructor ClientBootResult()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object ClientBootSuccess : ClientBootResult {
+    private constructor ClientBootSuccess()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@FunctionalInterface /* annotation class not found */ public interface Function</*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!, /*1*/ @io.reactivex.rxjava3.annotations.NonNull R : kotlin.Any!> {
+    public abstract fun apply(/*0*/ t: T!): R!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Single</*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!> {
+    public constructor Single</*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @io.reactivex.rxjava3.annotations.NonNull public final fun </*0*/ @io.reactivex.rxjava3.annotations.NonNull R : kotlin.Any!> map(/*0*/ @io.reactivex.rxjava3.annotations.NonNull mapper: @io.reactivex.rxjava3.annotations.NonNull Function<in T!, out R!>!): @io.reactivex.rxjava3.annotations.NonNull Single<R!>!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    @io.reactivex.rxjava3.annotations.NonNull public open fun </*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!> just(/*0*/ item: T!): @io.reactivex.rxjava3.annotations.NonNull Single<T!>!
+}

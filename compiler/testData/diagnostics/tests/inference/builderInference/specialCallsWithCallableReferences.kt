@@ -39,7 +39,7 @@ fun <R> select(vararg x: R) = x[0]
 fun poll0(): Flow<String> {
     return flow {
         val inv = select(::bar, ::foo)
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        inv()
     }
 }
 
@@ -53,7 +53,7 @@ fun poll01(): Flow<String> {
 fun poll02(): Flow<String> {
     return flow {
         val inv = select(::bar3, ::foo3)
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
+        inv()
     }
 }
 
@@ -67,7 +67,7 @@ fun poll03(): Flow<String> {
 fun poll04(): Flow<String> {
     return flow {
         val inv = select(::bar5, ::foo5)
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        inv
     }
 }
 
@@ -81,7 +81,7 @@ fun poll05(): Flow<String> {
 fun poll06(): Flow<String> {
     return flow {
         val inv = select(foo7(), <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!>)
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        inv
     }
 }
 
@@ -137,14 +137,14 @@ fun poll16(flag: Boolean): Flow<String> {
 fun poll17(flag: Boolean): Flow<String> {
     return flow {
         val inv = if (flag) { foo7() } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> }
-        inv
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }
 
 fun poll2(flag: Boolean): Flow<String> {
     return flow {
         val inv = when (flag) { true -> ::bar else -> ::foo }
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        inv()
     }
 }
 
@@ -158,7 +158,7 @@ fun poll21(flag: Boolean): Flow<String> {
 fun poll22(flag: Boolean): Flow<String> {
     return flow {
         val inv = when (flag) { true -> ::bar3 else -> ::foo3 }
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        inv()
     }
 }
 
@@ -193,7 +193,7 @@ fun poll26(flag: Boolean): Flow<String> {
 fun poll3(flag: Boolean): Flow<String> {
     return flow {
         val inv = when (flag) { true -> ::bar false -> ::foo }
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        inv()
     }
 }
 
@@ -207,7 +207,7 @@ fun poll31(flag: Boolean): Flow<String> {
 fun poll32(flag: Boolean): Flow<String> {
     return flow {
         val inv = when (flag) { true -> ::bar3 false -> ::foo3 }
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        inv()
     }
 }
 
@@ -333,7 +333,7 @@ fun poll55(): Flow<String> {
 fun poll56(): Flow<String> {
     return flow {
         val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
-        inv
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }
 
@@ -486,8 +486,8 @@ fun poll86(): Flow<String> {
 
 fun poll87(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!><!> <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>setOf<!>(<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>foo7<!>())
-        <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>inv<!>
+        val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!><!> <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(foo7())
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }
 

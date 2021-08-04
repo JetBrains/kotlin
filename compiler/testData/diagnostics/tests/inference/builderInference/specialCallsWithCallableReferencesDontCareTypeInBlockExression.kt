@@ -86,7 +86,7 @@ fun poll16(flag: Boolean): Flow<String> {
 fun poll17(flag: Boolean): Flow<String> {
     return flow {
         val inv = if (flag) { foo7() } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> }
-        inv
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }
 
@@ -184,6 +184,6 @@ fun poll55(): Flow<String> {
 fun poll56(): Flow<String> {
     return flow {
         val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
-        inv
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }
