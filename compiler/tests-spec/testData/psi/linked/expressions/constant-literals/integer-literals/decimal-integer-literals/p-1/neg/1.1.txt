@@ -246,7 +246,7 @@ KtFile: 1.1.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('100')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(BAD_CHARACTER)('&')
+      PsiElement(AND)('&')
       PsiElement(INTEGER_LITERAL)('10')
   PsiWhiteSpace('\n')
   PROPERTY
