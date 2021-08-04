@@ -133,3 +133,12 @@ gradlePlugin {
         }
     }
 }
+
+afterEvaluate {
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            languageVersion = "1.4"
+            apiVersion = "1.4"
+        }
+    }
+}

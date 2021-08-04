@@ -106,3 +106,12 @@ dependencies {
     implementation("com.github.jengelman.gradle.plugins:shadow:$shadowVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }
+
+afterEvaluate {
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            languageVersion = "1.4"
+            apiVersion = "1.4"
+        }
+    }
+}
