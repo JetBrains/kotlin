@@ -7,6 +7,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.targets.js.calculateDirHash
 import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
@@ -35,6 +36,9 @@ abstract class NodeJsSetupTask : DefaultTask() {
 
     val destination: File
         @OutputDirectory get() = env.nodeDir
+
+    val destinationHashFile: File
+        @OutputFile get() = destination.parentFile.resolve("${destination.name}.hash")
 
     @Transient
     @get:Internal
@@ -78,11 +82,29 @@ abstract class NodeJsSetupTask : DefaultTask() {
     fun exec() {
         logger.kotlinInfo("Using node distribution from '$nodeJsDist'")
 
+        val upToDate = destinationHashFile.let { file ->
+            if (file.exists()) {
+                file.useLines {
+                    it.single() == calculateDirHash(destination)
+                }
+            } else false
+        }
+
+        if (upToDate) return
+
+        if (destination.isDirectory) {
+            destination.deleteRecursively()
+        }
+
         unpackNodeArchive(nodeJsDist, destination.parentFile) // parent because archive contains name already
 
         if (!env.isWindows) {
             File(env.nodeExecutable).setExecutable(true)
         }
+
+        destinationHashFile.writeText(
+            calculateDirHash(destination)!!
+        )
     }
 
     private fun unpackNodeArchive(archive: File, destination: File) {

@@ -12,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.targets.js.calculateDirHash
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -40,6 +41,9 @@ open class YarnSetupTask : DefaultTask() {
     @Suppress("MemberVisibilityCanBePrivate")
     val destination: File
         @OutputDirectory get() = env.home
+
+    val destinationHashFile: File
+        @OutputFile get() = destination.parentFile.resolve("${destination.name}.hash")
 
     init {
         group = NodeJsRootPlugin.TASKS_GROUP_NAME
@@ -89,7 +93,25 @@ open class YarnSetupTask : DefaultTask() {
     fun setup() {
         logger.kotlinInfo("Using yarn distribution from '$yarnDist'")
 
+        val upToDate = destinationHashFile.let { file ->
+            if (file.exists()) {
+                file.useLines {
+                    it.single() == calculateDirHash(destination)
+                }
+            } else false
+        }
+
+        if (upToDate) return
+
+        if (destination.isDirectory) {
+            destination.deleteRecursively()
+        }
+
         extract(yarnDist, destination.parentFile) // parent because archive contains name already
+
+        destinationHashFile.writeText(
+            calculateDirHash(destination)!!
+        )
     }
 
     private fun extract(archive: File, destination: File) {

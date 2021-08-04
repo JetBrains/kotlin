@@ -10,6 +10,7 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import org.gradle.internal.hash.FileHasher
+import org.jetbrains.kotlin.gradle.targets.js.toHex
 import java.io.File
 
 /**
@@ -90,17 +91,6 @@ internal open class ProcessedFilesCache(
         beginObject()
         body()
         endObject()
-    }
-
-    fun ByteArray.toHex(): String {
-        val result = CharArray(size * 2) { ' ' }
-        var i = 0
-        forEach {
-            val n = it.toInt()
-            result[i++] = Character.forDigit(n shr 4 and 0xF, 16)
-            result[i++] = Character.forDigit(n and 0xF, 16)
-        }
-        return String(result)
     }
 
     private fun decodeHexString(hexString: String): ByteArray {
