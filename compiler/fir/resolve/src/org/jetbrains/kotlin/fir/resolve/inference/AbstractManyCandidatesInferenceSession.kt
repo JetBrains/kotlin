@@ -27,7 +27,7 @@ abstract class AbstractManyCandidatesInferenceSession(
         get() = partiallyResolvedCalls.lastOrNull()
             ?.second
             ?.system
-            ?.currentStorage()
+            ?.asReadOnlyStorage()
             ?: ConstraintStorage.Empty
 
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
@@ -48,4 +48,10 @@ abstract class AbstractManyCandidatesInferenceSession(
 
     protected val FirResolvable.candidate: Candidate
         get() = candidate()!!
+
+    override fun clear() {
+        errorCalls.clear()
+        partiallyResolvedCalls.clear()
+        completedCalls.clear()
+    }
 }

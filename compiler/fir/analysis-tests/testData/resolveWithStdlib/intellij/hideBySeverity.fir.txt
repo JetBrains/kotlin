@@ -30,9 +30,9 @@ FILE: hideBySeverity.kt
             super<R|BaseState|>()
         }
 
-        public final val hideBySeverityDerived: R|kotlin/collections/MutableSet<kotlin/Int>|by this@R|/Some|.<CS errors: /BaseState.propertyDerived>#<R|ERROR CLASS: Cannot infer argument for type parameter PROPERTY_TYPE|>(R|kotlin/collections/mutableSetOf|<R|ERROR CLASS: Cannot infer argument for type parameter T|>()).R|SubstitutionOverride</StoredPropertyDerived.provideDelegate: R|StoredPropertyBase<ERROR CLASS: Cannot infer argument for type parameter PROPERTY_TYPE>|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
+        public final val hideBySeverityDerived: R|kotlin/collections/MutableSet<kotlin/Int>|by this@R|/Some|.R|/BaseState.propertyDerived|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>()).R|SubstitutionOverride</StoredPropertyDerived.provideDelegate: R|StoredPropertyBase<kotlin/collections/MutableSet<kotlin/Int>>|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
             public get(): R|kotlin/collections/MutableSet<kotlin/Int>| {
-                ^ this@R|/Some|.D|/Some.hideBySeverityDerived|.R|SubstitutionOverride</StoredPropertyBase.getValue: <ERROR TYPE REF: Cannot infer argument for type parameter PROPERTY_TYPE>>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
+                ^ this@R|/Some|.D|/Some.hideBySeverityDerived|.R|SubstitutionOverride</StoredPropertyBase.getValue: R|kotlin/collections/MutableSet<kotlin/Int>|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
             }
 
         public final val hideBySeverityBase: R|kotlin/collections/MutableSet<kotlin/Int>|by this@R|/Some|.R|/BaseState.propertyBase|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())

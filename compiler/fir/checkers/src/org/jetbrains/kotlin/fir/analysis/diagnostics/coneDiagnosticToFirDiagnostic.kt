@@ -231,6 +231,15 @@ private fun mapInapplicableCandidateError(
                 rootCause.isCastToNotNull
             )
             is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol)
+            is InferenceError -> {
+                rootCause.constraintError.toDiagnostic(
+                    source,
+                    qualifiedAccessSource,
+                    session.typeContext,
+                    mutableSetOf(),
+                    diagnostic.candidate
+                )
+            }
             else -> genericDiagnostic
         }
     }.distinct()

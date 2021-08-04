@@ -33,8 +33,8 @@ operator fun CustomDelegate3.setValue(thisRef: Any?, prop: KProperty<*>, value: 
 
 class Example {
 
-    var a by <!DELEGATE_SPECIAL_FUNCTION_MISSING, DELEGATE_SPECIAL_FUNCTION_MISSING!>CustomDelegate()<!>
-    val aval by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>CustomDelegate()<!>
+    var a by <!DELEGATE_SPECIAL_FUNCTION_MISSING, DELEGATE_SPECIAL_FUNCTION_MISSING, NEW_INFERENCE_ERROR!>CustomDelegate()<!>
+    val aval by <!DELEGATE_SPECIAL_FUNCTION_MISSING, NEW_INFERENCE_ERROR!>CustomDelegate()<!>
     var b by OkDelegate()
     var c by CustomDelegate2()
     var d by CustomDelegate3()
