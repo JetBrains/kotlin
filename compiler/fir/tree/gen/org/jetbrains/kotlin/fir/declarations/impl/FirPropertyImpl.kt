@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -51,6 +52,7 @@ internal class FirPropertyImpl(
     override val isVar: Boolean,
     override var getter: FirPropertyAccessor?,
     override var setter: FirPropertyAccessor?,
+    override var backingField: FirBackingField?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val symbol: FirPropertySymbol,
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
@@ -76,6 +78,7 @@ internal class FirPropertyImpl(
         delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
+        backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
@@ -89,6 +92,7 @@ internal class FirPropertyImpl(
         transformDelegate(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
+        transformBackingField(transformer, data)
         transformTypeParameters(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -126,6 +130,11 @@ internal class FirPropertyImpl(
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         setter = setter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        backingField = backingField?.transform(transformer, data)
         return this
     }
 

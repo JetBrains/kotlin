@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -57,6 +58,7 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
     var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
+    var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
@@ -83,6 +85,7 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
             isVar,
             getter,
             setter,
+            backingField,
             annotations,
             symbol,
             delegateFieldSymbol,
@@ -125,6 +128,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.isVar = original.isVar
     copyBuilder.getter = original.getter
     copyBuilder.setter = original.setter
+    copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.symbol = original.symbol
     copyBuilder.delegateFieldSymbol = original.delegateFieldSymbol

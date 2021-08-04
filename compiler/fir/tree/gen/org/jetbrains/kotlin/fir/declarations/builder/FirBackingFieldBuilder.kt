@@ -10,24 +10,20 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirBackingFieldImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyFieldDeclarationSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /*
  * This file was generated automatically
@@ -35,51 +31,45 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  */
 
 @FirBuilderDsl
-class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
+class FirBackingFieldBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
-    val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
-    lateinit var status: FirDeclarationStatus
-    var deprecation: DeprecationsPerUseSite? = null
-    var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeKotlinType? = null
-    lateinit var name: Name
+    lateinit var symbol: FirPropertyFieldDeclarationSymbol
+    var backingFieldSymbol: FirBackingFieldSymbol? = null
+    var propertySymbol: FirPropertySymbol? = null
     var initializer: FirExpression? = null
-    var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    lateinit var symbol: FirEnumEntrySymbol
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    lateinit var status: FirDeclarationStatus
 
-    override fun build(): FirEnumEntry {
-        return FirEnumEntryImpl(
+    override fun build(): FirBackingField {
+        return FirBackingFieldImpl(
             source,
             moduleData,
             resolvePhase,
             origin,
             attributes,
             returnTypeRef,
+            symbol,
+            backingFieldSymbol,
+            propertySymbol,
+            initializer,
+            annotations,
             typeParameters,
             status,
-            deprecation,
-            containerSource,
-            dispatchReceiverType,
-            name,
-            initializer,
-            backingField,
-            annotations,
-            symbol,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildEnumEntry(init: FirEnumEntryBuilder.() -> Unit): FirEnumEntry {
+inline fun buildBackingField(init: FirBackingFieldBuilder.() -> Unit): FirBackingField {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirEnumEntryBuilder().apply(init).build()
+    return FirBackingFieldBuilder().apply(init).build()
 }

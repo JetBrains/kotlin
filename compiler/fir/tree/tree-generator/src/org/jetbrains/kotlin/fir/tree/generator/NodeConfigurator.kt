@@ -329,6 +329,20 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +typeParameters
         }
 
+        backingField.configure {
+            +symbol("FirPropertyFieldDeclarationSymbol")
+            +field("backingFieldSymbol", backingFieldSymbolType, nullable = true).apply {
+                withBindThis = false
+            }
+            +field("propertySymbol", firPropertySymbolType, nullable = true).apply {
+                withBindThis = false
+            }
+            +initializer.withTransform().withReplace()
+            +annotations
+            +typeParameters
+            +status.withTransform()
+        }
+
         declarationStatus.configure {
             +visibility
             +modality
@@ -373,6 +387,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             generateBooleanFields("var", "val")
             +field("getter", propertyAccessor, nullable = true).withTransform()
             +field("setter", propertyAccessor, nullable = true).withTransform()
+            +field("backingField", backingField, nullable = true).withTransform()
             +annotations
             needTransformOtherChildren()
         }

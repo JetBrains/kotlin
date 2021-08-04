@@ -79,6 +79,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val setter: FirPropertyAccessor?
         get() = null
 
+    override val backingField: FirBackingField?
+        get() = null
+
     override val controlFlowGraphReference: FirControlFlowGraphReference?
         get() = null
 
@@ -128,6 +131,10 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     }
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter {
+        return this
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
 

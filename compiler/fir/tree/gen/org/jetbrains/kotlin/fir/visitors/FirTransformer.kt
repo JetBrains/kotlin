@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.FirPackageDirective
@@ -277,6 +278,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): FirStatement {
         return transformElement(propertyAccessor, data)
+    }
+
+    open fun transformBackingField(backingField: FirBackingField, data: D): FirStatement {
+        return transformElement(backingField, data)
     }
 
     open fun transformConstructor(constructor: FirConstructor, data: D): FirStatement {
@@ -789,6 +794,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): FirStatement {
         return transformPropertyAccessor(propertyAccessor, data)
+    }
+
+    final override fun visitBackingField(backingField: FirBackingField, data: D): FirStatement {
+        return transformBackingField(backingField, data)
     }
 
     final override fun visitConstructor(constructor: FirConstructor, data: D): FirStatement {

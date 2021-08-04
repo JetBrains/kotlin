@@ -44,6 +44,7 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
     abstract override val isVal: Boolean
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
+    abstract override val backingField: FirBackingField?
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val diagnostic: ConeDiagnostic
     abstract override val symbol: FirErrorPropertySymbol
@@ -79,6 +80,8 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
     abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirErrorProperty
+
+    abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
