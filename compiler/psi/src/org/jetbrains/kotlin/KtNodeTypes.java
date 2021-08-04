@@ -79,6 +79,7 @@ public interface KtNodeTypes {
     IElementType TYPE_PROJECTION          = KtStubElementTypes.TYPE_PROJECTION;
 
     IElementType PROPERTY_ACCESSOR       = KtStubElementTypes.PROPERTY_ACCESSOR;
+    IElementType BACKING_FIELD = KtStubElementTypes.BACKING_FIELD;
     IElementType INITIALIZER_LIST        = KtStubElementTypes.INITIALIZER_LIST;
     IElementType TYPE_CONSTRAINT_LIST    = KtStubElementTypes.TYPE_CONSTRAINT_LIST;
     IElementType TYPE_CONSTRAINT         = KtStubElementTypes.TYPE_CONSTRAINT;
