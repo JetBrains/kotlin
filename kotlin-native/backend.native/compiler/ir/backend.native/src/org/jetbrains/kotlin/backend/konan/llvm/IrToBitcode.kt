@@ -997,6 +997,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                         return evaluateSuspendableExpression  (value)
             is IrSuspensionPoint     -> return evaluateSuspensionPoint        (value)
             is IrClassReference ->      return evaluateClassReference         (value)
+            is IrConstantValue ->       return evaluateConstantValue          (value).llvm
             else                     -> {
                 TODO(ir2string(value))
             }
@@ -1806,6 +1807,91 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             IrConstKind.Double -> return Float64(value.value as Double)
         }
         TODO(ir2string(value))
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private class IrConstValueCacheKey(val value: IrConstantValue) {
+        override fun equals(other: Any?): Boolean {
+            if (other !is IrConstValueCacheKey) return false
+            return value.contentEquals(other.value)
+        }
+
+        override fun hashCode(): Int {
+            return value.contentHashCode()
+        }
+    }
+
+    private val constantValuesCache = mutableMapOf<IrConstValueCacheKey, ConstValue>()
+
+    private fun evaluateConstantValue(value: IrConstantValue): ConstValue =
+            constantValuesCache.getOrPut(IrConstValueCacheKey(value)) {
+                evaluateConstantValueImpl(value)
+            }
+
+    private fun evaluateConstantValueImpl(value: IrConstantValue): ConstValue {
+        val symbols = context.ir.symbols
+        return when (value) {
+            is IrConstantPrimitive -> {
+                val constructedType = value.value.type
+                if (context.ir.symbols.getTypeConversion(constructedType, value.type) != null) {
+                    if (value.value.kind == IrConstKind.Null) {
+                        Zero(codegen.getLLVMType(value.type))
+                    } else {
+                        require(codegen.getLLVMType(value.type) == codegen.kObjHeaderPtr) {
+                            "Can't wrap ${value.value.kind.asString} constant to type ${value.type.render()}"
+                        }
+                        context.llvm.staticData.createConstKotlinObject(
+                                constructedType.getClass()!!,
+                                evaluateConst(value.value)
+                        )
+                    }
+                } else {
+                    evaluateConst(value.value)
+                }
+            }
+            is IrConstantArray -> {
+                val clazz = value.type.getClass()!!
+                require(clazz.symbol == symbols.array || clazz.symbol in symbols.primitiveTypesToPrimitiveArrays.values) {
+                    "Statically initialized array should have array type"
+                }
+                context.llvm.staticData.createConstKotlinArray(
+                        value.type.getClass()!!,
+                        value.elements.map { evaluateConstantValue(it) }
+                )
+            }
+            is IrConstantObject -> {
+                val constructedType = value.constructor.owner.constructedClassType
+                val constructedClass = constructedType.getClass()!!
+                val needUnBoxing = constructedType.getInlinedClassNative() != null &&
+                        context.ir.symbols.getTypeConversion(constructedType, value.type) == null
+                if (needUnBoxing) {
+                    val unboxed = value.valueArguments.singleOrNull()
+                            ?: error("Inlined class should have exactly one constructor argument")
+                    return evaluateConstantValue(unboxed)
+                }
+                val fields = if (value.constructor.owner.isConstantConstructorIntrinsic) {
+                    intrinsicGenerator.evaluateConstantConstructorFields(value, value.valueArguments.map { evaluateConstantValue(it) })
+                } else {
+                    context.getLayoutBuilder(constructedClass).fields.map { field ->
+                        val index = value.constructor.owner.valueParameters
+                                .indexOfFirst { it.name.toString() == field.name }
+                                .takeIf { it >= 0 }
+                                ?: error("Bad statically initialized object: field ${field.name} value not set in ${constructedClass.name}")
+                        evaluateConstantValue(value.valueArguments[index])
+                    }.also {
+                        require(it.size == value.valueArguments.size) { "Bad statically initialized object: too many fields" }
+                    }
+                }
+
+                require(codegen.getLLVMType(value.type) == codegen.kObjHeaderPtr) { "Constant object is not an object, but ${value.type.render()}" }
+                context.llvm.staticData.createConstKotlinObject(
+                        constructedClass,
+                        *fields.toTypedArray()
+                )
+            }
+            else -> TODO("Unimplemented IrConstantValue subclass ${value::class.qualifiedName}")
+        }
     }
 
     //-------------------------------------------------------------------------//
