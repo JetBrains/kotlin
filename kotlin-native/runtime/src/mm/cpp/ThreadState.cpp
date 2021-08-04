@@ -29,12 +29,14 @@ std::string kotlin::internal::statesToString(std::initializer_list<ThreadState> 
 }
 
 ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant) noexcept {
+    RuntimeAssert(thread != nullptr, "thread must not be nullptr");
     return SwitchThreadState(thread->GetThreadData(), newState, reentrant);
 }
 
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {
     // Avoid redundant read in GetThreadData if runtime asserts are disabled.
     if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
+        RuntimeAssert(thread != nullptr, "thread must not be nullptr");
         AssertThreadState(thread->GetThreadData(), expected);
     }
 }
@@ -42,6 +44,7 @@ ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState ex
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept {
     // Avoid redundant read in GetThreadData if runtime asserts are disabled.
     if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
+        RuntimeAssert(thread != nullptr, "thread must not be nullptr");
         AssertThreadState(thread->GetThreadData(), expected);
     }
 }
