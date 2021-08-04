@@ -122,14 +122,13 @@ object CheckDispatchReceiver : ResolutionStage() {
             !explicitReceiverExpression.isStable &&
             (isCandidateFromUnstableSmartcast || (isReceiverNullable && !explicitReceiverExpression.smartcastType.canBeNull))
         ) {
+            val targetType =
+                (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType ?: explicitReceiverExpression.smartcastType.coneType
             sink.yieldDiagnostic(
                 UnstableSmartCast(
                     explicitReceiverExpression,
-                    explicitReceiverExpression.smartcastType.coneType,
-                    context.session.typeContext.isTypeMismatchDueToNullability(
-                        explicitReceiverExpression.originalType.coneType,
-                        explicitReceiverExpression.smartcastType.coneType
-                    )
+                    targetType,
+                    context.session.typeContext.isTypeMismatchDueToNullability(explicitReceiverExpression.originalType.coneType, targetType)
                 )
             )
         } else if (isReceiverNullable) {
