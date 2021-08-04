@@ -34,4 +34,5 @@ object KonanFqNames {
     val hasFreezeHook = FqName("kotlin.native.internal.HasFreezeHook")
     val gcUnsafeCall = FqName("kotlin.native.internal.GCUnsafeCall")
     val eagerInitialization = FqName("kotlin.native.EagerInitialization")
+    val noReorderFields = FqName("kotlin.native.internal.NoReorderFields")
 }

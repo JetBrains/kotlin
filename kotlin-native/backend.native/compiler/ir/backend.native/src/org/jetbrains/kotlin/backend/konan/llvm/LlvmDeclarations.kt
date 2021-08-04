@@ -76,7 +76,7 @@ internal class StaticFieldLlvmDeclarations(val storageAddressAccess: AddressAcce
 
 internal class UniqueLlvmDeclarations(val pointer: ConstPointer)
 
-private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>): LLVMTypeRef {
+private fun ContextUtils.createClassBodyType(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): LLVMTypeRef {
     val fieldTypes = listOf(runtime.objHeaderType) + fields.map { getLLVMType(it.type) }
     // TODO: consider adding synthetic ObjHeader field to Any.
 
@@ -307,11 +307,12 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             val classDeclarations = (containingClass.metadata as? CodegenClassMetadata)?.llvm
                     ?: error(containingClass.descriptor.toString())
             val allFields = context.getLayoutBuilder(containingClass).fields
+            val fieldInfo = allFields.firstOrNull { it.irField == declaration } ?: error("Field ${declaration.render()} is not found")
             declaration.metadata = CodegenInstanceFieldMetadata(
                     declaration.metadata?.name,
                     containingClass.konanLibrary,
                     FieldLlvmDeclarations(
-                            allFields.indexOf(declaration) + 1, // First field is ObjHeader.
+                            fieldInfo.index,
                             classDeclarations.bodyType
                     )
             )

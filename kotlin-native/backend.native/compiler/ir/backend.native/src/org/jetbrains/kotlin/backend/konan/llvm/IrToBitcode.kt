@@ -924,7 +924,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun computeFields(declaration: IrClass): Array<ConstValue> {
         val fields = context.getLayoutBuilder(declaration).fields
         return Array(fields.size) { index ->
-            val initializer = fields[index].initializer!!.expression as IrConst<*>
+            val initializer = fields[index].irField!!.initializer!!.expression as IrConst<*>
             constValue(evaluateConst(initializer))
         }
     }

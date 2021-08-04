@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
-import org.jetbrains.kotlin.backend.konan.llvm.llvmType
+import org.jetbrains.kotlin.backend.konan.llvm.getLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.InnerClassLowering
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
@@ -18,11 +18,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
 
 internal class OverriddenFunctionInfo(
         val function: IrSimpleFunction,
@@ -392,15 +393,30 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
         return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
     }
 
+    class FieldInfo(val name: String, val type: IrType, val isConst: Boolean, val hasConstInitializer: Boolean, val irField: IrField?) {
+        var index = -1
+    }
+
     /**
      * All fields of the class instance.
      * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
      */
-    val fields: List<IrField> by lazy {
-        val superClass = irClass.getSuperClassNotAny() // TODO: what if Any has fields?
+    val fields: List<FieldInfo> by lazy {
+        val superClass = irClass.getSuperClassNotAny()
         val superFields = if (superClass != null) context.getLayoutBuilder(superClass).fields else emptyList()
 
-        superFields + getDeclaredFields()
+        val declaredFields = getDeclaredFields()
+        val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
+            declaredFields
+        else
+            declaredFields.sortedByDescending {
+                with(context.llvm) { LLVMStoreSizeOfType(runtime.targetData, getLLVMType(it.type)) }
+            }
+
+        val superFieldsCount = 1 /* First field is ObjHeader */ + superFields.size
+        sortedDeclaredFields.forEachIndexed { index, field -> field.index = superFieldsCount + index }
+
+        superFields + sortedDeclaredFields
     }
 
     val associatedObjects by lazy {
@@ -441,10 +457,15 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
 
     lateinit var hierarchyInfo: ClassGlobalHierarchyInfo
 
+    private fun IrField.toFieldInfo() =
+            FieldInfo(name.asString(), type,
+                    correspondingPropertySymbol?.owner?.isConst ?: false,
+                    initializer?.expression is IrConst<*>, this)
+
     /**
      * Fields declared in the class.
      */
-    private fun getDeclaredFields(): List<IrField> {
+    fun getDeclaredFields(): List<FieldInfo> {
         val declarations: List<IrDeclaration> = if (irClass.isInner && !isLowered) {
             // Note: copying to avoid mutation of the original class.
             irClass.declarations.toMutableList()
@@ -452,19 +473,13 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
         } else {
             irClass.declarations
         }
-
-        val fields = declarations.mapNotNull {
+        return declarations.mapNotNull {
             when (it) {
-                is IrField -> it.takeIf { it.isReal }
-                is IrProperty -> it.takeIf { it.isReal }?.backingField
+                is IrField -> it.takeIf { it.isReal }?.toFieldInfo()
+                is IrProperty -> it.takeIf { it.isReal }?.backingField?.toFieldInfo()
                 else -> null
             }
         }
-
-        if (irClass.hasAnnotation(FqName.fromSegments(listOf("kotlin", "native", "internal", "NoReorderFields"))))
-            return fields
-
-        return fields.sortedByDescending{ LLVMStoreSizeOfType(context.llvm.runtime.targetData, it.type.llvmType(context)) }
     }
 
     private val IrClass.overridableOrOverridingMethods: List<IrSimpleFunction>

@@ -254,7 +254,7 @@ internal class InitializersGenerationState {
             && moduleGlobalInitializers.isEmpty() && moduleThreadLocalInitializers.isEmpty()
 }
 
-internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
+internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : RuntimeAware {
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
         if (LLVMGetNamedFunction(llvmModule, name) != null) {
@@ -462,7 +462,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     private val target = context.config.target
 
     val runtimeFile = context.config.distribution.runtime(target)
-    val runtime = Runtime(runtimeFile) // TODO: dispose
+    override val runtime = Runtime(runtimeFile) // TODO: dispose
 
     val targetTriple = runtime.target
 
