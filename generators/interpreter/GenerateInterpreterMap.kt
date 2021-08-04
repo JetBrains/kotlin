@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
@@ -58,7 +57,7 @@ fun generateMap(): String {
         this += Operation("toString", listOf("Any?"), customExpression = "a?.toString() ?: \"null\"")
     })
 
-    generateInterpretBinaryFunction(p, getOperationMap(2) + getBinaryIrOperationMap(irBuiltIns))
+    generateInterpretBinaryFunction(p, getOperationMap(2) + getBinaryIrOperationMap(irBuiltIns) + getExtensionOperationMap())
 
     generateInterpretTernaryFunction(p, getOperationMap(3))
 
@@ -242,6 +241,28 @@ private fun getBinaryIrOperationMap(irBuiltIns: IrBuiltIns): List<Operation> {
                         castValueParenthesized("b", parametersTypes[1])
             )
         )
+    }
+
+    return operationMap
+}
+
+// TODO can be drop after serialization introduction
+private fun getExtensionOperationMap(): List<Operation> {
+    val operationMap = mutableListOf<Operation>()
+    val integerTypes = listOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.LONG).map { it.typeName.asString() }
+    val fpTypes = listOf(PrimitiveType.FLOAT, PrimitiveType.DOUBLE).map { it.typeName.asString() }
+
+    for (type in integerTypes) {
+        for (otherType in integerTypes) {
+            operationMap.add(Operation("mod", listOf(type, otherType), isFunction = true))
+            operationMap.add(Operation("floorDiv", listOf(type, otherType), isFunction = true))
+        }
+    }
+
+    for (type in fpTypes) {
+        for (otherType in fpTypes) {
+            operationMap.add(Operation("mod", listOf(type, otherType), isFunction = true))
+        }
     }
 
     return operationMap

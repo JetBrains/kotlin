@@ -51,19 +51,22 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     ONLY_BUILTINS(mustCheckBody = false) {
         private val forbiddenMethodsOnPrimitives = setOf("inc", "dec", "rangeTo", "hashCode")
         private val forbiddenMethodsOnStrings = setOf("subSequence", "hashCode", "<init>")
+        private val allowedExtensionFunctions = setOf("kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod")
 
         override fun canEvaluateFunction(function: IrFunction, expression: IrCall?): Boolean {
             if ((function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isConst == true) return true
 
-            val parent = function.parentClassOrNull ?: return false
-            val parentType = parent.defaultType
+            val fqName = function.fqNameWhenAvailable?.asString()
+            val parent = function.parentClassOrNull
+            val parentType = parent?.defaultType
             return when {
+                parentType == null -> fqName in allowedExtensionFunctions
                 parentType.isPrimitiveType() -> function.name.asString() !in forbiddenMethodsOnPrimitives
                 parentType.isString() -> function.name.asString() !in forbiddenMethodsOnStrings
                 parentType.isAny() -> function.name.asString() == "toString" && expression?.dispatchReceiver !is IrGetObjectValue
                 parent.isObject -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
                 parentType.isUnsignedType() && function is IrConstructor -> true
-                else -> false
+                else -> fqName in allowedExtensionFunctions
             }
         }
     };
