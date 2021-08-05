@@ -57,7 +57,7 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
     @get:OutputDirectory
     val outputDirectory: File = project.buildDir.resolve("kotlinToolingMetadata")
 
-    @get:OutputFile
+    @get:Internal /* Covered by 'outputDirectory' */
     val outputFile: File = outputDirectory.resolve("kotlin-tooling-metadata.json")
 
     @get:Internal
@@ -71,7 +71,10 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
 
     @TaskAction
     internal fun createToolingMetadataFile() {
+        /* Ensure output directory exists and is empty */
         outputDirectory.mkdirs()
+        outputDirectory.listFiles().orEmpty().forEach { file -> file.deleteRecursively() }
+
         outputFile.writeText(kotlinToolingMetadataJson)
     }
 }
