@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.IrLongArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
@@ -33,7 +34,7 @@ class IcModuleDeserializer(
     override val klib: IrLibrary,
     override val strategy: DeserializationStrategy,
     private val containsErrorCode: Boolean = false,
-) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+) : IrModuleDeserializer(moduleDescriptor, (klib as KotlinLibrary).versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 
@@ -108,7 +109,6 @@ class IcModuleDeserializer(
         if (!symbol.isBound) {
             topLevelSignature.originalEnqueue(icDeserializer)
             idSig.enqueue(icDeserializer)
-            linker.modulesWithReachableTopLevels.add(this)
         }
 
         return symbol
@@ -219,16 +219,19 @@ class IcModuleDeserializer(
             val icFileDeserializer = fileQueue.removeFirst()
             val signature = signatureQueue.removeFirst()
 
-            val declaration = icFileDeserializer.deserializeDeclaration(signature) ?: icFileDeserializer.deserializeAnyDeclaration(signature) ?: continue
+            val declaration =
+                icFileDeserializer.deserializeDeclaration(signature) ?: icFileDeserializer.deserializeAnyDeclaration(signature)
 
-            icFileDeserializer.injectCarriers(declaration, signature)
+            if (declaration != null) {
+                icFileDeserializer.injectCarriers(declaration, signature)
 
-            icFileDeserializer.mappingsDeserializer(signature, declaration)
+                icFileDeserializer.mappingsDeserializer(signature, declaration)
 
-            // Make sure all members are loaded
-            if (declaration is IrClass) {
-                icFileDeserializer.loadClassOrder(signature)?.let {
-                    classToDeclarationSymbols[declaration] = it
+                // Make sure all members are loaded
+                if (declaration is IrClass) {
+                    icFileDeserializer.loadClassOrder(signature)?.let {
+                        classToDeclarationSymbols[declaration] = it
+                    }
                 }
             }
         }
