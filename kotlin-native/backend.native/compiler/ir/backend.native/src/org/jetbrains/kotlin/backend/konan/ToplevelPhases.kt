@@ -394,6 +394,9 @@ internal val bitcodePhase = NamedCompilerPhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
         lower = contextLLVMSetupPhase then
+                propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
+                                                 // from dependencies can be changed during lowerings.
+                returnsInsertionPhase then
                 buildDFGPhase then
                 devirtualizationAnalysisPhase then
                 dcePhase then
@@ -404,9 +407,7 @@ internal val bitcodePhase = NamedCompilerPhase(
                 ghaPhase then
                 RTTIPhase then
                 generateDebugInfoHeaderPhase then
-                propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
-                                                 // from dependencies can be changed during lowerings.
-                returnsInsertionPhase then
+
                 escapeAnalysisPhase then
                 localEscapeAnalysisPhase then
                 codegenPhase then
