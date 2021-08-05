@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -206,10 +205,10 @@ object ModifierCheckerCore {
                 isCompanionObject = parentDescriptor.isCompanionObject,
                 isLocalClass = DescriptorUtils.isLocal(parentDescriptor)
             )
-            is PropertySetterDescriptor -> listOf(PROPERTY_SETTER)
-            is PropertyGetterDescriptor -> listOf(PROPERTY_GETTER)
-            is FunctionDescriptor -> listOf(FUNCTION)
-            else -> listOf(FILE)
+            is PropertySetterDescriptor -> KotlinTarget.PROPERTY_SETTER_LIST
+            is PropertyGetterDescriptor -> KotlinTarget.PROPERTY_GETTER_LIST
+            is FunctionDescriptor -> KotlinTarget.FUNCTION_LIST
+            else -> KotlinTarget.FILE_LIST
         }
         val deprecatedParents = deprecatedParentTargetMap[modifierType]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {

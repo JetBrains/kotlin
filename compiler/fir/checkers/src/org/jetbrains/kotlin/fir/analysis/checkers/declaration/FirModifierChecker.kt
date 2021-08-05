@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.Companion.classActualTargets
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -53,9 +52,12 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        if (list.modifiers.isEmpty()) return
+
         // general strategy: report no more than one error and any number of warnings
         // therefore, a track of nodes with already reported errors should be kept
         val reportedNodes = hashSetOf<FirModifier<*>>()
+
         val actualTargets = getActualTargetList(owner).defaultTargets
 
         val parent = context.findClosest<FirDeclaration> {
@@ -65,17 +67,17 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         }
 
         val actualParents = when (parent) {
-            is FirAnonymousObject -> listOf(LOCAL_CLASS, CLASS)
+            is FirAnonymousObject -> KotlinTarget.LOCAL_CLASS_LIST
             is FirClass -> classActualTargets(
                 parent.classKind,
                 isInnerClass = (parent as? FirMemberDeclaration)?.isInner ?: false,
                 isCompanionObject = (parent as? FirRegularClass)?.isCompanion ?: false,
                 isLocalClass = parent.isLocal
             )
-            is FirPropertyAccessor -> listOf(if (parent.isSetter) PROPERTY_SETTER else PROPERTY_GETTER)
-            is FirFunction -> listOf(FUNCTION)
-            is FirEnumEntry -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
-            else -> listOf(FILE)
+            is FirPropertyAccessor -> if (parent.isSetter) KotlinTarget.PROPERTY_SETTER_LIST else KotlinTarget.PROPERTY_GETTER_LIST
+            is FirFunction -> KotlinTarget.FUNCTION_LIST
+            is FirEnumEntry -> KotlinTarget.ENUM_ENTRY_LIST
+            else -> KotlinTarget.FILE_LIST
         }
 
         val modifiers = list.modifiers
