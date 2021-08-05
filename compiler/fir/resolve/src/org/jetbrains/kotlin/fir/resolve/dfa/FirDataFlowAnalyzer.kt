@@ -817,8 +817,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.enterFinallyBlock().mergeIncomingFlow(updateReceivers = true, shouldForkFlow = true)
     }
 
-    fun exitFinallyBlock(tryExpression: FirTryExpression) {
-        graphBuilder.exitFinallyBlock(tryExpression).mergeIncomingFlow()
+    fun exitFinallyBlock() {
+        graphBuilder.exitFinallyBlock().mergeIncomingFlow()
     }
 
     fun exitTryExpression(callCompleted: Boolean) {

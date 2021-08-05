@@ -96,6 +96,7 @@ class ControlFlowGraphBuilder {
     private val catchNodeStorage: NodeStorage<FirCatch, CatchClauseEnterNode> get() = catchNodeStorages.top()
     private val catchExitNodeStorages: Stack<NodeStorage<FirCatch, CatchClauseExitNode>> = stackOf()
     private val finallyEnterNodes: Stack<FinallyBlockEnterNode> = stackOf()
+    private val finallyExitNodes: NodeStorage<FirTryExpression, FinallyBlockExitNode> = NodeStorage()
 
     private val initBlockExitNodes: Stack<InitBlockExitNode> = stackOf()
 
@@ -872,6 +873,7 @@ class ControlFlowGraphBuilder {
             // a flow where an uncaught exception is thrown before executing any of try-main block.
             addEdge(enterTryExpressionNode, finallyEnterNode, propagateDeadness = false, label = UncaughtExceptionPath)
             finallyEnterNodes.push(finallyEnterNode)
+            finallyExitNodes.push(createFinallyBlockExitNode(tryExpression))
         }
 
         return enterTryExpressionNode to enterTryNodeBlock
@@ -938,18 +940,19 @@ class ControlFlowGraphBuilder {
         return enterNode
     }
 
-    fun exitFinallyBlock(tryExpression: FirTryExpression): FinallyBlockExitNode {
-        return createFinallyBlockExitNode(tryExpression).also {
-            popAndAddEdge(it)
+    fun exitFinallyBlock(): FinallyBlockExitNode {
+        return finallyExitNodes.pop().also { finallyExit ->
+            popAndAddEdge(finallyExit)
             val tryExitNode = tryExitNodes.top()
             // a flow where either there wasn't any exception or caught if any.
-            addEdge(it, tryExitNode)
-            if (tryExitNode.isDead) {
+            addEdge(finallyExit, tryExitNode)
+            if (finallyExit.isDead) {
                 //refresh forward links, which were created before finalizing try expression (eg created by `break`)
-                propagateDeadnessForward(tryExitNode)
+                propagateDeadnessForward(finallyExit)
             }
             // a flow that exits to the exit target while there was an uncaught exception.
-            addEdge(it, exitTargetsForTry.top(), propagateDeadness = false, label = UncaughtExceptionPath)
+            //todo this edge might exist already if try has jump outside, so we effectively lose labeled edge here
+            addEdgeIfNotExist(finallyExit, exitTargetsForTry.top(), propagateDeadness = false, label = UncaughtExceptionPath)
             // TODO: differentiate flows that return/(re)throw in try main block and/or catch clauses
             //   To do so, we need mappings from such distinct label to original exit target (fun exit or loop)
             //   Also, CFG should support multiple edges towards the same destination node
@@ -1423,9 +1426,10 @@ class ControlFlowGraphBuilder {
         lastNodes.push(stub)
     }
 
-    private fun finallyBefore(target: CFGNode<*>): List<Pair<FinallyBlockEnterNode, TryExpressionExitNode>> {
-        return finallyEnterNodes.all().takeWhile { it.level > target.level }.map {
-            it to tryExitNodes[it.fir]!!
+    private fun finallyBefore(target: CFGNode<*>): List<Pair<FinallyBlockEnterNode, FinallyBlockExitNode>> {
+        return finallyEnterNodes.all().takeWhile { it.level > target.level }.map { finallyEnter ->
+            val finallyExit = finallyExitNodes[finallyEnter.fir]!!
+            finallyEnter to finallyExit
         }
     }
 
