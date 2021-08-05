@@ -177,7 +177,7 @@ class SymbolTable(
         }
 
 
-        inline fun referenced(d: D, orElse: () -> S): S {
+        inline fun referenced(d: D, reg: Boolean = true, orElse: () -> S): S {
             synchronized(lock) {
                 @Suppress("UNCHECKED_CAST")
                 val d0 = d.original as D
@@ -187,8 +187,10 @@ class SymbolTable(
                 val s = get(d0)
                 if (s == null) {
                     val new = orElse()
-                    assert(unboundSymbols.add(new)) {
-                        "Symbol for $new was already referenced"
+                    if (reg) {
+                        assert(unboundSymbols.add(new)) {
+                            "Symbol for $new was already referenced"
+                        }
                     }
                     set(new)
                     return new
@@ -198,12 +200,14 @@ class SymbolTable(
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
-        inline fun referenced(sig: IdSignature, orElse: () -> S): S {
+        inline fun referenced(sig: IdSignature, reg: Boolean = true, orElse: () -> S): S {
             synchronized(lock) {
                 return get(sig) ?: run {
                     val new = orElse()
-                    assert(unboundSymbols.add(new)) {
-                        "Symbol for ${new.signature} was already referenced"
+                    if (reg) {
+                        assert(unboundSymbols.add(new)) {
+                            "Symbol for ${new.signature} was already referenced"
+                        }
                     }
                     set(new)
                     new
@@ -515,7 +519,7 @@ class SymbolTable(
 
     override fun referenceClassFromLinker(sig: IdSignature): IrClassSymbol =
         classSymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig) { IrClassPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, false) { IrClassPublicSymbolImpl(sig) }
             else IrClassSymbolImpl()
         }
 
@@ -582,7 +586,7 @@ class SymbolTable(
 
     override fun referenceConstructorFromLinker(sig: IdSignature): IrConstructorSymbol =
         constructorSymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig) { IrConstructorPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, false) { IrConstructorPublicSymbolImpl(sig) }
             else IrConstructorSymbolImpl()
         }
 
@@ -634,7 +638,7 @@ class SymbolTable(
 
     override fun referenceEnumEntryFromLinker(sig: IdSignature) =
         enumEntrySymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig) { IrEnumEntryPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, false) { IrEnumEntryPublicSymbolImpl(sig) }
             else IrEnumEntrySymbolImpl()
         }
 
@@ -786,7 +790,7 @@ class SymbolTable(
 
     override fun referencePropertyFromLinker(sig: IdSignature): IrPropertySymbol =
         propertySymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig) { IrPropertyPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, false) { IrPropertyPublicSymbolImpl(sig) }
             else IrPropertySymbolImpl()
         }
 
@@ -817,7 +821,7 @@ class SymbolTable(
 
     override fun referenceTypeAliasFromLinker(sig: IdSignature) =
         typeAliasSymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig) { IrTypeAliasPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, false) { IrTypeAliasPublicSymbolImpl(sig) }
             else IrTypeAliasSymbolImpl()
         }
 
@@ -894,7 +898,7 @@ class SymbolTable(
 
     override fun referenceSimpleFunctionFromLinker(sig: IdSignature): IrSimpleFunctionSymbol {
         return simpleFunctionSymbolTable.run {
-            if (sig.isPubliclyVisible) referenced(sig) { IrSimpleFunctionPublicSymbolImpl(sig) }
+            if (sig.isPubliclyVisible) referenced(sig, false) { IrSimpleFunctionPublicSymbolImpl(sig) }
             else IrSimpleFunctionSymbolImpl()
         }
     }
@@ -1025,7 +1029,7 @@ class SymbolTable(
         }
 
     override fun referenceGlobalTypeParameterFromLinker(sig: IdSignature): IrTypeParameterSymbol {
-        return globalTypeParameterSymbolTable.referenced(sig) {
+        return globalTypeParameterSymbolTable.referenced(sig, false) {
             if (sig.isPubliclyVisible) IrTypeParameterPublicSymbolImpl(sig) else IrTypeParameterSymbolImpl()
         }
     }
