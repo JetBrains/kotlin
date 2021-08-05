@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_TEXT
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.TREAT_AS_ONE_FILE
@@ -31,7 +32,7 @@ class BytecodeTextHandler(testServices: TestServices, private val shouldEnableEx
         if (shouldEnableExplicitly && CHECK_BYTECODE_TEXT !in module.directives) return
 
         val targetBackend = module.targetBackend!!
-        val isIgnored = targetBackend in module.directives[CodegenTestDirectives.IGNORE_BACKEND]
+        val isIgnored = testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
         val files = module.files.filter { it.isKtFile }
         if (files.size > 1 && TREAT_AS_ONE_FILE !in module.directives) {
             processMultiFileTest(files, info, targetBackend, !isIgnored)
