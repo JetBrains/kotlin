@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.getOuterClass
 import org.jetbrains.kotlin.fir.scopes.PACKAGE_MEMBER
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.utils.SmartSet
 
 object FirConflictsChecker : FirBasicDeclarationChecker() {
@@ -217,11 +217,8 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         when (declaration) {
             is FirFile -> checkFile(declaration, inspector, context)
             is FirRegularClass -> checkRegularClass(declaration, inspector)
-            is FirFunction -> {
-                checkConflictingValueParameters(declaration, context, reporter)
-                return
+            else -> {
             }
-            else -> return
         }
 
         inspector.declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
@@ -246,24 +243,61 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                 }
             }
         }
+
+        if (declaration.source?.kind !is FirFakeSourceElementKind) {
+            when (declaration) {
+                is FirMemberDeclaration -> {
+                    if (declaration is FirFunction) {
+                        checkConflictingParameters(declaration.valueParameters, context, reporter)
+                    }
+                    checkConflictingParameters(declaration.typeParameters, context, reporter)
+                }
+                is FirTypeParametersOwner -> {
+                    checkConflictingParameters(declaration.typeParameters, context, reporter)
+                }
+                else -> {
+                }
+            }
+        }
     }
 
-    private fun checkConflictingValueParameters(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val multimap = ListMultimap<Name, FirValueParameter>()
-        for (parameter in function.valueParameters) {
-            if (!parameter.name.isSpecial) {
-                multimap.put(parameter.name, parameter)
+    private fun checkConflictingParameters(parameters: List<FirElement>, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (parameters.size <= 1) return
+
+        val multimap = ListMultimap<Name, FirBasedSymbol<*>>()
+        for (parameter in parameters) {
+            val name: Name
+            val symbol: FirBasedSymbol<*>
+            when (parameter) {
+                is FirValueParameter -> {
+                    symbol = parameter.symbol
+                    name = parameter.name
+                }
+                is FirOuterClassTypeParameterRef -> {
+                    continue
+                }
+                is FirTypeParameterRef -> {
+                    symbol = parameter.symbol
+                    name = symbol.name
+                }
+                is FirTypeParameter -> {
+                    symbol = parameter.symbol
+                    name = parameter.name
+                }
+                else -> throw AssertionError("Invalid parameter type")
+            }
+            if (!name.isSpecial) {
+                multimap.put(name, symbol)
             }
         }
         for (key in multimap.keys) {
-            val parameters = multimap[key]
-            if (parameters.size > 1) {
-                val symbols = parameters.map { it.symbol }
-                for (parameter in parameters) {
+            val conflictingParameters = multimap[key]
+            if (conflictingParameters.size > 1) {
+                for (parameter in conflictingParameters) {
                     reporter.reportOn(
                         parameter.source,
                         FirErrors.REDECLARATION,
-                        symbols,
+                        conflictingParameters,
                         context
                     )
                 }
