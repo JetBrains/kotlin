@@ -39,6 +39,32 @@ class IrInlineCodegen(
     InlineCodegen<ExpressionCodegen>(codegen, state, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner),
     IrInlineCallGenerator {
 
+    private val inlineArgumentsInPlace = run {
+        if (function.isInlineOnly() &&
+            !function.isSuspend &&
+            function.valueParameters.isNotEmpty() &&
+            function.valueParameters.none { it.type.isFunction() || it.type.isSuspendFunction() }
+        ) {
+            val methodNode = sourceCompiler.compileInlineFunction(signature).node
+            if (canInlineArgumentsInPlace(methodNode)) {
+                return@run true
+            }
+        }
+        false
+    }
+
+    override fun beforeCallStart() {
+        if (inlineArgumentsInPlace) {
+            codegen.visitor.addInplaceCallStartMarker()
+        }
+    }
+
+    override fun afterCallEnd() {
+        if (inlineArgumentsInPlace) {
+            codegen.visitor.addInplaceCallEndMarker()
+        }
+    }
+
     override fun generateAssertField() {
         // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
         // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
@@ -90,13 +116,20 @@ class IrInlineCodegen(
                 ValueKind.DEFAULT_PARAMETER, ValueKind.DEFAULT_INLINE_PARAMETER ->
                     StackValue.createDefaultValue(parameterType)
                 else -> {
+                    if (inlineArgumentsInPlace) {
+                        codegen.visitor.addInplaceArgumentStartMarker()
+                    }
                     // Here we replicate the old backend: reusing the locals for everything except extension receivers.
                     // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
                     //   local will not be visible in the debugger, so this needs to be reconsidered.
-                    if (irValueParameter.index >= 0)
+                    val argValue = if (irValueParameter.index >= 0)
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
                     else
                         codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                    if (inlineArgumentsInPlace) {
+                        codegen.visitor.addInplaceArgumentEndMarker()
+                    }
+                    argValue
                 }
             }
 

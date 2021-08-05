@@ -33,9 +33,11 @@ interface IrCallGenerator {
         }
     }
 
-    fun beforeValueParametersStart() {
+    fun beforeCallStart() {}
 
-    }
+    fun beforeValueParametersStart() {}
+
+    fun afterCallEnd() {}
 
     fun genValueAndPut(
         irValueParameter: IrValueParameter,

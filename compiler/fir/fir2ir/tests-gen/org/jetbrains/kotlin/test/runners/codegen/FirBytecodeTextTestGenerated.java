@@ -3396,6 +3396,28 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeText/inlineArgsInPlace")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InlineArgsInPlace {
+        @Test
+        public void testAllFilesPresentInInlineArgsInPlace() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineArgsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("println.kt")
+        public void testPrintln() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineArgsInPlace/println.kt");
+        }
+
+        @Test
+        @TestMetadata("sin.kt")
+        public void testSin() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineArgsInPlace/sin.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/bytecodeText/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineClasses {

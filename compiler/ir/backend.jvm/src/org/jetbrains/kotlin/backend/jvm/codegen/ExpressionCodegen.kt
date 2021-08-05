@@ -467,6 +467,8 @@ class ExpressionCodegen(
             addInlineMarker(mv, isStartNotEnd = true)
         }
 
+        callGenerator.beforeCallStart()
+
         expression.dispatchReceiver?.let { receiver ->
             val type = if (expression.superQualifierSymbol != null) receiver.asmType else callable.owner
             callGenerator.genValueAndPut(callee.dispatchReceiverParameter!!, receiver, type, this, data)
@@ -505,6 +507,8 @@ class ExpressionCodegen(
             }
             addInlineMarker(mv, isStartNotEnd = false)
         }
+
+        callGenerator.afterCallEnd()
 
         return when {
             (expression.type.isNothing() || expression.type.isUnit()) && irFunction.shouldContainSuspendMarkers() -> {

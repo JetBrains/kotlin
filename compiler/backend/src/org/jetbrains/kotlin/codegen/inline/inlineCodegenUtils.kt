@@ -60,7 +60,7 @@ const val INLINE_FUN_VAR_SUFFIX = "\$iv"
 internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
 internal const val SPECIAL_TRANSFORMATION_NAME = "\$special"
 const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
-internal const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$" + INLINE_TRANSFORMATION_SUFFIX
+internal const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$$INLINE_TRANSFORMATION_SUFFIX"
 internal const val INLINE_FUN_THIS_0_SUFFIX = "\$inline_fun"
 internal const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
 internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
@@ -68,11 +68,10 @@ internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
 private const val NON_LOCAL_RETURN = "$$$$\$NON_LOCAL_RETURN$$$$$"
 const val CAPTURED_FIELD_PREFIX = "$"
 private const val NON_CAPTURED_FIELD_PREFIX = "$$"
-private const val INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker"
+internal const val INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker"
 private const val INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall"
 private const val INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall"
 private const val INLINE_MARKER_FINALLY_START = "finallyStart"
-
 private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
 private const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
 private const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
@@ -535,17 +534,15 @@ internal fun isInlineMarker(insn: AbstractInsnNode): Boolean {
     return isInlineMarker(insn, null)
 }
 
-private fun isInlineMarker(insn: AbstractInsnNode, name: String?): Boolean {
-    if (insn !is MethodInsnNode) {
-        return false
-    }
+internal fun isInlineMarker(insn: AbstractInsnNode, name: String?): Boolean {
+    if (insn.opcode != Opcodes.INVOKESTATIC) return false
 
-    return insn.getOpcode() == Opcodes.INVOKESTATIC &&
-            insn.owner == INLINE_MARKER_CLASS_NAME &&
+    val methodInsn = insn as MethodInsnNode
+    return methodInsn.owner == INLINE_MARKER_CLASS_NAME &&
             if (name != null)
-                insn.name == name
+                methodInsn.name == name
             else
-                insn.name == INLINE_MARKER_BEFORE_METHOD_NAME || insn.name == INLINE_MARKER_AFTER_METHOD_NAME
+                methodInsn.name == INLINE_MARKER_BEFORE_METHOD_NAME || methodInsn.name == INLINE_MARKER_AFTER_METHOD_NAME
 }
 
 internal fun isBeforeInlineMarker(insn: AbstractInsnNode): Boolean {
