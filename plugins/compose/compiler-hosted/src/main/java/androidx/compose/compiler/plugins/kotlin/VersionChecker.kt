@@ -76,7 +76,7 @@ class VersionChecker(val context: IrPluginContext) {
             // all, so we check for the presence of the Composer class here to try and check for the
             // case that an older version of Compose runtime is available.
             val composerClass = context.referenceClass(ComposeFqNames.Composer)
-            if (composerClass == null) {
+            if (composerClass != null) {
                 outdatedRuntimeWithUnknownVersionNumber()
             } else {
                 noRuntimeOnClasspathError()
