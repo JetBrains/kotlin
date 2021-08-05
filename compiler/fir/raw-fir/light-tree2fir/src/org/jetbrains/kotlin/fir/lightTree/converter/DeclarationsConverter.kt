@@ -104,6 +104,9 @@ class DeclarationsConverter(
                 PROPERTY -> firDeclarationList += convertPropertyDeclaration(it)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(it)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(it)
+                SCRIPT -> {
+                    // TODO: scripts aren't supported yet
+                }
             }
         }
 
