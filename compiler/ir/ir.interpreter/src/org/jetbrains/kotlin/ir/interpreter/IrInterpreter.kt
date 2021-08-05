@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterTimeOutError
+import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal interface Instruction {
     val element: IrElement?
@@ -188,7 +188,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
 
         // 5. store arguments in memory (remap args on actual names)
-        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> callStack.addVariable(Variable(it, receiver)) } }
+        irFunction.getDispatchReceiver()?.let { callStack.addVariable(Variable(it, dispatchReceiver!!)) }
         irFunction.getExtensionReceiver()?.let { callStack.addVariable(Variable(it, extensionReceiver ?: callStack.getState(it))) }
         irFunction.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
         // `call.type` is used in check cast and emptyArray
@@ -481,7 +481,29 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                     else -> callStack.pushState(state)
                 }
             }
-            else -> TODO("${expression.operator} not implemented")
+            IrTypeOperator.SAM_CONVERSION -> {
+                val newState = when {
+                    state.isNull() -> state
+                    state is KFunctionState -> state.apply { this.funInterface = typeOperand }
+                    else -> {
+                        // this case supports implicit conversion of `invoke` method from FunctionN to similar in fun interface
+                        val samClass = typeOperand.classOrNull!!.owner
+                        val samFunction = samClass.getSingleAbstractMethod()
+
+                        val invokeFunction = state.irClass.declarations.filterIsInstance<IrFunction>()
+                            .first { it.name == OperatorNameConventions.INVOKE && it.valueParameters.size == samFunction.valueParameters.size }
+                        val functionClass = invokeFunction.getLastOverridden().parentAsClass
+
+                        // receiver will be stored as up value
+                        val dispatchReceiver = Variable(invokeFunction.dispatchReceiverParameter!!.symbol, state)
+                        val newInvoke = invokeFunction.deepCopyWithSymbols(samClass).apply { dispatchReceiverParameter = null }
+                        KFunctionState(newInvoke, functionClass, environment, mutableListOf(dispatchReceiver))
+                            .apply { this.funInterface = typeOperand }
+                    }
+                }
+                callStack.pushState(newState)
+            }
+            else -> stop { "Type operator ${expression.operator} is not supported for interpretation" }
         }
     }
 

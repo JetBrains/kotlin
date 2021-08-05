@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -272,4 +273,12 @@ internal fun IrFunctionAccessExpression.getSuperEnumCall(): IrEnumConstructorCal
         is IrTypeOperatorCall -> (delegatingCall.argument as IrFunctionAccessExpression).getSuperEnumCall()
         else -> TODO("$delegatingCall is unexpected")
     }
+}
+
+internal fun IrFunction.hasFunInterfaceParent(): Boolean {
+    return this.parentClassOrNull?.isFun == true
+}
+
+internal fun IrClass.getSingleAbstractMethod(): IrFunction {
+    return declarations.filterIsInstance<IrSimpleFunction>().single { it.modality == Modality.ABSTRACT }
 }

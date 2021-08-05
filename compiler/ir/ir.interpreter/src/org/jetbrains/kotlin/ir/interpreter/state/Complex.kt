@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
@@ -21,15 +20,14 @@ internal interface Complex : State {
 
     fun irClassFqName() = irClass.fqName
 
-    private fun getIrFunctionFromGivenClass(irClass: IrClass, symbol: IrFunctionSymbol): IrFunction? {
+    private fun getIrFunctionFromGivenClass(irClass: IrClass, owner: IrFunction): IrFunction? {
         val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
         val propertySetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.setter }
         val functions = irClass.declarations.filterIsInstance<IrFunction>()
         return (propertyGetters + propertySetters + functions).firstOrNull {
-            val owner = symbol.owner
             when {
                 it is IrSimpleFunction && owner is IrSimpleFunction -> it.overrides(owner) || owner.overrides(it)
-                else -> it == symbol.owner
+                else -> it == owner
             }
         }
     }
@@ -40,7 +38,7 @@ internal interface Complex : State {
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         val receiver = expression.superQualifierSymbol?.owner ?: irClass
-        val irFunction = getIrFunctionFromGivenClass(receiver, expression.symbol) ?: return null
+        val irFunction = getIrFunctionFromGivenClass(receiver, expression.symbol.owner) ?: return null
         return (irFunction as IrSimpleFunction).resolveFakeOverride()
     }
 

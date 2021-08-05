@@ -290,6 +290,12 @@ public class IrInterpreterAfterFir2IrTestGenerated extends AbstractIrInterpreter
     }
 
     @Test
+    @TestMetadata("samConversion.kt")
+    public void testSamConversion() throws Exception {
+        runTest("compiler/testData/ir/interpreter/samConversion.kt");
+    }
+
+    @Test
     @TestMetadata("scopeFunctions.kt")
     public void testScopeFunctions() throws Exception {
         runTest("compiler/testData/ir/interpreter/scopeFunctions.kt");

@@ -215,14 +215,12 @@ class IrCompileTimeChecker(
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): Boolean {
         return when (expression.operator) {
             IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF,
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST,
-            IrTypeOperator.IMPLICIT_NOTNULL -> {
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, IrTypeOperator.IMPLICIT_NOTNULL, IrTypeOperator.SAM_CONVERSION,
+            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> {
                 val operand = expression.typeOperand.classifierOrNull?.owner
                 if (operand is IrTypeParameter && !visitedStack.contains(operand.parent)) return false
                 expression.argument.accept(this, data)
             }
-            IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> false
             else -> false
         }
     }

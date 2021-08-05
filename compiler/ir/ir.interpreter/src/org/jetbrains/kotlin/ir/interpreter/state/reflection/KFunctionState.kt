@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -16,9 +17,11 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.name.SpecialNames
@@ -33,6 +36,17 @@ internal class KFunctionState(
     override val fields: MutableList<Variable> = mutableListOf()
 ) : ReflectionState(), StateWithClosure {
     override val upValues: MutableList<Variable> = mutableListOf()
+
+    var funInterface: IrType? = null
+        set(value) {
+            field = value ?: return
+            val samFunction = value.classOrNull!!.owner.getSingleAbstractMethod()
+            if (samFunction.extensionReceiverParameter != null) {
+                // this change of parameter is needed because of difference in `invoke` and sam calls
+                invokeSymbol.owner.extensionReceiverParameter = invokeSymbol.owner.valueParameters[0]
+                invokeSymbol.owner.valueParameters = invokeSymbol.owner.valueParameters.drop(1)
+            }
+        }
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
     private var _typeParameters: List<KTypeParameter>? = null
@@ -47,7 +61,7 @@ internal class KFunctionState(
     }
 
     companion object {
-        fun createInvokeFunction(
+        private fun createInvokeFunction(
             irFunction: IrFunction, irClass: IrClass, hasDispatchReceiver: Boolean, hasExtensionReceiver: Boolean
         ): IrSimpleFunction {
             val invokeFunction = irClass.declarations
@@ -86,13 +100,23 @@ internal class KFunctionState(
                         putArgument(it, it.createGetValue())
                         newValueParameters += it
                     }
-                    this@impl.valueParameters = newValueParameters
                 }
 
+                valueParameters = newValueParameters
                 body = listOf(this.createReturn(call)).wrapWithBlockBody()
             }
             functionClass.declarations += newFunctionToInvoke
             return newFunctionToInvoke
+        }
+
+        private fun isCallToNonAbstractMethodOfFunInterface(expression: IrCall): Boolean {
+            val owner = expression.symbol.owner
+            return owner.hasFunInterfaceParent() && owner.modality != Modality.ABSTRACT
+        }
+
+        fun isCallToInvokeOrMethodFromFunInterface(expression: IrCall): Boolean {
+            val owner = expression.symbol.owner
+            return owner.name == OperatorNameConventions.INVOKE || owner.hasFunInterfaceParent()
         }
     }
 
@@ -112,7 +136,8 @@ internal class KFunctionState(
     }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
-        if (expression.symbol.owner.name == OperatorNameConventions.INVOKE) return invokeSymbol.owner
+        if (isCallToNonAbstractMethodOfFunInterface(expression)) return expression.symbol.owner.resolveFakeOverride()
+        if (isCallToInvokeOrMethodFromFunInterface(expression)) return invokeSymbol.owner
         return super.getIrFunctionByIrCall(expression)
     }
 

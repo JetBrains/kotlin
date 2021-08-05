@@ -66,6 +66,10 @@ internal fun State.isSubtypeOf(other: IrType): Boolean {
         return this.type.arraySubtypeCheck(other)
     }
 
+    if (other.classOrNull?.owner?.isFun == true) {
+        return this is KFunctionState && this.funInterface?.isSubtypeOfClass(other.classOrNull!!) == true
+    }
+
     val thisType = this.irClass.defaultType
     if (other.isFunction() && thisType.isKFunction()/* TODO || (other.isSuspendFunction && thisType.isKSuspendFunction())*/) {
         // KFunction{n} has no super type of Function{n},
@@ -92,6 +96,20 @@ internal fun State.checkNullability(
 }
 
 internal fun State?.mustBeHandledAsReflection(call: IrCall): Boolean {
-    if (call.symbol.owner.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return false
-    return this is ReflectionState && !(this is KFunctionState && call.symbol.owner.name == OperatorNameConventions.INVOKE)
+    val owner = call.symbol.owner
+    if (owner.body != null || owner.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return false
+    return this is ReflectionState && !(this is KFunctionState && KFunctionState.isCallToInvokeOrMethodFromFunInterface(call))
+}
+
+internal fun State.hasTheSameFieldsWith(other: State): Boolean {
+    if (this.fields.size != other.fields.size) return false
+    for (i in 0 until this.fields.size) {
+        val firstState = this.fields[i].state
+        val secondState = other.fields[i].state
+        when {
+            firstState is Primitive<*> && secondState is Primitive<*> -> if (firstState.value != secondState.value) return false
+            else -> if (firstState !== secondState) return false
+        }
+    }
+    return true
 }

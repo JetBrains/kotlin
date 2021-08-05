@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
+import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.internalName
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
+import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
+import org.jetbrains.kotlin.ir.util.defaultType
 import kotlin.reflect.*
 
 internal class KClassProxy(
@@ -60,7 +64,9 @@ internal class KClassProxy(
         get() = state.classReference.isInline
 
     override fun isInstance(value: Any?): Boolean {
-        TODO("Not yet implemented")
+        verify(value is State) { "Cannot interpret `isInstance` method for $value" }
+        // TODO fix problems with typealias and java classes subtype check
+        return (value as State).isSubtypeOf(state.classReference.defaultType)
     }
 
     override fun equals(other: Any?): Boolean {
