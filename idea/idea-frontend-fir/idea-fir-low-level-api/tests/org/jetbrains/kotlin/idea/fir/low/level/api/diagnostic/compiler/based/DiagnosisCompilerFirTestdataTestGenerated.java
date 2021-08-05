@@ -3060,6 +3060,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("sameValueParametersDifferentReceiver.kt")
+            public void testSameValueParametersDifferentReceiver() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/overrides/sameValueParametersDifferentReceiver.kt");
+            }
+
+            @Test
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/overrides/simple.kt");

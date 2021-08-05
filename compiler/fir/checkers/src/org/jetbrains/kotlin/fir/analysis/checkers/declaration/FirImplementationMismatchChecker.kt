@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 object FirImplementationMismatchChecker : FirClassChecker() {
 
@@ -182,6 +183,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, symbol, overriddenVar, context)
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun checkConflictingMembers(
         containingClass: FirClass,
         context: CheckerContext,
@@ -200,7 +202,10 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         }
 
         val sameArgumentGroups = allFunctions.groupBy { function ->
-            function.valueParameterSymbols.map { it.resolvedReturnTypeRef.coneType }
+            buildList<ConeKotlinType> {
+                addIfNotNull(function.resolvedReceiverTypeRef?.type)
+                function.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
+            }
         }.values
 
         val clashes = sameArgumentGroups.mapNotNull { fs ->

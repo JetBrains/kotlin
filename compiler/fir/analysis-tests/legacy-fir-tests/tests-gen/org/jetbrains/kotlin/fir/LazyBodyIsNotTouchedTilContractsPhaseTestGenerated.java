@@ -2701,6 +2701,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/overrides/protobufExt.kt");
         }
 
+        @TestMetadata("sameValueParametersDifferentReceiver.kt")
+        public void testSameValueParametersDifferentReceiver() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/overrides/sameValueParametersDifferentReceiver.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/overrides/simple.kt");
