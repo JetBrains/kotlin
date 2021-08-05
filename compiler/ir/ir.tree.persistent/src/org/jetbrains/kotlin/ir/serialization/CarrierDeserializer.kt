@@ -15,20 +15,21 @@ import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.PirBodyCarrier
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.persistent.*
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrClass
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.BodyCarrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.BodyCarrierImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.DeclarationCarrier
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.library.impl.IrIntArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import kotlin.collections.set
 
 class CarrierDeserializer(
     val declarationDeserializer: IrDeclarationDeserializer,
@@ -120,7 +121,6 @@ class CarrierDeserializer(
             // pretend to be lowered "all the way"
             // TODO: make less hacky?
             this.lastModified = 1000
-            this.loweredUpTo = 1000
         }
     }
 
