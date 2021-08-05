@@ -127,7 +127,8 @@ private fun KtElement.isCompiled(): Boolean = containingKtFile.isCompiled
 private val allowedFakeElementKinds = setOf(
     FirFakeSourceElementKind.PropertyFromParameter,
     FirFakeSourceElementKind.ItLambdaParameter,
-    FirFakeSourceElementKind.DataClassGeneratedMembers
+    FirFakeSourceElementKind.DataClassGeneratedMembers,
+    FirFakeSourceElementKind.ImplicitConstructor,
 )
 
 private fun FirElement.getAllowedPsi() = when (val source = source) {
