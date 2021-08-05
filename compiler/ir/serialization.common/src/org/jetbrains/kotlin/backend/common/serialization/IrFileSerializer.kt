@@ -399,8 +399,10 @@ open class IrFileSerializer(
             .addAllAnnotation(serializeAnnotations(type.annotations))
             .setClassifier(serializeIrSymbol(type.classifier))
             .setHasQuestionMark(type.hasQuestionMark)
-        type.abbreviation?.let {
-            proto.setAbbreviation(serializeIrTypeAbbreviation(it))
+        type.abbreviation?.let { ta ->
+            serializeIrTypeAbbreviation(ta)?.let { pta ->
+                proto.setAbbreviation(pta)
+            }
         }
         type.arguments.forEach {
             proto.addArgument(serializeTypeArgument(it))
@@ -408,15 +410,23 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeIrTypeAbbreviation(typeAbbreviation: IrTypeAbbreviation): ProtoTypeAbbreviation {
-        val proto = ProtoTypeAbbreviation.newBuilder()
-            .addAllAnnotation(serializeAnnotations(typeAbbreviation.annotations))
-            .setTypeAlias(serializeIrSymbol(typeAbbreviation.typeAlias))
-            .setHasQuestionMark(typeAbbreviation.hasQuestionMark)
-        typeAbbreviation.arguments.forEach {
-            proto.addArgument(serializeTypeArgument(it))
+    @Suppress("UNUSED_PARAMETER")
+    private fun isTypeAbbreviationAccessibleHere(typeAbbreviation: IrTypeAbbreviation): Boolean {
+        return !skipMutableState
+    }
+
+    private fun serializeIrTypeAbbreviation(typeAbbreviation: IrTypeAbbreviation): ProtoTypeAbbreviation? {
+        if (isTypeAbbreviationAccessibleHere(typeAbbreviation)) {
+            val proto = ProtoTypeAbbreviation.newBuilder()
+                .addAllAnnotation(serializeAnnotations(typeAbbreviation.annotations))
+                .setTypeAlias(serializeIrSymbol(typeAbbreviation.typeAlias))
+                .setHasQuestionMark(typeAbbreviation.hasQuestionMark)
+            typeAbbreviation.arguments.forEach {
+                proto.addArgument(serializeTypeArgument(it))
+            }
+            return proto.build()
         }
-        return proto.build()
+        return null
     }
 
     private fun serializeDynamicType(type: IrDynamicType): ProtoDynamicType = ProtoDynamicType.newBuilder()
