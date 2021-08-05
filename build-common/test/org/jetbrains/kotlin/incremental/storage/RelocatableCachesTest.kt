@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.TestWithWorkingDir
+import org.jetbrains.kotlin.incremental.IncrementalJvmCache
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
@@ -21,6 +22,29 @@ class RelocatableCachesTest : TestWithWorkingDir() {
         val reversedFilesOrderRoot = workingDir.resolve("reversedFiles")
         fillLookupStorage(reversedFilesOrderRoot, reverseFiles = true, reverseLookups = false)
         assertEqualDirectories(originalRoot, reversedFilesOrderRoot, forgiveExtraFiles = false)
+    }
+
+    @Test
+    fun testShowCacheMaps() {
+        val rootProjectDir = File("/Users/Aleksei.Cherepanov/jb/intellij")
+        val outputDir = File("/Users/Aleksei.Cherepanov/jb/intellij/out")
+        val pathConverter = IncrementalFileToPathConverter(rootProjectDir)
+
+        val jvmCacheDir = File("/Users/Aleksei.Cherepanov/jb/remoteCaches/4b510107544f8787b6b6e929e26d7f233b8846b3/targets/java-production/intellij.platform.concurrency_6ef1222f")
+
+        if (!jvmCacheDir.exists()) {
+            println("cache dir does not exist")
+            return
+        }
+        var platformCache: IncrementalJvmCache? = null
+        try {
+            platformCache = IncrementalJvmCache(jvmCacheDir, outputDir, pathConverter)
+            platformCache.doSmthHacky()
+            println("===========")
+
+        } finally {
+            platformCache?.close()
+        }
     }
 
     @Test

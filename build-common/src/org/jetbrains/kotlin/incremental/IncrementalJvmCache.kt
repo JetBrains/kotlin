@@ -88,6 +88,11 @@ open class IncrementalJvmCache(
     fun classesBySources(sources: Iterable<File>): Iterable<JvmClassName> =
         sources.flatMap { sourceToClassesMap[it] }
 
+    fun doSmthHacky() {
+        println(sourceToClassesMap.dump())
+        //TODO: add other maps dump
+    }
+
     fun sourceInCache(file: File): Boolean =
         sourceToClassesMap.contains(file)
 
