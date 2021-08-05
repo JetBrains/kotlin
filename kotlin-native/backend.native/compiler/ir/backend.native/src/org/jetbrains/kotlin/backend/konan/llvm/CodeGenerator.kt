@@ -422,6 +422,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private val stackLocalsInitBb = basicBlockInFunction("stack_locals_init", null)
     private val entryBb = basicBlockInFunction("entry", startLocation)
     private val epilogueBb = basicBlockInFunction("epilogue", endLocation)
+    private val fatalForeignExceptionBb by lazy { basicBlockInFunction("fatal_foreign_exception", endLocation) }
+    private val catchKotlinExceptionAndTerminateBb by lazy { basicBlockInFunction("catch_kotlin_exception_and_terminate", endLocation) }
     private val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
@@ -435,6 +437,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
      * TODO: consider merging this with [ExceptionHandler].
      */
     var forwardingForeignExceptionsTerminatedWith: LLVMValueRef? = null
+    private val foreignExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
+    private val kotlinExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
+
+    private val kotlinExceptionExtractInstructions: MutableList<LLVMValueRef> = mutableListOf()
 
     // Whether the generating function needs to initialize Kotlin runtime before execution. Useful for interop bridges,
     // for example.
@@ -850,15 +856,17 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             LLVMAddClause(landingpad, kotlinExceptionRtti.llvm)
             if (wrapExceptionMode) {
                 LLVMAddClause(landingpad, objcNSExceptionRtti.llvm)
+                LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
+            } else {
+                LLVMSetCleanup(landingpad, 1)
             }
-            LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
 
             if (switchThreadState) {
                 switchThreadState(Runnable)
             }
 
-            val fatalForeignExceptionBlock = basicBlock("fatalForeignException", position()?.start)
-            val forwardKotlinExceptionBlock = basicBlock("forwardKotlinException", position()?.start)
+            val extractForeignExceptionBlock = basicBlock("extractForeignException", position()?.start)
+            val extractKotlinExceptionBlock = basicBlock("extractKotlinException", position()?.start)
 
             val typeId = extractValue(landingpad, 1)
             val isKotlinException = icmpEq(
@@ -870,13 +878,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 val foreignExceptionBlock = basicBlock("foreignException", position()?.start)
                 val forwardNativeExceptionBlock = basicBlock("forwardNativeException", position()?.start)
 
-                condBr(isKotlinException, forwardKotlinExceptionBlock, foreignExceptionBlock)
+                condBr(isKotlinException, extractKotlinExceptionBlock, foreignExceptionBlock)
                 appendingTo(foreignExceptionBlock) {
                     val isObjCException = icmpEq(
                             typeId,
                             call(context.llvm.llvmEhTypeidFor, listOf(objcNSExceptionRtti.llvm))
                     )
-                    condBr(isObjCException, forwardNativeExceptionBlock, fatalForeignExceptionBlock)
+                    condBr(isObjCException, forwardNativeExceptionBlock, extractForeignExceptionBlock)
 
                     appendingTo(forwardNativeExceptionBlock) {
                         val exception = createForeignException(landingpad, outerHandler)
@@ -884,20 +892,20 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                     }
                 }
             } else {
-                condBr(isKotlinException, forwardKotlinExceptionBlock, fatalForeignExceptionBlock)
+                condBr(isKotlinException, extractKotlinExceptionBlock, extractForeignExceptionBlock)
             }
 
-            appendingTo(forwardKotlinExceptionBlock) {
-                // Rethrow Kotlin exception to real handler.
-                outerHandler.genThrow(this, extractKotlinException(landingpad))
-            }
-
-            appendingTo(fatalForeignExceptionBlock) {
+            appendingTo(extractForeignExceptionBlock) {
                 val exceptionRecord = extractValue(landingpad, 0)
-                call(context.llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
-                terminate()
+                foreignExceptions.add(extractForeignExceptionBlock to exceptionRecord)
+                br(fatalForeignExceptionBb)
             }
 
+            appendingTo(extractKotlinExceptionBlock) {
+                val exceptionRecord = extractKotlinException(landingpad)
+                kotlinExceptions.add(extractKotlinExceptionBlock to exceptionRecord)
+                br(catchKotlinExceptionAndTerminateBb)
+            }
         }
 
         return object : ExceptionHandler.Local() {
@@ -943,6 +951,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     private fun extractKotlinException(landingpadResult: LLVMValueRef): LLVMValueRef {
         val exceptionRecord = extractValue(landingpadResult, 0, "er")
+        kotlinExceptionExtractInstructions.add(exceptionRecord)
 
         // __cxa_begin_catch returns pointer to C++ exception object.
         val beginCatch = context.llvm.cxaBeginCatchFunction
@@ -1341,7 +1350,112 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         positionAtEnd(entryBb)
     }
 
+    private fun catchKotlinExceptionBlock(landingpad: LLVMValueRef? = null) {
+        val hasLandingpadFromCleanup = forwardingForeignExceptionsTerminatedWith != null
+        val severalExceptions = kotlinExceptions.isNotEmpty() || foreignExceptions.isNotEmpty()
+        if (!hasLandingpadFromCleanup && !severalExceptions) return
+
+        val foreignExceptionLandingpad = if (severalExceptions)
+            basicBlock("nativeExceptionLandingpad", position()?.start)
+        else fatalForeignExceptionBb
+
+        appendingTo(foreignExceptionLandingpad) {
+            val lp = gxxLandingpad(numClauses = 0)
+            LLVMSetCleanup(lp, 1)
+            val exceptionRecord = extractValue(lp, 0)
+            if (severalExceptions) {
+                foreignExceptions.add(foreignExceptionLandingpad to exceptionRecord)
+                br(fatalForeignExceptionBb)
+            } else {
+                call(context.llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
+            }
+        }
+
+        val unwind = object : ExceptionHandler.Local() {
+            override val unwind: LLVMBasicBlockRef
+                get() = foreignExceptionLandingpad
+        }
+        if (hasLandingpadFromCleanup && landingpad != null) {
+            val extractCleanupLandingpadValue = if (severalExceptions) {
+                basicBlock("extractCleanupLandingpadKotlinException", position()?.start)
+            } else catchKotlinExceptionAndTerminateBb
+
+            appendingTo(extractCleanupLandingpadValue) {
+                val cleanupException = extractKotlinException(landingpad)
+                if (severalExceptions) {
+                    kotlinExceptions.add(extractCleanupLandingpadValue to cleanupException)
+                    br(catchKotlinExceptionAndTerminateBb)
+                } else {
+                    call(context.ir.symbols.terminateWithUnhandledException.owner.llvmFunction, listOf(cleanupException), exceptionHandler = unwind)
+                    unreachable()
+                }
+            }
+
+            forwardingForeignExceptionsTerminatedWith?.let { terminator ->
+                // Catch all but Kotlin exceptions.
+                val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
+                LLVMAddClause(landingpad, clause.llvm)
+
+                val bbUnexpected = basicBlock("unexpectedException", position()?.end)
+
+                val selector = extractValue(landingpad, 1)
+                condBr(
+                        icmpLt(selector, Int32(0).llvm),
+                        bbUnexpected,
+                        extractCleanupLandingpadValue
+                )
+
+                appendingTo(bbUnexpected) {
+                    val exceptionRecord = extractValue(landingpad, 0)
+
+                    val beginCatch = context.llvm.cxaBeginCatchFunction
+                    // So `terminator` is called from C++ catch block:
+                    call(beginCatch, listOf(exceptionRecord))
+                    call(terminator, emptyList())
+                    unreachable()
+                }
+            }
+        }
+
+        appendingTo(fatalForeignExceptionBb) {
+            if (severalExceptions) {
+                val exceptionPhi = phi(foreignExceptions[0].second.type)
+                addPhiIncoming(exceptionPhi, *foreignExceptions.toTypedArray())
+                call(context.llvm.cxaBeginCatchFunction, listOf(exceptionPhi))
+            }
+            terminate()
+        }
+
+        appendingTo(catchKotlinExceptionAndTerminateBb) {
+            if (severalExceptions) {
+                val exceptionPhi = phi(kotlinExceptions[0].second.type)
+                addPhiIncoming(exceptionPhi, *kotlinExceptions.toTypedArray())
+                call(context.ir.symbols.terminateWithUnhandledException.owner.llvmFunction, listOf(exceptionPhi), exceptionHandler = unwind)
+                unreachable()
+            }
+        }
+        if (hasLandingpadFromCleanup)
+            positionAtEnd(catchKotlinExceptionAndTerminateBb)
+        else
+            positionAtEnd(cleanupLandingpad)
+
+    }
+
     internal fun epilogue() {
+        val shouldHaveCleanupLandingpad = forwardingForeignExceptionsTerminatedWith != null ||
+                !stackLocalsManager.isEmpty() ||
+                (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
+
+        var landingpad: LLVMValueRef? = null
+
+        if (shouldHaveCleanupLandingpad) {
+            appendingTo(cleanupLandingpad) {
+                landingpad = gxxLandingpad(numClauses = 0)
+                LLVMSetCleanup(landingpad!!, 1)
+                catchKotlinExceptionBlock(landingpad!!)
+            }
+        }
+
         appendingTo(prologueBb) {
             val slots = if (needSlotsPhi)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
@@ -1369,10 +1483,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 }
             }
             br(localsInitBb)
-        }
-
-        appendingTo(localsInitBb) {
-            br(stackLocalsInitBb)
+            kotlinExceptionExtractInstructions.forEach {
+                positionBefore(it)
+                call(context.llvm.setCurrentFrameFunction, listOf(slots))
+            }
         }
 
 
@@ -1421,47 +1535,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
         }
 
-        val shouldHaveCleanupLandingpad = forwardingForeignExceptionsTerminatedWith != null ||
-                needSlots ||
-                !stackLocalsManager.isEmpty() ||
-                (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable)
-
         if (shouldHaveCleanupLandingpad) {
             appendingTo(cleanupLandingpad) {
-                val landingpad = gxxLandingpad(numClauses = 0)
-                LLVMSetCleanup(landingpad, 1)
-
-                forwardingForeignExceptionsTerminatedWith?.let { terminator ->
-                    // Catch all but Kotlin exceptions.
-                    val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
-                    LLVMAddClause(landingpad, clause.llvm)
-
-                    val bbCleanup = basicBlock("forwardException", position()?.end)
-                    val bbUnexpected = basicBlock("unexpectedException", position()?.end)
-
-                    val selector = extractValue(landingpad, 1)
-                    condBr(
-                            icmpLt(selector, Int32(0).llvm),
-                            bbUnexpected,
-                            bbCleanup
-                    )
-
-                    appendingTo(bbUnexpected) {
-                        val exceptionRecord = extractValue(landingpad, 0)
-
-                        val beginCatch = context.llvm.cxaBeginCatchFunction
-                        // So `terminator` is called from C++ catch block:
-                        call(beginCatch, listOf(exceptionRecord))
-                        call(terminator, emptyList())
-                        unreachable()
-                    }
-
-                    positionAtEnd(bbCleanup)
-                }
-
-                releaseVars()
+                cleanStackLocals()
                 handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
-                LLVMBuildResume(builder, landingpad)
+                LLVMBuildResume(builder, landingpad!!)
             }
         } else {
             // Replace invokes with calls and branches.
@@ -1475,6 +1553,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 LLVMInstructionEraseFromParent(functionInvokeInfo.invokeInstruction)
             }
             LLVMDeleteBasicBlock(cleanupLandingpad)
+            catchKotlinExceptionBlock(null)
+        }
+
+        appendingTo(localsInitBb) {
+            br(stackLocalsInitBb)
+        }
+
+        appendingTo(stackLocalsInitBb) {
+            br(entryBb)
         }
 
         returns.clear()
@@ -1628,6 +1715,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
         }
+        cleanStackLocals()
+    }
+
+    private fun cleanStackLocals() {
         stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
     }
 }

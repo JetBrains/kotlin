@@ -923,6 +923,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |${prefix}_KBoolean IsInstance(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
         |void EnterFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
         |void LeaveFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+        |void SetCurrentFrame(KObjHeader** start) RUNTIME_NOTHROW;
         |void Kotlin_initRuntimeIfNeeded();
         |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
         |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;

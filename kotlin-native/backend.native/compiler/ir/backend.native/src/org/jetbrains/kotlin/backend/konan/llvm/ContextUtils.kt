@@ -487,6 +487,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val zeroArrayRefsFunction = importRtFunction("ZeroArrayRefs")
     val enterFrameFunction = importRtFunction("EnterFrame")
     val leaveFrameFunction = importRtFunction("LeaveFrame")
+    val setCurrentFrameFunction = importRtFunction("SetCurrentFrame")
     val lookupInterfaceTableRecord = importRtFunction("LookupInterfaceTableRecord")
     val isInstanceFunction = importRtFunction("IsInstance")
     val isInstanceOfClassFastFunction = importRtFunction("IsInstanceOfClassFast")
