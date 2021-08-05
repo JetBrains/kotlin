@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.*
@@ -71,6 +72,7 @@ internal class KtFirCallResolver(
             is FirFunctionCall -> resolveCall(fir)
             is FirAnnotationCall -> fir.asAnnotationCall()
             is FirDelegatedConstructorCall -> fir.asDelegatedConstructorCall()
+            is FirConstructor -> fir.asDelegatedConstructorCall()
             is FirSafeCallExpression -> fir.regularQualifiedAccess.safeAs<FirFunctionCall>()?.let { resolveCall(it) }
             else -> null
         }
@@ -130,6 +132,18 @@ internal class KtFirCallResolver(
         val target = calleeReference.createCallTarget() ?: return null
         val kind = if (isSuper) KtDelegatedConstructorCallKind.SUPER_CALL else KtDelegatedConstructorCallKind.THIS_CALL
         return KtDelegatedConstructorCall(createArgumentMapping(), target, kind)
+    }
+
+    private fun FirConstructor.asDelegatedConstructorCall(): KtDelegatedConstructorCall? {
+        // A delegation call may not be present in the source code:
+        //
+        //   class A {
+        //     constructor(i: Int)   // <--- implicit constructor delegation call (empty element after RPAR)
+        //   }
+        //
+        // and FIR built/found from that implicit `KtConstructorDelegationCall` is `FirConstructor`,
+        // which may have a pointer to the delegated constructor.
+        return delegatedConstructor?.asDelegatedConstructorCall()
     }
 
     private fun FirReference.createCallTarget(): KtCallTarget? {

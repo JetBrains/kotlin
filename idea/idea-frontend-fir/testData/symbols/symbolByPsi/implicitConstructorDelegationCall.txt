@@ -1,0 +1,52 @@
+KtFirValueParameterSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: i
+  origin: SOURCE
+  receiverType: null
+  symbolKind: LOCAL
+
+KtFirConstructorSymbol:
+  annotatedType: [] A
+  annotationClassIds: []
+  annotations: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: A
+  dispatchType: null
+  hasStableParameterNames: true
+  isExtension: false
+  isPrimary: false
+  origin: SOURCE
+  receiverType: null
+  symbolKind: MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtFirValueParameterSymbol(i)
+  ]
+  visibility: Public
+
+KtFirNamedClassOrObjectSymbol:
+  annotationClassIds: []
+  annotations: []
+  classIdIfNonLocal: A
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: A
+  origin: SOURCE
+  superTypes: [
+    [] kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public

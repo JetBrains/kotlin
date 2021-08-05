@@ -97,6 +97,12 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("implicitConstructorDelegationCall.kt")
+    public void testImplicitConstructorDelegationCall() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/implicitConstructorDelegationCall.kt");
+    }
+
+    @Test
     @TestMetadata("implicitReturn.kt")
     public void testImplicitReturn() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/implicitReturn.kt");

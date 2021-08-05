@@ -67,6 +67,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("implicitConstructorDelegationCall.kt")
+    public void testImplicitConstructorDelegationCall() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/implicitConstructorDelegationCall.kt");
+    }
+
+    @Test
     @TestMetadata("implicitConstuctorCall.kt")
     public void testImplicitConstuctorCall() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/implicitConstuctorCall.kt");
