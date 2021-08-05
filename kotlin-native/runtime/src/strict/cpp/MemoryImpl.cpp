@@ -63,6 +63,10 @@ RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, int count) {
   LeaveFrameStrict(start, parameters, count);
 }
 
+RUNTIME_NOTHROW void SetCurrentFrame(ObjHeader** start) {
+    SetCurrentFrameStrict(start);
+}
+
 RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
     UpdateStackRefStrict(location, object);
 }

@@ -2556,6 +2556,30 @@ void leaveFrame(ObjHeader** start, int parameters, int count) {
   }
 }
 
+template <bool Strict>
+void setCurrentFrame(ObjHeader** start) {
+    MEMORY_LOG("SetCurrentFrame %p\n", start)
+    FrameOverlay* frame = reinterpret_cast<FrameOverlay*>(start);
+    if (Strict) {
+        currentFrame = frame;
+    } else {
+        while (currentFrame != frame && currentFrame != nullptr) {
+            auto parameters = currentFrame->parameters;
+            auto count = currentFrame->count;
+            ObjHeader** current = reinterpret_cast<ObjHeader**>(currentFrame + 1)  + parameters + kFrameOverlaySlots;
+            count -= parameters;
+            while (count-- > kFrameOverlaySlots) {
+                ObjHeader* object = *current;
+                if (object != nullptr) {
+                    releaseHeapRef<false>(object);
+                }
+                current++;
+            }
+            currentFrame = currentFrame->previous;
+        }
+    }
+}
+
 void suspendGC() {
   GC_LOG("suspendGC\n")
   memoryState->gcSuspendCount++;
@@ -3459,6 +3483,13 @@ RUNTIME_NOTHROW void LeaveFrameStrict(ObjHeader** start, int parameters, int cou
 }
 RUNTIME_NOTHROW void LeaveFrameRelaxed(ObjHeader** start, int parameters, int count) {
   leaveFrame<false>(start, parameters, count);
+}
+
+RUNTIME_NOTHROW void SetCurrentFrameStrict(ObjHeader** start) {
+    setCurrentFrame<true>(start);
+}
+RUNTIME_NOTHROW void SetCurrentFrameRelaxed(ObjHeader** start) {
+    setCurrentFrame<false>(start);
 }
 
 void Kotlin_native_internal_GC_collect(KRef) {

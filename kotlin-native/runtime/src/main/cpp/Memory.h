@@ -239,6 +239,8 @@ OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index);
 void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
 void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+// Set current frame in case if exception catched.
+void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 // Clears object subgraph references from memory subsystem, and optionally
 // checks if subgraph referenced by given root is disjoint from the rest of
 // object graph, i.e. no external references exists.
