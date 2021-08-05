@@ -318,6 +318,15 @@ private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinTy
         return captureTypeFromExpressionOrNull(argumentType.lowerBound, context)
     }
 
+    if (argumentType is ConeIntersectionType) {
+        val intersectedTypes = argumentType.intersectedTypes.map { captureTypeFromExpressionOrNull(it, context) ?: it }
+        if (intersectedTypes == argumentType.intersectedTypes) return null
+        return ConeIntersectionType(
+            intersectedTypes,
+            argumentType.alternativeType?.let { captureTypeFromExpressionOrNull(it, context) ?: it }
+        )
+    }
+
     if (argumentType !is ConeClassLikeType) return null
 
     argumentType.fullyExpandedType(context.session).let {

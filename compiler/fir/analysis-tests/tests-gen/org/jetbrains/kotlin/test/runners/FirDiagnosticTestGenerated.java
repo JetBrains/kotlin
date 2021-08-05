@@ -5052,6 +5052,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("PersistentStateComponent.kt")
+            public void testPersistentStateComponent() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/PersistentStateComponent.kt");
+            }
+
+            @Test
             @TestMetadata("UastPatterns.kt")
             public void testUastPatterns() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/UastPatterns.kt");

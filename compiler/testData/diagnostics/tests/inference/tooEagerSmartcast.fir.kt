@@ -20,7 +20,7 @@ fun <X> InvBase<X>.myLastInv(): X = TODO()
 
 fun <T> fooInv(x: InvBase<T>) {
     if (x is InvDerived<*>) {
-        val l: T = <!INITIALIZER_TYPE_MISMATCH!>x.<!INAPPLICABLE_CANDIDATE!>myLastInv<!>()<!> // required T, found Cap(*). Only in NI
+        val l: T = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>x.myLastInv()<!> // required T, found Cap(*). Only in NI
     }
 }
 
@@ -36,7 +36,7 @@ fun Number.num() {}
 fun main(b: Base<out Number>) {
     b.foo().num()
     if (b is Derived<*>) {
-        b.<!INAPPLICABLE_CANDIDATE!>foo<!>().<!INAPPLICABLE_CANDIDATE!>num<!>()
-        b.<!INAPPLICABLE_CANDIDATE!>baz<!>().length
+        b.foo().<!INAPPLICABLE_CANDIDATE!>num<!>()
+        b.baz().length
     }
 }
