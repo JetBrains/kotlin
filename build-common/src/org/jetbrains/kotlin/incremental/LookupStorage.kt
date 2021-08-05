@@ -48,12 +48,14 @@ open class LookupStorage(
 
     @Volatile
     private var size: Int = 0
+    private var oldSize: Int = 0
 
     init {
         try {
             if (countersFile.exists()) {
                 val lines = countersFile.readLines()
                 size = lines[0].toInt()
+                oldSize = size
             }
         } catch (e: Exception) {
             throw IOException("Could not read $countersFile", e)
@@ -120,13 +122,15 @@ open class LookupStorage(
     @Synchronized
     override fun flush(memoryCachesOnly: Boolean) {
         try {
-            if (size > 0) {
-                if (!countersFile.exists()) {
-                    countersFile.parentFile.mkdirs()
-                    countersFile.createNewFile()
-                }
+            if (size != oldSize) {
+                if (size > 0) {
+                    if (!countersFile.exists()) {
+                        countersFile.parentFile.mkdirs()
+                        countersFile.createNewFile()
+                    }
 
-                countersFile.writeText("$size\n0")
+                    countersFile.writeText("$size\n0")
+                }
             }
         } finally {
             super.flush(memoryCachesOnly)
