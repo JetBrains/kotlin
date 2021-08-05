@@ -97,7 +97,7 @@ class IrDeclarationDeserializer(
         fileReader.type(index).codedInputStream
 
     private fun loadTypeProto(index: Int): ProtoType {
-        return ProtoType.parseFrom(readType(index), ExtensionRegistryLite.newInstance())
+        return ProtoType.parseFrom(readType(index), extensionRegistry)
     }
 
     fun deserializeNullableIrType(index: Int): IrType? = if (index == -1) null else deserializeIrType(index)
@@ -492,11 +492,11 @@ class IrDeclarationDeserializer(
         fileReader.body(index).codedInputStream
 
     private fun loadStatementBodyProto(index: Int): ProtoStatement {
-        return ProtoStatement.parseFrom(readBody(index), ExtensionRegistryLite.newInstance())
+        return ProtoStatement.parseFrom(readBody(index), extensionRegistry)
     }
 
     private fun loadExpressionBodyProto(index: Int): ProtoExpression {
-        return ProtoExpression.parseFrom(readBody(index), ExtensionRegistryLite.newInstance())
+        return ProtoExpression.parseFrom(readBody(index), extensionRegistry)
     }
 
     fun deserializeExpressionBody(index: Int): IrExpressionBody {
@@ -749,6 +749,8 @@ class IrDeclarationDeserializer(
         private val allKnownStatementOrigins = IrStatementOrigin::class.nestedClasses.toList()
         private val statementOriginIndex =
             allKnownStatementOrigins.mapNotNull { it.objectInstance as? IrStatementOriginImpl }.associateBy { it.debugName }
+
+        private val extensionRegistry = ExtensionRegistryLite.newInstance()
     }
 
     fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOriginImpl {
