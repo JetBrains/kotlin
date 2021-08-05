@@ -16,4 +16,6 @@ fun foo(arg: Any?) {
 
 @Test fun runTest() {
     foo(16)
+    val nonConst = 16
+    foo(nonConst)
 }

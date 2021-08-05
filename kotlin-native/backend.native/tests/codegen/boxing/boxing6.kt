@@ -16,4 +16,8 @@ fun foo(arg: Any) {
 @Test fun runTest() {
     foo(42)
     foo("Hello")
+    val nonConstInt = 42
+    val nonConstString = "Hello"
+    foo(nonConstInt)
+    foo(nonConstString)
 }

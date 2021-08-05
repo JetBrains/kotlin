@@ -16,4 +16,10 @@ fun is42(x: Any?) {
     is42(16)
     is42(42)
     is42("42")
+    val nonConst16 = 16
+    val nonConst42 = 42
+    val nonConst42String = "42"
+    is42(nonConst16)
+    is42(nonConst42)
+    is42(nonConst42String)
 }

@@ -1639,6 +1639,11 @@ linkTest("initializers_sharedVarInInitBlock") {
     lib = "codegen/initializers/sharedVarInInitBlock_lib.kt"
 }
 
+standaloneTest("initializers_static") {
+    source = "codegen/initializers/static.kt"
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative', "-tr"]
+}
+
 task arithmetic_basic(type: KonanLocalTest) {
     source = "codegen/arithmetic/basic.kt"
 }
