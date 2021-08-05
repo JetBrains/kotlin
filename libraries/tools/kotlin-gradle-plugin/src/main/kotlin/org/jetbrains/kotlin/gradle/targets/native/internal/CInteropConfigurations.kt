@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.setupAsPublicConfigurationIfSupported
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -63,6 +64,7 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
     return configurations.create(configurationName).apply {
         isCanBeResolved = false
         isCanBeConsumed = true
+        setupAsPublicConfigurationIfSupported(target)
 
         usesPlatformOf(target)
         attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
