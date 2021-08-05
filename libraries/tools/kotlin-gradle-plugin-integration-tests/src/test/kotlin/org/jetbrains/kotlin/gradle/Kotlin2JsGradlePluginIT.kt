@@ -978,4 +978,16 @@ class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
             assertNoWarnings()
         }
     }
+
+    @Test
+    fun testNodeJsAndYarnDownload() = with(transformProjectWithPluginsDsl("cleanTask")) {
+
+        build("checkDownloadedFolder") {
+            assertSuccessful()
+        }
+
+        build("checkIfLastModifiedNotNow", "--rerun-tasks") {
+            assertSuccessful()
+        }
+    }
 }
