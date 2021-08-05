@@ -186,6 +186,7 @@ private fun referencePublicSymbol(
                 BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(descriptor as FunctionDescriptor)
                 BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(descriptor as TypeAliasDescriptor)
                 BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(descriptor as PropertyDescriptor)
+                BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(descriptor as TypeParameterDescriptor)
                 else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
             }
         } else {
