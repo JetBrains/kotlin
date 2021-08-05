@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
-import java.io.File
 import java.util.*
 
 /**
@@ -162,7 +162,7 @@ object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
         }
     }
 
-    override fun read(input: DataInput): Map<String, Any>? {
+    override fun read(input: DataInput): Map<String, Any> {
         val size = input.readInt()
         val map = HashMap<String, Any>(size)
 
@@ -197,15 +197,33 @@ object IntExternalizer : DataExternalizer<Int> {
     }
 }
 
-object PathStringDescriptor : EnumeratorStringDescriptor() {
-    override fun getHashCode(value: String) = FileUtil.pathHashCode(value)
 
-    override fun isEqual(val1: String, val2: String?) = FileUtil.pathsEqual(val1, val2)
+// Should be consistent with org.jetbrains.jps.incremental.storage.PathStringDescriptor for correct work of portable caches
+object PathStringDescriptor : EnumeratorStringDescriptor() {
+    private const val PORTABLE_CACHES_PROPERTY = "org.jetbrains.jps.portable.caches"
+    private val PORTABLE_CACHES = java.lang.Boolean.getBoolean(PORTABLE_CACHES_PROPERTY)
+
+    override fun getHashCode(path: String): Int {
+        if (!PORTABLE_CACHES) return FileUtil.pathHashCode(path)
+        // On case insensitive OS hash calculated from value converted to lower case
+        return if (StringUtil.isEmpty(path)) 0 else FileUtil.toCanonicalPath(path).hashCode()
+    }
+
+    override fun isEqual(val1: String, val2: String?): Boolean {
+        if (!PORTABLE_CACHES) return FileUtil.pathsEqual(val1, val2)
+        // On case insensitive OS hash calculated from path converted to lower case
+        if (val1 == val2) return true
+        if (val2 == null) return false
+
+        val path1 = FileUtil.toCanonicalPath(val1)
+        val path2 = FileUtil.toCanonicalPath(val2)
+        return path1 == path2
+    }
 }
 
 open class CollectionExternalizer<T>(
-        private val elementExternalizer: DataExternalizer<T>,
-        private val newCollection: () -> MutableCollection<T>
+    private val elementExternalizer: DataExternalizer<T>,
+    private val newCollection: () -> MutableCollection<T>
 ) : DataExternalizer<Collection<T>> {
     override fun read(input: DataInput): Collection<T> {
         val result = newCollection()
