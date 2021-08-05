@@ -1025,6 +1025,7 @@ class DeclarationsConverter(
         val accessors = mutableListOf<LighterASTNode>()
         var propertyInitializer: FirExpression? = null
         var typeParameterList: LighterASTNode? = null
+        var fieldDeclaration: LighterASTNode? = null
         property.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
@@ -1038,6 +1039,7 @@ class DeclarationsConverter(
                 PROPERTY_ACCESSOR -> {
                     accessors += it
                 }
+                PROPERTY_FIELD_DECLARATION -> fieldDeclaration = it
                 else -> if (it.isExpression()) propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
             }
         }
@@ -1132,6 +1134,7 @@ class DeclarationsConverter(
                                 it.initContainingClassAttr()
                             }
                         } else null
+                    this.backingField = fieldDeclaration?.let { convertFieldDeclaration(it, propertyVisibility, symbol, modifiers) }
 
                     status = FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality(isClassOrObject = false)).apply {
                         isExpect = modifiers.hasExpect() || context.containerIsExpect
@@ -1222,7 +1225,7 @@ class DeclarationsConverter(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyComponent
      */
     private fun convertGetterOrSetter(
         getterOrSetter: LighterASTNode,
@@ -1269,7 +1272,7 @@ class DeclarationsConverter(
             }
         val sourceElement = getterOrSetter.toFirSourceElement()
         var isShortGetter = false
-        if (isGetter == true) {
+        if (isGetter) {
             val visibilityDifference = accessorVisibility.compareTo(propertyVisibility)
             val withGreaterVisibility = visibilityDifference != null && visibilityDifference > 0
             val returnTypeAsIfItIsGetter = returnType ?: propertyTypeRef
@@ -1321,6 +1324,56 @@ class DeclarationsConverter(
         }.also {
             target.bind(it)
             it.initContainingClassAttr()
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyComponent
+     */
+    private fun convertFieldDeclaration(
+        fieldDeclaration: LighterASTNode,
+        propertyVisibility: Visibility,
+        propertySymbol: FirPropertySymbol,
+        propertyModifiers: Modifier,
+    ): FirPropertyFieldDeclaration {
+        var modifiers = Modifier()
+        var returnType: FirTypeRef = implicitType
+        var backingFieldInitializer: FirExpression? = null
+        fieldDeclaration.forEachChildren {
+            when {
+                it.tokenType == MODIFIER_LIST -> modifiers = convertModifierList(it)
+                it.tokenType == TYPE_REFERENCE -> returnType = convertType(it)
+                it.isExpression() -> backingFieldInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+            }
+        }
+        val status = obtainPropertyComponentStatus(modifiers, propertyVisibility, propertyModifiers)
+        val sourceElement = fieldDeclaration.toFirSourceElement()
+        return buildPropertyFieldDeclaration {
+            source = sourceElement
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = returnType
+            symbol = FirPropertyFieldDeclarationSymbol()
+            this.status = status
+            annotations += modifiers.annotations
+            this.propertySymbol = propertySymbol
+            this.initializer = backingFieldInitializer
+        }
+    }
+
+    private fun obtainPropertyComponentStatus(
+        modifiers: Modifier,
+        propertyVisibility: Visibility,
+        propertyModifiers: Modifier,
+    ): FirDeclarationStatus {
+        var accessorVisibility = modifiers.getVisibility()
+        if (accessorVisibility == Visibilities.Unknown) {
+            accessorVisibility = propertyVisibility
+        }
+        // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
+        return FirDeclarationStatusImpl(accessorVisibility, modifiers.getModality(isClassOrObject = false)).apply {
+            isInline = propertyModifiers.hasInline() || modifiers.hasInline()
+            isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
         }
     }
 

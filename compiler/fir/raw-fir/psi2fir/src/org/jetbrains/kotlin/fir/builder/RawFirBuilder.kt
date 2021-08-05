@@ -451,6 +451,45 @@ open class RawFirBuilder(
             }
         }
 
+        private fun KtPropertyFieldDeclaration?.toFirPropertyFieldDeclaration(
+            property: KtProperty,
+            propertySymbol: FirPropertySymbol,
+        ): FirPropertyFieldDeclaration? {
+            if (this == null) {
+                return null
+            }
+            val accessorVisibility =
+                if (this.visibility != Visibilities.Unknown) this.visibility else property.visibility
+            // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
+            val status =
+                FirDeclarationStatusImpl(accessorVisibility, this.modality).apply {
+                    isInline = property.hasModifier(INLINE_KEYWORD) ||
+                            this@toFirPropertyFieldDeclaration.hasModifier(INLINE_KEYWORD) == true
+                    isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
+                            this@toFirPropertyFieldDeclaration.hasModifier(EXTERNAL_KEYWORD) == true
+                }
+            val backingFieldInitializer = when (mode) {
+                BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
+                    source = initializer?.toFirSourceElement()
+                }
+                BodyBuildingMode.STUBS -> buildExpressionStub()
+                else -> initializer.toFirExpression("Should have initializer")
+            }
+            val returnType = this.returnTypeReference.toFirOrImplicitType()
+            val source = this.toFirSourceElement()
+            return buildPropertyFieldDeclaration {
+                this.source = source
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                returnTypeRef = returnType
+                this.status = status
+                extractAnnotationsTo(this)
+                symbol = FirPropertyFieldDeclarationSymbol()
+                this.propertySymbol = propertySymbol
+                this.initializer = backingFieldInitializer
+            }
+        }
+
         private fun KtParameter.toFirValueParameter(defaultTypeRef: FirTypeRef? = null): FirValueParameter {
             val name = nameAsSafeName
             return buildValueParameter {
@@ -1463,6 +1502,10 @@ open class RawFirBuilder(
                             propertyType,
                             propertySymbol = symbol,
                             isGetter = false
+                        )
+                        backingField = this@toFirProperty.fieldDeclaration.toFirPropertyFieldDeclaration(
+                            this@toFirProperty,
+                            propertySymbol = symbol,
                         )
 
                         status = FirDeclarationStatusImpl(visibility, modality).apply {
