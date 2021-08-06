@@ -240,7 +240,7 @@ internal fun Path.enableCacheRedirector() {
 
                         def cacheRedirectorFile = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
                         if (new File(cacheRedirectorFile).exists()) {
-                            apply from: cacheRedirectorFile
+                            apply(from: cacheRedirectorFile)
                         }
 
                     """.trimIndent()

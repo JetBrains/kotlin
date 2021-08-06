@@ -364,7 +364,7 @@ internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project, rena
         embeddedModuleDir.walk().forEach {
             if (it.name.contains("build.gradle")) {
                 it.modify { string ->
-                    string.lines().dropLast(2).joinToString(separator = "\n")
+                    string.lines().dropLast(5).joinToString(separator = "\n")
                 }
             }
         }
