@@ -82,7 +82,6 @@ class IcFileDeserializer(
         // TODO: reference lowered declarations cross-module
         if (kind == BinarySymbolData.SymbolKind.FILE_SYMBOL) return file.symbol
 
-        val topLevelSig = idSig.topLevelSignature()
         val actualModuleDeserializer =
             moduleDeserializer.findModuleDeserializerForTopLevelId(idSig)
                 ?: handleNoModuleDeserializerFound(idSig, moduleDeserializer.moduleDescriptor, moduleDeserializer.moduleDependencies)
