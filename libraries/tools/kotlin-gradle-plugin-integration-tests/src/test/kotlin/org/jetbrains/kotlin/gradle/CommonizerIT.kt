@@ -566,6 +566,23 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-48138 commonizing c-interops when nativeTest and nativeMain have different targets`() {
+        with(Project("commonize-kt-48138-nativeMain-nativeTest-different-targets")) {
+            reportSourceSetCommonizerDependencies(this) {
+                val nativeMain = getCommonizerDependencies("nativeMain")
+                nativeMain.onlyCInterops().assertDependencyFilesMatches(".*cinterop-dummy")
+                nativeMain.onlyNativeDistribution().assertNotEmpty()
+                nativeMain.assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64, LINUX_ARM32_HFP))
+
+                val nativeTest = getCommonizerDependencies("nativeTest")
+                nativeTest.onlyNativeDistribution().assertNotEmpty()
+                nativeTest.onlyCInterops().assertDependencyFilesMatches(".*cinterop-dummy")
+                nativeTest.assertTargetOnAllDependencies(CommonizerTarget(LINUX_X64, LINUX_ARM64))
+            }
+        }
+    }
+
     private fun preparedProject(name: String): Project {
         return Project(name).apply {
             setupWorkingDir()
