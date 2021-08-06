@@ -3106,7 +3106,7 @@ standaloneTest("stress_gc_allocations") {
         (project.testTarget != "watchos_arm64") &&
         (project.testTarget != "watchos_x86") &&
         (project.testTarget != "watchos_x64") &&
-        (project.testTarget != "watchos_simulator_arm64")
+        (project.testTarget != "watchos_simulator_arm64") &&
         !isNoopGC
     source = "runtime/memory/stress_gc_allocations.kt"
     flags = ['-tr', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
