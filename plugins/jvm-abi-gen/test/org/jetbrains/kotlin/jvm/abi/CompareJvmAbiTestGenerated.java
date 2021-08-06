@@ -85,6 +85,16 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/functionBody/");
     }
 
+    @TestMetadata("inlineFunInPrivateClass")
+    public void testInlineFunInPrivateClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateClass/");
+    }
+
+    @TestMetadata("inlineFunInPrivateNestedClass")
+    public void testInlineFunInPrivateNestedClass() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateNestedClass/");
+    }
+
     @TestMetadata("inlineFunctionBody")
     public void testInlineFunctionBody() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");

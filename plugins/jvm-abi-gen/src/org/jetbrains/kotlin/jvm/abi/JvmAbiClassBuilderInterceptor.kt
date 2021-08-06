@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -65,11 +66,17 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
 
     override fun interceptClassBuilderFactory(interceptedFactory: ClassBuilderFactory, bindingContext: BindingContext, diagnostics: DiagnosticSink): ClassBuilderFactory =
         object : DelegatingClassBuilderFactory(interceptedFactory) {
-            override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder =
-                AbiInfoClassBuilder(interceptedFactory.newClassBuilder(origin))
+            override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
+                val descriptor = origin.descriptor as? ClassDescriptor
+                val isPrivate = descriptor?.visibility?.let(DescriptorVisibilities::isPrivate) ?: false
+                return AbiInfoClassBuilder(interceptedFactory.newClassBuilder(origin), isPrivate)
+            }
         }
 
-    private inner class AbiInfoClassBuilder(private val delegate: ClassBuilder) : DelegatingClassBuilder() {
+    private inner class AbiInfoClassBuilder(
+        private val delegate: ClassBuilder,
+        private val isPrivateClass: Boolean
+    ) : DelegatingClassBuilder() {
         lateinit var internalName: String
         var localOrAnonymousClass = false
         var publicAbi = false
@@ -104,7 +111,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
             // metadata to indicate this (the inliner simply first checks for a method such as `f$$forInline`
             // and then checks for `f` if this method doesn't exist) so we have to remember to strip the
             // original methods if there was a $$forInline version.
-            if (name.endsWith(FOR_INLINE_SUFFIX)) {
+            if (name.endsWith(FOR_INLINE_SUFFIX) && !isPrivateClass) {
                 // Note that origin.descriptor is null on the JVM BE in this case.
                 methodInfos[Method(name, desc)] = AbiMethodInfo.KEEP
                 maskedMethods += Method(name.removeSuffix(FOR_INLINE_SUFFIX), desc)
@@ -119,7 +126,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
             }
 
             // Copy inline functions verbatim
-            if (origin.descriptor?.safeAs<FunctionDescriptor>()?.isInline == true) {
+            if (origin.descriptor?.safeAs<FunctionDescriptor>()?.isInline == true && !isPrivateClass) {
                 methodInfos[Method(name, desc)] = AbiMethodInfo.KEEP
             } else {
                 methodInfos[Method(name, desc)] = AbiMethodInfo.STRIP

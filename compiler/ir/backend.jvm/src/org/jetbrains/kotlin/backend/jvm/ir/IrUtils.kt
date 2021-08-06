@@ -6,14 +6,20 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -426,15 +432,25 @@ private val IrDeclaration.original: IrDeclaration
 // Declarations in the scope of an externally visible inline function are implicitly part of the
 // public ABI of a Kotlin module. This function returns the visibility of a containing inline function
 // (determined *before* lowering), or null if the given declaration is not in the scope of an inline function.
+//
+// Currently, we mark all declarations in the scope of a public inline function as public, even if they are
+// contained in a nested private inline function. This is an over approximation, since private declarations
+// inside of a public inline function can still escape if they are used without being regenerated.
+// See `plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration` for an example.
 val IrDeclaration.inlineScopeVisibility: DescriptorVisibility?
     get() {
         var owner: IrDeclaration? = original
         var result: DescriptorVisibility? = null
         while (owner != null) {
             if (owner is IrFunction && owner.isInline) {
-                if (!DescriptorVisibilities.isPrivate(owner.visibility))
-                    return owner.visibility
-                result = owner.visibility
+                result = if (!DescriptorVisibilities.isPrivate(owner.visibility)) {
+                    if (owner.parentClassOrNull?.visibility?.let(DescriptorVisibilities::isPrivate) == true)
+                        DescriptorVisibilities.PRIVATE
+                    else
+                        return owner.visibility
+                } else {
+                    owner.visibility
+                }
             }
             owner = owner.parent.safeAs<IrDeclaration>()?.original
         }
