@@ -76,22 +76,24 @@ fun TestProject.build(
     vararg buildArguments: String,
     forceOutput: Boolean = this.forceOutput,
     enableGradleDebug: Boolean = this.enableGradleDebug,
+    enableBuildCacheDebug: Boolean = false,
     buildOptions: KGPBaseTest.BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
 ) {
     val allBuildArguments = commonBuildSetup(
         buildArguments.toList(),
         buildOptions,
+        enableBuildCacheDebug,
         gradleVersion
     )
     val gradleRunnerForBuild = gradleRunner
         .also { if (forceOutput) it.forwardOutput() }
         .withDebug(enableGradleDebug)
         .withArguments(allBuildArguments)
-    val buildResult = withBuildSummary(allBuildArguments) {
-        gradleRunnerForBuild.build()
+    withBuildSummary(allBuildArguments) {
+        val buildResult = gradleRunnerForBuild.build()
+        assertions(buildResult)
     }
-    assertions(buildResult)
 }
 
 /**
@@ -101,23 +103,25 @@ fun TestProject.buildAndFail(
     vararg buildArguments: String,
     forceOutput: Boolean = this.forceOutput,
     enableGradleDebug: Boolean = this.enableGradleDebug,
+    enableBuildCacheDebug: Boolean = false,
     buildOptions: KGPBaseTest.BuildOptions = this.buildOptions,
     assertions: BuildResult.() -> Unit = {}
 ) {
     val allBuildArguments = commonBuildSetup(
         buildArguments.toList(),
         buildOptions,
+        enableBuildCacheDebug,
         gradleVersion
     )
     val gradleRunnerForBuild = gradleRunner
         .also { if (forceOutput) it.forwardOutput() }
         .withDebug(enableGradleDebug)
         .withArguments(allBuildArguments)
-    val buildResult = withBuildSummary(allBuildArguments) {
-        gradleRunnerForBuild.buildAndFail()
+    withBuildSummary(allBuildArguments) {
+        val buildResult = gradleRunnerForBuild.buildAndFail()
+        assertions(buildResult)
     }
 
-    assertions(buildResult)
 }
 
 fun TestProject.enableLocalBuildCache(
@@ -168,23 +172,32 @@ class TestProject(
 private fun commonBuildSetup(
     buildArguments: List<String>,
     buildOptions: KGPBaseTest.BuildOptions,
+    enableBuildCacheDebug: Boolean,
     gradleVersion: GradleVersion
 ): List<String> {
     val buildOptionsArguments = buildOptions.toArguments(gradleVersion)
-    return buildOptionsArguments + buildArguments + "--full-stacktrace"
+    val buildCacheDebugOption = if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null
+    return buildOptionsArguments +
+            buildArguments +
+            listOfNotNull(
+                "--full-stacktrace",
+                buildCacheDebugOption
+            )
 }
 
 private fun TestProject.withBuildSummary(
     buildArguments: List<String>,
-    run: () -> BuildResult
-): BuildResult = try {
-    run()
-} catch (t: Throwable) {
-    println("<=== Test build: $projectName ===>")
-    println("<=== Using Gradle version: ${gradleVersion.version} ===>")
-    println("<=== Run arguments: ${buildArguments.joinToString()} ===>")
-    println("<=== Project path:  ${projectPath.toAbsolutePath()} ===>")
-    throw t
+    run: () -> Unit
+) {
+    try {
+        run()
+    } catch (t: Throwable) {
+        println("<=== Test build: $projectName ===>")
+        println("<=== Using Gradle version: ${gradleVersion.version} ===>")
+        println("<=== Run arguments: ${buildArguments.joinToString()} ===>")
+        println("<=== Project path:  ${projectPath.toAbsolutePath()} ===>")
+        throw t
+    }
 }
 
 /**
