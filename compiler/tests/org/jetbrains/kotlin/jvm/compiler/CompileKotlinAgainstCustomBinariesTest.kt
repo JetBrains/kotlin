@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.valid
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.junit.Ignore
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.File
@@ -374,9 +375,9 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestKotlinLibraryWithWrongMetadataVersion("library", null, "-Xskip-prerelease-check")
     }
 
-    fun testRequireKotlin() {
-        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
-    }
+//    fun testRequireKotlin() {
+//        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
+//    }
 
     fun testRequireKotlinInNestedClasses() {
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
