@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
-import java.util.*
 
 @SuppressWarnings("WeakerAccess")
 abstract class CommonCompilerArguments : CommonToolArguments() {
@@ -563,8 +562,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             checkLanguageVersionIsStable(languageVersion, collector)
             checkOutdatedVersions(languageVersion, apiVersion, collector)
             checkProgressiveMode(languageVersion, collector)
-
-            checkIrSupport(languageVersionSettings, collector)
         }
 
         return languageVersionSettings
@@ -633,10 +630,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                         "or turning off progressive mode."
             )
         }
-    }
-
-    protected open fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        // backend-specific
     }
 
     private enum class VersionKind(val text: String) {
