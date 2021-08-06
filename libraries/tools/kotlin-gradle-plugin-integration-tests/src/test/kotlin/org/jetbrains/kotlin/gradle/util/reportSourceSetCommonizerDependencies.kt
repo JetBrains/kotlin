@@ -38,6 +38,15 @@ data class SourceSetCommonizerDependencies(
         )
     }
 
+    fun onlyNativeDistribution(): SourceSetCommonizerDependencies {
+        return SourceSetCommonizerDependencies(
+            sourceSetName,
+            dependencies.filter { dependency ->
+                dependency.file.allParents.any { parentFile -> parentFile.name == ".konan" }
+            }.toSet()
+        )
+    }
+
     fun assertTargetOnAllDependencies(target: CommonizerTarget) {
         dependencies.forEach { dependency ->
             if (dependency.target != target) {
@@ -49,6 +58,12 @@ data class SourceSetCommonizerDependencies(
     fun assertEmpty() {
         if (dependencies.isNotEmpty()) {
             fail("$sourceSetName: Expected no dependencies in set. Found $dependencies")
+        }
+    }
+
+    fun assertNotEmpty() {
+        if (dependencies.isEmpty()) {
+            fail("$sourceSetName: Missing dependencies")
         }
     }
 
@@ -137,12 +152,12 @@ private const val dollar = "\$"
 
 private val taskSourceCode = """
 tasks.register("reportCommonizerSourceSetDependencies") {
-    kotlin.sourceSets.withType(DefaultKotlinSourceSet::class).all {
+    kotlin.sourceSets.withType(org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet::class).all {
         inputs.files(configurations.getByName(intransitiveMetadataConfigurationName))
     }
 
     doLast {
-        kotlin.sourceSets.filterIsInstance<DefaultKotlinSourceSet>().forEach { sourceSet ->
+        kotlin.sourceSets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet>().forEach { sourceSet ->
             val configuration = configurations.getByName(sourceSet.intransitiveMetadataConfigurationName)
             val dependencies = configuration.files
 

@@ -516,6 +516,29 @@ class CommonizerIT : BaseGradleIT() {
     }
 
     @Test
+    fun `test KT-48118 c-interops available in commonMain`() {
+        with(Project("commonize-kt-48118-c-interop-in-common-main")) {
+            reportSourceSetCommonizerDependencies(this) {
+                val upperMain = getCommonizerDependencies("upperMain")
+                upperMain.onlyCInterops().assertDependencyFilesMatches(".*cinterop-dummy")
+                upperMain.onlyNativeDistribution().assertNotEmpty()
+
+                val commonMain = getCommonizerDependencies("commonMain")
+                commonMain.onlyCInterops().assertDependencyFilesMatches(".*cinterop-dummy")
+                commonMain.onlyNativeDistribution().assertNotEmpty()
+            }
+
+            build(":compileCommonMainKotlinMetadata") {
+                assertSuccessful()
+            }
+
+            build(":compileUpperMainKotlinMetadata") {
+                assertSuccessful()
+            }
+        }
+    }
+
+    @Test
     fun `test KT-47641 commonizing c-interops does not depend on any source compilation`() {
         with(Project("commonize-kt-47641-cinterops-compilation-dependency")) {
             build("commonizeCInterop", options = BuildOptions(forceOutputToStdout = true)) {
