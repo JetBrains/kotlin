@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
@@ -446,10 +447,8 @@ class FunctionDescriptorResolver(
                 }
             } else {
                 type = if (isFunctionLiteral(functionDescriptor) || isFunctionExpression(functionDescriptor)) {
-                    val containsUninferredParameter = TypeUtils.contains(expectedType) {
-                        TypeUtils.isDontCarePlaceholder(it) || ErrorUtils.isUninferredParameter(it)
-                    }
-                    if (expectedType == null || containsUninferredParameter) {
+                    val containsErrorType = TypeUtils.contains(expectedType) { it.isError }
+                    if (expectedType == null || containsErrorType) {
                         trace.report(CANNOT_INFER_PARAMETER_TYPE.on(valueParameter))
                     }
 

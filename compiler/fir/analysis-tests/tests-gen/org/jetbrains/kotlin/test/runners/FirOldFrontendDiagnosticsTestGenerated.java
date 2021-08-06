@@ -10706,6 +10706,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt47493.kt")
+            public void testKt47493() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/functionLiterals/kt47493.kt");
+            }
+
+            @Test
             @TestMetadata("kt6541_extensionForExtensionFunction.kt")
             public void testKt6541_extensionForExtensionFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/kt6541_extensionForExtensionFunction.kt");
