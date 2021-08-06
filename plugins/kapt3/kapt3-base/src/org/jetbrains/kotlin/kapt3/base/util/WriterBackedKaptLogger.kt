@@ -10,7 +10,7 @@ import java.io.PrintWriter
 class WriterBackedKaptLogger(
     override val isVerbose: Boolean,
     override val infoWriter: PrintWriter = PrintWriter(System.out),
-    override val warnWriter: PrintWriter = PrintWriter(System.out),
+    override val warnWriter: PrintWriter = if (isJava17OrLater()) infoWriter else PrintWriter(System.out),
     override val errorWriter: PrintWriter = PrintWriter(System.err)
 ) : KaptLogger {
     override fun info(message: String) {
