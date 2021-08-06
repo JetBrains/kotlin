@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar.KaptComponentContribut
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
-import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLog
+import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLogBase
 import org.jetbrains.kotlin.kapt3.base.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.prettyPrint
@@ -287,7 +287,7 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
             .let { removeMetadataAnnotationContents(it) }
 
         if (kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
-            val log = Log.instance(kaptContext.context) as KaptJavaLog
+            val log = Log.instance(kaptContext.context) as KaptJavaLogBase
 
             val actualErrors = log.reportedDiagnostics
                 .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }

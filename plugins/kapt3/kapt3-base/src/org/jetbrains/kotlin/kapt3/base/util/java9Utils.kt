@@ -28,6 +28,7 @@ private fun getJavaVersion(): Int =
 
 fun isJava9OrLater() = getJavaVersion() >= 9
 fun isJava11OrLater() = getJavaVersion() >= 11
+fun isJava17OrLater() = getJavaVersion() >= 17
 
 fun Options.putJavacOption(jdk8Name: String, jdk9Name: String, value: String) {
     val option = if (isJava9OrLater()) {
