@@ -1491,9 +1491,8 @@ public class Float private constructor(public val value: Float) : Number(), Comp
         /**
          * A constant holding the "not a number" value of Float.
          */
-        public val NaN: Float
-            get() =
-                wasm_float_nan()
+        @Suppress("DIVISION_BY_ZERO")
+        public val NaN: Float = 0.0f / 0.0f
     }
 
     /**
@@ -1800,10 +1799,8 @@ public class Double private constructor(public val value: Double) : Number(), Co
         /**
          * A constant holding the "not a number" value of Double.
          */
-        public val NaN: Double
-            get() =
-                wasm_double_nan()
-
+        @Suppress("DIVISION_BY_ZERO")
+        public val NaN: Double = 0.0 / 0.0
     }
 
     /**

@@ -13,12 +13,6 @@ package kotlin.wasm.internal
 internal fun wasm_unreachable(): Nothing =
     implementedAsIntrinsic
 
-internal fun wasm_float_nan(): Float =
-    implementedAsIntrinsic
-
-internal fun wasm_double_nan(): Double =
-    implementedAsIntrinsic
-
 internal fun <To> wasm_ref_cast(a: Any?): To =
     implementedAsIntrinsic
 

@@ -284,13 +284,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 body.buildRefCast()
             }
 
-            wasmSymbols.wasmFloatNaN -> {
-                body.buildConstF32(Float.NaN)
-            }
-            wasmSymbols.wasmDoubleNaN -> {
-                body.buildConstF64(Double.NaN)
-            }
-
             wasmSymbols.unboxIntrinsic -> {
                 val fromType = call.getTypeArgument(0)!!
 

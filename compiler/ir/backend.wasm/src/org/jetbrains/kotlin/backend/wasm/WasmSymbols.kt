@@ -70,8 +70,6 @@ class WasmSymbols(
         get() = TODO()
 
     val wasmUnreachable = getInternalFunction("wasm_unreachable")
-    val wasmFloatNaN = getInternalFunction("wasm_float_nan")
-    val wasmDoubleNaN = getInternalFunction("wasm_double_nan")
 
     val equalityFunctions = mapOf(
         context.irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),
