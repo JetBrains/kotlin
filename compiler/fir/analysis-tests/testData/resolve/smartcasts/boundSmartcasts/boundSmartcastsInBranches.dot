@@ -54,7 +54,7 @@ digraph boundSmartcastsInBranches_kt {
                         color=blue
                         18 [label="Enter loop condition"];
                         19 [label="Access variable R|<local>/<iterator>|"];
-                        20 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
+                        20 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()"];
                         21 [label="Exit loop condition"];
                     }
                     subgraph cluster_8 {
@@ -84,7 +84,7 @@ digraph boundSmartcastsInBranches_kt {
                                     35 [label="Enter block"];
                                     36 [label="Access variable R|<local>/a|"];
                                     37 [label="Assignment: R|<local>/goodA|"];
-                                    38 [label="Jump: continue@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()] "];
+                                    38 [label="Jump: continue@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()] "];
                                     39 [label="Stub" style="filled" fillcolor=gray];
                                     40 [label="Exit block" style="filled" fillcolor=gray];
                                 }

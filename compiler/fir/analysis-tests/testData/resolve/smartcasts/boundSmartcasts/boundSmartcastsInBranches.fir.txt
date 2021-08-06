@@ -12,12 +12,12 @@ FILE: boundSmartcastsInBranches.kt
         lvar goodA: R|A?| = Null(null)
          {
             lval <iterator>: R|kotlin/collections/Iterator<A>| = R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()
-            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval a: R|A| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|A|>|()
                 when () {
                     ==(R|<local>/goodA|, Null(null)) ->  {
                         R|<local>/goodA| = R|<local>/a|
-                        continue@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()]
+                        continue@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
                     }
                 }
 

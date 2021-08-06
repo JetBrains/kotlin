@@ -597,6 +597,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("protectedWithGenericsInDifferentPackage.kt")
+        public void testProtectedWithGenericsInDifferentPackage() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/protectedWithGenericsInDifferentPackage.kt");
+        }
+
+        @Test
         @TestMetadata("publishedApi.kt")
         public void testPublishedApi() throws Exception {
             runTest("compiler/testData/diagnostics/tests/publishedApi.kt");

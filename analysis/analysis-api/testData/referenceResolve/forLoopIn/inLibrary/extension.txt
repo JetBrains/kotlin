@@ -1,4 +1,4 @@
 Resolved to:
-0: (in kotlin.collections.CharIterator) operator fun next(): kotlin.Char
-1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+0: (in kotlin.collections.CharIterator) abstract operator fun hasNext(): kotlin.Boolean
+1: (in kotlin.collections.CharIterator) operator fun next(): kotlin.Char
 2: (in kotlin.text) operator fun kotlin.CharSequence.iterator(): kotlin.collections.CharIterator

@@ -461,8 +461,8 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin/collections/List.isEmpty
-  dispatchType: kotlin/collections/List<E>
+  callableIdIfNonLocal: kotlin/collections/MutableList.isEmpty
+  dispatchType: kotlin/collections/MutableList<E>
   hasStableParameterNames: true
   isExtension: false
   isExternal: false
@@ -538,11 +538,11 @@ KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin/collections/List.size
-  dispatchType: kotlin/collections/List<E>
-  getter: KtFirPropertyGetterSymbol(<getter>)
+  callableIdIfNonLocal: kotlin/collections/MutableList.size
+  dispatchType: kotlin/collections/MutableList<E>
+  getter: null
   hasBackingField: false
-  hasGetter: true
+  hasGetter: false
   hasSetter: false
   initializer: null
   isConst: false

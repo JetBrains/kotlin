@@ -174,16 +174,22 @@ class FirTypeIntersectionScope private constructor(
         }
 
         val baseMembers = mutableSetOf<S>()
-        for ((unwrappedMember, scope) in unwrappedMemberSet) {
+        for ((member, scope) in this) {
             @Suppress("UNCHECKED_CAST")
-            if (unwrappedMember is FirNamedFunctionSymbol) {
-                scope.processOverriddenFunctions(unwrappedMember) {
-                    baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as S
+            if (member is FirNamedFunctionSymbol) {
+                scope.processOverriddenFunctions(member) {
+                    val symbol = it.fir.unwrapSubstitutionOverrides().symbol
+                    if (symbol != member.fir.unwrapSubstitutionOverrides().symbol) {
+                        baseMembers += symbol as S
+                    }
                     ProcessorAction.NEXT
                 }
-            } else if (unwrappedMember is FirPropertySymbol) {
-                scope.processOverriddenProperties(unwrappedMember) {
-                    baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as S
+            } else if (member is FirPropertySymbol) {
+                scope.processOverriddenProperties(member) {
+                    val symbol = it.fir.unwrapSubstitutionOverrides().symbol
+                    if (symbol != member.fir.unwrapSubstitutionOverrides().symbol) {
+                        baseMembers += symbol as S
+                    }
                     ProcessorAction.NEXT
                 }
             }

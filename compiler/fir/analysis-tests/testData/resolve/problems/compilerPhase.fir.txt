@@ -13,9 +13,9 @@ FILE: compilerPhase.kt
 
     }
     public final inline fun <R, D> R|PhaserState<D>|.downlevel(nlevels: R|kotlin/Int|, block: R|() -> R|): R|R| {
-        this@R|/downlevel|.R|/PhaserState.depth| = this@R|/downlevel|.R|/PhaserState.depth|.R|kotlin/Int.plus|(R|<local>/nlevels|)
+        this@R|/downlevel|.R|SubstitutionOverride</PhaserState.depth: R|kotlin/Int|>| = this@R|/downlevel|.R|SubstitutionOverride</PhaserState.depth: R|kotlin/Int|>|.R|kotlin/Int.plus|(R|<local>/nlevels|)
         lval result: R|R| = R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
-        this@R|/downlevel|.R|/PhaserState.depth| = this@R|/downlevel|.R|/PhaserState.depth|.R|kotlin/Int.minus|(R|<local>/nlevels|)
+        this@R|/downlevel|.R|SubstitutionOverride</PhaserState.depth: R|kotlin/Int|>| = this@R|/downlevel|.R|SubstitutionOverride</PhaserState.depth: R|kotlin/Int|>|.R|kotlin/Int.minus|(R|<local>/nlevels|)
         ^downlevel R|<local>/result|
     }
     public abstract interface CompilerPhase<in Context : R|CommonBackendContext|, Input, Output> : R|kotlin/Any| {

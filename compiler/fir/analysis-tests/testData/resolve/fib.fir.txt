@@ -10,7 +10,7 @@ FILE: fib.kt
         lvar prev: R|kotlin/Int| = Int(1)
          {
             lval <iterator>: R|kotlin/collections/IntIterator| = Int(2).R|kotlin/Int.rangeTo|(R|<local>/n|).R|kotlin/ranges/IntProgression.iterator|()
-            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
                 lval temp: R|kotlin/Int| = R|<local>/current|
                 R|<local>/current| = R|<local>/current|.R|kotlin/Int.plus|(R|<local>/prev|)

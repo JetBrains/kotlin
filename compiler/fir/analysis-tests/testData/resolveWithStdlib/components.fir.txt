@@ -20,7 +20,7 @@ FILE: components.kt
     public final fun foo(list: R|kotlin/collections/List<D>|): R|kotlin/Unit| {
          {
             lval <iterator>: R|kotlin/collections/Iterator<D>| = R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<D>|>|()
-            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval <destruct>: R|D| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|D|>|()
                 lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/D.component1|()
                 lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/D.component2|()

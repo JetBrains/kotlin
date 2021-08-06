@@ -7,7 +7,7 @@ FILE: nestedExtensionFunctionType.kt
     public final fun test_1(a: R|A|, ys: R|kotlin/collections/List<@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>>|): R|kotlin/Unit| {
          {
             lval <iterator>: R|kotlin/collections/Iterator<@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>>| = R|<local>/ys|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>>|>|()
-            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval y: R|(A) -> kotlin/Unit| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|(A) -> kotlin/Unit|>|()
                 R|<local>/y|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/a|)
             }
@@ -18,7 +18,7 @@ FILE: nestedExtensionFunctionType.kt
     public final fun test_2(a: R|A|, vararg zs: R|kotlin/Array<out @ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>>|): R|kotlin/Unit| {
          {
             lval <iterator>: R|kotlin/collections/Iterator<@ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>>| = R|<local>/zs|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<CapturedType(out @ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>)>|>|()
-            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval z: R|(A) -> kotlin/Unit| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|(A) -> kotlin/Unit|>|()
                 R|<local>/z|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/a|)
             }

@@ -30,6 +30,6 @@ FILE: importedReceiver.kt
         (Q|My|, String()).R|/My.bar|<R|kotlin/String|>()
         Q|My|.R|/My.baz|()
         (Q|My|, Boolean(true)).R|/My.gau|()
-        Q|My|.R|/Your.wat|()
+        Q|My|.R|SubstitutionOverride</My.wat: R|kotlin/Unit|>|()
         (Q|My|, Boolean(false)).R|SubstitutionOverride</My.watwat: R|kotlin/Unit|>|<R|kotlin/Boolean|>()
     }

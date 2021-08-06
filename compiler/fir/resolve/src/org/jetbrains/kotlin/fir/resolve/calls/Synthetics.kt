@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsFromAccessors
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
@@ -105,7 +105,7 @@ class FirSyntheticPropertiesScope(
             }
         }
 
-        val classLookupTag = getterSymbol.dispatchReceiverClassOrNull()
+        val classLookupTag = getterSymbol.originalOrSelf().dispatchReceiverClassOrNull()
         val packageName = classLookupTag?.classId?.packageFqName ?: getterSymbol.callableId.packageName
         val className = classLookupTag?.classId?.relativeClassName
 

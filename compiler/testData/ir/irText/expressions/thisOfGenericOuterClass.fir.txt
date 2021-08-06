@@ -82,7 +82,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                   CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
                     $this: CALL 'public final fun <get-x> (): T of <root>.Outer declared in <root>.Outer' type=kotlin.Int origin=GET_PROPERTY
                       $this: GET_VAR '<this>: <root>.Outer<kotlin.Int> declared in <root>.test' type=<root>.Outer<kotlin.Int> origin=null
-                    other: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.Outer.Inner' type=kotlin.Int origin=GET_PROPERTY
+                    other: CALL 'public final fun <get-y> (): kotlin.Int [fake_override] declared in <root>.test.<no name provided>' type=kotlin.Int origin=GET_PROPERTY
                       $this: GET_VAR '<this>: <root>.test.<no name provided> declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:<root>.test.<no name provided>) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:xx visibility:public modality:FINAL [val]

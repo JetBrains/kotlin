@@ -31,10 +31,9 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
     FUN DELEGATED_MEMBER name:clear visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Unit
       overridden:
         public abstract fun clear (): kotlin.Unit [fake_override] declared in <root>.Foo.A
-        public abstract fun clear (): kotlin.Unit [fake_override] declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       BLOCK_BODY
-        CALL 'public abstract fun clear (): kotlin.Unit declared in kotlin.collections.MutableSet' type=kotlin.Unit origin=null
+        CALL 'public abstract fun clear (): kotlin.Unit [fake_override] declared in <root>.Foo.B' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Foo.B visibility:local [final]' type=<root>.Foo.B origin=null
             receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.clear' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:iterator visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> [operator]
@@ -104,26 +103,23 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
     FUN DELEGATED_MEMBER name:isEmpty visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Boolean
       overridden:
         public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.B
       $this: VALUE_PARAMETER name:<this> type:<root>.Impl
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Set' type=kotlin.Boolean origin=null
+          CALL 'public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.B' type=kotlin.Boolean origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Foo.B visibility:local [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.isEmpty' type=<root>.Impl origin=null
     PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
       overridden:
         public abstract size: kotlin.Int [fake_override,val]
-        public abstract size: kotlin.Int [fake_override,val]
       FUN DELEGATED_MEMBER name:<get-size> visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int [fake_override] declared in <root>.Foo.A
-          public abstract fun <get-size> (): kotlin.Int [fake_override] declared in <root>.Foo.B
         $this: VALUE_PARAMETER name:<this> type:<root>.Impl
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.Impl'
-            CALL 'public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.Set' type=kotlin.Int origin=null
+            CALL 'public abstract fun <get-size> (): kotlin.Int [fake_override] declared in <root>.Foo.B' type=kotlin.Int origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Foo.B visibility:local [final]' type=<root>.Foo.B origin=null
                 receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.<get-size>' type=<root>.Impl origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.Foo.B visibility:local [final]

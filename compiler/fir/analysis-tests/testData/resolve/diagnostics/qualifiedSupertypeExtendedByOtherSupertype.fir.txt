@@ -23,11 +23,11 @@ FILE: qualifiedSupertypeExtendedByOtherSupertype.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/Test|.super<R|IBase<kotlin/String>|>.R|/IBase.foo|()
-            this@R|/Test|.super<R|IBase<kotlin/String>|>.R|/IBase.bar|()
-            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|/IDerived.foo|()
-            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|/IBase.bar|()
-            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|/IDerived.qux|()
+            this@R|/Test|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.foo: R|kotlin/Unit|>|()
+            this@R|/Test|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.bar: R|kotlin/Unit|>|()
+            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.foo: R|kotlin/Unit|>|()
+            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.bar: R|kotlin/Unit|>|()
+            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.qux: R|kotlin/Unit|>|()
         }
 
     }
@@ -37,13 +37,13 @@ FILE: qualifiedSupertypeExtendedByOtherSupertype.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|/IBase.foo|()
-            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|/IBase.bar|()
-            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|/IBase.foo|()
-            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|/IBase.bar|()
-            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|/IDerived.foo|()
-            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|/IBase.bar|()
-            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|/IDerived.qux|()
+            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.foo: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.bar: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.foo: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.bar: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.foo: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.bar: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.qux: R|kotlin/Unit|>|()
         }
 
     }

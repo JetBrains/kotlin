@@ -547,7 +547,7 @@ digraph implicitReceivers_kt {
                 subgraph cluster_52 {
                     color=blue
                     202 [label="Enter block"];
-                    203 [label="Access variable R|kotlin/collections/List.size|"];
+                    203 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
                     204 [label="Exit block"];
                 }
                 205 [label="Exit when branch result"];
@@ -555,7 +555,7 @@ digraph implicitReceivers_kt {
             }
             207 [label="Jump: ^test_5 when () {
     (this@R|/test_5| is R|kotlin/collections/List<*>|) ->  {
-        this@R|/test_5|.R|kotlin/collections/List.size|
+        this@R|/test_5|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
     }
     (this@R|/test_5| is R|kotlin/String|) ->  {
         this@R|/test_5|.R|kotlin/String.length|
@@ -612,7 +612,7 @@ digraph implicitReceivers_kt {
             212 [label="Enter block"];
             213 [label="Access variable this@R|/test_6|"];
             214 [label="Type operator: (this@R|/test_6| as R|kotlin/collections/List<*>|)"];
-            215 [label="Access variable R|kotlin/collections/List.size|"];
+            215 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
             216 [label="Access variable this@R|/test_6|"];
             217 [label="Type operator: (this@R|/test_6| as R|kotlin/String|)"];
             218 [label="Access variable R|kotlin/String.length|"];

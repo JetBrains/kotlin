@@ -18,10 +18,10 @@ FILE: bareTypes2.kt
 
     }
     public final fun test(x: R|A<*>|): R|kotlin/Unit| {
-        when ((R|<local>/x| as? R|C|)?.{ $subj$.R|/A.field| }) {
+        when ((R|<local>/x| as? R|C|)?.{ $subj$.R|SubstitutionOverride</C.field: R|kotlin/Any|>| }) {
             ($subj$ is R|kotlin/String|) ->  {
                 when () {
-                    ==((R|<local>/x| as? R|B<*>|)?.{ $subj$.R|/A.cond| }, Boolean(true)) ->  {
+                    ==((R|<local>/x| as? R|B<*>|)?.{ $subj$.R|SubstitutionOverride</B.cond: R|kotlin/Boolean|>| }, Boolean(true)) ->  {
                         R|<local>/x|.R|/C.foo|()
                     }
                 }

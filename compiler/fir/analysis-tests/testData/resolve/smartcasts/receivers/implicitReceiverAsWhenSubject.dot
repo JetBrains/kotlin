@@ -51,7 +51,7 @@ digraph implicitReceiverAsWhenSubject_kt {
                     color=blue
                     23 [label="Enter block"];
                     24 [label="Access variable this@R|/test_1|"];
-                    25 [label="Access variable R|kotlin/collections/List.size|"];
+                    25 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
                     26 [label="Exit block"];
                 }
                 27 [label="Exit when branch result"];
@@ -59,7 +59,7 @@ digraph implicitReceiverAsWhenSubject_kt {
             }
             29 [label="Jump: ^test_1 when (this@R|/test_1|) {
     ($subj$ is R|kotlin/collections/List<*>|) ->  {
-        this@R|/test_1|.R|kotlin/collections/List.size|
+        this@R|/test_1|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
     }
     ($subj$ is R|kotlin/String|) ->  {
         this@R|/test_1|.R|kotlin/String.length|
@@ -159,9 +159,9 @@ digraph implicitReceiverAsWhenSubject_kt {
                     color=blue
                     59 [label="Enter block"];
                     60 [label="Access variable R|<local>/x|"];
-                    61 [label="Access variable R|kotlin/collections/List.size|"];
+                    61 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
                     62 [label="Access variable this@R|/test_2|"];
-                    63 [label="Access variable R|kotlin/collections/List.size|"];
+                    63 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
                     64 [label="Exit block"];
                 }
                 65 [label="Exit when branch result"];
@@ -169,8 +169,8 @@ digraph implicitReceiverAsWhenSubject_kt {
             }
             67 [label="Jump: ^test_2 when (lval x: R|kotlin/Any| = this@R|/test_2|) {
     ($subj$ is R|kotlin/collections/List<*>|) ->  {
-        R|<local>/x|.R|kotlin/collections/List.size|
-        this@R|/test_2|.R|kotlin/collections/List.size|
+        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
+        this@R|/test_2|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
     }
     ($subj$ is R|kotlin/String|) ->  {
         R|<local>/x|.R|kotlin/String.length|

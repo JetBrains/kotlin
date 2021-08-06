@@ -253,7 +253,7 @@ FILE: forLoopChecker.kt
 
          {
             lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>| = R|<local>/range1|.R|/Range1.iterator|()
-            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Int|>|()
             }
 

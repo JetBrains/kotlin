@@ -42,9 +42,11 @@ object FirFakeOverrideGenerator {
         isExpect: Boolean = baseFunction.isExpect,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirNamedFunctionSymbol {
-        val symbol = FirNamedFunctionSymbol(
-            CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseFunction.name)
-        )
+        val symbol = if (derivedClassId == null) {
+            FirNamedFunctionSymbol(baseSymbol.callableId)
+        } else {
+            FirNamedFunctionSymbol(CallableId(derivedClassId, baseFunction.name))
+        }
         createSubstitutionOverrideFunction(
             symbol, session, baseFunction, newDispatchReceiverType, newReceiverType, newReturnType,
             newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution
@@ -261,9 +263,11 @@ object FirFakeOverrideGenerator {
         isExpect: Boolean = baseProperty.isExpect,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirPropertySymbol {
-        val symbol = FirPropertySymbol(
-            CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseProperty.name)
-        )
+        val symbol = if (derivedClassId == null) {
+            FirPropertySymbol(baseSymbol.callableId)
+        } else {
+            FirPropertySymbol(CallableId(derivedClassId, baseProperty.name))
+        }
         createCopyForFirProperty(
             symbol, baseProperty, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
             newDispatchReceiverType, newTypeParameters, newReceiverType, newReturnType,

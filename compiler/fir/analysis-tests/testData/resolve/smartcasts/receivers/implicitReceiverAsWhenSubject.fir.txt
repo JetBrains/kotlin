@@ -2,7 +2,7 @@ FILE: implicitReceiverAsWhenSubject.kt
     public final fun R|kotlin/Any|.test_1(): R|kotlin/Int| {
         ^test_1 when (this@R|/test_1|) {
             ($subj$ is R|kotlin/collections/List<*>|) ->  {
-                this@R|/test_1|.R|kotlin/collections/List.size|
+                this@R|/test_1|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
             }
             ($subj$ is R|kotlin/String|) ->  {
                 this@R|/test_1|.R|kotlin/String.length|
@@ -16,8 +16,8 @@ FILE: implicitReceiverAsWhenSubject.kt
     public final fun R|kotlin/Any|.test_2(): R|kotlin/Int| {
         ^test_2 when (lval x: R|kotlin/Any| = this@R|/test_2|) {
             ($subj$ is R|kotlin/collections/List<*>|) ->  {
-                R|<local>/x|.R|kotlin/collections/List.size|
-                this@R|/test_2|.R|kotlin/collections/List.size|
+                R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
+                this@R|/test_2|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
             }
             ($subj$ is R|kotlin/String|) ->  {
                 R|<local>/x|.R|kotlin/String.length|

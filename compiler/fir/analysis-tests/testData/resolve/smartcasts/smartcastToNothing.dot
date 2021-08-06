@@ -181,7 +181,7 @@ digraph smartcastToNothing_kt {
                         color=blue
                         61 [label="Enter loop condition"];
                         62 [label="Access variable R|<local>/<iterator>|"];
-                        63 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
+                        63 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()"];
                         64 [label="Exit loop condition"];
                     }
                     subgraph cluster_19 {
@@ -213,7 +213,7 @@ digraph smartcastToNothing_kt {
                                 subgraph cluster_23 {
                                     color=blue
                                     82 [label="Enter block" style="filled" fillcolor=gray];
-                                    83 [label="Jump: break@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()] " style="filled" fillcolor=gray];
+                                    83 [label="Jump: break@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()] " style="filled" fillcolor=gray];
                                     84 [label="Stub" style="filled" fillcolor=gray];
                                     85 [label="Exit block" style="filled" fillcolor=gray];
                                 }

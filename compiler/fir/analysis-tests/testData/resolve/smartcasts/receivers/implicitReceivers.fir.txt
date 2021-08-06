@@ -100,7 +100,7 @@ FILE: implicitReceivers.kt
     public final fun R|kotlin/Any|.test_5(): R|kotlin/Int| {
         ^test_5 when () {
             (this@R|/test_5| is R|kotlin/collections/List<*>|) ->  {
-                this@R|/test_5|.R|kotlin/collections/List.size|
+                this@R|/test_5|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
             }
             (this@R|/test_5| is R|kotlin/String|) ->  {
                 this@R|/test_5|.R|kotlin/String.length|
@@ -113,7 +113,7 @@ FILE: implicitReceivers.kt
     }
     public final fun R|kotlin/Any|.test_6(): R|kotlin/Unit| {
         (this@R|/test_6| as R|kotlin/collections/List<*>|)
-        this@R|/test_6|.R|kotlin/collections/List.size|
+        this@R|/test_6|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
         (this@R|/test_6| as R|kotlin/String|)
         this@R|/test_6|.R|kotlin/String.length|
     }

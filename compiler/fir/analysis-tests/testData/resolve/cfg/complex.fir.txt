@@ -27,7 +27,7 @@ FILE: complex.kt
     public final inline fun <reified T : R|kotlin/Any|> R|kotlin/collections/List<*>|.firstIsInstanceOrNull(): R|T?| {
          {
             lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>| = this@R|/firstIsInstanceOrNull|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<CapturedType(*)>|>|()
-            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval element: R|kotlin/Any?| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()
                 when () {
                     (R|<local>/element| is R|T|) ->  {

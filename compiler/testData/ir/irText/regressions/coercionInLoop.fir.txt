@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
       VAR name:i type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
       WHILE label=null origin=WHILE_LOOP
-        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
+        condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.DoubleIterator' type=kotlin.Boolean origin=null
           $this: GET_VAR 'val x: kotlin.collections.DoubleIterator [val] declared in <root>.box' type=kotlin.collections.DoubleIterator origin=null
         body: BLOCK type=kotlin.Int origin=null
           WHEN type=kotlin.Unit origin=IF

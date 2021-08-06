@@ -46,10 +46,10 @@ FILE: valueOfOrNull.kt
     public final inline fun <reified E : R|kotlin/Enum<E>|> valueOfOrNull(value: R|kotlin/String|): R|E?| {
          {
             lval <iterator>: R|kotlin/collections/Iterator<E>| = R|kotlin/enumValues|<R|E|>().R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<E>|>|()
-            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval enumValue: R|E| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|E|>|()
                 when () {
-                    ==(R|<local>/enumValue|.R|kotlin/Enum.name|, R|<local>/value|) ->  {
+                    ==(R|<local>/enumValue|.R|SubstitutionOverride<kotlin/Enum.name: R|kotlin/String|>|, R|<local>/value|) ->  {
                         ^valueOfOrNull R|<local>/enumValue|
                     }
                 }

@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
           CALL 'public final fun iterator (): kotlin.collections.IntIterator [operator] declared in kotlin.IntArray' type=kotlin.collections.IntIterator origin=null
             $this: GET_VAR 'args: kotlin.IntArray [vararg] declared in <root>.sum' type=kotlin.IntArray origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
-          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
             $this: GET_VAR 'val tmp_0: kotlin.collections.IntIterator [val] declared in <root>.sum' type=kotlin.collections.IntIterator origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
             VAR FOR_LOOP_VARIABLE name:arg type:kotlin.Int [val]

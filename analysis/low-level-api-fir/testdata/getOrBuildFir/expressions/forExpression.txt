@@ -2,6 +2,6 @@ KT element: KtForExpression
 FIR element: FirWhileLoopImpl
 
 FIR element rendered:
-while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
     lval x: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
 }

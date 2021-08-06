@@ -133,7 +133,7 @@ digraph loops_kt {
                         color=blue
                         45 [label="Enter loop condition"];
                         46 [label="Access variable R|<local>/<iterator>|"];
-                        47 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
+                        47 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()"];
                         48 [label="Exit loop condition"];
                     }
                     subgraph cluster_17 {

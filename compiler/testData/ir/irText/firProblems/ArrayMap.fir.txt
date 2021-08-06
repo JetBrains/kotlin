@@ -575,7 +575,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                         arg1: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
                           $this: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                             $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                      then: CALL 'protected final fun done (): kotlin.Unit declared in kotlin.collections.AbstractIterator' type=kotlin.Unit origin=null
+                      then: CALL 'protected final fun done (): kotlin.Unit [fake_override] declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=null
                         $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true

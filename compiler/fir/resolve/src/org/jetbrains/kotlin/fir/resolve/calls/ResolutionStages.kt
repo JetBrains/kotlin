@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
@@ -122,8 +123,14 @@ object CheckDispatchReceiver : ResolutionStage() {
             !explicitReceiverExpression.isStable &&
             (isCandidateFromUnstableSmartcast || (isReceiverNullable && !explicitReceiverExpression.smartcastType.canBeNull))
         ) {
+            val dispatchReceiverType = (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType?.let {
+                context.session.inferenceComponents.approximator.approximateToSuperType(
+                    it,
+                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                ) ?: it
+            }
             val targetType =
-                (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType ?: explicitReceiverExpression.smartcastType.coneType
+                dispatchReceiverType ?: explicitReceiverExpression.smartcastType.coneType
             sink.yieldDiagnostic(
                 UnstableSmartCast(
                     explicitReceiverExpression,

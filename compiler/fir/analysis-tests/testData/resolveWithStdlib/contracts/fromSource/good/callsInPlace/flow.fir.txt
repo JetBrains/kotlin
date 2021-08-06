@@ -28,7 +28,7 @@ FILE: flow.kt
             Boolean(true) ->  {
                  {
                     lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(0)).R|kotlin/ranges/IntProgression.iterator|()
-                    while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+                    while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
                         lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
                         R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
                     }

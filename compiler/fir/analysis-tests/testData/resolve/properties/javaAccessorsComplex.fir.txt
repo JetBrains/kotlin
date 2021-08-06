@@ -22,11 +22,11 @@ FILE: main.kt
 
     }
     public final fun main(d1: R|D1|, e1: R|E1|, d2: R|D2|, e2: R|E2|): R|kotlin/Unit| {
-        R|<local>/d1|.R|/D1.foo|
+        R|<local>/d1|.R|/KB.foo|
         R|<local>/d1|.<Unresolved name: bar>#
         R|<local>/e1|.R|/E1.foo|
         R|<local>/e1|.<Unresolved name: bar>#
-        R|<local>/d2|.R|/D2.foo|
+        R|<local>/d2|.R|/KB.foo|
         R|<local>/d2|.<Unresolved name: bar>#
         R|<local>/e2|.R|/E2.foo|
         R|<local>/e2|.<Unresolved name: bar>#
