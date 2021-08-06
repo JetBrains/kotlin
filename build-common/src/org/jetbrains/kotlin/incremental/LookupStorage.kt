@@ -54,9 +54,12 @@ open class LookupStorage(
         try {
             if (countersFile.exists()) {
                 val lines = countersFile.readLines()
-                size = lines[0].toInt()
+                size = lines.firstOrNull()?.toIntOrNull() ?: throw IOException("$countersFile exists, but it is empty. " +
+                                                                                       "Counters file is corrupted")
                 oldSize = size
             }
+        } catch (e: IOException) {
+            throw e
         } catch (e: Exception) {
             throw IOException("Could not read $countersFile", e)
         }
