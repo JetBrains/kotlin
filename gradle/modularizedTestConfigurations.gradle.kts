@@ -13,17 +13,18 @@ val ideaSandboxDir: File by extra
 val ideaSdkPath: String
     get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
 
-fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, benchFilter: String?) {
+fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, languageVersion: String, benchFilter: String?) {
     add("-${prefix}fir.bench.prefix=$path")
     add("-${prefix}fir.bench.jps.dir=$path/test-project-model-dump")
     add("-${prefix}fir.bench.passes=1")
     add("-${prefix}fir.bench.dump=true")
+    add("-${prefix}fir.bench.language.version=$languageVersion")
     if (benchFilter != null) {
         add("-${prefix}fir.bench.filter=$benchFilter")
     }
 }
 
-fun generateVmParametersForJpsConfiguration(path: String, benchFilter: String?): String {
+fun generateVmParametersForJpsConfiguration(path: String, languageVersion: String, benchFilter: String?): String {
     val vmParameters = mutableListOf(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
@@ -40,13 +41,13 @@ fun generateVmParametersForJpsConfiguration(path: String, benchFilter: String?):
         "-Duse.jps=true",
         "-Djava.awt.headless=true"
     )
-    vmParameters.addModularizedTestArgs(prefix = "D", path = path, benchFilter = benchFilter)
+    vmParameters.addModularizedTestArgs(prefix = "D", path = path, languageVersion = languageVersion, benchFilter = benchFilter)
     return vmParameters.joinToString(" ")
 }
 
-fun generateArgsForGradleConfiguration(benchFilter: String?, path: String): String {
+fun generateArgsForGradleConfiguration(path: String, languageVersion: String, benchFilter: String?): String {
     val args = mutableListOf<String>()
-    args.addModularizedTestArgs(prefix = "P", path = path, benchFilter = benchFilter)
+    args.addModularizedTestArgs(prefix = "P", path = path, languageVersion = languageVersion, benchFilter = benchFilter)
     return args.joinToString(" ")
 }
 
@@ -111,8 +112,8 @@ fun String.convertNameToRunConfigurationFile(prefix: String = ""): File {
     return rootDir.resolve(".idea/runConfigurations/${fileName}")
 }
 
-fun generateJpsConfiguration(name: String, testClassName: String, path: String, benchFilter: String?) {
-    val vmParameters = generateVmParametersForJpsConfiguration(path, benchFilter)
+fun generateJpsConfiguration(name: String, testClassName: String, path: String, languageVersion: String, benchFilter: String?) {
+    val vmParameters = generateVmParametersForJpsConfiguration(path, languageVersion, benchFilter)
     val content = generateXmlContentForJpsConfiguration(
         name = name,
         testClassName = testClassName,
@@ -121,8 +122,8 @@ fun generateJpsConfiguration(name: String, testClassName: String, path: String, 
     name.convertNameToRunConfigurationFile("JPS").writeText(content)
 }
 
-fun generateGradleConfiguration(name: String, testClassName: String, path: String, benchFilter: String?) {
-    val vmParameters = generateArgsForGradleConfiguration(benchFilter, path)
+fun generateGradleConfiguration(name: String, testClassName: String, path: String, languageVersion: String, benchFilter: String?) {
+    val vmParameters = generateArgsForGradleConfiguration(path, languageVersion, benchFilter)
     val content = generateXmlContentForGradleConfiguration(
         name = name,
         testClassName = testClassName,
@@ -131,12 +132,18 @@ fun generateGradleConfiguration(name: String, testClassName: String, path: Strin
     name.convertNameToRunConfigurationFile().writeText(content)
 }
 
-infix fun <A : Any, B> A?.toNotNull(b: B): Pair<A, B>? = this?.to(b)
+data class Configuration(val path: String, val name: String, val languageVersion: String) {
+    companion object {
+        operator fun invoke(path: String?, name: String, languageVersion: String): Configuration? {
+            return path?.let { Configuration(it, name, languageVersion) }
+        }
+    }
+}
 
 val testDataPathList = listOfNotNull(
-    kotlinBuildProperties.pathToKotlinModularizedTestData toNotNull "Kotlin",
-    kotlinBuildProperties.pathToIntellijModularizedTestData toNotNull "IntelliJ",
-    kotlinBuildProperties.pathToYoutrackModularizedTestData toNotNull "YouTrack"
+    Configuration(kotlinBuildProperties.pathToKotlinModularizedTestData, "Kotlin", "1.4"),
+    Configuration(kotlinBuildProperties.pathToIntellijModularizedTestData, "IntelliJ", "1.4"),
+    Configuration(kotlinBuildProperties.pathToYoutrackModularizedTestData, "YouTrack", "1.5")
 )
 
 val additionalConfigurationsWithFilter = mapOf(
@@ -147,7 +154,7 @@ val additionalConfigurationsWithFilter = mapOf(
     )
 )
 
-for ((path, projectName) in testDataPathList) {
+for ((path, projectName, languageVersion) in testDataPathList) {
     rootProject.afterEvaluate {
         val configurations = mutableListOf<Pair<String, String?>>(
             "Full $projectName" to null
@@ -160,11 +167,11 @@ for ((path, projectName) in testDataPathList) {
         val jpsBuildEnabled = kotlinBuildProperties.isInJpsBuildIdeaSync
 
         for ((name, benchFilter) in configurations) {
-            generateGradleConfiguration("[MT] $name", "FirResolveModularizedTotalKotlinTest", path, benchFilter)
-            generateGradleConfiguration("[FP] $name", "FullPipelineModularizedTest", path, benchFilter)
+            generateGradleConfiguration("[MT] $name", "FirResolveModularizedTotalKotlinTest", path, languageVersion, benchFilter)
+            generateGradleConfiguration("[FP] $name", "FullPipelineModularizedTest", path, languageVersion, benchFilter)
             if (jpsBuildEnabled) {
-                generateJpsConfiguration("[MT-JPS] $name", "FirResolveModularizedTotalKotlinTest", path, benchFilter)
-                generateJpsConfiguration("[FP-JPS] $name", "FullPipelineModularizedTest", path, benchFilter)
+                generateJpsConfiguration("[MT-JPS] $name", "FirResolveModularizedTotalKotlinTest", path, languageVersion, benchFilter)
+                generateJpsConfiguration("[FP-JPS] $name", "FullPipelineModularizedTest", path, languageVersion, benchFilter)
             }
         }
     }
