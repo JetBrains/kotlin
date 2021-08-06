@@ -299,13 +299,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 // to avoid showing it in the `tasks` output.
             }
 
-            check(isAvailableToProduceSynthetic) {
-                """
-                    Dependency on pods requires cocoapods-generate plugin to be installed.
-                    Please install it by executing 'gem install cocoapods-generate' in terminal.
-                """.trimMargin()
-            }
-
             kotlinExtension.supportedTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.create(pod.moduleName) { interop ->
 
@@ -395,7 +388,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.description = "Invokes `pod install` call within Podfile location directory"
             it.podfile.set(cocoapodsExtension.podfile)
             it.frameworkName = project.provider { cocoapodsExtension.frameworkNameInternal }
-            it.onlyIf { isAvailableToProduceSynthetic }
             it.dependsOn(podspecTaskProvider)
         }
     }
@@ -449,7 +441,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 it.family = family
                 it.pods.set(cocoapodsExtension.pods)
                 it.dependsOn(downloadPods)
-                it.onlyIf { isAvailableToProduceSynthetic }
             }
         }
     }
@@ -487,7 +478,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     it.podsXcodeProjDir = podGenTaskProvider.map { podGen -> podGen.podsXcodeProjDir.get() }
                     it.frameworkName = project.provider { cocoapodsExtension.frameworkNameInternal }
                     it.dependsOn(podGenTaskProvider)
-                    it.onlyIf { isAvailableToProduceSynthetic }
                 }
             }
         }
@@ -528,7 +518,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     it.pod = project.provider { pod }
                     it.podsXcodeProjDir = podSetupBuildTaskProvider.map { task -> task.podsXcodeProjDir.get() }
                     it.buildSettingsFile = podSetupBuildTaskProvider.map { task -> task.buildSettingsFile.get() }
-                    it.onlyIf { isAvailableToProduceSynthetic }
                 }
             }
         }
@@ -543,7 +532,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.group = TASK_GROUP
             it.description = "Called on Gradle sync, depends on Cinterop tasks for every used pod"
             it.dependsOn(podInstallTaskProvider)
-            it.onlyIf { isAvailableToProduceSynthetic }
 
             kotlinExtension.supportedTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.all { interop ->

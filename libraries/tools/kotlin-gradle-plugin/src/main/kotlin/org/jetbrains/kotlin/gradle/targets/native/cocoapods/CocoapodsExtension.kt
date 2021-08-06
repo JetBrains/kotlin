@@ -254,13 +254,6 @@ open class CocoapodsExtension(private val project: Project) {
         pods.all { pod ->
             binary.linkerOpts("-framework", pod.moduleName)
 
-            check(KotlinCocoapodsPlugin.isAvailableToProduceSynthetic) {
-                """
-                    Dependency on pods requires cocoapods-generate plugin to be installed.
-                    Please install it by executing 'gem install cocoapods-generate' in terminal.
-                """.trimMargin()
-            }
-
             binary.linkTaskProvider.configure { task ->
 
                 val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
