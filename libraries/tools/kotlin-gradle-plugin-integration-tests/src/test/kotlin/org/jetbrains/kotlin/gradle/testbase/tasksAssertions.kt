@@ -63,7 +63,9 @@ fun BuildResult.assertTasksFromCache(vararg tasks: String) {
     tasks.forEach { task ->
         assert(task(task)?.outcome == TaskOutcome.FROM_CACHE) {
             printBuildOutput()
-            "Task $task didn't have 'FROM_CACHE' state: ${task(task)?.outcome}"
+            val occurrences = output.lineSequence().filter { it.contains("> Task $task") }
+            System.err.println("ZZZ: task results ${occurrences.joinToString(separator = "\n")}")
+            "Task $task didn't have 'FROM-CACHE' state: ${task(task)?.outcome}"
         }
     }
 }
@@ -77,5 +79,14 @@ fun BuildResult.assertTasksNoSource(vararg tasks: String) {
             printBuildOutput()
             "Task $task didn't have 'NO_SOURCE' state: ${task(task)?.outcome}"
         }
+    }
+}
+
+/**
+ * Assert new cache entry was created for given [tasks].
+ */
+fun BuildResult.assertTasksPackedToCache(vararg tasks: String) {
+    tasks.forEach {
+        assertOutputContains("Stored cache entry for task '$it' with cache key ")
     }
 }
