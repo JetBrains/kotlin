@@ -303,6 +303,17 @@ task distCompiler(type: Copy) {
         into('konan')
         include('**/*.properties')
         filter(ReplaceTokens, tokens: [compilerVersion: konanVersionFull.toString()])
+        // Set LLVM variant that will be used by default in the distribution.
+        // `user` - smaller, includes only necessary components.
+        // `dev` - bigger, includes (almost) every possible component. Use this one,
+        //          if your feature requires component that is not a part of user distribution (yet).
+        // Note: by default konan.properties use `dev` variant because it is needed for building our LLVM dynamic library.
+        String llvmVariant = 'user'
+        filter(ReplaceTokens,
+                beginToken: '$',
+                endToken: '',
+                tokens: [("llvm.${hostName}.dev".toString()): "\$llvm.${hostName}.${llvmVariant}".toString()]
+        )
     }
     if (experimentalEnabled) {
         file('konan/experimentalTargetsEnabled').text = ""
