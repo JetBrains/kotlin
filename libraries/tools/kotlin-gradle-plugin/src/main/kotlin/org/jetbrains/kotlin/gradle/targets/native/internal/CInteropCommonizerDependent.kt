@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier.Scope
 import org.jetbrains.kotlin.gradle.utils.UnsafeApi
@@ -82,17 +85,10 @@ internal fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedN
 }
 
 internal fun CInteropCommonizerDependent.Factory.from(project: Project, sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
-    val target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null
-    val compilations = compilationsBySourceSets(project)[sourceSet] ?: return null
-
-    /* Non-native or non 'shared native' source sets can return eagerly */
-    if (compilations.any { compilation -> compilation !is AbstractKotlinNativeCompilation }) {
-        return null
-    }
-
     return from(
-        target = target,
-        compilations = compilations.filterIsInstance<KotlinNativeCompilation>().toSet()
+        target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
+        compilations = (compilationsBySourceSets(project)[sourceSet] ?: return null)
+            .filterIsInstance<KotlinNativeCompilation>().toSet()
     )
 }
 
