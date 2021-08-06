@@ -179,9 +179,10 @@ fun FirDeclarationStatus.copy(
     isExpect: Boolean = this.isExpect,
     newModality: Modality? = null,
     newVisibility: Visibility? = null,
-    newEffectiveVisibility: EffectiveVisibility? = null
+    newEffectiveVisibility: EffectiveVisibility? = null,
+    isOperator: Boolean = this.isOperator
 ): FirDeclarationStatus {
-    return if (this.isExpect == isExpect && newModality == null && newVisibility == null) {
+    return if (this.isExpect == isExpect && newModality == null && newVisibility == null && this.isOperator == isOperator) {
         this
     } else {
         require(this is FirDeclarationStatusImpl) { "Unexpected class ${this::class}" }
@@ -191,6 +192,7 @@ fun FirDeclarationStatus.copy(
             newEffectiveVisibility ?: EffectiveVisibility.Public
         ).apply {
             this.isExpect = isExpect
+            this.isOperator = isOperator
         }
     }
 }

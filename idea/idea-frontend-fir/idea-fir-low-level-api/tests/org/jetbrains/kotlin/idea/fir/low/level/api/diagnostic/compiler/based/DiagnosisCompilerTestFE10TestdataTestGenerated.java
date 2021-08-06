@@ -7496,6 +7496,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("mappedFunctionNotImplemented.kt")
+            public void testMappedFunctionNotImplemented() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/declarationChecks/mappedFunctionNotImplemented.kt");
+            }
+
+            @Test
             @TestMetadata("mulitpleVarargParameters.kt")
             public void testMulitpleVarargParameters() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/declarationChecks/mulitpleVarargParameters.kt");

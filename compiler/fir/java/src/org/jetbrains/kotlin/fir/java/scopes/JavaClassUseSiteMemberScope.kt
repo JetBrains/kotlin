@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -299,6 +300,13 @@ class JavaClassUseSiteMemberScope(
     ): FirNamedFunctionSymbol? {
         val overriddenBuiltin = symbol.getOverriddenBuiltinWithDifferentJvmName() ?: return null
 
+        //if (unrelated) method with special name is already defined, we don't add renamed method at all
+        //otherwise  we get methods ambiguity
+        val alreadyDefined = declaredMemberScope.getFunctions(name).any { declaredSymbol ->
+            overrideChecker.isOverriddenFunction(declaredSymbol.fir, symbol.fir)
+        }
+        if (alreadyDefined) return null
+
         val nameInJava =
             SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[overriddenBuiltin.fir.computeJvmSignature() ?: return null]
                 ?: return null
@@ -308,6 +316,7 @@ class JavaClassUseSiteMemberScope(
             val renamedCopy = buildJavaMethodCopy(candidateFir) {
                 this.name = name
                 this.symbol = FirNamedFunctionSymbol(CallableId(candidateFir.symbol.callableId.classId!!, name))
+                this.status = candidateFir.status.copy(isOperator = symbol.isOperator)
             }.apply {
                 initialSignatureAttr = candidateFir
             }
@@ -414,6 +423,10 @@ class JavaClassUseSiteMemberScope(
 
     private fun FirNamedFunctionSymbol.getOverriddenBuiltinWithDifferentJvmName(): FirNamedFunctionSymbol? {
         var result: FirNamedFunctionSymbol? = null
+
+        if (SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME.containsKey(this.fir.computeJvmSignature())) {
+            return this
+        }
 
         superTypesScope.processOverriddenFunctions(this) {
             if (!it.isFromBuiltInClass(session)) return@processOverriddenFunctions ProcessorAction.NEXT

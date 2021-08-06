@@ -111,32 +111,6 @@ KtFirFunctionSymbol:
   visibility: Public
 
 KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Char
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: java/lang/String.charAt
-  dispatchType: java/lang/String
-  hasStableParameterNames: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: OPEN
-  name: charAt
-  origin: JAVA
-  receiverType: null
-  symbolKind: MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtFirValueParameterSymbol(p0)
-  ]
-  visibility: Public
-
-KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -1511,9 +1485,9 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Char
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin/CharSequence.get
-  dispatchType: @EnhancedNullability kotlin/CharSequence
-  hasStableParameterNames: true
+  callableIdIfNonLocal: java/lang/String.get
+  dispatchType: java/lang/String
+  hasStableParameterNames: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1522,14 +1496,14 @@ KtFirFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
-  modality: ABSTRACT
+  modality: OPEN
   name: get
-  origin: LIBRARY
+  origin: JAVA
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [
-    KtFirValueParameterSymbol(index)
+    KtFirValueParameterSymbol(p0)
   ]
   visibility: Public
 
