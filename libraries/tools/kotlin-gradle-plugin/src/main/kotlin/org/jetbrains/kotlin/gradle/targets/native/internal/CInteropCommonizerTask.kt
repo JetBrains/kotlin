@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
-import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.CommonizerDependency
-import org.jetbrains.kotlin.commonizer.NonTargetedCommonizerDependency
 import org.jetbrains.kotlin.commonizer.TargetedCommonizerDependency
 import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
@@ -142,7 +140,11 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
             .mapNotNull { sourceSet -> CInteropCommonizerDependent.from(project, sourceSet) }
             .toSet()
 
-        return (fromSharedNativeCompilations + fromSourceSets)
+        val fromSourceSetsAssociateCompilations = multiplatformExtension.sourceSets
+            .mapNotNull { sourceSet -> CInteropCommonizerDependent.fromAssociateCompilations(project, sourceSet) }
+            .toSet()
+
+        return (fromSharedNativeCompilations + fromSourceSets + fromSourceSetsAssociateCompilations)
     }
 }
 

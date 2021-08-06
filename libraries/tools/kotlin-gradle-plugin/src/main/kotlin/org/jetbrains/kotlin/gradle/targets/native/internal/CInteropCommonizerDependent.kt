@@ -92,6 +92,19 @@ internal fun CInteropCommonizerDependent.Factory.from(project: Project, sourceSe
     )
 }
 
+internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(
+    project: Project, sourceSet: KotlinSourceSet
+): CInteropCommonizerDependent? {
+    return from(
+        target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
+        compilations = (compilationsBySourceSets(project)[sourceSet] ?: return null)
+            .filterIsInstance<KotlinNativeCompilation>()
+            .flatMap { compilation -> compilation.associateWithTransitiveClosure }
+            .filterIsInstance<KotlinNativeCompilation>()
+            .toSet()
+    )
+}
+
 private fun KotlinSharedNativeCompilation.findDependingNativeCompilations(): Set<KotlinNativeCompilation> {
     val multiplatformExtension = project.multiplatformExtensionOrNull ?: return emptySet()
     val allParticipatingSourceSetsOfCompilation = allParticipatingSourceSets()

@@ -46,16 +46,10 @@ private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: Default
     val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask ?: return
 
     addDependency(sourceSet, filesProvider files@{
-        val sourceSetCommonizerTarget = getCommonizerTarget(sourceSet)
+        val directlyDependent = CInteropCommonizerDependent.from(project, sourceSet)
+        val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(project, sourceSet)
 
-        val additionalVisibleSourceSets = sourceSet.getAdditionalVisibleSourceSets()
-            .filter { sourceSet -> getCommonizerTarget(sourceSet) == sourceSetCommonizerTarget }
-
-        val cinteropCommonizerDependents = (additionalVisibleSourceSets + sourceSet).toSet()
-            .mapNotNull { sourceSet -> CInteropCommonizerDependent.from(this, sourceSet) }
-            .toSet()
-
-        cinteropCommonizerDependents.map { cinteropCommonizerDependent ->
+        listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
             cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
         }
     })
