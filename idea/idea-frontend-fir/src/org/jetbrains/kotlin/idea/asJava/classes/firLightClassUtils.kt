@@ -119,7 +119,7 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     return (targetField as? FirLightFieldForEnumEntry)?.initializingClass as? KtLightClass
 }
 
-internal fun FirLightClassForSymbol.createConstructors(
+internal fun FirLightClassBase.createConstructors(
     declarations: Sequence<KtConstructorSymbol>,
     result: MutableList<KtLightMethod>
 ) {

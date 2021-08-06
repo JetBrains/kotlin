@@ -59,8 +59,11 @@ internal class FirLightAnonymousClassForSymbol(
         val result = mutableListOf<KtLightMethod>()
 
         analyzeWithSymbolAsContext(anonymousObjectSymbol) {
-            val callableSymbols = anonymousObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-            createMethods(callableSymbols, result)
+            val declaredMemberScope = anonymousObjectSymbol.getDeclaredMemberScope()
+
+            createMethods(declaredMemberScope.getCallableSymbols(), result)
+
+            createConstructors(declaredMemberScope.getConstructors(), result)
         }
 
         result

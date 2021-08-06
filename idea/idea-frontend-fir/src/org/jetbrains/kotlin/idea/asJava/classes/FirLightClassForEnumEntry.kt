@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.asJava.FirLightClassModifierList
 import org.jetbrains.kotlin.idea.asJava.FirLightPsiJavaCodeReferenceElementWithNoReference
+import org.jetbrains.kotlin.idea.asJava.classes.createConstructors
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
@@ -127,8 +128,11 @@ internal class FirLightClassForEnumEntry(
         val result = mutableListOf<KtLightMethod>()
 
         analyzeWithSymbolAsContext(enumEntrySymbol) {
-            val callableSymbols = enumEntrySymbol.getDeclaredMemberScope().getCallableSymbols()
-            createMethods(callableSymbols, result)
+            val declaredMemberScope = enumEntrySymbol.getDeclaredMemberScope()
+
+            createMethods(declaredMemberScope.getCallableSymbols(), result)
+
+            createConstructors(declaredMemberScope.getConstructors(), result)
         }
 
         return result
