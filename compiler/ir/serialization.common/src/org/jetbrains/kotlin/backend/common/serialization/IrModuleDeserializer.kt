@@ -155,8 +155,8 @@ class IrModuleDeserializerWithBuiltIns(
             val classSignature = idSig.container
             val classSymbol = resolveFunctionalInterface(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
             val typeParameterSig = composite.inner as IdSignature.LocalSignature
-            val typeParameterIndex = typeParameterSig.hashSig ?: error("Expected index for $idSig")
-            val typeParameter = classSymbol.owner.typeParameters[typeParameterIndex.toInt()]
+            val typeParameterIndex = typeParameterSig.index()
+            val typeParameter = classSymbol.owner.typeParameters[typeParameterIndex]
             return typeParameter.symbol
         }
         val publicSig = idSig.asPublic() ?: error("$idSig has to be public")

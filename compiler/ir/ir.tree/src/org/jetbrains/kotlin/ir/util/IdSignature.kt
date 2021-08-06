@@ -194,6 +194,8 @@ sealed class IdSignature {
         override val isLocal: Boolean
             get() = true
 
+        fun index(): Int = hashSig?.toInt() ?: error("Expected index in ${render()}")
+
         override fun topLevelSignature(): IdSignature {
             error("Illegal access: Local Sig does not have toplevel (${render()}")
         }

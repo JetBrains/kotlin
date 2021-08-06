@@ -57,7 +57,7 @@ class DescriptorByIdSignatureFinder(
                 fqn == MangleConstant.TYPE_PARAMETER_MARKER_NAME || fqn == MangleConstant.TYPE_PARAMETER_MARKER_NAME_SETTER
 
             if (isTypeParameterSig(inner.localFqn)) {
-                val tpIndex = inner.hashSig?.toInt() ?: error("Expected index in $signature")
+                val tpIndex = inner.index()
                 if (container is CallableDescriptor) {
                     return container.typeParameters[tpIndex]
                 }
