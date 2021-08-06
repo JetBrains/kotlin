@@ -206,4 +206,18 @@ class BuildCacheRelocationIT : BaseGradleIT() {
                 .map { it.relativeTo(dir) to it.readBytes().contentHashCode() }
                 .toList()
         }
+
+    private fun BaseGradleIT.Project.prepareLocalBuildCache(directory: File = File(projectDir.parentFile, "buildCache").apply { mkdir() }): File {
+        if (!projectDir.exists()) {
+            setupWorkingDir()
+        }
+        File(projectDir, "settings.gradle").appendText("\nbuildCache.local.directory = '${directory.absolutePath.replace("\\", "/")}'")
+        return directory
+    }
+
+    private fun CompiledProject.assertTaskPackedToCache(taskPath: String) {
+        with(project.testCase) {
+            assertContainsRegex(Regex("(?:Packing|Stored cache entry for) task '${Regex.escape(taskPath)}'"))
+        }
+    }
 }
