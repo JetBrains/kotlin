@@ -109,10 +109,15 @@ abstract class BasicWasmBoxTest(
         testFunction: String
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode = getBoolean("kotlin.wasm.debugMode")
+        val debugMode: Int = when (System.getProperty("kotlin.wasm.debugMode")) {
+            "2", "super_debug" -> 2
+            "1", "true", "debug" -> 1
+            "0", "false", "", null -> 0
+            else -> 0
+        }
 
-        val phaseConfig = if (debugMode) {
-            val allPhasesSet = wasmPhases.toPhaseMap().values.toSet()
+        val phaseConfig = if (debugMode >= 1) {
+            val allPhasesSet = if (debugMode >= 2) wasmPhases.toPhaseMap().values.toSet() else emptySet()
             val dumpOutputDir = File(outputWatFile.parent, outputWatFile.nameWithoutExtension + "-irdump")
             println("\n ------ Dumping phases to file://$dumpOutputDir")
             println("\n ------  KT file://${testFile.absolutePath}")
@@ -122,7 +127,7 @@ abstract class BasicWasmBoxTest(
             PhaseConfig(
                 wasmPhases,
                 dumpToDirectory = dumpOutputDir.path,
-                // toDumpStateAfter = allPhasesSet,
+                toDumpStateAfter = allPhasesSet,
                 // toValidateStateAfter = allPhasesSet,
                 // dumpOnlyFqName = null
             )
