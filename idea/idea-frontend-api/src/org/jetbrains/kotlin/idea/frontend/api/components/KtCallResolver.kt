@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtUnaryExpression
@@ -14,6 +15,7 @@ public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCall(call: KtCallElement): KtCall?
     public abstract fun resolveCall(call: KtBinaryExpression): KtCall?
     public abstract fun resolveCall(call: KtUnaryExpression): KtCall?
+    public abstract fun resolveCall(call: KtArrayAccessExpression): KtCall?
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
@@ -24,5 +26,8 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
         analysisSession.callResolver.resolveCall(this)
 
     public fun KtUnaryExpression.resolveCall(): KtCall? =
+        analysisSession.callResolver.resolveCall(this)
+
+    public fun KtArrayAccessExpression.resolveCall(): KtCall? =
         analysisSession.callResolver.resolveCall(this)
 }

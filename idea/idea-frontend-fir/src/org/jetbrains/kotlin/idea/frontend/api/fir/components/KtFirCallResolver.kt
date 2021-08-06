@@ -78,6 +78,13 @@ internal class KtFirCallResolver(
         }
     }
 
+    override fun resolveCall(call: KtArrayAccessExpression): KtCall? = withValidityAssertion {
+        return when (val fir = call.getOrBuildFir(firResolveState)) {
+            is FirFunctionCall -> resolveCall(fir)
+            else -> null
+        }
+    }
+
     private fun resolveCall(firCall: FirFunctionCall): KtCall? {
         val session = firResolveState.rootModuleSession
         return when {
