@@ -12,6 +12,11 @@ repositories {
 android {
     compileSdkVersion(23)
     buildToolsVersion("25.0.2")
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
 
 kotlin {
