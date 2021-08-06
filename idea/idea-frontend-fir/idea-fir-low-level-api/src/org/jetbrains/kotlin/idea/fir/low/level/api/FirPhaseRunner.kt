@@ -7,28 +7,14 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 internal class FirPhaseRunner {
-    private val superTypesBodyResolveLock = ReentrantLock()
-    private val statusResolveLock = ReentrantLock()
-    private val implicitTypesResolveLock = ReentrantLock()
-
-    inline fun runPhaseWithCustomResolve(phase: FirResolvePhase, crossinline resolve: () -> Unit) = when (phase) {
-        FirResolvePhase.SUPER_TYPES -> superTypesBodyResolveLock.withLock {
-            runPhaseWithCustomResolveWithoutLock(resolve)
-        }
-        FirResolvePhase.STATUS -> statusResolveLock.withLock {
-            runPhaseWithCustomResolveWithoutLock(resolve)
-        }
-        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesResolveLock.withLock {
-            runPhaseWithCustomResolveWithoutLock(resolve)
-        }
-        else -> {
-            runPhaseWithCustomResolveWithoutLock(resolve)
-        }
-    }
+    /**
+     * We temporary disable multi-locks to fix deadlocks problem
+     * @see org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.LockProvider
+     */
+    inline fun runPhaseWithCustomResolve(phase: FirResolvePhase, crossinline resolve: () -> Unit) =
+        runPhaseWithCustomResolveWithoutLock(resolve)
 
     private inline fun runPhaseWithCustomResolveWithoutLock(crossinline resolve: () -> Unit) {
         executeWithoutPCE {

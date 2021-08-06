@@ -5,36 +5,26 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
-import com.google.common.collect.MapMaker
-import com.google.common.util.concurrent.CycleDetectingLockFactory
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
-import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
+/**
+ * Keyed locks provider.
+ * !!! We temporary remove its correct implementation to fix deadlocks problem. Do not use this until this comment is present
+ */
 internal class LockProvider<KEY> {
-    private val locks: ConcurrentMap<KEY, ReentrantLock> = MapMaker().weakKeys().makeMap()
-
-    @Suppress("UnstableApiUsage")
-    private val lockFactory = CycleDetectingLockFactory.newInstance(CycleDetectingLockFactory.Policies.THROW)
-
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun getLockFor(key: KEY) = locks.getOrPut(key) {
-        val file = key as FirFile
-        val name = "${file.packageDirective.packageFqName.asString()}.${file.name}"
-        @Suppress("UnstableApiUsage")
-        lockFactory.newReentrantLock(name)
-    }
+    val globalLock = ReentrantLock()
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withWriteLock(key: KEY, action: () -> R): R =
-        getLockFor(key).withLock(action)
+        globalLock.withLock(action)
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withWriteLockPCECheck(key: KEY, lockingIntervalMs: Long, action: () -> R): R =
-        getLockFor(key).lockWithPCECheck(lockingIntervalMs, action)
+        globalLock.lockWithPCECheck(lockingIntervalMs, action) //We temporary disable multi-locks to fix deadlocks problem
 }
 
 /**
