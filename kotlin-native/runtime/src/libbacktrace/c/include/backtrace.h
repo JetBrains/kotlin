@@ -98,7 +98,7 @@ extern struct backtrace_state *backtrace_create_state (
    invalid after this function returns.  */
 
 typedef int (*backtrace_full_callback) (void *data, uintptr_t pc,
-					const char *filename, int lineno,
+					const char *filename, int lineno, int column,
 					const char *function);
 
 /* Get a full stack backtrace.  SKIP is the number of frames to skip;
