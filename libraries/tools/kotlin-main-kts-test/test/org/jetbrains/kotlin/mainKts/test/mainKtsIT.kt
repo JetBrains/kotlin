@@ -37,7 +37,6 @@ class MainKtsIT {
     }
 
     @Test
-    @Ignore
     fun testImport() {
         val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
         Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
@@ -70,7 +69,6 @@ class MainKtsIT {
 
     @OptIn(ExperimentalPathApi::class)
     @Test
-    @Ignore
     fun testCache() {
         val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
         val cache = createTempDirectory("main.kts.test")
@@ -98,7 +96,6 @@ class MainKtsIT {
 
     @OptIn(ExperimentalPathApi::class)
     @Test
-    @Ignore
     fun testCacheInProcess() {
         val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
         val cache = createTempDirectory("main.kts.test")
