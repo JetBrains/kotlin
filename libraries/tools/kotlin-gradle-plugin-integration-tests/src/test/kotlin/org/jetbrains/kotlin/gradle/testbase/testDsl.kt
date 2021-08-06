@@ -213,8 +213,7 @@ internal fun Path.enableCacheRedirector() {
         "$redirectorScript does not exist! Please provide correct path to 'cacheRedirector.gradle.kts' file."
     }
     val gradleDir = resolve("gradle").also { it.createDirectories() }
-    val cacheRedirectFile = gradleDir.resolve("cacheRedirector.gradle.kts")
-    redirectorScript.copyTo(cacheRedirectFile)
+    redirectorScript.copyTo(gradleDir.resolve("cacheRedirector.gradle.kts"))
 
     val projectCacheRedirectorStatus = Paths
         .get("../../../gradle.properties")
@@ -239,7 +238,10 @@ internal fun Path.enableCacheRedirector() {
                 it.appendText(
                     """
 
-                        apply(from: "$cacheRedirectFile")
+                        def cacheRedirectorFile = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
+                        if (new File(cacheRedirectorFile).exists()) {
+                            apply from: cacheRedirectorFile
+                        }
 
                     """.trimIndent()
                 )
@@ -248,7 +250,10 @@ internal fun Path.enableCacheRedirector() {
                 it.appendText(
                     """
 
-                        apply(from = "$cacheRedirectFile")
+                        val cacheRedirectorFile = "${'$'}rootDir/gradle/cacheRedirector.gradle.kts"
+                        if (File(cacheRedirectorFile).exists()) {
+                            apply(from = cacheRedirectorFile)
+                        }
 
                     """.trimIndent()
                 )
