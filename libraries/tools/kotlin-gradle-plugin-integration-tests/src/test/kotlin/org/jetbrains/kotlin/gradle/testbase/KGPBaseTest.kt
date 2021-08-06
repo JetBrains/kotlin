@@ -43,7 +43,16 @@ abstract class KGPBaseTest {
         val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
         val fileSystemWatchEnabled: Boolean = false,
         val buildCacheEnabled: Boolean = false,
+        val kaptOptions: KaptOptions? = null
     ) {
+        data class KaptOptions(
+            val verbose: Boolean = false,
+            val useWorkers: Boolean = false,
+            val incrementalKapt: Boolean = false,
+            val includeCompileClasspath: Boolean = false,
+            val classLoadersCacheSize: Int? = null
+        )
+
         fun toArguments(
             gradleVersion: GradleVersion
         ): List<String> {
@@ -83,6 +92,16 @@ abstract class KGPBaseTest {
             }
 
             arguments.add(if (buildCacheEnabled) "--build-cache" else "--no-build-cache")
+
+            if (kaptOptions != null) {
+                arguments.add("-Pkapt.verbose=${kaptOptions.verbose}")
+                arguments.add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
+                arguments.add("-Pkapt.incremental.apt=${kaptOptions.incrementalKapt}")
+                arguments.add("-Pkapt.include.compile.classpath=${kaptOptions.includeCompileClasspath}")
+                kaptOptions.classLoadersCacheSize?.let { cacheSize ->
+                    arguments.add("-Pkapt.classloaders.cache.size=$cacheSize")
+                }
+            }
 
             return arguments.toList()
         }
