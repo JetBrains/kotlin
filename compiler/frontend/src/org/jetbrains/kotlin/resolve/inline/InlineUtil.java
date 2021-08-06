@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping;
@@ -78,8 +79,11 @@ public class InlineUtil {
         if (descriptor == null) return false;
         if (isInline(descriptor) && descriptor instanceof DeclarationDescriptorWithVisibility) {
             DescriptorVisibility visibility = ((DeclarationDescriptorWithVisibility) descriptor).getVisibility();
-            if (!DescriptorVisibilities.isPrivate(visibility))
-                return true;
+            if (!DescriptorVisibilities.isPrivate(visibility)) {
+                ClassDescriptor containingClass = DescriptorUtils.getContainingClass(descriptor);
+                if (containingClass == null || !DescriptorVisibilities.isPrivate(containingClass.getVisibility()))
+                    return true;
+            }
         }
         return isInPublicInlineScope(descriptor.getContainingDeclaration());
     }
