@@ -57,6 +57,10 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allPropertyAccessorCheckers.check(propertyAccessor, data, reporter)
     }
 
+    override fun visitPropertyFieldDeclaration(propertyFieldDeclaration: FirPropertyFieldDeclaration, data: CheckerContext) {
+        checkers.allPropertyFieldDeclarationCheckers.check(propertyFieldDeclaration, data, reporter)
+    }
+
     override fun visitValueParameter(valueParameter: FirValueParameter, data: CheckerContext) {
         checkers.allValueParameterCheckers.check(valueParameter, data, reporter)
     }
