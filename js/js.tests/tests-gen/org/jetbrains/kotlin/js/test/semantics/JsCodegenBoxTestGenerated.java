@@ -11389,6 +11389,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/functions/kt47527.kt");
         }
 
+        @TestMetadata("kt48058.kt")
+        public void testKt48058() throws Exception {
+            runTest("compiler/testData/codegen/box/functions/kt48058.kt");
+        }
+
         @TestMetadata("kt785.kt")
         public void testKt785() throws Exception {
             runTest("compiler/testData/codegen/box/functions/kt785.kt");
