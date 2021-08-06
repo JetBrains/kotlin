@@ -1,2 +1,3 @@
+warning: -Xuse-old-backend is deprecated and will be removed in a future release
 warning: both -Xuse-ir and -Xuse-old-backend are passed. This is an inconsistent configuration. The compiler will use the old JVM backend
 OK

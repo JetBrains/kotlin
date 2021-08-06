@@ -212,13 +212,20 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
                 arguments.useIR && !useOldBackend
             }
 
-    if (arguments.useIR && arguments.useOldBackend) {
+    if (arguments.useOldBackend) {
         messageCollector.report(
             STRONG_WARNING,
-            "Both -Xuse-ir and -Xuse-old-backend are passed. This is an inconsistent configuration. " +
-                    "The compiler will use the ${if (useIR) "JVM IR" else "old JVM"} backend"
+            "-Xuse-old-backend is deprecated and will be removed in a future release"
         )
+        if (arguments.useIR) {
+            messageCollector.report(
+                STRONG_WARNING,
+                "Both -Xuse-ir and -Xuse-old-backend are passed. This is an inconsistent configuration. " +
+                        "The compiler will use the ${if (useIR) "JVM IR" else "old JVM"} backend"
+            )
+        }
     }
+
     messageCollector.report(LOGGING, "Using ${if (useIR) "JVM IR" else "old JVM"} backend")
 
     put(JVMConfigurationKeys.IR, useIR)

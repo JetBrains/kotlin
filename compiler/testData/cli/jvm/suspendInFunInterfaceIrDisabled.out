@@ -1,3 +1,4 @@
+warning: -Xuse-old-backend is deprecated and will be removed in a future release
 compiler/testData/cli/jvm/suspendInFunInterfaceIrDisabled.kt:2:5: error: 'suspend' modifier is not allowed on a single abstract member
     suspend fun foo()
     ^
