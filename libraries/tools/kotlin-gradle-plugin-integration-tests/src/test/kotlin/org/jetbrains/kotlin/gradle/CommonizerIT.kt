@@ -380,6 +380,11 @@ class CommonizerIT : BaseGradleIT() {
 
             reportSourceSetCommonizerDependencies(this, testSourceSetsDependingOnMainParameter) {
                 it.assertTestSourceSetsDependingOnMainParameter()
+
+                /* this source sets are also shared with a jvm target */
+                getCommonizerDependencies("commonMain").assertEmpty()
+                getCommonizerDependencies("commonTest").assertEmpty()
+
                 getCommonizerDependencies("nativeMain").onlyCInterops().apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper".takeIf { isUnix })
                     assertTargetOnAllDependencies(
