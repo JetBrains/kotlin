@@ -3468,6 +3468,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("incorrectSmartcastToNothing.kt")
+            public void testIncorrectSmartcastToNothing() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/incorrectSmartcastToNothing.kt");
+            }
+
+            @Test
             @TestMetadata("kt10240.kt")
             public void testKt10240() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt10240.kt");

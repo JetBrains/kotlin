@@ -627,6 +627,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun enterWhenBranchCondition(whenBranch: FirWhenBranch): WhenBranchConditionEnterNode {
+        levelCounter += whenBranchIndices.top().getValue(whenBranch)
         return createWhenBranchConditionEnterNode(whenBranch).also { addNewSimpleNode(it) }.also { levelCounter++ }
     }
 
@@ -639,7 +640,6 @@ class ControlFlowGraphBuilder {
             lastNodes.push(it)
             addEdge(conditionExitNode, it)
         }
-        levelCounter += whenBranchIndices.top().getValue(whenBranch)
         return conditionExitNode to branchEnterNode
     }
 
