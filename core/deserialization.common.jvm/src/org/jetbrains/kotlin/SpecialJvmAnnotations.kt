@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin
 
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 
 object SpecialJvmAnnotations {
     val SPECIAL_ANNOTATIONS: Set<ClassId> = listOf(
@@ -18,4 +20,22 @@ object SpecialJvmAnnotations {
         JvmAnnotationNames.RETENTION_ANNOTATION,
         JvmAnnotationNames.DOCUMENTED_ANNOTATION
     ).mapTo(mutableSetOf(), ClassId::topLevel)
+
+    val JAVA_LANG_ANNOTATION_REPEATABLE = ClassId.topLevel(JvmAnnotationNames.REPEATABLE_ANNOTATION)
+
+    fun isAnnotatedWithContainerMetaAnnotation(klass: KotlinJvmBinaryClass): Boolean {
+        var result = false
+        klass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
+            override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                if (classId == JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_META_ANNOTATION) {
+                    result = true
+                }
+                return null
+            }
+
+            override fun visitEnd() {
+            }
+        }, null)
+        return result
+    }
 }

@@ -33,14 +33,14 @@ class JvmBinaryAnnotationDeserializer(
     byteContent: ByteArray?
 ) : AbstractAnnotationDeserializer(session) {
     private val annotationInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        session.loadMemberAnnotations(kotlinBinaryClass, byteContent)
+        session.loadMemberAnnotations(kotlinBinaryClass, byteContent, kotlinClassFinder)
     }
 
     private val annotationInfoForDefaultImpls by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val defaultImplsClassId = kotlinBinaryClass.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
         val (defaultImplsClass, defaultImplsByteContent) = kotlinClassFinder.findKotlinClassOrContent(defaultImplsClassId) as? KotlinClassFinder.Result.KotlinClass
             ?: return@lazy null
-        session.loadMemberAnnotations(defaultImplsClass, defaultImplsByteContent)
+        session.loadMemberAnnotations(defaultImplsClass, defaultImplsByteContent, kotlinClassFinder)
     }
 
     override fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
@@ -288,9 +288,13 @@ class JvmBinaryAnnotationDeserializer(
 private data class MemberAnnotations(val memberAnnotations: MutableMap<MemberSignature, MutableList<FirAnnotationCall>>)
 
 // TODO: better to be in KotlinDeserializedJvmSymbolsProvider?
-private fun FirSession.loadMemberAnnotations(kotlinBinaryClass: KotlinJvmBinaryClass, byteContent: ByteArray?): MemberAnnotations {
+private fun FirSession.loadMemberAnnotations(
+    kotlinBinaryClass: KotlinJvmBinaryClass,
+    byteContent: ByteArray?,
+    kotlinClassFinder: KotlinClassFinder,
+): MemberAnnotations {
     val memberAnnotations = hashMapOf<MemberSignature, MutableList<FirAnnotationCall>>()
-    val annotationsLoader = AnnotationsLoader(this)
+    val annotationsLoader = AnnotationsLoader(this, kotlinClassFinder)
 
     kotlinBinaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
         override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {

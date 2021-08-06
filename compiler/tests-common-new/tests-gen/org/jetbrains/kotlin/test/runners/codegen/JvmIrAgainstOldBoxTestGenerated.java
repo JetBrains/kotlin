@@ -398,6 +398,12 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
     }
 
     @Test
+    @TestMetadata("repeatableAnnotation.kt")
+    public void testRepeatableAnnotation() throws Exception {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/repeatableAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("sealedClass.kt")
     public void testSealedClass() throws Exception {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/sealedClass.kt");

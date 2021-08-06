@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -29,7 +32,6 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.compact
-import java.util.*
 
 class BinaryClassAnnotationAndConstantLoaderImpl(
     private val module: ModuleDescriptor,
@@ -143,7 +145,13 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             override fun visitEnd() {
-                result.add(AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source))
+                val annotation = AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source)
+                // Do not load the @java.lang.annotation.Repeatable annotation instance generated automatically by the compiler for
+                // Kotlin-repeatable annotation classes. Otherwise the reference to the implicit nested "Container" class cannot be
+                // resolved, since that class is only generated in the backend, and is not visible to the frontend.
+                if (!isRepeatableWithImplicitContainer(annotation)) {
+                    result.add(annotation)
+                }
             }
 
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
@@ -155,5 +163,19 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 
     private fun resolveClass(classId: ClassId): ClassDescriptor {
         return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)
+    }
+
+    private fun isRepeatableWithImplicitContainer(annotation: AnnotationDescriptor): Boolean {
+        if (annotation.fqName != JvmAnnotationNames.REPEATABLE_ANNOTATION) return false
+
+        val containerKClassValue = annotation.allValueArguments[Name.identifier("value")] as? KClassValue ?: return false
+        val normalClass = containerKClassValue.value as? KClassValue.Value.NormalClass ?: return false
+        val classId = normalClass.classId
+        if (classId.outerClassId == null ||
+            classId.shortClassName.asString() != JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME
+        ) return false
+
+        val klass = kotlinClassFinder.findKotlinClass(classId)
+        return klass != null && SpecialJvmAnnotations.isAnnotatedWithContainerMetaAnnotation(klass)
     }
 }

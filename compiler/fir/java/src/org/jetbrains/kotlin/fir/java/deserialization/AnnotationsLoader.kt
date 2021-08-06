@@ -9,28 +9,30 @@ import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.createConstantOrError
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.constructClassType
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 
-internal class AnnotationsLoader(private val session: FirSession) {
+internal class AnnotationsLoader(private val session: FirSession, private val kotlinClassFinder: KotlinClassFinder) {
     private fun loadAnnotation(
         annotationClassId: ClassId, result: MutableList<FirAnnotationCall>,
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
@@ -141,6 +143,11 @@ internal class AnnotationsLoader(private val session: FirSession) {
             }
 
             override fun visitEnd() {
+                // Do not load the @java.lang.annotation.Repeatable annotation instance generated automatically by the compiler for
+                // Kotlin-repeatable annotation classes. Otherwise the reference to the implicit nested "Container" class cannot be
+                // resolved, since that class is only generated in the backend, and is not visible to the frontend.
+                if (isRepeatableWithImplicitContainer(lookupTag, argumentMap)) return
+
                 result += buildAnnotationCall {
                     annotationTypeRef = lookupTag.toDefaultResolvedTypeRef()
                     argumentList = buildArgumentList {
@@ -160,6 +167,21 @@ internal class AnnotationsLoader(private val session: FirSession) {
                 return value.createConstantOrError(session)
             }
         }
+    }
+
+    private fun isRepeatableWithImplicitContainer(lookupTag: ConeClassLikeLookupTag, argumentMap: Map<Name, FirExpression>): Boolean {
+        if (lookupTag.classId != SpecialJvmAnnotations.JAVA_LANG_ANNOTATION_REPEATABLE) return false
+
+        val getClassCall = argumentMap[Name.identifier("value")] as? FirGetClassCall ?: return false
+        val classReference = getClassCall.argument as? FirClassReferenceExpression ?: return false
+        val containerType = classReference.classTypeRef.coneType as? ConeClassLikeType ?: return false
+        val classId = containerType.lookupTag.classId
+        if (classId.outerClassId == null ||
+            classId.shortClassName.asString() != JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME
+        ) return false
+
+        val klass = kotlinClassFinder.findKotlinClass(classId)
+        return klass != null && SpecialJvmAnnotations.isAnnotatedWithContainerMetaAnnotation(klass)
     }
 
     internal fun loadAnnotationIfNotSpecial(
