@@ -1,2 +1,3 @@
+warning: -Xuse-old-backend is deprecated and will be removed in a future release
 error: -Xabi-stability=unstable is not supported in the old JVM backend
 COMPILATION_ERROR
