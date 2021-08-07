@@ -4109,6 +4109,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         public void testIndices() throws Exception {
             runTest("compiler/testData/codegen/boxInline/signatureMangling/indices.kt");
         }
+
+        @Test
+        @TestMetadata("rawType.kt")
+        public void testRawType() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/signatureMangling/rawType.kt");
+        }
     }
 
     @Nested
