@@ -18107,6 +18107,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testMutableCollectionPlusAssign() throws Exception {
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/mutableCollectionPlusAssign.kt");
         }
+
+        @Test
+        @TestMetadata("suspensionPointInsideArgument.kt")
+        public void testSuspensionPointInsideArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineArgsInPlace/suspensionPointInsideArgument.kt");
+        }
     }
 
     @Nested

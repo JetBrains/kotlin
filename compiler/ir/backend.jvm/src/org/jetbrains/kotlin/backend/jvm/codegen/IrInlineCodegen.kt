@@ -39,19 +39,32 @@ class IrInlineCodegen(
     InlineCodegen<ExpressionCodegen>(codegen, state, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner),
     IrInlineCallGenerator {
 
-    private val inlineArgumentsInPlace = run {
-        if (function.isInlineOnly() &&
-            !function.isSuspend &&
-            function.valueParameters.isNotEmpty() &&
-            function.valueParameters.none { it.type.isFunction() || it.type.isSuspendFunction() }
-        ) {
-            val methodNode = sourceCompiler.compileInlineFunction(signature).node
-            if (canInlineArgumentsInPlace(methodNode)) {
-                return@run true
-            }
+    private val inlineArgumentsInPlace = canInlineArgumentsInPlace()
+
+    private fun canInlineArgumentsInPlace(): Boolean {
+        if (!function.isInlineOnly()) return false
+        if (function.isSuspend) return false
+
+        var actualParametersCount = function.valueParameters.size
+        function.dispatchReceiverParameter?.let { dispatchReceiverParameter ->
+            ++actualParametersCount
+            if (dispatchReceiverParameter.isFunctionOrSuspendFunction())
+                return false
         }
-        false
+        function.extensionReceiverParameter?.let { extensionReceiverParameter ->
+            ++actualParametersCount
+            if (extensionReceiverParameter.isFunctionOrSuspendFunction())
+                return false
+        }
+        if (actualParametersCount == 0)
+            return false
+        if (function.valueParameters.any { it.isFunctionOrSuspendFunction() })
+            return false
+
+        return canInlineArgumentsInPlace(sourceCompiler.compileInlineFunction(jvmSignature).node)
     }
+
+    private fun IrValueParameter.isFunctionOrSuspendFunction() = type.isFunction() || type.isSuspendFunction()
 
     override fun beforeCallStart() {
         if (inlineArgumentsInPlace) {

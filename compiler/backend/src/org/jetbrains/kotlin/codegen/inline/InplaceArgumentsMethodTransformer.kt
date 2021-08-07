@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.optimization.boxing.isMethodInsnWith
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Label
@@ -19,6 +20,7 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
 
             collectStartToEnd(methodContext)
             collectLvtEntryInstructions(methodContext)
+            collectSuspensionPoints(methodContext)
 
             transformMethod(methodContext)
             updateLvtEntriesForMovedInstructions(methodContext)
@@ -36,6 +38,7 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         val startArgToEndArg = HashMap<AbstractInsnNode, AbstractInsnNode>()
         val lvtEntryForInstruction = HashMap<AbstractInsnNode, LocalVariableNode>()
         val varInstructionMoved = HashMap<AbstractInsnNode, CallContext>()
+        val suspensionJumpLabels = HashSet<LabelNode>()
     }
 
     private class CallContext(
@@ -185,6 +188,37 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         }
     }
 
+    private fun collectSuspensionPoints(methodContext: MethodContext) {
+        val insnList = methodContext.methodNode.instructions
+        var insn = insnList.first
+        while (
+            !insn.isMethodInsnWith(Opcodes.INVOKESTATIC) {
+                owner == "kotlin/coroutines/intrinsics/IntrinsicsKt" &&
+                        name == "getCOROUTINE_SUSPENDED" &&
+                        desc == "()Ljava/lang/Object;"
+            }
+        ) {
+            insn = insn.next ?: return
+        }
+
+        // Find a first TABLESWITCH and record its jump destinations
+        while (insn != null) {
+            if (insn.opcode != Opcodes.TABLESWITCH || insn.previous.opcode != Opcodes.GETFIELD) {
+                insn = insn.next
+                continue
+            }
+            val getFiendInsn = insn.previous as FieldInsnNode
+            if (getFiendInsn.name != "label" || getFiendInsn.desc != "I") {
+                insn = insn.next
+                continue
+            }
+            val tableSwitchInsn = insn as TableSwitchInsnNode
+            methodContext.suspensionJumpLabels.addAll(tableSwitchInsn.labels)
+            methodContext.suspensionJumpLabels.add(tableSwitchInsn.dflt)
+            return
+        }
+    }
+
     private fun transformMethod(methodContext: MethodContext) {
         for (call in methodContext.calls) {
             transformCall(methodContext, call)
@@ -205,7 +239,7 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         // If an inplace argument contains a non-local jump,
         // moving such argument inside inline function body can interfere with stack normalization.
         // TODO investigate complex cases
-        if (callContext.args.any { it.hasNonLocalJump() }) {
+        if (callContext.args.any { it.isUnsafeToMove(methodContext) }) {
             // Do not transform such call, just strip call and argument markers.
             val insnList = methodContext.methodNode.instructions
             for (arg in callContext.args) {
@@ -220,10 +254,13 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         moveInplaceArgumentsFromStoresToLoads(methodContext, callContext)
     }
 
-    private fun ArgContext.hasNonLocalJump(): Boolean {
+    private fun ArgContext.isUnsafeToMove(methodContext: MethodContext): Boolean {
         val argInsns = InsnSequence(this.argStartMarker, this.argEndMarker)
         val localLabels = argInsns.filterTo(HashSet()) { it is LabelNode }
-        return argInsns.any { insn -> insn.opcode == Opcodes.GOTO && (insn as JumpInsnNode).label !in localLabels }
+        return argInsns.any { insn ->
+            insn in methodContext.suspensionJumpLabels ||
+                    insn.opcode == Opcodes.GOTO && (insn as JumpInsnNode).label !in localLabels
+        }
     }
 
     private fun moveInplaceArgumentsFromStoresToLoads(methodContext: MethodContext, callContext: CallContext) {
