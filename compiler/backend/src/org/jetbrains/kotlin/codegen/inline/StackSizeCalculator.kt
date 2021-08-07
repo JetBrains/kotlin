@@ -71,7 +71,7 @@ internal class StackSizeCalculator(owner: String, method: MethodNode) :
         }
 
         override fun merge(frame: Frame<out FixStackValue>, interpreter: Interpreter<FixStackValue>): Boolean {
-            throw UnsupportedOperationException("Stack normalization should not merge frames")
+            throw UnsupportedOperationException("Stack size calculator should not merge frames")
         }
 
         fun getActualStackSize() = super.getStackSize() + extraStack.sumOf { it.size }
