@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 
 class InplaceArgumentsMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
@@ -153,16 +151,43 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
     }
 
     private fun transformCall(methodContext: MethodContext, callContext: CallContext) {
+        // Transform nested calls
         for (arg in callContext.args) {
-            transformArg(methodContext, arg)
+            for (nestedCall in arg.calls) {
+                transformCall(methodContext, nestedCall)
+            }
         }
-
         for (call in callContext.calls) {
             transformCall(methodContext, call)
         }
 
-        val insnList = methodContext.methodNode.instructions
+        // If an inplace argument contains a non-local jump,
+        // moving such argument inside inline function body can interfere with stack normalization.
+        // TODO investigate complex cases
+        if (callContext.args.any { it.hasNonLocalJump() }) {
+            // Do not transform such call, just strip call and argument markers.
+            val insnList = methodContext.methodNode.instructions
+            for (arg in callContext.args) {
+                insnList.remove(arg.argStartMarker)
+                insnList.remove(arg.argEndMarker)
+            }
+            insnList.remove(callContext.callStartMarker)
+            insnList.remove(callContext.callEndMarker)
+            return
+        }
 
+        moveInplaceArgumentsFromStoresToLoads(methodContext, callContext)
+    }
+
+    private fun ArgContext.hasNonLocalJump(): Boolean {
+        val argInsns = InsnSequence(this.argStartMarker, this.argEndMarker)
+        val localLabels = argInsns.filterTo(HashSet()) { it is LabelNode }
+        return argInsns.any { insn -> insn.opcode == Opcodes.GOTO && (insn as JumpInsnNode).label !in localLabels }
+    }
+
+    private fun moveInplaceArgumentsFromStoresToLoads(methodContext: MethodContext, callContext: CallContext) {
+        // Transform call
+        val insnList = methodContext.methodNode.instructions
         val args = callContext.args.associateBy { it.varIndex }
         var argsProcessed = 0
 
@@ -229,13 +254,6 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         // Remove call start and call end markers
         insnList.remove(callContext.callStartMarker)
         insnList.remove(callContext.callEndMarker)
-    }
-
-    private fun transformArg(methodContext: MethodContext, argContext: ArgContext) {
-        // Transform nested calls inside argument
-        for (call in argContext.calls) {
-            transformCall(methodContext, call)
-        }
     }
 
     private fun stripMarkers(methodNode: MethodNode) {
