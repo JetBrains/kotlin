@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.services.ModuleTransformerForSwitchingBackend
-import org.jetbrains.kotlin.test.services.ModuleTransformerForTwoFilesBoxTests
+import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 
 @OptIn(TestInfrastructureInternals::class)
 abstract class AbstractBoxInlineWithDifferentBackendsTest(
@@ -25,7 +25,7 @@ abstract class AbstractBoxInlineWithDifferentBackendsTest(
 
             resetModuleStructureTransformers()
             useModuleStructureTransformers(
-                ModuleTransformerForTwoFilesBoxTests(),
+                SplittingModuleTransformerForBoxTests(),
                 ModuleTransformerForSwitchingBackend(backendForLib, backendForMain)
             )
 

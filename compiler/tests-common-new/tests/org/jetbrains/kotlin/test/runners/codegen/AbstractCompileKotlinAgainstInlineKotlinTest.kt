@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.ModuleTransformerForTwoFilesBoxTests
+import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 
 
 @OptIn(TestInfrastructureInternals::class)
@@ -45,7 +45,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<I : ResultingArt
         useInlineHandlers()
         configureCommonHandlersForBoxTest()
         useModuleStructureTransformers(
-            ModuleTransformerForTwoFilesBoxTests()
+            SplittingModuleTransformerForBoxTests()
         )
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor.bind(IGNORE_BACKEND_MULTI_MODULE))
     }

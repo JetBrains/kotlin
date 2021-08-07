@@ -13,20 +13,23 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 
 /**
- * This transformers is used for transforming test with two files
- *   into test with two modules
+ * This transformers is used for transforming test with several files
+ *   into test with two modules, the second one containing the last file.
  *
- * It will fail in case when module structure contains more than one module
- *   or not exactly two files in it
+ * Used when the same test sets are run both in a single module mode (as in IrBlackBoxInlineCodegenTest)
+ * and in multi-module mode (as in IrCompileKotlinAgainstInlineKotlinTest).
+ *
+ * It will fail in case when module structure contains more than one module.
  */
 @TestInfrastructureInternals
-class ModuleTransformerForTwoFilesBoxTests : ModuleStructureTransformer() {
+class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
     override fun transformModuleStructure(moduleStructure: TestModuleStructure): TestModuleStructure {
         val module = moduleStructure.modules.singleOrNull() ?: error("Test should contain only one module")
         val realFiles = module.files.filterNot { it.isAdditional }
-        if (realFiles.size != 2) error("Test should contain exactly two files")
+        if (realFiles.size < 2) error("Test should contain at least two files")
         val additionalFiles = module.files.filter { it.isAdditional }
-        val (first, second) = realFiles
+        val firstModuleFiles = realFiles.dropLast(1)
+        val secondModuleFile = realFiles.last()
         val firstModule = TestModule(
             name = "lib",
             module.targetPlatform,
@@ -34,7 +37,7 @@ class ModuleTransformerForTwoFilesBoxTests : ModuleStructureTransformer() {
             module.frontendKind,
             module.backendKind,
             module.binaryKind,
-            files = listOf(first) + additionalFiles,
+            files = firstModuleFiles + additionalFiles,
             allDependencies = emptyList(),
             module.directives,
             module.languageVersionSettings
@@ -47,7 +50,7 @@ class ModuleTransformerForTwoFilesBoxTests : ModuleStructureTransformer() {
             module.frontendKind,
             module.backendKind,
             module.binaryKind,
-            files = listOf(second) + additionalFiles,
+            files = listOf(secondModuleFile) + additionalFiles,
             allDependencies = listOf(DependencyDescription("lib", DependencyKind.Binary, DependencyRelation.FriendDependency)),
             module.directives,
             module.languageVersionSettings
