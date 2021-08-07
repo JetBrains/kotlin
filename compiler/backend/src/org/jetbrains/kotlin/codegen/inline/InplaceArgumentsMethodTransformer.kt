@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 
@@ -15,8 +16,13 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         val methodContext = parseMethodOrNull(methodNode)
         if (methodContext != null) {
             if (methodContext.calls.isEmpty()) return
+
             collectStartToEnd(methodContext)
+            collectLvtEntryInstructions(methodContext)
+
             transformMethod(methodContext)
+            updateLvtEntriesForMovedInstructions(methodContext)
+
             val stackSizeAfter = StackSizeCalculator(internalClassName, methodNode).calculateStackSize()
             methodNode.maxStack = stackSizeAfter
         }
@@ -28,13 +34,16 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         val calls: List<CallContext>
     ) {
         val startArgToEndArg = HashMap<AbstractInsnNode, AbstractInsnNode>()
+        val lvtEntryForInstruction = HashMap<AbstractInsnNode, LocalVariableNode>()
+        val varInstructionMoved = HashMap<AbstractInsnNode, CallContext>()
     }
 
     private class CallContext(
         val callStartMarker: AbstractInsnNode,
         val callEndMarker: AbstractInsnNode,
         val args: List<ArgContext>,
-        val calls: List<CallContext>
+        val calls: List<CallContext>,
+        val endLabel: LabelNode
     )
 
     private class ArgContext(
@@ -61,7 +70,7 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
                 val insn = iter.next()
                 when {
                     insn.isInplaceCallStartMarker() ->
-                        calls.add(parseCall(insn, iter))
+                        calls.add(parseCall(methodNode, insn, iter))
                     insn.isInplaceCallEndMarker() || insn.isInplaceArgumentStartMarker() || insn.isInplaceArgumentEndMarker() ->
                         throw ParseErrorException()
                 }
@@ -72,7 +81,7 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         return MethodContext(methodNode, calls)
     }
 
-    private fun parseCall(start: AbstractInsnNode, iter: ListIterator<AbstractInsnNode>): CallContext {
+    private fun parseCall(methodNode: MethodNode, start: AbstractInsnNode, iter: ListIterator<AbstractInsnNode>): CallContext {
         //  CALL    ::= callStartMarker insn* (ARG insn*)* (CALL insn*)* callEndMarker
         val args = ArrayList<ArgContext>()
         val calls = ArrayList<CallContext>()
@@ -80,11 +89,22 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
             val insn = iter.next()
             when {
                 insn.isInplaceCallStartMarker() ->
-                    calls.add(parseCall(insn, iter))
-                insn.isInplaceCallEndMarker() ->
-                    return CallContext(start, insn, args, calls)
+                    calls.add(parseCall(methodNode, insn, iter))
+                insn.isInplaceCallEndMarker() -> {
+                    val previous = insn.previous
+                    val endLabel =
+                        if (previous.type == AbstractInsnNode.LABEL)
+                            previous as LabelNode
+                        else
+                            LabelNode(Label()).also {
+                                // Make sure each call with inplace arguments has an endLabel
+                                // (we need it to update LVT after transformation).
+                                methodNode.instructions.insertBefore(insn, it)
+                            }
+                    return CallContext(start, insn, args, calls, endLabel)
+                }
                 insn.isInplaceArgumentStartMarker() ->
-                    args.add(parseArg(insn, iter))
+                    args.add(parseArg(methodNode, insn, iter))
                 insn.isInplaceArgumentEndMarker() ->
                     throw ParseErrorException()
             }
@@ -93,14 +113,14 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         throw ParseErrorException()
     }
 
-    private fun parseArg(start: AbstractInsnNode, iter: ListIterator<AbstractInsnNode>): ArgContext {
+    private fun parseArg(methodNode: MethodNode, start: AbstractInsnNode, iter: ListIterator<AbstractInsnNode>): ArgContext {
         //  ARG     ::= argStartMarker insn* (CALL insn*)* argEndMarker storeInsn
         val calls = ArrayList<CallContext>()
         while (iter.hasNext()) {
             val insn = iter.next()
             when {
                 insn.isInplaceCallStartMarker() ->
-                    calls.add(parseCall(insn, iter))
+                    calls.add(parseCall(methodNode, insn, iter))
                 insn.isInplaceArgumentEndMarker() -> {
                     val next = insn.next
                     if (next is VarInsnNode && next.opcode in Opcodes.ISTORE..Opcodes.ASTORE) {
@@ -141,6 +161,27 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         methodContext.startArgToEndArg[argContext.argStartMarker] = argContext.argEndMarker
         for (call in argContext.calls) {
             collectStartToEnd(methodContext, call)
+        }
+    }
+
+    private fun collectLvtEntryInstructions(methodContext: MethodContext) {
+        val insnList = methodContext.methodNode.instructions
+        val insnArray = insnList.toArray()
+        for (lv in methodContext.methodNode.localVariables) {
+            val lvStartIndex = insnList.indexOf(lv.start)
+            val lvEndIndex = insnList.indexOf(lv.end)
+            for (i in lvStartIndex until lvEndIndex) {
+                val insn = insnArray[i]
+                if (insn.opcode in Opcodes.ILOAD..Opcodes.ALOAD || insn.opcode in Opcodes.ISTORE..Opcodes.ASTORE) {
+                    if ((insn as VarInsnNode).`var` == lv.index) {
+                        methodContext.lvtEntryForInstruction[insn] = lv
+                    }
+                } else if (insn.opcode == Opcodes.IINC) {
+                    if ((insn as IincInsnNode).`var` == lv.index) {
+                        methodContext.lvtEntryForInstruction[insn] = lv
+                    }
+                }
+            }
         }
     }
 
@@ -212,6 +253,16 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
                         // Replace argument load with argument body
                         var argInsn = arg.argStartMarker.next
                         while (argInsn != arg.argEndMarker) {
+                            // If a LOAD/STORE/IINC instruction was moved,
+                            // record it so that we can update corresponding LVT entry if needed.
+                            // NB it's better to do so after all transformations, so that we don't recalculate node indices.
+                            if (argInsn.opcode in Opcodes.ILOAD..Opcodes.ALOAD ||
+                                argInsn.opcode in Opcodes.ISTORE..Opcodes.ASTORE ||
+                                argInsn.opcode == Opcodes.IINC
+                            ) {
+                                methodContext.varInstructionMoved[argInsn] = callContext
+                            }
+
                             val argInsnNext = argInsn.next
                             insnList.remove(argInsn)
                             insnList.insertBefore(loadInsn, argInsn)
@@ -254,6 +305,19 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         // Remove call start and call end markers
         insnList.remove(callContext.callStartMarker)
         insnList.remove(callContext.callEndMarker)
+    }
+
+    private fun updateLvtEntriesForMovedInstructions(methodContext: MethodContext) {
+        val insnList = methodContext.methodNode.instructions
+        for ((insn, callContext) in methodContext.varInstructionMoved.entries) {
+            // Extend local variable interval to call end label if needed
+            val lv = methodContext.lvtEntryForInstruction[insn] ?: continue
+            val lvEndIndex = insnList.indexOf(lv.end)
+            val endLabelIndex = insnList.indexOf(callContext.endLabel)
+            if (endLabelIndex > lvEndIndex) {
+                lv.end = callContext.endLabel
+            }
+        }
     }
 
     private fun stripMarkers(methodNode: MethodNode) {
