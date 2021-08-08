@@ -91,7 +91,7 @@ internal class FirLightAnonymousClassForSymbol(
         result
     }
 
-    private val _ownInnerClasses: List<FirLightClassForSymbol> by lazyPub {
+    private val _ownInnerClasses: List<FirLightClassBase> by lazyPub {
         anonymousObjectSymbol.createInnerClasses(manager)
     }
 

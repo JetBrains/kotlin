@@ -57,26 +57,27 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = 
     val anonymousObject = classOrObject.parent as? KtObjectLiteralExpression
     if (anonymousObject != null) {
         return analyseForLightClasses(anonymousObject) {
-            FirLightAnonymousClassForSymbol(anonymousObject.getAnonymousObjectSymbol(), anonymousObject.manager)
+            anonymousObject.getAnonymousObjectSymbol().createLightClassNoCache(anonymousObject.manager)
         }
     }
 
     return when {
         classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
         classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> return null //TODO
-
         else -> {
             analyseForLightClasses(classOrObject) {
-                when (val symbol = classOrObject.getClassOrObjectSymbol()) {
-                    is KtAnonymousObjectSymbol -> FirLightAnonymousClassForSymbol(symbol, classOrObject.manager)
-                    is KtNamedClassOrObjectSymbol -> when (symbol.classKind) {
-                        KtClassKind.INTERFACE -> FirLightInterfaceClassSymbol(symbol, classOrObject.manager)
-                        KtClassKind.ANNOTATION_CLASS -> FirLightAnnotationClassSymbol(symbol, classOrObject.manager)
-                        else -> FirLightClassForSymbol(symbol, classOrObject.manager)
-                    }
-                }
+                classOrObject.getClassOrObjectSymbol().createLightClassNoCache(classOrObject.manager)
             }
         }
+    }
+}
+
+internal fun KtClassOrObjectSymbol.createLightClassNoCache(manager: PsiManager): FirLightClassBase = when (this) {
+    is KtAnonymousObjectSymbol -> FirLightAnonymousClassForSymbol(this, manager)
+    is KtNamedClassOrObjectSymbol -> when (classKind) {
+        KtClassKind.INTERFACE -> FirLightInterfaceClassSymbol(this, manager)
+        KtClassKind.ANNOTATION_CLASS -> FirLightAnnotationClassSymbol(this, manager)
+        else -> FirLightClassForSymbol(this, manager)
     }
 }
 
@@ -320,8 +321,8 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
     return listBuilder
 }
 
-internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<FirLightClassForSymbol> {
-    val result = ArrayList<FirLightClassForSymbol>()
+internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<FirLightClassBase> {
+    val result = ArrayList<FirLightClassBase>()
 
     // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927
     // inner classes with null names can't be searched for and can't be used from java anyway
@@ -329,7 +330,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
 
     analyzeWithSymbolAsContext(this) {
         getDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
-            FirLightClassForSymbol(it, manager)
+            it.createLightClassNoCache(manager)
         }
     }
 
