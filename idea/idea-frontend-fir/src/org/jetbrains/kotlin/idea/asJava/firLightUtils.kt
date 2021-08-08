@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.isPrimitiveType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithModality
@@ -120,17 +122,29 @@ private class AnonymousTypesSubstitutor(
     }
 }
 
+private fun ConeKotlinType.simplifyType(session: FirSession, state: FirModuleResolveState): ConeKotlinType {
+    val substitutor = AnonymousTypesSubstitutor(session, state)
+    var currentType = this
+    do {
+        val oldType = currentType
+        currentType = currentType.fullyExpandedType(session)
+        currentType = currentType.upperBoundIfFlexible()
+        currentType = substitutor.substituteOrSelf(currentType)
+        currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session) ?: currentType
+    } while (oldType !== currentType)
+    return currentType
+}
+
 internal fun ConeKotlinType.asPsiType(
     session: FirSession,
     state: FirModuleResolveState,
     mode: TypeMappingMode,
     psiContext: PsiElement,
 ): PsiType {
+    val correctedType = simplifyType(session, state)
 
-    if (this is ConeClassErrorType || this !is SimpleTypeMarker) return psiContext.nonExistentType()
-    if (this.typeArguments.any { it is ConeClassErrorType }) return psiContext.nonExistentType()
-
-    val correctedType = AnonymousTypesSubstitutor(session, state).substituteOrSelf(this)
+    if (correctedType is ConeClassErrorType || correctedType !is SimpleTypeMarker) return psiContext.nonExistentType()
+    if (correctedType.typeArguments.any { it is ConeClassErrorType }) return psiContext.nonExistentType()
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
 
