@@ -31,7 +31,7 @@ fun extractDefaultNullabilityQualifier(
             ?: return null
 
     val jsr305ReportLevel = with(typeQualifierResolver) {
-        resolveJsr305CustomLevel(annotationCall) ?: resolveJsr305ReportLevel(typeQualifier)
+        resolveJsr305CustomState(annotationCall) ?: resolveJsr305AnnotationState(typeQualifier)
     }
 
     if (jsr305ReportLevel.isIgnore) {
@@ -50,7 +50,7 @@ fun FirJavaEnhancementContext.computeNewDefaultTypeQualifiers(
     javaTypeEnhancementState: JavaTypeEnhancementState,
     additionalAnnotations: List<FirAnnotationCall>
 ): JavaTypeQualifiersByElementType? {
-    if (typeQualifierResolver.isDisabled) return defaultTypeQualifiers
+    if (javaTypeEnhancementState.jsr305.isDisabled) return defaultTypeQualifiers
 
     val defaultQualifiers =
         additionalAnnotations.mapNotNull { annotationCall ->
