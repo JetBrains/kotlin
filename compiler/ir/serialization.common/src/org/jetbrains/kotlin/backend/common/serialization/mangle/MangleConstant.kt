@@ -34,6 +34,7 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
 
         const val PLATFORM_FUNCTION_MARKER = '%'
 
+        const val CONTEXT_RECEIVER_PREFIX = '!'
         const val EXTENSION_RECEIVER_PREFIX = '@'
         const val FUNCTION_NAME_PREFIX = '#'
         const val TYPE_PARAM_INDEX_PREFIX = '@'

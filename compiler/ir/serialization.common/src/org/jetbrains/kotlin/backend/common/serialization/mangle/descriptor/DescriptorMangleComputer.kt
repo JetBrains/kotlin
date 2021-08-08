@@ -115,6 +115,11 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
         }
 
+        contextReceiverParameters.forEach {
+            builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
+            mangleContextReceiverParameter(builder, it)
+        }
+
         extensionReceiverParameter?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleExtensionReceiverParameter(builder, it)
@@ -137,6 +142,10 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             builder.appendSignature(MangleConstant.PLATFORM_FUNCTION_MARKER)
             builder.appendSignature(it)
         }
+    }
+
+    private fun mangleContextReceiverParameter(vpBuilder: StringBuilder, param: ReceiverParameterDescriptor) {
+        mangleType(vpBuilder, param.type)
     }
 
     private fun mangleExtensionReceiverParameter(vpBuilder: StringBuilder, param: ReceiverParameterDescriptor) {
