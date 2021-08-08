@@ -184,8 +184,7 @@ internal class EnhancementSignatureParts(
 
     private fun FirTypeRef?.extractQualifiersFromAnnotations(
         isHeadTypeConstructor: Boolean,
-        defaultQualifiersForType: JavaDefaultQualifiers?,
-        javaTypeEnhancementState: JavaTypeEnhancementState
+        defaultQualifiersForType: JavaDefaultQualifiers?
     ): JavaTypeQualifiers {
         val composedAnnotation =
             if (isHeadTypeConstructor && typeContainer != null)
@@ -207,7 +206,7 @@ internal class EnhancementSignatureParts(
             else
                 defaultQualifiersForType
 
-        val nullabilityInfo = composedAnnotation.extractNullability(typeQualifierResolver, javaTypeEnhancementState).also {
+        val nullabilityInfo = composedAnnotation.extractNullability(typeQualifierResolver).also {
             if (it?.qualifier == NullabilityQualifier.NOT_NULL) {
                 attributesCache[this] = composedAnnotation.computeTypeAttributesForJavaType()
             }
@@ -242,8 +241,7 @@ internal class EnhancementSignatureParts(
         session: FirSession,
         fromSupertypes: Collection<FirTypeRef>,
         defaultQualifiersForType: JavaDefaultQualifiers?,
-        isHeadTypeConstructor: Boolean,
-        javaTypeEnhancementState: JavaTypeEnhancementState
+        isHeadTypeConstructor: Boolean
     ): JavaTypeQualifiers {
         val superQualifiers = fromSupertypes.map { it.extractQualifiers(session) }
         val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
@@ -252,7 +250,7 @@ internal class EnhancementSignatureParts(
             .mapNotNull { it.extractQualifiers(session).nullability }
             .toSet()
 
-        val own = extractQualifiersFromAnnotations(isHeadTypeConstructor, defaultQualifiersForType, javaTypeEnhancementState)
+        val own = extractQualifiersFromAnnotations(isHeadTypeConstructor, defaultQualifiersForType)
         val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
         val ownNullabilityForWarning = own.nullability
 
@@ -306,7 +304,7 @@ internal class EnhancementSignatureParts(
             val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
 
             // Only the head type constructor is safely co-variant
-            type.computeQualifiersForOverride(session, verticalSlice, defaultQualifiers, isHeadTypeConstructor, javaTypeEnhancementState)
+            type.computeQualifiersForOverride(session, verticalSlice, defaultQualifiers, isHeadTypeConstructor)
         }
 
         return IndexedJavaTypeQualifiers(computedResult)

@@ -173,6 +173,7 @@ private fun LazyJavaResolverContext.extractDefaultNullabilityQualifier(
 
     val areImprovementsInStrictMode = components.settings.typeEnhancementImprovementsInStrictMode
 
+    // TODO: if `extractNullability` forces a warning for compatibility, this overrides that. Expected? Probably not.
     val nullabilityQualifier =
         components.signatureEnhancement.extractNullability(typeQualifier, areImprovementsInStrictMode, typeParameterBounds = false)
             ?.copy(isForWarningOnly = jsr305State.isWarning) ?: return null

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.name.FqName
 import java.util.concurrent.ConcurrentHashMap
 
@@ -100,6 +102,42 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
             "IGNORE" -> ReportLevel.IGNORE
             else -> null
         }
+    }
+
+    fun extractNullability(annotation: Annotation, forceWarning: Annotation.() -> Boolean): NullabilityQualifierWithMigrationStatus? {
+        knownNullability(annotation, annotation.forceWarning())?.let { return it }
+
+        val typeQualifierAnnotation = resolveTypeQualifierAnnotation(annotation) ?: return null
+        val jsr305State = resolveJsr305AnnotationState(annotation)
+        if (jsr305State.isIgnore) return null
+        // TODO: the result of `forceWarning` will be overwritten - expected? Probably not.
+        return knownNullability(typeQualifierAnnotation, typeQualifierAnnotation.forceWarning())
+            ?.copy(isForWarningOnly = jsr305State.isWarning)
+    }
+
+    private fun knownNullability(annotation: Annotation, forceWarning: Boolean): NullabilityQualifierWithMigrationStatus? {
+        val fqName = annotation.fqName ?: return null
+        val reportLevel = javaTypeEnhancementState.getReportLevelForAnnotation(fqName)
+        if (reportLevel.isIgnore) return null
+        val nullability = when (fqName) {
+            in NULLABLE_ANNOTATIONS -> NullabilityQualifier.NULLABLE
+            in NOT_NULL_ANNOTATIONS -> NullabilityQualifier.NOT_NULL
+            JSPECIFY_NULLABLE -> NullabilityQualifier.NULLABLE
+            JSPECIFY_NULLNESS_UNKNOWN -> NullabilityQualifier.FORCE_FLEXIBILITY
+            JAVAX_NONNULL_ANNOTATION ->
+                when (annotation.enumArguments(onlyValue = false).firstOrNull()) {
+                    "ALWAYS", null -> NullabilityQualifier.NOT_NULL
+                    "MAYBE", "NEVER" -> NullabilityQualifier.NULLABLE
+                    "UNKNOWN" -> NullabilityQualifier.FORCE_FLEXIBILITY
+                    else -> return null
+                }
+            COMPATQUAL_NULLABLE_ANNOTATION -> NullabilityQualifier.NULLABLE
+            COMPATQUAL_NONNULL_ANNOTATION -> NullabilityQualifier.NOT_NULL
+            ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifier.NOT_NULL
+            ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifier.NULLABLE
+            else -> return null
+        }
+        return NullabilityQualifierWithMigrationStatus(nullability, reportLevel.isWarning || forceWarning)
     }
 
     @OptIn(ExperimentalStdlibApi::class)

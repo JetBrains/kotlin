@@ -21,7 +21,6 @@ class FirJavaEnhancementContext private constructor(
 
 fun extractDefaultNullabilityQualifier(
     typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-    javaTypeEnhancementState: JavaTypeEnhancementState,
     annotationCall: FirAnnotationCall
 ): JavaDefaultQualifiers? {
     typeQualifierResolver.resolveQualifierBuiltInDefaultAnnotation(annotationCall)?.let { return it }
@@ -38,10 +37,8 @@ fun extractDefaultNullabilityQualifier(
         return null
     }
 
-    val nullabilityQualifier = typeQualifier.extractNullability(
-        typeQualifierResolver, javaTypeEnhancementState
-    )?.copy(isForWarningOnly = jsr305ReportLevel.isWarning) ?: return null
-
+    val nullabilityQualifier = typeQualifier.extractNullability(typeQualifierResolver)
+        ?.copy(isForWarningOnly = jsr305ReportLevel.isWarning) ?: return null
     return JavaDefaultQualifiers(nullabilityQualifier, applicability)
 }
 
@@ -54,11 +51,7 @@ fun FirJavaEnhancementContext.computeNewDefaultTypeQualifiers(
 
     val defaultQualifiers =
         additionalAnnotations.mapNotNull { annotationCall ->
-            extractDefaultNullabilityQualifier(
-                typeQualifierResolver,
-                javaTypeEnhancementState,
-                annotationCall
-            )
+            extractDefaultNullabilityQualifier(typeQualifierResolver, annotationCall)
         }
 
     if (defaultQualifiers.isEmpty()) return defaultTypeQualifiers
