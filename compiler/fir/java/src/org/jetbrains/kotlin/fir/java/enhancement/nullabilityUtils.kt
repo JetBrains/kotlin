@@ -33,7 +33,7 @@ fun FirAnnotationCall.extractNullability(
         annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(this)
             ?: return null
 
-    val jsr305ReportLevel = annotationTypeQualifierResolver.resolveJsr305ReportLevel(this)
+    val jsr305ReportLevel = annotationTypeQualifierResolver.resolveJsr305AnnotationState(this)
     if (jsr305ReportLevel.isIgnore) return null
 
     return typeQualifierAnnotation.extractNullabilityFromKnownAnnotations(javaTypeEnhancementState)?.copy(isForWarningOnly = jsr305ReportLevel.isWarning)

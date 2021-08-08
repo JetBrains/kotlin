@@ -155,7 +155,7 @@ fun makeLazyJavaPackageFragmentProvider(
     singleModuleClassResolver: ModuleClassResolver,
     packagePartProvider: PackagePartProvider = PackagePartProvider.Empty
 ): LazyJavaPackageFragmentProvider {
-    val annotationTypeQualifierResolver = AnnotationTypeQualifierResolver(storageManager, JavaTypeEnhancementState.DEFAULT)
+    val annotationTypeQualifierResolver = AnnotationTypeQualifierResolver(JavaTypeEnhancementState.DEFAULT)
     val javaTypeEnhancementState = JavaTypeEnhancementState.DEFAULT
     val javaResolverComponents = JavaResolverComponents(
         storageManager, javaClassFinder, reflectKotlinClassFinder, deserializedDescriptorResolver,
