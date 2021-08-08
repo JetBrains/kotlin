@@ -75,6 +75,7 @@ class FirStatusResolver(
                     ProcessorAction.NEXT
                 }
             }.map {
+                it.ensureResolved(FirResolvePhase.STATUS)
                 it.status as FirResolvedDeclarationStatus
             }
         }
