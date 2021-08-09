@@ -136,7 +136,7 @@ class IrExpressionLambdaImpl(
     val reference: IrFunctionReference,
     irValueParameter: IrValueParameter
 ) : ExpressionLambda(irValueParameter.isCrossinline), IrExpressionLambda {
-    override val isExtensionLambda: Boolean = irValueParameter.type.isExtensionFunctionType
+    override val isExtensionLambda: Boolean = function.extensionReceiverParameter != null
 
     val function: IrFunction
         get() = reference.symbol.owner
