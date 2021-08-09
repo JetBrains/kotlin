@@ -22644,6 +22644,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testEnumEntryArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/privateSignatures/enumEntryArguments.kt");
             }
+
+            @Test
+            @TestMetadata("privateLeakThroughInline.kt")
+            public void testPrivateLeakThroughInline() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/privateLeakThroughInline.kt");
+            }
         }
 
         @Nested

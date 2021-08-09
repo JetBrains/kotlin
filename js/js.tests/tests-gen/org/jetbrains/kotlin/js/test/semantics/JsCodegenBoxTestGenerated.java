@@ -15451,6 +15451,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/ir/privateSignatures/localFakeOverride.kt");
             }
 
+            @TestMetadata("privateLeakThroughInline.kt")
+            public void testPrivateLeakThroughInline() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/privateLeakThroughInline.kt");
+            }
+
             @TestMetadata("topLevelPrivateDelegate.kt")
             public void testTopLevelPrivateDelegate() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/privateSignatures/topLevelPrivateDelegate.kt");

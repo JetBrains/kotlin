@@ -18865,6 +18865,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testEnumEntryArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/privateSignatures/enumEntryArguments.kt");
             }
+
+            @TestMetadata("privateLeakThroughInline.kt")
+            public void testPrivateLeakThroughInline() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/privateSignatures/privateLeakThroughInline.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/ir/serializationRegressions")
