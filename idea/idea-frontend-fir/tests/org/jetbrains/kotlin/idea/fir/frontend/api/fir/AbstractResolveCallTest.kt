@@ -72,7 +72,7 @@ private fun KtCall.stringRepresentation(): String {
         is KtErrorCallTarget -> "ERR<${this.diagnostic.defaultMessage}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()
         is Map<*, *> -> entries.joinToString(prefix = "{ ", postfix = " }") { (k, v) -> "${k?.stringValue()} -> (${v?.stringValue()})" }
-        is KtValueArgument -> this.text
+        is KtExpression -> this.text
         is KtDelegatedConstructorCallKind -> toString()
         else -> error("unexpected parameter type ${this::class}")
     }

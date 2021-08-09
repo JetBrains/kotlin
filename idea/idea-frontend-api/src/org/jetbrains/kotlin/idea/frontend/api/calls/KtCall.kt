@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtExpression
 
 /**
  * Represents direct or indirect (via invoke) function call from Kotlin code
  */
 public sealed class KtCall {
     public abstract val isErrorCall: Boolean
-    public abstract val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>
+    public abstract val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>
     public abstract val targetFunction: KtCallTarget
 }
 
@@ -29,7 +29,7 @@ public sealed class KtCall {
  */
 public class KtFunctionalTypeVariableCall(
     public val target: KtVariableLikeSymbol,
-    override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
+    override val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget
 ) : KtCall() {
     override val isErrorCall: Boolean get() = false
@@ -54,7 +54,7 @@ public sealed class KtDeclaredFunctionCall : KtCall() {
  */
 public class KtVariableWithInvokeFunctionCall(
     public val target: KtVariableLikeSymbol,
-    override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
+    override val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget
 ) : KtDeclaredFunctionCall()
 
@@ -64,7 +64,7 @@ public class KtVariableWithInvokeFunctionCall(
  * x.toString() // function call
  */
 public class KtFunctionCall(
-    override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
+    override val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget
 ) : KtDeclaredFunctionCall()
 
@@ -75,7 +75,7 @@ public class KtFunctionCall(
  * annotation class Ann
  */
 public class KtAnnotationCall(
-    override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
+    override val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget
 ) : KtDeclaredFunctionCall()
 // TODO: Add other properties, e.g., useSiteTarget
@@ -89,7 +89,7 @@ public class KtAnnotationCall(
  * }
  */
 public class KtDelegatedConstructorCall(
-    override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
+    override val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget,
     public val kind: KtDelegatedConstructorCallKind
 ) : KtDeclaredFunctionCall()

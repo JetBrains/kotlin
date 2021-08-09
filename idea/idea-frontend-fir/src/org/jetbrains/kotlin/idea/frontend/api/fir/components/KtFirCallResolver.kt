@@ -176,28 +176,28 @@ internal class KtFirCallResolver(
         }
     }
 
-    private fun FirCall.createArgumentMapping(): LinkedHashMap<KtValueArgument, KtValueParameterSymbol> {
-        val ktArgumentMapping = LinkedHashMap<KtValueArgument, KtValueParameterSymbol>()
+    private fun FirCall.createArgumentMapping(): LinkedHashMap<KtExpression, KtValueParameterSymbol> {
+        val ktArgumentMapping = LinkedHashMap<KtExpression, KtValueParameterSymbol>()
         argumentMapping?.let {
-            fun FirExpression.findKtValueArgument(): KtValueArgument? {
+            fun FirExpression.findKtExpression(): KtExpression? {
                 // For spread and named arguments, the source is the KtValueArgument.
-                // For other arguments, the source is the KtExpression itself and its parent should be the KtValueArgument.
-                val psi = when (this) {
-                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression -> realPsi
-                    else -> realPsi?.parent
+                // For other arguments (including array indices), the source is the KtExpression.
+                return when (this) {
+                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
+                        realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
+                    else -> realPsi as? KtExpression
                 }
-                return psi as? KtValueArgument
             }
 
             for ((firExpression, firValueParameter) in it.entries) {
                 val parameterSymbol = firValueParameter.buildSymbol(firSymbolBuilder) as KtValueParameterSymbol
                 if (firExpression is FirVarargArgumentsExpression) {
                     for (varargArgument in firExpression.arguments) {
-                        val valueArgument = varargArgument.findKtValueArgument() ?: continue
+                        val valueArgument = varargArgument.findKtExpression() ?: continue
                         ktArgumentMapping[valueArgument] = parameterSymbol
                     }
                 } else {
-                    val valueArgument = firExpression.findKtValueArgument() ?: continue
+                    val valueArgument = firExpression.findKtExpression() ?: continue
                     ktArgumentMapping[valueArgument] = parameterSymbol
                 }
             }
