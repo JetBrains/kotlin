@@ -10110,6 +10110,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("suspendFunctionAsSupertypeIsCheckWithArity.kt")
+            public void testSuspendFunctionAsSupertypeIsCheckWithArity() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendFunctionAsSupertypeIsCheckWithArity.kt");
+            }
+
+            @Test
             @TestMetadata("suspendFunctionIsAs.kt")
             public void testSuspendFunctionIsAs() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendFunctionIsAs.kt");

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -457,6 +457,12 @@ fun usefulDeclarations(
                             val arg = expression.getTypeArgument(0)!!
                             val klass = arg.getClass()
                             constructedClasses.addIfNotNull(klass)
+                        }
+                        context.intrinsics.jsInvokeSuspendSuperType,
+                        context.intrinsics.jsInvokeSuspendSuperTypeWithReceiver,
+                        context.intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam -> {
+                            invokeFunForLambda(expression)
+                                .enqueue("intrinsic: suspendSuperType")
                         }
                     }
                 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -162,19 +163,21 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // interface II : I
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
-            declaration.realOverrideTarget.let {
-                val implClassDeclaration = it.parent as IrClass
+            declaration.collectRealOverrides()
+                .find { it.modality != Modality.ABSTRACT }
+                ?.let {
+                    val implClassDeclaration = it.parent as IrClass
 
-                if (implClassDeclaration.shouldCopyFrom() && !implClassDeclaration.defaultType.isFunctionType()) {
-                    val implMethodName = context.getNameForMemberFunction(it)
-                    val implClassName = context.getNameForClass(implClassDeclaration)
+                    if (implClassDeclaration.shouldCopyFrom()) {
+                        val implMethodName = context.getNameForMemberFunction(it)
+                        val implClassName = context.getNameForClass(implClassDeclaration)
 
-                    val implClassPrototype = prototypeOf(implClassName.makeRef())
-                    val implMemberRef = JsNameRef(implMethodName, implClassPrototype)
+                        val implClassPrototype = prototypeOf(implClassName.makeRef())
+                        val implMemberRef = JsNameRef(implMethodName, implClassPrototype)
 
-                    classModel.postDeclarationBlock.statements += jsAssignment(memberRef, implMemberRef).makeStmt()
+                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, implMemberRef).makeStmt()
+                    }
                 }
-            }
         }
 
         return Pair(memberRef, null)

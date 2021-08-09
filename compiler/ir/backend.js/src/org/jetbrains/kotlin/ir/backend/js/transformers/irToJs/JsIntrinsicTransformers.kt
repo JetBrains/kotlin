@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getClassRef
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -232,45 +230,14 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             val suspendInvokeTransform: (IrCall, JsGenerationContext) -> JsExpression = { call, context: JsGenerationContext ->
                 // Because it is intrinsic, we know everything about this function
                 // There is callable reference as extension receiver
-                val invokeFun = (call.extensionReceiver as IrCall)
-                    .getValueArgument(0)!!
-                    .type
-                    .getClass()!!
-                    .declarations
-                    .filterIsInstance<IrSimpleFunction>()
-                    .single { it.name.asString() == "invoke" }
+                val invokeFun = invokeFunForLambda(call)
 
                 val jsInvokeFunName = context.getNameForMemberFunction(invokeFun)
 
-                val jsExtensionReceiver = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!! as JsInvocation
+                val jsExtensionReceiver = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!!
                 val args = translateCallArguments(call, context)
-                val jsArgsForClosureFun = args.mapIndexed { index, _ -> JsName("${"$"}p$index") }
 
-                // Function to make closure for invoke to avoid losing this
-                jsExtensionReceiver.arguments[0] = JsInvocation(
-                    JsNameRef(
-                        Namer.BIND_FUNCTION,
-                        JsFunction(
-                            emptyScope,
-                            JsBlock(
-                                JsReturn(
-                                    JsInvocation(
-                                        JsNameRef(
-                                            jsInvokeFunName,
-                                            jsExtensionReceiver.arguments[0]
-                                        ),
-                                        jsArgsForClosureFun.map { it.makeRef() }
-                                    )
-                                )
-                            ),
-                            "Function to make closure for invoke to avoid losing this"
-                        ).also { func ->
-                            func.parameters.addAll(jsArgsForClosureFun.map { JsParameter(it) })
-                        }
-                    ), JsThisRef()
-                )
-
-                JsInvocation(jsExtensionReceiver, args)
+                JsInvocation(JsNameRef(jsInvokeFunName, jsExtensionReceiver), args)
             }
 
             add(intrinsics.jsInvokeSuspendSuperType, suspendInvokeTransform)

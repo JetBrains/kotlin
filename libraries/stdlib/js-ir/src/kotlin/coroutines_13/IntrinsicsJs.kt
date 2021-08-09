@@ -74,7 +74,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(completion)
-    else ::invoke.invokeSuspendSuperType(completion)
+    else this.invokeSuspendSuperType(completion)
 }
 
 /**
@@ -97,7 +97,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, completion)
-    else ::invoke.invokeSuspendSuperTypeWithReceiver(receiver, completion)
+    else this.invokeSuspendSuperTypeWithReceiver(receiver, completion)
 }
 
 @InlineOnly
@@ -108,7 +108,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, param, completion)
-    else ::invoke.invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, completion)
+    else this.invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, completion)
 }
 
 /**
@@ -134,7 +134,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     createCoroutineFromSuspendFunction(completion) {
         val a = this.asDynamic()
         if (jsTypeOf(a) == "function") a(completion)
-        else ::invoke.invokeSuspendSuperType(completion)
+        else this.invokeSuspendSuperType(completion)
     }
 
 /**
@@ -161,7 +161,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     createCoroutineFromSuspendFunction(completion) {
         val a = this.asDynamic()
         if (jsTypeOf(a) == "function") a(receiver, completion)
-        else ::invoke.invokeSuspendSuperTypeWithReceiver(receiver, completion)
+        else this.invokeSuspendSuperTypeWithReceiver(receiver, completion)
     }
 
 /**
