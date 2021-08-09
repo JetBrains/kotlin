@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.internal.hash.FileHasher
+import org.gradle.internal.hash.Hashing.defaultFunction
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
-import java.security.MessageDigest
 
 fun Appendable.appendConfigsFromDir(confDir: File) {
     val files = confDir.listFiles() ?: return
@@ -35,20 +36,21 @@ fun ByteArray.toHex(): String {
     return String(result)
 }
 
-fun calculateDirHash(dir: File): String? {
+fun FileHasher.calculateDirHash(
+    dir: File
+): String? {
     if (!dir.isDirectory) return null
-    val md = MessageDigest.getInstance("MD5")
+
+    val hasher = defaultFunction().newHasher()
     dir.walk()
         .forEach { file ->
-            md.update(file.toRelativeString(dir).toByteArray())
+            hasher.putString(file.toRelativeString(dir))
             if (file.isFile) {
-                file.inputStream().use {
-                    md.update(it.readBytes())
-                }
+                hasher.putHash(hash(file))
             }
         }
 
-    val digest = md.digest()
+    val digest = hasher.hash().toByteArray()
 
     return digest.toHex()
 }

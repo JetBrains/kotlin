@@ -2,11 +2,11 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateDirHash
@@ -25,6 +25,10 @@ abstract class NodeJsSetupTask : DefaultTask() {
     private val shouldDownload = settings.download
 
     private val archiveOperations = ArchiveOperationsCompat(project)
+
+    @get:Inject
+    internal open val fileHasher: FileHasher
+        get() = error("Should be injected")
 
     @get:Inject
     internal open val fs: FileSystemOperations
@@ -84,7 +88,7 @@ abstract class NodeJsSetupTask : DefaultTask() {
         val upToDate = destinationHashFile.let { file ->
             if (file.exists()) {
                 file.useLines {
-                    it.single() == (calculateDirHash(destination).also { dirHash = it })
+                    it.single() == (fileHasher.calculateDirHash(destination).also { dirHash = it })
                 }
             } else false
         }
@@ -92,7 +96,7 @@ abstract class NodeJsSetupTask : DefaultTask() {
         val tmpDir = temporaryDir
         unpackNodeArchive(nodeJsDist, tmpDir)
 
-        if (upToDate && calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
+        if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
 
         if (destination.isDirectory) {
             destination.deleteRecursively()
@@ -110,7 +114,7 @@ abstract class NodeJsSetupTask : DefaultTask() {
         }
 
         destinationHashFile.writeText(
-            calculateDirHash(destination)!!
+            fileHasher.calculateDirHash(destination)!!
         )
     }
 

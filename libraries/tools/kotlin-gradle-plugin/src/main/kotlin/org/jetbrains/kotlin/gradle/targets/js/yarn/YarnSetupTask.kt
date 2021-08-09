@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateDirHash
@@ -29,6 +30,10 @@ open class YarnSetupTask : DefaultTask() {
     private val shouldDownload = settings.download
 
     private val archiveOperations = ArchiveOperationsCompat(project)
+
+    @get:Inject
+    internal open val fileHasher: FileHasher
+        get() = error("Should be injected")
 
     @get:Inject
     internal open val fs: FileSystemOperations
@@ -93,7 +98,7 @@ open class YarnSetupTask : DefaultTask() {
         val upToDate = destinationHashFile.let { file ->
             if (file.exists()) {
                 file.useLines {
-                    it.single() == (calculateDirHash(destination).also { dirHash = it })
+                    it.single() == (fileHasher.calculateDirHash(destination).also { dirHash = it })
                 }
             } else false
         }
@@ -101,7 +106,7 @@ open class YarnSetupTask : DefaultTask() {
         val tmpDir = temporaryDir
         extract(yarnDist, tmpDir) // parent because archive contains name already
 
-        if (upToDate && calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
+        if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) return
 
         if (destination.isDirectory) {
             destination.deleteRecursively()
@@ -115,7 +120,7 @@ open class YarnSetupTask : DefaultTask() {
         tmpDir.deleteRecursively()
 
         destinationHashFile.writeText(
-            calculateDirHash(destination)!!
+            fileHasher.calculateDirHash(destination)!!
         )
     }
 
