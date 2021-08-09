@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -347,7 +346,7 @@ fun isArgumentTypeMismatchDueToNullability(
 private fun checkApplicabilityForArgumentType(
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
-    argumentType: ConeKotlinType,
+    argumentTypeBeforeCapturing: ConeKotlinType,
     expectedType: ConeKotlinType?,
     position: SimpleConstraintSystemConstraintPosition,
     isReceiver: Boolean,
@@ -356,6 +355,9 @@ private fun checkApplicabilityForArgumentType(
     context: ResolutionContext
 ) {
     if (expectedType == null) return
+
+    // todo run this approximation only once for call
+    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, context.session)
 
     fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
         if (argument.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {

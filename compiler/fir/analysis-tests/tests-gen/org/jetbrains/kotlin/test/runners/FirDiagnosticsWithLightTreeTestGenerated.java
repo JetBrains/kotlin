@@ -5056,6 +5056,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             public void testUastPatterns() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/UastPatterns.kt");
             }
+
+            @Test
+            @TestMetadata("WithSpeedSearch.kt")
+            public void testWithSpeedSearch() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/WithSpeedSearch.kt");
+            }
         }
 
         @Nested
