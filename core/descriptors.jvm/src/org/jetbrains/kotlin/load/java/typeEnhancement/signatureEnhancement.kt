@@ -103,7 +103,6 @@ class SignatureEnhancement(
                 ) { it.extensionReceiverParameter!!.type }.enhance()
             else null
 
-
         val predefinedEnhancementInfo =
             (this as? JavaMethodDescriptor)
                 ?.run { SignatureBuildingComponents.signature(this.containingDeclaration as ClassDescriptor, this.computeJvmDescriptor()) }
@@ -132,23 +131,24 @@ class SignatureEnhancement(
                     AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE
             ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
-        val containsFunctionN = receiverTypeEnhancement?.containsFunctionN == true || returnTypeEnhancement.containsFunctionN ||
-                valueParameterEnhancements.any { it.containsFunctionN }
+        val containsFunctionN = returnType!!.containsFunctionN() ||
+                extensionReceiverParameter?.type?.containsFunctionN() ?: false ||
+                valueParameters.any { it.type.containsFunctionN() }
+        val additionalUserData = if (containsFunctionN)
+            DEPRECATED_FUNCTION_KEY to DeprecationCausedByFunctionN(this)
+        else
+            null
 
-        if ((receiverTypeEnhancement?.wereChanges == true)
-            || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges } || containsFunctionN
+        if (receiverTypeEnhancement != null || returnTypeEnhancement != null || valueParameterEnhancements.any { it != null } ||
+            additionalUserData != null
         ) {
-            val additionalUserData =
-                if (containsFunctionN)
-                    DEPRECATED_FUNCTION_KEY to DeprecationCausedByFunctionN(this)
-                else
-                    null
-
             @Suppress("UNCHECKED_CAST")
             return this.enhance(
-                receiverTypeEnhancement?.type,
-                valueParameterEnhancements.map { ValueParameterData(it.type, false) },
-                returnTypeEnhancement.type,
+                receiverTypeEnhancement ?: extensionReceiverParameter?.type,
+                valueParameterEnhancements.mapIndexed { index, enhanced ->
+                    ValueParameterData(enhanced ?: valueParameters[index].type, false)
+                },
+                returnTypeEnhancement ?: returnType!!,
                 additionalUserData
             ) as D
         }
@@ -168,7 +168,7 @@ class SignatureEnhancement(
                 typeParameter, bound, emptyList(), false, context,
                 AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS,
                 typeParameterBounds = true
-            ).enhance().type
+            ).enhance() ?: bound
         }
     }
 
@@ -177,7 +177,14 @@ class SignatureEnhancement(
      *      class A extends B<@NotNull Integer> {}
      */
     fun enhanceSuperType(type: KotlinType, context: LazyJavaResolverContext) =
-        SignatureParts(null, type, emptyList(), false, context, AnnotationQualifierApplicabilityType.TYPE_USE).enhance().type
+        SignatureParts(null, type, emptyList(), false, context, AnnotationQualifierApplicabilityType.TYPE_USE).enhance() ?: type
+
+    private fun KotlinType.containsFunctionN(): Boolean =
+        TypeUtils.contains(this) {
+            val classifier = it.constructor.declarationDescriptor ?: return@contains false
+            classifier.name == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME.shortName() &&
+                    classifier.fqNameOrNull() == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME
+        }
 
     private inner class SignatureParts(
         private val typeContainer: Annotated?,
@@ -191,28 +198,10 @@ class SignatureEnhancement(
 
         private val isForVarargParameter get() = typeContainer.safeAs<ValueParameterDescriptor>()?.varargElementType != null
 
-        fun enhance(predefined: TypeEnhancementInfo? = null): PartEnhancementResult {
-            val qualifiers = computeIndexedQualifiersForOverride()
-
-            val qualifiersWithPredefined: ((Int) -> JavaTypeQualifiers)? = predefined?.let {
-                { index ->
-                    predefined.map[index] ?: qualifiers(index)
-                }
+        fun enhance(predefined: TypeEnhancementInfo? = null): KotlinType? =
+            with(typeEnhancement) {
+                fromOverride.enhance(computeIndexedQualifiersForOverride(predefined))
             }
-
-            val containsFunctionN = TypeUtils.contains(fromOverride) {
-                val classifier = it.constructor.declarationDescriptor ?: return@contains false
-
-                classifier.name == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME.shortName() &&
-                        classifier.fqNameOrNull() == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME
-            }
-
-            return with(typeEnhancement) {
-                fromOverride.enhance(qualifiersWithPredefined ?: qualifiers)?.let { enhanced ->
-                    PartEnhancementResult(enhanced, wereChanges = true, containsFunctionN = containsFunctionN)
-                } ?: PartEnhancementResult(fromOverride, wereChanges = false, containsFunctionN = containsFunctionN)
-            }
-        }
 
         private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
             val (lower, upper) =
@@ -399,8 +388,7 @@ class SignatureEnhancement(
         ): NullabilityQualifierWithMigrationStatus? =
             this.firstNotNullOfOrNull { extractNullability(it, areImprovementsEnabled, typeParameterBounds) }
 
-        private fun computeIndexedQualifiersForOverride(): (Int) -> JavaTypeQualifiers {
-
+        private fun computeIndexedQualifiersForOverride(predefined: TypeEnhancementInfo?): (Int) -> JavaTypeQualifiers {
             val indexedFromSupertypes = fromOverridden.map { it.toIndexed() }
             val indexedThisType = fromOverride.toIndexed()
 
@@ -416,8 +404,7 @@ class SignatureEnhancement(
                 val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
                 indexedThisType[index].computeQualifiersForOverride(verticalSlice)
             }
-
-            return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
+            return { index -> predefined?.map?.get(index) ?: computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
         }
 
 
@@ -485,12 +472,6 @@ class SignatureEnhancement(
             )
         }
     }
-
-    private open class PartEnhancementResult(
-        val type: KotlinType,
-        val wereChanges: Boolean,
-        val containsFunctionN: Boolean
-    )
 
     private fun CallableMemberDescriptor.partsForValueParameter(
         // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)
