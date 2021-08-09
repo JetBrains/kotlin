@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
@@ -141,6 +143,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         storeVariableReturnType(property)
                     }
                 }
+                // In case an explicit backing field declaration
+                // is present, and the default accessors haven't
+                // been generated earlier.
+                property.generateMissingDefaultAccessors()
                 val delegate = property.delegate
                 if (delegate != null) {
                     transformPropertyAccessorsWithDelegate(property, delegate)
@@ -156,6 +162,51 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
             property.replaceInitializerAndAccessorsAreResolved(true)
             property
+        }
+    }
+
+    private fun FirProperty.generateMissingDefaultAccessors() {
+        val fieldDeclaration = backingField ?: return
+
+        val typeCheckerContext = session.typeContext.newBaseTypeCheckerContext(
+            errorTypesEqualToAnything = false,
+            stubTypesEqualToAnything = false
+        )
+
+        if (fieldDeclaration.isSubtypeOf(this, typeCheckerContext)) {
+            this.replaceGetter(
+                FirDefaultPropertyGetter(
+                    null,
+                    this.moduleData,
+                    FirDeclarationOrigin.Source,
+                    this.returnTypeRef,
+                    this.visibility,
+                    this.symbol,
+                ).also {
+                    it.status = this.getDefaultAccessorStatus()
+                }
+            )
+        } else if (this.isVar && this.isSubtypeOf(fieldDeclaration, typeCheckerContext)) {
+            this.replaceSetter(
+                FirDefaultPropertySetter(
+                    null,
+                    this.moduleData,
+                    FirDeclarationOrigin.Source,
+                    this.returnTypeRef,
+                    this.visibility,
+                    this.symbol,
+                ).also {
+                    it.status = this.getDefaultAccessorStatus()
+                }
+            )
+        }
+    }
+
+    fun FirProperty.getDefaultAccessorStatus(): FirDeclarationStatus {
+        // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
+        return FirDeclarationStatusImpl(this.visibility, this.modality).apply {
+            isInline = this@getDefaultAccessorStatus.isInline
+            isExternal = this@getDefaultAccessorStatus.isExternal
         }
     }
 
