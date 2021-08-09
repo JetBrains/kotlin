@@ -234,53 +234,6 @@ internal class EnhancementSignatureParts(
     private fun FirTypeRef?.isTypeParameterBasedType() =
         ((this as? FirJavaTypeRef)?.type as? JavaClassifierType)?.classifier is JavaTypeParameter
 
-    private fun FirTypeRef?.computeQualifiersForOverride(
-        session: FirSession,
-        fromSupertypes: Collection<FirTypeRef>,
-        defaultQualifiersForType: JavaDefaultQualifiers?,
-        isHeadTypeConstructor: Boolean
-    ): JavaTypeQualifiers {
-        val superQualifiers = fromSupertypes.map { it.extractQualifiers(session) }
-        val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
-        val nullabilityFromSupertypes = superQualifiers.mapNotNull { it.nullability }.toSet()
-        val nullabilityFromSupertypesWithWarning = fromSupertypes
-            .mapNotNull { it.extractQualifiers(session).nullability }
-            .toSet()
-
-        val own = extractQualifiersFromAnnotations(isHeadTypeConstructor, defaultQualifiersForType)
-        val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
-        val ownNullabilityForWarning = own.nullability
-
-        val isCovariantPosition = isCovariant && isHeadTypeConstructor
-        val nullability =
-            nullabilityFromSupertypes.select(ownNullability, isCovariantPosition)
-                // Vararg value parameters effectively have non-nullable type in Kotlin
-                // and having nullable types in Java may lead to impossibility of overriding them in Kotlin
-                ?.takeUnless { isForVarargParameter && isHeadTypeConstructor && it == NullabilityQualifier.NULLABLE }
-
-        val mutability =
-            mutabilityFromSupertypes
-                .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability, isCovariantPosition)
-
-        val canChange = ownNullabilityForWarning != ownNullability || nullabilityFromSupertypesWithWarning != nullabilityFromSupertypes
-        val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }
-        if (nullability == null && canChange) {
-            val nullabilityWithWarning =
-                nullabilityFromSupertypesWithWarning.select(ownNullabilityForWarning, isCovariantPosition)
-
-            return createJavaTypeQualifiers(
-                nullabilityWithWarning, mutability,
-                forWarning = true, isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
-            )
-        }
-
-        return createJavaTypeQualifiers(
-            nullability, mutability,
-            forWarning = nullability == null,
-            isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
-        )
-    }
-
     private fun computeIndexedQualifiersForOverride(session: FirSession): IndexedJavaTypeQualifiers {
         val indexedFromSupertypes = fromOverridden.map { it.toIndexed(typeQualifierResolver, context) }
         val indexedThisType = current.toIndexed(typeQualifierResolver, context)
@@ -294,14 +247,10 @@ internal class EnhancementSignatureParts(
 
         val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
         val computedResult = Array(treeSize) { index ->
-            val isHeadTypeConstructor = index == 0
-            assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
-
             val (type, defaultQualifiers) = indexedThisType[index]
-            val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
-
-            // Only the head type constructor is safely co-variant
-            type.computeQualifiersForOverride(session, verticalSlice, defaultQualifiers, isHeadTypeConstructor)
+            val qualifiers = type.extractQualifiersFromAnnotations(index == 0, defaultQualifiers)
+            val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers(session) }
+            qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && isForVarargParameter)
         }
 
         return IndexedJavaTypeQualifiers(computedResult)
