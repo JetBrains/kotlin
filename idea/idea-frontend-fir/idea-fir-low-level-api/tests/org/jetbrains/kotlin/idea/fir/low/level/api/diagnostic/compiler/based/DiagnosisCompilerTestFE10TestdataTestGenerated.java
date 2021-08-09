@@ -22367,6 +22367,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
         @TestDataPath("$PROJECT_ROOT")
         public class Properties {
             @Test
+            @TestMetadata("abstarctPropertyInPrimaryConstructor.kt")
+            public void testAbstarctPropertyInPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/abstarctPropertyInPrimaryConstructor.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInProperties() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }

@@ -457,6 +457,7 @@ object FirErrors {
     val WRONG_SETTER_RETURN_TYPE by error0<KtTypeReference>()
     val WRONG_GETTER_RETURN_TYPE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
     val ACCESSOR_FOR_DELEGATED_PROPERTY by error0<KtPropertyAccessor>()
+    val ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS by error0<KtModifierListOwner>(SourceElementPositioningStrategies.ABSTRACT_MODIFIER)
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
