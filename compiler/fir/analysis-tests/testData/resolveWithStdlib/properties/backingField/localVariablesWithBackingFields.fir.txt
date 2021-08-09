@@ -1,0 +1,26 @@
+FILE: localVariablesWithBackingFields.kt
+    public final val that: R|kotlin/Number|
+        public get(): R|kotlin/Number|
+    public final fun test(): R|kotlin/Unit| {
+        lval a: R|kotlin/Number|
+        <Unresolved name: field># = Int(1)
+        lval b: R|kotlin/Number|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(2)
+        }
+        )
+        <Unresolved name: field># = Int(10)
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val c: R|kotlin/Number|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(2)
+        }
+        )
+            public get(): R|kotlin/Number| {
+                ^ this@R|/A|.D|/A.c|.R|kotlin/getValue|<R|kotlin/Int|>(this@R|/A|, ::R|/A.c|)
+            }
+
+    }

@@ -30,4 +30,42 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
     public void testSample() throws Exception {
         runTest("compiler/fir/fir2ir/testData/codegen/box/sample.kt");
     }
+
+    @Nested
+    @TestMetadata("compiler/fir/fir2ir/testData/codegen/box/properties")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Properties {
+        @Test
+        public void testAllFilesPresentInProperties() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/box/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/fir2ir/testData/codegen/box/properties/backingField")
+        @TestDataPath("$PROJECT_ROOT")
+        public class BackingField {
+            @Test
+            public void testAllFilesPresentInBackingField() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/box/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("backingFieldVisibility.kt")
+            public void testBackingFieldVisibility() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/backingFieldVisibility.kt");
+            }
+
+            @Test
+            @TestMetadata("independentBackingFieldType.kt")
+            public void testIndependentBackingFieldType() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/independentBackingFieldType.kt");
+            }
+
+            @Test
+            @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
+            public void testOverriddenPropertiesWithExplicitBackingFields() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
+            }
+        }
+    }
 }
