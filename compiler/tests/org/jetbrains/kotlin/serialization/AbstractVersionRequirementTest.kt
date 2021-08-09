@@ -140,8 +140,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
 
     fun testDefinitelyNotNull() {
         doTest(
-            VersionRequirement.Version(1, 6), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
-            customLanguageVersion = LanguageVersion.KOTLIN_1_6,
+            VersionRequirement.Version(1, 7), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_7,
             fqNamesWithRequirements = listOf(
                 "test.A.foo",
                 "test.A.w",
