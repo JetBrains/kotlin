@@ -391,6 +391,13 @@ internal val autoboxPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(bridgesPhase, coroutinesPhase)
 )
 
+internal val returnsInsertionPhase = makeKonanFileLoweringPhase(
+        ::ReturnsInsertionLowering,
+        name = "ReturnsInsertion",
+        description = "Returns insertion for Unit functions",
+        prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase)
+)
+
 internal val ifNullExpressionsFusionPhase = makeKonanFileLoweringPhase(
         ::IfNullExpressionsFusionLowering,
         name = "IfNullExpressionsFusionLowering",

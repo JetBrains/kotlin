@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
-import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -107,13 +106,6 @@ internal val buildDFGPhase = makeKonanModuleOpPhase(
         op = { context, irModule ->
             context.moduleDFG = ModuleDFGBuilder(context, irModule).build()
         }
-)
-
-internal val returnsInsertionPhase = makeKonanModuleOpPhase(
-        name = "ReturnsInsertion",
-        description = "Returns insertion for Unit functions",
-        prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase),
-        op = { context, irModule -> irModule.files.forEach { ReturnsInsertionLowering(context).lower(it) } }
 )
 
 internal val devirtualizationPhase = makeKonanModuleOpPhase(

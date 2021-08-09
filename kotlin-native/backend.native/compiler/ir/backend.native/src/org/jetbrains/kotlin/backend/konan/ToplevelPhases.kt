@@ -253,6 +253,7 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                             typeOperatorPhase,
                             bridgesPhase,
                             autoboxPhase,
+                            returnsInsertionPhase,
                         )
                 ),
         actions = setOf(defaultDumper, ::moduleValidationCallback)
@@ -400,7 +401,6 @@ internal val bitcodePhase = NamedCompilerPhase(
                 generateDebugInfoHeaderPhase then
                 propertyAccessorInlinePhase then // Have to run after link dependencies phase, because fields
                                                  // from dependencies can be changed during lowerings.
-                returnsInsertionPhase then
                 escapeAnalysisPhase then
                 localEscapeAnalysisPhase then
                 codegenPhase then
