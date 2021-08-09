@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/intersectionType1_NI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>'
         CALL 'public final fun ofType <K> (y: kotlin.Any?): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
-          <K>: kotlin.Any
+          <K>: kotlin.Any?
           $receiver: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=<root>.In<kotlin.Nothing> origin=null
             $this: CALL 'public final fun select <S> (x: S of <root>.select, y: S of <root>.select): S of <root>.select declared in <root>' type=kotlin.Array<out <root>.In<kotlin.Nothing>> origin=null
               <S>: kotlin.Array<out <root>.In<kotlin.Nothing>>

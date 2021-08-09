@@ -1,1 +1,1 @@
-fun <T> f(t: T): T!! = t!!
+interface A : suspend () -> Unit
