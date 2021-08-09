@@ -386,8 +386,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +initializer.withTransform().withReplace()
             +field("delegate", expression, nullable = true).withTransform()
             generateBooleanFields("var", "val")
-            +field("getter", propertyAccessor, nullable = true).withTransform()
-            +field("setter", propertyAccessor, nullable = true).withTransform()
+            +field("getter", propertyAccessor, nullable = true, withReplace = true).withTransform()
+            +field("setter", propertyAccessor, nullable = true, withReplace = true).withTransform()
             +field("backingField", propertyFieldDeclaration, nullable = true).withTransform()
             +annotations
             needTransformOtherChildren()

@@ -70,6 +70,10 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
 
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)
+
+    abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract fun replaceInitializerAndAccessorsAreResolved(newInitializerAndAccessorsAreResolved: Boolean)

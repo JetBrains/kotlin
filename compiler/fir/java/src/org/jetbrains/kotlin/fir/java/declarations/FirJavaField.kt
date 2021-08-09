@@ -53,8 +53,8 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val receiverTypeRef: FirTypeRef? get() = null
     override val isVal: Boolean get() = !isVar
-    override val getter: FirPropertyAccessor? get() = null
-    override val setter: FirPropertyAccessor? get() = null
+    override var getter: FirPropertyAccessor? = null
+    override var setter: FirPropertyAccessor? = null
     override val backingField: FirPropertyFieldDeclaration? = null
 
     override val origin: FirDeclarationOrigin
@@ -126,6 +126,14 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
         initializer = newInitializer
+    }
+
+    override fun replaceGetter(newGetter: FirPropertyAccessor?) {
+        getter = newGetter
+    }
+
+    override fun replaceSetter(newSetter: FirPropertyAccessor?) {
+        setter = newSetter
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
