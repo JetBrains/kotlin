@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -104,25 +107,24 @@ internal class KtFirCallResolver(
     }
 
     private fun FirFunctionCall.createCallByVariableLikeSymbolCall(variableLikeSymbol: KtVariableLikeSymbol): KtCall? {
-        return when (val callReference = calleeReference) {
+        val (functionSymbol, target) = when (val callReference = calleeReference) {
             is FirResolvedNamedReference -> {
                 val functionSymbol = callReference.resolvedSymbol as? FirNamedFunctionSymbol
-                val callableId = functionSymbol?.callableId ?: return null
-                (callReference.resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionSymbol)
-                    ?.let {
-                        if (callableId in kotlinFunctionInvokeCallableIds) {
-                            KtFunctionalTypeVariableCall(variableLikeSymbol, createArgumentMapping(), KtSuccessCallTarget(it))
-                        } else {
-                            KtVariableWithInvokeFunctionCall(variableLikeSymbol, createArgumentMapping(), KtSuccessCallTarget(it))
-                        }
-                    }
+                (functionSymbol?.fir?.buildSymbol(firSymbolBuilder) as? KtFunctionSymbol)?.let {
+                    functionSymbol to KtSuccessCallTarget(it)
+                } ?: return null
             }
-            is FirErrorNamedReference -> KtVariableWithInvokeFunctionCall(
-                variableLikeSymbol,
-                createArgumentMapping(),
-                callReference.createErrorCallTarget(source)
-            )
+            is FirErrorNamedReference -> {
+                val functionSymbol = callReference.candidateSymbol as? FirNamedFunctionSymbol
+                functionSymbol to callReference.createErrorCallTarget(source)
+            }
             else -> error("Unexpected call reference ${callReference::class.simpleName}")
+        }
+        val callableId = functionSymbol?.callableId ?: return null
+        return if (callableId in kotlinFunctionInvokeCallableIds) {
+            KtFunctionalTypeVariableCall(variableLikeSymbol, createArgumentMapping(), target)
+        } else {
+            KtVariableWithInvokeFunctionCall(variableLikeSymbol, createArgumentMapping(), target)
         }
     }
 
