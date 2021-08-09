@@ -58,7 +58,7 @@ class IrInlineCodegen(
         }
         if (actualParametersCount == 0)
             return false
-        if (function.valueParameters.any { it.isFunctionOrSuspendFunction() })
+        if (function.valueParameters.any { !it.isNoinline && it.isFunctionOrSuspendFunction() })
             return false
 
         return canInlineArgumentsInPlace(sourceCompiler.compileInlineFunction(jvmSignature).node)

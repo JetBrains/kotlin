@@ -12504,6 +12504,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/mutableCollectionPlusAssign.kt");
         }
 
+        @TestMetadata("noinlineParameter.kt")
+        public void testNoinlineParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineArgsInPlace/noinlineParameter.kt");
+        }
+
         @TestMetadata("suspensionPointInsideArgument.kt")
         public void testSuspensionPointInsideArgument() throws Exception {
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/suspensionPointInsideArgument.kt");

@@ -18109,6 +18109,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("noinlineParameter.kt")
+        public void testNoinlineParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineArgsInPlace/noinlineParameter.kt");
+        }
+
+        @Test
         @TestMetadata("suspensionPointInsideArgument.kt")
         public void testSuspensionPointInsideArgument() throws Exception {
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/suspensionPointInsideArgument.kt");
