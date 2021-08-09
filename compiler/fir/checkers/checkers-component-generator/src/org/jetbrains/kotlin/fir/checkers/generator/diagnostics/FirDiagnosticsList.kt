@@ -837,6 +837,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER by error<KtProperty>()
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
+        val PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION by error<KtExpression>()
+        val PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER by error<KtPropertyFieldDeclaration>()
+        val PROPERTY_MUST_HAVE_GETTER by error<KtProperty>()
+        val PROPERTY_MUST_HAVE_SETTER by error<KtProperty>()
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {
