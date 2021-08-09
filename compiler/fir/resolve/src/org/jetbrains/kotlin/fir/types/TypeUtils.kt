@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -510,3 +511,13 @@ private class CapturedArguments(val capturedArguments: Array<ConeTypeProjection>
     }
 }
 
+fun FirTypedDeclaration.isSubtypeOf(
+    other: FirTypedDeclaration,
+    typeCheckerContext: ConeTypeCheckerContext
+): Boolean {
+    return AbstractTypeChecker.isSubtypeOf(
+        typeCheckerContext,
+        returnTypeRef.coneType,
+        other.returnTypeRef.coneType
+    )
+}
