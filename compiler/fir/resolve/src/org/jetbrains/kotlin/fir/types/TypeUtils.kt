@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -528,3 +529,14 @@ fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, session: FirSession): 
         session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
         this, superType,
     )
+
+fun FirTypedDeclaration.isSubtypeOf(
+    other: FirTypedDeclaration,
+    typeCheckerContext: TypeCheckerState
+): Boolean {
+    return AbstractTypeChecker.isSubtypeOf(
+        typeCheckerContext,
+        returnTypeRef.coneType,
+        other.returnTypeRef.coneType
+    )
+}
