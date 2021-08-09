@@ -305,7 +305,8 @@ open class MarkdownParser(
             node.type,
             children = DocTagsFromIElementFactory.getInstance(
                 MarkdownTokenTypes.TEXT,
-                body = text.substring(node.startOffset + 1, node.endOffset - 1).replace('\n', ' ').trimIndent()
+                body = text.substring(node.startOffset + 1, node.endOffset - 1).replace('\n', ' ').trimIndent(),
+                keepFormatting = true
             )
         )
 
