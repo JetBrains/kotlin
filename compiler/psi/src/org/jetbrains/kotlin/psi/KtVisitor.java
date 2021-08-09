@@ -402,10 +402,6 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitTypeElement(nullableType, data);
     }
 
-    public R visitDefinitelyNotNullType(@NotNull KtDefinitelyNotNullType definitelyNotNullType, D data) {
-        return visitTypeElement(definitelyNotNullType, data);
-    }
-
     public R visitIntersectionType(@NotNull KtIntersectionType definitelyNotNullType, D data) {
         return visitTypeElement(definitelyNotNullType, data);
     }

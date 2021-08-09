@@ -509,7 +509,7 @@ object LightTreePositioningStrategies {
         return when (node.tokenType) {
             KtNodeTypes.USER_TYPE -> findChildByType(node, KtNodeTypes.REFERENCE_EXPRESSION)
                 ?: findChildByType(node, KtNodeTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
-            KtNodeTypes.NULLABLE_TYPE, KtNodeTypes.DEFINITELY_NOT_NULL_TYPE -> findChildByType(node, KtStubElementTypes.TYPE_ELEMENT_TYPES)
+            KtNodeTypes.NULLABLE_TYPE -> findChildByType(node, KtStubElementTypes.TYPE_ELEMENT_TYPES)
                 ?.let { referencedTypeExpression(it) }
             else -> null
         }

@@ -79,9 +79,6 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtNullableType> NULLABLE_TYPE =
             new KtPlaceHolderStubElementType<>("NULLABLE_TYPE", KtNullableType.class);
 
-    KtPlaceHolderStubElementType<KtDefinitelyNotNullType> DEFINITELY_NOT_NULL_TYPE =
-            new KtPlaceHolderStubElementType<>("DEFINITELY_NOT_NULL_TYPE", KtDefinitelyNotNullType.class);
-
     KtPlaceHolderStubElementType<KtIntersectionType> INTERSECTION_TYPE =
             new KtPlaceHolderStubElementType<>("INTERSECTION_TYPE", KtIntersectionType.class);
 

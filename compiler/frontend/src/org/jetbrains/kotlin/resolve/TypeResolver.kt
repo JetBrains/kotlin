@@ -290,33 +290,6 @@ class TypeResolver(
                 return resolveTypeElement(c, innerAnnotations, outerModifierList ?: innerModifierList, innerType)
             }
 
-            override fun visitDefinitelyNotNullType(definitelyNotNullType: KtDefinitelyNotNullType) {
-                val baseType =
-                    createTypeFromInner(definitelyNotNullType, definitelyNotNullType.modifierList, definitelyNotNullType.innerType)
-
-                if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNotNullTypeParameters)) {
-                    result = baseType
-                    c.trace.report(
-                        UNSUPPORTED_FEATURE.on(
-                            definitelyNotNullType,
-                            LanguageFeature.DefinitelyNotNullTypeParameters to languageVersionSettings
-                        )
-                    )
-                    return
-                }
-
-                val definitelyNotNullKotlinType =
-                    if (!baseType.isBare) DefinitelyNotNullType.makeDefinitelyNotNull(baseType.actualType.unwrap()) else null
-
-                if (definitelyNotNullKotlinType == null) {
-                    result = baseType
-                    c.trace.report(DEFINITELY_NOT_NULLABLE_NOT_APPLICABLE.on(definitelyNotNullType))
-                    return
-                }
-
-                result = type(definitelyNotNullKotlinType)
-            }
-
             override fun visitIntersectionType(intersectionType: KtIntersectionType) {
                 val leftType = resolvePossiblyBareType(c, intersectionType.getLeftTypeRef() ?: return).let {
                     when {

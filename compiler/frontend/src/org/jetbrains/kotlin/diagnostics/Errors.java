@@ -159,7 +159,6 @@ public interface Errors {
     DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> UPPER_BOUND_VIOLATED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> UPPER_BOUND_VIOLATED_WARNING = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory0<KtNullableType> REDUNDANT_NULLABLE = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
-    DiagnosticFactory0<KtDefinitelyNotNullType> DEFINITELY_NOT_NULLABLE_NOT_APPLICABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtNullableType> NULLABLE_ON_DEFINITELY_NOT_NULLABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> INCORRECT_LEFT_COMPONENT_OF_INTERSECTION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION = DiagnosticFactory0.create(ERROR);

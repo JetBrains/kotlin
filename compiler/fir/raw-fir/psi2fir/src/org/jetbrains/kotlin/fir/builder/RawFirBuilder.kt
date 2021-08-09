@@ -1536,11 +1536,6 @@ open class RawFirBuilder(
                         allModifierLists += getAllModifierLists()
                         this.innerType.unwrapNullable()
                     }
-                    // TODO: Support explicit definitely not null type
-                    is KtDefinitelyNotNullType -> {
-                        allModifierLists += getAllModifierLists()
-                        this.innerType.unwrapNullable()
-                    }
                     else -> this
                 }
 
