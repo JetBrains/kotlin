@@ -108,15 +108,10 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             "Array.kotlin.collections.copyToArrayOfAny(Boolean)" to "kotlin.collections.CollectionsKt",
         )
 
-        private fun IrDeclarationWithName.getSignature(): String {
+        private fun IrFunction.getSignature(): String {
             val fqName = this.fqName
-            return when (this) {
-                is IrFunction -> {
-                    val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
-                    this.valueParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
-                }
-                else -> fqName
-            }
+            val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
+            return this.valueParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
         }
 
         private fun IrFunction.getJvmClassName(): String? {
@@ -124,10 +119,9 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         }
 
         fun mustBeHandledWithWrapper(declaration: IrDeclarationWithName): Boolean {
-            val fqName = declaration.fqName
             return when (declaration) {
                 is IrFunction -> declaration.getSignature() in intrinsicFunctionToHandler
-                else -> fqName in intrinsicClasses || fqName.startsWith("java")
+                else -> declaration.fqName.let { it in intrinsicClasses || it.startsWith("java") }
             }
         }
 

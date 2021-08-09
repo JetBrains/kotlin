@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
 internal sealed class IntrinsicBase {
-    abstract fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean
+    abstract fun getListOfAcceptableFunctions(): List<String>
     abstract fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment)
     open fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
         return listOf(customEvaluateInstruction(irFunction, environment))
@@ -38,8 +38,8 @@ internal sealed class IntrinsicBase {
 }
 
 internal object EmptyArray : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName in setOf("kotlin.emptyArray", "kotlin.ArrayIntrinsicsKt.emptyArray")
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf("kotlin.emptyArray", "kotlin.ArrayIntrinsicsKt.emptyArray")
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -49,8 +49,11 @@ internal object EmptyArray : IntrinsicBase() {
 }
 
 internal object ArrayOf : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName == "kotlin.arrayOf" || fqName.matches("kotlin\\.(byte|char|short|int|long|float|double|boolean|)ArrayOf".toRegex())
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf(
+            "kotlin.arrayOf", "kotlin.byteArrayOf", "kotlin.charArrayOf", "kotlin.shortArrayOf", "kotlin.intArrayOf",
+            "kotlin.longArrayOf", "kotlin.floatArrayOf", "kotlin.doubleArrayOf", "kotlin.booleanArrayOf"
+        )
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -61,8 +64,8 @@ internal object ArrayOf : IntrinsicBase() {
 }
 
 internal object ArrayOfNulls : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName == "kotlin.arrayOfNulls"
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf("kotlin.arrayOfNulls")
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -78,8 +81,8 @@ internal object ArrayOfNulls : IntrinsicBase() {
 }
 
 internal object EnumValues : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName == "kotlin.enumValues"
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf("kotlin.enumValues")
     }
 
     private fun getEnumClass(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrClass {
@@ -108,8 +111,8 @@ internal object EnumValues : IntrinsicBase() {
 }
 
 internal object EnumValueOf : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName == "kotlin.enumValueOf"
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf("kotlin.enumValueOf")
     }
 
     private fun getEnumClass(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrClass {
@@ -144,7 +147,13 @@ internal object EnumValueOf : IntrinsicBase() {
 }
 
 internal object EnumIntrinsics : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
+    override fun getListOfAcceptableFunctions(): List<String> {
+        // functions that can be handled by this intrinsic cannot be described by single string
+        // must call instead `canHandleFunctionWithName` method
+        return listOf()
+    }
+
+    fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
         if (origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) return true
         return fqName.startsWith("kotlin.Enum.")
     }
@@ -188,8 +197,8 @@ internal object EnumIntrinsics : IntrinsicBase() {
 }
 
 internal object JsPrimitives : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName == "kotlin.Long.<init>" || fqName == "kotlin.Char.<init>"
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf("kotlin.Long.<init>", "kotlin.Char.<init>")
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -208,8 +217,12 @@ internal object JsPrimitives : IntrinsicBase() {
 }
 
 internal object ArrayConstructor : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName.matches("kotlin\\.(Byte|Char|Short|Int|Long|Float|Double|Boolean|)Array\\.<init>".toRegex())
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf(
+            "kotlin.Array.<init>",
+            "kotlin.ByteArray.<init>", "kotlin.CharArray.<init>", "kotlin.ShortArray.<init>", "kotlin.IntArray.<init>",
+            "kotlin.LongArray.<init>", "kotlin.FloatArray.<init>", "kotlin.DoubleArray.<init>", "kotlin.BooleanArray.<init>"
+        )
     }
 
     override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
@@ -271,8 +284,8 @@ internal object ArrayConstructor : IntrinsicBase() {
 }
 
 internal object SourceLocation : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName == "kotlin.experimental.sourceLocation" || fqName == "kotlin.experimental.SourceLocationKt.sourceLocation"
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf("kotlin.experimental.sourceLocation", "kotlin.experimental.SourceLocationKt.sourceLocation")
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -281,8 +294,8 @@ internal object SourceLocation : IntrinsicBase() {
 }
 
 internal object AssertIntrinsic : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName == "kotlin.PreconditionsKt.assert"
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf("kotlin.PreconditionsKt.assert")
     }
 
     override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
@@ -307,8 +320,8 @@ internal object AssertIntrinsic : IntrinsicBase() {
 }
 
 internal object DataClassArrayToString : IntrinsicBase() {
-    override fun canHandleFunctionWithName(fqName: String, origin: IrDeclarationOrigin): Boolean {
-        return fqName == "kotlin.internal.ir.dataClassArrayMemberToString"
+    override fun getListOfAcceptableFunctions(): List<String> {
+        return listOf("kotlin.internal.ir.dataClassArrayMemberToString")
     }
 
     private fun arrayToString(array: Any?): String {
