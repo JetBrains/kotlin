@@ -61,7 +61,7 @@ data class Annotations(
         }.toMap()
 
     enum class AnnotationScope {
-        DIRECT, FILE
+        DIRECT, FILE, GETTER, SETTER
     }
 }
 
