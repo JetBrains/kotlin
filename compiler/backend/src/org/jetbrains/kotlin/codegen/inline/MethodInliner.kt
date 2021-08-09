@@ -733,6 +733,7 @@ class MethodInliner(
 
     private fun preprocessNodeBeforeInline(node: MethodNode, returnLabels: Map<String, Label?>) {
         try {
+            InplaceArgumentsMethodTransformer().transform("fake", node)
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
         } catch (e: Throwable) {
             throw wrapException(e, node, "couldn't inline method call")

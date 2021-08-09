@@ -18085,6 +18085,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("arrayDequeRemoveAll.kt")
+        public void testArrayDequeRemoveAll() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineArgsInPlace/arrayDequeRemoveAll.kt");
+        }
+
+        @Test
         @TestMetadata("breakInArgumentExpression.kt")
         public void testBreakInArgumentExpression() throws Exception {
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/breakInArgumentExpression.kt");
@@ -18094,6 +18100,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("continueInArgumentExpression.kt")
         public void testContinueInArgumentExpression() throws Exception {
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/continueInArgumentExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineCircularDedepency.kt")
+        public void testInlineCircularDedepency() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineArgsInPlace/inlineCircularDedepency.kt");
         }
 
         @Test

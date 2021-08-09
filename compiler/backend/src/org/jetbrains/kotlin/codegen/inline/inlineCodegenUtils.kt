@@ -301,7 +301,7 @@ internal fun firstLabelInChain(node: LabelNode): LabelNode {
 internal fun areLabelsBeforeSameInsn(first: LabelNode, second: LabelNode): Boolean =
     firstLabelInChain(first) == firstLabelInChain(second)
 
-internal val MethodNode?.nodeText: String
+val MethodNode?.nodeText: String
     get() {
         if (this == null) {
             return "Not generated"

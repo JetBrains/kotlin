@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.optimization.boxing.isMethodInsnWith
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.remapLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 
 class InplaceArgumentsMethodTransformer : MethodTransformer() {
@@ -25,8 +27,8 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
             transformMethod(methodContext)
             updateLvtEntriesForMovedInstructions(methodContext)
 
-            val stackSizeAfter = StackSizeCalculator(internalClassName, methodNode).calculateStackSize()
-            methodNode.maxStack = stackSizeAfter
+            methodNode.maxStack = StackSizeCalculator(internalClassName, methodNode).calculateStackSize()
+            packLocalVariables(methodNode)
         }
         stripMarkers(methodNode)
     }
@@ -287,7 +289,15 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
                         // Not an argument load
                         insn = insn.next
                     } else {
-                        // Replace argument load with argument body
+                        // For each argument within this call we have
+                        //      <inplaceArgStartMarker>
+                        //      <argumentBody>
+                        //      <inplaceArgEndMarker>
+                        //      store [arg]
+                        //      ...
+                        //      load [arg]
+                        // Replace 'load [arg]' with '<argumentBody>', drop 'store [arg]' and argument markers.
+
                         var argInsn = arg.argStartMarker.next
                         while (argInsn != arg.argEndMarker) {
                             // If a LOAD/STORE/IINC instruction was moved,
@@ -372,6 +382,62 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
             }
             insn = insn.next
         }
+    }
+
+    private fun packLocalVariables(methodNode: MethodNode) {
+        // After we've dropped argument stores-loads for inplace arguments, some variable slots may become unused.
+        // Track used slots and remap local variables.
+        // Keep in mind that 'long' and 'double' variables occupy 2 slots.
+        val usedLocalVar = BooleanArray(methodNode.maxLocals)
+
+        // 'this' and arguments are always "used"
+        val argTypes = Type.getArgumentTypes(methodNode.desc)
+        var lastArgIndex = 0
+        if (methodNode.access and Opcodes.ACC_STATIC == 0) {
+            usedLocalVar[lastArgIndex++] = true
+        }
+        for (argType in argTypes) {
+            usedLocalVar[lastArgIndex++] = true
+            if (argType.size == 2) {
+                usedLocalVar[lastArgIndex++] = true
+            }
+        }
+
+        // Local variables used in xLOAD/xSTORE/IINC instructions
+        for (insn in methodNode.instructions) {
+            when (insn.opcode) {
+                Opcodes.ILOAD, Opcodes.FLOAD, Opcodes.ALOAD, Opcodes.ISTORE, Opcodes.FSTORE, Opcodes.ASTORE ->
+                    usedLocalVar[(insn as VarInsnNode).`var`] = true
+                Opcodes.LLOAD, Opcodes.DLOAD, Opcodes.LSTORE, Opcodes.DSTORE -> {
+                    val index = (insn as VarInsnNode).`var`
+                    usedLocalVar[index] = true
+                    usedLocalVar[index + 1] = true
+                }
+                Opcodes.IINC ->
+                    usedLocalVar[(insn as IincInsnNode).`var`] = true
+            }
+        }
+
+        // Local variables mentioned in LVT
+        for (lv in methodNode.localVariables) {
+            usedLocalVar[lv.index] = true
+            val lvd0 = lv.desc[0]
+            if (lvd0 == 'J' || lvd0 == 'D') { // long || double
+                usedLocalVar[lv.index + 1] = true
+            }
+        }
+
+        val newIndex = IntArray(methodNode.maxLocals)
+        var lastIndex = 0
+        for (i in newIndex.indices) {
+            newIndex[i] = lastIndex
+            if (usedLocalVar[i]) {
+                ++lastIndex
+            }
+        }
+
+        methodNode.remapLocalVariables(newIndex)
+        methodNode.maxLocals = lastIndex
     }
 
 }
