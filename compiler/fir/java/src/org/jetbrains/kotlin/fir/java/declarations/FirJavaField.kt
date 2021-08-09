@@ -149,6 +149,10 @@ class FirJavaField @FirImplementationDetail constructor(
     override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField {
         return this
     }
+
+    override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
+
+    override fun replaceSetter(newSetter: FirPropertyAccessor?) {}
 }
 
 @FirBuilderDsl

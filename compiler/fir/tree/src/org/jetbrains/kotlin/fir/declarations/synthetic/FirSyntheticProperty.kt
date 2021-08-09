@@ -166,4 +166,12 @@ class FirSyntheticProperty(
     override fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState) {
         throw AssertionError("Mutation of synthetic property isn't supported")
     }
+
+    override fun replaceGetter(newGetter: FirPropertyAccessor?) {
+        throw AssertionError("Mutation of synthetic property isn't supported")
+    }
+
+    override fun replaceSetter(newSetter: FirPropertyAccessor?) {
+        throw AssertionError("Mutation of synthetic property isn't supported")
+    }
 }

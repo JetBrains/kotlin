@@ -63,6 +63,10 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
 
     abstract fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract fun replaceGetter(newGetter: FirPropertyAccessor?)
+
+    abstract fun replaceSetter(newSetter: FirPropertyAccessor?)
+
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirVariable
