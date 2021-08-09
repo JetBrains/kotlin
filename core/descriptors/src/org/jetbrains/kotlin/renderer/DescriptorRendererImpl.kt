@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.util.*
 
 internal class DescriptorRendererImpl(
     val options: DescriptorRendererOptionsImpl
@@ -263,7 +262,7 @@ internal class DescriptorRendererImpl(
         }
 
         if (type.isDefinitelyNotNullType) {
-            append("!!")
+            append(" & Any")
         }
     }
 
