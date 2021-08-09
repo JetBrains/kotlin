@@ -174,7 +174,7 @@ class DefinitelyNotNullType private constructor(
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
         if (newNullability) delegate.makeNullableAsSpecified(newNullability) else this
 
-    override fun toString(): String = "$delegate!!"
+    override fun toString(): String = "$delegate & Any"
 
     @TypeRefinement
     override fun replaceDelegate(delegate: SimpleType) = DefinitelyNotNullType(delegate, useCorrectedNullabilityForTypeParameters)
