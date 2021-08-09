@@ -1,0 +1,6 @@
+FILE: explicitBackingFieldInInterface.kt
+    public abstract interface I : R|kotlin/Any| {
+        public abstract val it: R|kotlin/Number|
+            public get(): R|kotlin/Number|
+
+    }

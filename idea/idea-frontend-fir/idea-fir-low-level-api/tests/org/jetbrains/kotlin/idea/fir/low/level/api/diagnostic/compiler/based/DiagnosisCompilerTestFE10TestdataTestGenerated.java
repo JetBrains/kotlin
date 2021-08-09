@@ -22486,6 +22486,22 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/properties/backingField")
+            @TestDataPath("$PROJECT_ROOT")
+            public class BackingField {
+                @Test
+                public void testAllFilesPresentInBackingField() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("trivialExplicitBackingFIeld.kt")
+                public void testTrivialExplicitBackingFIeld() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/properties/backingField/trivialExplicitBackingFIeld.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters")
             @TestDataPath("$PROJECT_ROOT")
             public class InferenceFromGetters {

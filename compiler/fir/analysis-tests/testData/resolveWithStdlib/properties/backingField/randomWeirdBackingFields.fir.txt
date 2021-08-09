@@ -1,0 +1,10 @@
+FILE: randomWeirdBackingFields.kt
+    public abstract class Some1 : R|kotlin/Any| {
+        public constructor(): R|Some1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val foo: R|kotlin/collections/List<kotlin/Int>|
+            public get(): R|kotlin/collections/List<kotlin/Int>|
+
+    }

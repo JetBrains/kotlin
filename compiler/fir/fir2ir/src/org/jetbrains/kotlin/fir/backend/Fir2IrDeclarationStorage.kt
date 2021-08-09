@@ -610,13 +610,7 @@ class Fir2IrDeclarationStorage(
             signature,
             containerSource
         ) { symbol ->
-            val accessorReturnType = if (isSetter) {
-                irBuiltIns.unitType
-            } else if (property.canNarrowDownGetterType) {
-                property.backingField?.returnTypeRef?.toIrType() ?: propertyType
-            } else {
-                propertyType
-            }
+            val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             val visibility = propertyAccessor?.visibility?.let {
                 components.visibilityConverter.convertToDescriptorVisibility(it)
             }

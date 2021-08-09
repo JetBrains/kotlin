@@ -1,0 +1,8 @@
+FILE: explicitBackingFieldsWithDelegates.kt
+    public final val thingWithDelefate: R|kotlin/Number|by R|kotlin/lazy|<R|kotlin/Number|>(<L> = lazy@fun <anonymous>(): R|kotlin/Number| <inline=NoInline>  {
+        ^ (Int(2) as R|kotlin/Number|)
+    }
+    )
+        public get(): R|kotlin/Number| {
+            ^ D|/thingWithDelefate|.R|kotlin/getValue|<R|kotlin/Number|>(Null(null), ::R|/thingWithDelefate|)
+        }

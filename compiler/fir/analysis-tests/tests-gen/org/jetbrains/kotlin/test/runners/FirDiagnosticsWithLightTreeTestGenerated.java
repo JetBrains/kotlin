@@ -5533,6 +5533,104 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Properties {
+            @Test
+            public void testAllFilesPresentInProperties() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField")
+            @TestDataPath("$PROJECT_ROOT")
+            public class BackingField {
+                @Test
+                public void testAllFilesPresentInBackingField() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("backingFieldModifiers.kt")
+                public void testBackingFieldModifiers() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldModifiers.kt");
+                }
+
+                @Test
+                @TestMetadata("backingFieldVisibility.kt")
+                public void testBackingFieldVisibility() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldVisibility.kt");
+                }
+
+                @Test
+                @TestMetadata("backingFieldWithSmartTypeParameters.kt")
+                public void testBackingFieldWithSmartTypeParameters() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldWithSmartTypeParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("explicitBackingFieldInInterface.kt")
+                public void testExplicitBackingFieldInInterface() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldInInterface.kt");
+                }
+
+                @Test
+                @TestMetadata("explicitBackingFieldType.kt")
+                public void testExplicitBackingFieldType() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldType.kt");
+                }
+
+                @Test
+                @TestMetadata("explicitBackingFieldsWithDelegates.kt")
+                public void testExplicitBackingFieldsWithDelegates() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsWithDelegates.kt");
+                }
+
+                @Test
+                @TestMetadata("filePrivateBackingFieldAccess.kt")
+                public void testFilePrivateBackingFieldAccess() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/filePrivateBackingFieldAccess.kt");
+                }
+
+                @Test
+                @TestMetadata("lateinitBackingFields.kt")
+                public void testLateinitBackingFields() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/lateinitBackingFields.kt");
+                }
+
+                @Test
+                @TestMetadata("localVariablesWithBackingFields.kt")
+                public void testLocalVariablesWithBackingFields() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/localVariablesWithBackingFields.kt");
+                }
+
+                @Test
+                @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
+                public void testOverriddenPropertiesWithExplicitBackingFields() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyTypeNarrowing.kt")
+                public void testPropertyTypeNarrowing() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/propertyTypeNarrowing.kt");
+                }
+
+                @Test
+                @TestMetadata("randomWeirdBackingFields.kt")
+                public void testRandomWeirdBackingFields() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/randomWeirdBackingFields.kt");
+                }
+
+                @Test
+                @TestMetadata("redundantExplicitBackingField.kt")
+                public void testRedundantExplicitBackingField() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/redundantExplicitBackingField.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations")
         @TestDataPath("$PROJECT_ROOT")
         public class Reinitializations {

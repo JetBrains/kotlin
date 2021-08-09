@@ -1,0 +1,23 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var it: Double
+    field = 3.14
+    get(): Int {
+      return <this>.#it.plus(other = 10).toInt()
+    }
+    set(value: Int) {
+      <this>.#it = value.minus(other = 10).toDouble()
+    }
+
+}
+
+fun test() {
+  val a: A = A()
+  val it: Int = A().<get-it>().and(other = 10)
+  a.<set-it>(value = it)
+}
