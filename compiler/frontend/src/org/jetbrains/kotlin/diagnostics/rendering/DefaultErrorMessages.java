@@ -696,6 +696,8 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_NULLABLE, "Redundant '?'");
         MAP.put(DEFINITELY_NOT_NULLABLE_NOT_APPLICABLE, "'!!' is only applicable to type parameters with nullable upper bounds");
         MAP.put(NULLABLE_ON_DEFINITELY_NOT_NULLABLE, "'!!' type cannot be marked as nullable");
+        MAP.put(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION, "Intersection types are only supported for definitely non-nullable types: left part should be a type parameter with nullable bounds");
+        MAP.put(INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION, "Intersection types are only supported for definitely non-nullable types: right part should be non-nullable Any");
         MAP.put(UNSAFE_CALL, "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}", RENDER_TYPE);
         MAP.put(UNSAFE_IMPLICIT_INVOKE_CALL, "Reference has a nullable type ''{0}'', use explicit ''?.invoke()'' to make a function-like call instead", RENDER_TYPE);
         MAP.put(AMBIGUOUS_LABEL, "Ambiguous label");

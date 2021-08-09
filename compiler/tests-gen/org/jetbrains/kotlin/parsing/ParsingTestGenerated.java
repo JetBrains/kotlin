@@ -36,6 +36,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi"), Pattern.compile("^(.*)\\.kts?$"), null, true);
         }
 
+        @TestMetadata("AnnotatedIntersections.kt")
+        public void testAnnotatedIntersections() throws Exception {
+            runTest("compiler/testData/psi/AnnotatedIntersections.kt");
+        }
+
         @TestMetadata("AnonymousInitializer.kt")
         public void testAnonymousInitializer() throws Exception {
             runTest("compiler/testData/psi/AnonymousInitializer.kt");
@@ -624,6 +629,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         @TestMetadata("SimpleExpressions.kt")
         public void testSimpleExpressions() throws Exception {
             runTest("compiler/testData/psi/SimpleExpressions.kt");
+        }
+
+        @TestMetadata("SimpleIntersections.kt")
+        public void testSimpleIntersections() throws Exception {
+            runTest("compiler/testData/psi/SimpleIntersections.kt");
         }
 
         @TestMetadata("SimpleModifiers.kt")

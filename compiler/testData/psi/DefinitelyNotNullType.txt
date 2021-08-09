@@ -20,76 +20,74 @@ KtFile: DefinitelyNotNullType.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          DEFINITELY_NOT_NULL_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-            PsiElement(EXCLEXCL)('!!')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('y')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('List')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_PROJECTION
-                TYPE_REFERENCE
-                  DEFINITELY_NOT_NULL_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(EXCLEXCL)('!!')
-              PsiElement(GT)('>')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('z')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          FUNCTION_TYPE
-            FUNCTION_TYPE_RECEIVER
-              TYPE_REFERENCE
-                DEFINITELY_NOT_NULL_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                  PsiElement(EXCLEXCL)('!!')
-            PsiElement(DOT)('.')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              VALUE_PARAMETER
-                TYPE_REFERENCE
-                  DEFINITELY_NOT_NULL_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(EXCLEXCL)('!!')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              DEFINITELY_NOT_NULL_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(EXCLEXCL)('!!')
-      PsiElement(RPAR)(')')
-    PsiElement(COLON)(':')
-    PsiWhiteSpace(' ')
-    TYPE_REFERENCE
-      DEFINITELY_NOT_NULL_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('T')
+              PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting comma or ')'
+        <empty list>
+      PsiErrorElement:Expecting ')'
         PsiElement(EXCLEXCL)('!!')
-    PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COMMA)(',')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('y')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COLON)(':')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('List')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COMMA)(',')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('z')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COLON)(':')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(DOT)('.')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(ARROW)('->')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COLON)(':')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
@@ -113,98 +111,94 @@ KtFile: DefinitelyNotNullType.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          NULLABLE_TYPE
-            DEFINITELY_NOT_NULL_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-              PsiElement(EXCLEXCL)('!!')
-            PsiElement(QUEST)('?')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('y')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('List')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_PROJECTION
-                TYPE_REFERENCE
-                  NULLABLE_TYPE
-                    DEFINITELY_NOT_NULL_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
-                      PsiElement(EXCLEXCL)('!!')
-                    PsiElement(QUEST)('?')
-              PsiElement(GT)('>')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('z')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          FUNCTION_TYPE
-            FUNCTION_TYPE_RECEIVER
-              TYPE_REFERENCE
-                NULLABLE_TYPE
-                  DEFINITELY_NOT_NULL_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(EXCLEXCL)('!!')
-                  PsiElement(QUEST)('?')
-            PsiElement(DOT)('.')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              VALUE_PARAMETER
-                TYPE_REFERENCE
-                  NULLABLE_TYPE
-                    DEFINITELY_NOT_NULL_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
-                      PsiElement(EXCLEXCL)('!!')
-                    PsiElement(QUEST)('?')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              NULLABLE_TYPE
-                DEFINITELY_NOT_NULL_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                  PsiElement(EXCLEXCL)('!!')
-                PsiElement(QUEST)('?')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      VALUE_PARAMETER
-        PsiElement(IDENTIFIER)('w')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          DEFINITELY_NOT_NULL_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('String')
-            PsiElement(EXCLEXCL)('!!')
-      PsiElement(RPAR)(')')
-    PsiElement(COLON)(':')
-    PsiWhiteSpace(' ')
-    TYPE_REFERENCE
-      DEFINITELY_NOT_NULL_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('T')
+              PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting comma or ')'
+        <empty list>
+      PsiErrorElement:Expecting ')'
         PsiElement(EXCLEXCL)('!!')
-    PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(QUEST)('?')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COMMA)(',')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('y')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COLON)(':')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('List')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(QUEST)('?')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COMMA)(',')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('z')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COLON)(':')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(SAFE_ACCESS)('?.')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(QUEST)('?')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(ARROW)('->')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(QUEST)('?')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COMMA)(',')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('w')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COLON)(':')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('String')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COLON)(':')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EXCLEXCL)('!!')
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')

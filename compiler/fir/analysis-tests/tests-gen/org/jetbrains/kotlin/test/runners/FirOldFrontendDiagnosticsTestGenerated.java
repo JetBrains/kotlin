@@ -10105,6 +10105,76 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ExplicitDefinitelyNotNullableViaIntersection {
+            @Test
+            public void testAllFilesPresentInExplicitDefinitelyNotNullableViaIntersection() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("approximation.kt")
+            public void testApproximation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/approximation.kt");
+            }
+
+            @Test
+            @TestMetadata("bareTypes.kt")
+            public void testBareTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/bareTypes.kt");
+            }
+
+            @Test
+            @TestMetadata("disabledFeature.kt")
+            public void testDisabledFeature() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/disabledFeature.kt");
+            }
+
+            @Test
+            @TestMetadata("inference.kt")
+            public void testInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/inference.kt");
+            }
+
+            @Test
+            @TestMetadata("isAsOperators.kt")
+            public void testIsAsOperators() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/isAsOperators.kt");
+            }
+
+            @Test
+            @TestMetadata("isAsOperatorsEnabled.kt")
+            public void testIsAsOperatorsEnabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/isAsOperatorsEnabled.kt");
+            }
+
+            @Test
+            @TestMetadata("notApplicable.kt")
+            public void testNotApplicable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/notApplicable.kt");
+            }
+
+            @Test
+            @TestMetadata("overrides.kt")
+            public void testOverrides() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/overrides.kt");
+            }
+
+            @Test
+            @TestMetadata("overridesJavaAnnotated.kt")
+            public void testOverridesJavaAnnotated() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/overridesJavaAnnotated.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/simple.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/exposed")
         @TestDataPath("$PROJECT_ROOT")
         public class Exposed {

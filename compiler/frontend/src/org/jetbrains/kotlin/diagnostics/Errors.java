@@ -161,6 +161,8 @@ public interface Errors {
     DiagnosticFactory0<KtNullableType> REDUNDANT_NULLABLE = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
     DiagnosticFactory0<KtDefinitelyNotNullType> DEFINITELY_NOT_NULLABLE_NOT_APPLICABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtNullableType> NULLABLE_ON_DEFINITELY_NOT_NULLABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> INCORRECT_LEFT_COMPONENT_OF_INTERSECTION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<KtElement, Integer, DeclarationDescriptor> WRONG_NUMBER_OF_TYPE_ARGUMENTS = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<KtElement, ClassDescriptor> OUTER_CLASS_ARGUMENTS_REQUIRED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtElement, String> TYPE_ARGUMENTS_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);

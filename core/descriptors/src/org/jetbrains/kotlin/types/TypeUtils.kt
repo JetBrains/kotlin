@@ -24,11 +24,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.NewCapturedType
+import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
+import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 enum class TypeNullability {
     NOT_NULL,
@@ -58,6 +60,7 @@ fun KotlinType.isNullableNothing(): Boolean = KotlinBuiltIns.isNullableNothing(t
 fun KotlinType.isNothingOrNullableNothing(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this)
 fun KotlinType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+fun KotlinType.isAny(): Boolean = KotlinBuiltIns.isAny(this)
 fun KotlinType.isNullableAny(): Boolean = KotlinBuiltIns.isNullableAny(this)
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
 fun KotlinType.isPrimitiveNumberType(): Boolean = KotlinBuiltIns.isPrimitiveType(this) && !isBoolean()

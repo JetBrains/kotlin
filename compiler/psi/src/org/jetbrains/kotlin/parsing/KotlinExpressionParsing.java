@@ -158,7 +158,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         AS(AS_KEYWORD, AS_SAFE) {
             @Override
             public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
-                parser.myKotlinParsing.parseTypeRefWithoutDefinitelyNotNull();
+                parser.myKotlinParsing.parseTypeRefWithoutIntersections();
                 return BINARY_WITH_TYPE;
             }
 
@@ -177,7 +177,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             @Override
             public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
-                    parser.myKotlinParsing.parseTypeRefWithoutDefinitelyNotNull();
+                    parser.myKotlinParsing.parseTypeRefWithoutIntersections();
                     return IS_EXPRESSION;
                 }
 
