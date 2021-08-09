@@ -444,7 +444,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val RECURSION_IN_IMPLICIT_TYPES by error<PsiElement>()
         val INFERENCE_ERROR by error<PsiElement>()
         val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error<PsiElement>()
-        val UPPER_BOUND_VIOLATED by warning<PsiElement> {
+        val UPPER_BOUND_VIOLATED by error<PsiElement> {
             parameter<ConeKotlinType>("expectedUpperBound")
             parameter<ConeKotlinType>("actualUpperBound")
         }
@@ -553,7 +553,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("typeB")
         }
 
-        val TYPE_VARIANCE_CONFLICT by warning<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+        val TYPE_VARIANCE_CONFLICT by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirTypeParameterSymbol>("typeParameter")
             parameter<Variance>("typeParameterVariance")
             parameter<Variance>("variance")
@@ -1179,11 +1179,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val DECLARATION_CANT_BE_INLINED by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
-        
+
         val OVERRIDE_BY_INLINE by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
-        
+
         val NON_INTERNAL_PUBLISHED_API by error<KtElement>()
-        
+
         val INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE by error<KtElement>() {
             parameter<FirExpression>("defaultValue")
             parameter<FirValueParameterSymbol>("parameter")

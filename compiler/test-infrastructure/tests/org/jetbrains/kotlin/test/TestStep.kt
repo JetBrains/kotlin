@@ -15,7 +15,7 @@ sealed class TestStep<I : ResultingArtifact<I>, O : ResultingArtifact<O>> {
         return inputArtifact.kind == inputArtifactKind
     }
 
-    abstract fun processModule(module: TestModule, inputArtifact: I, thereWereExceptionsOnPreviousSteps: Boolean): StepResult<O>
+    abstract fun processModule(module: TestModule, inputArtifact: I, thereWereExceptionsOnPreviousSteps: Boolean): StepResult<out O>
 
     class FacadeStep<I : ResultingArtifact<I>, O : ResultingArtifact<O>>(val facade: AbstractTestFacade<I, O>) : TestStep<I, O>() {
         override val inputArtifactKind: TestArtifactKind<I>
@@ -28,7 +28,7 @@ sealed class TestStep<I : ResultingArtifact<I>, O : ResultingArtifact<O>> {
             return super.shouldProcessModule(module, inputArtifact) && facade.shouldRunAnalysis(module)
         }
 
-        override fun processModule(module: TestModule, inputArtifact: I, thereWereExceptionsOnPreviousSteps: Boolean): StepResult<O> {
+        override fun processModule(module: TestModule, inputArtifact: I, thereWereExceptionsOnPreviousSteps: Boolean): StepResult<out O> {
             val outputArtifact = try {
                 facade.transform(module, inputArtifact) ?: return StepResult.NoArtifactFromFacade
             } catch (e: Throwable) {
@@ -69,8 +69,8 @@ sealed class TestStep<I : ResultingArtifact<I>, O : ResultingArtifact<O>> {
         }
     }
 
-    sealed class StepResult<out O : ResultingArtifact<out O>> {
-        class Artifact<out O : ResultingArtifact<out O>>(val outputArtifact: O) : StepResult<O>()
+    sealed class StepResult<O : ResultingArtifact<O>> {
+        class Artifact<O : ResultingArtifact<O>>(val outputArtifact: O) : StepResult<O>()
         class ErrorFromFacade<O : ResultingArtifact<O>>(val exception: WrappedException) : StepResult<O>()
         data class HandlersResult(
             val exceptionsFromHandlers: Collection<WrappedException>,

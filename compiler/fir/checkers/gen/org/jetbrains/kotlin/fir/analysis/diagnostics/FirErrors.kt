@@ -310,7 +310,7 @@ object FirErrors {
     val RECURSION_IN_IMPLICIT_TYPES by error0<PsiElement>()
     val INFERENCE_ERROR by error0<PsiElement>()
     val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error0<PsiElement>()
-    val UPPER_BOUND_VIOLATED by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val UPPER_BOUND_VIOLATED by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val TYPE_ARGUMENTS_NOT_ALLOWED by error0<PsiElement>()
     val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error2<PsiElement, Int, FirRegularClassSymbol>()
@@ -350,7 +350,7 @@ object FirErrors {
     val DYNAMIC_UPPER_BOUND by error0<KtTypeReference>()
     val INCOMPATIBLE_TYPES by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val INCOMPATIBLE_TYPES_WARNING by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
-    val TYPE_VARIANCE_CONFLICT by warning4<PsiElement, FirTypeParameterSymbol, Variance, Variance, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val TYPE_VARIANCE_CONFLICT by error4<PsiElement, FirTypeParameterSymbol, Variance, Variance, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE by error4<PsiElement, FirTypeParameterSymbol, Variance, Variance, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val SMARTCAST_IMPOSSIBLE by error3<KtExpression, ConeKotlinType, FirExpression, String>()
 
