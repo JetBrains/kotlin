@@ -5463,6 +5463,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("explicitFieldComponentDeclaration.kt")
+                public void testExplicitFieldComponentDeclaration() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/explicitFieldComponentDeclaration.kt");
+                }
+
+                @Test
                 @TestMetadata("explicitType.kt")
                 public void testExplicitType() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/publicType/explicitType.kt");
