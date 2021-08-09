@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class EnhancementSignatureParts(
@@ -49,11 +48,10 @@ internal class EnhancementSignatureParts(
 
     internal fun enhance(
         session: FirSession,
-        javaTypeEnhancementState: JavaTypeEnhancementState,
         predefined: TypeEnhancementInfo? = null,
         forAnnotationMember: Boolean = false
     ): PartEnhancementResult {
-        val qualifiers = computeIndexedQualifiersForOverride(session, javaTypeEnhancementState)
+        val qualifiers = computeIndexedQualifiersForOverride(session)
 
         val qualifiersWithPredefined = predefined?.let {
             IndexedJavaTypeQualifiers(qualifiers.size) { index ->
@@ -95,13 +93,12 @@ internal class EnhancementSignatureParts(
 
     private fun FirTypeRef.toIndexed(
         typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-        javaTypeEnhancementState: JavaTypeEnhancementState,
         context: FirJavaEnhancementContext
     ): List<TypeAndDefaultQualifiers> {
         val list = ArrayList<TypeAndDefaultQualifiers>(1)
 
         fun add(type: FirTypeRef?) {
-            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, javaTypeEnhancementState, type?.annotations.orEmpty())
+            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, type?.annotations.orEmpty())
 
             list.add(
                 TypeAndDefaultQualifiers(
@@ -206,7 +203,7 @@ internal class EnhancementSignatureParts(
             else
                 defaultQualifiersForType
 
-        val nullabilityInfo = composedAnnotation.extractNullability(typeQualifierResolver).also {
+        val nullabilityInfo = composedAnnotation.firstNotNullOfOrNull { typeQualifierResolver.extractNullability(it) }.also {
             if (it?.qualifier == NullabilityQualifier.NOT_NULL) {
                 attributesCache[this] = composedAnnotation.computeTypeAttributesForJavaType()
             }
@@ -284,9 +281,9 @@ internal class EnhancementSignatureParts(
         )
     }
 
-    private fun computeIndexedQualifiersForOverride(session: FirSession, javaTypeEnhancementState: JavaTypeEnhancementState): IndexedJavaTypeQualifiers {
-        val indexedFromSupertypes = fromOverridden.map { it.toIndexed(typeQualifierResolver, javaTypeEnhancementState, context) }
-        val indexedThisType = current.toIndexed(typeQualifierResolver, javaTypeEnhancementState, context)
+    private fun computeIndexedQualifiersForOverride(session: FirSession): IndexedJavaTypeQualifiers {
+        val indexedFromSupertypes = fromOverridden.map { it.toIndexed(typeQualifierResolver, context) }
+        val indexedThisType = current.toIndexed(typeQualifierResolver, context)
 
         // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
         // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMi
 import org.jetbrains.kotlin.name.FqName
 import java.util.concurrent.ConcurrentHashMap
 
-typealias TypeQualifierWithApplicability<Annotation> = Pair<Annotation, Set<AnnotationQualifierApplicabilityType>>
+private typealias TypeQualifierWithApplicability<Annotation> = Pair<Annotation, Set<AnnotationQualifierApplicabilityType>>
 
 abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
     private val javaTypeEnhancementState: JavaTypeEnhancementState
@@ -43,7 +43,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         }
     }
 
-    fun resolveQualifierBuiltInDefaultAnnotation(annotation: Annotation): JavaDefaultQualifiers? {
+    private fun resolveQualifierBuiltInDefaultAnnotation(annotation: Annotation): JavaDefaultQualifiers? {
         if (javaTypeEnhancementState.disabledDefaultAnnotations) {
             return null
         }
@@ -72,7 +72,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         else
             this
 
-    fun resolveTypeQualifierDefaultAnnotation(annotation: Annotation): TypeQualifierWithApplicability<Annotation>? {
+    private fun resolveTypeQualifierDefaultAnnotation(annotation: Annotation): TypeQualifierWithApplicability<Annotation>? {
         if (javaTypeEnhancementState.jsr305.isDisabled) return null
         val typeQualifierDefault = annotation.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) ?: return null
         val typeQualifier = annotation.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null } ?: return null
@@ -87,12 +87,12 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         return target.enumArguments(onlyValue = false).any { it == KotlinTarget.TYPE.name }
     }
 
-    fun resolveJsr305AnnotationState(annotation: Annotation): ReportLevel {
+    private fun resolveJsr305AnnotationState(annotation: Annotation): ReportLevel {
         resolveJsr305CustomState(annotation)?.let { return it }
         return javaTypeEnhancementState.jsr305.globalLevel
     }
 
-    fun resolveJsr305CustomState(annotation: Annotation): ReportLevel? {
+    private fun resolveJsr305CustomState(annotation: Annotation): ReportLevel? {
         javaTypeEnhancementState.jsr305.userDefinedLevelForSpecificAnnotation[annotation.fqName]?.let { return it }
         val enumValue = annotation.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.enumArguments(onlyValue = false)?.firstOrNull()
             ?: return null
@@ -104,7 +104,9 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         }
     }
 
-    fun extractNullability(annotation: Annotation, forceWarning: Annotation.() -> Boolean): NullabilityQualifierWithMigrationStatus? {
+    fun extractNullability(
+        annotation: Annotation, forceWarning: Annotation.() -> Boolean = { false }
+    ): NullabilityQualifierWithMigrationStatus? {
         knownNullability(annotation, annotation.forceWarning())?.let { return it }
 
         val typeQualifierAnnotation = resolveTypeQualifierAnnotation(annotation) ?: return null
@@ -113,6 +115,42 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         // TODO: the result of `forceWarning` will be overwritten - expected? Probably not.
         return knownNullability(typeQualifierAnnotation, typeQualifierAnnotation.forceWarning())
             ?.copy(isForWarningOnly = jsr305State.isWarning)
+    }
+
+    private fun extractDefaultQualifiers(annotation: Annotation): JavaDefaultQualifiers? {
+        resolveQualifierBuiltInDefaultAnnotation(annotation)?.let { return it }
+
+        val (typeQualifier, applicability) = resolveTypeQualifierDefaultAnnotation(annotation)
+            ?: return null
+        val jsr305State = resolveJsr305CustomState(annotation) ?: resolveJsr305AnnotationState(typeQualifier)
+        if (jsr305State.isIgnore) return null
+        // TODO: since we override the warning status, whether we force it in `extractNullability` is irrelevant.
+        //   However, this is probably not what was intended.
+        val nullabilityQualifier = extractNullability(typeQualifier) ?: return null
+        return JavaDefaultQualifiers(nullabilityQualifier.copy(isForWarningOnly = jsr305State.isWarning), applicability)
+    }
+
+    fun extractAndMergeDefaultQualifiers(
+        oldQualifiers: JavaTypeQualifiersByElementType?, annotations: Iterable<Annotation>
+    ): JavaTypeQualifiersByElementType? {
+        if (javaTypeEnhancementState.disabledDefaultAnnotations) return oldQualifiers
+
+        val defaultQualifiers = annotations.mapNotNull { extractDefaultQualifiers(it) }
+        if (defaultQualifiers.isEmpty()) return oldQualifiers
+
+        val defaultQualifiersByType =
+            oldQualifiers?.defaultQualifiers?.let(::QualifierByApplicabilityType)
+                ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
+
+        var wasUpdate = false
+        for (qualifier in defaultQualifiers) {
+            for (applicabilityType in qualifier.qualifierApplicabilityTypes) {
+                defaultQualifiersByType[applicabilityType] = qualifier
+                wasUpdate = true
+            }
+        }
+
+        return if (!wasUpdate) oldQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)
     }
 
     private fun knownNullability(annotation: Annotation, forceWarning: Boolean): NullabilityQualifierWithMigrationStatus? {
