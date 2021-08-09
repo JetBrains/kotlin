@@ -210,17 +210,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun FirTypedDeclaration.isSubtypeOf(
-        other: FirTypedDeclaration,
-        typeCheckerContext: ConeTypeCheckerContext
-    ): Boolean {
-        return AbstractTypeChecker.isSubtypeOf(
-            typeCheckerContext,
-            returnTypeRef.coneType,
-            other.returnTypeRef.coneType
-        )
-    }
-
     override fun transformField(field: FirField, data: ResolutionMode): FirField {
         val returnTypeRef = field.returnTypeRef
         if (implicitTypeOnly) return field
