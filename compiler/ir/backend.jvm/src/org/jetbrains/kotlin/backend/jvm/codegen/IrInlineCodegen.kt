@@ -56,7 +56,7 @@ class IrInlineCodegen(
         val isInlineParameter = irValueParameter.isInlineParameter()
         if (isInlineParameter && argumentExpression.isInlineIrExpression()) {
             val irReference = (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
-            val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference, irValueParameter)
+            val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference)
             rememberClosure(parameterType, irValueParameter.index, lambdaInfo)
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
@@ -117,9 +117,8 @@ class IrInlineCodegen(
 class IrExpressionLambdaImpl(
     codegen: ExpressionCodegen,
     val reference: IrFunctionReference,
-    irValueParameter: IrValueParameter
 ) : ExpressionLambda(), IrExpressionLambda {
-    override val isExtensionLambda: Boolean = irValueParameter.type.isExtensionFunctionType && reference.extensionReceiver == null
+    override val isExtensionLambda: Boolean = function.extensionReceiverParameter != null && reference.extensionReceiver == null
 
     val function: IrFunction
         get() = reference.symbol.owner
