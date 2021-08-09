@@ -358,6 +358,7 @@ open class RawFirBuilder(
             propertyTypeRef: FirTypeRef,
             propertySymbol: FirPropertySymbol,
             isGetter: Boolean,
+            hasBackingField: Boolean,
         ): FirPropertyAccessor? {
             val accessorVisibility =
                 if (this?.visibility != null && this.visibility != Visibilities.Unknown) this.visibility else property.visibility
@@ -422,7 +423,11 @@ open class RawFirBuilder(
                         this@RawFirBuilder.context.firFunctionTargets.removeLast()
                     }
                 }
-                isGetter || property.isVar -> {
+                // If an explicit backing field is present,
+                // the default accessors might not be compatible
+                // with it. We should check the types first, and
+                // only then see if we can create the default accessors.
+                !hasBackingField && (isGetter || property.isVar) -> {
                     // Default getter for val/var properties, and default setter for var properties.
                     val propertySource =
                         this?.toFirSourceElement() ?: property.toFirPsiSourceElement(FirFakeSourceElementKind.DefaultAccessor)
@@ -1491,21 +1496,23 @@ open class RawFirBuilder(
                             }
                         } else null
 
+                        backingField = this@toFirProperty.fieldDeclaration.toFirPropertyFieldDeclaration(
+                            this@toFirProperty,
+                            propertySymbol = symbol,
+                        )
                         getter = this@toFirProperty.getter.toFirPropertyAccessor(
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
-                            isGetter = true
+                            isGetter = true,
+                            hasBackingField = backingField != null,
                         )
                         setter = this@toFirProperty.setter.toFirPropertyAccessor(
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
-                            isGetter = false
-                        )
-                        backingField = this@toFirProperty.fieldDeclaration.toFirPropertyFieldDeclaration(
-                            this@toFirProperty,
-                            propertySymbol = symbol,
+                            isGetter = false,
+                            hasBackingField = backingField != null,
                         )
 
                         status = FirDeclarationStatusImpl(visibility, modality).apply {

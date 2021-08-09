@@ -259,6 +259,13 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformProperty(property, data)
     }
 
+    override fun transformPropertyFieldDeclaration(
+        propertyFieldDeclaration: FirPropertyFieldDeclaration,
+        data: ResolutionMode
+    ): FirStatement {
+        return declarationsTransformer.transformPropertyFieldDeclaration(propertyFieldDeclaration, data)
+    }
+
     override fun transformField(field: FirField, data: ResolutionMode): FirField {
         return declarationsTransformer.transformField(field, data)
     }

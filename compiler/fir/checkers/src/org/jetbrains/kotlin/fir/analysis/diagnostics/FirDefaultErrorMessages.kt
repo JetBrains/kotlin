@@ -296,9 +296,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_GETTER_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_MUST_HAVE_GETTER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_MUST_HAVE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE
@@ -1204,6 +1208,22 @@ class FirDefaultErrorMessages {
                 "Properties can't both have a delegate and a getter with a greater visibility"
             )
             map.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations")
+            map.put(
+                PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION,
+                "Property initializers are not allowed for properties with an explicit backing field declaration"
+            )
+            map.put(
+                PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER,
+                "Property backing field declaration must have an initializer"
+            )
+            map.put(
+                PROPERTY_MUST_HAVE_GETTER,
+                "This property needs a custom getter"
+            )
+            map.put(
+                PROPERTY_MUST_HAVE_SETTER,
+                "This property needs a custom setter"
+            )
 
             map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects")
             map.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter")

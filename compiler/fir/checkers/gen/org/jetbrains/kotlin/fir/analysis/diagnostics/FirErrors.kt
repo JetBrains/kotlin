@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.KtPropertyFieldDeclaration
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
@@ -454,6 +455,10 @@ object FirErrors {
     val INCOMPLETE_PROPERTY_OVERRIDE by error2<KtDeclaration, Visibility, Visibility>()
     val PROPERTY_WITH_DELEGATE_AND_EXPOSING_GETTER by error0<KtProperty>()
     val ACCESSOR_FOR_DELEGATED_PROPERTY by error0<KtPropertyAccessor>()
+    val PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION by error0<KtExpression>()
+    val PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER by error0<KtPropertyFieldDeclaration>()
+    val PROPERTY_MUST_HAVE_GETTER by error0<KtProperty>()
+    val PROPERTY_MUST_HAVE_SETTER by error0<KtProperty>()
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

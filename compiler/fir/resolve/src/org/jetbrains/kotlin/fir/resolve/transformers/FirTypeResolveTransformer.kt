@@ -110,6 +110,7 @@ open class FirTypeResolveTransformer(
                 .transformReceiverTypeRef(this, data)
                 .transformGetter(this, data)
                 .transformSetter(this, data)
+                .transformBackingField(this, data)
                 .transformAnnotations(this, data)
             if (property.isFromVararg == true) {
                 property.transformTypeToArrayType()
