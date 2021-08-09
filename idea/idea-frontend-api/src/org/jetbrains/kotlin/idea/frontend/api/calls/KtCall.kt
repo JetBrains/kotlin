@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtValueArgument
  */
 public sealed class KtCall {
     public abstract val isErrorCall: Boolean
+    public abstract val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>
     public abstract val targetFunction: KtCallTarget
 }
 
@@ -28,6 +29,7 @@ public sealed class KtCall {
  */
 public class KtFunctionalTypeVariableCall(
     public val target: KtVariableLikeSymbol,
+    override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget
 ) : KtCall() {
     override val isErrorCall: Boolean get() = false
@@ -52,15 +54,9 @@ public sealed class KtDeclaredFunctionCall : KtCall() {
  */
 public class KtVariableWithInvokeFunctionCall(
     public val target: KtVariableLikeSymbol,
+    override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget
 ) : KtDeclaredFunctionCall()
-
-/**
- * Represents a direct function call with arguments
- */
-public sealed class KtCallWithArguments : KtDeclaredFunctionCall() {
-    public abstract val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>
-}
 
 /**
  * Simple function call, e.g.,
@@ -70,7 +66,7 @@ public sealed class KtCallWithArguments : KtDeclaredFunctionCall() {
 public class KtFunctionCall(
     override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget
-) : KtCallWithArguments()
+) : KtDeclaredFunctionCall()
 
 /**
  * Annotation call, e.g.,
@@ -81,7 +77,7 @@ public class KtFunctionCall(
 public class KtAnnotationCall(
     override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget
-) : KtCallWithArguments()
+) : KtDeclaredFunctionCall()
 // TODO: Add other properties, e.g., useSiteTarget
 
 /**
@@ -96,7 +92,7 @@ public class KtDelegatedConstructorCall(
     override val argumentMapping: LinkedHashMap<KtValueArgument, KtValueParameterSymbol>,
     override val targetFunction: KtCallTarget,
     public val kind: KtDelegatedConstructorCallKind
-) : KtCallWithArguments()
+) : KtDeclaredFunctionCall()
 
 public enum class KtDelegatedConstructorCallKind { SUPER_CALL, THIS_CALL }
 

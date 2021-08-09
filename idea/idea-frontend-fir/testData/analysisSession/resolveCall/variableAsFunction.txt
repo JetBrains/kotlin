@@ -1,3 +1,4 @@
 KtFunctionalTypeVariableCall:
 target = x: kotlin.Function1<kotlin.Int, kotlin.String>
+argumentMapping = { 1 -> (p1: kotlin.Int) }
 targetFunction = kotlin/Function1.invoke(p1: kotlin.Int): kotlin.String

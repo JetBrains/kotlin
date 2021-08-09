@@ -111,14 +111,15 @@ internal class KtFirCallResolver(
                 (callReference.resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionSymbol)
                     ?.let {
                         if (callableId in kotlinFunctionInvokeCallableIds) {
-                            KtFunctionalTypeVariableCall(variableLikeSymbol, KtSuccessCallTarget(it))
+                            KtFunctionalTypeVariableCall(variableLikeSymbol, createArgumentMapping(), KtSuccessCallTarget(it))
                         } else {
-                            KtVariableWithInvokeFunctionCall(variableLikeSymbol, KtSuccessCallTarget(it))
+                            KtVariableWithInvokeFunctionCall(variableLikeSymbol, createArgumentMapping(), KtSuccessCallTarget(it))
                         }
                     }
             }
             is FirErrorNamedReference -> KtVariableWithInvokeFunctionCall(
                 variableLikeSymbol,
+                createArgumentMapping(),
                 callReference.createErrorCallTarget(source)
             )
             else -> error("Unexpected call reference ${callReference::class.simpleName}")
