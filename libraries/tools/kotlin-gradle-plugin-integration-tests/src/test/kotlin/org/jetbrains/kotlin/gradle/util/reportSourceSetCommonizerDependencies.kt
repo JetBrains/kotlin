@@ -39,10 +39,13 @@ data class SourceSetCommonizerDependencies(
     }
 
     fun onlyNativeDistribution(): SourceSetCommonizerDependencies {
+        val konanDataDir = System.getenv("KONAN_DATA_DIR")?.let(::File)
+
         return SourceSetCommonizerDependencies(
             sourceSetName,
             dependencies.filter { dependency ->
-                dependency.file.allParents.any { parentFile -> parentFile.name == ".konan" }
+                (if (konanDataDir != null) dependency.file.startsWith(konanDataDir) else false) ||
+                        dependency.file.allParents.any { parentFile -> parentFile.name == ".konan" }
             }.toSet()
         )
     }
