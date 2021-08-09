@@ -92,13 +92,31 @@ def construct_cmake_flags(
         install_path: str = None,
         projects: List[str] = None,
         runtimes: List[str] = None,
-        targets: List[str] = None
+        targets: List[str] = None,
+        distribution_components: List[str] = None
 ) -> List[str]:
     building_bootstrap = bootstrap_llvm_path is None
 
     c_compiler, cxx_compiler, linker, ar = None, None, None, None
     c_flags, cxx_flags, linker_flags = None, None, None
+
+    cmake_args = [
+        '-DCMAKE_BUILD_TYPE=Release',
+        '-DLLVM_ENABLE_ASSERTIONS=OFF',
+        '-DLLVM_ENABLE_TERMINFO=OFF',
+        '-DLLVM_INCLUDE_GO_TESTS=OFF',
+        '-DLLVM_ENABLE_Z3_SOLVER=OFF',
+        '-DCOMPILER_RT_BUILD_BUILTINS=ON',
+        '-DLLVM_ENABLE_THREADS=ON',
+        '-DLLVM_OPTIMIZED_TABLEGEN=ON'
+    ]
     if not building_bootstrap:
+        if distribution_components:
+            cmake_args.append('-DLLVM_DISTRIBUTION_COMPONENTS=' + ';'.join(distribution_components))
+            # These links are actually copies on windows, so they're wasting precious disk space.
+            cmake_args.append("-DCLANG_LINKS_TO_CREATE=clang++")
+            cmake_args.append("-DLLD_SYMLINKS_TO_CREATE=ld.lld;wasm-ld")
+
         if host_is_windows():
             # CMake is not tolerant to backslashes
             c_compiler = f'{bootstrap_llvm_path}/bin/clang-cl.exe'.replace('\\', '/')
@@ -120,14 +138,6 @@ def construct_cmake_flags(
             cxx_flags = ['-isysroot', isysroot, '-stdlib=libc++']
             linker_flags = ['-stdlib=libc++']
 
-    cmake_args = [
-        '-DCMAKE_BUILD_TYPE=Release',
-        '-DLLVM_ENABLE_ASSERTIONS=OFF',
-        '-DLLVM_ENABLE_TERMINFO=OFF',
-        '-DLLVM_INCLUDE_GO_TESTS=OFF',
-        '-DLLVM_ENABLE_Z3_SOLVER=OFF',
-        '-DCOMPILER_RT_BUILD_BUILTINS=ON'
-    ]
 
     if host_is_darwin():
         cmake_args.append('-DLLVM_ENABLE_LIBCXX=ON')
@@ -186,7 +196,7 @@ def construct_cmake_flags(
     # Also not working for Linux and macOS because of signal chaining.
     # TODO: Enable after LLVM distribution patching.
     if not host_is_windows():
-        cmake_args.append("-LLVM_BUILD_LLVM_DYLIB=OFF")
+        cmake_args.append("-DLLVM_BUILD_LLVM_DYLIB=OFF")
         cmake_args.append("-DLLVM_LINK_LLVM_DYLIB=OFF")
 
     return cmake_args
@@ -221,11 +231,11 @@ def force_create_directory(parent, name) -> Path:
 
 
 def llvm_build_commands(
-        install_path, bootstrap_path, llvm_src, targets, ninja_target, projects, runtimes
+        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components
 ) -> List[List[str]]:
-    cmake_flags = construct_cmake_flags(bootstrap_path, install_path, projects, runtimes, targets)
+    cmake_flags = construct_cmake_flags(bootstrap_path, install_path, projects, runtimes, targets, distribution_components)
     cmake_command = [cmake, "-G", "Ninja"] + cmake_flags + [os.path.join(llvm_src, "llvm")]
-    ninja_command = [ninja, ninja_target]
+    ninja_command = [ninja] + build_targets
     return [cmake_command, ninja_command]
 
 
@@ -250,12 +260,18 @@ def default_num_stages():
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Build LLVM toochain for Kotlin/Native")
+    parser = argparse.ArgumentParser(description="Build LLVM toolchain for Kotlin/Native")
     # Output configuration.
     parser.add_argument("--install-path", type=str, default="llvm-distribution", required=False,
-                        help="Where final LLVM distribution will be installed")
-    parser.add_argument("--archive-path", default=None,
-                        help="Create an archive and its sha256 for final distribution at given path")
+                        help="Where final LLVM distribution will be enabled")
+    parser.add_argument("--pack", action='store_true',
+                        help="Create an archive and its sha256 for final distribution at `--install-path`")
+    parser.add_argument("--build-targets", default=["install"],
+                        nargs="+",
+                        help="What components should be installed")
+    parser.add_argument("--distribution-components", default=None,
+                        nargs="+",
+                        help="What components should be installed with `install-distribution` target")
     # Build configuration
     parser.add_argument("--stage0", type=str, default=None,
                         help="Path to existing LLVM toolchain")
@@ -280,7 +296,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--isysroot", type=str, default=None,
                         help="(macOS only) Override path to macOS SDK")
     # Misc.
-    parser.add_argument("--save-temporary-files", type=bool, default=False,
+    parser.add_argument("--save-temporary-files", action='store_true',
                         help="Should intermediate build results be saved?")
     return parser
 
@@ -312,16 +328,16 @@ def build_distribution(args):
         else:
             # None targets means all available targets.
             targets = None
-
         if building_final:
             install_path = args.install_path
+            build_targets = args.build_targets
         else:
             install_path = force_create_directory(current_dir, f"llvm-stage-{stage}")
             intermediate_build_results.append(install_path)
+            build_targets = ["install"]
 
         projects = ["clang", "lld", "libcxx", "libcxxabi", "compiler-rt"]
         runtimes = None
-        ninja_target = "install"
 
         build_dir = force_create_directory(current_dir, f"llvm-stage-{stage}-build")
         intermediate_build_results.append(build_dir)
@@ -330,9 +346,10 @@ def build_distribution(args):
             bootstrap_path=absolute_path(bootstrap_path),
             llvm_src=absolute_path(args.llvm_src),
             targets=targets,
-            ninja_target=ninja_target,
+            build_targets=build_targets,
             projects=projects,
-            runtimes=runtimes
+            runtimes=runtimes,
+            distribution_components=args.distribution_components
         )
 
         os.chdir(build_dir)
@@ -404,8 +421,8 @@ def main():
         temporary_llvm_repo = clone_llvm_repository(args.repo, args.branch, args.llvm_repo_destination)
         args.llvm_src = temporary_llvm_repo
     final_dist = build_distribution(args)
-    if args.archive_path is not None:
-        archive = create_archive(final_dist, args.archive_path)
+    if args.pack:
+        archive = create_archive(final_dist, args.install_path)
         create_checksum_file(archive, f"{archive}.sha256")
     if not args.save_temporary_files and temporary_llvm_repo is not None:
         print(f"Removing temporary directory: {temporary_llvm_repo}")
