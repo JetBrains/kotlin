@@ -1,0 +1,28 @@
+FILE: EnumWithToString.kt
+    public final enum class Some : R|kotlin/Enum<Some>| {
+        private constructor(): R|Some| {
+            super<R|kotlin/Enum<Some>|>()
+        }
+
+        public final static enum entry ENTRY: R|Some| = object : R|Some| {
+            private constructor(): R|<anonymous>| {
+                super<R|Some|>()
+            }
+
+            public final override fun toString(): R|kotlin/String| {
+                ^toString String(Entry)
+            }
+
+        }
+
+        public open override fun toString(): R|kotlin/String| {
+            ^toString String(Some)
+        }
+
+        public final static fun values(): R|kotlin/Array<Some>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Some| {
+        }
+
+    }

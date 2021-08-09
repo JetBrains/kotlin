@@ -5038,6 +5038,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             public void testDailyAggregatedDoubleFactor() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/DailyAggregatedDoubleFactor.kt");
             }
+
+            @Test
+            @TestMetadata("EnumWithToString.kt")
+            public void testEnumWithToString() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/EnumWithToString.kt");
+            }
         }
 
         @Nested
