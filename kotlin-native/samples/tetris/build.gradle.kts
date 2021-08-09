@@ -41,7 +41,7 @@ kotlin {
                             presets["mingwX86"] -> kotlinNativeDataPath.resolve(
                                     "dependencies/msys2-mingw-w64-i686-clang-llvm-lld-compiler_rt-8.0.1/bin")
                             presets["mingwX64"] -> kotlinNativeDataPath.resolve(
-                                    "dependencies/msys2-mingw-w64-x86_64-clang-llvm-lld-compiler_rt-8.0.1/bin")
+                                    "dependencies/msys2-mingw-w64-x86_64-1/bin")
                             else -> throw GradleException("Unsupported presets")
                         }.toString()
                         inputs.file(inFile)
