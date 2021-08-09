@@ -1,7 +1,7 @@
 package
 
 public interface A</*0*/ T> {
-    public abstract fun bar(/*0*/ x: T!!): T!!
+    public abstract fun bar(/*0*/ x: T & Any): T & Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(/*0*/ x: T): T
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -9,7 +9,7 @@ public interface A</*0*/ T> {
 }
 
 public interface B</*0*/ T1> : A<T1> {
-    public abstract override /*1*/ fun bar(/*0*/ x: T1!!): T1!!
+    public abstract override /*1*/ fun bar(/*0*/ x: T1 & Any): T1 & Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ fun foo(/*0*/ x: T1): T1
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -18,10 +18,10 @@ public interface B</*0*/ T1> : A<T1> {
 
 public interface C</*0*/ T2> : A<T2> {
     public abstract fun bar(/*0*/ x: T2): T2
-    public abstract override /*1*/ /*fake_override*/ fun bar(/*0*/ x: T2!!): T2!!
+    public abstract override /*1*/ /*fake_override*/ fun bar(/*0*/ x: T2 & Any): T2 & Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ x: T2): T2
-    public abstract fun foo(/*0*/ x: T2!!): T2!!
+    public abstract fun foo(/*0*/ x: T2 & Any): T2 & Any
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

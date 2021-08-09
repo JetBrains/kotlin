@@ -72,8 +72,8 @@ fun case_5(x: Any?) {
  */
 fun <T> case_6(x: T) {
     if (x is Int || x is Float) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
     }
 }
 
@@ -147,8 +147,8 @@ fun case_12(x: Any) {
  */
 fun <T> case_13(x: T) {
     if (x !is Int && x !is Float) throw Exception()
-    <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
 }
 
 /*

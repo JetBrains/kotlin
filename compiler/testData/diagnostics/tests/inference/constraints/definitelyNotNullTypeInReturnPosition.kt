@@ -75,12 +75,12 @@ val <K> K?.vfoo2: OutBar<Bar<in OutBar<K>>> get() = materialize()
 class Main<L>(x: L?, y: L) {
     init {
         if (x != null && y != null) {
-            val x12 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L!!>>")!>foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L!! & L?")!>x<!>)<!>
-            val x13 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L!!>>")!>foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L & L!!")!>y<!>)<!>
+            val x12 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L & Any & L?")!>x<!>)<!>
+            val x13 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L & L & Any")!>y<!>)<!>
         }
         if (x != null && y != null) {
-            val x120 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>foo12(x)<!>
-            val x121 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>foo12(y)<!>
+            val x120 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>foo12(x)<!>
+            val x121 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>foo12(y)<!>
         }
         if (x != null) {
             val x137 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>Foo13(y).foo1(x)<!>
@@ -93,8 +93,8 @@ class Main<L>(x: L?, y: L) {
             val x154 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L?>")!>foo15(<!DEBUG_INFO_SMARTCAST!>y<!>)<!>
         }
         if (x != null && y != null) {
-            val x163 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>foo16(<!DEBUG_INFO_SMARTCAST!>x<!>)<!>
-            val x164 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>foo16(<!DEBUG_INFO_SMARTCAST!>y<!>)<!>
+            val x163 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>foo16(<!DEBUG_INFO_SMARTCAST!>x<!>)<!>
+            val x164 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>foo16(<!DEBUG_INFO_SMARTCAST!>y<!>)<!>
         }
     }
 
@@ -104,8 +104,8 @@ class Main<L>(x: L?, y: L) {
     val x10 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L>>")!>foo1(x)<!>
     val x11 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L>>")!>foo1(y)<!>
 
-    val x12 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L!!>>")!>foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L!!")!>x!!<!>)<!>
-    val x13 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L!!>>")!>foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L!!")!>y!!<!>)<!>
+    val x12 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L & Any")!>x!!<!>)<!>
+    val x13 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L & Any")!>y!!<!>)<!>
 
     val x20 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L>>")!>foo2(x)<!>
     val x21 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L>>")!>foo2(y)<!>
@@ -119,8 +119,8 @@ class Main<L>(x: L?, y: L) {
     val x50 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<in L>")!>foo5(x)<!>
     val x51 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<in L>")!>foo5(y)<!>
 
-    val x60 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<L!!>")!>foo6(x)<!>
-    val x61 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<L!!>")!>foo6(y)<!>
+    val x60 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<L & Any>")!>foo6(x)<!>
+    val x61 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<L & Any>")!>foo6(y)<!>
 
     val x70 = <!DEBUG_INFO_EXPRESSION_TYPE("InBar<L>")!>foo7(x)<!>
     val x71 = <!DEBUG_INFO_EXPRESSION_TYPE("InBar<L>")!>foo7(y)<!>
@@ -137,8 +137,8 @@ class Main<L>(x: L?, y: L) {
     val x110 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>foo11(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L>>")!>Foo(Bar())<!>)<!>
     val x111 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>foo11(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L>>")!>Foo(Bar())<!>)<!>
 
-    val x120 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>foo12(x!!)<!>
-    val x121 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>foo12(y!!)<!>
+    val x120 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>foo12(x!!)<!>
+    val x121 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>foo12(y!!)<!>
 
     val x122 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>foo12(<!TYPE_MISMATCH!>x<!>)<!>
     val x123 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>foo12(<!TYPE_MISMATCH!>y<!>)<!>
@@ -158,8 +158,8 @@ class Main<L>(x: L?, y: L) {
 
     val x161 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>foo16(x)<!>
     val x162 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>foo16(y)<!>
-    val x163 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>foo16(x!!)<!>
-    val x164 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>foo16(y!!)<!>
+    val x163 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>foo16(x!!)<!>
+    val x164 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>foo16(y!!)<!>
 
     val x170 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>foo17(x)<!>
     val x171 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>foo17(y)<!>
@@ -182,29 +182,29 @@ class Main<L>(x: L?, y: L) {
     val x240 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<in L>>>")!>foo24(x)<!>
     val x241 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<in L>>>")!>foo24(y)<!>
 
-    val x250 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<out L!!>")!>foo25(x)<!>
-    val x251 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<out L!!>")!>foo25(y)<!>
+    val x250 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<out L & Any>")!>foo25(x)<!>
+    val x251 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<out L & Any>")!>foo25(y)<!>
 
-    val x260 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<out Foo<out Bar<out L!!>>>")!>foo26(x)<!>
-    val x261 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<out Foo<out Bar<out L!!>>>")!>foo26(y)<!>
+    val x260 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<out Foo<out Bar<out L & Any>>>")!>foo26(x)<!>
+    val x261 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<out Foo<out Bar<out L & Any>>>")!>foo26(y)<!>
 
     val x270 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<out Foo<Bar<out L>>>")!>foo27(x)<!>
     val x271 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<out Foo<Bar<out L>>>")!>foo27(y)<!>
 
-    val x280 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L!!>>>")!>foo28(x)<!>
-    val x281 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L!!>>>")!>foo28(y)<!>
+    val x280 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L & Any>>>")!>foo28(x)<!>
+    val x281 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L & Any>>>")!>foo28(y)<!>
 
     val x290 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<OutBar<L>>>")!>foo29(x)<!>
     val x291 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<OutBar<L>>>")!>foo29(y)<!>
 
-    val x300 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<out OutBar<L!!>>>")!>foo30(x)<!>
-    val x301 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<out OutBar<L!!>>>")!>foo30(y)<!>
+    val x300 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<out OutBar<L & Any>>>")!>foo30(x)<!>
+    val x301 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<out OutBar<L & Any>>>")!>foo30(y)<!>
 
-    val x310 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBarAliasUseSite<L!!> /* = Bar<out L!!> */")!>foo31(x)<!>
-    val x311 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBarAliasUseSite<L!!> /* = Bar<out L!!> */")!>foo31(y)<!>
+    val x310 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBarAliasUseSite<L & Any> /* = Bar<out L & Any> */")!>foo31(x)<!>
+    val x311 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBarAliasUseSite<L & Any> /* = Bar<out L & Any> */")!>foo31(y)<!>
 
-    val x320 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBarAliasDecSite<L!!> /* = OutBar<L!!> */")!>foo32(x)<!>
-    val x321 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBarAliasDecSite<L!!> /* = OutBar<L!!> */")!>foo32(y)<!>
+    val x320 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBarAliasDecSite<L & Any> /* = OutBar<L & Any> */")!>foo32(x)<!>
+    val x321 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBarAliasDecSite<L & Any> /* = OutBar<L & Any> */")!>foo32(y)<!>
 
     val x330 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<InBar<OutBar<L>>>")!>foo33(x)<!>
     val x331 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<InBar<OutBar<L>>>")!>foo33(y)<!>
@@ -221,8 +221,8 @@ class Main<L>(x: L?, y: L) {
     val vx01 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L>>")!>x.vfoo0<!>
     val vx02 = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L>>")!>y.vfoo0<!>
 
-    val vx11 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<out OutBar<L!!>>>")!>x.vfoo1<!>
-    val vx12 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<out OutBar<L!!>>>")!>y.vfoo1<!>
+    val vx11 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<out OutBar<L & Any>>>")!>x.vfoo1<!>
+    val vx12 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<out OutBar<L & Any>>>")!>y.vfoo1<!>
 
     val vx21 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<in OutBar<L>>>")!>x.vfoo2<!>
     val vx22 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<Bar<in OutBar<L>>>")!>y.vfoo2<!>
@@ -258,8 +258,8 @@ class Main<L>(x: L?, y: L) {
     val x460 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<OutBar<OutBar<L>>>")!>foo46(x)<!>
     val x461 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<OutBar<OutBar<L>>>")!>foo46(y)<!>
 
-    val x470 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L!!>>>")!>foo47(x)<!>
-    val x471 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L!!>>>")!>foo47(y)<!>
+    val x470 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L & Any>>>")!>foo47(x)<!>
+    val x471 = <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<OutBar<OutBar<L & Any>>>")!>foo47(y)<!>
 
     fun <R> takeLambda(block: () -> R): R = materialize()
     val x480 = <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!><!DEBUG_INFO_LEAKING_THIS!>takeLambda<!> { foo48 { <!TYPE_MISMATCH("Any; L")!>x<!> } }<!>
