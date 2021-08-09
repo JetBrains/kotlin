@@ -1,1 +1,2 @@
-public final fun <T> foo(x: R|T!!|, y: R|kotlin/collections/List<T!!>|, z: R|(T!!) -> T!!|): R|T!!|
+public final fun <T> foo(x: R|T & Any|, y: R|kotlin/collections/List<T & Any>|, z: R|(T & Any) -> T & Any|): R|T & Any|
+

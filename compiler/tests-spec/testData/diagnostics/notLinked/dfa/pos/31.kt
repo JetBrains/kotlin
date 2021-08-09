@@ -104,23 +104,23 @@ fun case_6(x: Class?) {
 // TESTCASE NUMBER: 5
 fun <T> case_5(x: T) {
     if ((x as Any).propNullableT != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!! & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any & kotlin.Any")!>x<!>
     }
 }
 
 // TESTCASE NUMBER: 6
 fun <T>case_6(x: Inv<T>?) {
     if (x?.prop_1?.prop_1?.prop_1?.prop_2 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T?")!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!!"), DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_2<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any & T?")!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any"), DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_2<!>.equals(10)
     }
 }
 
 // TESTCASE NUMBER: 7
 inline fun <reified T>case_7(x: Inv<T>?) {
     if (x?.prop_1?.prop_1?.prop_1?.prop_2 == null) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T?")!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!!"), DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_2<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any & T?")!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any"), DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_2<!>.equals(10)
     }
 }
 

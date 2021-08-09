@@ -15,7 +15,7 @@
 fun <T: Any, K: Any> case_1(x: T?, y: K?) {
     x as T
     y as K
-    val z = <!DEBUG_INFO_EXPRESSION_TYPE("T & T!! & T?")!>x<!> <!USELESS_ELVIS!>?: <!DEBUG_INFO_EXPRESSION_TYPE("K & K!! & K?"), DEBUG_INFO_SMARTCAST!>y<!><!>
+    val z = <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any & T?")!>x<!> <!USELESS_ELVIS!>?: <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any & K?"), DEBUG_INFO_SMARTCAST!>y<!><!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("T & T?"), DEBUG_INFO_SMARTCAST!>x<!>.equals(10)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>z<!>
@@ -26,6 +26,6 @@ fun <T: Any, K: Any> case_1(x: T?, y: K?) {
 inline fun <reified T: Any, reified K: T> case_2(y: K?) {
     y as K
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("K & K!! & K?")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("K & K & Any & K?")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("K & K?"), DEBUG_INFO_SMARTCAST!>y<!>.equals(10)
 }
