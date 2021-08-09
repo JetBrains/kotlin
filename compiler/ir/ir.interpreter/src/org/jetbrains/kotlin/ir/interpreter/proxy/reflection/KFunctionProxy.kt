@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.hasTheSameFieldsWith
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -52,12 +51,10 @@ internal class KFunctionProxy(
     override fun call(vararg args: Any?): Any? {
         // TODO check arity
         var index = 0
-        val dispatchReceiver = state.irFunction.dispatchReceiverParameter
-            ?.let { Variable(it.symbol, environment.convertToState(args[index++], it.type)) }
-        val extensionReceiver = state.irFunction.extensionReceiverParameter
-            ?.let { Variable(it.symbol, environment.convertToState(args[index++], it.type)) }
+        val dispatchReceiver = state.irFunction.dispatchReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
+        val extensionReceiver = state.irFunction.extensionReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
         val argsVariables = state.irFunction.valueParameters.map { parameter ->
-            Variable(parameter.symbol, environment.convertToState(args[index++], parameter.type))
+            environment.convertToState(args[index++], parameter.type)
         }
         val valueArguments = listOfNotNull(dispatchReceiver, extensionReceiver) + argsVariables
         return callInterceptor.interceptProxy(state.irFunction, valueArguments)

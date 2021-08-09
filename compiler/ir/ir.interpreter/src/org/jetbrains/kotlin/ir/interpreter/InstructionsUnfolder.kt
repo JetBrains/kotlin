@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -98,7 +97,7 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
             irClass.declarations.filterIsInstance<IrProperty>().forEach { property ->
                 val parameter = constructor.valueParameters.singleOrNull { it.name == property.name }
                 val state = parameter?.let { callStack.getState(it.symbol) } ?: Primitive.nullStateOfType(property.getter!!.returnType)
-                receiverState.setField(Variable(property.symbol, state))
+                receiverState.setField(property.symbol, state)
             }
         }
         else -> {
@@ -268,7 +267,7 @@ private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterp
 
 private fun unfoldVariable(variable: IrVariable, callStack: CallStack) {
     when (variable.initializer) {
-        null -> callStack.addVariable(Variable(variable.symbol))
+        null -> callStack.addVariable(variable.symbol, null)
         else -> {
             callStack.addInstruction(SimpleInstruction(variable))
             callStack.addInstruction(CompoundInstruction(variable.initializer!!))
@@ -337,7 +336,7 @@ private fun unfoldCatch(element: IrCatch, callStack: CallStack) {
         val frameOwner = callStack.currentFrameOwner as IrTry
         callStack.dropSubFrame() // drop other catch blocks
         callStack.newSubFrame(element) // new frame with IrTry instruction to interpret finally block at the end
-        callStack.addVariable(Variable(element.catchParameter.symbol, exceptionState))
+        callStack.addVariable(element.catchParameter.symbol, exceptionState)
         callStack.addInstruction(SimpleInstruction(frameOwner))
         callStack.addInstruction(CompoundInstruction(element.result))
     }
@@ -360,7 +359,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
                 // TODO this check can be dropped after serialization introduction
                 // for now declarations in unsigned class don't have bodies and must be treated separately
                 if (state.irClass.defaultType.isUnsigned()) {
-                    val result = when (val value = (state.fields.single().state as Primitive<*>).value) {
+                    val result = when (val value = (state.fields.values.single() as Primitive<*>).value) {
                         is Byte -> value.toUByte().toString()
                         is Short -> value.toUShort().toString()
                         is Int -> value.toUInt().toString()

@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import kotlin.reflect.*
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty1
 
 internal open class KProperty1Proxy(
     state: KPropertyState, callInterceptor: CallInterceptor
@@ -32,7 +33,7 @@ internal open class KProperty1Proxy(
             override fun call(vararg args: Any?): Any? {
                 checkArguments(1, args.size)
                 val receiverParameter = (getter.dispatchReceiverParameter ?: getter.extensionReceiverParameter)!!
-                val receiver = Variable(receiverParameter.symbol, environment.convertToState(args[0], receiverParameter.getActualType()))
+                val receiver = environment.convertToState(args[0], receiverParameter.getActualType())
                 return callInterceptor.interceptProxy(getter, listOf(receiver))
             }
 
@@ -60,9 +61,9 @@ internal class KMutableProperty1Proxy(
             override fun call(vararg args: Any?) {
                 checkArguments(2, args.size)
                 val receiverParameter = (setter.dispatchReceiverParameter ?: setter.extensionReceiverParameter)!!
-                val receiver = Variable(receiverParameter.symbol, environment.convertToState(args[0], receiverParameter.getActualType()))
+                val receiver = environment.convertToState(args[0], receiverParameter.getActualType())
                 val valueParameter = setter.valueParameters.single()
-                val value = Variable(valueParameter.symbol, environment.convertToState(args[1], valueParameter.getActualType()))
+                val value = environment.convertToState(args[1], valueParameter.getActualType())
                 callInterceptor.interceptProxy(setter, listOf(receiver, value))
             }
 

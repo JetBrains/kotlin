@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
-import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.getExtensionReceiver
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.isNull
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import kotlin.reflect.*
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty0
 
 internal open class KProperty0Proxy(
     state: KPropertyState, callInterceptor: CallInterceptor
@@ -32,11 +32,7 @@ internal open class KProperty0Proxy(
                 val value = receiver.getField(actualPropertySymbol)
                 return when {
                     // null value <=> property is extension or Primitive; receiver.isNull() <=> nullable extension
-                    value == null || receiver.isNull() -> {
-                        val receiverSymbol = getter.getReceiver()
-                        val receiverVariable = receiverSymbol?.let { Variable(it, receiver) }
-                        callInterceptor.interceptProxy(getter, listOfNotNull(receiverVariable))
-                    }
+                    value == null || receiver.isNull() -> callInterceptor.interceptProxy(getter, listOf(receiver))
                     else -> value
                 }
             }
@@ -70,11 +66,8 @@ internal class KMutableProperty0Proxy(
                 val receiver = state.receiver!!
                 val newValue = environment.convertToState(args.single(), propertyType)
                 setter.getExtensionReceiver()
-                    ?.let {
-                        val fieldSymbol = setter.valueParameters.single().symbol
-                        callInterceptor.interceptProxy(setter, listOf(Variable(it, receiver), Variable(fieldSymbol, newValue)))
-                    }
-                    ?: receiver.setField(Variable(state.property.symbol, newValue))
+                    ?.let { callInterceptor.interceptProxy(setter, listOf(receiver, newValue)) }
+                    ?: receiver.setField(state.property.symbol, newValue)
             }
 
             override fun callBy(args: Map<KParameter, Any?>) {

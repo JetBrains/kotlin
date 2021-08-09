@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.interpreter.Instruction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
-internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
-    private val innerStack = mutableListOf(subFrame)
+internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
+    private val innerStack = mutableListOf(SubFrame(subFrameOwner))
     private var currentInstruction: Instruction? = null
 
     private val currentFrame get() = innerStack.last()
@@ -26,8 +27,8 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
         const val NOT_DEFINED = "Not defined"
     }
 
-    fun addSubFrame(frame: SubFrame) {
-        innerStack.add(frame)
+    fun addSubFrame(subFrameOwner: IrElement) {
+        innerStack.add(SubFrame(subFrameOwner))
     }
 
     fun removeSubFrame() {
@@ -59,8 +60,12 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
     fun popState(): State = currentFrame.popState()
     fun peekState(): State? = currentFrame.peekState()
 
-    fun addVariable(variable: Variable) {
-        currentFrame.addVariable(variable)
+    fun addVariable(symbol: IrSymbol, state: State?) {
+        currentFrame.addVariable(symbol, state)
+    }
+
+    fun addVariable(symbol: IrSymbol, variable: Variable) {
+        currentFrame.addVariable(symbol, variable)
     }
 
     fun getState(symbol: IrSymbol): State {
@@ -77,7 +82,15 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
 
     fun containsVariable(symbol: IrSymbol): Boolean = (innerStack.lastIndex downTo 0).any { innerStack[it].containsVariable(symbol) }
 
-    fun getAll(): List<Variable> = innerStack.flatMap { it.getAll() }
+    fun copyMemoryInto(newFrame: Frame) {
+        this.getAll().forEach { (symbol, variable) -> if (!newFrame.containsVariable(symbol)) newFrame.addVariable(symbol, variable) }
+    }
+
+    fun copyMemoryInto(closure: StateWithClosure) {
+        getAll().reversed().forEach { (symbol, variable) -> closure.upValues[symbol] = variable }
+    }
+
+    private fun getAll(): List<Pair<IrSymbol, Variable>> = innerStack.flatMap { it.getAll() }
 
     private fun getLineNumberForCurrentInstruction(): String {
         irFile ?: return ""
@@ -105,10 +118,10 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
     }
 }
 
-internal class SubFrame(val owner: IrElement) {
+private class SubFrame(val owner: IrElement) {
     private val instructions = mutableListOf<Instruction>()
     private val dataStack = DataStack()
-    private val memory = mutableListOf<Variable>()
+    private val memory = mutableMapOf<IrSymbol, Variable>()
 
     // Methods to work with instruction
     fun isEmpty() = instructions.isEmpty()
@@ -122,18 +135,21 @@ internal class SubFrame(val owner: IrElement) {
     fun peekState(): State? = dataStack.peek()
 
     // Methods to work with memory
-    fun addVariable(variable: Variable) {
-        memory.add(0, variable)
+    fun addVariable(symbol: IrSymbol, variable: Variable) {
+        memory[symbol] = variable
     }
 
-    private fun getVariable(symbol: IrSymbol): Variable? = memory.firstOrNull { it.symbol == symbol }
-    fun containsVariable(symbol: IrSymbol): Boolean = getVariable(symbol) != null
-    fun getState(symbol: IrSymbol): State? = getVariable(symbol)?.state
+    fun addVariable(symbol: IrSymbol, state: State?) {
+        memory[symbol] = Variable(state)
+    }
+
+    fun containsVariable(symbol: IrSymbol): Boolean = memory[symbol] != null
+    fun getState(symbol: IrSymbol): State? = memory[symbol]?.state
     fun setState(symbol: IrSymbol, newState: State) {
-        getVariable(symbol)?.state = newState
+        memory[symbol]?.state = newState
     }
 
-    fun getAll(): List<Variable> = memory
+    fun getAll(): List<Pair<IrSymbol, Variable>> = memory.toList()
 }
 
 private class DataStack {

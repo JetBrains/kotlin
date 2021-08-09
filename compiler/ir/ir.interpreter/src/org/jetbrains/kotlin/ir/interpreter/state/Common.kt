@@ -13,17 +13,20 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.createCall
 import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.name.Name
 
-internal class Common private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex, StateWithClosure {
-    override val upValues: MutableList<Variable> = mutableListOf()
+internal class Common private constructor(
+    override val irClass: IrClass, override val fields: MutableMap<IrSymbol, State>
+) : Complex, StateWithClosure {
+    override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
     override var superWrapperClass: Wrapper? = null
-    override var outerClass: Variable? = null
+    override var outerClass: Pair<IrSymbol, State>? = null
 
-    constructor(irClass: IrClass) : this(irClass, mutableListOf())
+    constructor(irClass: IrClass) : this(irClass, mutableMapOf())
 
     // This method is used to get correct java method name
     private fun getKotlinName(declaringClassName: String, methodName: String): String {

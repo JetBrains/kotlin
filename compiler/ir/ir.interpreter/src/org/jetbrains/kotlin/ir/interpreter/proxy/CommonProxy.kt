@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
@@ -34,31 +33,31 @@ internal class CommonProxy private constructor(override val state: Common, overr
         if (this === other) return true
         if (other == null) return false
 
-        val valueArguments = mutableListOf<Variable>()
+        val valueArguments = mutableListOf<State>()
         val equalsFun = state.getEqualsFunction()
         if (equalsFun.isFakeOverriddenFromAny() || equalsFun.wasAlreadyCalled()) return defaultEquals(other)
 
-        equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
-        valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, if (other is Proxy) other.state else other as State))
+        equalsFun.getDispatchReceiver()!!.let { valueArguments.add(state) }
+        valueArguments.add(if (other is Proxy) other.state else other as State)
 
         return callInterceptor.interceptProxy(equalsFun, valueArguments) as Boolean
     }
 
     override fun hashCode(): Int {
-        val valueArguments = mutableListOf<Variable>()
+        val valueArguments = mutableListOf<State>()
         val hashCodeFun = state.getHashCodeFunction()
         if (hashCodeFun.isFakeOverriddenFromAny() || hashCodeFun.wasAlreadyCalled()) return defaultHashCode()
 
-        hashCodeFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
+        hashCodeFun.getDispatchReceiver()!!.let { valueArguments.add(state) }
         return callInterceptor.interceptProxy(hashCodeFun, valueArguments) as Int
     }
 
     override fun toString(): String {
-        val valueArguments = mutableListOf<Variable>()
+        val valueArguments = mutableListOf<State>()
         val toStringFun = state.getToStringFunction()
         if (toStringFun.isFakeOverriddenFromAny() || toStringFun.wasAlreadyCalled()) return defaultToString()
 
-        toStringFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
+        toStringFun.getDispatchReceiver()!!.let { valueArguments.add(state) }
         return callInterceptor.interceptProxy(toStringFun, valueArguments) as String
     }
 
@@ -81,10 +80,9 @@ internal class CommonProxy private constructor(override val state: Common, overr
                     else -> {
                         val irFunction = commonProxy.state.getIrFunction(method)
                             ?: return@newProxyInstance commonProxy.fallbackIfMethodNotFound(method)
-                        val valueArguments = mutableListOf<Variable>()
-                        valueArguments += Variable(irFunction.getDispatchReceiver()!!, commonProxy.state)
+                        val valueArguments = mutableListOf<State>(commonProxy.state)
                         valueArguments += irFunction.valueParameters.mapIndexed { index, parameter ->
-                            Variable(parameter.symbol, callInterceptor.environment.convertToState(args[index], parameter.type))
+                            callInterceptor.environment.convertToState(args[index], parameter.type)
                         }
                         callInterceptor.interceptProxy(irFunction, valueArguments, method.returnType)
                     }

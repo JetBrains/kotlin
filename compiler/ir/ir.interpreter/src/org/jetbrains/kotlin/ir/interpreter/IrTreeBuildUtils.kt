@@ -82,7 +82,7 @@ internal fun State.toIrExpression(expression: IrExpression): IrExpression {
         is Complex -> {
             val stateType = this.irClass.defaultType
             when {
-                stateType.isUnsignedType() -> (this.fields.single().state as Primitive<*>).value.toIrConst(type, start, end)
+                stateType.isUnsignedType() -> (this.fields.values.single() as Primitive<*>).value.toIrConst(type, start, end)
                 else -> expression
             }
         }

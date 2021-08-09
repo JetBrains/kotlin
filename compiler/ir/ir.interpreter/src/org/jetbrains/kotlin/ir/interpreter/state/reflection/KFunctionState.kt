@@ -15,16 +15,18 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -33,9 +35,9 @@ internal class KFunctionState(
     val irFunction: IrFunction,
     override val irClass: IrClass,
     environment: IrInterpreterEnvironment,
-    override val fields: MutableList<Variable> = mutableListOf()
+    override val fields: MutableMap<IrSymbol, State> = mutableMapOf()
 ) : ReflectionState(), StateWithClosure {
-    override val upValues: MutableList<Variable> = mutableListOf()
+    override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
 
     var funInterface: IrType? = null
         set(value) {
@@ -123,16 +125,18 @@ internal class KFunctionState(
     constructor(
         functionReference: IrFunctionReference,
         environment: IrInterpreterEnvironment,
-        dispatchReceiver: Variable?,
-        extensionReceiver: Variable?
+        dispatchReceiver: Pair<IrSymbol, State>?,
+        extensionReceiver: Pair<IrSymbol, State>?
     ) : this(
         functionReference.symbol.owner,
         functionReference.type.classOrNull!!.owner,
         environment,
-        listOfNotNull(dispatchReceiver, extensionReceiver).toMutableList()
+        listOfNotNull(dispatchReceiver, extensionReceiver).toMap().toMutableMap()
     ) {
+        dispatchReceiver?.let { (symbol, state) -> setField(symbol, state) }
+        extensionReceiver?.let { (symbol, state) -> setField(symbol, state) }
         // receivers are used in comparison of two functions in KFunctionProxy
-        upValues += fields
+        upValues += fields.map { it.key to Variable(it.value) }
     }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {

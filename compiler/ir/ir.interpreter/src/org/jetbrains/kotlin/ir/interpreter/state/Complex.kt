@@ -5,18 +5,21 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 
 internal interface Complex : State {
     var superWrapperClass: Wrapper?
-    var outerClass: Variable?
+    var outerClass: Pair<IrSymbol, State>?
 
     fun irClassFqName() = irClass.fqName
 
@@ -53,12 +56,12 @@ internal interface Complex : State {
             return list
         }
 
-        generateSequence(outerClass) { (it.state as? Complex)?.outerClass }
+        generateSequence(outerClass) { (it.second as? Complex)?.outerClass }
             .toList()
-            .takeFromEndWhile { receiver == null || it.symbol != receiver } // only state's below receiver must be loaded on stack
-            .forEach { variable ->
-                callStack.addVariable(variable)
-                (variable.state as? StateWithClosure)?.let { callStack.loadUpValues(it) }
+            .takeFromEndWhile { receiver == null || it.first != receiver } // only state's below receiver must be loaded on stack
+            .forEach { (symbol, state) ->
+                callStack.addVariable(symbol, state)
+                (state as? StateWithClosure)?.let { callStack.loadUpValues(it) }
             }
     }
 }

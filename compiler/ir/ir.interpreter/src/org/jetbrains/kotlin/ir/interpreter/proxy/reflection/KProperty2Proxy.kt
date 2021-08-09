@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
-import kotlin.reflect.*
+import kotlin.reflect.KMutableProperty2
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty2
 
 internal open class KProperty2Proxy(
     state: KPropertyState, callInterceptor: CallInterceptor
@@ -21,8 +22,8 @@ internal open class KProperty2Proxy(
                 checkArguments(2, args.size)
                 val dispatchParameter = getter.dispatchReceiverParameter!!
                 val extensionReceiverParameter = getter.extensionReceiverParameter!!
-                val dispatch = Variable(dispatchParameter.symbol, environment.convertToState(args[0], dispatchParameter.type))
-                val extension = Variable(extensionReceiverParameter.symbol, environment.convertToState(args[1], extensionReceiverParameter.type))
+                val dispatch = environment.convertToState(args[0], dispatchParameter.type)
+                val extension = environment.convertToState(args[1], extensionReceiverParameter.type)
                 return callInterceptor.interceptProxy(getter, listOf(dispatch, extension))
             }
 

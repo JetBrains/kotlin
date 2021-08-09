@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.interpreter.exceptions.withExceptionHandler
 import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.IrType
@@ -35,7 +34,7 @@ internal interface CallInterceptor {
     val irBuiltIns: IrBuiltIns
     val interpreter: IrInterpreter
 
-    fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*> = Any::class.java): Any?
+    fun interceptProxy(irFunction: IrFunction, valueArguments: List<State>, expectedResultClass: Class<*> = Any::class.java): Any?
     fun interceptCall(call: IrCall, irFunction: IrFunction, args: List<State>, defaultAction: () -> Unit)
     fun interceptConstructor(constructorCall: IrFunctionAccessExpression, args: List<State>, defaultAction: () -> Unit)
     fun interceptGetObjectValue(expression: IrGetObjectValue, defaultAction: () -> Unit)
@@ -49,11 +48,11 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override val irBuiltIns: IrBuiltIns = environment.irBuiltIns
     private val bodyMap: Map<IdSignature, IrBody> = interpreter.bodyMap
 
-    override fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*>): Any? {
+    override fun interceptProxy(irFunction: IrFunction, valueArguments: List<State>, expectedResultClass: Class<*>): Any? {
         val irCall = irFunction.createCall()
         return interpreter.withNewCallStack(irCall) {
             this@withNewCallStack.environment.callStack.addInstruction(SimpleInstruction(irCall))
-            valueArguments.forEach { this@withNewCallStack.environment.callStack.pushState(it.state) }
+            valueArguments.forEach { this@withNewCallStack.environment.callStack.pushState(it) }
         }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = false, extendFrom = expectedResultClass)
     }
 
@@ -78,7 +77,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val irConstructor = constructorCall.symbol.owner
         val irClass = irConstructor.parentAsClass
         when {
-            Wrapper.mustBeHandledWithWrapper(irClass) || irClass.fqName.startsWith("java") -> {
+            Wrapper.mustBeHandledWithWrapper(irClass) -> {
                 Wrapper.getConstructorMethod(irConstructor).invokeMethod(irConstructor, args)
                 when {
                     irClass.isSubclassOfThrowable() -> (receiver as ExceptionState).copyFieldsFrom(callStack.popState() as Wrapper)
@@ -88,12 +87,11 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             }
             irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray() -> {
                 // array constructor doesn't have body so must be treated separately
-                callStack.addVariable(Variable(irConstructor.symbol, KTypeState(constructorCall.type, environment.kTypeClass.owner)))
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
                 val propertySymbol = irClass.declarations.single { it is IrProperty }.symbol
-                callStack.pushState(receiver.apply { fields += Variable(propertySymbol, args.single()) })
+                callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
             }
             else -> defaultAction()
         }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.utils.keysToMap
 import java.lang.invoke.MethodType
 
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
@@ -262,6 +263,13 @@ internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): I
     return this.buildSimpleType {
         hasQuestionMark = this.hasQuestionMark || this@getTypeIfReified.hasQuestionMark
         arguments = newArguments
+    }
+}
+
+internal fun IrInterpreterEnvironment.loadReifiedTypeArguments(expression: IrFunctionAccessExpression): Map<IrTypeParameterSymbol, KTypeState> {
+    return expression.symbol.owner.typeParameters.filter { it.isReified }.map { it.symbol }.keysToMap {
+        val reifiedType = expression.getTypeArgument(it.owner.index)!!.getTypeIfReified(callStack)
+        KTypeState(reifiedType, this.kTypeClass.owner)
     }
 }
 

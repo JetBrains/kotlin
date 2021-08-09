@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.isFunction
 import org.jetbrains.kotlin.ir.interpreter.isKFunction
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -22,18 +21,15 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal interface State {
-    val fields: MutableList<Variable>
+    val fields: MutableMap<IrSymbol, State>
     val irClass: IrClass
 
     fun getField(symbol: IrSymbol): State? {
-        return fields.firstOrNull { it.symbol == symbol }?.state
+        return fields[symbol]
     }
 
-    fun setField(newVar: Variable) {
-        when (val oldState = fields.firstOrNull { it.symbol == newVar.symbol }) {
-            null -> fields.add(newVar)                                      // newVar isn't present in value list
-            else -> fields[fields.indexOf(oldState)].state = newVar.state   // newVar already present
-        }
+    fun setField(symbol: IrSymbol, state: State) {
+        fields[symbol] = state
     }
 
     fun getIrFunctionByIrCall(expression: IrCall): IrFunction?
@@ -103,9 +99,8 @@ internal fun State?.mustBeHandledAsReflection(call: IrCall): Boolean {
 
 internal fun State.hasTheSameFieldsWith(other: State): Boolean {
     if (this.fields.size != other.fields.size) return false
-    for (i in 0 until this.fields.size) {
-        val firstState = this.fields[i].state
-        val secondState = other.fields[i].state
+    // TODO prove that this will always work or find better solution
+    this.fields.values.zip(other.fields.values).forEach { (firstState, secondState) ->
         when {
             firstState is Primitive<*> && secondState is Primitive<*> -> if (firstState.value != secondState.value) return false
             else -> if (firstState !== secondState) return false

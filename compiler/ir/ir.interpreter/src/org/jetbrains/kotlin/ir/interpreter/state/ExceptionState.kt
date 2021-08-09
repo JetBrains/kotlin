@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.ir.interpreter.state
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.interpreter.getOriginalPropertyByName
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import kotlin.math.min
 
 internal class ExceptionState private constructor(
-    override val irClass: IrClass, override val fields: MutableList<Variable>, stackTrace: List<String>
+    override val irClass: IrClass, override val fields: MutableMap<IrSymbol, State>, stackTrace: List<String>
 ) : Complex, StateWithClosure, Throwable() {
-    override val upValues: MutableList<Variable> = mutableListOf()
+    override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
     override var superWrapperClass: Wrapper? = null
-    override var outerClass: Variable? = null
+    override var outerClass: Pair<IrSymbol, State>? = null
 
     override val message: String?
         get() = getField(messageProperty.symbol)?.asStringOrNull()
@@ -32,11 +33,11 @@ internal class ExceptionState private constructor(
 
     init {
         if (!this::exceptionFqName.isInitialized) this.exceptionFqName = irClassFqName()
-        if (fields.none { it.symbol == messageProperty.symbol }) setMessage(null)
-        if (fields.none { it.symbol == causeProperty.symbol }) setCause(null)
+        if (!fields.containsKey(messageProperty.symbol)) setMessage(null)
+        if (!fields.containsKey(causeProperty.symbol)) setCause(null)
     }
 
-    constructor(irClass: IrClass, stackTrace: List<String>) : this(irClass, mutableListOf(), stackTrace)
+    constructor(irClass: IrClass, stackTrace: List<String>) : this(irClass, mutableMapOf(), stackTrace)
 
     constructor(
         exception: Throwable, irClass: IrClass, stackTrace: List<String>
@@ -58,8 +59,8 @@ internal class ExceptionState private constructor(
         }
     }
 
-    override fun setField(newVar: Variable) {
-        super.setField(newVar)
+    override fun setField(symbol: IrSymbol, state: State) {
+        super.setField(symbol, state)
         recalculateCauseAndMessage()
     }
 
@@ -78,11 +79,11 @@ internal class ExceptionState private constructor(
     }
 
     private fun setMessage(messageValue: String?) {
-        setField(Variable(messageProperty.symbol, Primitive(messageValue, messageProperty.getter!!.returnType)))
+        setField(messageProperty.symbol, Primitive(messageValue, messageProperty.getter!!.returnType))
     }
 
     private fun setCause(causeValue: State?) {
-        setField(Variable(causeProperty.symbol, causeValue ?: Primitive.nullStateOfType(causeProperty.getter!!.returnType)))
+        setField(causeProperty.symbol, causeValue ?: Primitive.nullStateOfType(causeProperty.getter!!.returnType))
     }
 
     fun getFullDescription(): String {
@@ -99,15 +100,15 @@ internal class ExceptionState private constructor(
     override fun toString(): String = message?.let { "$exceptionFqName: $it" } ?: exceptionFqName
 
     companion object {
-        private fun evaluateFields(exception: Throwable, irClass: IrClass, stackTrace: List<String>): MutableList<Variable> {
+        private fun evaluateFields(exception: Throwable, irClass: IrClass, stackTrace: List<String>): MutableMap<IrSymbol, State> {
             val messageProperty = irClass.getOriginalPropertyByName("message")
             val causeProperty = irClass.getOriginalPropertyByName("cause")
 
-            val messageVar = Variable(messageProperty.symbol, Primitive(exception.message, messageProperty.getter!!.returnType))
+            val messageVar = messageProperty.symbol to Primitive(exception.message, messageProperty.getter!!.returnType)
             val causeVar = exception.cause?.let {
-                Variable(causeProperty.symbol, ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" }))
+                causeProperty.symbol to ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" })
             }
-            return causeVar?.let { mutableListOf(messageVar, it) } ?: mutableListOf(messageVar)
+            return causeVar?.let { mutableMapOf(messageVar, it) } ?: mutableMapOf(messageVar)
         }
 
         private fun evaluateAdditionalStackTrace(e: Throwable): List<String> {

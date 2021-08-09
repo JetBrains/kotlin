@@ -25,18 +25,15 @@ internal class CallStack {
     internal val currentFrameOwner get() = currentFrame.currentSubFrameOwner
 
     fun newFrame(frameOwner: IrElement, irFile: IrFile? = null) {
-        val newFrame = SubFrame(frameOwner)
-        frames.add(Frame(newFrame, irFile))
+        frames.add(Frame(frameOwner, irFile))
     }
 
     fun newFrame(frameOwner: IrFunction) {
-        val newFrame = SubFrame(frameOwner)
-        frames.add(Frame(newFrame, frameOwner.fileOrNull))
+        frames.add(Frame(frameOwner, frameOwner.fileOrNull))
     }
 
     fun newSubFrame(frameOwner: IrElement) {
-        val newFrame = SubFrame(frameOwner)
-        currentFrame.addSubFrame(newFrame)
+        currentFrame.addSubFrame(frameOwner)
     }
 
     fun dropFrame() {
@@ -174,8 +171,12 @@ internal class CallStack {
     fun popState(): State = currentFrame.popState()
     fun peekState(): State? = currentFrame.peekState()
 
-    fun addVariable(variable: Variable) {
-        currentFrame.addVariable(variable)
+    fun addVariable(symbol: IrSymbol, state: State?) {
+        currentFrame.addVariable(symbol, state)
+    }
+
+    private fun addVariable(symbol: IrSymbol, variable: Variable) {
+        currentFrame.addVariable(symbol, variable)
     }
 
     fun getState(symbol: IrSymbol): State = currentFrame.getState(symbol)
@@ -184,19 +185,15 @@ internal class CallStack {
 
     fun storeUpValues(state: StateWithClosure) {
         // TODO save only necessary declarations
-        currentFrame.getAll().reversed().forEach { variable ->
-            // TODO replace list with map
-            val index = state.upValues.indexOfFirst { it.symbol == variable.symbol }
-            if (index == -1) state.upValues.add(variable) else state.upValues[index] = variable
-        }
+        currentFrame.copyMemoryInto(state)
     }
 
     fun loadUpValues(state: StateWithClosure) {
-        state.upValues.forEach { addVariable(it) }
+        state.upValues.forEach { (symbol, variable) -> addVariable(symbol, variable) }
     }
 
     fun copyUpValuesFromPreviousFrame() {
-        frames[frames.size - 2].getAll().forEach { if (!containsVariable(it.symbol)) addVariable(it) }
+        frames[frames.size - 2].copyMemoryInto(currentFrame)
     }
 
     fun getStackTrace(): List<String> {
