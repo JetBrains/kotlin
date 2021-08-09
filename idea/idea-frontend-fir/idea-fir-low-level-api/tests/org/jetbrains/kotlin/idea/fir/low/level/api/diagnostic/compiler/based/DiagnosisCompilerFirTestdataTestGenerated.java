@@ -5044,6 +5044,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             public void testEnumWithToString() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/EnumWithToString.kt");
             }
+
+            @Test
+            @TestMetadata("UastPatterns.kt")
+            public void testUastPatterns() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/UastPatterns.kt");
+            }
         }
 
         @Nested

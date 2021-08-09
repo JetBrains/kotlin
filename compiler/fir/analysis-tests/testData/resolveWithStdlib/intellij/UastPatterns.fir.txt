@@ -1,0 +1,42 @@
+FILE: UastPatterns.kt
+    public abstract interface UElement : R|kotlin/Any| {
+    }
+    public abstract interface UExpression : R|UElement| {
+    }
+    public abstract interface UReferenceExpression : R|UExpression| {
+    }
+    public final fun injectionHostOrReferenceExpression(): R|UExpressionPattern.Capture<UExpression>| {
+        ^injectionHostOrReferenceExpression R|/uExpression|().<CS errors: /UExpressionPattern.Capture.filter>#(<L> = filter@fun <anonymous>(it: R|UExpression|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ (R|<local>/it| is R|UReferenceExpression|)
+        }
+        )
+    }
+    public final fun uExpression(): R|UExpressionPattern.Capture<UExpression>| {
+        ^uExpression R|/expressionCapture|<R|UExpression|>(<getClass>(Q|UExpression|).R|kotlin/jvm/java|<R|UExpression|>)
+    }
+    public final fun <T : R|UExpression|> expressionCapture(clazz: R|java/lang/Class<T>|): R|UExpressionPattern.Capture<T>| {
+        ^expressionCapture Q|UExpressionPattern|.R|SubstitutionOverride</UExpressionPattern.Capture.Capture>|<R|T|>(R|<local>/clazz|)
+    }
+    public open class UElementPattern<T : R|UElement|, Self : R|UElementPattern<T, Self>|> : R|ObjectPattern<T, Self>| {
+        public constructor<T : R|UElement|, Self : R|UElementPattern<T, Self>|>(clazz: R|java/lang/Class<T>|): R|UElementPattern<T, Self>| {
+            super<R|ObjectPattern<T, Self>|>(R|<local>/clazz|)
+        }
+
+        public final fun filter(filter: R|(T) -> kotlin/Boolean|): R|Self| {
+            ^filter (this@R|/UElementPattern| as R|Self|)
+        }
+
+    }
+    public open class UExpressionPattern<T : R|UExpression|, Self : R|UExpressionPattern<T, Self>|> : R|UElementPattern<T, Self>| {
+        public constructor<T : R|UExpression|, Self : R|UExpressionPattern<T, Self>|>(clazz: R|java/lang/Class<T>|): R|UExpressionPattern<T, Self>| {
+            super<R|UElementPattern<T, Self>|>(R|<local>/clazz|)
+        }
+
+        public open class Capture<T : R|UExpression|> : R|UExpressionPattern<T, ObjectPattern.Capture<T>>| {
+            public constructor<T : R|UExpression|>(clazz: R|java/lang/Class<T>|): R|UExpressionPattern.Capture<T>| {
+                super<R|UExpressionPattern<T, ObjectPattern.Capture<T>>|>(R|<local>/clazz|)
+            }
+
+        }
+
+    }
