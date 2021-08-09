@@ -206,7 +206,9 @@ internal object DataFlowIR {
         }
     }
 
-    data class Field(val receiverType: Type?, val type: Type, val hash: Long, val name: String? = null)
+    class Field(val type: Type, val index: Int, val name: String? = null) {
+        override fun toString() = "Field(type=$type, index=$index, name=$name)"
+    }
 
     class Edge(val castToType: Type?) {
 

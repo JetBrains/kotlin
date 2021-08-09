@@ -180,8 +180,7 @@ internal object DevirtualizationAnalysis {
 
             val voidNode = addNode { Node.Ordinary(it, { "Void" }) }
             val virtualNode = addNode { Node.Source(it, VIRTUAL_TYPE_ID, { "Virtual" }) }
-            val arrayItemField = DataFlowIR.Field(null,
-                    symbolTable.mapClassReferenceType(context.irBuiltIns.anyClass.owner), 1, "Array\$Item")
+            val arrayItemField = DataFlowIR.Field(symbolTable.mapClassReferenceType(context.irBuiltIns.anyClass.owner), -1, "Array\$Item")
             val functions = mutableMapOf<DataFlowIR.FunctionSymbol, Function>()
             val externalFunctions = mutableMapOf<Pair<DataFlowIR.FunctionSymbol, DataFlowIR.Type>, Node>()
             val fields = mutableMapOf<DataFlowIR.Field, Node>() // Do not distinguish receivers.
@@ -1221,14 +1220,14 @@ internal object DevirtualizationAnalysis {
                             val type = node.field.type.resolved()
                             if (entryPoint == null && type.isFinal)
                                 addInstantiatingClass(type)
-                            readField(node.field, type)
+                            readField(node.field, node.type.resolved())
                         }
 
                         is DataFlowIR.Node.FieldWrite -> {
                             val type = node.field.type.resolved()
                             if (entryPoint == null && type.isFinal)
                                 addInstantiatingClass(type)
-                            writeField(node.field, type, edgeToConstraintNode(node.value))
+                            writeField(node.field, node.type.resolved(), edgeToConstraintNode(node.value))
                             constraintGraph.voidNode
                         }
 

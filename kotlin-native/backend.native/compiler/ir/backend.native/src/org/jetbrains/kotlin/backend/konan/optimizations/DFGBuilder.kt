@@ -448,6 +448,16 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     private val reinterpret = symbols.reinterpret
     private val objCObjectRawValueGetter = symbols.interopObjCObjectRawValueGetter
 
+    private val fields = mutableMapOf<IrField, DataFlowIR.Field>()
+    private fun IrField.toDataFlowIRField() = fields.getOrPut(this) {
+        val name = name.asString()
+        DataFlowIR.Field(
+                symbolTable.mapType(type),
+                1 + fields.size,
+                takeName { name }
+        )
+    }
+
     private class Scoped<out T : Any>(val value: T, val scope: DataFlowIR.Node.Scope)
 
     private inner class FunctionDFGBuilder(val expressionValuesExtractor: ExpressionValuesExtractor,
@@ -836,16 +846,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                             is IrGetField -> {
                                 val receiver = value.receiver?.let { expressionToEdge(it) }
-                                val receiverType = value.receiver?.let { symbolTable.mapType(it.type) }
-                                val name = value.symbol.owner.name.asString()
                                 DataFlowIR.Node.FieldRead(
                                         receiver,
-                                        DataFlowIR.Field(
-                                                receiverType,
-                                                symbolTable.mapType(value.symbol.owner.type),
-                                                name.localHash.value,
-                                                takeName { name }
-                                        ),
+                                        value.symbol.owner.toDataFlowIRField(),
                                         mapReturnType(value.type, value.symbol.owner.type),
                                         value
                                 )
@@ -853,16 +856,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
                             is IrSetField -> {
                                 val receiver = value.receiver?.let { expressionToEdge(it) }
-                                val receiverType = value.receiver?.let { symbolTable.mapType(it.type) }
-                                val name = value.symbol.owner.name.asString()
                                 DataFlowIR.Node.FieldWrite(
                                         receiver,
-                                        DataFlowIR.Field(
-                                                receiverType,
-                                                symbolTable.mapType(value.symbol.owner.type),
-                                                name.localHash.value,
-                                                takeName { name }
-                                        ),
+                                        value.symbol.owner.toDataFlowIRField(),
                                         expressionToEdge(value.value),
                                         mapReturnType(value.value.type, value.symbol.owner.type)
                                 )
