@@ -8,6 +8,7 @@ import org.jetbrains.dokka.pages.*
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.drisOfAllNestedBounds
 import org.jetbrains.dokka.model.AnnotationTarget
+import org.jetbrains.dokka.model.doc.DocumentationNode
 
 interface JvmSignatureUtils {
 
@@ -22,6 +23,19 @@ interface JvmSignatureUtils {
 
     fun <T : AnnotationTarget> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
         extra[Annotations]?.directAnnotations ?: emptyMap()
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun <T : Iterable<*>> SourceSetDependent<T>.plus(other: SourceSetDependent<T>): SourceSetDependent<T> =
+        LinkedHashMap(this).apply {
+            for ((k, v) in other) {
+                put(k, get(k).let { if (it != null) (it + v) as T else v })
+            }
+        }
+
+    fun DProperty.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
+        (extra[Annotations]?.directAnnotations ?: emptyMap()) +
+        (getter?.annotations() ?: emptyMap()).mapValues { it.value.map { it.copy( scope = Annotations.AnnotationScope.GETTER) } } +
+        (setter?.annotations() ?: emptyMap()).mapValues { it.value.map { it.copy( scope = Annotations.AnnotationScope.SETTER) } }
 
     private fun PageContentBuilder.DocumentableContentBuilder.annotations(
         d: AnnotationTarget,
@@ -65,7 +79,13 @@ interface JvmSignatureUtils {
     ) {
 
         when (renderAtStrategy) {
-            is All, is OnlyOnce -> text("@")
+            is All, is OnlyOnce -> {
+                text("@")
+                when(a.scope) {
+                    Annotations.AnnotationScope.GETTER -> text("get:")
+                    Annotations.AnnotationScope.SETTER -> text("set:")
+                }
+            }
             is Never -> Unit
         }
         link(a.dri.classNames!!, a.dri)
