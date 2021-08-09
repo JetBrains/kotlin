@@ -10,12 +10,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 
 object FirPropertyFieldTypeChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -70,16 +67,5 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
     ) {
         checkAsPropertyNotSubtype(property, context, reporter)
         checkAsFieldNotSubtype(property, context, reporter)
-    }
-
-    private fun FirTypedDeclaration.isSubtypeOf(
-        other: FirTypedDeclaration,
-        typeCheckerContext: ConeTypeCheckerContext
-    ): Boolean {
-        return AbstractTypeChecker.isSubtypeOf(
-            typeCheckerContext,
-            returnTypeRef.coneType,
-            other.returnTypeRef.coneType
-        )
     }
 }
