@@ -174,6 +174,14 @@ internal class FirPropertyImpl(
         initializer = newInitializer
     }
 
+    override fun replaceGetter(newGetter: FirPropertyAccessor?) {
+        getter = newGetter
+    }
+
+    override fun replaceSetter(newSetter: FirPropertyAccessor?) {
+        setter = newSetter
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }
