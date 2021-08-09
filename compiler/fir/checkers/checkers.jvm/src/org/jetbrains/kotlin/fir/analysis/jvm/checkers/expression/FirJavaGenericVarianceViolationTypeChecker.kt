@@ -121,7 +121,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
                     lowerBoundWithoutCapturing.withNullability(ConeNullability.NULLABLE, typeCtx)
                 )
             ) {
-                reporter.reportOn(arg.source, FirErrors.JAVA_TYPE_MISMATCH, argType, expectedType, context)
+                reporter.reportOn(arg.source, FirErrors.JAVA_TYPE_MISMATCH, expectedType, argType, context)
             }
         }
     }
@@ -161,9 +161,10 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
     private fun ConeTypeProjection.removeOutProjection(positive: Boolean): ConeTypeProjection {
         return when (this) {
             is ConeKotlinTypeProjectionOut -> if (positive) type else this
-            is ConeKotlinType -> this.removeOutProjection(true)
-            is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(type.removeOutProjection(true))
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(type.removeOutProjection(!positive))
+            // Don't remove nested projections for types at invariant position.
+            is ConeKotlinTypeConflictingProjection,
+            is ConeKotlinType,
             is ConeStarProjection -> this
         }
     }

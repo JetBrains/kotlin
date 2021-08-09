@@ -5,9 +5,19 @@ public fun main(/*0*/ a: A): kotlin.Unit
 public open class A {
     public constructor A()
     public/*package*/ open fun bar(): (kotlin.collections.MutableList<out kotlin.Number!>..kotlin.collections.List<kotlin.Number!>?)
+    public/*package*/ open fun bar2(): kotlin.collections.(Mutable)List<(kotlin.collections.MutableList<out kotlin.Number!>..kotlin.collections.List<kotlin.Number!>?)>!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)List<kotlin.Any!>!): kotlin.Unit
     public/*package*/ open fun </*0*/ T : kotlin.Any!> foo2(/*0*/ x: kotlin.collections.(Mutable)List<T!>!): kotlin.Unit
+    public/*package*/ open fun foo3(/*0*/ x: (kotlin.collections.MutableCollection<out kotlin.Any!>..kotlin.collections.Collection<kotlin.Any!>?)): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public open class B</*0*/ T : kotlin.Any!> {
+    public constructor B</*0*/ T : kotlin.Any!>(/*0*/ c: kotlin.collections.(Mutable)Collection<T!>!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
