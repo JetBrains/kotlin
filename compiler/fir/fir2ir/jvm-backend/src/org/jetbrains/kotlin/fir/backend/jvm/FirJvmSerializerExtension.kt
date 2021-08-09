@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.types.*
@@ -259,11 +260,9 @@ class FirJvmSerializerExtension(
     private fun FirProperty.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
         if (!hasJvmFieldAnnotation) return false
 
-        val container =
-            dispatchReceiverType?.classId?.let {
-                session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
-            }
-        if (container == null || !container.isCompanion) {
+        val container = (dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.toFirRegularClass(session)
+        // Note: companions are anyway forbidden in local classes
+        if (container == null || !container.isCompanion || container.isLocal) {
             return false
         }
 

@@ -16035,6 +16035,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("jvmFieldInLocalClass.kt")
+        public void testJvmFieldInLocalClass() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/jvmFieldInLocalClass.kt");
+        }
+
+        @Test
         @TestMetadata("KotlinDocumentationProvider.kt")
         public void testKotlinDocumentationProvider() throws Exception {
             runTest("compiler/testData/codegen/box/fir/KotlinDocumentationProvider.kt");
