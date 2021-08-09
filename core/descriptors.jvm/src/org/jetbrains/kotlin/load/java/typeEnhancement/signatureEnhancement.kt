@@ -162,6 +162,7 @@ class SignatureEnhancement(
         context: LazyJavaResolverContext
     ): List<KotlinType> {
         return bounds.map { bound ->
+            // TODO: would not enhancing raw type arguments be sufficient?
             if (bound.contains { it is RawType }) return@map bound
 
             SignatureParts(
@@ -246,13 +247,8 @@ class SignatureEnhancement(
             )
         }
 
-        private fun KotlinType.extractQualifiersFromAnnotations(
-            isHeadTypeConstructor: Boolean,
-            defaultQualifiersForType: JavaDefaultQualifiers?,
-            typeParameterForArgument: TypeParameterDescriptor?,
-            isFromStarProjection: Boolean
-        ): JavaTypeQualifiers {
-            if (isFromStarProjection && typeParameterForArgument?.variance == Variance.IN_VARIANCE) {
+        private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
+            if (type == null && typeParameterForArgument?.variance == Variance.IN_VARIANCE) {
                 // Star projections can only be enhanced in one way: `?` -> `? extends <something>`. Given a Kotlin type `C<in T>
                 // (declaration-site variance), this is not a valid enhancement due to conflicting variances.
                 return JavaTypeQualifiers.NONE
@@ -260,6 +256,8 @@ class SignatureEnhancement(
 
             val areImprovementsInStrictMode = containerContext.components.settings.typeEnhancementImprovementsInStrictMode
 
+            val isHeadTypeConstructor = typeParameterForArgument == null
+            val typeOrBound = type ?: typeParameterForArgument!!.starProjectionType()
             val composedAnnotation =
                 if (isHeadTypeConstructor && typeContainer != null && typeContainer !is TypeParameterDescriptor && areImprovementsInStrictMode) {
                     val filteredContainerAnnotations = typeContainer.annotations.filter {
@@ -273,29 +271,33 @@ class SignatureEnhancement(
                          */
                         !annotationTypeQualifierResolver.isTypeUseAnnotation(it)
                     }
-                    composeAnnotations(Annotations.create(filteredContainerAnnotations), annotations)
+                    composeAnnotations(Annotations.create(filteredContainerAnnotations), typeOrBound.annotations)
                 } else if (isHeadTypeConstructor && typeContainer != null) {
-                    composeAnnotations(typeContainer.annotations, annotations)
-                } else annotations
+                    composeAnnotations(typeContainer.annotations, typeOrBound.annotations)
+                } else typeOrBound.annotations
 
             fun <T : Any> List<FqName>.ifPresent(qualifier: T) =
                 if (any { composedAnnotation.findAnnotation(it) != null }) qualifier else null
 
             fun <T : Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
-            val defaultTypeQualifier =
-                (if (isHeadTypeConstructor)
-                    containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
-                else
-                    defaultQualifiersForType)?.takeIf {
-                    (it.affectsTypeParameterBasedTypes || !isTypeParameter()) && (it.affectsStarProjection || !isFromStarProjection)
-                }
+            val defaultTypeQualifier = (
+                    if (isHeadTypeConstructor)
+                        containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
+                    else
+                        defaultQualifiers?.get(
+                            if (typeParameterBounds)
+                                AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
+                            else
+                                AnnotationQualifierApplicabilityType.TYPE_USE
+                        )
+                    )?.takeIf { (it.affectsTypeParameterBasedTypes || !typeOrBound.isTypeParameter()) && (it.affectsStarProjection || type != null) }
 
             val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
-                nullabilityInfoBoundsForTypeParameterUsage()
+                typeOrBound.nullabilityInfoBoundsForTypeParameterUsage()
 
             val annotationsNullability = composedAnnotation.extractNullability(areImprovementsInStrictMode, typeParameterBounds)
-                ?.takeUnless { isFromStarProjection }
+                ?.takeUnless { type == null }
             val nullabilityInfo =
                 annotationsNullability
                     ?: computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
@@ -320,7 +322,7 @@ class SignatureEnhancement(
                         MutabilityQualifier.MUTABLE
                     )
                 ),
-                isNotNullTypeParameter = isNotNullTypeParameter && isTypeParameter(),
+                isNotNullTypeParameter = isNotNullTypeParameter && typeOrBound.isTypeParameter(),
                 isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
             )
         }
@@ -426,67 +428,39 @@ class SignatureEnhancement(
 
             val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
             val computedResult = Array(treeSize) { index ->
-                val isHeadTypeConstructor = index == 0
-                assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
-
-                val (qualifiers, defaultQualifiers, typeParameterForArgument, isFromStarProjection) = indexedThisType[index]
                 val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
-
-                // Only the head type constructor is safely co-variant
-                qualifiers.computeQualifiersForOverride(
-                    verticalSlice, defaultQualifiers, isHeadTypeConstructor, typeParameterForArgument, isFromStarProjection
-                )
+                indexedThisType[index].computeQualifiersForOverride(verticalSlice)
             }
 
             return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
         }
 
 
-        private fun KotlinType.toIndexed(): List<TypeAndDefaultQualifiers> {
-            val list = ArrayList<TypeAndDefaultQualifiers>(1)
+        private fun <T> T.flattenTree(result: MutableList<T>, children: (T) -> Iterable<T>?) {
+            result.add(this)
+            children(this)?.forEach { it.flattenTree(result, children) }
+        }
 
-            fun add(type: KotlinType, ownerContext: LazyJavaResolverContext, typeParameterForArgument: TypeParameterDescriptor?) {
-                val c = ownerContext.copyWithNewDefaultTypeQualifiers(type.annotations)
+        private fun <T> T.flattenTree(children: (T) -> Iterable<T>?): List<T> =
+            ArrayList<T>(1).also { flattenTree(it, children) }
 
-                val defaultQualifiers = c.defaultTypeQualifiers
-                    ?.get(
-                        if (typeParameterBounds)
-                            AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
-                        else
-                            AnnotationQualifierApplicabilityType.TYPE_USE
-                    )
-                list.add(
-                    TypeAndDefaultQualifiers(
-                        type,
-                        defaultQualifiers,
-                        typeParameterForArgument,
-                        isFromStarProjection = false
-                    )
-                )
+        private fun KotlinType.extractAndMergeDefaultQualifiers(oldQualifiers: JavaTypeQualifiersByElementType?) =
+            containerContext.components.annotationTypeQualifierResolver.extractAndMergeDefaultQualifiers(oldQualifiers, annotations)
 
-                if (isSuperTypesEnhancement && type is RawType) return
+        private fun KotlinType.toIndexed(): List<TypeAndDefaultQualifiers> =
+            TypeAndDefaultQualifiers(this, extractAndMergeDefaultQualifiers(containerContext.defaultTypeQualifiers), null).flattenTree {
+                // Enhancement of raw type arguments may enter a loop.
+                if (isSuperTypesEnhancement && it.type is RawType) return@flattenTree null
 
-                for ((arg, parameter) in type.arguments.zip(type.constructor.parameters)) {
-                    if (arg.isStarProjection) {
-                        // TODO: sort out how to handle wildcards
-                        list.add(TypeAndDefaultQualifiers(arg.type, defaultQualifiers, parameter, isFromStarProjection = true))
-                    } else {
-                        add(arg.type, c, parameter)
-                    }
+                it.type?.arguments?.zip(it.type.constructor.parameters) { arg, parameter ->
+                    if (arg.isStarProjection)
+                        TypeAndDefaultQualifiers(null, it.defaultQualifiers, parameter)
+                    else
+                        TypeAndDefaultQualifiers(arg.type, arg.type.extractAndMergeDefaultQualifiers(it.defaultQualifiers), parameter)
                 }
             }
 
-            add(this, containerContext, typeParameterForArgument = null)
-            return list
-        }
-
-        private fun KotlinType.computeQualifiersForOverride(
-            fromSupertypes: Collection<KotlinType>,
-            defaultQualifiersForType: JavaDefaultQualifiers?,
-            isHeadTypeConstructor: Boolean,
-            typeParameterForArgument: TypeParameterDescriptor?,
-            isFromStarProjection: Boolean
-        ): JavaTypeQualifiers {
+        private fun TypeAndDefaultQualifiers.computeQualifiersForOverride(fromSupertypes: Collection<KotlinType>): JavaTypeQualifiers {
             val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
             val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
             val nullabilityFromSupertypes = superQualifiers.mapNotNull { it.nullability }.toSet()
@@ -494,13 +468,11 @@ class SignatureEnhancement(
                 .mapNotNull { it.unwrapEnhancement().extractQualifiers().nullability }
                 .toSet()
 
-            val own =
-                extractQualifiersFromAnnotations(
-                    isHeadTypeConstructor, defaultQualifiersForType, typeParameterForArgument, isFromStarProjection
-                )
+            val own = extractQualifiersFromAnnotations()
             val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
             val ownNullabilityForWarning = own.nullability
 
+            val isHeadTypeConstructor = typeParameterForArgument == null
             val isCovariantPosition = isCovariant && isHeadTypeConstructor
             val nullability =
                 nullabilityFromSupertypes.select(ownNullability, isCovariantPosition)
@@ -572,10 +544,9 @@ class SignatureEnhancement(
 }
 
 private data class TypeAndDefaultQualifiers(
-    val type: KotlinType,
-    val defaultQualifiers: JavaDefaultQualifiers?,
-    val typeParameterForArgument: TypeParameterDescriptor?,
-    val isFromStarProjection: Boolean
+    val type: KotlinType?,
+    val defaultQualifiers: JavaTypeQualifiersByElementType?,
+    val typeParameterForArgument: TypeParameterDescriptor?
 )
 
 private fun KotlinType.isNullabilityFlexible(): Boolean {
