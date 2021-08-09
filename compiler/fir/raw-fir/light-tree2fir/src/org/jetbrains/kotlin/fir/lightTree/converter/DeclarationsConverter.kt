@@ -1803,7 +1803,6 @@ class DeclarationsConverter(
                 TYPE_REFERENCE -> firType = convertType(it)
                 MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
                 USER_TYPE -> firType = convertUserType(typeRefSource, it)
-                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(typeRefSource, it, allTypeModifiers)
                 NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
                 FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isSuspend = allTypeModifiers.hasSuspend())
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
@@ -1875,31 +1874,6 @@ class DeclarationsConverter(
                         source = typeRefSource
                         diagnostic = ConeSimpleDiagnostic("Intersection types are not supported yet", DiagnosticKind.Syntax)
                     }
-            }
-        }
-
-        return firType
-    }
-
-    private fun unwrapDefinitelyNotNullableType(
-        typeRefSource: FirSourceElement,
-        definitelyNotNullType: LighterASTNode,
-        allTypeModifiers: MutableList<TypeModifier>,
-        isNullable: Boolean = false
-    ): FirTypeRef {
-        lateinit var firType: FirTypeRef
-        // TODO: Support proper DefinitelyNotNullableType
-        definitelyNotNullType.forEachChildren {
-            when (it.tokenType) {
-                MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
-                USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
-                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
-                NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers, isNullable = false)
-                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(typeRefSource, it, allTypeModifiers, isNullable)
-                DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
-                    source = typeRefSource
-                    isMarkedNullable = false
-                }
             }
         }
 

@@ -694,7 +694,6 @@ public class DefaultErrorMessages {
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
         MAP.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic");
         MAP.put(REDUNDANT_NULLABLE, "Redundant '?'");
-        MAP.put(DEFINITELY_NOT_NULLABLE_NOT_APPLICABLE, "'!!' is only applicable to type parameters with nullable upper bounds");
         MAP.put(NULLABLE_ON_DEFINITELY_NOT_NULLABLE, "'!!' type cannot be marked as nullable");
         MAP.put(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION, "Intersection types are only supported for definitely non-nullable types: left part should be a type parameter with nullable bounds");
         MAP.put(INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION, "Intersection types are only supported for definitely non-nullable types: right part should be non-nullable Any");

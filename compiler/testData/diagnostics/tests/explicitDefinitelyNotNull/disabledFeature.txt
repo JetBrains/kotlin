@@ -1,4 +1,0 @@
-package
-
-public fun </*0*/ T> foo(/*0*/ x: T, /*1*/ y: T): kotlin.collections.List<T>?
-
