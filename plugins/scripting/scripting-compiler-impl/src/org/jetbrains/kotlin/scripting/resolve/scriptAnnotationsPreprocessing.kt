@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ArrayFqNames.ARRAY_OF_FUNCTION
+import org.jetbrains.kotlin.resolve.ArrayFqNames.EMPTY_ARRAY
 import org.jetbrains.kotlin.resolve.ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -29,7 +30,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
 
-private val ARRAY_OF_METHODS = setOf(ARRAY_OF_FUNCTION) + PRIMITIVE_TYPE_TO_ARRAY.values.toSet() + Name.identifier("emptyArray")
+private val ARRAY_OF_METHODS = setOf(ARRAY_OF_FUNCTION, EMPTY_ARRAY) + PRIMITIVE_TYPE_TO_ARRAY.values.toSet()
 
 // basic text comparison of function name, todo: better handling?
 private val KtCallExpression.isArrayCall: Boolean get() = Name.identifier(calleeExpression!!.text) in ARRAY_OF_METHODS
