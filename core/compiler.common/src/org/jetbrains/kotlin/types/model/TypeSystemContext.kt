@@ -349,6 +349,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isClassTypeConstructor(): Boolean
     fun TypeConstructorMarker.isInterface(): Boolean
     fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
+    fun TypeConstructorMarker.isCollectionLiteralTypeConstructor(): Boolean // TODO add more overrides
     fun TypeConstructorMarker.isLocalType(): Boolean
     fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker?
 
@@ -399,6 +400,10 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun SimpleTypeMarker.isIntegerLiteralType(): Boolean = typeConstructor().isIntegerLiteralTypeConstructor()
 
     fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker>
+
+    fun SimpleTypeMarker.isCollectionLiteralType(): Boolean = typeConstructor().isCollectionLiteralTypeConstructor()
+
+    fun SimpleTypeMarker.possibleTypesOfCollectionLiteral(): Collection<KotlinTypeMarker>
 
     fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean
 

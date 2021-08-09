@@ -176,26 +176,23 @@ class FirCallResolver(
             CallKind.CollectionLiteral,
             OperatorNameConventions.BUILD_CL,
             null,
-            buildArgumentList {
+            buildArgumentList { // TODO add arguments from CL
                 this.arguments.add(0, buildConstExpression(null, ConstantValueKind.Int, collectionLiteral.expressions.size))
             },
             isPotentialQualifierPart = false,
             isImplicitInvoke = false,
-            listOf(buildTypeProjectionWithVariance {
-                this.typeRef = buildImplicitTypeRef()
-                this.variance = Variance.INVARIANT // TODO возможны ли in out?
-            }),
+            emptyList(),
+//            listOf(buildTypeProjectionWithVariance {
+//                this.typeRef = buildImplicitTypeRef()
+//                this.variance = Variance.INVARIANT // TODO возможны ли in out?
+//            }),
             session,
             components.file,
             transformer.components.containingDeclarations
         )
         towerResolver.reset()
         val result = towerResolver.runResolver(info, transformer.resolutionContext)
-        val bestCandidates = result.bestCandidates()
-
-        // TODO check that this is operators
-
-        return bestCandidates
+        return result.bestCandidates()
     }
 
 

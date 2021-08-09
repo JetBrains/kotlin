@@ -67,6 +67,7 @@ abstract class AbstractConeSubstitutor(private val typeContext: ConeTypeContext)
             is ConeIntersectionType -> this.substituteIntersectedTypes()
             is ConeStubType -> return null
             is ConeIntegerLiteralType -> return null
+            is ConeCollectionLiteralType -> return null
         }
     }
 

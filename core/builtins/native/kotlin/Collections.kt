@@ -172,7 +172,7 @@ public interface List<out E> : Collection<E> {
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 
     companion object {
-        fun <T> build(size: Int): Set<T> {
+        fun <T> build(size: Int): List<T> {
             return TODO()
         }
     }

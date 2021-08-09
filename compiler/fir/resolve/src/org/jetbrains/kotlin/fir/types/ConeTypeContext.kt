@@ -48,6 +48,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeIntegerLiteralType
     }
 
+    override fun TypeConstructorMarker.isCollectionLiteralTypeConstructor(): Boolean {
+        return this is ConeCollectionLiteralType
+    }
+
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is ConeClassLikeLookupTag) return false
         return classId.isLocal
@@ -63,6 +67,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return (this as? ConeIntegerLiteralType)?.possibleTypes ?: emptyList()
     }
 
+    override fun SimpleTypeMarker.possibleTypesOfCollectionLiteral(): Collection<KotlinTypeMarker> {
+        return (this as? ConeCollectionLiteralType)?.possibleTypes ?: emptyList()
+    }
+
     override fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? {
         require(this is ConeKotlinType)
         return session.correspondingSupertypesCache.getCorrespondingSupertypes(this, constructor)
@@ -70,6 +78,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun SimpleTypeMarker.isIntegerLiteralType(): Boolean {
         return this is ConeIntegerLiteralType
+    }
+
+    override fun SimpleTypeMarker.isCollectionLiteralType(): Boolean {
+        return this is ConeCollectionLiteralType
     }
 
     override fun KotlinTypeMarker.asSimpleType(): SimpleTypeMarker? {
@@ -147,6 +159,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeStubType -> variable.typeConstructor
             is ConeDefinitelyNotNullType -> original.typeConstructor()
             is ConeIntegerLiteralType -> this
+            is ConeCollectionLiteralType -> this
             else -> error("?: $this")
         }
     }
@@ -271,6 +284,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedTypeConstructor -> supertypes!!
             is ConeIntersectionType -> intersectedTypes
             is ConeIntegerLiteralType -> supertypes
+            is ConeCollectionLiteralType -> emptyList() // TODO need any?
             else -> unknownConstructorError()
         }
     }

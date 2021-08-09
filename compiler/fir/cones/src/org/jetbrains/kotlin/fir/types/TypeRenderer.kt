@@ -48,6 +48,7 @@ fun ConeKotlinType.render(): String {
         }
         is ConeStubType -> "${renderAttributes()}Stub: $variable"
         is ConeIntegerLiteralType -> "${renderAttributes()}ILT: $value"
+        is ConeCollectionLiteralType -> "${renderAttributes()}CLT: $possibleTypes"
     } + nullabilitySuffix
 }
 
