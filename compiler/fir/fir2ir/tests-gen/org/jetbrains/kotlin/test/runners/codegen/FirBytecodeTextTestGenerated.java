@@ -92,6 +92,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("checkcastOnThrow.kt")
+    public void testCheckcastOnThrow() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/checkcastOnThrow.kt");
+    }
+
+    @Test
     @TestMetadata("collectionStubs.kt")
     public void testCollectionStubs() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/collectionStubs.kt");

@@ -1280,12 +1280,11 @@ class ExpressionCodegen(
     override fun visitThrow(expression: IrThrow, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         val exception = expression.value.accept(this, data)
-        // Avoid unecessary CHECKCASTs to java/lang/Throwable. If the exception is not of type Object
-        // then it must be some subtype of throwable and we don't need to coerce it.
-        if (exception.type == OBJECT_TYPE)
-            exception.materializeAt(context.irBuiltIns.throwableType)
-        else
+        // Avoid unnecessary CHECKCASTs to java/lang/Throwable.
+        if (exception.irType.isSubtypeOfClass(context.irBuiltIns.throwableClass))
             exception.materialize()
+        else
+            exception.materializeAt(context.irBuiltIns.throwableType)
         mv.athrow()
         return unitValue
     }

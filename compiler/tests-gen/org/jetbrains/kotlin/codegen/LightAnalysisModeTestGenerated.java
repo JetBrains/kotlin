@@ -31980,6 +31980,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/smartCasts/kt44942.kt");
         }
 
+        @TestMetadata("kt48163_smartCastToThrowable.kt")
+        public void testKt48163_smartCastToThrowable() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/kt48163_smartCastToThrowable.kt");
+        }
+
         @TestMetadata("lambdaArgumentWithoutType.kt")
         public void testLambdaArgumentWithoutType() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/lambdaArgumentWithoutType.kt");
