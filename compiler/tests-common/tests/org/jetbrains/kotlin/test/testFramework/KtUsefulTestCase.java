@@ -799,6 +799,12 @@ public abstract class KtUsefulTestCase extends TestCase {
             fileText = FileUtil.loadFile(new File(filePath), StandardCharsets.UTF_8);
         }
         catch (FileNotFoundException e) {
+            try {
+                FileUtil.writeToFile(new File(filePath), actualText);
+            }
+            catch (IOException exception) {
+                throw new AssertionError(exception);
+            }
             throw new AssertionFailedError("No output text found. File " + filePath + " created.");
         }
         catch (IOException e) {

@@ -55,9 +55,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
-import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
-import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.min
 
@@ -317,6 +315,57 @@ class TypeResolver(
                 }
 
                 result = type(definitelyNotNullKotlinType)
+            }
+
+            override fun visitIntersectionType(intersectionType: KtIntersectionType) {
+                val leftType = resolvePossiblyBareType(c, intersectionType.getLeftTypeRef() ?: return).let {
+                    when {
+                        it.isBare -> error("There should not be bare types for intersections")
+                        else -> it.actualType
+                    }
+                }
+
+                // Just in case of early return
+                result = type(leftType)
+
+                val rightType = resolvePossiblyBareType(c, intersectionType.getRightTypeRef() ?: return).let {
+                    when {
+                        it.isBare -> error("There should not be bare types for intersections")
+                        else -> it.actualType
+                    }
+                }
+
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNotNullTypeParameters)) {
+                    c.trace.report(
+                        UNSUPPORTED_FEATURE.on(
+                            intersectionType,
+                            LanguageFeature.DefinitelyNotNullTypeParameters to languageVersionSettings
+                        )
+                    )
+                    return
+                }
+
+                if (!leftType.isTypeParameter() || leftType.isMarkedNullable || !TypeUtils.isNullableType(leftType)) {
+                    c.trace.report(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION.on(intersectionType.getLeftTypeRef()!!))
+                    return
+                }
+
+                if (!rightType.isAny()) {
+                    c.trace.report(INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION.on(intersectionType.getRightTypeRef()!!))
+                    return
+                }
+
+                val definitelyNotNullType =
+                    DefinitelyNotNullType.makeDefinitelyNotNull(leftType.unwrap())
+                        ?: error(
+                            "Definitely not-nullable type is not created for type parameter with nullable upper bound ${
+                                TypeUtils.getTypeParameterDescriptorOrNull(
+                                    leftType
+                                )!!
+                            }"
+                        )
+
+                result = type(definitelyNotNullType)
             }
 
             override fun visitFunctionType(type: KtFunctionType) {

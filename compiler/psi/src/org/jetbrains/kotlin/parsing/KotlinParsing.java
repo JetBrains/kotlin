@@ -833,7 +833,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
-        parseUserType(/* allowNotNullTypeParameter */ false);
+        parseUserType(/* allowSimpleIntersectionTypes */ false);
         typeReference.done(TYPE_REFERENCE);
         reference.done(CONSTRUCTOR_CALLEE);
 
@@ -1713,7 +1713,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (!receiverPresent) return false;
 
-        createTruncatedBuilder(lastDot).parseTypeRef();
+        createTruncatedBuilder(lastDot).parseTypeRefWithoutIntersections();
 
         if (atSet(RECEIVER_TYPE_TERMINATORS)) {
             advance(); // expectation
@@ -2055,22 +2055,22 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseTypeRef(TokenSet.EMPTY);
     }
 
-    void parseTypeRefWithoutDefinitelyNotNull() {
-        parseTypeRef(TokenSet.EMPTY, /* allowNotNullTypeParameters */ false);
+    void parseTypeRefWithoutIntersections() {
+        parseTypeRef(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ false);
     }
 
     void parseTypeRef(TokenSet extraRecoverySet) {
-        parseTypeRef(extraRecoverySet, /* allowNotNullTypeParameters */ true);
+        parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
     }
 
-    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowNotNullTypeParameters) {
-        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowNotNullTypeParameters);
+    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
+        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes);
         typeRefMarker.done(TYPE_REFERENCE);
     }
 
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
-    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowNotNullTypeParameters) {
+    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
         PsiBuilder.Marker typeRefMarker = mark();
 
         parseTypeModifierList();
@@ -2086,14 +2086,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
             dynamicType.done(DYNAMIC_TYPE);
         }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
-            parseUserType(allowNotNullTypeParameters);
+            parseUserType(allowSimpleIntersectionTypes);
         }
         else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
 
             // This may be a function parameter list or just a parenthesized type
             advance(); // LPAR
-            parseTypeRefContents(TokenSet.EMPTY, allowNotNullTypeParameters).drop(); // parenthesized types, no reference element around it is needed
+            parseTypeRefContents(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ true).drop(); // parenthesized types, no reference element around it is needed
 
             if (at(RPAR)) {
                 advance(); // RPAR
@@ -2133,7 +2133,23 @@ public class KotlinParsing extends AbstractKotlinParsing {
         typeElementMarker = parseNullableTypeSuffix(typeElementMarker);
         myBuilder.restoreJoiningComplexTokensState();
 
-        if (typeBeforeDot && at(DOT)) {
+        boolean wasIntersection = false;
+        if (allowSimpleIntersectionTypes && at(AND)) {
+            PsiBuilder.Marker leftTypeRef = typeElementMarker;
+
+            typeElementMarker = typeElementMarker.precede();
+            PsiBuilder.Marker intersectionType = leftTypeRef.precede();
+
+            leftTypeRef.done(TYPE_REFERENCE);
+
+            advance(); // &
+            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
+
+            intersectionType.done(INTERSECTION_TYPE);
+            wasIntersection = true;
+        }
+
+        if (typeBeforeDot && !wasIntersection && at(DOT)) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^
@@ -2183,7 +2199,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
      */
-    private void parseUserType(boolean allowNotNullTypeParameter) {
+    private void parseUserType(boolean allowSimpleIntersectionTypes) {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
@@ -2228,12 +2244,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         userType.done(USER_TYPE);
-
-        if (allowNotNullTypeParameter && at(EXCLEXCL)) {
-            PsiBuilder.Marker definitelyNotNull = userType.precede();
-            advance(); // !!
-            definitelyNotNull.done(DEFINITELY_NOT_NULL_TYPE);
-        }
     }
 
     private boolean atParenthesizedMutableForPlatformTypes(int offset) {
