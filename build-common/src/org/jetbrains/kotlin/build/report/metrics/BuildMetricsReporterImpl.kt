@@ -24,8 +24,8 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
 
     override fun endMeasure(metric: BuildTime, endNs: Long) {
         val startNs = myBuildTimeStartNs.remove(metric) ?: error("$metric finished before it started")
-        val durationNs = endNs - startNs
-        myBuildTimes.add(metric, durationNs)
+        val durationMs = (endNs - startNs) / 1_000_000
+        myBuildTimes.add(metric, durationMs)
     }
 
     override fun addAttribute(attribute: BuildAttribute) {

@@ -13,7 +13,7 @@ internal interface TaskExecutionData {
     val task: Task
     val startNs: Long
     val endNs: Long
-    val totalTimeNs: Long
+    val totalTimeMs: Long
     val resultState: TaskState
     val icLogLines: List<String>
     val buildMetrics: BuildMetrics

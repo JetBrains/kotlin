@@ -83,19 +83,14 @@ internal class KotlinGradleBuildServices private constructor(
             }
 
 
-            listenerRegistryHolder.listenerRegistry.onTaskCompletion(kotlinGradleListenerProvider)
-            listenerRegistryHolder.listenerRegistry.onTaskCompletion(kotlinGradleEsListenerProvider)
-
             if (instance != null) {
                 log.kotlinDebug(ALREADY_INITIALIZED_MESSAGE)
-//                instance!!.gradleListenerProviders.forEach { listenerRegistryHolder.listenerRegistry.onTaskCompletion(it) }
+//                instance!!.gradleListenerProviders.forEach { listenerRegistry.onTaskCompletion(it) }
                 return instance!!
             }
 
             val gradle = project.gradle
             val services = KotlinGradleBuildServices(gradle, kotlinGradleListenerProvider, kotlinGradleEsListenerProvider)
-//            listenerRegistry.onTaskCompletion(kotlinGradleListenerProvider)
-//            listenerRegistry.onTaskCompletion(kotlinGradleEsListenerProvider)
             if (isConfigurationCacheAvailable(gradle)) {
                 listenerRegistryHolder.listenerRegistry!!.onTaskCompletion(kotlinGradleListenerProvider)
                 listenerRegistryHolder.listenerRegistry.onTaskCompletion(kotlinGradleEsListenerProvider)
@@ -104,11 +99,6 @@ internal class KotlinGradleBuildServices private constructor(
                 gradle.taskGraph.addTaskExecutionListener(kotlinGradleEsListenerProvider.get())
                 log.kotlinDebug(INIT_MESSAGE)
             }
-
-
-//            listenerRegistryHolder.listenerRegistry.onTaskCompletion(kotlinGradleListenerProvider)
-//            listenerRegistryHolder.listenerRegistry.onTaskCompletion(kotlinGradleEsListenerProvider)
-
             instance = services
 
             services.buildStarted()

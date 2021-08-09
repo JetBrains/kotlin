@@ -27,7 +27,7 @@ enum class TaskExecutionState {
     ;
 }
 
-class KotlinBuildEsStatListener(val projectName: String, val reportStatistics : List<ReportStatistics>) : OperationCompletionListener, AutoCloseable, TaskExecutionListener {
+class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: List<ReportStatistics>) : OperationCompletionListener, AutoCloseable, TaskExecutionListener {
 
     val label by lazy { CompilerSystemProperties.KOTLIN_STAT_LABEl_PROPERTY.value }
 
@@ -37,9 +37,11 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics : 
             val taskPath = event.descriptor.taskPath
             val duration = event.result.endTime - event.result.startTime
             val taskResult = when (result) {
-                is TaskSuccessResult -> if (result.isFromCache) TaskExecutionState.FROM_CACHE
-                else if (result.isUpToDate) TaskExecutionState.UP_TO_DATE
-                else TaskExecutionState.SUCCESS
+                is TaskSuccessResult -> when {
+                    result.isFromCache -> TaskExecutionState.FROM_CACHE
+                    result.isUpToDate -> TaskExecutionState.UP_TO_DATE
+                    else -> TaskExecutionState.SUCCESS
+                }
 
                 is TaskSkippedResult -> TaskExecutionState.SKIPPED
                 is TaskFailureResult -> TaskExecutionState.FAILED
@@ -55,9 +57,8 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics : 
             return;
         }
         val taskExecutionResult = TaskExecutionResults[taskPath]
-        val statData = taskExecutionResult?.buildMetrics?.buildTimes?.asMap()?.mapKeys { (key, _) -> key.name } ?: emptyMap()
-        val changedFiles = taskExecutionResult?.taskInfo?.changedFiles
-        val changes = when (changedFiles) {
+        val statData = taskExecutionResult?.buildMetrics?.buildTimes?.asMap() ?: emptyMap()
+        val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
             is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
             is ChangedFiles.Dependencies -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
             else -> emptyList<String>()
@@ -67,13 +68,13 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics : 
             duration = duration, taskResult = taskResult.name, label = label,
             statData = statData, projectName = projectName, taskName = taskPath, changes = changes,
             tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList(),
-            nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?.mapKeys { (key, _) -> key.name }?: emptyMap()
+            nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?: emptyMap()
         )
         reportStatistics.forEach { it.report(compileStatData) }
     }
 
     private fun availableForStat(taskPath: String): Boolean {
-        return taskPath.contains("Kotlin")
+        return taskPath.contains("Kotlin") && (TaskExecutionResults[taskPath] != null)
     }
 
     override fun afterExecute(task: Task, taskState: TaskState) {

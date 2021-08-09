@@ -76,8 +76,8 @@ internal class PlainTextBuildReportWriter(
             fun printBuildTime(buildTime: BuildTime) {
                 if (!visitedBuildTimes.add(buildTime)) return
 
-                val timeNs = collectedBuildTimes[buildTime] ?: return
-                p.println("${buildTime.name}: ${formatTime(timeNs)}")
+                val timeMs = collectedBuildTimes[buildTime] ?: return
+                p.println("${buildTime.name}: ${formatTime(timeMs)}")
                 p.withIndent {
                     BuildTime.children[buildTime]?.forEach { printBuildTime(it) }
                 }
@@ -106,16 +106,16 @@ internal class PlainTextBuildReportWriter(
     }
 
     private fun printTaskOverview(build: BuildExecutionData) {
-        var allTasksTimeNs = 0L
-        var kotlinTotalTimeNs = 0L
+        var allTasksTimeMs = 0L
+        var kotlinTotalTimeMs = 0L
         val kotlinTasks = ArrayList<TaskExecutionData>()
 
         for (task in build.taskExecutionData) {
-            val taskTimeNs = task.totalTimeNs
-            allTasksTimeNs += taskTimeNs
+            val taskTimeMs = task.totalTimeMs
+            allTasksTimeMs += taskTimeMs
 
             if (task.isKotlinTask) {
-                kotlinTotalTimeNs += taskTimeNs
+                kotlinTotalTimeMs += taskTimeMs
                 kotlinTasks.add(task)
             }
         }
@@ -125,14 +125,14 @@ internal class PlainTextBuildReportWriter(
             return
         }
 
-        val ktTaskPercent = (kotlinTotalTimeNs.toDouble() / allTasksTimeNs * 100).asString(1)
-        p.println("Total time for Kotlin tasks: ${formatTime(kotlinTotalTimeNs)} ($ktTaskPercent % of all tasks time)")
+        val ktTaskPercent = (kotlinTotalTimeMs.toDouble() / allTasksTimeMs * 100).asString(1)
+        p.println("Total time for Kotlin tasks: ${formatTime(kotlinTotalTimeMs)} ($ktTaskPercent % of all tasks time)")
 
         val table = TextTable("Time", "% of Kotlin time", "Task")
-        for (task in kotlinTasks.sortedByDescending { it.totalTimeNs }) {
-            val timeNs = task.totalTimeNs
-            val percent = (timeNs.toDouble() / kotlinTotalTimeNs * 100).asString(1)
-            table.addRow(formatTime(timeNs), "$percent %", task.task.path)
+        for (task in kotlinTasks.sortedByDescending { it.totalTimeMs }) {
+            val timeMs = task.totalTimeMs
+            val percent = (timeMs.toDouble() / kotlinTotalTimeMs * 100).asString(1)
+            table.addRow(formatTime(timeMs), "$percent %", task.task.path)
         }
         table.printTo(p)
         p.println()
@@ -150,7 +150,7 @@ internal class PlainTextBuildReportWriter(
         if (skipMessage != null) {
             p.println("Task '${task.task.path}' was skipped: $skipMessage")
         } else {
-            p.println("Task '${task.task.path}' finished in ${formatTime(task.totalTimeNs)}")
+            p.println("Task '${task.task.path}' finished in ${formatTime(task.totalTimeMs)}")
         }
 
         if (task.icLogLines.isNotEmpty()) {

@@ -5,17 +5,30 @@
 
 package org.jetbrains.kotlin.gradle.plugin.statistics
 
-import com.google.gson.Gson
 import com.gradle.scan.plugin.BuildScanExtension
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
+import org.jetbrains.kotlin.konan.file.File
 
-class ReportStatisticsToBuildScan(val buildScan: BuildScanExtension) : ReportStatistics {
+class ReportStatisticsToBuildScan(private val buildScan: BuildScanExtension) : ReportStatistics {
     override fun report(data: CompileStatData) {
-        buildScan.value(data.taskName, Gson().toJson(data).toString())
-        val keys = data.nonIncrementalAttributes.filterValues { it > 0 }.keys.joinToString()
-        if (keys.isNotEmpty()) {
-            buildScan.value("${data.taskName}_nonIncremental", keys)
+        buildScan.value(data.taskName, readableString(data))
+        data.tags.forEach { buildScan.tag(it) }
+    }
+
+    private fun readableString(data: CompileStatData): String {
+        val nonIncrementalReasons = data.nonIncrementalAttributes.filterValues { it > 0 }.keys
+        val readableString = StringBuilder()
+        if (nonIncrementalReasons.isEmpty()) {
+            readableString.append("Incremental build; ")
+        } else {
+            nonIncrementalReasons.joinTo(readableString, prefix = "Non incremental build because: [", postfix = "]; ") { it.readableString }
         }
+        data.changes.joinTo(readableString, prefix = "Changes: [", postfix = "]; ") { it.substringAfterLast(File.separator) }
+
+        readableString.append("Performance: [")
+        data.statData.forEach { (key, value) -> readableString.append(key.readableString).append(": ").append(value).append("ms, ") }
+        readableString.append("]; ")
+        return readableString.toString()
     }
 }

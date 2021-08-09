@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.stat
 
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
+
 data class CompileStatData(
     val version: Int = 1,
     val projectName: String?,
@@ -14,8 +17,8 @@ data class CompileStatData(
     val duration: Long,
     val tags: List<String>,
     val changes: List<String>,
-    val nonIncrementalAttributes: Map<String, Int>,
-    val statData: Map<String, Long>
+    val nonIncrementalAttributes: Map<BuildAttribute, Int>,
+    val statData: Map<BuildTime, Long>
 )
 
 interface ReportStatistics {
