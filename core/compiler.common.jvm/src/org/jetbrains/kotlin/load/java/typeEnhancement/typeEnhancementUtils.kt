@@ -9,19 +9,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-fun createJavaTypeQualifiers(
-    nullability: NullabilityQualifier?,
-    mutability: MutabilityQualifier?,
-    forWarning: Boolean,
-    isAnyNonNullTypeParameter: Boolean
-): JavaTypeQualifiers {
-    if (!isAnyNonNullTypeParameter || nullability != NullabilityQualifier.NOT_NULL) {
-        return JavaTypeQualifiers(nullability, mutability, false, forWarning)
-    }
-    return JavaTypeQualifiers(nullability, mutability, true, forWarning)
-}
-
-fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? {
+private fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? {
     if (isCovariant) {
         val supertypeQualifier = if (low in this) low else if (high in this) high else null
         return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
@@ -35,11 +23,36 @@ fun <T : Any> Set<T>.select(low: T, high: T, own: T?, isCovariant: Boolean): T? 
     return effectiveSet.singleOrNull()
 }
 
-fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Boolean) =
+private fun Set<NullabilityQualifier>.select(own: NullabilityQualifier?, isCovariant: Boolean) =
     if (own == NullabilityQualifier.FORCE_FLEXIBILITY)
         NullabilityQualifier.FORCE_FLEXIBILITY
     else
         select(NullabilityQualifier.NOT_NULL, NullabilityQualifier.NULLABLE, own, isCovariant)
+
+private val JavaTypeQualifiers.nullabilityForErrors: NullabilityQualifier?
+    get() = if (isNullabilityQualifierForWarning) null else nullability
+
+fun JavaTypeQualifiers.computeQualifiersForOverride(
+    superQualifiers: Collection<JavaTypeQualifiers>,
+    isCovariant: Boolean,
+    isForVarargParameter: Boolean
+): JavaTypeQualifiers {
+    val newNullabilityForErrors = superQualifiers.mapNotNull { it.nullabilityForErrors }.toSet()
+        .select(nullabilityForErrors, isCovariant)
+    val newNullability = newNullabilityForErrors ?: superQualifiers.mapNotNull { it.nullability }.toSet()
+        .select(nullability, isCovariant)
+    val newMutability = superQualifiers.mapNotNull { it.mutability }.toSet()
+        .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, mutability, isCovariant)
+    // Vararg value parameters effectively have non-nullable type in Kotlin
+    // and having nullable types in Java may lead to impossibility of overriding them in Kotlin
+    val realNullability = newNullability?.takeUnless { isForVarargParameter && it == NullabilityQualifier.NULLABLE }
+    return JavaTypeQualifiers(
+        realNullability, newMutability,
+        realNullability == NullabilityQualifier.NOT_NULL &&
+                (isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }),
+        realNullability != null && newNullabilityForErrors != newNullability
+    )
+}
 
 fun TypeSystemCommonBackendContext.hasEnhancedNullability(type: KotlinTypeMarker): Boolean =
     type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)

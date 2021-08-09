@@ -225,20 +225,24 @@ private class SignatureParts(
     private val KotlinType.fqNameUnsafe: FqNameUnsafe?
         get() = TypeUtils.getClassDescriptor(this)?.let { DescriptorUtils.getFqName(it) }
 
+    private val KotlinType.nullabilityQualifier: NullabilityQualifier?
+        get() = when {
+            lowerIfFlexible().isMarkedNullable -> NullabilityQualifier.NULLABLE
+            !upperIfFlexible().isMarkedNullable -> NullabilityQualifier.NOT_NULL
+            else -> null
+        }
+
+    private val KotlinType.mutabilityQualifier: MutabilityQualifier?
+        get() = when {
+            JavaToKotlinClassMap.isReadOnly(lowerIfFlexible().fqNameUnsafe) -> MutabilityQualifier.READ_ONLY
+            JavaToKotlinClassMap.isMutable(upperIfFlexible().fqNameUnsafe) -> MutabilityQualifier.MUTABLE
+            else -> null
+        }
+
     private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
-        val lower = lowerIfFlexible()
-        val upper = upperIfFlexible()
-        val nullability = when {
-            lower.isMarkedNullable -> NullabilityQualifier.NULLABLE
-            !upper.isMarkedNullable -> NullabilityQualifier.NOT_NULL
-            else -> null
-        }
-        val mutability = when {
-            JavaToKotlinClassMap.isReadOnly(lower.fqNameUnsafe) -> MutabilityQualifier.READ_ONLY
-            JavaToKotlinClassMap.isMutable(upper.fqNameUnsafe) -> MutabilityQualifier.MUTABLE
-            else -> null
-        }
-        return JavaTypeQualifiers(nullability, mutability, isNotNullTypeParameter)
+        val forErrors = nullabilityQualifier
+        val forErrorsOrWarnings = forErrors ?: unwrapEnhancement().nullabilityQualifier
+        return JavaTypeQualifiers(forErrorsOrWarnings, mutabilityQualifier, isNotNullTypeParameter, forErrorsOrWarnings != forErrors)
     }
 
     private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
@@ -431,8 +435,9 @@ private class SignatureParts(
 
         val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
         val computedResult = Array(treeSize) { index ->
-            val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
-            indexedThisType[index].computeQualifiersForOverride(verticalSlice)
+            val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations()
+            val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
+            qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && isForVarargParameter)
         }
         return { index -> predefined?.map?.get(index) ?: computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
     }
@@ -460,49 +465,6 @@ private class SignatureParts(
                     TypeAndDefaultQualifiers(arg.type, arg.type.extractAndMergeDefaultQualifiers(it.defaultQualifiers), parameter)
             }
         }
-
-    private fun TypeAndDefaultQualifiers.computeQualifiersForOverride(fromSupertypes: Collection<KotlinType>): JavaTypeQualifiers {
-        val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
-        val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
-        val nullabilityFromSupertypes = superQualifiers.mapNotNull { it.nullability }.toSet()
-        val nullabilityFromSupertypesWithWarning = fromSupertypes
-            .mapNotNull { it.unwrapEnhancement().extractQualifiers().nullability }
-            .toSet()
-
-        val own = extractQualifiersFromAnnotations()
-        val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
-        val ownNullabilityForWarning = own.nullability
-
-        val isHeadTypeConstructor = typeParameterForArgument == null
-        val isCovariantPosition = isCovariant && isHeadTypeConstructor
-        val nullability =
-            nullabilityFromSupertypes.select(ownNullability, isCovariantPosition)
-                // Vararg value parameters effectively have non-nullable type in Kotlin
-                // and having nullable types in Java may lead to impossibility of overriding them in Kotlin
-                ?.takeUnless { isForVarargParameter && isHeadTypeConstructor && it == NullabilityQualifier.NULLABLE }
-
-        val mutability =
-            mutabilityFromSupertypes
-                .select(MutabilityQualifier.MUTABLE, MutabilityQualifier.READ_ONLY, own.mutability, isCovariantPosition)
-
-        val canChange = ownNullabilityForWarning != ownNullability || nullabilityFromSupertypesWithWarning != nullabilityFromSupertypes
-        val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || superQualifiers.any { it.isNotNullTypeParameter }
-        if (nullability == null && canChange) {
-            val nullabilityWithWarning =
-                nullabilityFromSupertypesWithWarning.select(ownNullabilityForWarning, isCovariantPosition)
-
-            return createJavaTypeQualifiers(
-                nullabilityWithWarning, mutability,
-                forWarning = true, isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
-            )
-        }
-
-        return createJavaTypeQualifiers(
-            nullability, mutability,
-            forWarning = nullability == null,
-            isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
-        )
-    }
 }
 
 private data class TypeAndDefaultQualifiers(
