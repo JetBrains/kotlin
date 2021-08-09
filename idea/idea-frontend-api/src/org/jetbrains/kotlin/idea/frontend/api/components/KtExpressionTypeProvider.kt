@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 
 public abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
-    public abstract fun getKtExpressionType(expression: KtExpression): KtType
+    public abstract fun getKtExpressionType(expression: KtExpression): KtType?
     public abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
     public abstract fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType
 
@@ -22,7 +22,15 @@ public abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
 }
 
 public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtExpression.getKtType(): KtType =
+    /**
+     * Get type of given expression.
+     *
+     * Return:
+     * - [KtExpression] type if given [KtExpression] is real expression;
+     * - `null` for [KtExpression] inside pacakges and import declarations;
+     * - `Unit` type for statements;
+     */
+    public fun KtExpression.getKtType(): KtType? =
         analysisSession.expressionTypeProvider.getKtExpressionType(this)
 
     /**

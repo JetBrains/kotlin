@@ -79,6 +79,12 @@ public class HLExpressionTypeTestGenerated extends AbstractHLExpressionTypeTest 
     }
 
     @Test
+    @TestMetadata("nonExpression.kt")
+    public void testNonExpression() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/nonExpression.kt");
+    }
+
+    @Test
     @TestMetadata("property.kt")
     public void testProperty() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expressionType/property.kt");

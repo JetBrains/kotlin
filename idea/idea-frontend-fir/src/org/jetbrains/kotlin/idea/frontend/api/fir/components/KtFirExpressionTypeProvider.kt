@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalType
 import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
@@ -34,12 +38,13 @@ internal class KtFirExpressionTypeProvider(
     override val token: ValidityToken,
 ) : KtExpressionTypeProvider(), KtFirAnalysisSessionComponent {
 
-    override fun getKtExpressionType(expression: KtExpression): KtType = withValidityAssertion {
+    override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {
         when (val fir = expression.unwrap().getOrBuildFir(firResolveState)) {
             is FirExpression -> fir.typeRef.coneType.asKtType()
             is FirNamedReference -> fir.getReferencedElementType().asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
-            else -> error("Unexpected ${fir?.let { it::class }}")
+            is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel -> null
+            else -> error("Unexpected ${fir?.let { it::class }} for ${expression::class} with text `${expression.text}`")
         }
     }
 
