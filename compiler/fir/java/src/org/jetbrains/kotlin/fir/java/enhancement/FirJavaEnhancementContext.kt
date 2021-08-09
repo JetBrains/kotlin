@@ -19,66 +19,13 @@ class FirJavaEnhancementContext private constructor(
     val defaultTypeQualifiers: JavaTypeQualifiersByElementType? by delegateForDefaultTypeQualifiers
 }
 
-fun extractDefaultNullabilityQualifier(
-    typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-    annotationCall: FirAnnotationCall
-): JavaDefaultQualifiers? {
-    typeQualifierResolver.resolveQualifierBuiltInDefaultAnnotation(annotationCall)?.let { return it }
-
-    val (typeQualifier, applicability) =
-        typeQualifierResolver.resolveTypeQualifierDefaultAnnotation(annotationCall)
-            ?: return null
-
-    val jsr305ReportLevel = with(typeQualifierResolver) {
-        resolveJsr305CustomState(annotationCall) ?: resolveJsr305AnnotationState(typeQualifier)
-    }
-
-    if (jsr305ReportLevel.isIgnore) {
-        return null
-    }
-
-    val nullabilityQualifier = typeQualifier.extractNullability(typeQualifierResolver)
-        ?.copy(isForWarningOnly = jsr305ReportLevel.isWarning) ?: return null
-    return JavaDefaultQualifiers(nullabilityQualifier, applicability)
-}
-
-fun FirJavaEnhancementContext.computeNewDefaultTypeQualifiers(
-    typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-    javaTypeEnhancementState: JavaTypeEnhancementState,
-    additionalAnnotations: List<FirAnnotationCall>
-): JavaTypeQualifiersByElementType? {
-    if (javaTypeEnhancementState.jsr305.isDisabled) return defaultTypeQualifiers
-
-    val defaultQualifiers =
-        additionalAnnotations.mapNotNull { annotationCall ->
-            extractDefaultNullabilityQualifier(typeQualifierResolver, annotationCall)
-        }
-
-    if (defaultQualifiers.isEmpty()) return defaultTypeQualifiers
-
-    val defaultQualifiersByType =
-        defaultTypeQualifiers?.defaultQualifiers?.let(::QualifierByApplicabilityType)
-            ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
-
-    var wasUpdate = false
-    for (qualifier in defaultQualifiers) {
-        for (applicabilityType in qualifier.qualifierApplicabilityTypes) {
-            defaultQualifiersByType[applicabilityType] = qualifier
-            wasUpdate = true
-        }
-    }
-
-    return if (!wasUpdate) defaultTypeQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)
-}
-
 fun FirJavaEnhancementContext.copyWithNewDefaultTypeQualifiers(
     typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-    javaTypeEnhancementState: JavaTypeEnhancementState,
     additionalAnnotations: List<FirAnnotationCall>
 ): FirJavaEnhancementContext =
     when {
         additionalAnnotations.isEmpty() -> this
         else -> FirJavaEnhancementContext(session) {
-            computeNewDefaultTypeQualifiers(typeQualifierResolver, javaTypeEnhancementState, additionalAnnotations)
+            typeQualifierResolver.extractAndMergeDefaultQualifiers(defaultTypeQualifiers, additionalAnnotations)
         }
     }
