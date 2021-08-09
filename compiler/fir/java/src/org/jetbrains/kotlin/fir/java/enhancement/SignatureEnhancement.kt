@@ -57,7 +57,7 @@ class FirSignatureEnhancement(
     private val typeQualifierResolver = FirAnnotationTypeQualifierResolver(session, jsr305State)
 
     private val context: FirJavaEnhancementContext =
-        FirJavaEnhancementContext(session) { null }.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, owner.annotations)
+        FirJavaEnhancementContext(session) { null }.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, owner.annotations)
 
     private val enhancements = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>>()
 
@@ -85,7 +85,7 @@ class FirSignatureEnhancement(
         when (val firElement = original.fir) {
             is FirEnumEntry -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
-                val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firElement.annotations)
+                val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, firElement.annotations)
                 val predefinedInfo =
                     PredefinedFunctionEnhancementInfo(
                         TypeEnhancementInfo(0 to JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, false)),
@@ -100,7 +100,7 @@ class FirSignatureEnhancement(
             }
             is FirField -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
-                val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firElement.annotations)
+                val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, firElement.annotations)
                 val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), memberContext, null)
 
                 val symbol = FirFieldSymbol(original.callableId)
@@ -176,7 +176,7 @@ class FirSignatureEnhancement(
         methodId: CallableId,
         name: Name?
     ): FirFunctionSymbol<*> {
-        val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firMethod.annotations)
+        val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, firMethod.annotations)
 
         val predefinedEnhancementInfo =
             SignatureBuildingComponents.signature(
@@ -316,7 +316,7 @@ class FirSignatureEnhancement(
             parameterContainer = ownerFunction,
             methodContext = memberContext,
             typeInSignature = TypeInSignature.Receiver
-        ).enhance(session, jsr305State)
+        ).enhance(session)
         return signatureParts.type
     }
 
@@ -340,7 +340,6 @@ class FirSignatureEnhancement(
             typeInSignature = TypeInSignature.ValueParameter(hasReceiver, index)
         ).enhance(
             session,
-            jsr305State,
             predefinedEnhancementInfo?.parametersInfo?.getOrNull(index),
             forAnnotationMember = owner.classKind == ClassKind.ANNOTATION_CLASS
         )
@@ -363,8 +362,7 @@ class FirSignatureEnhancement(
             else AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
             typeInSignature = TypeInSignature.Return
         ).enhance(
-            session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo,
-            forAnnotationMember = this.owner.classKind == ClassKind.ANNOTATION_CLASS
+            session, predefinedEnhancementInfo?.returnTypeInfo, forAnnotationMember = this.owner.classKind == ClassKind.ANNOTATION_CLASS
         )
         return signatureParts.type
     }
@@ -405,7 +403,7 @@ class FirSignatureEnhancement(
         overriddenMembers,
         parameterContainer, false,
         parameterContainer?.let {
-            methodContext.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, it.annotations)
+            methodContext.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, it.annotations)
         } ?: methodContext,
         AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
         typeInSignature
@@ -432,7 +430,7 @@ class FirSignatureEnhancement(
             isCovariant,
             // recompute default type qualifiers using type annotations
             containerContext.copyWithNewDefaultTypeQualifiers(
-                typeQualifierResolver, jsr305State, typeRef.annotations
+                typeQualifierResolver, typeRef.annotations
             ),
             containerApplicabilityType
         )
