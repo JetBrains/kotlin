@@ -682,7 +682,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         ) {
             useToolchainExtension(8)
 
-            build("assemble", forceOutput = true)
+            build("assemble")
         }
     }
 
@@ -690,7 +690,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
 
-    private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getenv("JAVA_HOME")))
+    private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getProperty("java.home")))
     private fun getJdk9(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk9Home")))
     private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
     // replace required for windows paths so Groovy will not complain about unexpected char '\'
