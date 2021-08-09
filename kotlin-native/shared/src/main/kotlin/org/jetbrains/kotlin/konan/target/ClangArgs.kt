@@ -183,12 +183,7 @@ sealed class ClangArgs(
      */
     val clangXXArgs: Array<String> = clangArgs + when (configurables) {
         is AppleConfigurables -> arrayOf(
-                "-stdlib=libc++",
-                // Starting from Xcode 12.5, platform SDKs contain C++ stdlib.
-                // It results in two c++ stdlib in search path (one from LLVM, another from SDK).
-                // We workaround this problem by explicitly specifying path to stdlib.
-                // TODO: Revise after LLVM update.
-                "-nostdinc++", "-isystem", "$absoluteLlvmHome/include/c++/v1"
+                "-stdlib=libc++"
         )
         else -> emptyArray()
     }
