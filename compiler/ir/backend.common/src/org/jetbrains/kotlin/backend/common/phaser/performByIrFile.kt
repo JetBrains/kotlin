@@ -121,8 +121,12 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
             input.files.clear()
             input.files.addAll(filesAndStates.map { (irFile, _) -> irFile }.toMutableList())
 
+            // Some remappers in handleDeepCopy depend on entries in remappedFunctions inserted by adjustDefaultArgumentStubs.
             adjustDefaultArgumentStubs(context, remappedFunctions)
             context.handleDeepCopy(remappedFiles, remappedClasses, remappedFunctions)
+            // and some entries in adjustDefaultArgumentStubs depend on those inserted by handleDeepCopy, so we need to repeat the call.
+            adjustDefaultArgumentStubs(context, remappedFunctions)
+
             input.transformChildrenVoid(CrossFileCallAdjuster(remappedFunctions))
         }
 
