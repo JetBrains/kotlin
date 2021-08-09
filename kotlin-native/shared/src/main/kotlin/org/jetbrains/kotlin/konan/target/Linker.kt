@@ -422,8 +422,13 @@ class GccBasedLinker(targetProperties: GccConfigurables)
 class MingwLinker(targetProperties: MingwConfigurables)
     : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
 
-    private val ar = "$absoluteTargetToolchain/bin/ar"
-    private val linker = "$absoluteLlvmHome/bin/clang++"
+    // TODO: Maybe always use llvm-ar?
+    private val ar = if (HostManager.hostIsMingw) {
+        "$absoluteTargetToolchain/bin/ar"
+    } else {
+        "$absoluteLlvmHome/bin/llvm-ar"
+    }
+    private val clang = "$absoluteLlvmHome/bin/clang++"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
@@ -483,12 +488,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +additionalArguments
         }
 
-        return listOf(when {
-            HostManager.hostIsMingw -> Command(linker)
-            else -> Command("wine64", "$linker.exe")
-        }.constructLinkerArguments(
-                additionalArguments = listOf("-fuse-ld=$absoluteLldLocation")
-        ))
+        return listOf(Command(clang).constructLinkerArguments(additionalArguments = listOf("-fuse-ld=$absoluteLinker")))
     }
 }
 

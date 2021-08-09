@@ -53,6 +53,8 @@ open class HostManager(
             LINUX_ARM64,
             LINUX_MIPS32,
             LINUX_MIPSEL32,
+            MINGW_X86,
+            MINGW_X64,
             ANDROID_X86,
             ANDROID_X64,
             ANDROID_ARM32,
@@ -89,6 +91,8 @@ open class HostManager(
             LINUX_X64,
             LINUX_ARM32_HFP,
             LINUX_ARM64,
+            MINGW_X86,
+            MINGW_X64,
             ANDROID_X86,
             ANDROID_X64,
             ANDROID_ARM32,
@@ -113,6 +117,8 @@ open class HostManager(
             LINUX_X64,
             LINUX_ARM32_HFP,
             LINUX_ARM64,
+            MINGW_X86,
+            MINGW_X64,
             ANDROID_X86,
             ANDROID_X64,
             ANDROID_ARM32,
@@ -122,9 +128,9 @@ open class HostManager(
     )
 
     private val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
-        LINUX_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
-        MACOS_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
-        MINGW_X64 to setOf<KonanTarget>() + zephyrSubtargets,
+        LINUX_X64 to zephyrSubtargets.toSet(),
+        MACOS_X64 to zephyrSubtargets.toSet(),
+        MINGW_X64 to zephyrSubtargets.toSet(),
         MACOS_ARM64 to emptySet()
     )
 
