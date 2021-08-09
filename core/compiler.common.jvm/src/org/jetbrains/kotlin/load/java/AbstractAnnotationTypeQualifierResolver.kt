@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.name.FqName
@@ -104,8 +105,8 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         }
     }
 
-    fun extractNullability(
-        annotation: Annotation, forceWarning: Annotation.() -> Boolean = { false }
+    private fun extractNullability(
+        annotation: Annotation, forceWarning: Annotation.() -> Boolean
     ): NullabilityQualifierWithMigrationStatus? {
         knownNullability(annotation, annotation.forceWarning())?.let { return it }
 
@@ -117,6 +118,21 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
             ?.copy(isForWarningOnly = jsr305State.isWarning)
     }
 
+    fun extractNullability(
+        annotations: Iterable<Annotation>, forceWarning: Annotation.() -> Boolean = { false }
+    ): NullabilityQualifierWithMigrationStatus? =
+        annotations.firstNotNullOfOrNull { extractNullability(it, forceWarning) }
+
+    fun extractMutability(annotations: Iterable<Annotation>): MutabilityQualifier? {
+        return annotations.fold(null as MutabilityQualifier?) { found, annotation ->
+            when (annotation.fqName) {
+                in READ_ONLY_ANNOTATIONS -> MutabilityQualifier.READ_ONLY
+                in MUTABLE_ANNOTATIONS -> MutabilityQualifier.MUTABLE
+                else -> found
+            }.also { if (found != null && found != it) return null /* inconsistent */ }
+        }
+    }
+
     private fun extractDefaultQualifiers(annotation: Annotation): JavaDefaultQualifiers? {
         resolveQualifierBuiltInDefaultAnnotation(annotation)?.let { return it }
 
@@ -126,7 +142,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<Annotation : Any>(
         if (jsr305State.isIgnore) return null
         // TODO: since we override the warning status, whether we force it in `extractNullability` is irrelevant.
         //   However, this is probably not what was intended.
-        val nullabilityQualifier = extractNullability(typeQualifier) ?: return null
+        val nullabilityQualifier = extractNullability(typeQualifier) { false } ?: return null
         return JavaDefaultQualifiers(nullabilityQualifier.copy(isForWarningOnly = jsr305State.isWarning), applicability)
     }
 

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
 import org.jetbrains.kotlin.load.java.*
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.signature
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY
@@ -259,7 +257,7 @@ private class SignatureParts(
         val isHeadTypeConstructor = typeParameterForArgument == null
         val typeOrBound = type ?: typeParameterForArgument!!.starProjectionType()
         val composedAnnotation =
-            if (isHeadTypeConstructor && typeContainer != null && typeContainer !is TypeParameterDescriptor && areImprovementsInStrictMode) {
+            if (isHeadTypeConstructor && typeContainer != null && !typeParameterBounds && areImprovementsInStrictMode) {
                 val filteredContainerAnnotations = typeContainer.annotations.filter {
                     /*
                      * We don't apply container type use annotations to avoid double applying them like with arrays:
@@ -276,11 +274,6 @@ private class SignatureParts(
                 composeAnnotations(typeContainer.annotations, typeOrBound.annotations)
             } else typeOrBound.annotations
 
-        fun <T : Any> List<FqName>.ifPresent(qualifier: T) =
-            if (any { composedAnnotation.findAnnotation(it) != null }) qualifier else null
-
-        fun <T : Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
-
         val defaultTypeQualifier = (
                 if (isHeadTypeConstructor)
                     containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
@@ -296,8 +289,10 @@ private class SignatureParts(
         val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
             typeOrBound.nullabilityInfoBoundsForTypeParameterUsage()
 
-        val annotationsNullability = composedAnnotation.extractNullability(areImprovementsInStrictMode, typeParameterBounds)
-            ?.takeUnless { type == null }
+        val annotationsNullability = annotationTypeQualifierResolver.extractNullability(composedAnnotation) {
+            (this is LazyJavaAnnotationDescriptor && (isFreshlySupportedTypeUseAnnotation || typeParameterBounds) && !areImprovementsInStrictMode) ||
+                    (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation)
+        }.takeUnless { type == null }
         val nullabilityInfo =
             annotationsNullability
                 ?: computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
@@ -314,15 +309,7 @@ private class SignatureParts(
                 isTypeParameterWithNotNullableBounds || defaultTypeQualifier?.makesTypeParameterNotNull == true
 
         return JavaTypeQualifiers(
-            nullabilityInfo?.qualifier,
-            uniqueNotNull(
-                READ_ONLY_ANNOTATIONS.ifPresent(
-                    MutabilityQualifier.READ_ONLY
-                ),
-                MUTABLE_ANNOTATIONS.ifPresent(
-                    MutabilityQualifier.MUTABLE
-                )
-            ),
+            nullabilityInfo?.qualifier, annotationTypeQualifierResolver.extractMutability(composedAnnotation),
             isNotNullTypeParameter = isNotNullTypeParameter && typeOrBound.isTypeParameter(),
             isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
         )
@@ -409,21 +396,6 @@ private class SignatureParts(
 
         return NullabilityQualifierWithMigrationStatus(resultingQualifier)
     }
-
-    private fun Annotations.extractNullability(
-        areImprovementsEnabled: Boolean,
-        typeParameterBounds: Boolean
-    ): NullabilityQualifierWithMigrationStatus? =
-        firstNotNullOfOrNull { it.extractNullability(areImprovementsEnabled, typeParameterBounds) }
-
-    private fun AnnotationDescriptor.extractNullability(
-        areImprovementsEnabled: Boolean,
-        typeParameterBounds: Boolean
-    ): NullabilityQualifierWithMigrationStatus? =
-        containerContext.components.annotationTypeQualifierResolver.extractNullability(this) {
-            (this is LazyJavaAnnotationDescriptor && (isFreshlySupportedTypeUseAnnotation || typeParameterBounds) && !areImprovementsEnabled) ||
-                    (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation)
-        }
 
     private fun computeIndexedQualifiersForOverride(predefined: TypeEnhancementInfo?): (Int) -> JavaTypeQualifiers {
         val indexedFromSupertypes = fromOverridden.map { it.toIndexed() }

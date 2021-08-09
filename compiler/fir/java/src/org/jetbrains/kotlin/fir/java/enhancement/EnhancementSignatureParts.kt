@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeWithoutEnhancement
 import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
@@ -19,13 +18,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
-import org.jetbrains.kotlin.load.java.MUTABLE_ANNOTATIONS
-import org.jetbrains.kotlin.load.java.READ_ONLY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -189,43 +185,22 @@ internal class EnhancementSignatureParts(
             else
                 this?.annotations.orEmpty()
 
-        fun <T : Any> List<ClassId>.ifPresent(qualifier: T) =
-            if (any { classId ->
-                    composedAnnotation.any { it.classId == classId }
-                }
-            ) qualifier else null
-
-        fun <T : Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
-
         val defaultTypeQualifier =
             if (isHeadTypeConstructor)
                 context.defaultTypeQualifiers?.get(containerApplicabilityType)
             else
                 defaultQualifiersForType
 
-        val nullabilityInfo = composedAnnotation.firstNotNullOfOrNull { typeQualifierResolver.extractNullability(it) }.also {
+        val nullabilityInfo = typeQualifierResolver.extractNullability(composedAnnotation).also {
             if (it?.qualifier == NullabilityQualifier.NOT_NULL) {
                 attributesCache[this] = composedAnnotation.computeTypeAttributesForJavaType()
             }
-        }
-            ?: defaultTypeQualifier?.nullabilityQualifier?.let { nullability ->
-                NullabilityQualifierWithMigrationStatus(
-                    nullability.qualifier,
-                    nullability.isForWarningOnly
-                )
-            }
+        } ?: defaultTypeQualifier?.nullabilityQualifier
 
         @Suppress("SimplifyBooleanWithConstants")
         return JavaTypeQualifiers(
             nullabilityInfo?.qualifier,
-            uniqueNotNull(
-                READ_ONLY_ANNOTATION_IDS.ifPresent(
-                    MutabilityQualifier.READ_ONLY
-                ),
-                MUTABLE_ANNOTATION_IDS.ifPresent(
-                    MutabilityQualifier.MUTABLE
-                )
-            ),
+            typeQualifierResolver.extractMutability(composedAnnotation),
             isNotNullTypeParameter = nullabilityInfo?.qualifier == NullabilityQualifier.NOT_NULL && this.isTypeParameterBasedType(),
             isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
         )
@@ -262,10 +237,4 @@ internal class EnhancementSignatureParts(
         val wereChanges: Boolean,
         val containsFunctionN: Boolean
     )
-
-    companion object {
-        private val READ_ONLY_ANNOTATION_IDS = READ_ONLY_ANNOTATIONS.map { ClassId.topLevel(it) }
-        private val MUTABLE_ANNOTATION_IDS = MUTABLE_ANNOTATIONS.map { ClassId.topLevel(it) }
-    }
 }
-
