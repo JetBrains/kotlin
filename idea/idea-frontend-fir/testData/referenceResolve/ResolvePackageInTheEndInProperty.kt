@@ -4,4 +4,3 @@ class Some()
 
 val test : test1.test2.<caret>test3.Some = Some()
 
-// REF: test3

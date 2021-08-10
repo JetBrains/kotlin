@@ -12,4 +12,3 @@ fun test() {
     <caret>Conflict()
 }
 
-// REF: (in test.test).Conflict

@@ -4,4 +4,3 @@ class A<X> {
     }
 }
 
-// REF: X

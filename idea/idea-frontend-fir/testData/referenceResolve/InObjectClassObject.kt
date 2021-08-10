@@ -8,4 +8,3 @@ object b {
     }
 }
 
-// REF: (test).A
