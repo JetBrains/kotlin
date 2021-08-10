@@ -3934,6 +3934,10 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/kt42172/objclib.def'
         it.headers "$projectDir/interop/objc/kt42172/objclib.h"
     }
+    createInterop("nullable_result_import") {
+        it.defFile 'interop/objc/nullable_result_import/objclib.def'
+        it.headers "$projectDir/interop/objc/nullable_result_import/objclib.h"
+    }
 }
 
 createInterop("withSpaces") {
@@ -4528,6 +4532,23 @@ if (PlatformInfo.isAppleTarget(project)) {
             }
             if (UtilsKt.isSimulatorTarget(project, project.target)) {
                 UtilsKt.codesign(project, "$buildDir/libobjc_kt42172.dylib")
+            }
+        }
+    }
+
+    interopTest("interop_objc_nullable_result_import") {
+        source = "interop/objc/nullable_result_import/main.kt"
+        interop = "nullable_result_import"
+
+        doBeforeBuild {
+            mkdir(buildDir)
+            execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/nullable_result_import/objclib.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjc_nullable_result_import.dylib"
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjc_nullable_result_import.dylib")
             }
         }
     }
