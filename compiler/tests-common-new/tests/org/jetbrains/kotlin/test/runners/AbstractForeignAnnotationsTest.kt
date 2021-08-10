@@ -21,45 +21,24 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.preprocessors.JspecifyMarksCleanupPreprocessor
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.*
 import org.jetbrains.kotlin.test.services.jvm.ForeignAnnotationAgainstCompiledJavaTestSuppressor
 import org.jetbrains.kotlin.test.services.jvm.PsiClassFilesReadingForCompiledJavaTestSuppressor
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-private val configureClassicFrontend: TestConfigurationBuilder.() -> Unit = {
-    globalDefaults {
-        frontend = FrontendKinds.ClassicFrontend
-    }
-
-    useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
-    classicFrontendStep()
-    classicFrontendHandlersStep {
-        useHandlers(
-            ::DeclarationsDumpHandler,
-            ::ClassicDiagnosticsHandler,
-        )
-    }
-
-    forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/*") {
-        configureClassicFrontendHandlersStep {
-            useHandlers(::JspecifyDiagnosticComplianceHandler)
-        }
-        useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
-    }
-
-    useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
+enum class ForeignAnnotationsTestKind(val compiledJava: Boolean, val psiClassLoading: Boolean) {
+    SOURCE(false, false),
+    COMPILED_JAVA(true, false),
+    COMPILED_JAVA_WITH_PSI_CLASS_LOADING(true, true)
 }
 
-abstract class AbstractForeignAnnotationsTestBase(
-    private val configureFrontend: TestConfigurationBuilder.() -> Unit = configureClassicFrontend
-) : AbstractKotlinCompilerTest() {
-
+abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnotationsTestKind) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             targetPlatform = JvmPlatforms.defaultJvmPlatform
@@ -69,9 +48,23 @@ abstract class AbstractForeignAnnotationsTestBase(
         defaultDirectives {
             +REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
             +WITH_FOREIGN_ANNOTATIONS
+            if (kind.compiledJava) {
+                +ALL_JAVA_AS_BINARY
+                +SKIP_TXT
+            }
+            if (kind.psiClassLoading) {
+                +USE_PSI_CLASS_FILES_READING
+            }
         }
 
         enableMetaInfoHandler()
+
+        if (kind.compiledJava) {
+            useMetaTestConfigurators(::ForeignAnnotationAgainstCompiledJavaTestSuppressor)
+        }
+        if (kind.psiClassLoading) {
+            useMetaTestConfigurators(::PsiClassFilesReadingForCompiledJavaTestSuppressor)
+        }
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
@@ -107,39 +100,50 @@ abstract class AbstractForeignAnnotationsTestBase(
             }
         }
     }
+
+    abstract fun TestConfigurationBuilder.configureFrontend()
 }
 
-abstract class AbstractForeignAnnotationsSourceJavaTest : AbstractForeignAnnotationsTestBase()
+private class FirForeignDiagnosticsTestDataConsistencyHandler(testServices: TestServices) :
+    FirTestDataConsistencyHandler(testServices) {
 
-abstract class AbstractForeignAnnotationsCompiledJavaTest : AbstractForeignAnnotationsTestBase {
-    constructor() : super()
-    constructor(configureFrontend: TestConfigurationBuilder.() -> Unit) : super(configureFrontend)
+    override fun correspondingFirTest(): AbstractKotlinCompilerTest =
+        object : AbstractFirForeignAnnotationsSourceJavaTest() {}
+}
 
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +ALL_JAVA_AS_BINARY
-                +SKIP_TXT
-            }
+abstract class AbstractOldFrontendForeignAnnotationsTestBase(kind: ForeignAnnotationsTestKind) :
+    AbstractForeignAnnotationsTestBase(kind) {
 
-            useMetaTestConfigurators(::ForeignAnnotationAgainstCompiledJavaTestSuppressor)
+    override fun TestConfigurationBuilder.configureFrontend() {
+        globalDefaults {
+            frontend = FrontendKinds.ClassicFrontend
         }
+
+        useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
+        classicFrontendStep()
+        classicFrontendHandlersStep {
+            useHandlers(
+                ::DeclarationsDumpHandler,
+                ::ClassicDiagnosticsHandler,
+            )
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/*") {
+            configureClassicFrontendHandlersStep {
+                useHandlers(::JspecifyDiagnosticComplianceHandler)
+            }
+            useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
+        }
+
+        useAfterAnalysisCheckers(::FirForeignDiagnosticsTestDataConsistencyHandler)
     }
 }
 
-abstract class AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest : AbstractForeignAnnotationsCompiledJavaTest {
-    constructor() : super()
-    constructor(configureFrontend: TestConfigurationBuilder.() -> Unit) : super(configureFrontend)
+abstract class AbstractForeignAnnotationsSourceJavaTest :
+    AbstractOldFrontendForeignAnnotationsTestBase(ForeignAnnotationsTestKind.SOURCE)
 
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +USE_PSI_CLASS_FILES_READING
-            }
+abstract class AbstractForeignAnnotationsCompiledJavaTest :
+    AbstractOldFrontendForeignAnnotationsTestBase(ForeignAnnotationsTestKind.COMPILED_JAVA)
 
-            useMetaTestConfigurators(::PsiClassFilesReadingForCompiledJavaTestSuppressor)
-        }
-    }
-}
+abstract class AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest :
+    AbstractOldFrontendForeignAnnotationsTestBase(ForeignAnnotationsTestKind.COMPILED_JAVA_WITH_PSI_CLASS_LOADING)
