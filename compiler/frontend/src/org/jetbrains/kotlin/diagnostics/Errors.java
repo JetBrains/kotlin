@@ -957,6 +957,8 @@ public interface Errors {
     DiagnosticFactory0<KtSimpleNameExpression> EQUALS_MISSING = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory3<KtBinaryExpression, KtSimpleNameExpression, KotlinType, KotlinType> EQUALITY_NOT_APPLICABLE =
             DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtBinaryExpression, KtSimpleNameExpression, KotlinType, KotlinType> EQUALITY_NOT_APPLICABLE_WARNING =
+            DiagnosticFactory3.create(WARNING);
 
     DiagnosticFactory2<KtElement, KotlinType, KotlinType> INCOMPATIBLE_ENUM_COMPARISON =
             DiagnosticFactory2.create(WARNING);

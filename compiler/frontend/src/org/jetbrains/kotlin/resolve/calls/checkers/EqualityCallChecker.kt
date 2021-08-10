@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
@@ -88,7 +91,14 @@ object EqualityCallChecker : CallChecker {
         val rightType = context.trace.getType(right) ?: return
 
         if (TypeIntersector.isIntersectionEmpty(leftType, rightType)) {
-            context.trace.report(Errors.EQUALITY_NOT_APPLICABLE.on(expression, expression.operationReference, leftType, rightType))
+            val isProperEqualityChecksEnabled =
+                context.languageVersionSettings.supportsFeature(LanguageFeature.ProperEqualityChecksInBuilderInferenceCalls)
+            val shouldReportWarnings = !isProperEqualityChecksEnabled
+                    && context.inferenceSession is BuilderInferenceSession
+                    && context.trace.get(BindingContext.MARKED_EQUALIY_CALL_PROPER_IN_BUILDER_INFERENCE, expression) != null
+            val diagnostic = if (shouldReportWarnings) Errors.EQUALITY_NOT_APPLICABLE_WARNING else Errors.EQUALITY_NOT_APPLICABLE
+
+            context.trace.report(diagnostic.on(expression, expression.operationReference, leftType, rightType))
         } else {
             checkEnumsForCompatibility(context, expression, leftType, rightType)
         }

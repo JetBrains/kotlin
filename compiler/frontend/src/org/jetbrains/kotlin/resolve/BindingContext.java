@@ -175,6 +175,8 @@ public interface BindingContext {
 
     WritableSlice<Pair<AnonymousFunctionDescriptor, Integer>, Boolean> SUSPEND_LAMBDA_PARAMETER_USED = Slices.createSimpleSlice();
 
+    WritableSlice<KtBinaryExpression, Boolean> MARKED_EQUALIY_CALL_PROPER_IN_BUILDER_INFERENCE = Slices.createSimpleSlice();
+
     /**
      * Has type of current expression has been already resolved
      */

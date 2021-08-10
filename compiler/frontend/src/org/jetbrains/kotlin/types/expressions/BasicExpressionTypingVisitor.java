@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.*;
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl;
@@ -1170,6 +1171,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         KotlinTypeInfo rightTypeInfo = facade.getTypeInfo(right, contextWithDataFlow);
+
+        KotlinType leftType = leftTypeInfo.getType();
+        KotlinType rightType = rightTypeInfo.getType();
+
+        boolean isBuilderInferenceContext = context.inferenceSession instanceof BuilderInferenceSession;
+
+        if (leftType != null && rightType != null && !TypeIntersector.isIntersectionEmpty(leftType, rightType) && isBuilderInferenceContext) {
+            context.trace.record(MARKED_EQUALIY_CALL_PROPER_IN_BUILDER_INFERENCE, expression);
+        }
+
         return rightTypeInfo.replaceType(components.builtIns.getBooleanType());
     }
 

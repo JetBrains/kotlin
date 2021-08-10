@@ -252,6 +252,7 @@ enum class LanguageFeature(
     ProhibitConfusingSyntaxInWhenBranches(KOTLIN_1_8, kind = BUG_FIX), // KT-48385
     UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276
+    ProperEqualityChecksInBuilderInferenceCalls(KOTLIN_1_8, kind = BUG_FIX),
 
     // 1.9
 
