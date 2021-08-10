@@ -29,14 +29,22 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
         testServices.assertions.assertTrue(firTestData.exists()) {
             "FIR test data does not exist; run the corresponding FIR test to generate it"
         }
-        testServices.assertions.assertEquals(firTestData.preprocessSource(), testData.preprocessSource()) {
-            "Original and fir test data aren't identical. " +
+        val firPreprocessedTextData = firTestData.preprocessSource()
+        val originalPreprocessedTextData = testData.preprocessSource()
+        testServices.assertions.assertEquals(firPreprocessedTextData, originalPreprocessedTextData) {
+            "Original and FIR test data aren't identical. " +
                     "Please, add changes from ${testData.name} to ${firTestData.name}"
         }
     }
 
-    private fun File.preprocessSource(): String =
-        testServices.sourceFileProvider.getContentOfSourceFile(
-            TestFile(path, readText().trim().convertLineSeparators(), this, 0, isAdditional = false, RegisteredDirectives.Empty)
+    private fun File.preprocessSource(): String {
+        val content = testServices.sourceFileProvider.getContentOfSourceFile(
+            TestFile(path, readText().trim(), this, 0, isAdditional = false, RegisteredDirectives.Empty)
         )
+        // Note: convertSeparators() does not work on Windows properly (\r\n are left intact for some reason)
+        if (System.lineSeparator() != "\n") {
+            return content.replace("\r\n", "\n")
+        }
+        return content
+    }
 }
