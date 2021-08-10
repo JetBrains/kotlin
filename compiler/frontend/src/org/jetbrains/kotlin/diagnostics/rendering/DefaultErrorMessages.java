@@ -833,10 +833,8 @@ public class DefaultErrorMessages {
         MAP.put(INCONSISTENT_TYPE_PARAMETER_VALUES, "Type parameter {0} of ''{1}'' has inconsistent values: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
         MAP.put(INCONSISTENT_TYPE_PARAMETER_BOUNDS, "Type parameter {0} of ''{1}'' has inconsistent bounds: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
 
-        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", (nameExpression, context) -> {
-            //noinspection ConstantConditions
-            return nameExpression.getReferencedName();
-        }, RENDER_TYPE, RENDER_TYPE);
+        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", (nameExpression, context) -> nameExpression.getReferencedName(), RENDER_TYPE, RENDER_TYPE);
+        MAP.put(EQUALITY_NOT_APPLICABLE_WARNING, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''. It will became an error in future releases.", (nameExpression, context) -> nameExpression.getReferencedName(), RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(INCOMPATIBLE_ENUM_COMPARISON, "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful", RENDER_TYPE, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_ENUM_COMPARISON_ERROR, "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful", RENDER_TYPE, RENDER_TYPE);

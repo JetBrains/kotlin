@@ -13969,6 +13969,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("equalityChecksOnIntegerTypes.kt")
+                public void testEqualityChecksOnIntegerTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/equalityChecksOnIntegerTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("equalityChecksOnIntegerTypesProgressive.kt")
+                public void testEqualityChecksOnIntegerTypesProgressive() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/equalityChecksOnIntegerTypesProgressive.kt");
+                }
+
+                @Test
                 @TestMetadata("kt47744.kt")
                 public void testKt47744() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47744.kt");

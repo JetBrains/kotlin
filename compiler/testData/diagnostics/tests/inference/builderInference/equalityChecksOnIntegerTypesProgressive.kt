@@ -1,4 +1,5 @@
-// WITH_RUNTIME
+// !LANGUAGE: +ProperEqualityChecksInBuilderInferenceCalls
+// WITH_STDLIB
 
 fun main(x: Long, y: Int) {
     sequence {
