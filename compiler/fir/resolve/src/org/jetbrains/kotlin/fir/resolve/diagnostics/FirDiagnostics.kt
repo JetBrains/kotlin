@@ -108,20 +108,23 @@ class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic() {
     override val reason: String get() = "Not a legal annotation: $name"
 }
 
-abstract class ConeUnmatchedTypeArgumentsError(val desiredCount: Int, val type: FirClassLikeSymbol<*>) : ConeDiagnostic()
+interface ConeUnmatchedTypeArgumentsError {
+    val desiredCount: Int
+    val symbol: FirClassLikeSymbol<*>
+}
 
 class ConeWrongNumberOfTypeArgumentsError(
-    val desiredCount: Int,
-    val symbol: FirRegularClassSymbol,
+    override val desiredCount: Int,
+    override val symbol: FirRegularClassSymbol,
     source: FirSourceElement
-) : ConeDiagnosticWithSource(source) {
+) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "Wrong number of type arguments"
 }
 
 class ConeNoTypeArgumentsOnRhsError(
-    desiredCount: Int,
-    type: FirClassLikeSymbol<*>
-) : ConeUnmatchedTypeArgumentsError(desiredCount, type) {
+    override val desiredCount: Int,
+    override val symbol: FirClassLikeSymbol<*>
+) : ConeDiagnostic(), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "No type arguments on RHS"
 }
 

@@ -76,7 +76,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeOuterClassArgumentsRequired ->
         FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(qualifiedAccessSource ?: source, this.symbol)
     is ConeNoTypeArgumentsOnRhsError ->
-        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.type)
+        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.symbol)
     is ConeSimpleDiagnostic -> when {
         source.kind is FirFakeSourceElementKind && source.kind != FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)

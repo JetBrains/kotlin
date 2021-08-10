@@ -577,6 +577,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     }
 
     @Test
+    @TestMetadata("WrongNumberOfTypeArguments4.kt")
+    public void testWrongNumberOfTypeArguments4() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/referenceResolve/WrongNumberOfTypeArguments4.kt");
+    }
+
+    @Test
     @TestMetadata("WrongNumberOfTypeArgumentsInSupertype.kt")
     public void testWrongNumberOfTypeArgumentsInSupertype() throws Exception {
         runTest("idea/idea-frontend-fir/testData/referenceResolve/WrongNumberOfTypeArgumentsInSupertype.kt");
