@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.codeMetaInfo.model
 
 import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.JspecifyCodeMetaInfoRenderConfiguration
 
-class JspecifyMarkerCodeMetaInfo(
-    override val start: Int,
-    override val end: Int,
-    val offset: Int,
-    val name: String
-) : CodeMetaInfo {
-    override val tagPrefix = "\n${" ".repeat(offset)}// "
-    override val tagPostfix = ""
+class JspecifyMarkerCodeMetaInfo(override val start: Int, val indentation: Int, val name: String) : CodeMetaInfo {
+    override val end = start
+    override val tagPrefix = "${" ".repeat(indentation)}// "
+    override val tagPostfix = "\n"
     override val closingTag = ""
 
     override val renderConfiguration = JspecifyCodeMetaInfoRenderConfiguration
