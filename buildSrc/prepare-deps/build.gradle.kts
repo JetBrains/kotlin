@@ -79,7 +79,6 @@ val jpsStandalone by configurations.creating
 val jpsStandaloneForIde by configurations.creating
 val intellijCore by configurations.creating
 val intellijCoreForIde by configurations.creating
-val nodeJSPlugin by configurations.creating
 
 /**
  * Special repository for annotations.jar required for idea runtime only.
