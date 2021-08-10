@@ -99,7 +99,11 @@ fun main() {
         error("It's not allowed to have imls in same directory:\n$report")
     }
 
-    imlFiles.mapNotNull { imlFile -> ijCommunityModuleNameToJpsModuleMapping[imlFile.nameWithoutExtension]?.let { imlFile to it } }
+    imlFiles
+        .mapNotNull { imlFile ->
+            ijCommunityModuleNameToJpsModuleMapping[imlFile.nameWithoutExtension]?.let { imlFile to it }
+        }
+        .filter { (_, jpsModule) -> jpsModule.name != "kotlin.util.compiler-dependencies" }
         .forEach { (imlFile, jpsModule) ->
             println("Processing iml ${imlFile}")
             imlFile.parentFile.resolve("build.gradle.kts").writeText(convertJpsModule(imlFile, jpsModule))
