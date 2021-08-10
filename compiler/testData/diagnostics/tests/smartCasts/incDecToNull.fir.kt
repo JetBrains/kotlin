@@ -4,7 +4,7 @@ class IncDec {
 
 fun foo(): IncDec {
     var x = IncDec()
-    x = <!RESULT_TYPE_MISMATCH!>x++<!>
-    <!RESULT_TYPE_MISMATCH!>x++<!>
+    x = x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
+    x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
     return x
 }

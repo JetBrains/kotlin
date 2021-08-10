@@ -29,7 +29,7 @@ class Test()
     fun test()
     {
         val control = Control()
-        control.MouseMoved += { it.X } // here
+        control.MouseMoved <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>+=<!> { it.X } // here
         control.MouseMoved.plusAssign( { it.X } ) // ok
     }
 }

@@ -3401,6 +3401,22 @@ internal class IncompatibleEnumComparisonErrorImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class IncDecShouldNotReturnUnitImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.IncDecShouldNotReturnUnit(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class AssignmentOperatorShouldReturnUnitImpl(
+    override val functionSymbol: KtFunctionLikeSymbol,
+    override val operator: String,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AssignmentOperatorShouldReturnUnit(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ToplevelTypealiasesOnlyImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

@@ -2113,6 +2113,16 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val rightType: KtType
     }
 
+    abstract class IncDecShouldNotReturnUnit : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = IncDecShouldNotReturnUnit::class
+    }
+
+    abstract class AssignmentOperatorShouldReturnUnit : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = AssignmentOperatorShouldReturnUnit::class
+        abstract val functionSymbol: KtFunctionLikeSymbol
+        abstract val operator: String
+    }
+
     abstract class ToplevelTypealiasesOnly : KtFirDiagnostic<KtTypeAlias>() {
         override val diagnosticClass get() = ToplevelTypealiasesOnly::class
     }

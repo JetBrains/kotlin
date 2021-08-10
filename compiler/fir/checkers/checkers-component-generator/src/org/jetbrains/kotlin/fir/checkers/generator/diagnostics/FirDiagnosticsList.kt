@@ -1115,6 +1115,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("leftType")
             parameter<ConeKotlinType>("rightType")
         }
+        val INC_DEC_SHOULD_NOT_RETURN_UNIT by error<KtExpression>(PositioningStrategy.OPERATOR)
+        val ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT by error<KtExpression>(PositioningStrategy.OPERATOR) {
+            parameter<FirNamedFunctionSymbol>("functionSymbol")
+            parameter<String>("operator")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {
