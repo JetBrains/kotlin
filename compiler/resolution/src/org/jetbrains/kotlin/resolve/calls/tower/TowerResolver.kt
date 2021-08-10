@@ -48,6 +48,12 @@ interface CandidateFactory<out C : Candidate> {
     ): C
 
     fun createErrorCandidate(): C
+
+    fun createCandidate(
+        towerCandidate: CandidateWithBoundDispatchReceiver,
+        explicitReceiverKind: ExplicitReceiverKind,
+        extensionReceiverCandidates: List<ReceiverValueWithSmartCastInfo>
+    ): C
 }
 
 interface CandidateFactoryProviderForInvoke<C : Candidate> {

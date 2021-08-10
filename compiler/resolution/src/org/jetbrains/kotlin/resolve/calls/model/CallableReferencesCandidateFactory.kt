@@ -119,6 +119,17 @@ class CallableReferencesCandidateFactory(
         return createCallableReferenceCallCandidate(diagnostics)
     }
 
+    /**
+     * The function is called only inside [NoExplicitReceiverScopeTowerProcessor] with [TowerData.BothTowerLevelAndContextReceiversGroup].
+     * This case involves only [SimpleCandidateFactory].
+     */
+    override fun createCandidate(
+        towerCandidate: CandidateWithBoundDispatchReceiver,
+        explicitReceiverKind: ExplicitReceiverKind,
+        extensionReceiverCandidates: List<ReceiverValueWithSmartCastInfo>
+    ): CallableReferenceResolutionCandidate =
+        error("${this::class.simpleName} doesn't support candidates with multiple extension receiver candidates")
+
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
         createCallableReferenceProcessor(scopeTower, kotlinCall.rhsName, this, explicitReceiver)
 
@@ -377,7 +388,7 @@ class CallableReferencesCandidateFactory(
                         (suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION && buildTypeWithConversions)
 
                 callComponents.reflectionTypes.getKFunctionType(
-                    Annotations.EMPTY, null, argumentsAndReceivers, null,
+                    Annotations.EMPTY, null, emptyList(), argumentsAndReceivers, null,
                     returnType, descriptor.builtIns, isSuspend
                 ) to callableReferenceAdaptation
             }
