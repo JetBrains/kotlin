@@ -12,7 +12,7 @@ kotlin {
     <SingleNativeTarget>("native") {
         binaries {
             executable {
-                entryPoint = "main"
+                entryPoint = "sample.app.main"
             }
         }
         sourceSets["commonMain"].dependencies {

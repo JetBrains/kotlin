@@ -18,7 +18,7 @@ kotlin {
 publishing {
     repositories {
         maven {
-            url = file("<LocalRepo>").toURI()
+            url = uri("<LocalRepo>")
         }
     }
 }

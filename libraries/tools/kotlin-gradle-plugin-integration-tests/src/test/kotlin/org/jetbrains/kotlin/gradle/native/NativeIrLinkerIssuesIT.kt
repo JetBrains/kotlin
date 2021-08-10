@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.MASKED_TARGET_NAME
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findKotlinNativeTargetName
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findParameterInOutput
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.junit.Assume
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -90,79 +93,84 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
     }
 
     @Test
-    fun `ktor 1_5_4 and coroutines 1_5_0-RC-native-mt (KT-46697)`() = buildApplicationAndFail(
-        directory = null,
-        projectName = "native-ir-linker-issues-ktor-and-coroutines",
-        localRepo = null
-    ) { kotlinNativeCompilerVersion ->
-        """
-        |e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, kotlinx.coroutines/CancellationException|null[0]. IrTypeAliasSymbol is expected.
-        |
-        |This could happen if there are two libraries, where one library was compiled against the different version of the other library than the one currently used in the project. Please check that the project configuration is correct and has consistent versions of dependencies.
-        |
-        |The list of libraries that depend on "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME)" and may lead to conflicts:
-        |1. "io.ktor:ktor-client-core (io.ktor:ktor-client-core-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-        |2. "io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-        |3. "io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-        |4. "io.ktor:ktor-io (io.ktor:ktor-io-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-        |5. "io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-        |
-        |Project dependencies:
-        |├─── io.ktor:ktor-client-core (io.ktor:ktor-client-core-$MASKED_TARGET_NAME): 1.5.4
-        |│    ├─── io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4
-        |│    │    ├─── io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4
-        |│    │    │    ├─── io.ktor:ktor-io (io.ktor:ktor-io-$MASKED_TARGET_NAME): 1.5.4
-        |│    │    │    │    ├─── io.ktor:ktor-io-cinterop-bits: 1.5.4
-        |│    │    │    │    │    └─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
-        |│    │    │    │    ├─── io.ktor:ktor-io-cinterop-sockets: 1.5.4
-        |│    │    │    │    │    └─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
-        |│    │    │    │    ├─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
-        |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.CoreFoundation: 1.4.32 -> $kotlinNativeCompilerVersion
-        |│    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
-        |│    │    │    │    │    ├─── org.jetbrains.kotlin.native.platform.darwin: $kotlinNativeCompilerVersion
-        |│    │    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
-        |│    │    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion
-        |│    │    │    │    │    │         └─── stdlib: $kotlinNativeCompilerVersion
-        |│    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
-        |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.darwin: 1.4.32 -> $kotlinNativeCompilerVersion (*)
-        |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.iconv: 1.4.32 -> $kotlinNativeCompilerVersion
-        |│    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
-        |│    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
-        |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.posix: 1.4.32 -> $kotlinNativeCompilerVersion (*)
-        |│    │    │    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1
-        |│    │    │    │    │    ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
-        |│    │    │    │    │    ├─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
-        |│    │    │    │    │    └─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1
-        |│    │    │    │    │         ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
-        |│    │    │    │    │         └─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
-        |│    │    │    │    ├─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
-        |│    │    │    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt
-        |│    │    │    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-        |│    │    │    │         ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
-        |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.CoreFoundation: 1.5 -> $kotlinNativeCompilerVersion (*)
-        |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.darwin: 1.5 -> $kotlinNativeCompilerVersion (*)
-        |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
-        |│    │    │    │         ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.16.1 (*)
-        |│    │    │    │         └─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
-        |│    │    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-        |│    │    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
-        |│    │    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-        |│    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-        |│    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
-        |│    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-        |│    ├─── io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$MASKED_TARGET_NAME): 1.5.4
-        |│    │    ├─── io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4 (*)
-        |│    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-        |│    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
-        |│    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-        |│    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-        |│    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
-        |│         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-        |└─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt (*)
-        |     ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-        |
-        |(*) - dependencies omitted (listed previously)
-        """.trimMargin()
+    fun `ktor 1_5_4 and coroutines 1_5_0-RC-native-mt (KT-46697)`() {
+        // Run this test only on macOS.
+        assumeTrue(HostManager.hostIsMac)
+
+        buildApplicationAndFail(
+            directory = null,
+            projectName = "native-ir-linker-issues-ktor-and-coroutines",
+            localRepo = null
+        ) { kotlinNativeCompilerVersion ->
+            """
+            |e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, kotlinx.coroutines/CancellationException|null[0]. IrTypeAliasSymbol is expected.
+            |
+            |This could happen if there are two libraries, where one library was compiled against the different version of the other library than the one currently used in the project. Please check that the project configuration is correct and has consistent versions of dependencies.
+            |
+            |The list of libraries that depend on "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME)" and may lead to conflicts:
+            |1. "io.ktor:ktor-client-core (io.ktor:ktor-client-core-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
+            |2. "io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
+            |3. "io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
+            |4. "io.ktor:ktor-io (io.ktor:ktor-io-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
+            |5. "io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
+            |
+            |Project dependencies:
+            |├─── io.ktor:ktor-client-core (io.ktor:ktor-client-core-$MASKED_TARGET_NAME): 1.5.4
+            |│    ├─── io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4
+            |│    │    ├─── io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4
+            |│    │    │    ├─── io.ktor:ktor-io (io.ktor:ktor-io-$MASKED_TARGET_NAME): 1.5.4
+            |│    │    │    │    ├─── io.ktor:ktor-io-cinterop-bits: 1.5.4
+            |│    │    │    │    │    └─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
+            |│    │    │    │    ├─── io.ktor:ktor-io-cinterop-sockets: 1.5.4
+            |│    │    │    │    │    └─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
+            |│    │    │    │    ├─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
+            |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.CoreFoundation: 1.4.32 -> $kotlinNativeCompilerVersion
+            |│    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
+            |│    │    │    │    │    ├─── org.jetbrains.kotlin.native.platform.darwin: $kotlinNativeCompilerVersion
+            |│    │    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
+            |│    │    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion
+            |│    │    │    │    │    │         └─── stdlib: $kotlinNativeCompilerVersion
+            |│    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
+            |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.darwin: 1.4.32 -> $kotlinNativeCompilerVersion (*)
+            |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.iconv: 1.4.32 -> $kotlinNativeCompilerVersion
+            |│    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
+            |│    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
+            |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.posix: 1.4.32 -> $kotlinNativeCompilerVersion (*)
+            |│    │    │    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1
+            |│    │    │    │    │    ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
+            |│    │    │    │    │    ├─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
+            |│    │    │    │    │    └─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1
+            |│    │    │    │    │         ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
+            |│    │    │    │    │         └─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
+            |│    │    │    │    ├─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
+            |│    │    │    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt
+            |│    │    │    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            |│    │    │    │         ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
+            |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.CoreFoundation: 1.5 -> $kotlinNativeCompilerVersion (*)
+            |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.darwin: 1.5 -> $kotlinNativeCompilerVersion (*)
+            |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
+            |│    │    │    │         ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.16.1 (*)
+            |│    │    │    │         └─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
+            |│    │    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
+            |│    │    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            |│    │    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            |│    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
+            |│    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            |│    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            |│    ├─── io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$MASKED_TARGET_NAME): 1.5.4
+            |│    │    ├─── io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4 (*)
+            |│    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
+            |│    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            |│    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            |│    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
+            |│    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            |│         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            |└─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt (*)
+            |     ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            |
+            |(*) - dependencies omitted (listed previously)
+            """.trimMargin()
+        }
     }
 
     private fun buildApplicationAndFail(
@@ -207,9 +215,9 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
     ) {
         with(transformNativeTestProjectWithPluginDsl(directoryPrefix = directory, projectName = projectName)) {
             if (localRepo != null) {
-                val localRepoPath = localRepo.absolutePath
+                val localRepoUri = localRepo.absoluteFile.toURI().toString()
                 gradleBuildScript().apply {
-                    writeText(readText().replace("<LocalRepo>", localRepoPath))
+                    writeText(readText().replace("<LocalRepo>", localRepoUri))
                 }
             }
 
