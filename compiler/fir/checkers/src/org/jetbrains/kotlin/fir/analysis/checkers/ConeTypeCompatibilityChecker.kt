@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
@@ -212,10 +213,10 @@ internal object ConeTypeCompatibilityChecker {
         val classes = classesOrInterfaces.filter { !it.isInterface }
         // Java force single inheritance, so any pair of unrelated classes are incompatible.
         if (classes.size >= 2) {
-            return if (classes.any { it.getHasPredefinedEqualityContract(this) }) {
-                compatibilityUpperBound
-            } else {
-                Compatibility.SOFT_INCOMPATIBLE
+            return when {
+                classes.any { it.firClass.classId.packageFqName.startsWith(Name.identifier("java")) } -> Compatibility.SOFT_INCOMPATIBLE
+                classes.any { it.getHasPredefinedEqualityContract(this) } -> compatibilityUpperBound
+                else -> Compatibility.SOFT_INCOMPATIBLE
             }
         }
         val finalClass = classes.firstOrNull { it.isFinal } ?: return null

@@ -1,0 +1,9 @@
+FILE: IntersectionWithJavaString.kt
+    public final fun collapse(path: R|kotlin/String|): R|kotlin/Unit| {
+        lval result: R|ft<kotlin/String, kotlin/String?>| = (R|<local>/path| as R|java/lang/String|).R|java/lang/String.replace|(String(123), String(456))
+        when () {
+            !==(R|<local>/result|, R|<local>/path|) ->  {
+            }
+        }
+
+    }
