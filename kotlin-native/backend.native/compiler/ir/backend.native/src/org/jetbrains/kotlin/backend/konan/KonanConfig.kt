@@ -60,7 +60,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val destroyRuntimeMode: DestroyRuntimeMode get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)!!
     val gc: GC get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR)!!
     val gcAggressive: Boolean get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR_AGRESSIVE)!!
-    val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(KonanConfigKeys.RUNTIME_ASSERTS_MODE)!!
+    val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)!!
 
     val needVerifyIr: Boolean

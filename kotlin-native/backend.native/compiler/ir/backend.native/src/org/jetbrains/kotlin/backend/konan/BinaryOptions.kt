@@ -12,6 +12,7 @@ import kotlin.properties.ReadOnlyProperty
 // Note: options defined in this class are a part of user interface, including the names:
 // users can pass these options using a -Xbinary=name=value compiler argument or corresponding Gradle DSL.
 object BinaryOptions : BinaryOptionRegistry() {
+    val runtimeAssertionsMode by option<RuntimeAssertsMode>()
 }
 
 open class BinaryOption<T : Any>(

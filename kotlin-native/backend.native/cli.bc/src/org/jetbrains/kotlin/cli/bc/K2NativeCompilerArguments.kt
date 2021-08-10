@@ -326,9 +326,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-property-lazy-initialization", valueDescription = "{disable|enable}", description = "Initialize top level properties lazily per file")
     var propertyLazyInitialization: String? = null
 
-    @Argument(value="-Xruntime-asserts-mode", valueDescription = "<mode>", description = "Enable asserts in runtime. Possible values: 'ignore', 'log', 'panic'")
-    var runtimeAssertsMode: String? = "ignore"
-
     // TODO: Remove when legacy MM is gone.
     @Argument(
             value = "-Xworker-exception-handling",

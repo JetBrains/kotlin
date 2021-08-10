@@ -161,7 +161,6 @@ class KonanConfigKeys {
         val GARBAGE_COLLECTOR: CompilerConfigurationKey<GC> = CompilerConfigurationKey.create("gc")
         val GARBAGE_COLLECTOR_AGRESSIVE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("turn on agressive GC mode")
         val CHECK_LLD_COMPATIBILITY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("check compatibility with LLD")
-        val RUNTIME_ASSERTS_MODE: CompilerConfigurationKey<RuntimeAssertsMode> = CompilerConfigurationKey.create("enable runtime asserts")
         val PROPERTY_LAZY_INITIALIZATION: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("lazy top level properties initialization")
         val WORKER_EXCEPTION_HANDLING: CompilerConfigurationKey<WorkerExceptionHandling> = CompilerConfigurationKey.create("unhandled exception processing in Worker.executeAfter")
