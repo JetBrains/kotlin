@@ -67,19 +67,7 @@ class IrSourceCompilerForInline(
         return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(codegen, reifiedTypeParameters)
     }
 
-    private var cachedJvmSignature: JvmMethodSignature? = null
-    private var cachedCompiledInlineFunction: SMAPAndMethodNode? = null
-
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
-        if (jvmSignature == cachedJvmSignature) {
-            return cachedCompiledInlineFunction!!
-        }
-        cachedJvmSignature = jvmSignature
-        return doCompileInlineFunction(jvmSignature)
-            .also { cachedCompiledInlineFunction = it }
-    }
-
-    private fun doCompileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
         generateInlineIntrinsicForIr(state.languageVersionSettings, callee.toIrBasedDescriptor())?.let {
             return it
         }
