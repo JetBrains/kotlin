@@ -60,7 +60,7 @@ internal class CallStack {
                 is IrTry -> {
                     dropSubFrame()
                     pushState(result)
-                    addInstruction(SimpleInstruction(irReturn))
+                    pushInstruction(SimpleInstruction(irReturn))
                     frameOwner.finallyExpression?.handleAndDropResult(this)
                     return
                 }
@@ -68,7 +68,7 @@ internal class CallStack {
                     val tryBlock = currentFrame.dropInstructions()!!.element as IrTry// last instruction in `catch` block is `try`
                     dropSubFrame()
                     pushState(result)
-                    addInstruction(SimpleInstruction(irReturn))
+                    pushInstruction(SimpleInstruction(irReturn))
                     tryBlock.finallyExpression?.handleAndDropResult(this)
                     return
                 }
@@ -81,7 +81,7 @@ internal class CallStack {
         }
 
         currentFrame.dropInstructions()
-        addInstruction(SimpleInstruction(returnTarget))
+        pushInstruction(SimpleInstruction(returnTarget))
         if (returnTarget !is IrConstructor) pushState(result)
     }
 
@@ -91,17 +91,17 @@ internal class CallStack {
             when (frameOwner) {
                 is IrTry -> {
                     currentFrame.removeSubFrameWithoutDataPropagation()
-                    addInstruction(CompoundInstruction(breakOrContinue))
+                    pushInstruction(CompoundInstruction(breakOrContinue))
                     newSubFrame(frameOwner) // will be deleted when interpret 'try'
-                    addInstruction(SimpleInstruction(frameOwner))
+                    pushInstruction(SimpleInstruction(frameOwner))
                     return
                 }
                 is IrCatch -> {
                     val tryInstruction = currentFrame.dropInstructions()!! // last instruction in `catch` block is `try`
                     currentFrame.removeSubFrameWithoutDataPropagation()
-                    addInstruction(CompoundInstruction(breakOrContinue))
+                    pushInstruction(CompoundInstruction(breakOrContinue))
                     newSubFrame(tryInstruction.element!!)  // will be deleted when interpret 'try'
-                    addInstruction(tryInstruction)
+                    pushInstruction(tryInstruction)
                     return
                 }
                 else -> {
@@ -114,10 +114,10 @@ internal class CallStack {
         when (breakOrContinue) {
             is IrBreak -> currentFrame.removeSubFrameWithoutDataPropagation() // drop loop
             else -> if (breakOrContinue.loop is IrDoWhileLoop) {
-                addInstruction(SimpleInstruction(breakOrContinue.loop))
-                addInstruction(CompoundInstruction(breakOrContinue.loop.condition))
+                pushInstruction(SimpleInstruction(breakOrContinue.loop))
+                pushInstruction(CompoundInstruction(breakOrContinue.loop.condition))
             } else {
-                addInstruction(CompoundInstruction(breakOrContinue.loop))
+                pushInstruction(CompoundInstruction(breakOrContinue.loop))
             }
         }
     }
@@ -133,14 +133,14 @@ internal class CallStack {
                     is IrTry -> {
                         dropSubFrame()  // drop all instructions that left
                         newSubFrame(frameOwner)
-                        addInstruction(SimpleInstruction(frameOwner)) // to evaluate finally at the end
-                        frameOwner.catches.reversed().forEach { addInstruction(CompoundInstruction(it)) }
+                        pushInstruction(SimpleInstruction(frameOwner)) // to evaluate finally at the end
+                        frameOwner.catches.reversed().forEach { pushInstruction(CompoundInstruction(it)) }
                         pushState(exception)
                         return
                     }
                     is IrCatch -> {
                         // in case of exception in catch, drop everything except of last `try` instruction
-                        addInstruction(frame.dropInstructions()!!)
+                        pushInstruction(frame.dropInstructions()!!)
                         pushState(exception)
                         return
                     }
@@ -155,54 +155,25 @@ internal class CallStack {
     }
 
     fun hasNoInstructions() = frames.isEmpty() || (frames.size == 1 && frames.first().hasNoInstructions())
+    fun pushInstruction(instruction: Instruction) = currentFrame.pushInstruction(instruction)
+    fun popInstruction(): Instruction = currentFrame.popInstruction()
 
-    fun addInstruction(instruction: Instruction) {
-        currentFrame.addInstruction(instruction)
-    }
-
-    fun popInstruction(): Instruction {
-        return currentFrame.popInstruction()
-    }
-
-    fun pushState(state: State) {
-        currentFrame.pushState(state)
-    }
-
+    fun pushState(state: State) = currentFrame.pushState(state)
     fun popState(): State = currentFrame.popState()
     fun peekState(): State? = currentFrame.peekState()
 
-    fun addVariable(symbol: IrSymbol, state: State?) {
-        currentFrame.addVariable(symbol, state)
-    }
+    fun storeState(symbol: IrSymbol, state: State?) = currentFrame.storeState(symbol, state)
+    private fun storeState(symbol: IrSymbol, variable: Variable) = currentFrame.storeState(symbol, variable)
+    fun containsStateInMemory(symbol: IrSymbol): Boolean = currentFrame.containsStateInMemory(symbol)
+    fun loadState(symbol: IrSymbol): State = currentFrame.loadState(symbol)
+    fun rewriteState(symbol: IrSymbol, newState: State) = currentFrame.rewriteState(symbol, newState)
 
-    private fun addVariable(symbol: IrSymbol, variable: Variable) {
-        currentFrame.addVariable(symbol, variable)
-    }
+    // TODO save only necessary declarations
+    fun storeUpValues(state: StateWithClosure) = currentFrame.copyMemoryInto(state)
+    fun loadUpValues(state: StateWithClosure) = state.upValues.forEach { (symbol, variable) -> storeState(symbol, variable) }
+    fun copyUpValuesFromPreviousFrame() = frames[frames.size - 2].copyMemoryInto(currentFrame)
 
-    fun getState(symbol: IrSymbol): State = currentFrame.getState(symbol)
-    fun setState(symbol: IrSymbol, newState: State) = currentFrame.setState(symbol, newState)
-    fun containsVariable(symbol: IrSymbol): Boolean = currentFrame.containsVariable(symbol)
-
-    fun storeUpValues(state: StateWithClosure) {
-        // TODO save only necessary declarations
-        currentFrame.copyMemoryInto(state)
-    }
-
-    fun loadUpValues(state: StateWithClosure) {
-        state.upValues.forEach { (symbol, variable) -> addVariable(symbol, variable) }
-    }
-
-    fun copyUpValuesFromPreviousFrame() {
-        frames[frames.size - 2].copyMemoryInto(currentFrame)
-    }
-
-    fun getStackTrace(): List<String> {
-        return frames.map { it.toString() }.filter { it != Frame.NOT_DEFINED }
-    }
-
-    fun getFileAndPositionInfo(): String {
-        return frames[frames.size - 2].getFileAndPositionInfo()
-    }
-
+    fun getStackTrace(): List<String> = frames.map { it.toString() }.filter { it != Frame.NOT_DEFINED }
+    fun getFileAndPositionInfo(): String = frames[frames.size - 2].getFileAndPositionInfo()
     fun getStackCount(): Int = frames.size
 }

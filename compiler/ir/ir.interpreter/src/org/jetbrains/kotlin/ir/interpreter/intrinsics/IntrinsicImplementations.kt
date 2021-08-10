@@ -43,7 +43,7 @@ internal object EmptyArray : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val returnType = environment.callStack.getState(irFunction.symbol) as KTypeState
+        val returnType = environment.callStack.loadState(irFunction.symbol) as KTypeState
         environment.callStack.pushState(environment.convertToState(emptyArray<Any?>(), returnType.irType))
     }
 }
@@ -58,7 +58,7 @@ internal object ArrayOf : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val elementsSymbol = irFunction.valueParameters.single().symbol
-        val varargVariable = environment.callStack.getState(elementsSymbol)
+        val varargVariable = environment.callStack.loadState(elementsSymbol)
         environment.callStack.pushState(varargVariable)
     }
 }
@@ -69,9 +69,9 @@ internal object ArrayOfNulls : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val size = environment.callStack.getState(irFunction.valueParameters.first().symbol).asInt()
+        val size = environment.callStack.loadState(irFunction.valueParameters.first().symbol).asInt()
         val array = arrayOfNulls<Any?>(size)
-        val typeArgument = irFunction.typeParameters.map { environment.callStack.getState(it.symbol) }.single() as KTypeState
+        val typeArgument = irFunction.typeParameters.map { environment.callStack.loadState(it.symbol) }.single() as KTypeState
         val returnType = (irFunction.returnType as IrSimpleType).buildSimpleType {
             arguments = listOf(makeTypeProjection(typeArgument.irType, Variance.INVARIANT))
         }
@@ -88,7 +88,7 @@ internal object EnumValues : IntrinsicBase() {
     private fun getEnumClass(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrClass {
         return when (irFunction.fqName) {
             "kotlin.enumValues" -> {
-                val kType = environment.callStack.getState(irFunction.typeParameters.first().symbol) as KTypeState
+                val kType = environment.callStack.loadState(irFunction.typeParameters.first().symbol) as KTypeState
                 kType.irType.classOrNull!!.owner
             }
             else -> irFunction.parent as IrClass
@@ -118,7 +118,7 @@ internal object EnumValueOf : IntrinsicBase() {
     private fun getEnumClass(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrClass {
         return when (irFunction.fqName) {
             "kotlin.enumValueOf" -> {
-                val kType = environment.callStack.getState(irFunction.typeParameters.first().symbol) as KTypeState
+                val kType = environment.callStack.loadState(irFunction.typeParameters.first().symbol) as KTypeState
                 kType.irType.classOrNull!!.owner
             }
             else -> irFunction.parent as IrClass
@@ -127,7 +127,7 @@ internal object EnumValueOf : IntrinsicBase() {
 
     private fun getEnumEntryByName(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrEnumEntry? {
         val enumClass = getEnumClass(irFunction, environment)
-        val enumEntryName = environment.callStack.getState(irFunction.valueParameters.first().symbol).asString()
+        val enumEntryName = environment.callStack.loadState(irFunction.valueParameters.first().symbol).asString()
         val enumEntry = enumClass.declarations.filterIsInstance<IrEnumEntry>().singleOrNull { it.name.asString() == enumEntryName }
         if (enumEntry == null) {
             IllegalArgumentException("No enum constant ${enumClass.fqName}.$enumEntryName").handleUserException(environment)
@@ -168,7 +168,7 @@ internal object EnumIntrinsics : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val callStack = environment.callStack
-        val enumEntry = callStack.getState(irFunction.dispatchReceiverParameter!!.symbol)
+        val enumEntry = callStack.loadState(irFunction.dispatchReceiverParameter!!.symbol)
         when (irFunction.name.asString()) {
             "<get-name>", "<get-ordinal>" -> {
                 val symbol = (irFunction as IrSimpleFunction).correspondingPropertySymbol!!
@@ -176,13 +176,13 @@ internal object EnumIntrinsics : IntrinsicBase() {
             }
             "compareTo" -> {
                 val ordinalSymbol = enumEntry.irClass.getOriginalPropertyByName("ordinal").symbol
-                val other = callStack.getState(irFunction.valueParameters.single().symbol)
+                val other = callStack.loadState(irFunction.valueParameters.single().symbol)
                 val compareTo = enumEntry.getField(ordinalSymbol)!!.asInt().compareTo(other.getField(ordinalSymbol)!!.asInt())
                 callStack.pushState(environment.convertToState(compareTo, irFunction.returnType))
             }
             // TODO "clone" -> throw exception
             "equals" -> {
-                val other = callStack.getState(irFunction.valueParameters.single().symbol)
+                val other = callStack.loadState(irFunction.valueParameters.single().symbol)
                 callStack.pushState(environment.convertToState((enumEntry === other), irFunction.returnType))
             }
             "hashCode" -> callStack.pushState(environment.convertToState(enumEntry.hashCode(), irFunction.returnType))
@@ -204,12 +204,12 @@ internal object JsPrimitives : IntrinsicBase() {
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         when (irFunction.fqName) {
             "kotlin.Long.<init>" -> {
-                val low = environment.callStack.getState(irFunction.valueParameters[0].symbol).asInt()
-                val high = environment.callStack.getState(irFunction.valueParameters[1].symbol).asInt()
+                val low = environment.callStack.loadState(irFunction.valueParameters[0].symbol).asInt()
+                val high = environment.callStack.loadState(irFunction.valueParameters[1].symbol).asInt()
                 environment.callStack.pushState(environment.convertToState((high.toLong().shl(32) + low), irFunction.returnType))
             }
             "kotlin.Char.<init>" -> {
-                val value = environment.callStack.getState(irFunction.valueParameters[0].symbol).asInt()
+                val value = environment.callStack.loadState(irFunction.valueParameters[0].symbol).asInt()
                 environment.callStack.pushState(environment.convertToState(value.toChar(), irFunction.returnType))
             }
         }
@@ -231,14 +231,14 @@ internal object ArrayConstructor : IntrinsicBase() {
         val instructions = mutableListOf<Instruction>(customEvaluateInstruction(irFunction, environment))
 
         val sizeSymbol = irFunction.valueParameters[0].symbol
-        val size = callStack.getState(sizeSymbol).asInt()
+        val size = callStack.loadState(sizeSymbol).asInt()
 
         val initSymbol = irFunction.valueParameters[1].symbol
-        val state = callStack.getState(initSymbol).let {
+        val state = callStack.loadState(initSymbol).let {
             (it as? KFunctionState) ?: (it as KPropertyState).convertGetterToKFunctionState(environment)
         }
         // if property was converted, then we must replace symbol in memory to get correct receiver later
-        callStack.setState(initSymbol, state)
+        callStack.rewriteState(initSymbol, state)
 
         for (i in size - 1 downTo 0) {
             val call = (state.invokeSymbol.owner as IrSimpleFunction).createCall()
@@ -252,7 +252,7 @@ internal object ArrayConstructor : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val sizeDescriptor = irFunction.valueParameters[0].symbol
-        val size = environment.callStack.getState(sizeDescriptor).asInt()
+        val size = environment.callStack.loadState(sizeDescriptor).asInt()
         val arrayValue = MutableList<Any?>(size) {
             when {
                 irFunction.returnType.isCharArray() -> 0.toChar()
@@ -274,7 +274,7 @@ internal object ArrayConstructor : IntrinsicBase() {
             }
         }
 
-        val type = (environment.callStack.getState(irFunction.symbol) as KTypeState).irType
+        val type = (environment.callStack.loadState(irFunction.symbol) as KTypeState).irType
         environment.callStack.pushState(arrayValue.toPrimitiveStateArray(type))
     }
 }
@@ -298,7 +298,7 @@ internal object AssertIntrinsic : IntrinsicBase() {
         if (irFunction.valueParameters.size == 1) return listOf(customEvaluateInstruction(irFunction, environment))
 
         val lambdaParameter = irFunction.valueParameters.last()
-        val lambdaState = environment.callStack.getState(lambdaParameter.symbol) as KFunctionState
+        val lambdaState = environment.callStack.loadState(lambdaParameter.symbol) as KFunctionState
         val call = (lambdaState.invokeSymbol.owner as IrSimpleFunction).createCall()
         call.dispatchReceiver = lambdaParameter.createGetValue()
 
@@ -306,7 +306,7 @@ internal object AssertIntrinsic : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val value = environment.callStack.getState(irFunction.valueParameters.first().symbol).asBoolean()
+        val value = environment.callStack.loadState(irFunction.valueParameters.first().symbol).asBoolean()
         if (value) return
         when (irFunction.valueParameters.size) {
             1 -> AssertionError("Assertion failed").handleUserException(environment)
@@ -337,7 +337,7 @@ internal object DataClassArrayToString : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val array = environment.callStack.getState(irFunction.valueParameters.single().symbol) as Primitive<*>
+        val array = environment.callStack.loadState(irFunction.valueParameters.single().symbol) as Primitive<*>
         environment.callStack.pushState(environment.convertToState(arrayToString(array.value), irFunction.returnType))
     }
 }

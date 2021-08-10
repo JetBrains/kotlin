@@ -60,7 +60,7 @@ internal interface Complex : State {
             .toList()
             .takeFromEndWhile { receiver == null || it.first != receiver } // only state's below receiver must be loaded on stack
             .forEach { (symbol, state) ->
-                callStack.addVariable(symbol, state)
+                callStack.storeState(symbol, state)
                 (state as? StateWithClosure)?.let { callStack.loadUpValues(it) }
             }
     }

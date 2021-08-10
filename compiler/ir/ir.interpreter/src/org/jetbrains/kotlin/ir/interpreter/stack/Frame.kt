@@ -43,31 +43,16 @@ internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
 
     fun hasNoSubFrames() = innerStack.isEmpty()
     fun hasNoInstructions() = hasNoSubFrames() || (innerStack.size == 1 && innerStack.first().isEmpty())
-
-    fun addInstruction(instruction: Instruction) {
-        currentFrame.pushInstruction(instruction)
-    }
-
-    fun popInstruction(): Instruction {
-        return currentFrame.popInstruction().apply { currentInstruction = this }
-    }
-
+    fun pushInstruction(instruction: Instruction) = currentFrame.pushInstruction(instruction)
+    fun popInstruction(): Instruction = currentFrame.popInstruction().apply { currentInstruction = this }
     fun dropInstructions() = currentFrame.dropInstructions()
 
-    fun pushState(state: State) {
-        currentFrame.pushState(state)
-    }
-
+    fun pushState(state: State) = currentFrame.pushState(state)
     fun popState(): State = currentFrame.popState()
     fun peekState(): State? = currentFrame.peekState()
 
-    fun addVariable(symbol: IrSymbol, state: State?) {
-        currentFrame.addVariable(symbol, state)
-    }
-
-    fun addVariable(symbol: IrSymbol, variable: Variable) {
-        currentFrame.addVariable(symbol, variable)
-    }
+    fun storeState(symbol: IrSymbol, state: State?) = currentFrame.storeState(symbol, state)
+    fun storeState(symbol: IrSymbol, variable: Variable) = currentFrame.storeState(symbol, variable)
 
     private inline fun forEachSubFrame(block: (SubFrame) -> Unit) {
         // TODO speed up reverse iteration or do it forward
@@ -76,28 +61,22 @@ internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
         }
     }
 
-    fun getState(symbol: IrSymbol): State {
-        forEachSubFrame {
-            it.getState(symbol)?.let { state -> return state }
-        }
+    fun loadState(symbol: IrSymbol): State {
+        forEachSubFrame { it.loadState(symbol)?.let { state -> return state } }
         throw InterpreterError("$symbol not found") // TODO better message
     }
 
-    fun setState(symbol: IrSymbol, newState: State) {
-        forEachSubFrame {
-            if (it.containsVariable(symbol)) return it.setState(symbol, newState)
-        }
+    fun rewriteState(symbol: IrSymbol, newState: State) {
+        forEachSubFrame { if (it.containsStateInMemory(symbol)) return it.rewriteState(symbol, newState) }
     }
 
-    fun containsVariable(symbol: IrSymbol): Boolean {
-        forEachSubFrame {
-            if (it.containsVariable(symbol)) return true
-        }
+    fun containsStateInMemory(symbol: IrSymbol): Boolean {
+        forEachSubFrame { if (it.containsStateInMemory(symbol)) return true }
         return false
     }
 
     fun copyMemoryInto(newFrame: Frame) {
-        this.getAll().forEach { (symbol, variable) -> if (!newFrame.containsVariable(symbol)) newFrame.addVariable(symbol, variable) }
+        this.getAll().forEach { (symbol, variable) -> if (!newFrame.containsStateInMemory(symbol)) newFrame.storeState(symbol, variable) }
     }
 
     fun copyMemoryInto(closure: StateWithClosure) {
@@ -149,17 +128,17 @@ private class SubFrame(val owner: IrElement) {
     fun peekState(): State? = dataStack.peek()
 
     // Methods to work with memory
-    fun addVariable(symbol: IrSymbol, variable: Variable) {
+    fun storeState(symbol: IrSymbol, variable: Variable) {
         memory[symbol] = variable
     }
 
-    fun addVariable(symbol: IrSymbol, state: State?) {
+    fun storeState(symbol: IrSymbol, state: State?) {
         memory[symbol] = Variable(state)
     }
 
-    fun containsVariable(symbol: IrSymbol): Boolean = memory[symbol] != null
-    fun getState(symbol: IrSymbol): State? = memory[symbol]?.state
-    fun setState(symbol: IrSymbol, newState: State) {
+    fun containsStateInMemory(symbol: IrSymbol): Boolean = memory[symbol] != null
+    fun loadState(symbol: IrSymbol): State? = memory[symbol]?.state
+    fun rewriteState(symbol: IrSymbol, newState: State) {
         memory[symbol]?.state = newState
     }
 

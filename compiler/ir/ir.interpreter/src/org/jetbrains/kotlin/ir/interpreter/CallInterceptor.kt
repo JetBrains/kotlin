@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
@@ -51,7 +50,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override fun interceptProxy(irFunction: IrFunction, valueArguments: List<State>, expectedResultClass: Class<*>): Any? {
         val irCall = irFunction.createCall()
         return interpreter.withNewCallStack(irCall) {
-            this@withNewCallStack.environment.callStack.addInstruction(SimpleInstruction(irCall))
+            this@withNewCallStack.environment.callStack.pushInstruction(SimpleInstruction(irCall))
             valueArguments.forEach { this@withNewCallStack.environment.callStack.pushState(it) }
         }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = false, extendFrom = expectedResultClass)
     }
@@ -73,7 +72,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     }
 
     override fun interceptConstructor(constructorCall: IrFunctionAccessExpression, args: List<State>, defaultAction: () -> Unit) {
-        val receiver = callStack.getState(constructorCall.getThisReceiver())
+        val receiver = callStack.loadState(constructorCall.getThisReceiver())
         val irConstructor = constructorCall.symbol.owner
         val irClass = irConstructor.parentAsClass
         when {
@@ -81,7 +80,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 Wrapper.getConstructorMethod(irConstructor).invokeMethod(irConstructor, args)
                 when {
                     irClass.isSubclassOfThrowable() -> (receiver as ExceptionState).copyFieldsFrom(callStack.popState() as Wrapper)
-                    constructorCall is IrConstructorCall -> callStack.setState(constructorCall.getThisReceiver(), callStack.popState())
+                    constructorCall is IrConstructorCall -> callStack.rewriteState(constructorCall.getThisReceiver(), callStack.popState())
                     else -> (receiver as Complex).superWrapperClass = callStack.popState() as Wrapper
                 }
             }
@@ -140,7 +139,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
 
     private fun handleIntrinsicMethods(irFunction: IrFunction): Boolean {
         val instructions = IntrinsicEvaluator.unwindInstructions(irFunction, environment) ?: return false
-        instructions.forEach { callStack.addInstruction(it) }
+        instructions.forEach { callStack.pushInstruction(it) }
         return true
     }
 
@@ -185,7 +184,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
         }
 
-        callStack.addInstruction(CompoundInstruction(constructorCall))
+        callStack.pushInstruction(CompoundInstruction(constructorCall))
     }
 
     private fun Any?.getType(defaultType: IrType): IrType {
@@ -207,7 +206,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private fun IrFunction.trySubstituteFunctionBody(): IrElement? {
         val signature = this.symbol.signature ?: return null
         this.body = bodyMap[signature] ?: return null
-        callStack.addInstruction(CompoundInstruction(this))
+        callStack.pushInstruction(CompoundInstruction(this))
         return body
     }
 
@@ -215,6 +214,6 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private fun IrFunction.tryCalculateLazyConst(): IrExpression? {
         if (this !is IrSimpleFunction) return null
         val expression = this.correspondingPropertySymbol?.owner?.backingField?.initializer?.expression
-        return expression?.apply { callStack.addInstruction(CompoundInstruction(this)) }
+        return expression?.apply { callStack.pushInstruction(CompoundInstruction(this)) }
     }
 }

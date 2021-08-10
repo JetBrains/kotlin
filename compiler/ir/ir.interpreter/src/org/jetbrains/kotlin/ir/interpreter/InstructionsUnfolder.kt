@@ -25,8 +25,8 @@ internal fun IrExpression.handleAndDropResult(callStack: CallStack, dropOnlyUnit
     val dropResult = fun() {
         if (!dropOnlyUnit && !this.type.isUnit() || callStack.peekState().isUnit()) callStack.popState()
     }
-    callStack.addInstruction(CustomInstruction(dropResult))
-    callStack.addInstruction(CompoundInstruction(this))
+    callStack.pushInstruction(CustomInstruction(dropResult))
+    callStack.pushInstruction(CompoundInstruction(this))
 }
 
 internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEnvironment) {
@@ -45,11 +45,11 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrBlock -> unfoldBlock(element, callStack)
         is IrReturn -> unfoldReturn(element, callStack)
         is IrSetField -> unfoldSetField(element, callStack)
-        is IrGetField -> callStack.addInstruction(SimpleInstruction(element))
+        is IrGetField -> callStack.pushInstruction(SimpleInstruction(element))
         is IrGetValue -> unfoldGetValue(element, environment)
         is IrGetObjectValue -> unfoldGetObjectValue(element, environment)
         is IrGetEnumValue -> unfoldGetEnumValue(element, environment)
-        is IrConst<*> -> callStack.addInstruction(SimpleInstruction(element))
+        is IrConst<*> -> callStack.pushInstruction(SimpleInstruction(element))
         is IrVariable -> unfoldVariable(element, callStack)
         is IrSetValue -> unfoldSetValue(element, callStack)
         is IrTypeOperatorCall -> unfoldTypeOperatorCall(element, callStack)
@@ -60,12 +60,12 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrBreak -> unfoldBreak(element, callStack)
         is IrContinue -> unfoldContinue(element, callStack)
         is IrVararg -> unfoldVararg(element, callStack)
-        is IrSpreadElement -> callStack.addInstruction(CompoundInstruction(element.expression))
+        is IrSpreadElement -> callStack.pushInstruction(CompoundInstruction(element.expression))
         is IrTry -> unfoldTry(element, callStack)
         is IrCatch -> unfoldCatch(element, callStack)
         is IrThrow -> unfoldThrow(element, callStack)
         is IrStringConcatenation -> unfoldStringConcatenation(element, environment)
-        is IrFunctionExpression -> callStack.addInstruction(SimpleInstruction(element))
+        is IrFunctionExpression -> callStack.pushInstruction(SimpleInstruction(element))
         is IrFunctionReference -> unfoldFunctionReference(element, callStack)
         is IrPropertyReference -> unfoldPropertyReference(element, callStack)
         is IrClassReference -> unfoldClassReference(element, callStack)
@@ -83,7 +83,7 @@ private fun unfoldFunction(function: IrSimpleFunction, environment: IrInterprete
     }
     // SimpleInstruction with function is added in IrCall
     // It will serve as endpoint for all possible calls, there we drop frame and copy result to new one
-    function.body?.let { environment.callStack.addInstruction(CompoundInstruction(it)) }
+    function.body?.let { environment.callStack.pushInstruction(CompoundInstruction(it)) }
         ?: throw InterpreterError("Ir function must be with body")
 }
 
@@ -92,18 +92,18 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
         "kotlin.Enum.<init>", "kotlin.Throwable.<init>" -> {
             val irClass = constructor.parentAsClass
             val receiverSymbol = irClass.thisReceiver!!.symbol
-            val receiverState = callStack.getState(receiverSymbol)
+            val receiverState = callStack.loadState(receiverSymbol)
 
             irClass.declarations.filterIsInstance<IrProperty>().forEach { property ->
                 val parameter = constructor.valueParameters.singleOrNull { it.name == property.name }
-                val state = parameter?.let { callStack.getState(it.symbol) } ?: Primitive.nullStateOfType(property.getter!!.returnType)
+                val state = parameter?.let { callStack.loadState(it.symbol) } ?: Primitive.nullStateOfType(property.getter!!.returnType)
                 receiverState.setField(property.symbol, state)
             }
         }
         else -> {
             // SimpleInstruction with function is added in constructor call
             // It will serve as endpoint for all possible constructor calls, there we drop frame and return object
-            callStack.addInstruction(CompoundInstruction(constructor.body!!))
+            callStack.pushInstruction(CompoundInstruction(constructor.body!!))
         }
     }
 }
@@ -114,7 +114,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
     if (hasDefaults) {
         environment.getCachedFunction(expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall)?.let {
             val callToDefault = it.owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
-            callStack.addInstruction(CompoundInstruction(callToDefault))
+            callStack.pushInstruction(CompoundInstruction(callToDefault))
             return
         }
 
@@ -140,7 +140,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
                 actualParameters[index] = if (copiedParameter.defaultValue != null || copiedParameter.isVararg) {
                     copiedParameter.type = copiedParameter.type.makeNullable() // make nullable type to keep consistency; parameter can be null if it is missing
                     val irGetParameter = copiedParameter.createGetValue()
-                    // if parameter is vararg and it is missing then create constructor call for empty array
+                    // if parameter is vararg and it is missing, then create constructor call for empty array
                     val defaultInitializer = originalParameter.getDefaultWithActualParameters(this@apply, actualParameters)
                         ?: environment.irBuiltIns.emptyArrayConstructor(expression.getVarargType(index)!!.getTypeIfReified(callStack))
 
@@ -162,14 +162,14 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         val callToDefault = environment.setCachedFunction(
             expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall, newFunction = defaultFun.symbol
         ).owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
-        callStack.addInstruction(CompoundInstruction(callToDefault))
+        callStack.pushInstruction(CompoundInstruction(callToDefault))
     } else {
         val irFunction = expression.symbol.owner
-        callStack.addInstruction(SimpleInstruction(expression))
+        callStack.pushInstruction(SimpleInstruction(expression))
 
         fun IrValueParameter.schedule(arg: IrExpression?) {
-            callStack.addInstruction(SimpleInstruction(this))
-            callStack.addInstruction(CompoundInstruction(arg))
+            callStack.pushInstruction(SimpleInstruction(this))
+            callStack.pushInstruction(CompoundInstruction(arg))
         }
         (expression.valueArgumentsCount - 1 downTo 0).forEach { irFunction.valueParameters[it].schedule(expression.getValueArgument(it)) }
         expression.extensionReceiver?.let { irFunction.extensionReceiverParameter!!.schedule(it) }
@@ -183,25 +183,25 @@ private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceIni
 
     toInitialize.reversed().forEach {
         when {
-            it is IrAnonymousInitializer -> callStack.addInstruction(CompoundInstruction(it.body))
-            it is IrProperty && it.backingField?.initializer?.expression != null -> callStack.addInstruction(CompoundInstruction(it.backingField))
+            it is IrAnonymousInitializer -> callStack.pushInstruction(CompoundInstruction(it.body))
+            it is IrProperty && it.backingField?.initializer?.expression != null -> callStack.pushInstruction(CompoundInstruction(it.backingField))
         }
     }
 }
 
 private fun unfoldField(field: IrField, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(field))
-    callStack.addInstruction(CompoundInstruction(field.initializer?.expression))
+    callStack.pushInstruction(SimpleInstruction(field))
+    callStack.pushInstruction(CompoundInstruction(field.initializer?.expression))
 }
 
 private fun unfoldBody(body: IrBody, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(body))
+    callStack.pushInstruction(SimpleInstruction(body))
     unfoldStatements(body.statements, callStack)
 }
 
 private fun unfoldBlock(block: IrBlock, callStack: CallStack) {
     callStack.newSubFrame(block)
-    callStack.addInstruction(SimpleInstruction(block))
+    callStack.pushInstruction(SimpleInstruction(block))
     unfoldStatements(block.statements, callStack)
 }
 
@@ -214,24 +214,24 @@ private fun unfoldStatements(statements: List<IrStatement>, callStack: CallStack
             is IrFunction -> if (!statement.isLocal) TODO("Only local functions are supported")
             is IrExpression ->
                 when {
-                    i.isLastIndex() -> callStack.addInstruction(CompoundInstruction(statement))
+                    i.isLastIndex() -> callStack.pushInstruction(CompoundInstruction(statement))
                     else -> statement.handleAndDropResult(callStack, dropOnlyUnit = true)
                 }
-            else -> callStack.addInstruction(CompoundInstruction(statement))
+            else -> callStack.pushInstruction(CompoundInstruction(statement))
         }
     }
 }
 
 private fun unfoldReturn(expression: IrReturn, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(expression))
-    callStack.addInstruction(CompoundInstruction(expression.value))
+    callStack.pushInstruction(SimpleInstruction(expression))
+    callStack.pushInstruction(CompoundInstruction(expression.value))
 }
 
 private fun unfoldSetField(expression: IrSetField, callStack: CallStack) {
     verify(!expression.accessesTopLevelOrObjectField()) { "Cannot interpret set method on top level properties" }
 
-    callStack.addInstruction(SimpleInstruction(expression))
-    callStack.addInstruction(CompoundInstruction(expression.value))
+    callStack.pushInstruction(SimpleInstruction(expression))
+    callStack.pushInstruction(CompoundInstruction(expression.value))
 }
 
 private fun unfoldGetValue(expression: IrGetValue, environment: IrInterpreterEnvironment) {
@@ -242,7 +242,7 @@ private fun unfoldGetValue(expression: IrGetValue, environment: IrInterpreterEnv
         val irGetObject = expectedClass.createGetObject()
         return unfoldGetObjectValue(irGetObject, environment)
     }
-    environment.callStack.pushState(environment.callStack.getState(expression.symbol))
+    environment.callStack.pushState(environment.callStack.loadState(expression.symbol))
 }
 
 private fun unfoldGetObjectValue(expression: IrGetObjectValue, environment: IrInterpreterEnvironment) {
@@ -250,64 +250,64 @@ private fun unfoldGetObjectValue(expression: IrGetObjectValue, environment: IrIn
     val objectClass = expression.symbol.owner
     environment.mapOfObjects[objectClass.symbol]?.let { return callStack.pushState(it) }
 
-    callStack.addInstruction(SimpleInstruction(expression))
+    callStack.pushInstruction(SimpleInstruction(expression))
 }
 
 private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
     environment.mapOfEnums[expression.symbol]?.let { return callStack.pushState(it) }
 
-    callStack.addInstruction(SimpleInstruction(expression))
+    callStack.pushInstruction(SimpleInstruction(expression))
     val enumEntry = expression.symbol.owner
     val enumClass = enumEntry.symbol.owner.parentAsClass
     enumClass.declarations.filterIsInstance<IrEnumEntry>().forEach {
-        callStack.addInstruction(SimpleInstruction(it))
+        callStack.pushInstruction(SimpleInstruction(it))
     }
 }
 
 private fun unfoldVariable(variable: IrVariable, callStack: CallStack) {
     when (variable.initializer) {
-        null -> callStack.addVariable(variable.symbol, null)
+        null -> callStack.storeState(variable.symbol, null)
         else -> {
-            callStack.addInstruction(SimpleInstruction(variable))
-            callStack.addInstruction(CompoundInstruction(variable.initializer!!))
+            callStack.pushInstruction(SimpleInstruction(variable))
+            callStack.pushInstruction(CompoundInstruction(variable.initializer!!))
         }
     }
 }
 
 private fun unfoldSetValue(expression: IrSetValue, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(expression))
-    callStack.addInstruction(CompoundInstruction(expression.value))
+    callStack.pushInstruction(SimpleInstruction(expression))
+    callStack.pushInstruction(CompoundInstruction(expression.value))
 }
 
 private fun unfoldTypeOperatorCall(element: IrTypeOperatorCall, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(element))
-    callStack.addInstruction(CompoundInstruction(element.argument))
+    callStack.pushInstruction(SimpleInstruction(element))
+    callStack.pushInstruction(CompoundInstruction(element.argument))
 }
 
 private fun unfoldBranch(branch: IrBranch, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(branch))
-    callStack.addInstruction(CompoundInstruction(branch.condition))
+    callStack.pushInstruction(SimpleInstruction(branch))
+    callStack.pushInstruction(CompoundInstruction(branch.condition))
 }
 
 private fun unfoldWhileLoop(loop: IrWhileLoop, callStack: CallStack) {
     callStack.newSubFrame(loop)
-    callStack.addInstruction(SimpleInstruction(loop))
-    callStack.addInstruction(CompoundInstruction(loop.condition))
+    callStack.pushInstruction(SimpleInstruction(loop))
+    callStack.pushInstruction(CompoundInstruction(loop.condition))
 }
 
 private fun unfoldDoWhileLoop(loop: IrDoWhileLoop, callStack: CallStack) {
     callStack.newSubFrame(loop)
-    callStack.addInstruction(SimpleInstruction(loop))
-    callStack.addInstruction(CompoundInstruction(loop.condition))
-    callStack.addInstruction(CompoundInstruction(loop.body))
+    callStack.pushInstruction(SimpleInstruction(loop))
+    callStack.pushInstruction(CompoundInstruction(loop.condition))
+    callStack.pushInstruction(CompoundInstruction(loop.body))
 }
 
 private fun unfoldWhen(element: IrWhen, callStack: CallStack) {
     // new sub frame to drop it after
     callStack.newSubFrame(element)
-    callStack.addInstruction(SimpleInstruction(element))
-    element.branches.reversed().forEach { callStack.addInstruction(CompoundInstruction(it)) }
+    callStack.pushInstruction(SimpleInstruction(element))
+    element.branches.reversed().forEach { callStack.pushInstruction(CompoundInstruction(it)) }
 }
 
 private fun unfoldContinue(element: IrContinue, callStack: CallStack) {
@@ -319,14 +319,14 @@ private fun unfoldBreak(element: IrBreak, callStack: CallStack) {
 }
 
 private fun unfoldVararg(element: IrVararg, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(element))
-    element.elements.reversed().forEach { callStack.addInstruction(CompoundInstruction(it)) }
+    callStack.pushInstruction(SimpleInstruction(element))
+    element.elements.reversed().forEach { callStack.pushInstruction(CompoundInstruction(it)) }
 }
 
 private fun unfoldTry(element: IrTry, callStack: CallStack) {
     callStack.newSubFrame(element)
-    callStack.addInstruction(SimpleInstruction(element))
-    callStack.addInstruction(CompoundInstruction(element.tryResult))
+    callStack.pushInstruction(SimpleInstruction(element))
+    callStack.pushInstruction(CompoundInstruction(element.tryResult))
 }
 
 private fun unfoldCatch(element: IrCatch, callStack: CallStack) {
@@ -336,20 +336,20 @@ private fun unfoldCatch(element: IrCatch, callStack: CallStack) {
         val frameOwner = callStack.currentFrameOwner as IrTry
         callStack.dropSubFrame() // drop other catch blocks
         callStack.newSubFrame(element) // new frame with IrTry instruction to interpret finally block at the end
-        callStack.addVariable(element.catchParameter.symbol, exceptionState)
-        callStack.addInstruction(SimpleInstruction(frameOwner))
-        callStack.addInstruction(CompoundInstruction(element.result))
+        callStack.storeState(element.catchParameter.symbol, exceptionState)
+        callStack.pushInstruction(SimpleInstruction(frameOwner))
+        callStack.pushInstruction(CompoundInstruction(element.result))
     }
 }
 
 private fun unfoldThrow(expression: IrThrow, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(expression))
-    callStack.addInstruction(CompoundInstruction(expression.value))
+    callStack.pushInstruction(SimpleInstruction(expression))
+    callStack.pushInstruction(CompoundInstruction(expression.value))
 }
 
 private fun unfoldStringConcatenation(expression: IrStringConcatenation, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
-    callStack.addInstruction(SimpleInstruction(expression))
+    callStack.pushInstruction(SimpleInstruction(expression))
 
     // this callback is used to check the need for an explicit toString call
     val explicitToStringCheck = fun() {
@@ -368,52 +368,52 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
                     return callStack.pushState(environment.convertToState(result, environment.irBuiltIns.stringType))
                 }
                 val toStringCall = state.createToStringIrCall()
-                callStack.addInstruction(SimpleInstruction(toStringCall))
+                callStack.pushInstruction(SimpleInstruction(toStringCall))
                 callStack.pushState(state)
             }
         }
     }
     expression.arguments.reversed().forEach {
-        callStack.addInstruction(CustomInstruction(explicitToStringCheck))
-        callStack.addInstruction(CompoundInstruction(it))
+        callStack.pushInstruction(CustomInstruction(explicitToStringCheck))
+        callStack.pushInstruction(CompoundInstruction(it))
     }
 }
 
 private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
     when (element.origin) {
         IrStatementOrigin.DESTRUCTURING_DECLARATION, IrStatementOrigin.DO_WHILE_LOOP, null -> // is null for body of do while loop
-            element.statements.reversed().forEach { callStack.addInstruction(CompoundInstruction(it)) }
+            element.statements.reversed().forEach { callStack.pushInstruction(CompoundInstruction(it)) }
         else -> TODO("${element.origin} not implemented")
     }
 }
 
 private fun unfoldFunctionReference(reference: IrFunctionReference, callStack: CallStack) {
     val function = reference.symbol.owner
-    callStack.addInstruction(SimpleInstruction(reference))
+    callStack.pushInstruction(SimpleInstruction(reference))
 
-    reference.dispatchReceiver?.let { callStack.addInstruction(SimpleInstruction(function.dispatchReceiverParameter!!)) }
-    reference.extensionReceiver?.let { callStack.addInstruction(SimpleInstruction(function.extensionReceiverParameter!!)) }
+    reference.dispatchReceiver?.let { callStack.pushInstruction(SimpleInstruction(function.dispatchReceiverParameter!!)) }
+    reference.extensionReceiver?.let { callStack.pushInstruction(SimpleInstruction(function.extensionReceiverParameter!!)) }
 
-    reference.extensionReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
-    reference.dispatchReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
+    reference.extensionReceiver?.let { callStack.pushInstruction(CompoundInstruction(it)) }
+    reference.dispatchReceiver?.let { callStack.pushInstruction(CompoundInstruction(it)) }
 }
 
 private fun unfoldPropertyReference(propertyReference: IrPropertyReference, callStack: CallStack) {
     val getter = propertyReference.getter!!.owner
-    callStack.addInstruction(SimpleInstruction(propertyReference))
+    callStack.pushInstruction(SimpleInstruction(propertyReference))
 
-    propertyReference.dispatchReceiver?.let { callStack.addInstruction(SimpleInstruction(getter.dispatchReceiverParameter!!)) }
-    propertyReference.extensionReceiver?.let { callStack.addInstruction(SimpleInstruction(getter.extensionReceiverParameter!!)) }
+    propertyReference.dispatchReceiver?.let { callStack.pushInstruction(SimpleInstruction(getter.dispatchReceiverParameter!!)) }
+    propertyReference.extensionReceiver?.let { callStack.pushInstruction(SimpleInstruction(getter.extensionReceiverParameter!!)) }
 
-    propertyReference.extensionReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
-    propertyReference.dispatchReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
+    propertyReference.extensionReceiver?.let { callStack.pushInstruction(CompoundInstruction(it)) }
+    propertyReference.dispatchReceiver?.let { callStack.pushInstruction(CompoundInstruction(it)) }
 }
 
 private fun unfoldClassReference(classReference: IrClassReference, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(classReference))
+    callStack.pushInstruction(SimpleInstruction(classReference))
 }
 
 private fun unfoldGetClass(element: IrGetClass, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(element))
-    callStack.addInstruction(CompoundInstruction(element.argument))
+    callStack.pushInstruction(SimpleInstruction(element))
+    callStack.pushInstruction(CompoundInstruction(element.argument))
 }
