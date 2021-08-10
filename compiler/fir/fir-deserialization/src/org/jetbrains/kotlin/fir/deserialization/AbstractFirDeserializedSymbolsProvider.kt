@@ -67,7 +67,7 @@ abstract class AbstractFirDeserializedSymbolsProvider(
 
     private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
     private val typeAliasCache = session.firCachesFactory.createCache(::findAndDeserializeTypeAlias)
-    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, FirDeserializationContext?> =
+    protected val classCache: FirCache<ClassId, FirRegularClassSymbol?, FirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
             createValue = { classId, context -> findAndDeserializeClass(classId, context) },
             postCompute = { _, symbol, postProcessor ->
@@ -154,6 +154,9 @@ abstract class AbstractFirDeserializedSymbolsProvider(
 
     private fun findAndDeserializeClassViaParent(classId: ClassId): FirRegularClassSymbol? {
         val outerClassId = classId.outerClassId ?: return null
+        //This will cause cyclic cache request that is highly observable in IDE (but not in the compiler - but possible SOE bug also)
+        //To avoid it in IDE there is special implementation that forces load parent class before any nested class request:
+        //[org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionFactory.KotlinDeserializedJvmSymbolsProviderForIde]
         getClass(outerClassId) ?: return null
         return classCache.getValueIfComputed(classId)
     }
@@ -180,7 +183,7 @@ abstract class AbstractFirDeserializedSymbolsProvider(
         return packagePartsCache.getValue(packageFqName)
     }
 
-    private fun getClass(
+    protected open fun getClass(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
     ): FirRegularClassSymbol? {

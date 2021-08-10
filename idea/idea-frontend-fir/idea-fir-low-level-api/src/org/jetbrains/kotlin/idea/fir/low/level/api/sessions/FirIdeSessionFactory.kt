@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
+import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManage
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeFirPhaseManager
@@ -43,8 +46,12 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirThreadSafeSymbolProviderWrapper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
@@ -202,7 +209,7 @@ internal object FirIdeSessionFactory {
                 buildList {
                     add(
                         FirThreadSafeSymbolProviderWrapper(
-                            KotlinDeserializedJvmSymbolsProvider(
+                            KotlinDeserializedJvmSymbolsProviderForIde(
                                 this@session,
                                 moduleDataProvider,
                                 kotlinScopeProvider,
@@ -224,6 +231,44 @@ internal object FirIdeSessionFactory {
         }
     }
 
+    /**
+     * Workaround of SOE for loading classes that loads via parent.
+     * It is not observable in compiler but it is in IDE
+     * Remove this when cyclic cache request will be fixed in the compiler provider
+     */
+    private class KotlinDeserializedJvmSymbolsProviderForIde(
+        session: FirSession,
+        moduleDataProvider: ModuleDataProvider,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        packagePartProvider: PackagePartProvider,
+        kotlinClassFinder: KotlinClassFinder,
+        javaSymbolProvider: JavaSymbolProvider,
+        javaClassFinder: JavaClassFinder
+    ) : KotlinDeserializedJvmSymbolsProvider(
+        session, moduleDataProvider, kotlinScopeProvider, packagePartProvider, kotlinClassFinder,
+        javaSymbolProvider, javaClassFinder
+    ) {
+        override fun getClass(
+            classId: ClassId,
+            parentContext: FirDeserializationContext?
+        ): FirRegularClassSymbol? {
+            if (parentContext !== null) {
+                return super.getClass(classId, parentContext)
+            }
+            val computedClass = classCache.getValueIfComputed(classId)
+            if (computedClass != null) {
+                return computedClass
+            }
+
+            var parentClassId = classId
+            while (true) {
+                parentClassId = parentClassId.outerClassId ?: break
+            }
+
+            classCache.getValue(parentClassId, parentContext)
+            return classCache.getValue(classId, parentContext)
+        }
+    }
 
     fun createBuiltinsAndCloneableSession(
         project: Project,

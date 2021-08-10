@@ -36,7 +36,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 @ThreadSafeMutableState
-class KotlinDeserializedJvmSymbolsProvider(
+open class KotlinDeserializedJvmSymbolsProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
