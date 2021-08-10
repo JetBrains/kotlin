@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
-    private val innerStack = mutableListOf(SubFrame(subFrameOwner))
+    private val innerStack = ArrayDeque<SubFrame>().apply { add(SubFrame(subFrameOwner)) }
     private var currentInstruction: Instruction? = null
 
     private val currentFrame get() = innerStack.last()
@@ -32,8 +32,9 @@ internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
     }
 
     fun removeSubFrame() {
-        currentFrame.peekState()?.let { if (innerStack.size > 1) innerStack[innerStack.size - 2].pushState(it) }
+        val state = currentFrame.peekState()
         removeSubFrameWithoutDataPropagation()
+        if (!hasNoSubFrames() && state != null) currentFrame.pushState(state)
     }
 
     fun removeSubFrameWithoutDataPropagation() {
@@ -68,19 +69,32 @@ internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
         currentFrame.addVariable(symbol, variable)
     }
 
-    fun getState(symbol: IrSymbol): State {
-        return (innerStack.lastIndex downTo 0).firstNotNullOfOrNull { innerStack[it].getState(symbol) }
-            ?: throw InterpreterError("$symbol not found") // TODO better message
-    }
-
-    fun setState(symbol: IrSymbol, newState: State) {
+    private inline fun forEachSubFrame(block: (SubFrame) -> Unit) {
+        // TODO speed up reverse iteration or do it forward
         (innerStack.lastIndex downTo 0).forEach {
-            if (innerStack[it].containsVariable(symbol))
-                return innerStack[it].setState(symbol, newState)
+            block(innerStack[it])
         }
     }
 
-    fun containsVariable(symbol: IrSymbol): Boolean = (innerStack.lastIndex downTo 0).any { innerStack[it].containsVariable(symbol) }
+    fun getState(symbol: IrSymbol): State {
+        forEachSubFrame {
+            it.getState(symbol)?.let { state -> return state }
+        }
+        throw InterpreterError("$symbol not found") // TODO better message
+    }
+
+    fun setState(symbol: IrSymbol, newState: State) {
+        forEachSubFrame {
+            if (it.containsVariable(symbol)) return it.setState(symbol, newState)
+        }
+    }
+
+    fun containsVariable(symbol: IrSymbol): Boolean {
+        forEachSubFrame {
+            if (it.containsVariable(symbol)) return true
+        }
+        return false
+    }
 
     fun copyMemoryInto(newFrame: Frame) {
         this.getAll().forEach { (symbol, variable) -> if (!newFrame.containsVariable(symbol)) newFrame.addVariable(symbol, variable) }
@@ -119,13 +133,13 @@ internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
 }
 
 private class SubFrame(val owner: IrElement) {
-    private val instructions = mutableListOf<Instruction>()
+    private val instructions = ArrayDeque<Instruction>()
     private val dataStack = DataStack()
     private val memory = mutableMapOf<IrSymbol, Variable>()
 
     // Methods to work with instruction
     fun isEmpty() = instructions.isEmpty()
-    fun pushInstruction(instruction: Instruction) = instructions.add(0, instruction)
+    fun pushInstruction(instruction: Instruction) = instructions.addFirst(instruction)
     fun popInstruction(): Instruction = instructions.removeFirst()
     fun dropInstructions() = instructions.lastOrNull()?.apply { instructions.clear() }
 
@@ -153,7 +167,7 @@ private class SubFrame(val owner: IrElement) {
 }
 
 private class DataStack {
-    private val stack = mutableListOf<State>()
+    private val stack = ArrayDeque<State>()
 
     fun push(state: State) {
         stack.add(state)
