@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
-import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -13,11 +12,12 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import java.io.File
 
-class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
@@ -51,9 +51,12 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
     }
 
     private fun runFirTestAndGeneratedTestData(testData: File, firTestData: File) {
-        firTestData.writeText(clearTextFromDiagnosticMarkup(testData.readText()))
-        val test = object : AbstractFirDiagnosticTest() {}
+        firTestData.writeText(testData.preprocessSource())
+        val test = correspondingFirTest()
         test.initTestInfo(testServices.testInfo.copy(className = "${testServices.testInfo.className}_fir_anonymous"))
         test.runTest(firTestData.absolutePath)
     }
+
+    protected open fun correspondingFirTest(): AbstractKotlinCompilerTest =
+        object : AbstractFirDiagnosticTest() {}
 }
