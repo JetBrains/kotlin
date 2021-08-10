@@ -1366,6 +1366,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/checkStaticObjectClassIsPresent.kt");
             }
 
+            @TestMetadata("defaultAfterCapturing.kt")
+            public void testDefaultAfterCapturing() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultAfterCapturing.kt");
+            }
+
             @TestMetadata("defaultCallInDefaultLambda.kt")
             public void testDefaultCallInDefaultLambda() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultCallInDefaultLambda.kt");
@@ -1449,6 +1454,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
             @TestMetadata("receiverClashInClass2.kt")
             public void testReceiverClashInClass2() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClashInClass2.kt");
+            }
+
+            @TestMetadata("reordering.kt")
+            public void testReordering() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/reordering.kt");
             }
 
             @TestMetadata("simple.kt")
@@ -1551,6 +1561,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
                 @TestMetadata("constuctorReference.kt")
                 public void testConstuctorReference() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/constuctorReference.kt");
+                }
+
+                @TestMetadata("defaultAfterBoundReference.kt")
+                public void testDefaultAfterBoundReference() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/defaultAfterBoundReference.kt");
                 }
 
                 @TestMetadata("differentInvokeSignature.kt")
