@@ -6,7 +6,7 @@ FILE: UastPatterns.kt
     public abstract interface UReferenceExpression : R|UExpression| {
     }
     public final fun injectionHostOrReferenceExpression(): R|UExpressionPattern.Capture<UExpression>| {
-        ^injectionHostOrReferenceExpression R|/uExpression|().<CS errors: /UExpressionPattern.Capture.filter>#(<L> = filter@fun <anonymous>(it: R|UExpression|): R|kotlin/Boolean| <inline=NoInline>  {
+        ^injectionHostOrReferenceExpression R|/uExpression|().R|SubstitutionOverride</UExpressionPattern.Capture.filter: R|UExpressionPattern.Capture<UExpression>|>|(<L> = filter@fun <anonymous>(it: R|UExpression|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ (R|<local>/it| is R|UReferenceExpression|)
         }
         )
@@ -32,9 +32,9 @@ FILE: UastPatterns.kt
             super<R|UElementPattern<T, Self>|>(R|<local>/clazz|)
         }
 
-        public open class Capture<T : R|UExpression|> : R|UExpressionPattern<T, ObjectPattern.Capture<T>>| {
+        public open class Capture<T : R|UExpression|> : R|UExpressionPattern<T, UExpressionPattern.Capture<T>>| {
             public constructor<T : R|UExpression|>(clazz: R|java/lang/Class<T>|): R|UExpressionPattern.Capture<T>| {
-                super<R|UExpressionPattern<T, ObjectPattern.Capture<T>>|>(R|<local>/clazz|)
+                super<R|UExpressionPattern<T, UExpressionPattern.Capture<T>>|>(R|<local>/clazz|)
             }
 
         }

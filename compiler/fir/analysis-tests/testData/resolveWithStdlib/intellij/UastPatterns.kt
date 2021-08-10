@@ -23,7 +23,7 @@ interface UExpression : UElement
 interface UReferenceExpression : UExpression
 
 fun injectionHostOrReferenceExpression(): UExpressionPattern.Capture<UExpression> =
-    <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>uExpression().filter { it is UReferenceExpression }<!>
+    uExpression().filter { it is UReferenceExpression }
 
 fun uExpression(): UExpressionPattern.Capture<UExpression> = expressionCapture(UExpression::class.java)
 
@@ -34,5 +34,5 @@ open class UElementPattern<T : UElement, Self : UElementPattern<T, Self>>(clazz:
 }
 
 open class UExpressionPattern<T : UExpression, Self : UExpressionPattern<T, Self>>(clazz: Class<T>) : UElementPattern<T, Self>(clazz) {
-    open class Capture<T : UExpression>(clazz: Class<T>) : UExpressionPattern<T, <!UPPER_BOUND_VIOLATED!>Capture<T><!>>(<!ARGUMENT_TYPE_MISMATCH!>clazz<!>)
+    open class Capture<T : UExpression>(clazz: Class<T>) : UExpressionPattern<T, Capture<T>>(clazz)
 }
