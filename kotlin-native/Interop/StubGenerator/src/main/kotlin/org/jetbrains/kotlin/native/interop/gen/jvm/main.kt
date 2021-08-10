@@ -488,14 +488,18 @@ internal fun buildNativeLibrary(
         addAll(when (language) {
             Language.C -> emptyList()
             Language.CPP -> emptyList()
-            Language.OBJECTIVE_C -> {
+            Language.OBJECTIVE_C -> listOf(
                 // "Objective-C" within interop means "Objective-C with ARC":
-                listOf("-fobjc-arc")
+                "-fobjc-arc",
                 // Using this flag here has two effects:
                 // 1. The headers are parsed with ARC enabled, thus the API is visible correctly.
                 // 2. The generated Objective-C stubs are compiled with ARC enabled, so reference counting
                 // calls are inserted automatically.
-            }
+
+                // Add workaround for `_Nullable_result` attribute. Clang 8 doesn't know about it,
+                // so we replace it with a similar and familiar `_Nullable`.
+                "-D_Nullable_result=_Nullable"
+            )
         })
     }
 
