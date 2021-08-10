@@ -33,11 +33,11 @@ fun test2(a: A) {
     @kotlin.internal.HidesMembers
     fun A.forEach(i: Int) = ""
 
-    a.forEach() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    a.forEach() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     a.forEach(1)
 
     with(a) {
-        forEach() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        forEach() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
         forEach(1)
     }
 }

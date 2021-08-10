@@ -29,7 +29,7 @@ fun test() {
     oldAndNew %= 1
 
     val onlyOld = OnlyOld()
-    onlyOld <!INAPPLICABLE_CANDIDATE!>%=<!> 1
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOld %= 1<!>
 
     val onlyNew = OnlyNew()
     onlyNew %= 1

@@ -241,6 +241,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val message: String
     }
 
+    abstract class UnresolvedReferenceWrongReceiver : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UnresolvedReferenceWrongReceiver::class
+        abstract val candidates: List<KtSymbol>
+    }
+
     abstract class CreatingAnInstanceOfAbstractClass : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = CreatingAnInstanceOfAbstractClass::class
     }

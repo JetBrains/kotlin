@@ -141,9 +141,9 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
-        @TestMetadata("checkType.kt")
-        public void testCheckType() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/checkType.kt");
+        @TestMetadata("checkTypeTest.kt")
+        public void testCheckTypeTest() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/checkTypeTest.kt");
         }
 
         @Test

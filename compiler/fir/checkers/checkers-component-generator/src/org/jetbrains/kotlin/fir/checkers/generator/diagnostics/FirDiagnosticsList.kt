@@ -111,6 +111,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("reference")
             parameter<String>("message")
         }
+
+        val UNRESOLVED_REFERENCE_WRONG_RECEIVER by error<PsiElement> {
+            parameter<Collection<Symbol>>("candidates")
+        }
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {

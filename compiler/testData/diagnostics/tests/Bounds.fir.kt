@@ -34,7 +34,7 @@ fun test() {
     bar<Int>()
     bar<<!UPPER_BOUND_VIOLATED!>Double?<!>>()
     bar<<!UPPER_BOUND_VIOLATED!>Double<!>>()
-    1.<!INAPPLICABLE_CANDIDATE!>buzz<!><Double>()
+    1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>buzz<!><Double>()
 }
 
 fun <T : Any> foo() {}

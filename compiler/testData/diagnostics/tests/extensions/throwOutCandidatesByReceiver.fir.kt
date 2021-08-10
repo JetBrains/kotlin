@@ -6,19 +6,19 @@ package bar
 fun <R> List<R>.a() {}
 
 fun test1(i: Int?) {
-    1.<!INAPPLICABLE_CANDIDATE!>a<!>()
-    i.<!INAPPLICABLE_CANDIDATE!>a<!>()
+    1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
+    i.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
 }
 
 fun <R> test2(c: Collection<R>) {
-    c.<!INAPPLICABLE_CANDIDATE!>a<!>()
+    c.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
 }
 
 fun Int.foo() {}
 
 fun test3(s: String?) {
-    "".<!INAPPLICABLE_CANDIDATE!>foo<!>()
-    s.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
+    s.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
     "".foo(<!TOO_MANY_ARGUMENTS!>1<!>)
     s.foo(<!TOO_MANY_ARGUMENTS!>"a"<!>)
 }
@@ -27,7 +27,7 @@ interface A
 fun <T: A> T.c() {}
 
 fun test4() {
-    1.<!INAPPLICABLE_CANDIDATE!>c<!>()
+    1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>c<!>()
 }
 
 
@@ -40,16 +40,16 @@ fun test5() {
 fun <R: Any> R?.sure() : R = this!!
 
 fun <T> test6(l: List<T>?) {
-    l.<!INAPPLICABLE_CANDIDATE!>sure<!><T>()
+    l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>sure<!><T>()
 }
 
 
 fun List<String>.b() {}
 
 fun test7(l: List<String?>) {
-    l.<!INAPPLICABLE_CANDIDATE!>b<!>()
+    l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>b<!>()
 }
 
 fun test8(l: List<Any>?) {
-    l.<!INAPPLICABLE_CANDIDATE!>b<!>()
+    l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>b<!>()
 }

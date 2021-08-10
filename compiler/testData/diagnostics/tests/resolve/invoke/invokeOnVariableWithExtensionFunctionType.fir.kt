@@ -16,7 +16,7 @@ fun test(a: A, b: B) {
 
         b.(foo)()
 
-        <!ARGUMENT_TYPE_MISMATCH!>(b.<!INAPPLICABLE_CANDIDATE!>foo<!>)()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>(b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>)()<!>
 
         foo(b)
         (foo)(b)

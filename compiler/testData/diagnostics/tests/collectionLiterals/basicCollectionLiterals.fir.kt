@@ -19,5 +19,5 @@ fun check() {
     val f: IntArray = [1]
     [f] checkType { _<Array<IntArray>>() }
 
-    [1, ""] checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Any>>() }
+    [1, ""] checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Array<Any>>() }
 }

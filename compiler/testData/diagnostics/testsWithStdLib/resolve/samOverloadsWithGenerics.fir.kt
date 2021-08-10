@@ -19,6 +19,6 @@ class Foo {
 
 // FILE: 1.kt
 fun test() {
-    Foo().<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Int>() }
-    Foo().<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<String>() }
+    Foo().<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {} <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Int>() }
+    Foo().<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!> {} <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<String>() }
 }

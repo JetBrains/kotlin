@@ -35,7 +35,7 @@ fun test() {
     otherGeneric(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 
     val r = either(1, "")
-    r checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }
+    r checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any>() }
 
     use(a, b, c, d, e, f, g, r)
 }
@@ -60,7 +60,7 @@ fun <T> lowerBound(t: T, l : Cov<T>): T = throw Exception("$t $l")
 
 fun testLowerBound(cov: Cov<String>, covN: Cov<Number>) {
     val r = lowerBound(1, cov)
-    r checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }
+    r checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any>() }
 
     val n = lowerBound(1, covN)
     n checkType { _<Number>() }

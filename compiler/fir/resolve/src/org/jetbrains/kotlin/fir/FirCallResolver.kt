@@ -705,6 +705,7 @@ class FirCallResolver(
                 val candidate = candidates.single()
                 val diagnostic = when (applicability) {
                     CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate.symbol)
+                    CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate.symbol))
                     CandidateApplicability.NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate.symbol as FirRegularClassSymbol)
                     else -> ConeInapplicableCandidateError(applicability, candidate)
                 }

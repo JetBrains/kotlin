@@ -43,7 +43,7 @@ fun foo(x: List<String>, y: Throwable, z: A3) {
     x.stream()
     java.util.ArrayList<String>().stream()
 
-    y.fillInStackTrace() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+    y.fillInStackTrace() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
 
     HashMap<String, Int>().getOrDefault(<!ARGUMENT_TYPE_MISMATCH!>Any()<!>, null)
 

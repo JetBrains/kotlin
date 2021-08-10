@@ -15,5 +15,5 @@ class Derived : BaseDerived2<Int>() {
 
 fun foo() {
     Derived().foo() checkType { _<Outer<Int, String>.Inner<Char>>() }
-    Derived().baz() <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Map<Char, Int>>() }
+    Derived().baz() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Map<Char, Int>>() }
 }

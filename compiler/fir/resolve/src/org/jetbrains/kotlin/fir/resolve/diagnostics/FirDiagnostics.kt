@@ -63,6 +63,17 @@ class ConeHiddenCandidateError(
     override val reason: String get() = "HIDDEN: ${describeSymbol(candidateSymbol)} is invisible"
 }
 
+class ConeInapplicableWrongReceiver(val candidates: Collection<FirBasedSymbol<*>>) : ConeDiagnostic() {
+    override val reason: String
+        get() = "None of the following candidates is applicable because of receiver type mismatch: ${
+            candidates.map {
+                describeSymbol(
+                    it
+                )
+            }
+        }"
+}
+
 class ConeInapplicableCandidateError(
     val applicability: CandidateApplicability,
     val candidate: Candidate,

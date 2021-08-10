@@ -17,7 +17,7 @@ interface B<R, T: B<List<R>, <!UPPER_BOUND_VIOLATED!>T<!>>> {
 
 fun testB(b: B<*, *>) {
     b.r().checkType { _<Any?>() }
-    b.t().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><B<List<*>, *>>() }
+    b.t().checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><B<List<*>, *>>() }
 
     b.t().r().size
 }

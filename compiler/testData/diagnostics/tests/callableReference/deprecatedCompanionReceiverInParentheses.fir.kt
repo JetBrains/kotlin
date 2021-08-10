@@ -21,10 +21,10 @@ import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
 
 fun case() {
-    (V)::a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><KProperty0<Int>>() }
+    (V)::a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><KProperty0<Int>>() }
     (V)::a checkType { _<KProperty1<V, String>>() }
 
-    (test.abc.V)::a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><KProperty0<Int>>() }
+    (test.abc.V)::a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><KProperty0<Int>>() }
     (test.abc.V)::a checkType { _<KProperty1<V, String>>() }
 
     V::a checkType { _<KProperty1<V, String>>() }

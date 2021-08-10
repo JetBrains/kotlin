@@ -353,6 +353,14 @@ internal class DeprecationImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class UnresolvedReferenceWrongReceiverImpl(
+    override val candidates: List<KtSymbol>,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UnresolvedReferenceWrongReceiver(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class CreatingAnInstanceOfAbstractClassImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -33,10 +34,7 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
         if (calleReference is FirResolvedNamedReference) {
             calleeSymbol = calleReference.toResolvedCallableSymbol()
         } else if (calleReference is FirErrorNamedReference) {
-            val diagnostic = calleReference.diagnostic
-            if (diagnostic is ConeInapplicableCandidateError &&
-                diagnostic.applicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
-            ) {
+            if (calleReference.diagnostic is ConeInapplicableWrongReceiver) {
                 return
             }
             calleeSymbol = calleReference.candidateSymbol as? FirCallableSymbol<*>

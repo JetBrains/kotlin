@@ -42,7 +42,7 @@ fun bar() {
     }
 
     foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b) ->
-        a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+        a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         b checkType { _<String>() }
     }
 

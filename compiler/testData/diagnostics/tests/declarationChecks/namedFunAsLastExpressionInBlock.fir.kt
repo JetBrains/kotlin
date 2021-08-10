@@ -4,7 +4,7 @@ fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
     val x = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named1(x: Int): Int { return 1 }<!>
-    x <!INAPPLICABLE_CANDIDATE!>checkType<!> { _<Function1<Int, Int>>() }
+    x <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Function1<Int, Int>>() }
 
     foo { fun named2(): Int {return 1} }
     foo({ fun named3() = 1 })

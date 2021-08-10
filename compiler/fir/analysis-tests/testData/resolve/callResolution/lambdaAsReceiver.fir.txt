@@ -16,6 +16,6 @@ FILE: lambdaAsReceiver.kt
         fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
             ^ String()
         }
-        .<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /bar>#()
+        .<None of the following candidates is applicable because of receiver type mismatch: [/bar]>#()
         String().R|/bar|()
     }
