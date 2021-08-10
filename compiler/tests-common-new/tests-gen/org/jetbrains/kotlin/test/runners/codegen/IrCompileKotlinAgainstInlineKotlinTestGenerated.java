@@ -2312,6 +2312,22 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InlineArgsInplace {
+        @Test
+        public void testAllFilesPresentInInlineArgsInplace() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("callArgumentReordering.kt")
+        public void testCallArgumentReordering() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineArgsInplace/callArgumentReordering.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class InlineClasses {

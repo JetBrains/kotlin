@@ -1826,6 +1826,24 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineArgsInplace extends AbstractIrJsCodegenInlineTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineArgsInplace() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("callArgumentReordering.kt")
+        public void testCallArgumentReordering() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineArgsInplace/callArgumentReordering.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
