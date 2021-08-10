@@ -1716,6 +1716,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             }
 
             @Test
+            @TestMetadata("defaultAfterCapturing.kt")
+            public void testDefaultAfterCapturing() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultAfterCapturing.kt");
+            }
+
+            @Test
             @TestMetadata("defaultCallInDefaultLambda.kt")
             public void testDefaultCallInDefaultLambda() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultCallInDefaultLambda.kt");
@@ -1827,6 +1833,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @TestMetadata("receiverClashInClass2.kt")
             public void testReceiverClashInClass2() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/receiverClashInClass2.kt");
+            }
+
+            @Test
+            @TestMetadata("reordering.kt")
+            public void testReordering() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/reordering.kt");
             }
 
             @Test
@@ -1944,6 +1956,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 @TestMetadata("constuctorReference.kt")
                 public void testConstuctorReference() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/constuctorReference.kt");
+                }
+
+                @Test
+                @TestMetadata("defaultAfterBoundReference.kt")
+                public void testDefaultAfterBoundReference() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/defaultAfterBoundReference.kt");
                 }
 
                 @Test
