@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
+import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import java.io.File
 
@@ -26,8 +27,9 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
         if (testData.extension == "kts") return
         if (FirDiagnosticsDirectives.FIR_IDENTICAL in moduleStructure.allDirectives) return
         val firTestData = testData.firTestDataFile
-        testServices.assertions.assertTrue(firTestData.exists()) {
-            "FIR test data does not exist; run the corresponding FIR test to generate it"
+        if (!firTestData.exists()) {
+            runFirTestAndGeneratedTestData(testData, firTestData)
+            return
         }
         val firPreprocessedTextData = firTestData.preprocessSource()
         val originalPreprocessedTextData = testData.preprocessSource()
@@ -41,10 +43,17 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
         val content = testServices.sourceFileProvider.getContentOfSourceFile(
             TestFile(path, readText().trim(), this, 0, isAdditional = false, RegisteredDirectives.Empty)
         )
-        // Note: convertSeparators() does not work on Windows properly (\r\n are left intact for some reason)
+        // Note: convertLineSeparators() does not work on Windows properly (\r\n are left intact for some reason)
         if (System.lineSeparator() != "\n") {
             return content.replace("\r\n", "\n")
         }
         return content
+    }
+
+    private fun runFirTestAndGeneratedTestData(testData: File, firTestData: File) {
+        firTestData.writeText(clearTextFromDiagnosticMarkup(testData.readText()))
+        val test = object : AbstractFirDiagnosticTest() {}
+        test.initTestInfo(testServices.testInfo.copy(className = "${testServices.testInfo.className}_fir_anonymous"))
+        test.runTest(firTestData.absolutePath)
     }
 }
