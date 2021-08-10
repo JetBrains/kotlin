@@ -23,6 +23,8 @@ object PrimitiveTypes {
     val Long: ConeClassLikeType = StandardClassIds.Long.createType()
     val Float: ConeClassLikeType = StandardClassIds.Float.createType()
     val Double: ConeClassLikeType = StandardClassIds.Double.createType()
+
+    val Any: ConeClassLikeType = StandardClassIds.Any.createType()
 }
 
 private fun ClassId.createType(): ConeClassLikeType = 
