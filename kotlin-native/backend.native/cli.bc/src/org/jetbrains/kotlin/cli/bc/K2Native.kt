@@ -367,6 +367,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         }
                     }
                 })
+
+                parseBinaryOptions(arguments, configuration).forEach { optionWithValue ->
+                    configuration.put(optionWithValue)
+                }
             }
         }
     }
@@ -570,22 +574,64 @@ private fun parseDebugPrefixMap(
     }
 }.toMap()
 
+private class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T)
+
+private fun <T : Any> CompilerConfiguration.put(binaryOptionWithValue: BinaryOptionWithValue<T>) {
+    this.put(binaryOptionWithValue.option.compilerConfigurationKey, binaryOptionWithValue.value)
+}
+
+private fun parseBinaryOptions(
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration
+): List<BinaryOptionWithValue<*>> {
+    val keyValuePairs = parseKeyValuePairs(arguments.binaryOptions, configuration) ?: return emptyList()
+
+    return keyValuePairs.mapNotNull { (key, value) ->
+        val option = BinaryOptions.getByName(key)
+        if (option == null) {
+            configuration.report(STRONG_WARNING, "Unknown binary option '$key'")
+            null
+        } else {
+            parseBinaryOption(option, value, configuration)
+        }
+    }
+}
+
+private fun <T : Any> parseBinaryOption(
+        option: BinaryOption<T>,
+        valueName: String,
+        configuration: CompilerConfiguration
+): BinaryOptionWithValue<T>? {
+    val value = option.valueParser.parse(valueName)
+    return if (value == null) {
+        configuration.report(STRONG_WARNING, "Unknown value '$valueName' of binary option '${option.name}'. " +
+                "Possible values are: ${option.valueParser.validValuesHint}")
+        null
+    } else {
+        BinaryOptionWithValue(option, value)
+    }
+}
+
 private fun parseOverrideKonanProperties(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration
-): Map<String, String>? =
-        arguments.overrideKonanProperties?.mapNotNull {
-            val keyValueSeparatorIndex = it.indexOf('=')
-            if (keyValueSeparatorIndex > 0) {
-                it.substringBefore('=') to it.substringAfter('=')
-            } else {
-                configuration.report(
-                        ERROR,
-                        "incorrect property format: expected '<key>=<value>', got '$it'"
-                )
-                null
-            }
-        }?.toMap()
+): Map<String, String>? = parseKeyValuePairs(arguments.overrideKonanProperties, configuration)
+
+private fun parseKeyValuePairs(
+        argumentValue: Array<String>?,
+        configuration: CompilerConfiguration
+): Map<String, String>? = argumentValue?.mapNotNull {
+    val keyValueSeparatorIndex = it.indexOf('=')
+    if (keyValueSeparatorIndex > 0) {
+        it.substringBefore('=') to it.substringAfter('=')
+    } else {
+        configuration.report(
+                ERROR,
+                "incorrect property format: expected '<key>=<value>', got '$it'"
+        )
+        null
+    }
+}?.toMap()
 
 
 
