@@ -274,6 +274,20 @@ private class SignatureParts(
                 composeAnnotations(typeContainer.annotations, typeOrBound.annotations)
             } else typeOrBound.annotations
 
+        val annotationsMutability = annotationTypeQualifierResolver.extractMutability(composedAnnotation)
+        val annotationsNullability = annotationTypeQualifierResolver.extractNullability(composedAnnotation) {
+            (this is LazyJavaAnnotationDescriptor && (isFreshlySupportedTypeUseAnnotation || typeParameterBounds) && !areImprovementsInStrictMode) ||
+                    (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation)
+        }.takeUnless { type == null }
+
+        if (annotationsNullability != null) {
+            return JavaTypeQualifiers(
+                annotationsNullability.qualifier, annotationsMutability,
+                annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL && typeOrBound.isTypeParameter(),
+                annotationsNullability.isForWarningOnly
+            )
+        }
+
         val defaultTypeQualifier = (
                 if (isHeadTypeConstructor)
                     containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
@@ -288,28 +302,18 @@ private class SignatureParts(
 
         val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
             typeOrBound.nullabilityInfoBoundsForTypeParameterUsage()
-
-        val annotationsNullability = annotationTypeQualifierResolver.extractNullability(composedAnnotation) {
-            (this is LazyJavaAnnotationDescriptor && (isFreshlySupportedTypeUseAnnotation || typeParameterBounds) && !areImprovementsInStrictMode) ||
-                    (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation)
-        }.takeUnless { type == null }
-        val nullabilityInfo =
-            annotationsNullability
-                ?: computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
-                    nullabilityFromBoundsForTypeBasedOnTypeParameter,
-                    defaultTypeQualifier,
-                    typeParameterForArgument,
-                    type == null
-                )
+        val nullabilityInfo = computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
+            nullabilityFromBoundsForTypeBasedOnTypeParameter,
+            defaultTypeQualifier,
+            typeParameterForArgument,
+            type == null
+        )
 
         val isNotNullTypeParameter =
-            if (annotationsNullability != null)
-                annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL
-            else
-                isTypeParameterWithNotNullableBounds || defaultTypeQualifier?.makesTypeParameterNotNull == true
+            isTypeParameterWithNotNullableBounds || defaultTypeQualifier?.makesTypeParameterNotNull == true
 
         return JavaTypeQualifiers(
-            nullabilityInfo?.qualifier, annotationTypeQualifierResolver.extractMutability(composedAnnotation),
+            nullabilityInfo?.qualifier, annotationsMutability,
             isNotNullTypeParameter = isNotNullTypeParameter && typeOrBound.isTypeParameter(),
             isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
         )
