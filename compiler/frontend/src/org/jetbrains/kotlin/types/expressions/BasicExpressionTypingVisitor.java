@@ -1085,10 +1085,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = visitEquality(expression, context, operationSign, left, right);
         }
         else if (OperatorConventions.IDENTITY_EQUALS_OPERATIONS.contains(operationType)) {
-            ensureNonemptyIntersectionOfOperandTypes(expression, context);
-            // TODO : Check comparison pointlessness
-            result = TypeInfoFactoryKt.createTypeInfo(components.builtIns.getBooleanType(), context);
-            checkIdentityOnPrimitiveOrInlineClassTypes(expression, context);
+            result = visitIdentityEquality(expression, context);
         }
         else if (OperatorConventions.IN_OPERATIONS.contains(operationType)) {
             ValueArgument leftArgument = CallMaker.makeValueArgument(left, left != null ? left : operationSign);
@@ -1110,33 +1107,24 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return components.dataFlowAnalyzer.checkType(result, expression, contextWithExpectedType);
     }
 
-    private static void checkIdentityOnPrimitiveOrInlineClassTypes(
+    private KotlinTypeInfo visitIdentityEquality(
             @NotNull KtBinaryExpression expression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (expression.getLeft() == null || expression.getRight() == null) return;
+        KotlinTypeInfo typeInfo = TypeInfoFactoryKt.createTypeInfo(components.builtIns.getBooleanType(), context);
 
-        KotlinType leftType = context.trace.getType(expression.getLeft());
-        KotlinType rightType = context.trace.getType(expression.getRight());
-        if (leftType == null || rightType == null) return;
+        KtExpression left = expression.getLeft();
+        KtExpression right = expression.getRight();
 
-        if (KotlinTypeChecker.DEFAULT.equalTypes(leftType, rightType)) {
-            if (KotlinBuiltIns.isPrimitiveType(leftType)) {
-                context.trace.report(DEPRECATED_IDENTITY_EQUALS.on(expression, leftType, rightType));
-            }
-        }
-        else if (isIdentityComparedWithImplicitBoxing(leftType, rightType) || isIdentityComparedWithImplicitBoxing(rightType, leftType)) {
-            context.trace.report(IMPLICIT_BOXING_IN_IDENTITY_EQUALS.on(expression, leftType, rightType));
-        }
-        if (InlineClassesUtilsKt.isInlineClassType(leftType) || InlineClassesUtilsKt.isInlineClassType(rightType)) {
-            context.trace.report(FORBIDDEN_IDENTITY_EQUALS.on(expression, leftType, rightType));
-        }
-    }
+        if (left == null || right == null) return typeInfo;
 
-    private static boolean isIdentityComparedWithImplicitBoxing(KotlinType leftType, KotlinType rightType) {
-        return KotlinBuiltIns.isPrimitiveType(leftType) &&
-               !KotlinBuiltIns.isPrimitiveType(rightType) &&
-               KotlinTypeChecker.DEFAULT.isSubtypeOf(leftType, rightType);
+        // compute type of LHS and RHS
+        facade.getTypeInfo(left, context);
+        facade.getTypeInfo(right, context);
+
+        EqualityCallChecker.INSTANCE.checkIdentityEquality(expression, context);
+
+        return typeInfo;
     }
 
     private KotlinTypeInfo visitEquality(
@@ -1174,17 +1162,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =
                 components.callResolver.resolveEqualsCallWithGivenDescriptors(contextWithDataFlow, operationSign, receiver, call, equalsFunctions);
 
-        if (resolutionResults.isSuccess()) {
-            FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
-            if (ensureBooleanResult(operationSign, OperatorNameConventions.EQUALS, equals.getReturnType(), contextWithDataFlow)) {
-                ensureNonemptyIntersectionOfOperandTypes(expression, contextWithDataFlow);
-            }
-        }
-        else {
+        if (!resolutionResults.isSuccess()) {
             if (resolutionResults.isAmbiguity()) {
                 context.trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(operationSign, resolutionResults.getResultingCalls()));
-            }
-            else {
+            } else {
                 context.trace.report(EQUALS_MISSING.on(operationSign));
             }
         }
@@ -1450,34 +1431,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         return true;
-    }
-
-    private void ensureNonemptyIntersectionOfOperandTypes(KtBinaryExpression expression, ExpressionTypingContext context) {
-        KtExpression left = expression.getLeft();
-        if (left == null) return;
-
-        KtExpression right = expression.getRight();
-
-        // TODO : duplicated effort for == and !=
-        KotlinType leftType = facade.getTypeInfo(left, context).getType();
-        if (leftType != null && right != null) {
-            KotlinType rightType = facade.getTypeInfo(right, context).getType();
-
-            if (rightType != null) {
-                if (TypeIntersector.isIntersectionEmpty(leftType, rightType)) {
-                    context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
-                } else {
-                    EnumCompatibilityCheckerKt.checkEnumsForCompatibility(context, expression, leftType, rightType);
-                }
-
-
-                SenselessComparisonChecker.checkSenselessComparisonWithNull(
-                        expression, left, right, context,
-                        expr -> facade.getTypeInfo(expr, context).getType(),
-                        context.dataFlowInfo::getStableNullability
-                );
-            }
-        }
     }
 
     @NotNull
