@@ -1066,8 +1066,14 @@ internal class CacheBuilder(
         //  but naïve implementation makes build slower because it makes reading of konan.properties significantly more frequent.
         //  One possible solution is to use [Gradle Build service](https://docs.gradle.org/current/userguide/build_services.html).
         //  Tracking issue: https://youtrack.jetbrains.com/issue/KT-47529
-        private val targetsWithStableStaticCaches =
-            setOf(KonanTarget.IOS_X64, KonanTarget.MACOS_X64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.MACOS_ARM64)
+        private val targetsWithStableStaticCaches = setOf(
+                KonanTarget.IOS_X64,
+                KonanTarget.MACOS_X64,
+                KonanTarget.IOS_SIMULATOR_ARM64,
+                KonanTarget.MACOS_ARM64,
+                KonanTarget.IOS_ARM64,
+                KonanTarget.LINUX_X64
+            )
 
         internal fun cacheWorksFor(target: KonanTarget, project: Project) =
             target in getCacheableTargets(project)
