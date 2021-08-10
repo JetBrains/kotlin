@@ -865,6 +865,116 @@ __attribute__((swift_name("ArraysInitBlock")))
 - (NSString *)log __attribute__((swift_name("log()")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinLivenessTracker")))
+@interface KtKotlinLivenessTracker : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (void)addObj:(id _Nullable)obj __attribute__((swift_name("add(obj:)")));
+- (BOOL)isEmpty __attribute__((swift_name("isEmpty()")));
+- (BOOL)objectsAreDead __attribute__((swift_name("objectsAreDead()")));
+@property (readonly) NSMutableArray<KtKotlinWeakReference *> *weakRefs __attribute__((swift_name("weakRefs")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinObject")))
+@interface KtKotlinObject : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((swift_name("NoAutoreleaseSendHelper")))
+@protocol KtNoAutoreleaseSendHelper
+@required
+- (void)sendKotlinObjectKotlinObject:(KtKotlinObject *)kotlinObject __attribute__((swift_name("sendKotlinObject(kotlinObject:)")));
+- (void)sendSwiftObjectSwiftObject:(id)swiftObject __attribute__((swift_name("sendSwiftObject(swiftObject:)")));
+- (void)sendListList:(NSArray<id> *)list __attribute__((swift_name("sendList(list:)")));
+- (void)sendStringString:(NSString *)string __attribute__((swift_name("sendString(string:)")));
+- (void)sendNumberNumber:(id)number __attribute__((swift_name("sendNumber(number:)")));
+- (void)sendBlockBlock:(KtKotlinObject *(^)(void))block __attribute__((swift_name("sendBlock(block:)")));
+@end;
+
+__attribute__((swift_name("NoAutoreleaseReceiveHelper")))
+@protocol KtNoAutoreleaseReceiveHelper
+@required
+- (KtKotlinObject *)receiveKotlinObject __attribute__((swift_name("receiveKotlinObject()")));
+- (id)receiveSwiftObject __attribute__((swift_name("receiveSwiftObject()")));
+- (NSArray<id> *)receiveList __attribute__((swift_name("receiveList()")));
+- (NSString *)receiveString __attribute__((swift_name("receiveString()")));
+- (id)receiveNumber __attribute__((swift_name("receiveNumber()")));
+- (KtKotlinObject *(^)(void))receiveBlock __attribute__((swift_name("receiveBlock()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("NoAutoreleaseKotlinSendHelper")))
+@interface KtNoAutoreleaseKotlinSendHelper : KtBase <KtNoAutoreleaseSendHelper>
+- (instancetype)initWithKotlinLivenessTracker:(KtKotlinLivenessTracker *)kotlinLivenessTracker __attribute__((swift_name("init(kotlinLivenessTracker:)"))) __attribute__((objc_designated_initializer));
+- (void)sendKotlinObjectKotlinObject:(KtKotlinObject *)kotlinObject __attribute__((swift_name("sendKotlinObject(kotlinObject:)")));
+- (void)sendSwiftObjectSwiftObject:(id)swiftObject __attribute__((swift_name("sendSwiftObject(swiftObject:)")));
+- (void)sendListList:(NSArray<id> *)list __attribute__((swift_name("sendList(list:)")));
+- (void)sendStringString:(NSString *)string __attribute__((swift_name("sendString(string:)")));
+- (void)sendNumberNumber:(id)number __attribute__((swift_name("sendNumber(number:)")));
+- (void)sendBlockBlock:(KtKotlinObject *(^)(void))block __attribute__((swift_name("sendBlock(block:)")));
+@property (readonly) KtKotlinLivenessTracker *kotlinLivenessTracker __attribute__((swift_name("kotlinLivenessTracker")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("NoAutoreleaseKotlinReceiveHelper")))
+@interface KtNoAutoreleaseKotlinReceiveHelper : KtBase <KtNoAutoreleaseReceiveHelper>
+- (instancetype)initWithKotlinLivenessTracker:(KtKotlinLivenessTracker *)kotlinLivenessTracker __attribute__((swift_name("init(kotlinLivenessTracker:)"))) __attribute__((objc_designated_initializer));
+- (KtKotlinObject *)receiveKotlinObject __attribute__((swift_name("receiveKotlinObject()")));
+- (id)receiveSwiftObject __attribute__((swift_name("receiveSwiftObject()")));
+- (NSArray<id> *)receiveList __attribute__((swift_name("receiveList()")));
+- (NSString *)receiveString __attribute__((swift_name("receiveString()")));
+- (id)receiveNumber __attribute__((swift_name("receiveNumber()")));
+- (KtKotlinObject *(^)(void))receiveBlock __attribute__((swift_name("receiveBlock()")));
+@property id swiftObject __attribute__((swift_name("swiftObject")));
+@property (readonly) KtKotlinLivenessTracker *kotlinLivenessTracker __attribute__((swift_name("kotlinLivenessTracker")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("NoAutoreleaseSingleton")))
+@interface KtNoAutoreleaseSingleton : KtBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)noAutoreleaseSingleton __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KtNoAutoreleaseSingleton *shared __attribute__((swift_name("shared")));
+@property (readonly) int32_t x __attribute__((swift_name("x")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("NoAutoreleaseEnum")))
+@interface KtNoAutoreleaseEnum : KtKotlinEnum
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (class, readonly) KtNoAutoreleaseEnum *entry __attribute__((swift_name("entry")));
++ (KtKotlinArray *)values __attribute__((swift_name("values()")));
+@property (readonly) int32_t x __attribute__((swift_name("x")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("NoAutoreleaseKt")))
+@interface KtNoAutoreleaseKt : KtBase
++ (void)gc __attribute__((swift_name("gc()")));
++ (void)callSendKotlinObjectHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendKotlinObject(helper:tracker:)")));
++ (void)callSendSwiftObjectHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker swiftObject:(id)swiftObject __attribute__((swift_name("callSendSwiftObject(helper:tracker:swiftObject:)")));
++ (void)callSendListHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendList(helper:tracker:)")));
++ (void)callSendStringHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendString(helper:tracker:)")));
++ (void)callSendNumberHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendNumber(helper:tracker:)")));
++ (void)callSendBlockHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendBlock(helper:tracker:)")));
++ (void)callReceiveKotlinObjectHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveKotlinObject(helper:tracker:)")));
++ (void)callReceiveSwiftObjectHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveSwiftObject(helper:tracker:)")));
++ (void)callReceiveListHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveList(helper:tracker:)")));
++ (void)callReceiveStringHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveString(helper:tracker:)")));
++ (void)callReceiveNumberHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveNumber(helper:tracker:)")));
++ (void)callReceiveBlockHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveBlock(helper:tracker:)")));
++ (void)callReceiveBlockAndCallHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveBlockAndCall(helper:tracker:)")));
++ (void * _Nullable)objc_autoreleasePoolPush __attribute__((swift_name("objc_autoreleasePoolPush()")));
++ (void)objc_autoreleasePoolPopHandle:(void * _Nullable)handle __attribute__((swift_name("objc_autoreleasePoolPop(handle:)")));
++ (void)useIntArrayArray:(KtKotlinIntArray *)array __attribute__((swift_name("useIntArray(array:)")));
+@end;
+
 __attribute__((swift_name("OverrideKotlinMethods2")))
 @protocol KtOverrideKotlinMethods2
 @required
