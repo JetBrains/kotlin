@@ -278,16 +278,17 @@ private class SignatureParts(
         val annotationsNullability = annotationTypeQualifierResolver.extractNullability(composedAnnotation) {
             (this is LazyJavaAnnotationDescriptor && (isFreshlySupportedTypeUseAnnotation || typeParameterBounds) && !areImprovementsInStrictMode) ||
                     (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation)
-        }.takeUnless { type == null }
+        }
 
-        if (annotationsNullability != null) {
+        if (type != null && annotationsNullability != null) {
             return JavaTypeQualifiers(
                 annotationsNullability.qualifier, annotationsMutability,
-                annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL && typeOrBound.isTypeParameter(),
+                annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL && type.isTypeParameter(),
                 annotationsNullability.isForWarningOnly
             )
         }
 
+        // TODO: check whether the code below works properly for star projections (when typeOrBound != type)
         val defaultTypeQualifier = (
                 if (isHeadTypeConstructor)
                     containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
@@ -300,44 +301,48 @@ private class SignatureParts(
                     )
                 )?.takeIf { it.affectsTypeParameterBasedTypes || !typeOrBound.isTypeParameter() }
 
-        val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
-            typeOrBound.nullabilityInfoBoundsForTypeParameterUsage()
+        val referencedParameterBoundsNullability =
+            (typeOrBound.constructor.declarationDescriptor as? TypeParameterDescriptor)?.boundsNullability()
+
+        // For type parameter uses, we have *three* options:
+        //   T!! - NOT_NULL, isNotNullTypeParameter = true
+        //         happens if T is bounded by @NotNull (technically !! is redundant) or context says unannotated
+        //         type parameters are non-null;
+        //   T   - NOT_NULL, isNotNullTypeParameter = false
+        //         happens if T is bounded by @Nullable or context says unannotated types in general are non-null;
+        //   T?  - NULLABLE, isNotNullTypeParameter = false
+        //         happens if context says unannotated types in general are nullable.
+        // For other types, this is more straightforward (just take nullability from the context).
+        // TODO: clean up the representation of those cases in JavaTypeQualifiers
+        val defaultNullability =
+            referencedParameterBoundsNullability?.copy(qualifier = NullabilityQualifier.NOT_NULL)
+                ?: defaultTypeQualifier?.nullabilityQualifier
+        val isNotNullTypeParameter =
+            referencedParameterBoundsNullability?.qualifier == NullabilityQualifier.NOT_NULL ||
+                    (typeOrBound.isTypeParameter() && defaultTypeQualifier?.makesTypeParameterNotNull == true)
+
         val nullabilityInfo = computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
-            nullabilityFromBoundsForTypeBasedOnTypeParameter,
-            defaultTypeQualifier,
+            defaultNullability,
             typeParameterForArgument,
             type == null
         )
 
-        val isNotNullTypeParameter =
-            isTypeParameterWithNotNullableBounds || defaultTypeQualifier?.makesTypeParameterNotNull == true
-
         return JavaTypeQualifiers(
             nullabilityInfo?.qualifier, annotationsMutability,
-            isNotNullTypeParameter = isNotNullTypeParameter && typeOrBound.isTypeParameter(),
-            isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
+            isNotNullTypeParameter,
+            nullabilityInfo?.isForWarningOnly == true
         )
     }
 
     private fun computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
-        nullabilityFromBoundsForTypeBasedOnTypeParameter: NullabilityQualifierWithMigrationStatus?,
-        defaultTypeQualifier: JavaDefaultQualifiers?,
+        result: NullabilityQualifierWithMigrationStatus?,
         typeParameterForArgument: TypeParameterDescriptor?,
         isFromStarProjection: Boolean
     ): NullabilityQualifierWithMigrationStatus? {
 
-        val result =
-            nullabilityFromBoundsForTypeBasedOnTypeParameter
-                ?: defaultTypeQualifier?.nullabilityQualifier?.let { nullabilityQualifierWithMigrationStatus ->
-                    NullabilityQualifierWithMigrationStatus(
-                        nullabilityQualifierWithMigrationStatus.qualifier,
-                        nullabilityQualifierWithMigrationStatus.isForWarningOnly
-                    )
-                }
-
         val boundsFromTypeParameterForArgument = typeParameterForArgument?.boundsNullability() ?: return result
 
-        if (defaultTypeQualifier == null && result == null && boundsFromTypeParameterForArgument.qualifier == NullabilityQualifier.NULLABLE) {
+        if (result == null && boundsFromTypeParameterForArgument.qualifier == NullabilityQualifier.NULLABLE) {
             return NullabilityQualifierWithMigrationStatus(
                 NullabilityQualifier.FORCE_FLEXIBILITY,
                 boundsFromTypeParameterForArgument.isForWarningOnly
@@ -353,6 +358,7 @@ private class SignatureParts(
         a: NullabilityQualifierWithMigrationStatus,
         b: NullabilityQualifierWithMigrationStatus
     ): NullabilityQualifierWithMigrationStatus {
+        // TODO: this probably behaves really weirdly when some of those are warnings.
         if (a.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return b
         if (b.qualifier == NullabilityQualifier.FORCE_FLEXIBILITY) return a
         if (a.qualifier == NullabilityQualifier.NULLABLE) return b
@@ -362,21 +368,6 @@ private class SignatureParts(
         }
 
         return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
-    }
-
-    private fun KotlinType.nullabilityInfoBoundsForTypeParameterUsage(): Pair<NullabilityQualifierWithMigrationStatus?, Boolean> {
-        val typeParameterBoundsNullability =
-            (constructor.declarationDescriptor as? TypeParameterDescriptor)?.boundsNullability() ?: return Pair(null, false)
-
-        // If type parameter has a nullable (non-flexible) upper bound
-        // We shouldn't mark its type usages as nullable:
-        // interface A<T extends @Nullable Object> {
-        //      void foo(T t); // should be loaded as "fun foo(t: T)" but not as "fun foo(t: T?)"
-        // }
-        return Pair(
-            NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, typeParameterBoundsNullability.isForWarningOnly),
-            typeParameterBoundsNullability.qualifier == NullabilityQualifier.NOT_NULL
-        )
     }
 
     private fun TypeParameterDescriptor.boundsNullability(): NullabilityQualifierWithMigrationStatus? {
