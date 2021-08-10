@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.jetbrains.annotations.Nls
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.messages.ProgressMessage
+import org.jetbrains.kotlin.jps.KotlinJpsBundle
 
 interface ProgressReporter {
     fun progress(message: String)
@@ -16,12 +18,13 @@ interface ProgressReporter {
 }
 
 class ProgressReporterImpl(private val context: CompileContext, private val chunk: ModuleChunk) : ProgressReporter {
-    override fun progress(message: String) {
+    override fun progress(@Nls message: String) {
+        @Suppress("HardCodedStringLiteral")
         context.processMessage(ProgressMessage("Kotlin: $message"))
     }
 
     override fun compilationStarted() {
-        progress("compiling [${chunk.presentableShortName}]")
+        progress(KotlinJpsBundle.message("progress.text.compiling.0", chunk.presentableShortName))
     }
 
     override fun clearProgress() {
