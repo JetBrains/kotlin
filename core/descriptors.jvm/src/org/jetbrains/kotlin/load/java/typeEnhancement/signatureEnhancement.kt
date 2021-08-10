@@ -318,34 +318,21 @@ private class SignatureParts(
                 ?: defaultTypeQualifier?.nullabilityQualifier
         val isNotNullTypeParameter =
             referencedParameterBoundsNullability?.qualifier == NullabilityQualifier.NOT_NULL ||
-                    (typeOrBound.isTypeParameter() && defaultTypeQualifier?.makesTypeParameterNotNull == true)
+                    (typeOrBound.isTypeParameter() && defaultTypeQualifier?.nullabilityQualifier?.qualifier == NullabilityQualifier.NOT_NULL)
 
-        val nullabilityInfo = computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(defaultNullability, typeParameterForArgument)
-
-        return JavaTypeQualifiers(
-            nullabilityInfo?.qualifier, annotationsMutability,
-            isNotNullTypeParameter,
-            nullabilityInfo?.isForWarningOnly == true
-        )
-    }
-
-    private fun computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
-        result: NullabilityQualifierWithMigrationStatus?,
-        typeParameterForArgument: TypeParameterDescriptor?
-    ): NullabilityQualifierWithMigrationStatus? {
-
-        val boundsFromTypeParameterForArgument = typeParameterForArgument?.boundsNullability() ?: return result
-
-        if (result == null && boundsFromTypeParameterForArgument.qualifier == NullabilityQualifier.NULLABLE) {
-            return NullabilityQualifierWithMigrationStatus(
-                NullabilityQualifier.FORCE_FLEXIBILITY,
-                boundsFromTypeParameterForArgument.isForWarningOnly
-            )
+        // We should also enhance this type to satisfy the bound of the type parameter it is instantiating:
+        // for C<T extends @NotNull V>, C<X!> becomes C<X!!> regardless of the above.
+        val substitutedParameterBoundsNullability = typeParameterForArgument?.boundsNullability()
+        val result = when {
+            substitutedParameterBoundsNullability == null -> defaultNullability
+            defaultNullability == null ->
+                if (substitutedParameterBoundsNullability.qualifier == NullabilityQualifier.NULLABLE)
+                    substitutedParameterBoundsNullability.copy(qualifier = NullabilityQualifier.FORCE_FLEXIBILITY)
+                else
+                    substitutedParameterBoundsNullability
+            else -> mostSpecific(substitutedParameterBoundsNullability, defaultNullability)
         }
-
-        if (result == null) return boundsFromTypeParameterForArgument
-
-        return mostSpecific(boundsFromTypeParameterForArgument, result)
+        return JavaTypeQualifiers(result?.qualifier, annotationsMutability, isNotNullTypeParameter, result?.isForWarningOnly == true)
     }
 
     private fun mostSpecific(
