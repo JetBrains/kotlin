@@ -135,7 +135,7 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
                 JpsLikeJarDependency("project(\":kotlin-stdlib-jdk7\")", scope, dependencyConfiguration = null, exported = exported)
             )
         }
-        lib.name.startsWith("kotlinc.") -> {
+        lib.name.startsWith("kotlinc.") || mavenRepositoryLibraryDescriptor.version == DEFAULT_KOTLIN_SNAPSHOT_VERSION -> {
             val artifactId = mavenRepositoryLibraryDescriptor.artifactId
             val dependencyNotation =
                 if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$artifactId").exists())
