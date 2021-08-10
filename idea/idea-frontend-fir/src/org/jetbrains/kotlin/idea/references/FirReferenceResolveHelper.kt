@@ -412,10 +412,10 @@ internal object FirReferenceResolveHelper {
             var qualifiedAccess: KtDotQualifiedExpression = firSourcePsi
             val referencedClassId =
                 if ((referencedClass as? FirRegularClass)?.isCompanion == true &&
-                    (qualifiedAccess.selectorExpression as? KtNameReferenceExpression)?.getReferencedName() != "Companion"
+                    (qualifiedAccess.selectorExpression as? KtNameReferenceExpression)?.getReferencedName() != referencedClass.classId.shortClassName.asString()
                 ) {
-                    // Remove the last "Companion" part if the qualified access does not contain it. This is needed because the "Companion"
-                    // part is optional.
+                    // Remove the last companion name part if the qualified access does not contain it.
+                    // This is needed because the companion name part is optional.
                     referencedClass.classId.outerClassId ?: return referencedSymbolsByFir
                 } else {
                     referencedClass.classId
