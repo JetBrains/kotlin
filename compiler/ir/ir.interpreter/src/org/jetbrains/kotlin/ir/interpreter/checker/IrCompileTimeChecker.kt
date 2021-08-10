@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
 import org.jetbrains.kotlin.ir.interpreter.fqName
+import org.jetbrains.kotlin.ir.interpreter.isAccessToObject
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -111,7 +112,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): Boolean {
-        // to get object value we need nothing but it will contain only fields with compile time annotation
+        // to get object value we need nothing, but it will contain only fields with compile time annotation
         return true
     }
 
@@ -120,10 +121,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {
-        val owner = expression.symbol.owner
-        val parent = owner.parent as IrSymbolOwner
-        val isObjectReceiver = (parent as? IrClass)?.isObject == true && owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
-        return visitedStack.contains(parent) || isObjectReceiver
+        return visitedStack.contains(expression.symbol.owner.parent) || expression.isAccessToObject()
     }
 
     override fun visitSetValue(expression: IrSetValue, data: Nothing?): Boolean {

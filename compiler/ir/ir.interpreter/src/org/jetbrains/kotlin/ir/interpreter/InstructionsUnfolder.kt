@@ -235,11 +235,10 @@ private fun unfoldSetField(expression: IrSetField, callStack: CallStack) {
 }
 
 private fun unfoldGetValue(expression: IrGetValue, environment: IrInterpreterEnvironment) {
-    val expectedClass = expression.type.classOrNull?.owner
-    // used to evaluate constants inside object
-    if (expectedClass != null && expectedClass.isObject && expression.symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER) {
+    if (expression.isAccessToObject()) {
+        // used to evaluate constants inside object
         // TODO is this correct behaviour?
-        val irGetObject = expectedClass.createGetObject()
+        val irGetObject = expression.type.classOrNull?.owner!!.createGetObject()
         return unfoldGetObjectValue(irGetObject, environment)
     }
     environment.callStack.pushState(environment.callStack.loadState(expression.symbol))

@@ -290,3 +290,10 @@ internal fun IrFunction.hasFunInterfaceParent(): Boolean {
 internal fun IrClass.getSingleAbstractMethod(): IrFunction {
     return declarations.filterIsInstance<IrSimpleFunction>().single { it.modality == Modality.ABSTRACT }
 }
+
+fun IrGetValue.isAccessToObject(): Boolean {
+    val owner = this.symbol.owner
+    val expectedClass = this.type.classOrNull?.owner
+    if (expectedClass == null || !expectedClass.isObject) return false
+    return owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER || owner.name.asString() == "<this>"
+}
