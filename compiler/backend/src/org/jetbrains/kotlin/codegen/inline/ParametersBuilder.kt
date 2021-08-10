@@ -37,17 +37,17 @@ class ParametersBuilder private constructor() {
     }
 
     fun addCapturedParam(original: CapturedParamInfo, newFieldName: String): CapturedParamInfo {
-        val info = CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextParameterOffset, original.index)
-        info.functionalArgument = original.functionalArgument
-        return addParameter(info)
+        return addParameter(CapturedParamInfo(original.desc, newFieldName, original.isSkipped, -1, original.index)).apply {
+            functionalArgument = original.functionalArgument
+        }
     }
 
     fun addCapturedParam(desc: CapturedParamDesc, newFieldName: String, skipInConstructor: Boolean): CapturedParamInfo {
-        return addParameter(CapturedParamInfo(desc, newFieldName, false, nextParameterOffset, null, skipInConstructor, -1))
+        return addParameter(CapturedParamInfo(desc, newFieldName, false, -1, null, skipInConstructor, -1))
     }
 
     fun addCapturedParamCopy(copyFrom: CapturedParamInfo): CapturedParamInfo {
-        return addParameter(copyFrom.cloneWithNewDeclarationIndex(-1))
+        return addParameter(copyFrom.cloneWithIndices(-1, -1))
     }
 
     fun addCapturedParam(
@@ -58,19 +58,16 @@ class ParametersBuilder private constructor() {
         skipped: Boolean,
         original: ParameterInfo?
     ): CapturedParamInfo {
-        val info = CapturedParamInfo(
-            CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextParameterOffset, original?.index ?: -1
-        )
-        if (original != null) {
-            info.functionalArgument = original.functionalArgument
+        val desc = CapturedParamDesc(containingLambdaType, fieldName, type)
+        return addParameter(CapturedParamInfo(desc, newFieldName, skipped, -1, original?.index ?: -1)).apply {
+            functionalArgument = original?.functionalArgument
         }
-        return addParameter(info)
     }
 
     private fun <T : ParameterInfo> addParameter(info: T): T {
         params.add(info)
-        nextParameterOffset += info.type.size
         if (info !is CapturedParamInfo) {
+            nextParameterOffset += info.type.size
             nextValueParameterIndex++
         }
         return info
@@ -92,10 +89,10 @@ class ParametersBuilder private constructor() {
 
     fun buildParameters(): Parameters {
         var nextDeclarationIndex = (params.maxOfOrNull { it.declarationIndex } ?: -1) + 1
-
+        var nextOffset = nextParameterOffset
         return Parameters(params.map { param ->
             if (param is CapturedParamInfo) {
-                param.cloneWithNewDeclarationIndex(nextDeclarationIndex++)
+                param.cloneWithIndices(nextOffset.also { nextOffset += param.type.size }, nextDeclarationIndex++)
             } else {
                 param
             }

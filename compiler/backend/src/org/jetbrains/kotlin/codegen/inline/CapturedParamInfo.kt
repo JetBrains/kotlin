@@ -58,10 +58,8 @@ class CapturedParamInfo : ParameterInfo {
         this.isSkipInConstructor = skipInConstructor
     }
 
-    fun cloneWithNewDeclarationIndex(newDeclarationIndex: Int): CapturedParamInfo {
-        val result = CapturedParamInfo(
-            desc, newFieldName, isSkipped, index, remapValue, isSkipInConstructor, newDeclarationIndex
-        )
+    fun cloneWithIndices(index: Int, declarationIndex: Int): CapturedParamInfo {
+        val result = CapturedParamInfo(desc, newFieldName, isSkipped, index, remapValue, isSkipInConstructor, declarationIndex)
         result.functionalArgument = functionalArgument
         result.isSynthetic = isSynthetic
         return result
