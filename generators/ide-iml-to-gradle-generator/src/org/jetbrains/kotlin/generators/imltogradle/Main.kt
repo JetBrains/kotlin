@@ -130,7 +130,7 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
                     )
                 }
         }
-        lib.name == "kotlinc.kotlin-stdlib-jdk8" -> {
+        lib.name == "kotlin-stdlib-jdk8" -> {
             listOf(
                 JpsLikeJarDependency("kotlinStdlib()", scope, dependencyConfiguration = null, exported = exported),
                 // TODO remove hack (for some reason we have to specify :kotlin-stdlib-jdk7 explicitly, otherwise compilation doesn't pass)
