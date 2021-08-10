@@ -572,4 +572,58 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             """.trimIndent()
         )
     }
+
+    fun `test supertypes being retained`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            simpleSingleSourceTarget(
+                "a", """
+                    interface SuperInterface
+                    class X: SuperInterface
+                """.trimIndent()
+            )
+            simpleSingleSourceTarget(
+                "b", """
+                    interface SuperInterface
+                    class B: SuperInterface
+                    typealias X = B
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect interface SuperInterface
+                expect class X(): SuperInterface
+            """.trimIndent()
+        )
+    }
+
+    fun `test supertypes being retained from dependencies`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+
+            registerDependency("a", "b", "(a, b)") {
+                source("""interface SuperInterface""")
+            }
+
+            simpleSingleSourceTarget(
+                "a", """
+                    class X: SuperInterface
+                """.trimIndent()
+            )
+            simpleSingleSourceTarget(
+                "b", """
+                    class B: SuperInterface
+                    typealias X = B
+                """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                expect class X(): SuperInterface
+            """.trimIndent()
+        )
+    }
 }

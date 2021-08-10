@@ -10,8 +10,13 @@ import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Composite.Companion.plus
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.PreferredNode
+import org.jetbrains.kotlin.commonizer.transformer.ArtificialSupertypes.artificialSupertypes
+import org.jetbrains.kotlin.commonizer.utils.CNAMES_STRUCTS_PACKAGE
+import org.jetbrains.kotlin.commonizer.utils.OBJCNAMES_CLASSES_PACKAGE
+import org.jetbrains.kotlin.commonizer.utils.OBJCNAMES_PROTOCOLS_PACKAGE
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class InlineTypeAliasCirNodeTransformer(
@@ -142,4 +147,35 @@ private fun CirTypeAlias.toArtificialCirClass(): CirClass = CirClass.create(
     annotations = emptyList(), name = name, typeParameters = typeParameters,
     visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
     companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
-).also { it.supertypes = emptyList() }
+).also { it.supertypes = artificialSupertypes() }
+
+
+/**
+ * Analog to "KlibResolvedModuleDescriptorsFactoryImpl.createForwardDeclarationsModule" which also
+ * automatically assumes relevant supertypes for forward declarations based upon the package they are in.
+ */
+private object ArtificialSupertypes {
+    private fun createType(classId: String): CirClassType {
+        return CirClassType.createInterned(
+            classId = CirEntityId.create(classId),
+            outerType = null, visibility = Visibilities.Public, arguments = emptyList(), isMarkedNullable = false
+        )
+    }
+
+    private val cOpaqueType = listOf(createType("kotlinx/cinterop/COpaque"))
+    private val objcObjectBase = listOf(createType("kotlinx/cinterop/ObjCObjectBase"))
+    private val objcCObject = listOf(createType("kotlinx/cinterop/ObjCObject"))
+
+    fun CirTypeAlias.artificialSupertypes(): List<CirType> {
+        /* Not supported (yet). No real life examples known (yet), that would benefit */
+        if (this.expandedType.isMarkedNullable) return emptyList()
+
+        return when (underlyingType.classifierId.packageName) {
+            CNAMES_STRUCTS_PACKAGE -> cOpaqueType
+            OBJCNAMES_CLASSES_PACKAGE -> objcObjectBase
+            OBJCNAMES_PROTOCOLS_PACKAGE -> objcCObject
+            else -> emptyList()
+        }
+    }
+}
+
