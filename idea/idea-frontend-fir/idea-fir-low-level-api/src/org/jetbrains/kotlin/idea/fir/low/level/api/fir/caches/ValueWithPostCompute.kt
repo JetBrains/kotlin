@@ -36,6 +36,19 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     @Volatile
     private var value: Any? = ValueIsNotComputed
 
+    private val guard = ThreadLocal.withInitial { false }
+    private inline fun <T> recursiveGuarded(body: () -> T): T {
+        check(!guard.get()) {
+            "Should not be called recursively"
+        }
+        guard.set(true)
+        return try {
+            body()
+        } finally {
+            guard.set(false)
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun getValue(): VALUE {
         when (val stateSnapshot = value) {
@@ -56,7 +69,9 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                     return value as VALUE
                 }
                 val calculatedValue = try {
-                    val (calculated, data) = _calculate!!(key)
+                    val (calculated, data) = recursiveGuarded {
+                        _calculate!!(key)
+                    }
                     value = ValueIsPostComputingNow(calculated, Thread.currentThread().id) // only current thread may see the value
                     _postCompute!!(key, calculated, data)
                     calculated
