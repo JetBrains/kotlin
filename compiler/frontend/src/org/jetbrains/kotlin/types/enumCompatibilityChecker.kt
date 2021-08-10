@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.types.typeUtil.*
 
-fun checkEnumsForCompatibility(context: ExpressionTypingContext, reportOn: KtElement, typeA: KotlinType, typeB: KotlinType) {
+fun checkEnumsForCompatibility(context: ResolutionContext<*>, reportOn: KtElement, typeA: KotlinType, typeB: KotlinType) {
     if (isIncompatibleEnums(typeA, typeB)) {
         val diagnostic = if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitComparisonOfIncompatibleEnums)) {
             Errors.INCOMPATIBLE_ENUM_COMPARISON_ERROR
