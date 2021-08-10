@@ -71,6 +71,13 @@ sealed class NativeBinary(
         linkerOpts.addAll(options)
     }
 
+    var binaryOptions: MutableMap<String, String> = mutableMapOf()
+
+    fun binaryOption(name: String, value: String) {
+        // TODO: report if $name is unknown?
+        binaryOptions[name] = value
+    }
+
     /** Additional arguments passed to the Kotlin/Native compiler. */
     var freeCompilerArgs: List<String>
         get() = linkTask.kotlinOptions.freeCompilerArgs

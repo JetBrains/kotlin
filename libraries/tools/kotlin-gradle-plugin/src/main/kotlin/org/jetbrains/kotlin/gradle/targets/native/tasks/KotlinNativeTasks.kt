@@ -585,6 +585,19 @@ constructor(
     val linkerOpts: List<String>
         @Input get() = binary.linkerOpts
 
+    val binaryOptions: Map<String, String>
+        @Input get() = binary.binaryOptions
+
+    val projectWideBinaryOptions: Map<String, String>
+        @Input get() = project.properties.mapNotNull { (name, value) ->
+            val prefix = KOTLIN_NATIVE_BINARY_OPTION_PREFIX
+            if (name.startsWith(prefix) && value is String) {
+                name.removePrefix(prefix) to value
+            } else {
+                null
+            }
+        }.toMap()
+
     val processTests: Boolean
         @Input get() = binary is TestExecutable
 
@@ -627,6 +640,9 @@ constructor(
         }
         linkerOpts.forEach {
             addArg("-linker-option", it)
+        }
+        (projectWideBinaryOptions + binaryOptions).forEach { (name, value) ->
+            add("-Xbinary=$name=$value")
         }
         exportLibraries.files.filterKlibsPassedToCompiler().forEach {
             add("-Xexport-library=${it.absolutePath}")
@@ -688,6 +704,10 @@ constructor(
     override fun compile() {
         validatedExportedLibraries()
         super.compile()
+    }
+
+    private companion object {
+        const val KOTLIN_NATIVE_BINARY_OPTION_PREFIX = "kotlin.native.binary."
     }
 }
 
