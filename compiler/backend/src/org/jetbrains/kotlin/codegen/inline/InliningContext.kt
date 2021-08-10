@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.state.GenerationState
 
 class RootInliningContext(
-    expressionMap: Map<Int, FunctionalArgument>,
     state: GenerationState,
     nameGenerator: NameGenerator,
     val sourceCompilerForInline: SourceCompilerForInline,
@@ -17,12 +16,11 @@ class RootInliningContext(
     val inlineMethodReifier: ReifiedTypeInliner<*>,
     typeParameterMappings: TypeParameterMappings<*>
 ) : InliningContext(
-    null, expressionMap, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), null, false
+    null, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), null, false
 )
 
 class RegeneratedClassContext(
     parent: InliningContext,
-    expressionMap: Map<Int, FunctionalArgument>,
     state: GenerationState,
     nameGenerator: NameGenerator,
     typeRemapper: TypeRemapper,
@@ -30,14 +28,13 @@ class RegeneratedClassContext(
     override val callSiteInfo: InlineCallSiteInfo,
     override val transformationInfo: TransformationInfo
 ) : InliningContext(
-    parent, expressionMap, state, nameGenerator, typeRemapper, lambdaInfo, true
+    parent, state, nameGenerator, typeRemapper, lambdaInfo, true
 ) {
     val continuationBuilders: MutableMap<String, ClassBuilder> = hashMapOf()
 }
 
 open class InliningContext(
     val parent: InliningContext?,
-    val expressionMap: Map<Int, FunctionalArgument>,
     val state: GenerationState,
     val nameGenerator: NameGenerator,
     val typeRemapper: TypeRemapper,
@@ -97,7 +94,7 @@ open class InliningContext(
         callSiteInfo: InlineCallSiteInfo,
         transformationInfo: TransformationInfo
     ): InliningContext = RegeneratedClassContext(
-        this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),
+        this, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),
         lambdaInfo, callSiteInfo, transformationInfo
     )
 
@@ -110,7 +107,7 @@ open class InliningContext(
     ): InliningContext {
         val isInliningLambda = lambdaInfo != null
         return InliningContext(
-            this, expressionMap, state, generator,
+            this, state, generator,
             TypeRemapper.createFrom(
                 typeRemapper,
                 additionalTypeMappings,

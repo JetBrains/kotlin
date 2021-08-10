@@ -62,19 +62,16 @@ class PsiInlineCodegen(
             return
         }
         try {
-            val registerLineNumber = registerLineNumberAfterwards(resolvedCall)
-            for (info in expressionMap.values) {
-                if (info is PsiExpressionLambda) {
-                    // Can't be done immediately in `rememberClosure` for some reason:
-                    info.generateLambdaBody(sourceCompiler)
-                    // Requires `generateLambdaBody` first if the closure is non-empty (for bound callable references,
-                    // or indeed any callable references, it *is* empty, so this was done in `rememberClosure`):
-                    if (!info.isBoundCallableReference) {
-                        putClosureParametersOnStack(info, null)
-                    }
+            for (info in closuresToGenerate) {
+                // Can't be done immediately in `rememberClosure` for some reason:
+                info.generateLambdaBody(sourceCompiler)
+                // Requires `generateLambdaBody` first if the closure is non-empty (for bound callable references,
+                // or indeed any callable references, it *is* empty, so this was done in `rememberClosure`):
+                if (!info.isBoundCallableReference) {
+                    putClosureParametersOnStack(info, null)
                 }
             }
-            performInline(registerLineNumber, functionDescriptor.isInlineOnly())
+            performInline(registerLineNumberAfterwards(resolvedCall), functionDescriptor.isInlineOnly())
         } finally {
             state.globalInlineContext.exitFromInlining()
         }
@@ -144,6 +141,8 @@ class PsiInlineCodegen(
     private fun isCallSiteIsSuspend(descriptor: ValueParameterDescriptor): Boolean =
         state.bindingContext[CodegenBinding.CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA, descriptor] == true
 
+    private val closuresToGenerate = mutableListOf<PsiExpressionLambda>()
+
     private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor) {
         val ktLambda = KtPsiUtil.deparenthesize(expression)
         assert(isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
@@ -155,6 +154,7 @@ class PsiInlineCodegen(
 
         val lambda = PsiExpressionLambda(ktLambda!!, state, parameter.isCrossinline, boundReceiver != null)
         rememberClosure(type, parameter.index, lambda)
+        closuresToGenerate += lambda
         if (boundReceiver != null) {
             // Has to be done immediately to preserve evaluation order.
             val receiver = codegen.generateReceiverValue(boundReceiver, false)

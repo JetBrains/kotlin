@@ -32,7 +32,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     private val initialFrameSize = codegen.frameMap.currentSize
 
     protected val invocationParamBuilder = ParametersBuilder.newBuilder()
-    protected val expressionMap = linkedMapOf<Int, FunctionalArgument>()
     private val maskValues = ArrayList<Int>()
     private var maskStartIndex = -1
     private var methodHandleInDefaultMethodIndex = -1
@@ -80,8 +79,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             for (info in infos) {
                 val lambda = DefaultLambda(info, sourceCompiler)
                 parameters.getParameterByDeclarationSlot(info.offset).functionalArgument = lambda
-                val prev = expressionMap.put(info.offset, lambda)
-                assert(prev == null) { "Lambda with offset ${info.offset} already exists: $prev" }
                 if (info.needReification) {
                     lambda.reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(lambda.node.node))
                 }
@@ -98,7 +95,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val parameters = invocationParamBuilder.buildParameters()
 
         val info = RootInliningContext(
-            expressionMap, state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
+            state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
             sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
         )
 
@@ -213,9 +210,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {
-        val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, index)
-        closureInfo.functionalArgument = lambdaInfo
-        expressionMap[closureInfo.index] = lambdaInfo
+        invocationParamBuilder.addNextValueParameter(parameterType, true, null, index).functionalArgument = lambdaInfo
     }
 
     protected fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinType?) {
