@@ -213,8 +213,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun FirLoopBuilder.prepareTarget(): FirLoopTarget {
-        label = context.firLabels.pop()
+    fun FirLoopBuilder.prepareTarget(): FirLoopTarget = prepareTarget(context.firLabels.pop())
+
+    fun stashLabel(): FirLabel? = context.firLabels.pop()
+
+    fun FirLoopBuilder.prepareTarget(label: FirLabel?): FirLoopTarget {
+        this.label = label
         val target = FirLoopTarget(label?.name)
         context.firLoopTargets += target
         return target

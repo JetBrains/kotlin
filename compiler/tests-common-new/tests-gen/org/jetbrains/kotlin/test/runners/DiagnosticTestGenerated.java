@@ -6026,6 +6026,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("breakToLabel.kt")
+            public void testBreakToLabel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/breakToLabel.kt");
+            }
+
+            @Test
             @TestMetadata("catchGenerics.kt")
             public void testCatchGenerics() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/catchGenerics.kt");

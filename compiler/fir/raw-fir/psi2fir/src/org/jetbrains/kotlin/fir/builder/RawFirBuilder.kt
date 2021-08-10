@@ -1878,10 +1878,11 @@ open class RawFirBuilder(
             val target: FirLoopTarget
             return FirWhileLoopBuilder().apply {
                 source = expression.toFirSourceElement()
+                val label = stashLabel() //get label of while, otherwise if condition has lambda, it will steal the label
                 condition = expression.condition.toFirExpression("No condition in while loop")
                 // break/continue in the while loop condition will refer to an outer loop if any.
                 // So, prepare the loop target after building the condition.
-                target = prepareTarget()
+                target = prepareTarget(label)
             }.configure(target) { expression.body.toFirBlock() }
         }
 
