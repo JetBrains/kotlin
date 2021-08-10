@@ -1,0 +1,4 @@
+package
+
+public fun foo(): kotlin.Int?
+public inline fun </*0*/ T : java.lang.AutoCloseable, /*1*/ R> T.use(/*0*/ block: (T) -> R): R

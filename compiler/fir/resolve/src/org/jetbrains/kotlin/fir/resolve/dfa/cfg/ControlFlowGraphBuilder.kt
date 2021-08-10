@@ -104,6 +104,8 @@ class ControlFlowGraphBuilder {
     private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
     private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode> = stackOf()
 
+    private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallNode>> = stackOf()
+
     /*
      * ignoredFunctionCalls is needed for resolve of += operator:
      *   we have two different calls for resolve, but we left only one of them,
@@ -875,7 +877,7 @@ class ControlFlowGraphBuilder {
             finallyEnterNodes.push(finallyEnterNode)
             finallyExitNodes.push(createFinallyBlockExitNode(tryExpression))
         }
-
+        notCompletedFunctionCalls.push(mutableListOf())
         return enterTryExpressionNode to enterTryNodeBlock
     }
 
@@ -966,6 +968,9 @@ class ControlFlowGraphBuilder {
         catchNodeStorages.pop()
         val catchExitNodes = catchExitNodeStorages.pop()
         val tryMainExitNode = tryMainExitNodes.pop()
+        
+        notCompletedFunctionCalls.pop().forEach(::completeFunctionCall)
+
         val node = tryExitNodes.pop()
         node.updateDeadStatus()
         lastNodes.push(node)
@@ -983,6 +988,29 @@ class ControlFlowGraphBuilder {
         }
 
         return node to unionNode
+    }
+
+    //this is a workaround to make function call dead when call is completed _after_ building its node in the graph
+    //this happens when completing the last call in try/catch blocks
+    //todo this doesn't make fully 'right' Nothing node (doesn't support going to catch and pass through finally)
+    // because doing those afterwards is quite challenging
+    // it would be much easier if we could build calls after full completion only, at least for Nothing calls
+    private fun completeFunctionCall(node: FunctionCallNode) {
+        if (!node.fir.resultType.isNothing) return
+        val stub = withLevelOfNode(node) { createStubNode() }
+        val edges = node.followingNodes.map { it to node.outgoingEdges.getValue(it) }
+        CFGNode.removeAllOutgoingEdges(node)
+        addEdge(node, stub)
+        for ((to, edge) in edges) {
+            addEdge(
+                from = stub,
+                to = to,
+                isBack = edge.kind.isBack,
+                preferredKind = edge.kind,
+                label = edge.label
+            )
+        }
+        stub.followingNodes.forEach { propagateDeadnessForward(it, deep = true) }
     }
 
     // ----------------------------------- Resolvable call -----------------------------------
@@ -1025,6 +1053,9 @@ class ControlFlowGraphBuilder {
             addNodeThatReturnsNothing(node, preferredKind = kind)
         } else {
             addNewSimpleNode(node, preferredKind = kind)
+        }
+        if (!returnsNothing && !callCompleted) {
+            notCompletedFunctionCalls.topOrNull()?.add(node)
         }
         return node to unionNode
     }
@@ -1474,13 +1505,16 @@ class ControlFlowGraphBuilder {
         addEdge(from, to, propagateDeadness = false, isDead = isDead, isBack = true, preferredKind = EdgeKind.CfgBackward, label = label)
     }
 
-    private fun propagateDeadnessForward(node: CFGNode<*>) {
+    private fun propagateDeadnessForward(node: CFGNode<*>, deep: Boolean = false) {
         if (!node.isDead) return
         node.followingNodes
             .filter { node.outgoingEdges.getValue(it).kind == EdgeKind.Forward }
             .forEach { target ->
                 CFGNode.addJustKindEdge(node, target, EdgeKind.DeadForward, false)
                 target.updateDeadStatus()
+                if (deep) {
+                    propagateDeadnessForward(target, true)
+                }
             }
     }
 
@@ -1504,6 +1538,16 @@ class ControlFlowGraphBuilder {
     private fun addNewSimpleNodeIfPossible(newNode: CFGNode<*>, isDead: Boolean = false): CFGNode<*>? {
         if (lastNodes.isEmpty) return null
         return addNewSimpleNode(newNode, isDead)
+    }
+
+    private fun <R> withLevelOfNode(node: CFGNode<*>, f: () -> R): R {
+        val last = levelCounter
+        levelCounter = node.level
+        try {
+            return f()
+        } finally {
+            levelCounter = last
+        }
     }
 
 }

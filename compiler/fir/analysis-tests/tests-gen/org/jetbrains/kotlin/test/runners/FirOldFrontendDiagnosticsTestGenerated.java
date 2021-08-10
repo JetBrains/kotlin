@@ -5909,6 +5909,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("lambdaInTryFalsePositive.kt")
+                public void testLambdaInTryFalsePositive() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/lambdaInTryFalsePositive.kt");
+                }
+
+                @Test
                 @TestMetadata("ReturnFromFunctionInObject.kt")
                 public void testReturnFromFunctionInObject() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/ReturnFromFunctionInObject.kt");
