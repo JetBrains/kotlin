@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
+import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
@@ -370,6 +371,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         using(VariableScope()) usingVariableScope@{
                             context.llvm.initializersGenerationState.topLevelFields
                                     .filter { it.storageKind == FieldStorageKind.SHARED_FROZEN }
+                                    .filterNot { it.shouldBeInitializedEagerly }
                                     .forEach { initGlobalField(it) }
                             ret(null)
                         }
@@ -390,11 +392,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             positionAtEnd(bbInitGlobals)
                             context.llvm.initializersGenerationState.topLevelFields
                                     .filter { it.storageKind == FieldStorageKind.GLOBAL }
+                                    .filterNot { it.shouldBeInitializedEagerly }
                                     .forEach { initGlobalField(it) }
                             br(bbInitThreadLocals)
                             positionAtEnd(bbInitThreadLocals)
                             context.llvm.initializersGenerationState.topLevelFields
                                     .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                                    .filterNot { it.shouldBeInitializedEagerly }
                                     .forEach { initThreadLocalField(it) }
                             ret(null)
                         }
@@ -492,11 +496,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
                 // Globals initializers may contain accesses to objects, so visit them first.
                 appendingTo(bbInit) {
-                    if (!context.useLazyFileInitializers()) {
-                        context.llvm.initializersGenerationState.topLevelFields
-                                .filterNot { it.storageKind == FieldStorageKind.THREAD_LOCAL }
-                                .forEach { initGlobalField(it) }
-                    }
+                    context.llvm.initializersGenerationState.topLevelFields
+                            .filter { !context.useLazyFileInitializers() || it.shouldBeInitializedEagerly }
+                            .filterNot { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                            .forEach { initGlobalField(it) }
                     context.llvm.initializersGenerationState.moduleGlobalInitializers.forEach {
                         if (context.shouldContainLocationDebugInfo())
                             debugLocation(it.startLocation!!, it.endLocation)
@@ -511,11 +514,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         store(Int32(FILE_NOT_INITIALIZED).llvm, address)
                         LLVMSetInitializer(address, Int32(FILE_NOT_INITIALIZED).llvm)
                     }
-                    if (!context.useLazyFileInitializers()) {
-                        context.llvm.initializersGenerationState.topLevelFields
-                                .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
-                                .forEach { initThreadLocalField(it) }
-                    }
+                    context.llvm.initializersGenerationState.topLevelFields
+                            .filter { !context.useLazyFileInitializers() || it.shouldBeInitializedEagerly }
+                            .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                            .forEach { initThreadLocalField(it) }
                     context.llvm.initializersGenerationState.moduleThreadLocalInitializers.forEach {
                         if (context.shouldContainLocationDebugInfo())
                             debugLocation(it.startLocation!!, it.endLocation)

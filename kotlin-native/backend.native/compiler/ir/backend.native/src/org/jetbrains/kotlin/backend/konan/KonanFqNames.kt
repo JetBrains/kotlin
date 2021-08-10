@@ -33,4 +33,5 @@ object KonanFqNames {
     val hasFinalizer = FqName("kotlin.native.internal.HasFinalizer")
     val hasFreezeHook = FqName("kotlin.native.internal.HasFreezeHook")
     val gcUnsafeCall = FqName("kotlin.native.internal.GCUnsafeCall")
+    val eagerInitialization = FqName("kotlin.native.EagerInitialization")
 }

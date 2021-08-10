@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -39,6 +41,12 @@ internal val IrFunction.isFileInitializer: Boolean
 internal fun IrBuilderWithScope.irCallFileInitializer(initializer: IrFunctionSymbol) =
         irCall(initializer).apply { putValueArgument(0, irFalse()) }
 
+internal val IrField.shouldBeInitializedEagerly: Boolean
+    get() {
+        val annotations = correspondingPropertySymbol?.owner?.annotations ?: annotations
+        return annotations.hasAnnotation(KonanFqNames.eagerInitialization)
+    }
+
 // TODO: ExplicitlyExported for IR proto are not longer needed.
 internal class FileInitializersLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -47,7 +55,7 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
         var kPropertiesField: IrField? = null
         for (declaration in irFile.declarations) {
             val irField = (declaration as? IrField) ?: (declaration as? IrProperty)?.backingField
-            if (irField == null || !irField.hasNonConstInitializer) continue
+            if (irField == null || !irField.hasNonConstInitializer || irField.shouldBeInitializedEagerly) continue
             when {
                 irField.origin == DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION -> {
                     require(kPropertiesField == null) { "Expected at most one kProperties field" }

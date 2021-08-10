@@ -1485,6 +1485,26 @@ standaloneTest("initializers_globalInitedBeforeThreadLocal") {
     source = "codegen/initializers/globalInitedBeforeThreadLocal.kt"
 }
 
+standaloneTest("initializers_eagerInitializationGlobal1") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization')
+    source = "codegen/initializers/eagerInitializationGlobal1.kt"
+}
+
+standaloneTest("initializers_eagerInitializationGlobal2") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization')
+    source = "codegen/initializers/eagerInitializationGlobal2.kt"
+}
+
+standaloneTest("initializers_eagerInitializationThreadLocal1") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization')
+    source = "codegen/initializers/eagerInitializationThreadLocal1.kt"
+}
+
+standaloneTest("initializers_eagerInitializationThreadLocal2") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization')
+    source = "codegen/initializers/eagerInitializationThreadLocal2.kt"
+}
+
 standaloneTest("initializers_workers1") {
     source = "codegen/initializers/workers1.kt"
     goldValue = "42\n3\n"
