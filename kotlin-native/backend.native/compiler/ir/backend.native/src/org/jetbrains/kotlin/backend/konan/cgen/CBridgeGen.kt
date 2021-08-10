@@ -1290,8 +1290,9 @@ private class ObjCBlockPointerValuePassing(
         } else {
             "(id)$block"
         }
+        val blockAsIdVar = "blockAsId"
 
-        return "({ id $kotlinFunctionHolder = $expression; $kotlinFunctionHolder ? $blockAsId : (id)0; })"
+        return "({ id $kotlinFunctionHolder = $expression; id $blockAsIdVar = $kotlinFunctionHolder ? $blockAsId : (id)0; (__bridge_transfer id)(__bridge void*)$kotlinFunctionHolder; $blockAsIdVar; })"
     }
 
     override fun cToBridged(expression: String) = expression

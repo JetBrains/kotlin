@@ -243,7 +243,7 @@ sealed class TypeInfo {
         // it first gets wrapped by a holder in [argToBridged],
         // and then converted to block in [cFromBridged].
 
-        override fun argToBridged(expr: KotlinExpression): KotlinExpression = "createKotlinObjectHolder($expr)"
+        override fun argToBridged(expr: KotlinExpression): KotlinExpression = TODO("should not reach here")
 
         override fun cFromBridged(
                 expr: NativeExpression,

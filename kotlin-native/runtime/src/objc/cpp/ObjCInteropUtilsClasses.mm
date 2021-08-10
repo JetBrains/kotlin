@@ -46,7 +46,7 @@ static id Kotlin_Interop_createKotlinObjectHolder(KRef any) {
     return nullptr;
   }
 
-  return [[[KotlinObjectHolder alloc] initWithRef:any] autorelease];
+  return [[KotlinObjectHolder alloc] initWithRef:any];
 }
 
 static KRef Kotlin_Interop_unwrapKotlinObjectHolder(id holder) {
