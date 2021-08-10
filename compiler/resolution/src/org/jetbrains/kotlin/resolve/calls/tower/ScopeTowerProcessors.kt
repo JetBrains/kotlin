@@ -154,27 +154,22 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
             data.implicitReceiver
         )
         is TowerData.BothTowerLevelAndContextReceiversGroup -> {
-            val collected = mutableListOf<CandidateWithBoundDispatchReceiver>()
-            val receiversWithCandidates = mutableMapOf<ReceiverValueWithSmartCastInfo, List<CandidateWithBoundDispatchReceiver>>()
-            for (contextReceiver in data.contextReceiversGroup) {
-                val collectedFromReceiver = data.level.collectCandidates(contextReceiver).toMutableList()
-                collectedFromReceiver.removeIf { collectedCandidate ->
-                    val duplicate = collected.find { it.descriptor == collectedCandidate.descriptor }
-                    if (duplicate != null) {
-                        duplicate.diagnostics.add(ContextReceiverAmbiguity())
-                        true
-                    } else {
-                        false
-                    }
-                }
-                collected.addAll(collectedFromReceiver)
-                receiversWithCandidates[contextReceiver] = collectedFromReceiver
+            val groupsOfDuplicateCandidates = data.contextReceiversGroup.flatMap { receiver ->
+                data.level.collectCandidates(receiver).map { it to receiver }
+            }.filter { (candidate, _) ->
+                candidate.requiresExtensionReceiver
+            }.groupBy { it.first.descriptor }.values
+
+            val candidateToReceivers = groupsOfDuplicateCandidates.map { l ->
+                val candidate = l.first().first
+                val receivers = l.map { it.second }
+                candidate to receivers
             }
-            receiversWithCandidates.flatMap {
-                createCandidates(
-                    it.value,
+            candidateToReceivers.map {
+                candidateFactory.createCandidate(
+                    it.first,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                    it.key
+                    it.second
                 )
             }
         }
@@ -186,6 +181,7 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
             when (data) {
                 is TowerData.TowerLevel -> data.level.recordLookup(name)
                 is TowerData.BothTowerLevelAndImplicitReceiver -> data.level.recordLookup(name)
+                is TowerData.BothTowerLevelAndContextReceiversGroup -> data.level.recordLookup(name)
                 is TowerData.ForLookupForNoExplicitReceiver -> data.level.recordLookup(name)
                 else -> {}
             }

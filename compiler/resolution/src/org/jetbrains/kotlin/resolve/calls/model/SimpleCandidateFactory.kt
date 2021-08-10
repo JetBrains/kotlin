@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.NewConstraintSystemImpl
@@ -77,7 +78,7 @@ class SimpleCandidateFactory(
             ReceiverExpressionKotlinCallArgument(it, isSafeCall)
         }
         return createCandidate(
-            givenCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver, null,
+            givenCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver, null, null,
             listOf(), givenCandidate.knownTypeParametersResultingSubstitutor
         )
     }
@@ -96,7 +97,26 @@ class SimpleCandidateFactory(
 
         return createCandidate(
             towerCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver,
-            extensionArgumentReceiver, towerCandidate.diagnostics, knownSubstitutor = null
+            extensionArgumentReceiver, null, towerCandidate.diagnostics, knownSubstitutor = null
+        )
+    }
+
+    override fun createCandidate(
+        towerCandidate: CandidateWithBoundDispatchReceiver,
+        explicitReceiverKind: ExplicitReceiverKind,
+        extensionReceiverCandidates: List<ReceiverValueWithSmartCastInfo>
+    ): SimpleResolutionCandidate {
+        val dispatchArgumentReceiver = createReceiverArgument(
+            kotlinCall.getExplicitDispatchReceiver(explicitReceiverKind),
+            towerCandidate.dispatchReceiver
+        )
+        val extensionArgumentReceiverCandidates = extensionReceiverCandidates.mapNotNull {
+            createReceiverArgument(kotlinCall.getExplicitExtensionReceiver(explicitReceiverKind), it)
+        }
+
+        return createCandidate(
+            towerCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver,
+            null, extensionArgumentReceiverCandidates, towerCandidate.diagnostics, knownSubstitutor = null
         )
     }
 
@@ -105,12 +125,13 @@ class SimpleCandidateFactory(
         explicitReceiverKind: ExplicitReceiverKind,
         dispatchArgumentReceiver: SimpleKotlinCallArgument?,
         extensionArgumentReceiver: SimpleKotlinCallArgument?,
+        extensionArgumentReceiverCandidates: List<SimpleKotlinCallArgument>?,
         initialDiagnostics: Collection<KotlinCallDiagnostic>,
         knownSubstitutor: TypeSubstitutor?
     ): SimpleResolutionCandidate {
         val resolvedKtCall = MutableResolvedCallAtom(
             kotlinCall, descriptor, explicitReceiverKind,
-            dispatchArgumentReceiver, extensionArgumentReceiver
+            dispatchArgumentReceiver, extensionArgumentReceiver, extensionArgumentReceiverCandidates
         )
 
         if (ErrorUtils.isError(descriptor)) {
@@ -126,7 +147,7 @@ class SimpleCandidateFactory(
             candidate.addDiagnostic(HiddenDescriptor)
         }
 
-        if (extensionArgumentReceiver != null) {
+        if (extensionArgumentReceiver != null && descriptor !is ClassConstructorDescriptor) {
             val parameterIsDynamic = descriptor.extensionReceiverParameter!!.value.type.isDynamic()
             val argumentIsDynamic = extensionArgumentReceiver.receiver.receiverValue.type.isDynamic()
 
@@ -153,7 +174,7 @@ class SimpleCandidateFactory(
 
         return createCandidate(
             errorDescriptor, explicitReceiverKind, dispatchReceiver, extensionArgumentReceiver = null,
-            initialDiagnostics = listOf(), knownSubstitutor = null
+            extensionArgumentReceiverCandidates = null, initialDiagnostics = listOf(), knownSubstitutor = null
         )
     }
 }

@@ -75,7 +75,8 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract val candidateDescriptor: CallableDescriptor
     abstract val explicitReceiverKind: ExplicitReceiverKind
     abstract val dispatchReceiverArgument: SimpleKotlinCallArgument?
-    abstract val extensionReceiverArgument: SimpleKotlinCallArgument?
+    abstract var extensionReceiverArgument: SimpleKotlinCallArgument?
+    abstract val extensionReceiverArgumentCandidates: List<SimpleKotlinCallArgument>?
     abstract var contextReceiversArguments: List<SimpleKotlinCallArgument>
     abstract val typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
