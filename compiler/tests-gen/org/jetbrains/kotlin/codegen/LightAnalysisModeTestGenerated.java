@@ -15028,6 +15028,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testSuspensionPointInsideArgument() throws Exception {
             runTest("compiler/testData/codegen/box/inlineArgsInPlace/suspensionPointInsideArgument.kt");
         }
+
+        @TestMetadata("withLogFile.kt")
+        public void testWithLogFile() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineArgsInPlace/withLogFile.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/inlineClasses")
