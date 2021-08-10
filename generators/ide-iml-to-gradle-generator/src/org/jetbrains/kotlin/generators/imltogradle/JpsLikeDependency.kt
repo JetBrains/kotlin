@@ -26,6 +26,13 @@ data class JpsLikeJarDependency(
     val dependencyConfiguration: String?,
     val exported: Boolean
 ) : JpsLikeDependency {
+    init {
+        require(!dependencyNotation.contains(DEFAULT_KOTLIN_SNAPSHOT_VERSION)) {
+            "JpsLikeJarDependency dependency notation ($dependencyNotation) cannot contain Kotlin snapshot version. " +
+                    "Most likely you want to configure JpsLikeModuleDependency"
+        }
+    }
+
     override fun convertToGradleCall(): String {
         val scopeArg = "JpsDepScope.$scope"
         val exportedArg = "exported = true".takeIf { exported }

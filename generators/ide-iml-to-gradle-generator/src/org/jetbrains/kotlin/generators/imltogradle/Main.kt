@@ -22,6 +22,7 @@ import kotlin.system.measureNanoTime
 
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
 private val KOTLIN_REPO_ROOT = File(".").canonicalFile
+val DEFAULT_KOTLIN_SNAPSHOT_VERSION = KOTLIN_REPO_ROOT.resolve("gradle.properties").readProperty("defaultSnapshotVersion")
 private val INTELLIJ_REPO_ROOT = KOTLIN_REPO_ROOT.resolve("intellij").resolve("community").takeIf { it.exists() }
     ?: KOTLIN_REPO_ROOT.resolve("intellij")
 
@@ -63,10 +64,7 @@ fun main() {
         }
         .toList()
 
-    val ideaMajorVersion = KOTLIN_REPO_ROOT.resolve("local.properties").takeIf { it.exists() }
-        ?.inputStream()
-        ?.use { Properties().apply { load(it) }.getProperty("attachedIntellijVersion") }
-        ?: error("Can't find 'attachedIntellijVersion' in 'local.properties'")
+    val ideaMajorVersion = KOTLIN_REPO_ROOT.resolve("local.properties").readProperty("attachedIntellijVersion")
 
     intellijModuleNameToGradleDependencyNotationsMapping = fetchJsonsFromBuildserver(ideaMajorVersion)
         .flatMap { jsonStr ->

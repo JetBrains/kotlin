@@ -18,6 +18,7 @@ import org.jetbrains.jps.model.module.JpsModuleDependency
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import java.io.File
 import java.net.URL
+import java.util.*
 
 fun String.trimMarginWithInterpolations(): String {
     val regex = Regex("""^(\s*\|)(\s*).*$""")
@@ -97,4 +98,9 @@ fun fetchJsonsFromBuildserver(ideaMajorVersion: String): List<String> {
             error("Can't access $url. Is VPN on?")
         }
     }
+}
+
+fun File.readProperty(propertyName: String): String {
+    return inputStream().use { Properties().apply { load(it) }.getProperty(propertyName) }
+        ?: error("Can't find '$propertyName' in '${this.canonicalPath}'")
 }
