@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
@@ -35,7 +37,7 @@ internal class KFunctionState(
     val irFunction: IrFunction,
     override val irClass: IrClass,
     environment: IrInterpreterEnvironment,
-    override val fields: MutableMap<IrSymbol, State> = mutableMapOf()
+    override val fields: Fields = mutableMapOf()
 ) : ReflectionState(), StateWithClosure {
     override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
 
@@ -125,8 +127,8 @@ internal class KFunctionState(
     constructor(
         functionReference: IrFunctionReference,
         environment: IrInterpreterEnvironment,
-        dispatchReceiver: Pair<IrSymbol, State>?,
-        extensionReceiver: Pair<IrSymbol, State>?
+        dispatchReceiver: Field?,
+        extensionReceiver: Field?
     ) : this(
         functionReference.symbol.owner,
         functionReference.type.classOrNull!!.owner,

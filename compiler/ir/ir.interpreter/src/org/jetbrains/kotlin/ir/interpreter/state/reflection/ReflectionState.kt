@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.render
 import kotlin.math.min
 
 internal abstract class ReflectionState : State {
-    override val fields: MutableMap<IrSymbol, State> = mutableMapOf()
+    override val fields: Fields = mutableMapOf()
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? = null
 

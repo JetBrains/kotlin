@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.*
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -23,10 +25,10 @@ import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashMap
 
 internal class Wrapper(val value: Any, override val irClass: IrClass, environment: IrInterpreterEnvironment) : Complex {
-    override val fields: MutableMap<IrSymbol, State> = mutableMapOf()
+    override val fields: Fields = mutableMapOf()
 
     override var superWrapperClass: Wrapper? = null
-    override var outerClass: Pair<IrSymbol, State>? = null
+    override var outerClass: Field? = null
 
     private val receiverClass = irClass.defaultType.getClass(true)
 

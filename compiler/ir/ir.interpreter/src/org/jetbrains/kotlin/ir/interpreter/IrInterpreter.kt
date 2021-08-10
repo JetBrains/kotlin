@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -600,8 +601,8 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val function = KFunctionState(
             reference,
             environment,
-            dispatchReceiver?.let { irFunction.getDispatchReceiver()!! to it },
-            extensionReceiver?.let { irFunction.getExtensionReceiver()!! to it }
+            dispatchReceiver?.let { Field(irFunction.getDispatchReceiver()!!, it) },
+            extensionReceiver?.let { Field(irFunction.getExtensionReceiver()!!, it) }
         )
         if (irFunction.isLocal) callStack.storeUpValues(function)
         callStack.pushState(function)

@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 
 internal interface Complex : State {
     var superWrapperClass: Wrapper?
-    var outerClass: Pair<IrSymbol, State>?
+    var outerClass: Field?
 
     fun irClassFqName() = irClass.fqName
 

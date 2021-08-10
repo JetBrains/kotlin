@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.isFunction
 import org.jetbrains.kotlin.ir.interpreter.isKFunction
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal interface State {
-    val fields: MutableMap<IrSymbol, State>
+    val fields: Fields
     val irClass: IrClass
 
     fun getField(symbol: IrSymbol): State? {

@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
 
 internal class Primitive<T>(val value: T, val type: IrType) : State {
-    override val fields: MutableMap<IrSymbol, State> = mutableMapOf()
+    override val fields: Fields = mutableMapOf()
     override val irClass: IrClass = type.classOrNull!!.owner
 
     override fun getField(symbol: IrSymbol): State? = null

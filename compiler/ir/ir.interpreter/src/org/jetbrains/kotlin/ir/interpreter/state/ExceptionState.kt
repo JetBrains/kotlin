@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.interpreter.getOriginalPropertyByName
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import kotlin.math.min
 
 internal class ExceptionState private constructor(
-    override val irClass: IrClass, override val fields: MutableMap<IrSymbol, State>, stackTrace: List<String>
+    override val irClass: IrClass, override val fields: Fields, stackTrace: List<String>
 ) : Complex, StateWithClosure, Throwable() {
     override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
     override var superWrapperClass: Wrapper? = null
-    override var outerClass: Pair<IrSymbol, State>? = null
+    override var outerClass: Field? = null
 
     override val message: String?
         get() = getField(messageProperty.symbol)?.asStringOrNull()
@@ -100,7 +102,7 @@ internal class ExceptionState private constructor(
     override fun toString(): String = message?.let { "$exceptionFqName: $it" } ?: exceptionFqName
 
     companion object {
-        private fun evaluateFields(exception: Throwable, irClass: IrClass, stackTrace: List<String>): MutableMap<IrSymbol, State> {
+        private fun evaluateFields(exception: Throwable, irClass: IrClass, stackTrace: List<String>): Fields {
             val messageProperty = irClass.getOriginalPropertyByName("message")
             val causeProperty = irClass.getOriginalPropertyByName("cause")
 
