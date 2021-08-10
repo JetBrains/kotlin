@@ -255,6 +255,7 @@ enum class LanguageFeature(
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276
     ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_8), // KT-49017
     ForbidSuperDelegationToAbstractAnyMethod(KOTLIN_1_8), // KT-38078
+    ProperEqualityChecksInBuilderInferenceCalls(KOTLIN_1_8, kind = BUG_FIX),
 
     // 1.9
 
