@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.jvm.diagnostics.FirJvmDefaultErrorMessages
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.moduleSourceInfo
 import org.jetbrains.kotlin.platform.SimplePlatform
@@ -42,6 +43,7 @@ private object CheckersFactory {
     ): List<AbstractDiagnosticCollectorComponent> {
         val moduleInfo = session.moduleData.moduleSourceInfo
         val platform = moduleInfo.platform.componentPlatforms.first()
+        installPlatformSpecificErrorMessages(platform)
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform)
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform)
         val typeCheckers = createTypeCheckers(useExtendedCheckers)
@@ -67,6 +69,8 @@ private object CheckersFactory {
                 add(CommonDeclarationCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmDeclarationCheckers)
+                    else -> {
+                    }
                 }
             }
         }
@@ -80,7 +84,17 @@ private object CheckersFactory {
                 add(CommonExpressionCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmExpressionCheckers)
+                    else -> {
+                    }
                 }
+            }
+        }
+    }
+
+    private fun installPlatformSpecificErrorMessages(platform: SimplePlatform) {
+        when (platform) {
+            is JvmPlatform -> FirJvmDefaultErrorMessages.installJvmErrorMessages()
+            else -> {
             }
         }
     }

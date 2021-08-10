@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.PrimitiveTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -122,7 +122,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
                     lowerBoundWithoutCapturing.withNullability(ConeNullability.NULLABLE, typeCtx)
                 )
             ) {
-                reporter.reportOn(arg.source, FirErrors.JAVA_TYPE_MISMATCH, expectedType, argType, context)
+                reporter.reportOn(arg.source, FirJvmErrors.JAVA_TYPE_MISMATCH, expectedType, argType, context)
             }
         }
     }
