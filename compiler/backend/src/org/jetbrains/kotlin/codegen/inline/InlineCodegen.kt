@@ -73,8 +73,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         if (maskStartIndex != -1) {
             for (lambda in extractDefaultLambdas(node)) {
                 invocationParamBuilder.buildParameters().getParameterByDeclarationSlot(lambda.offset).functionalArgument = lambda
-                val prev = expressionMap.put(lambda.offset, lambda)
-                assert(prev == null) { "Lambda with offset ${lambda.offset} already exists: $prev" }
                 if (lambda.needReification) {
                     lambda.reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(lambda.node.node))
                 }
@@ -87,7 +85,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val parameters = invocationParamBuilder.buildParameters()
 
         val info = RootInliningContext(
-            expressionMap, state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
+            state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
             sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
         )
 
@@ -207,9 +205,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {
-        val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, index)
-        closureInfo.functionalArgument = lambdaInfo
-        expressionMap[closureInfo.index] = lambdaInfo
+        invocationParamBuilder.addNextValueParameter(parameterType, true, null, index).functionalArgument = lambdaInfo
     }
 
     protected fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinType?) {

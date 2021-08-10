@@ -517,13 +517,10 @@ class AnonymousObjectTransformer(
         val paramTypes = transformationInfo.constructorDesc?.let { Type.getArgumentTypes(it) } ?: emptyArray()
         for (type in paramTypes) {
             val info = indexToFunctionalArgument[constructorParamBuilder.nextParameterOffset]
+            val isCaptured = capturedParams.contains(constructorParamBuilder.nextParameterOffset)
             val parameterInfo = constructorParamBuilder.addNextParameter(type, info is LambdaInfo)
             parameterInfo.functionalArgument = info
-            if (capturedParams.contains(parameterInfo.index)) {
-                parameterInfo.isCaptured = true
-            } else {
-                //otherwise it's super constructor parameter
-            }
+            parameterInfo.isCaptured = isCaptured
         }
 
         //For all inlined lambdas add their captured parameters
