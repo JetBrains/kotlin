@@ -1506,34 +1506,40 @@ standaloneTest("initializers_eagerInitializationThreadLocal2") {
 }
 
 standaloneTest("initializers_workers1") {
+    expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
     source = "codegen/initializers/workers1.kt"
     goldValue = "42\n3\n"
 }
 
 standaloneTest("initializers_workers2") {
+    expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
     source = "codegen/initializers/workers2.kt"
     goldValue = "42\n42\n"
 }
 
 standaloneTest("initializers_failInInitializer1") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer1.kt"
     goldValue = "caught\n"
     flags = ['-Xir-property-lazy-initialization']
 }
 
 standaloneTest("initializers_failInInitializer2") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer2.kt"
     goldValue = "caught\ncaught2\n"
     flags = ['-Xir-property-lazy-initialization']
 }
 
 standaloneTest("initializers_failInInitializer3") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer3.kt"
     goldValue = "caught\ncaught2\n"
     flags = ['-Xir-property-lazy-initialization']
 }
 
 standaloneTest("initializers_failInInitializer4") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer4.kt"
     goldValue = "caught\ncaught2\n"
     flags = ['-Xir-property-lazy-initialization']
@@ -1550,11 +1556,13 @@ standaloneTest("initializers_when2") {
 }
 
 standaloneTest("initializers_throw1") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/throw1.kt"
     goldValue = "42\n"
 }
 
 standaloneTest("initializers_throw2") {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/throw2.kt"
     goldValue = "42\n"
 }
