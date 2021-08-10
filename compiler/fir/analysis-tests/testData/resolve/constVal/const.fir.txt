@@ -23,6 +23,16 @@ FILE: const.kt
         public get(): R|kotlin/Int|
     public final const val l: R|kotlin/Int| = R|/k|
         public get(): R|kotlin/Int|
+    public final const val m: R|kotlin/String| = String(123).R|kotlin/Any.toString|()
+        public get(): R|kotlin/String|
+    public final const val n: R|kotlin/Int| = String(456).R|kotlin/String.length|
+        public get(): R|kotlin/Int|
+    public final val o: R|kotlin/String| = String(789)
+        public get(): R|kotlin/String|
+    public final const val p: R|kotlin/String| = R|/o|.R|kotlin/Any.toString|()
+        public get(): R|kotlin/String|
+    public final const val q: R|kotlin/Int| = R|/o|.R|kotlin/String.length|
+        public get(): R|kotlin/Int|
     public final class ForConst : R|kotlin/Any| {
         public constructor(): R|ForConst| {
             super<R|kotlin/Any|>()

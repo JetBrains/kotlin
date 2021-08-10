@@ -18,6 +18,11 @@ const val i = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>ForConst.one() + "one"<!>
 const val j = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>4 * ForConst.two()<!>
 val k = 3 - ForConst.two()
 const val l = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>k<!>
+const val m = "123".toString()
+const val n = "456".length
+val o = "789"
+const val p = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>o.toString()<!>
+const val q = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>o.length<!>
 
 class ForConst{
     companion object {
