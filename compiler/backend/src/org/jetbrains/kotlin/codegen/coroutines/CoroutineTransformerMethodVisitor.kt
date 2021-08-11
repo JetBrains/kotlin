@@ -192,7 +192,7 @@ class CoroutineTransformerMethodVisitor(
         dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
 
-        updateLvtAccordingToLiveness(methodNode, isForNamedFunction)
+        updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
 
         if (languageVersionSettings.isReleaseCoroutines()) {
             writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
@@ -1269,7 +1269,7 @@ private fun MethodNode.nodeTextWithLiveness(liveness: List<VariableLivenessFrame
  * This means, that function parameters do not longer span the whole function, including `this`.
  * This might and will break some bytecode processors, including old versions of R8. See KT-24510.
  */
-private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction: Boolean) {
+private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction: Boolean, suspensionPoints: List<LabelNode>) {
     val liveness = analyzeLiveness(method)
 
     fun List<LocalVariableNode>.findRecord(insnIndex: Int, variableIndex: Int): LocalVariableNode? {
@@ -1288,8 +1288,8 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     fun nextLabel(node: AbstractInsnNode?): LabelNode? {
         var current = node
         while (current != null) {
-            if (current is LabelNode) return current as LabelNode
-            current = current!!.next
+            if (current is LabelNode) return current
+            current = current.next
         }
         return null
     }
@@ -1346,33 +1346,17 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
 
                 // Attempt to extend existing local variable node corresponding to the record in
                 // the original local variable table, if there is no back-edge
-                val recordToExtend: LocalVariableNode? = oldLvtNodeToLatestNewLvtNode[lvtRecord]
-                var recordExtended = false
-                if (recordToExtend != null) {
-                    var hasBackEdgeOrStore = false
-                    var current: AbstractInsnNode? = recordToExtend.end
-                    while (current != null && current != endLabel) {
-                        if (current is JumpInsnNode) {
-                            if (method.instructions.indexOf((current as JumpInsnNode).label) < method.instructions.indexOf(current)) {
-                                hasBackEdgeOrStore = true
-                                break
-                            }
-                        }
-                        if (current!!.isStoreOperation() && (current as VarInsnNode).`var` == recordToExtend.index) {
-                            hasBackEdgeOrStore = true
-                            break
-                        }
-                        current = current!!.next
-                    }
-                    if (!hasBackEdgeOrStore) {
-                        recordToExtend.end = endLabel
-                        recordExtended = true
-                    }
-                }
-                if (!recordExtended) {
-                    val node = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
-                    method.localVariables.add(node)
-                    oldLvtNodeToLatestNewLvtNode[lvtRecord] = node
+                val latest = oldLvtNodeToLatestNewLvtNode[lvtRecord]
+                // if we can extend the previous range to where the local variable dies, we do not need a
+                // new entry, we know we cannot extend it to the lvt.endOffset, if we could we would have
+                // done so when we added it below.
+                val extended = latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end) ?: false
+                if (!extended) {
+                    val new = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
+                    oldLvtNodeToLatestNewLvtNode[lvtRecord] = new
+                    method.localVariables.add(new)
+                    // see if we can extend it all the way to the old end
+                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end)
                 }
             }
         }
@@ -1394,4 +1378,36 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             continue
         }
     }
+}
+
+/* We cannot extend a record if there is STORE instruction or a back-edge.
+ * STORE instructions can signify a unspilling operation, in which case, the variable will become visible before it unspilled,
+ * back-edges occur in loops.
+ *
+ * @return true if the range has been extended
+ */
+private fun LocalVariableNode.extendRecordIfPossible(
+    method: MethodNode,
+    suspensionPoints: List<LabelNode>,
+    endLabel: LabelNode
+): Boolean {
+    val nextSuspensionPointLabel = suspensionPoints.find { it in InsnSequence(end, endLabel) } ?: endLabel
+
+    var current: AbstractInsnNode? = end
+    while (current != null && current != nextSuspensionPointLabel) {
+        if (current is JumpInsnNode) {
+            if (method.instructions.indexOf(current.label) < method.instructions.indexOf(current)) {
+                return false
+            }
+        }
+        // TODO: HACK
+        // TODO: Find correct label, which is OK to be used as end label.
+        if (current.opcode == Opcodes.ARETURN && nextSuspensionPointLabel != endLabel) return false
+        if (current.isStoreOperation() && (current as VarInsnNode).`var` == index) {
+            return false
+        }
+        current = current.next
+    }
+    end = nextSuspensionPointLabel
+    return true
 }
