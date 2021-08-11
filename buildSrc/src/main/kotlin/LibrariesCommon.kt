@@ -34,7 +34,7 @@ fun Project.configureJava9Compilation(
 
         // module-info.java should be in java9 source set by convention
         val java9SourceSet = sourceSets["java9"].java
-        destinationDir = file("${java9SourceSet.outputDir}/META-INF/versions/9")
+        destinationDirectory.set(java9SourceSet.destinationDirectory.asFile.get().resolve("META-INF/versions/9"))
         options.sourcepath = files(java9SourceSet.srcDirs)
         val compileClasspath = configurations["java9CompileClasspath"]
         val moduleFiles = objects.fileCollection().from(moduleOutputs)

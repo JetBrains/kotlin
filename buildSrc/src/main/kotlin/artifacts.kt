@@ -13,7 +13,7 @@ import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.*
 import org.gradle.api.plugins.JavaPluginExtension
@@ -76,7 +76,7 @@ fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
                 embedded.map(::zipTree)
             }
         }
-        setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
@@ -90,7 +90,7 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
 
     task.configure {
         configurations = configurations + listOf(project.configurations["embedded"])
-        setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
@@ -108,7 +108,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     }
 
     val sourcesJar = getOrCreateTask<Jar>("sourcesJar") {
-        fun Project.mainJavaPluginSourceSet() = findJavaPluginConvention()?.sourceSets?.findByName("main")
+        fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.findByName("main")
         fun Project.mainKotlinSourceSet() =
             (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
 

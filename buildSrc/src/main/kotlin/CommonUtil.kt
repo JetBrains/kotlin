@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.CopySourceSpec
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
@@ -70,9 +70,9 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
 
 inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourceSpec = from(Callable { filesProvider() })
 
-fun Project.javaPluginConvention(): JavaPluginConvention = the()
+fun Project.javaPluginExtension(): JavaPluginExtension = extensions.getByType()
 
-fun Project.findJavaPluginConvention(): JavaPluginConvention? = convention.findByType() ?: convention.findPlugin()
+fun Project.findJavaPluginExtension(): JavaPluginExtension? = extensions.findByType()
 
 fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
 
@@ -83,7 +83,7 @@ fun Task.singleOutputFile(): File = when (this) {
 }
 
 val Project.isConfigurationCacheDisabled
-    get() = (gradle.startParameter as? org.gradle.api.internal.StartParameterInternal)?.isConfigurationCache != true
+    get() = (gradle.startParameter as? org.gradle.api.internal.StartParameterInternal)?.configurationCache?.get() != true
 
 val Project.isIdeaActive
     get() = providers.systemProperty("idea.active").forUseAtConfigurationTime().isPresent

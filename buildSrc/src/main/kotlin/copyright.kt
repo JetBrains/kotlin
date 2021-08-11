@@ -6,7 +6,7 @@
 package tasks
 
 import groovy.util.Node
-import groovy.util.XmlParser
+import groovy.xml.XmlParser
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property

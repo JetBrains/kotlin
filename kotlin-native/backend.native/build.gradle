@@ -238,6 +238,7 @@ task trove4jCopy(type: Copy) {
 externalJars.each { arg ->
     def jar = arg.replace('_', '-') // :(
     task("${arg}Copy", type: Copy) {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from configurations.getByName("kotlin_${arg}_jar") {
             include "kotlin-${jar}*.jar"
             rename "kotlin-${jar}(.*).jar", "kotlin-${jar}.jar"

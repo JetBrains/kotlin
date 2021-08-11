@@ -39,7 +39,7 @@ class InstrumentJava(@Transient val javaInstrumentator: Configuration, @Transien
                 javaSourceDirectories.forEach { directory ->
                     "instrumentIdeaExtensions"(
                         "srcdir" to directory,
-                        "destdir" to task.destinationDir,
+                        "destdir" to task.destinationDirectory.asFile.get(),
                         "classpath" to task.classpath.asPath,
                         "includeantruntime" to false,
                         "instrumentNotNull" to true
