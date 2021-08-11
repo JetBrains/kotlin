@@ -65,8 +65,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             handleIntrinsicMethods(irFunction) -> return
             receiver.mustBeHandledAsReflection(call) -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
             receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
-            irFunction.body == null ->
-                irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction, args)
+            // TODO try to save fields in Primitive -> then it is possible to move up next branch
+            // TODO try to create backing field if it is missing
+            irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() -> callStack.pushInstruction(CompoundInstruction(irFunction.createGetField()))
+            irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction, args)
             else -> defaultAction()
         }
     }
@@ -208,12 +210,5 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         this.body = bodyMap[signature] ?: return null
         callStack.pushInstruction(CompoundInstruction(this))
         return body
-    }
-
-    // TODO fix in FIR2IR; const val getter must have body with IrGetField node
-    private fun IrFunction.tryCalculateLazyConst(): IrExpression? {
-        if (this !is IrSimpleFunction) return null
-        val expression = this.correspondingPropertySymbol?.owner?.backingField?.initializer?.expression
-        return expression?.apply { callStack.pushInstruction(CompoundInstruction(this)) }
     }
 }
