@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.interpreter.CompoundInstruction
 import org.jetbrains.kotlin.ir.interpreter.Instruction
-import org.jetbrains.kotlin.ir.interpreter.SimpleInstruction
 import org.jetbrains.kotlin.ir.interpreter.handleAndDropResult
+import org.jetbrains.kotlin.ir.interpreter.pushCompoundInstruction
+import org.jetbrains.kotlin.ir.interpreter.pushSimpleInstruction
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -60,7 +60,7 @@ internal class CallStack {
                 is IrTry -> {
                     dropSubFrame()
                     pushState(result)
-                    pushInstruction(SimpleInstruction(irReturn))
+                    pushSimpleInstruction(irReturn)
                     frameOwner.finallyExpression?.handleAndDropResult(this)
                     return
                 }
@@ -68,7 +68,7 @@ internal class CallStack {
                     val tryBlock = currentFrame.dropInstructions()!!.element as IrTry// last instruction in `catch` block is `try`
                     dropSubFrame()
                     pushState(result)
-                    pushInstruction(SimpleInstruction(irReturn))
+                    pushSimpleInstruction(irReturn)
                     tryBlock.finallyExpression?.handleAndDropResult(this)
                     return
                 }
@@ -81,7 +81,7 @@ internal class CallStack {
         }
 
         currentFrame.dropInstructions()
-        pushInstruction(SimpleInstruction(returnTarget))
+        pushSimpleInstruction(returnTarget)
         if (returnTarget !is IrConstructor) pushState(result)
     }
 
@@ -91,15 +91,15 @@ internal class CallStack {
             when (frameOwner) {
                 is IrTry -> {
                     currentFrame.removeSubFrameWithoutDataPropagation()
-                    pushInstruction(CompoundInstruction(breakOrContinue))
+                    pushCompoundInstruction(breakOrContinue)
                     newSubFrame(frameOwner) // will be deleted when interpret 'try'
-                    pushInstruction(SimpleInstruction(frameOwner))
+                    pushSimpleInstruction(frameOwner)
                     return
                 }
                 is IrCatch -> {
                     val tryInstruction = currentFrame.dropInstructions()!! // last instruction in `catch` block is `try`
                     currentFrame.removeSubFrameWithoutDataPropagation()
-                    pushInstruction(CompoundInstruction(breakOrContinue))
+                    pushCompoundInstruction(breakOrContinue)
                     newSubFrame(tryInstruction.element!!)  // will be deleted when interpret 'try'
                     pushInstruction(tryInstruction)
                     return
@@ -114,10 +114,10 @@ internal class CallStack {
         when (breakOrContinue) {
             is IrBreak -> currentFrame.removeSubFrameWithoutDataPropagation() // drop loop
             else -> if (breakOrContinue.loop is IrDoWhileLoop) {
-                pushInstruction(SimpleInstruction(breakOrContinue.loop))
-                pushInstruction(CompoundInstruction(breakOrContinue.loop.condition))
+                pushSimpleInstruction(breakOrContinue.loop)
+                pushCompoundInstruction(breakOrContinue.loop.condition)
             } else {
-                pushInstruction(CompoundInstruction(breakOrContinue.loop))
+                pushCompoundInstruction(breakOrContinue.loop)
             }
         }
     }
@@ -133,8 +133,8 @@ internal class CallStack {
                     is IrTry -> {
                         dropSubFrame()  // drop all instructions that left
                         newSubFrame(frameOwner)
-                        pushInstruction(SimpleInstruction(frameOwner)) // to evaluate finally at the end
-                        frameOwner.catches.reversed().forEach { pushInstruction(CompoundInstruction(it)) }
+                        pushSimpleInstruction(frameOwner) // to evaluate finally at the end
+                        frameOwner.catches.reversed().forEach { pushCompoundInstruction(it) }
                         pushState(exception)
                         return
                     }

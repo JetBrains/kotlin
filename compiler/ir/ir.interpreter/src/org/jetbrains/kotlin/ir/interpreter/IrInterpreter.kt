@@ -23,17 +23,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal interface Instruction {
-    val element: IrElement?
-}
-
-internal class CompoundInstruction(override val element: IrElement?) : Instruction // must unwind first
-internal class SimpleInstruction(override val element: IrElement) : Instruction   // must interpret as is
-internal class CustomInstruction(val evaluate: () -> Unit) : Instruction {
-    override val element: IrElement?
-        get() = null
-}
-
 class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal val bodyMap: Map<IdSignature, IrBody>) {
     val irBuiltIns: IrBuiltIns
         get() = environment.irBuiltIns
@@ -65,7 +54,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     fun interpret(expression: IrExpression, file: IrFile? = null): IrExpression {
         commandCount = 0
         callStack.newFrame(expression, file)
-        callStack.pushInstruction(CompoundInstruction(expression))
+        callStack.pushCompoundInstruction(expression)
 
         while (!callStack.hasNoInstructions()) {
             callStack.popInstruction().handle()
@@ -174,7 +163,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val reifiedTypeArguments = environment.loadReifiedTypeArguments(call)
 
         callStack.newFrame(irFunction)
-        callStack.pushInstruction(SimpleInstruction(irFunction))
+        callStack.pushSimpleInstruction(irFunction)
 
         // 4. load up values onto stack; do it at first to set low priority of these variables
         if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
@@ -195,7 +184,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) dispatchReceiver.loadOuterClassesInto(callStack)
 
         callInterceptor.interceptCall(call, irFunction, args) {
-            callStack.pushInstruction(CompoundInstruction(irFunction))
+            callStack.pushCompoundInstruction(irFunction)
         }
     }
 
@@ -244,7 +233,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val returnType = constructorCall.type.getTypeIfReified(callStack)
 
         callStack.newFrame(constructor)
-        callStack.pushInstruction(SimpleInstruction(constructor))
+        callStack.pushSimpleInstruction(constructor)
         if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
 
         callStack.storeState(constructorCall.getThisReceiver(), objectState)
@@ -274,7 +263,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         }
 
         callInterceptor.interceptConstructor(constructorCall, valueArguments) {
-            callStack.pushInstruction(CompoundInstruction(constructor))
+            callStack.pushCompoundInstruction(constructor)
         }
     }
 
@@ -303,7 +292,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
             constructorCall.putValueArgument(0, expression.value.toIrConst(signedType))
 
-            return callStack.pushInstruction(CompoundInstruction(constructorCall))
+            return callStack.pushCompoundInstruction(constructorCall)
         }
         callStack.pushState(expression.toPrimitive())
     }
@@ -317,9 +306,9 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         callStack.dropSubFrame()
         if (result) {
             callStack.newSubFrame(loop)
-            callStack.pushInstruction(SimpleInstruction(loop))
-            callStack.pushInstruction(CompoundInstruction(loop.condition))
-            callStack.pushInstruction(CompoundInstruction(loop.body))
+            callStack.pushSimpleInstruction(loop)
+            callStack.pushCompoundInstruction(loop.condition)
+            callStack.pushCompoundInstruction(loop.body)
         }
     }
 
@@ -328,9 +317,9 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         callStack.dropSubFrame()
         if (result) {
             callStack.newSubFrame(loop)
-            callStack.pushInstruction(SimpleInstruction(loop))
-            callStack.pushInstruction(CompoundInstruction(loop.condition))
-            callStack.pushInstruction(CompoundInstruction(loop.body))
+            callStack.pushSimpleInstruction(loop)
+            callStack.pushCompoundInstruction(loop.condition)
+            callStack.pushCompoundInstruction(loop.body)
         }
     }
 
@@ -338,7 +327,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val result = callStack.popState().asBoolean()
         if (result) {
             callStack.dropSubFrame()
-            callStack.pushInstruction(CompoundInstruction(branch.result))
+            callStack.pushCompoundInstruction(branch.result)
         }
     }
 
@@ -355,12 +344,12 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic -> {
                 // for java static variables
                 when (val initializerExpression = field.initializer?.expression) {
-                    is IrConst<*> -> callStack.pushInstruction(SimpleInstruction(initializerExpression))
+                    is IrConst<*> -> callStack.pushSimpleInstruction(initializerExpression)
                     else -> callInterceptor.interceptJavaStaticField(expression)
                 }
             }
             field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.correspondingPropertySymbol?.owner?.isConst == true -> {
-                callStack.pushInstruction(CompoundInstruction(field.initializer?.expression))
+                callStack.pushCompoundInstruction(field.initializer?.expression)
             }
             expression.accessesTopLevelOrObjectField() -> {
                 val propertyOwner = field.correspondingPropertySymbol?.owner
@@ -368,7 +357,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                         propertyOwner?.backingField?.initializer?.expression is IrConst<*> ||
                         propertyOwner?.parentClassOrNull?.hasAnnotation(compileTimeAnnotation) == true // check if object is marked as compile time
                 verify(isConst) { "Cannot interpret get method on top level non const properties" }
-                callStack.pushInstruction(CompoundInstruction(field.initializer?.expression))
+                callStack.pushCompoundInstruction(field.initializer?.expression)
             }
             else -> {
                 val result = callStack.loadState(receiver!!).getField(field.correspondingPropertySymbol!!)
@@ -391,7 +380,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
             val constructor = objectClass.constructors.first()
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            callStack.pushInstruction(CompoundInstruction(constructorCall))
+            callStack.pushCompoundInstruction(constructorCall)
         }
     }
 
@@ -428,7 +417,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
             callStack.newSubFrame(enumEntry)
             callStack.pushInstruction(CustomInstruction(cleanEnumSuperCall))
-            callStack.pushInstruction(CompoundInstruction(enumInitializer))
+            callStack.pushCompoundInstruction(enumInitializer)
             callStack.storeState(enumConstructorCall.getThisReceiver(), enumClassObject)
         }
     }

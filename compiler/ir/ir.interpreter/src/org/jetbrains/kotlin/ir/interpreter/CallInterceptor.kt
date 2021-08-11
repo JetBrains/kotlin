@@ -50,7 +50,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override fun interceptProxy(irFunction: IrFunction, valueArguments: List<State>, expectedResultClass: Class<*>): Any? {
         val irCall = irFunction.createCall()
         return interpreter.withNewCallStack(irCall) {
-            this@withNewCallStack.environment.callStack.pushInstruction(SimpleInstruction(irCall))
+            this@withNewCallStack.environment.callStack.pushSimpleInstruction(irCall)
             valueArguments.forEach { this@withNewCallStack.environment.callStack.pushState(it) }
         }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = false, extendFrom = expectedResultClass)
     }
@@ -67,7 +67,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
             // TODO try to save fields in Primitive -> then it is possible to move up next branch
             // TODO try to create backing field if it is missing
-            irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() -> callStack.pushInstruction(CompoundInstruction(irFunction.createGetField()))
+            irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() -> callStack.pushCompoundInstruction(irFunction.createGetField())
             irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction, args)
             else -> defaultAction()
         }
@@ -186,7 +186,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
         }
 
-        callStack.pushInstruction(CompoundInstruction(constructorCall))
+        callStack.pushCompoundInstruction(constructorCall)
     }
 
     private fun Any?.getType(defaultType: IrType): IrType {
@@ -208,7 +208,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private fun IrFunction.trySubstituteFunctionBody(): IrElement? {
         val signature = this.symbol.signature ?: return null
         this.body = bodyMap[signature] ?: return null
-        callStack.pushInstruction(CompoundInstruction(this))
+        callStack.pushCompoundInstruction(this)
         return body
     }
 }
