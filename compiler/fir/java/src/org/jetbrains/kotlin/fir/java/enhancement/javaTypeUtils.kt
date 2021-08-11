@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
@@ -38,8 +36,6 @@ import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.extractRadix
-
-typealias IndexedJavaTypeQualifiers = (Int) -> JavaTypeQualifiers
 
 internal fun ConeKotlinType.enhance(session: FirSession, qualifiers: IndexedJavaTypeQualifiers): ConeKotlinType? =
     enhanceConeKotlinType(session, qualifiers, 0, mutableListOf<Int>().apply { computeSubtreeSizes(this) })
@@ -208,11 +204,6 @@ private fun ConeClassifierLookupTag.enhanceMutability(
 
     return this
 }
-
-internal data class TypeAndDefaultQualifiers(
-    val type: ConeKotlinType?, // null denotes '*' here
-    val defaultQualifiers: JavaDefaultQualifiers?
-)
 
 internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String): FirExpression? {
     val lookupTagBasedType = when (this) {

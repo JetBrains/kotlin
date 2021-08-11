@@ -5,138 +5,62 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
+import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 
 internal class EnhancementSignatureParts(
-    private val typeQualifierResolver: FirAnnotationTypeQualifierResolver,
+    private val session: FirSession,
+    override val annotationTypeQualifierResolver: FirAnnotationTypeQualifierResolver,
     private val typeContainer: FirAnnotationContainer?,
-    private val javaTypeParameterStack: JavaTypeParameterStack,
-    private val current: FirJavaTypeRef,
-    private val fromOverridden: Collection<FirTypeRef>,
-    private val isCovariant: Boolean,
-    private val context: FirJavaEnhancementContext,
-    private val containerApplicabilityType: AnnotationQualifierApplicabilityType
-) {
-    private val isForVarargParameter get() = typeContainer.safeAs<FirValueParameter>()?.isVararg == true
+    override val isCovariant: Boolean,
+    override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
+    override val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
+) : AbstractSignatureParts<FirAnnotationCall>() {
+    override val enableImprovementsInStrictMode: Boolean
+        get() = true
 
-    private fun ConeKotlinType.toFqNameUnsafe(): FqNameUnsafe? =
-        ((this as? ConeLookupTagBasedType)?.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.toUnsafe()
+    override val containerAnnotations: Iterable<FirAnnotationCall>
+        get() = typeContainer?.annotations ?: emptyList()
 
-    internal fun enhance(
-        session: FirSession,
-        predefined: TypeEnhancementInfo? = null,
-        forAnnotationMember: Boolean = false
-    ): FirResolvedTypeRef {
-        val mode = if (forAnnotationMember) FirJavaTypeConversionMode.ANNOTATION_MEMBER else FirJavaTypeConversionMode.DEFAULT
-        val typeWithoutEnhancement = current.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, mode)
-        val qualifiers = computeIndexedQualifiersForOverride(typeWithoutEnhancement, predefined)
-        return buildResolvedTypeRef {
-            type = typeWithoutEnhancement.enhance(session, qualifiers) ?: typeWithoutEnhancement
-            annotations += current.annotations
-        }
-    }
+    override val containerIsVarargParameter: Boolean
+        get() = typeContainer is FirValueParameter && typeContainer.isVararg
 
-    private fun ConeKotlinType?.toIndexed(context: FirJavaEnhancementContext): List<TypeAndDefaultQualifiers> {
-        val list = ArrayList<TypeAndDefaultQualifiers>(1)
+    override val typeSystem: TypeSystemContext
+        get() = session.typeContext
 
-        fun add(type: ConeKotlinType?) {
-            // TODO: should use the context from parent type
-            val annotations = type?.attributes?.customAnnotations.orEmpty()
-            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, annotations)
-            list.add(TypeAndDefaultQualifiers(type, c.defaultTypeQualifiers?.get(AnnotationQualifierApplicabilityType.TYPE_USE)))
-            type?.typeArguments?.forEach { add(it.type) }
-        }
+    override val FirAnnotationCall.forceWarning: Boolean
+        get() = false
 
-        add(this)
-        return list
-    }
+    override val KotlinTypeMarker.annotations: Iterable<FirAnnotationCall>
+        get() = (this as ConeKotlinType).attributes.customAnnotations
 
-    private fun ConeKotlinType.extractQualifiers(): JavaTypeQualifiers {
-        val lower = lowerBoundIfFlexible()
-        val upper = upperBoundIfFlexible()
-        val mapping = JavaToKotlinClassMap
-        return JavaTypeQualifiers(
-            when {
-                lower.isMarkedNullable -> NullabilityQualifier.NULLABLE
-                !upper.isMarkedNullable -> NullabilityQualifier.NOT_NULL
-                else -> null
-            },
-            when {
-                mapping.isReadOnly(lower.toFqNameUnsafe()) -> MutabilityQualifier.READ_ONLY
-                mapping.isMutable(upper.toFqNameUnsafe()) -> MutabilityQualifier.MUTABLE
-                else -> null
-            },
-            isNotNullTypeParameter = lower is ConeDefinitelyNotNullType
-        )
-    }
+    override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
+        get() = ((this as? ConeLookupTagBasedType)?.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.toUnsafe()
 
-    private fun composeAnnotations(first: List<FirAnnotationCall>, second: List<FirAnnotationCall>): List<FirAnnotationCall> {
-        return when {
-            first.isEmpty() -> second
-            second.isEmpty() -> first
-            else -> first + second
-        }
-    }
+    override val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
+        get() = null // TODO: implement enhancement for warnings
 
-    private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(isHeadTypeConstructor: Boolean): JavaTypeQualifiers {
-        val annotations = type?.attributes?.customAnnotations.orEmpty()
-        val composedAnnotations =
-            if (isHeadTypeConstructor && typeContainer != null)
-                composeAnnotations(typeContainer.annotations, annotations)
-            else
-                annotations
+    override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
+        AbstractTypeChecker.equalTypes(session.typeContext, this, other)
 
-        val defaultTypeQualifier =
-            if (isHeadTypeConstructor)
-                context.defaultTypeQualifiers?.get(containerApplicabilityType)
-            else
-                defaultQualifiers
+    override val TypeParameterMarker.starProjectedType: KotlinTypeMarker?
+        get() = null // TODO: enhancement currently doesn't do anything to star projections anyway
 
-        val nullabilityInfo = typeQualifierResolver.extractNullability(composedAnnotations)
-            ?: defaultTypeQualifier?.nullabilityQualifier
-
-        return JavaTypeQualifiers(
-            nullabilityInfo?.qualifier,
-            typeQualifierResolver.extractMutability(composedAnnotations),
-            isNotNullTypeParameter = nullabilityInfo?.qualifier == NullabilityQualifier.NOT_NULL &&
-                    type?.lowerBoundIfFlexible() is ConeTypeParameterType,
-            isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
-        )
-    }
-
-    private fun computeIndexedQualifiersForOverride(current: ConeKotlinType?, predefined: TypeEnhancementInfo?): IndexedJavaTypeQualifiers {
-        val indexedFromSupertypes =
-            fromOverridden.map { it.toConeKotlinTypeProbablyFlexible(context.session, javaTypeParameterStack).toIndexed(context) }
-        val indexedThisType = current.toIndexed(context)
-
-        // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
-        // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor
-        // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
-        // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
-        // Note that `this` is flexible here, so it's equal to it's bounds
-        val onlyHeadTypeConstructor = isCovariant && fromOverridden.any { true /*equalTypes(it, this)*/ }
-
-        val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
-        val computedResult = Array(treeSize) { index ->
-            val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations(index == 0)
-            val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
-            qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && isForVarargParameter)
-        }
-        return { index -> predefined?.map?.get(index) ?: computedResult.getOrNull(index) ?: JavaTypeQualifiers.NONE }
-    }
+    override val TypeParameterMarker.isFromJava: Boolean
+        get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin == FirDeclarationOrigin.Java
 }
