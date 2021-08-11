@@ -70,7 +70,6 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     override fun visitReference(reference: FirReference, data: MutableMap<KtElement, FirElement>) {}
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: MutableMap<KtElement, FirElement>) {}
     override fun visitNamedReference(namedReference: FirNamedReference, data: MutableMap<KtElement, FirElement>) {}
-    override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: MutableMap<KtElement, FirElement>) {}
     override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: MutableMap<KtElement, FirElement>) {}
     override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference, data: MutableMap<KtElement, FirElement>) {}
     override fun visitSuperReference(superReference: FirSuperReference, data: MutableMap<KtElement, FirElement>) {}

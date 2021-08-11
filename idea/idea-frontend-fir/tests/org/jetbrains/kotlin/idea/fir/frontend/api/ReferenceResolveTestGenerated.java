@@ -1088,6 +1088,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         }
 
         @Test
+        @TestMetadata("nullSafeCallExpression.kt")
+        public void testNullSafeCallExpression() throws Exception {
+            runTest("idea/idea-frontend-fir/testData/referenceResolve/qualifiedAccess/nullSafeCallExpression.kt");
+        }
+
+        @Test
         @TestMetadata("ResolveFirstPackageOfFullyQualifiedReference.kt")
         public void testResolveFirstPackageOfFullyQualifiedReference() throws Exception {
             runTest("idea/idea-frontend-fir/testData/referenceResolve/qualifiedAccess/ResolveFirstPackageOfFullyQualifiedReference.kt");
