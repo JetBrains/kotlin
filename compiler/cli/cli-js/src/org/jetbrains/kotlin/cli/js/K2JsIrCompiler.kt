@@ -276,7 +276,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 ModulesStructure(
                     projectJs,
                     kLib,
-                    configuration,
+                    configurationJs,
                     libraries,
                     friendLibraries,
                     icUseGlobalSignatures = icCaches.isNotEmpty(),
