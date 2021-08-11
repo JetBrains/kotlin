@@ -43,8 +43,8 @@ fun main(
 
             b: AnnotatedBoundsOfWildcard
 ): Unit {
-    b.superAsIs(aAnyNotNullNotNullNotNull)
-    b.superAsIs(aAnyNotNullNotNullNull)
+    b.superAsIs(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
+    b.superAsIs(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
     b.superAsIs(aAnyNotNullNullNotNull)
     b.superAsIs(aAnyNotNullNullNull)
 
@@ -53,15 +53,15 @@ fun main(
     b.superNotNull(aAnyNotNullNullNotNull)
     b.superNotNull(aAnyNotNullNullNull)
 
-    b.superNullable(aAnyNotNullNotNullNotNull)
-    b.superNullable(aAnyNotNullNotNullNull)
-    b.superNullable(aAnyNotNullNullNotNull)
-    b.superNullable(aAnyNotNullNullNull)
+    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
+    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
+    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNullNotNull<!>)
+    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNullNull<!>)
 
     b.extendsAsIs(aNotNullNotNullNotNull)
-    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.extendsAsIs(aNotNullNotNullNull)
+    b.extendsAsIs(aNotNullNullNotNull)
+    b.extendsAsIs(aNotNullNullNull)
 
     b.extendsNotNull(aNotNullNotNullNotNull)
     b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
@@ -69,12 +69,12 @@ fun main(
     b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.extendsNullable(aNotNullNotNullNotNull)
-    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.extendsNullable(aNotNullNotNullNull)
+    b.extendsNullable(aNotNullNullNotNull)
+    b.extendsNullable(aNotNullNullNull)
 
     b.noBounds(aNotNullNotNullNotNull)
-    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.noBounds(aNotNullNotNullNull)
+    b.noBounds(aNotNullNullNotNull)
+    b.noBounds(aNotNullNullNull)
 }

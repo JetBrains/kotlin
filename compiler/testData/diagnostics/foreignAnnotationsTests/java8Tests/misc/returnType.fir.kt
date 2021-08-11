@@ -51,13 +51,13 @@ fun <R> main(a: ReturnType<R>) {
     takeNotNullStringAndNotNullK(x3)
     takeNullableStringAndNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x3<!>)
 
-    val x4 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<R..R?!>..kotlin.Array<out R..R?!>")!>a.foo4<!>
+    val x4 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<R!!>..kotlin.Array<out R!!>")!>a.foo4<!>
     takeArrayOfNotNullString(<!ARGUMENT_TYPE_MISMATCH!>x4<!>)
     takeArrayOfNullableString(<!ARGUMENT_TYPE_MISMATCH!>x4<!>)
-    takeArrayOfNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x4<!>)
-    takeArrayOfNullableK(x4)
+    takeArrayOfNotNullK(x4)
+    takeArrayOfNullableK(<!ARGUMENT_TYPE_MISMATCH!>x4<!>)
 
-    val x5 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.String..kotlin.String?!>?..kotlin.Array<out kotlin.String..kotlin.String?!>??")!>a.foo5()<!>
+    val x5 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<kotlin.String?>?..kotlin.Array<out kotlin.String?>??")!>a.foo5()<!>
     takeArrayOfNotNullString(<!ARGUMENT_TYPE_MISMATCH!>x5<!>)
     takeArrayOfNullableString(<!ARGUMENT_TYPE_MISMATCH!>x5<!>)
     takeArrayOfNotNullK(<!ARGUMENT_TYPE_MISMATCH!>x5<!>)

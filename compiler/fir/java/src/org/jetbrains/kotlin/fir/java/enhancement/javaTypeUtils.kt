@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
@@ -224,12 +222,6 @@ private fun ConeClassifierLookupTag.enhanceMutability(
     return this
 }
 
-
-internal data class TypeAndDefaultQualifiers(
-    val type: FirTypeRef?, // null denotes '*' here
-    val defaultQualifiers: JavaDefaultQualifiers?
-)
-
 internal fun JavaType.typeArguments(): List<JavaType?> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
 
 internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String): FirExpression? {
@@ -282,22 +274,3 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
         else -> null
     }
 }
-
-internal fun List<FirAnnotationCall>.computeTypeAttributesForJavaType(): ConeAttributes =
-    computeTypeAttributes { classId ->
-        when (classId) {
-            CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID -> add(CompilerConeAttributes.EnhancedNullability)
-            in NOT_NULL_ANNOTATION_IDS -> add(CompilerConeAttributes.EnhancedNullability)
-            JAVAX_NONNULL_ANNOTATION_ID,
-            JAVAX_CHECKFORNULL_ANNOTATION_ID,
-            COMPATQUAL_NONNULL_ANNOTATION_ID,
-            ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID
-            -> add(CompilerConeAttributes.EnhancedNullability)
-        }
-    }
-
-private val NOT_NULL_ANNOTATION_IDS = NOT_NULL_ANNOTATIONS.map { ClassId.topLevel(it) }
-private val JAVAX_NONNULL_ANNOTATION_ID = ClassId.topLevel(JAVAX_NONNULL_ANNOTATION)
-private val JAVAX_CHECKFORNULL_ANNOTATION_ID = ClassId.topLevel(JAVAX_CHECKFORNULL_ANNOTATION)
-private val COMPATQUAL_NONNULL_ANNOTATION_ID = ClassId.topLevel(COMPATQUAL_NONNULL_ANNOTATION)
-private val ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID = ClassId.topLevel(ANDROIDX_RECENTLY_NON_NULL_ANNOTATION)
