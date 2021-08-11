@@ -1,4 +1,4 @@
-// !LANGUAGE: +DefinitelyNotNullTypeParameters
+// !LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T : Any> foo(x: T & Any, y: List<String & Any> & Any) {}
 

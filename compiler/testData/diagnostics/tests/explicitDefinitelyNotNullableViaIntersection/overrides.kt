@@ -1,4 +1,4 @@
-// !LANGUAGE: +DefinitelyNotNullTypeParameters
+// !LANGUAGE: +DefinitelyNonNullableTypes
 
 interface A<T> {
     fun foo(x: T): T
