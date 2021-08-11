@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirQualifiedAccessExpressionImpl @FirImplementationDetail constructor(
+class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
@@ -31,7 +31,7 @@ class FirQualifiedAccessExpressionImpl @FirImplementationDetail constructor(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
-) : FirQualifiedAccessExpression() {
+) : FirPropertyAccessExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
@@ -46,7 +46,7 @@ class FirQualifiedAccessExpressionImpl @FirImplementationDetail constructor(
         }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         transformCalleeReference(transformer, data)
@@ -61,32 +61,32 @@ class FirQualifiedAccessExpressionImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         typeArguments.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         dispatchReceiver = dispatchReceiver.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpressionImpl {
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
         extensionReceiver = extensionReceiver.transform(transformer, data)
         return this
     }

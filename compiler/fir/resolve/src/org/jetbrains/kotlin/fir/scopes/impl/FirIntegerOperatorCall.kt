@@ -43,7 +43,6 @@ class FirIntegerOperatorCall @FirImplementationDetail constructor(
     explicitReceiver,
     dispatchReceiver,
     extensionReceiver,
-    mutableListOf(),
     argumentList,
     calleeReference,
     FirFunctionCallOrigin.Operator

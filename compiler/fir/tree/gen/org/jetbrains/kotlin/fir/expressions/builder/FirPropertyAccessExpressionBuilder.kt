@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirQualifiedAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
+class FirPropertyAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
@@ -42,8 +42,8 @@ class FirQualifiedAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnota
     val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
-    override fun build(): FirQualifiedAccessExpression {
-        return FirQualifiedAccessExpressionImpl(
+    override fun build(): FirPropertyAccessExpression {
+        return FirPropertyAccessExpressionImpl(
             source,
             typeRef,
             annotations,
@@ -59,9 +59,9 @@ class FirQualifiedAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnota
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildQualifiedAccessExpression(init: FirQualifiedAccessExpressionBuilder.() -> Unit): FirQualifiedAccessExpression {
+inline fun buildPropertyAccessExpression(init: FirPropertyAccessExpressionBuilder.() -> Unit): FirPropertyAccessExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirQualifiedAccessExpressionBuilder().apply(init).build()
+    return FirPropertyAccessExpressionBuilder().apply(init).build()
 }

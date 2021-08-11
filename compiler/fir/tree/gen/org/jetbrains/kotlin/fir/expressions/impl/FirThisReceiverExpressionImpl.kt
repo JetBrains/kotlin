@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -28,7 +27,6 @@ internal class FirThisReceiverExpressionImpl(
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
-    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
     override var calleeReference: FirThisReference,
 ) : FirThisReceiverExpression() {
     override var explicitReceiver: FirExpression? = null

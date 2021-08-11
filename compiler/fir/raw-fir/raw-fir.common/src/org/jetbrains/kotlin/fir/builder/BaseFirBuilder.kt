@@ -1091,7 +1091,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             classTypeRefWithCorrectSourceKind: FirTypeRef,
             firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef
         ) =
-            buildQualifiedAccessExpression {
+             buildPropertyAccessExpression {
                 source = parameterSource
                 typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
                 dispatchReceiver = buildThisReceiverExpression {
@@ -1185,7 +1185,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         containingClassForStaticMemberAttr = currentDispatchReceiverType.lookupTag
     }
 
-    private fun FirVariable.toQualifiedAccess(): FirQualifiedAccessExpression = buildQualifiedAccessExpression {
+    private fun FirVariable.toQualifiedAccess(): FirQualifiedAccessExpression = buildPropertyAccessExpression {
         calleeReference = buildResolvedNamedReference {
             source = this@toQualifiedAccess.source?.fakeElement(FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
             name = this@toQualifiedAccess.name

@@ -383,6 +383,10 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrCall(qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression)
     }
 
+    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Any?): IrElement {
+        return visitQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
     // Note that this mimics psi2ir [StatementGenerator#isThisForClassPhysicallyAvailable].
     private fun isThisForClassPhysicallyAvailable(irClass: IrClass): Boolean {
         var lastClass = conversionScope.lastClass()

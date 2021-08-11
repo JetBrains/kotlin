@@ -26,8 +26,7 @@ internal class FirExpressionWithSmartcastImpl(
     override var originalExpression: FirQualifiedAccessExpression,
     override val smartcastType: FirTypeRef,
     override val typesFromSmartCast: Collection<ConeKotlinType>,
-    override val smartcastStability: SmartcastStability,
-    override val nonFatalDiagnostics: List<ConeDiagnostic>
+    override val smartcastStability: SmartcastStability
 ) : FirExpressionWithSmartcast() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)

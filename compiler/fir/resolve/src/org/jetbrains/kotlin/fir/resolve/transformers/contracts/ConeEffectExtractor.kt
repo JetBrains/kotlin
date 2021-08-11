@@ -138,6 +138,13 @@ class ConeEffectExtractor(
         return toValueParameterReference(type, index, name)
     }
 
+    override fun visitPropertyAccessExpression(
+        propertyAccessExpression: FirPropertyAccessExpression,
+        data: Nothing?
+    ): ConeContractDescriptionElement? {
+        return visitQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
     private fun toValueParameterReference(
         type: ConeKotlinType,
         index: Int,

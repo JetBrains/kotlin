@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -111,6 +112,10 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                             context
                         )
                     }
+                }
+
+                override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
+                    visitQualifiedAccessExpression(propertyAccessExpression)
                 }
             })
         }

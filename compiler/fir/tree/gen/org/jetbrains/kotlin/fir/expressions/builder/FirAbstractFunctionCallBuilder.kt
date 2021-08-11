@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -35,7 +34,6 @@ interface FirAbstractFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBui
     abstract override var source: FirSourceElement?
     abstract override var argumentList: FirArgumentList
     abstract var typeRef: FirTypeRef
-    abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
     abstract var calleeReference: FirNamedReference
     abstract var origin: FirFunctionCallOrigin
     override fun build(): FirFunctionCall

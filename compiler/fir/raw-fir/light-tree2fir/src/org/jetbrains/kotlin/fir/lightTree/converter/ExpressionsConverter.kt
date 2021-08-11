@@ -645,7 +645,7 @@ class ExpressionsConverter(
                 context.calleeNamesForLambda.removeLast()
             }
         } else {
-            FirQualifiedAccessExpressionBuilder().apply {
+            FirPropertyAccessExpressionBuilder().apply {
                 this.source = source
                 this.calleeReference = calleeReference
             }
@@ -971,7 +971,7 @@ class ExpressionsConverter(
         } else {
             nameSource.fakeElement(FirFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
         }
-        return buildQualifiedAccessExpression {
+        return buildPropertyAccessExpression {
             val rawText = referenceExpression.asText
             if (rawText.isUnderscore) {
                 nonFatalDiagnostics.add(ConeUnderscoreUsageWithoutBackticks(nameSource))
@@ -1350,7 +1350,7 @@ class ExpressionsConverter(
             }
         }
 
-        return buildQualifiedAccessExpression {
+        return buildPropertyAccessExpression {
             source = superExpression.toFirSourceElement()
             calleeReference = buildExplicitSuperReference {
                 labelName = label

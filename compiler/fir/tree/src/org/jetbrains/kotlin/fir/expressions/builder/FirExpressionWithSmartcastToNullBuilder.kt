@@ -25,8 +25,7 @@ class FirExpressionWithSmartcastToNullBuilder {
             smartcastType,
             typesFromSmartCast,
             smartcastStability,
-            smartcastTypeWithoutNullableNothing,
-            listOf()
+            smartcastTypeWithoutNullableNothing
         )
     }
 }

@@ -153,6 +153,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return result
     }
 
+    override fun transformPropertyAccessExpression(
+        propertyAccessExpression: FirPropertyAccessExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        return transformQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
     protected open fun resolveQualifiedAccessAndSelectCandidate(qualifiedAccessExpression: FirQualifiedAccessExpression): FirStatement {
         return callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression)
     }

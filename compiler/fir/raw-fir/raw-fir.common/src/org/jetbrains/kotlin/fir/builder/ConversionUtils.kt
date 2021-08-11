@@ -254,7 +254,7 @@ fun generateAccessExpression(
     name: Name,
     diagnostic: ConeDiagnostic? = null
 ): FirQualifiedAccessExpression =
-    buildQualifiedAccessExpression {
+    buildPropertyAccessExpression {
         this.source = qualifiedSource
         calleeReference = buildSimpleNamedReference {
             this.source = if (calleeReferenceSource == qualifiedSource)
@@ -269,7 +269,7 @@ fun generateAccessExpression(
     }
 
 fun generateResolvedAccessExpression(source: FirSourceElement?, variable: FirVariable): FirQualifiedAccessExpression =
-    buildQualifiedAccessExpression {
+    buildPropertyAccessExpression {
         this.source = source
         calleeReference = buildResolvedNamedReference {
             this.source = source
@@ -362,7 +362,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             else -> buildConstExpression(null, ConstantValueKind.Null, null)
         }
 
-    fun delegateAccess() = buildQualifiedAccessExpression {
+    fun delegateAccess() = buildPropertyAccessExpression {
         source = fakeSource
         calleeReference = buildDelegateFieldReference {
             resolvedSymbol = delegateFieldSymbol
@@ -481,7 +481,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     argumentList = buildArgumentList {
                         arguments += thisRef()
                         arguments += propertyRef()
-                        arguments += buildQualifiedAccessExpression {
+                        arguments += buildPropertyAccessExpression {
                             calleeReference = buildResolvedNamedReference {
                                 source = fakeSource
                                 name = DELEGATED_SETTER_PARAM

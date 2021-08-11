@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -302,6 +303,10 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                         }
 
                         visitElement(qualifiedAccessExpression)
+                    }
+
+                    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
+                        visitQualifiedAccessExpression(propertyAccessExpression)
                     }
 
                     override fun visitTypeRef(typeRef: FirTypeRef) {
