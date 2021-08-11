@@ -32,9 +32,9 @@ fun testDesugaredForInList() {
 
 fun testForInArrayUnused(j: J) {
   { // BLOCK
-    val <iterator>: Iterator<@FlexibleNullability P?> = j.arrayOfNotNull().iterator()
+    val <iterator>: Iterator<@EnhancedNullability P> = j.arrayOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
-      val x: @FlexibleNullability P? = <iterator>.next()
+      val x: P = <iterator>.next() /*!! P */
     }
   }
 }
@@ -54,11 +54,11 @@ fun testForInListUse() {
 
 fun testForInArrayUse(j: J) {
   { // BLOCK
-    val <iterator>: Iterator<@FlexibleNullability P?> = j.arrayOfNotNull().iterator()
+    val <iterator>: Iterator<@EnhancedNullability P> = j.arrayOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
-      val x: @FlexibleNullability P? = <iterator>.next()
+      val x: P = <iterator>.next() /*!! P */
       { // BLOCK
-        use(s = x /*!! @FlexibleNullability P */)
+        use(s = x)
         use(s = x)
       }
     }

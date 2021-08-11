@@ -39,15 +39,12 @@ public class CKN extends C<@Nullable CK> {}
 // FILE: main.kt
 fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     ak.foo(ak)
-    // jspecify_nullness_mismatch
-    ak.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    ak.foo(null)
 
-    // jspecify_nullness_mismatch
-    akn.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    akn.foo(null)
 
     bk.foo(bk)
-    // jspecify_nullness_mismatch
-    bk.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    bk.foo(null)
 
     ck.foo(ck)
     ck.foo(null)

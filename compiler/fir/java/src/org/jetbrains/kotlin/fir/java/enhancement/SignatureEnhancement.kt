@@ -21,13 +21,17 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
@@ -35,6 +39,12 @@ import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
+import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSignatureEnhancement(
@@ -170,7 +180,7 @@ class FirSignatureEnhancement(
         }
         return enhanceMethod(firMethod, original.callableId, name)
     }
-    
+
     private fun enhanceMethod(
         firMethod: FirFunction,
         methodId: CallableId,
@@ -309,14 +319,16 @@ class FirSignatureEnhancement(
         overriddenMembers: List<FirCallableDeclaration>,
         memberContext: FirJavaEnhancementContext
     ): FirResolvedTypeRef {
-        return ownerFunction.partsForValueParameter(
+        return ownerFunction.enhanceValueParameter(
             typeQualifierResolver,
             overriddenMembers,
             // TODO: check me
             parameterContainer = ownerFunction,
             methodContext = memberContext,
-            typeInSignature = TypeInSignature.Receiver
-        ).enhance(session)
+            typeInSignature = TypeInSignature.Receiver,
+            predefined = null,
+            forAnnotationMember = false
+        )
     }
 
     private fun enhanceValueParameterType(
@@ -331,15 +343,13 @@ class FirSignatureEnhancement(
         if (ownerParameter.returnTypeRef is FirResolvedTypeRef) {
             return ownerParameter.returnTypeRef as FirResolvedTypeRef
         }
-        return ownerFunction.partsForValueParameter(
+        return ownerFunction.enhanceValueParameter(
             typeQualifierResolver,
             overriddenMembers,
             parameterContainer = ownerParameter,
             methodContext = memberContext,
-            typeInSignature = TypeInSignature.ValueParameter(hasReceiver, index)
-        ).enhance(
-            session,
-            predefinedEnhancementInfo?.parametersInfo?.getOrNull(index),
+            typeInSignature = TypeInSignature.ValueParameter(hasReceiver, index),
+            predefined = predefinedEnhancementInfo?.parametersInfo?.getOrNull(index),
             forAnnotationMember = owner.classKind == ClassKind.ANNOTATION_CLASS
         )
     }
@@ -350,7 +360,7 @@ class FirSignatureEnhancement(
         memberContext: FirJavaEnhancementContext,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
     ): FirResolvedTypeRef {
-        return owner.parts(
+        return owner.enhance(
             typeQualifierResolver,
             overriddenMembers,
             typeContainer = owner, isCovariant = true,
@@ -358,9 +368,9 @@ class FirSignatureEnhancement(
             containerApplicabilityType =
             if (owner is FirJavaField) AnnotationQualifierApplicabilityType.FIELD
             else AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
-            typeInSignature = TypeInSignature.Return
-        ).enhance(
-            session, predefinedEnhancementInfo?.returnTypeInfo, forAnnotationMember = this.owner.classKind == ClassKind.ANNOTATION_CLASS
+            typeInSignature = TypeInSignature.Return,
+            predefined = predefinedEnhancementInfo?.returnTypeInfo,
+            forAnnotationMember = this.owner.classKind == ClassKind.ANNOTATION_CLASS
         )
     }
 
@@ -388,14 +398,16 @@ class FirSignatureEnhancement(
         }
     }
 
-    private fun FirFunction.partsForValueParameter(
+    private fun FirFunction.enhanceValueParameter(
         typeQualifierResolver: FirAnnotationTypeQualifierResolver,
         overriddenMembers: List<FirCallableDeclaration>,
         // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)
         parameterContainer: FirAnnotationContainer?,
         methodContext: FirJavaEnhancementContext,
-        typeInSignature: TypeInSignature
-    ): EnhancementSignatureParts = (this as FirCallableDeclaration).parts(
+        typeInSignature: TypeInSignature,
+        predefined: TypeEnhancementInfo?,
+        forAnnotationMember: Boolean
+    ): FirResolvedTypeRef = (this as FirCallableDeclaration).enhance(
         typeQualifierResolver,
         overriddenMembers,
         parameterContainer, false,
@@ -403,33 +415,79 @@ class FirSignatureEnhancement(
             methodContext.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, it.annotations)
         } ?: methodContext,
         AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
-        typeInSignature
+        typeInSignature,
+        predefined,
+        forAnnotationMember
     )
 
-    private fun FirCallableDeclaration.parts(
+    private fun FirCallableDeclaration.enhance(
         typeQualifierResolver: FirAnnotationTypeQualifierResolver,
         overriddenMembers: List<FirCallableDeclaration>,
         typeContainer: FirAnnotationContainer?,
         isCovariant: Boolean,
         containerContext: FirJavaEnhancementContext,
         containerApplicabilityType: AnnotationQualifierApplicabilityType,
-        typeInSignature: TypeInSignature
-    ): EnhancementSignatureParts {
-        val typeRef = typeInSignature.getTypeRef(this)
-        return EnhancementSignatureParts(
-            typeQualifierResolver,
-            typeContainer,
-            javaTypeParameterStack,
-            typeRef as FirJavaTypeRef,
-            overriddenMembers.map {
-                typeInSignature.getTypeRef(it)
-            },
-            isCovariant,
-            // recompute default type qualifiers using type annotations
-            containerContext.copyWithNewDefaultTypeQualifiers(
-                typeQualifierResolver, typeRef.annotations
-            ),
-            containerApplicabilityType
+        typeInSignature: TypeInSignature,
+        predefined: TypeEnhancementInfo?,
+        forAnnotationMember: Boolean
+    ): FirResolvedTypeRef {
+        val parts = EnhancementSignatureParts(
+            session, typeQualifierResolver, typeContainer, isCovariant,
+            containerApplicabilityType, containerContext.defaultTypeQualifiers
         )
+        val typeRef = typeInSignature.getTypeRef(this)
+        val mode = if (forAnnotationMember) FirJavaTypeConversionMode.ANNOTATION_MEMBER else FirJavaTypeConversionMode.DEFAULT
+        val typeWithoutEnhancement = typeRef.toConeKotlinType(mode)
+        val typesFromOverridden = overriddenMembers.map { typeInSignature.getTypeRef(it).toConeKotlinType(mode) }
+        val qualifiers = with(parts) { typeWithoutEnhancement.computeIndexedQualifiers(typesFromOverridden, predefined) }
+        return buildResolvedTypeRef {
+            type = typeWithoutEnhancement.enhance(session, qualifiers) ?: typeWithoutEnhancement
+            annotations += typeRef.annotations
+        }
     }
+
+    private fun FirTypeRef.toConeKotlinType(mode: FirJavaTypeConversionMode): ConeKotlinType =
+        toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, mode)
+}
+
+private class EnhancementSignatureParts(
+    private val session: FirSession,
+    override val annotationTypeQualifierResolver: FirAnnotationTypeQualifierResolver,
+    private val typeContainer: FirAnnotationContainer?,
+    override val isCovariant: Boolean,
+    override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
+    override val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
+) : AbstractSignatureParts<FirAnnotationCall>() {
+    override val enableImprovementsInStrictMode: Boolean
+        get() = true
+
+    override val skipRawTypeArguments: Boolean
+        get() = false
+
+    override val containerAnnotations: Iterable<FirAnnotationCall>
+        get() = typeContainer?.annotations ?: emptyList()
+
+    override val containerIsVarargParameter: Boolean
+        get() = typeContainer is FirValueParameter && typeContainer.isVararg
+
+    override val typeSystem: TypeSystemContext
+        get() = session.typeContext
+
+    override val FirAnnotationCall.forceWarning: Boolean
+        get() = false // TODO: force warnings on IDEA external annotations
+
+    override val KotlinTypeMarker.annotations: Iterable<FirAnnotationCall>
+        get() = (this as ConeKotlinType).attributes.customAnnotations
+
+    override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
+        get() = ((this as? ConeLookupTagBasedType)?.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.toUnsafe()
+
+    override val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
+        get() = null // TODO: implement enhancement for warnings
+
+    override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
+        AbstractTypeChecker.equalTypes(session.typeContext, this, other)
+
+    override val TypeParameterMarker.isFromJava: Boolean
+        get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin == FirDeclarationOrigin.Java
 }
