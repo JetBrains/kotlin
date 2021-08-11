@@ -21,5 +21,8 @@ import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 object DecoyFqNames {
     val Decoy = ComposeFqNames.internalFqNameFor("Decoy")
     val DecoyImplementation = ComposeFqNames.internalFqNameFor("DecoyImplementation")
-    val CurrentComposerIntrinsic = ComposeFqNames.fqNameFor("\$get-currentComposer\$\$composable")
+    val DecoyImplementationDefaultsBitMask =
+        ComposeFqNames.internalFqNameFor("DecoyImplementationDefaultsBitMask")
+    val CurrentComposerIntrinsic =
+        ComposeFqNames.fqNameFor("\$get-currentComposer\$\$composable")
 }
