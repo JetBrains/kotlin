@@ -52,3 +52,47 @@ abstract class ClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
 class KotlinClassesClasspathSnapshotterTest : ClasspathSnapshotterTest() {
     override val testSourceFile = SimpleKotlinClass(tmpDir)
 }
+
+class JavaClassesClasspathSnapshotterTest : ClasspathSnapshotterTest() {
+    override val testSourceFile = SimpleJavaClass(tmpDir)
+}
+
+class JavaClassWithNestedClassesClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
+
+    private val testSourceFile = JavaClassWithNestedClasses(tmpDir)
+
+    private lateinit var testClassSnapshot: ClassSnapshot
+
+    @Before
+    fun setUp() {
+        testClassSnapshot = testSourceFile.compileAndSnapshotNestedClass()
+    }
+
+    private fun TestSourceFile.compileAndSnapshotNestedClass(): ClassSnapshot {
+        return compileAndSnapshotAll()[5].also {
+            assertEquals(
+                testSourceFile.nestedClassToTest,
+                (it as JavaClassSnapshot).serializedJavaClass!!.classId.asString().replace('.', '$')
+            )
+        }
+    }
+
+    @Test
+    fun `test ClassSnapshotter's result against expected snapshot`() {
+        val expectedSnapshot =
+            File("${testDataDir.path}/src/original/${testSourceFile.nestedClassToTest}-expected-snapshot.json").readText()
+        assertEquals(expectedSnapshot, testClassSnapshot.toGson())
+    }
+
+    @Test
+    fun `test ClassSnapshotter extracts ABI info from a class`() {
+        val updatedSnapshot = testSourceFile.changePublicMethodSignature().compileAndSnapshotNestedClass()
+        assertNotEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
+    }
+
+    @Test
+    fun `test ClassSnapshotter does not extract non-ABI info from a class`() {
+        val updatedSnapshot = testSourceFile.changeMethodImplementation().compileAndSnapshotNestedClass()
+        assertEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
+    }
+}

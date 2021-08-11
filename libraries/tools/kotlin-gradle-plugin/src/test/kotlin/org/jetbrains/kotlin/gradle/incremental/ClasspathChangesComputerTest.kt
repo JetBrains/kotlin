@@ -33,19 +33,17 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
     @Test
     fun testCollectClassChanges_changedPublicMethodSignature() {
         val updatedSnapshot = testSourceFile.changePublicMethodSignature().compileAndSnapshot()
-        val dirtyData = ClasspathChangesComputer.collectKotlinClassChanges(
-            updatedSnapshot as KotlinClassSnapshot,
-            originalSnapshot as KotlinClassSnapshot
-        )
+        val dirtyData = ClasspathChangesComputer.computeClassChanges(updatedSnapshot, originalSnapshot)
 
+        val testClass = testSourceFile.sourceFile.unixStyleRelativePath.substringBeforeLast('.').replace('/', '.')
         assertEquals(
             DirtyData(
                 dirtyLookupSymbols = setOf(
-                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SimpleKotlinClass"),
-                    LookupSymbol(name = "publicMethod", scope = "com.example.SimpleKotlinClass"),
-                    LookupSymbol(name = "changedPublicMethod", scope = "com.example.SimpleKotlinClass")
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = testClass),
+                    LookupSymbol(name = "publicMethod", scope = testClass),
+                    LookupSymbol(name = "changedPublicMethod", scope = testClass)
                 ),
-                dirtyClassesFqNames = setOf(FqName("com.example.SimpleKotlinClass")),
+                dirtyClassesFqNames = setOf(FqName(testClass)),
                 dirtyClassesFqNamesForceRecompile = emptySet()
             ),
             dirtyData
@@ -55,10 +53,7 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
     @Test
     fun testCollectClassChanges_changedMethodImplementation() {
         val updatedSnapshot = testSourceFile.changeMethodImplementation().compileAndSnapshot()
-        val dirtyData = ClasspathChangesComputer.collectKotlinClassChanges(
-            updatedSnapshot as KotlinClassSnapshot,
-            originalSnapshot as KotlinClassSnapshot
-        )
+        val dirtyData = ClasspathChangesComputer.computeClassChanges(updatedSnapshot, originalSnapshot)
 
         assertEquals(DirtyData(emptySet(), emptySet(), emptySet()), dirtyData)
     }
@@ -66,4 +61,8 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
 
 class KotlinClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     override val testSourceFile = SimpleKotlinClass(tmpDir)
+}
+
+class JavaClassesClasspathChangesComputerTest : ClasspathChangesComputerTest() {
+    override val testSourceFile = SimpleJavaClass(tmpDir)
 }

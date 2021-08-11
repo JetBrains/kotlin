@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.metrics.*
@@ -66,39 +66,85 @@ object ClasspathChangesComputer {
         for (key in current.classSnapshots.keys) {
             val currentSnapshot = current.classSnapshots[key]!!
             val previousSnapshot = previous.classSnapshots[key] ?: return Failure.AddedRemovedClasses
-            if (currentSnapshot !is KotlinClassSnapshot || previousSnapshot !is KotlinClassSnapshot) {
-                return Failure.NotYetImplemented
+            val result = collectClassChanges(currentSnapshot, previousSnapshot, changesCollector)
+            if (result !is Success) {
+                return result
             }
-            // TODO: Store results in changesCollector
-            collectKotlinClassChanges(currentSnapshot, previousSnapshot)
         }
         return Success
     }
 
-    @TestOnly
-    internal fun collectKotlinClassChanges(current: KotlinClassSnapshot, previous: KotlinClassSnapshot): DirtyData {
+    private fun collectClassChanges(
+        current: ClassSnapshot,
+        previous: ClassSnapshot,
+        @Suppress("UNUSED_PARAMETER") changesCollector: ChangesCollector
+    ): ChangesCollectorResult {
+        if (current is JavaClassSnapshot && previous is JavaClassSnapshot &&
+            (current.serializedJavaClass == null || previous.serializedJavaClass != null)
+        ) {
+            return Failure.NotYetImplemented
+        }
+        // TODO: Store results in changesCollector and return SUCCESS here
+        computeClassChanges(current, previous)
+        return Failure.NotYetImplemented
+    }
+
+    @VisibleForTesting
+    internal fun computeClassChanges(current: ClassSnapshot, previous: ClassSnapshot): DirtyData {
         // TODO Create IncrementalJvmCache early once and reuse it here
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
         val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToCanonicalPathConverter)
+        val changesCollector = ChangesCollector()
 
+        when {
+            current is KotlinClassSnapshot && previous is KotlinClassSnapshot ->
+                collectKotlinClassChanges(current, previous, incrementalJvmCache, changesCollector)
+            current is JavaClassSnapshot && previous is JavaClassSnapshot ->
+                collectJavaClassChanges(current, previous, incrementalJvmCache, changesCollector)
+            else -> error("Incompatible types: ${current.javaClass.name} vs. ${previous.javaClass.name}")
+        }
+
+        workingDir.deleteRecursively()
+        return changesCollector.getDirtyData(listOf(incrementalJvmCache), NoOpBuildReporter.NoOpICReporter)
+    }
+
+    private fun collectKotlinClassChanges(
+        current: KotlinClassSnapshot,
+        previous: KotlinClassSnapshot,
+        incrementalJvmCache: IncrementalJvmCache,
+        changesCollector: ChangesCollector
+    ) {
         // Store previous snapshot in incrementalJvmCache, the returned ChangesCollector result is not used.
         incrementalJvmCache.saveClassToCache(
             kotlinClassInfo = previous.classInfo,
             sourceFiles = null,
             changesCollector = ChangesCollector()
         )
+        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
 
         // Compute changes between the current snapshot and the previously stored snapshot, and store the result in changesCollector.
-        val changesCollector = ChangesCollector()
         incrementalJvmCache.saveClassToCache(
             kotlinClassInfo = current.classInfo,
             sourceFiles = null,
             changesCollector = changesCollector
         )
+        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
+    }
 
-        workingDir.deleteRecursively()
-        return changesCollector.getDirtyData(listOf(incrementalJvmCache), NoOpBuildReporter.NoOpICReporter)
+    private fun collectJavaClassChanges(
+        current: JavaClassSnapshot,
+        previous: JavaClassSnapshot,
+        incrementalJvmCache: IncrementalJvmCache,
+        changesCollector: ChangesCollector
+    ) {
+        // Store previous snapshot in incrementalJvmCache, the returned ChangesCollector result is not used.
+        incrementalJvmCache.saveJavaClassProto(/* source */ null, previous.serializedJavaClass!!, ChangesCollector())
+        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
+
+        // Compute changes between the current snapshot and the previously stored snapshot, and store the result in changesCollector.
+        incrementalJvmCache.saveJavaClassProto(/* source */ null, current.serializedJavaClass!!, changesCollector)
+        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
     }
 }
 

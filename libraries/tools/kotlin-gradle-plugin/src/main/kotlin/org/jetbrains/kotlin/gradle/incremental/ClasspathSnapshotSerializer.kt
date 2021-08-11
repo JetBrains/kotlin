@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.incremental
 
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.incremental.JavaClassProtoMapValueExternalizer
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -122,10 +123,15 @@ object FqNameExternalizer : DataExternalizer<FqName> {
 object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: JavaClassSnapshot) {
+        NullableValueExternalizer(JavaClassProtoMapValueExternalizer).save(output, snapshot.serializedJavaClass)
+        NullableValueExternalizer(ByteArrayExternalizer).save(output, snapshot.contentHash)
     }
 
     override fun read(input: DataInput): JavaClassSnapshot {
-        return JavaClassSnapshot
+        return JavaClassSnapshot(
+            serializedJavaClass = NullableValueExternalizer(JavaClassProtoMapValueExternalizer).read(input),
+            contentHash = NullableValueExternalizer(ByteArrayExternalizer).read(input)
+        )
     }
 }
 

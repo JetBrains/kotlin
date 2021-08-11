@@ -6,16 +6,22 @@
 package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
+import org.jetbrains.kotlin.incremental.SerializedJavaClass
 
 /** Snapshot of a classpath. It consists of a list of [ClasspathEntrySnapshot]s. */
 class ClasspathSnapshot(val classpathEntrySnapshots: List<ClasspathEntrySnapshot>)
 
-/** Snapshot of a classpath entry (directory or jar). It consists of a list of [ClassSnapshot]s. */
+/**
+ * Snapshot of a classpath entry (directory or jar). It consists of a list of [ClassSnapshot]s.
+ *
+ * NOTE: It's important that the path to the classpath entry is not part of this snapshot. The reason is that classpath entries produced by
+ * different builds or on different machines but having the same contents should be considered the same for better build performance.
+ */
 class ClasspathEntrySnapshot(
 
     /**
-     * Maps (Unix-like) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory or
-     * jar).
+     * Maps (Unix-style) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory
+     * or jar).
      */
     val classSnapshots: LinkedHashMap<String, ClassSnapshot>
 )
@@ -34,4 +40,15 @@ sealed class ClassSnapshot
 class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
 
 /** [ClassSnapshot] of a Java class. */
-object JavaClassSnapshot : ClassSnapshot()
+class JavaClassSnapshot(
+
+    /** The [SerializedJavaClass], or `null` if it can't be computed (in which case [contentHash] is used instead). */
+    val serializedJavaClass: SerializedJavaClass?,
+
+    /** The hash of the class contents in case [serializedJavaClass] can't be computed, or `null` if [serializedJavaClass] is not-null. */
+    val contentHash: ByteArray?
+) : ClassSnapshot() {
+    init {
+        check((serializedJavaClass != null) xor (contentHash != null))
+    }
+}

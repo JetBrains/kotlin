@@ -187,7 +187,6 @@ object StringExternalizer : DataExternalizer<String> {
     override fun read(input: DataInput): String = IOUtil.readString(input)
 }
 
-
 // Should be consistent with org.jetbrains.jps.incremental.storage.PathStringDescriptor for correct work of portable caches
 object PathStringDescriptor : EnumeratorStringDescriptor() {
     private const val PORTABLE_CACHES_PROPERTY = "org.jetbrains.jps.portable.caches"
@@ -239,6 +238,37 @@ fun DataOutput.writeString(value: String) = StringExternalizer.save(this, value)
 
 fun DataInput.readString(): String = StringExternalizer.read(this)
 
+class NullableValueExternalizer<T>(private val valueExternalizer: DataExternalizer<T>) : DataExternalizer<T> {
+
+    override fun save(output: DataOutput, value: T?) {
+        output.writeBoolean(value != null)
+        value?.let {
+            valueExternalizer.save(output, it)
+        }
+    }
+
+    override fun read(input: DataInput): T? {
+        return if (input.readBoolean()) {
+            valueExternalizer.read(input)
+        } else null
+    }
+}
+
+object ByteArrayExternalizer : DataExternalizer<ByteArray> {
+
+    override fun save(output: DataOutput, bytes: ByteArray) {
+        output.writeInt(bytes.size)
+        output.write(bytes)
+    }
+
+    override fun read(input: DataInput): ByteArray {
+        val size = input.readInt()
+        return ByteArray(size).also {
+            input.readFully(it, 0, size)
+        }
+    }
+}
+
 class ListExternalizer<T>(
     private val elementExternalizer: DataExternalizer<T>
 ) : DataExternalizer<List<T>> {
@@ -282,21 +312,5 @@ class LinkedHashMapExternalizer<K, V>(
             map[key] = value
         }
         return map
-    }
-}
-
-class NullableValueExternalizer<T>(private val valueExternalizer: DataExternalizer<T>) : DataExternalizer<T> {
-
-    override fun save(output: DataOutput, value: T?) {
-        output.writeBoolean(value != null)
-        value?.let {
-            valueExternalizer.save(output, it)
-        }
-    }
-
-    override fun read(input: DataInput): T? {
-        return if (input.readBoolean()) {
-            valueExternalizer.read(input)
-        } else null
     }
 }
