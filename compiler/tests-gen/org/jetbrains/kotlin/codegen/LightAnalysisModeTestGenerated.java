@@ -32098,6 +32098,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/specialBuiltins/irrelevantRemoveAtOverride.kt");
         }
 
+        @TestMetadata("javaMapWithCustomEntries.kt")
+        public void testJavaMapWithCustomEntries() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/javaMapWithCustomEntries.kt");
+        }
+
         @TestMetadata("mapGetOrDefault.kt")
         public void testMapGetOrDefault() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/mapGetOrDefault.kt");
