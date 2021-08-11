@@ -32,6 +32,7 @@ testsJar()
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    dependsOn(":dist")
 }
 
 val generateSpecTests by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt")
