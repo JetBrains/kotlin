@@ -923,6 +923,24 @@ __attribute__((swift_name("ArraysInitBlock")))
 - (NSString *)log __attribute__((swift_name("log()")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestNoAutorelease")))
+@interface KtTestNoAutorelease : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (KtTestNoAutoreleaseNoAutorelease * _Nullable)returnObj __attribute__((swift_name("returnObj()")));
+- (void)clearObj __attribute__((swift_name("clearObj()")));
+- (BOOL)isObjUnreachable __attribute__((swift_name("isObjUnreachable()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestNoAutorelease.NoAutorelease")))
+@interface KtTestNoAutoreleaseNoAutorelease : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) int32_t x __attribute__((swift_name("x")));
+@end;
+
 __attribute__((swift_name("OverrideKotlinMethods2")))
 @protocol KtOverrideKotlinMethods2
 @required
