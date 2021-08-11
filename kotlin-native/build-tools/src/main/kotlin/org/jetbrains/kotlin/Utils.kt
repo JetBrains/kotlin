@@ -416,3 +416,17 @@ internal val Project.testTargetConfigurables: Configurables
         val testTarget = project.testTarget
         return platformManager.platform(testTarget).configurables
     }
+
+/**
+ * Checks that version of Xcode we currently using is at least [minimalVersion].
+ * Doesn't take suffixes after '-' into account.
+ * For example, this function returns true if current version is 13.0-beta and minimalVersion is 13.0.
+ */
+fun Project.checkCurrentXcodeVersion(minimalVersion: String): Boolean {
+    val configurables = testTargetConfigurables
+    require(configurables is AppleConfigurables)
+    val current = configurables.toolchainVersion
+    val currentWithoutSuffix = current.split('-').first()
+    val minimalWithoutSuffix = minimalVersion.split('-').first()
+    return (compareStringsAsVersions(currentWithoutSuffix, minimalWithoutSuffix) >= 0)
+}

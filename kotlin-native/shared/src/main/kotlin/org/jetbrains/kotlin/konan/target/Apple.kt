@@ -51,6 +51,11 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> listOf(sdkDependency, toolchainDependency, xcodeAddonDependency)
     }
 
+    override val toolchainVersion get() = when (val provider = xcodePartsProvider) {
+        is XcodePartsProvider.Local -> provider.xcode.version
+        XcodePartsProvider.InternalServer -> properties.getProperty("appleToolchainVersion")
+    }
+
     private val xcodePartsProvider by lazy {
         if (InternalServer.isAvailable) {
             XcodePartsProvider.InternalServer

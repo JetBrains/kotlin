@@ -4539,6 +4539,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_nullable_result_import") {
         source = "interop/objc/nullable_result_import/main.kt"
         interop = "nullable_result_import"
+        enabled = UtilsKt.checkCurrentXcodeVersion(project, "12.5")
 
         doBeforeBuild {
             mkdir(buildDir)

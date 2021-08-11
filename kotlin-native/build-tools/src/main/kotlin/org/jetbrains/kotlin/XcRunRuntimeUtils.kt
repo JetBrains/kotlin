@@ -9,7 +9,7 @@ import kotlin.math.min
  * Compares two strings assuming that both are representing numeric version strings.
  * Examples of numeric version strings: "12.4.1.2", "9", "0.5".
  */
-private fun compareStringsAsVersions(version1: String, version2: String): Int {
+internal fun compareStringsAsVersions(version1: String, version2: String): Int {
     val splitVersion1 = version1.split('.').map { it.toInt() }
     val splitVersion2 = version2.split('.').map { it.toInt() }
     val minimalLength = min(splitVersion1.size, splitVersion2.size)
