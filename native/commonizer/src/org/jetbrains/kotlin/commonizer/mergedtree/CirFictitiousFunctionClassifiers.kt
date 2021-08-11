@@ -39,7 +39,7 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
         }
 
         val classId = CirEntityId.create(PACKAGE_NAME, CirName.create("$prefix$arity"))
-        val clazz = CirProvided.RegularClass(typeParameters, Visibilities.Public)
+        val clazz = CirProvided.RegularClass(typeParameters, emptyList(), Visibilities.Public)
 
         consumer(classId, clazz)
     }

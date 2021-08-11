@@ -144,11 +144,10 @@ private data class ArtificialAliasedCirClass(
 }
 
 private fun CirTypeAlias.toArtificialCirClass(): CirClass = CirClass.create(
-    annotations = emptyList(), name = name, typeParameters = typeParameters,
+    annotations = emptyList(), name = name, typeParameters = typeParameters, supertypes = artificialSupertypes(),
     visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
     companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
-).also { it.supertypes = artificialSupertypes() }
-
+)
 
 /**
  * Analog to "KlibResolvedModuleDescriptorsFactoryImpl.createForwardDeclarationsModule" which also

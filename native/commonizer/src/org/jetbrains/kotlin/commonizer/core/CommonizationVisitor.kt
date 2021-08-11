@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.CirClass
-import org.jetbrains.kotlin.commonizer.cir.CirType
 import org.jetbrains.kotlin.commonizer.mergedtree.*
-import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.commonizer.utils.compactMapNotNull
 
 internal class CommonizationVisitor(
     private val classifiers: CirKnownClassifiers,
@@ -93,9 +89,6 @@ internal class CommonizationVisitor(
                 commonClass.companion = companionObjectName
             }
         }
-
-        // find out common (and commonized) supertypes
-        commonClass.commonizeSupertypes(node.collectCommonSupertypes())
     }
 
     override fun visitClassConstructorNode(node: CirClassConstructorNode, data: Unit) {
@@ -103,49 +96,6 @@ internal class CommonizationVisitor(
     }
 
     override fun visitTypeAliasNode(node: CirTypeAliasNode, data: Unit) {
-        val commonClassifier = node.commonDeclaration() // commonize type alias
-
-        if (commonClassifier is CirClass) {
-            // find out common (and commonized) supertypes
-            commonClassifier.commonizeSupertypes(node.collectCommonSupertypes())
-        }
-    }
-
-    private fun CirClassNode.collectCommonSupertypes(): Map<CirType, CommonizedGroup<CirType>> {
-        val supertypesMap: MutableMap<CirType, CommonizedGroup<CirType>> = linkedMapOf() // preserve supertype order
-        for ((index, clazz) in targetDeclarations.withIndex()) {
-            for (supertype in clazz!!.supertypes) {
-                supertypesMap.getOrPut(supertype) { CommonizedGroup(targetDeclarations.size) }[index] = supertype
-            }
-        }
-        return supertypesMap
-    }
-
-    private fun CirTypeAliasNode.collectCommonSupertypes(): Map<CirType, CommonizedGroup<CirType>>? {
-        val supertypesMap: MutableMap<CirType, CommonizedGroup<CirType>> = linkedMapOf() // preserve supertype order
-        for ((index, typeAlias) in targetDeclarations.withIndex()) {
-            val expandedClassId = typeAlias!!.expandedType.classifierId
-            if (classifiers.commonDependencies.hasClassifier(expandedClassId))
-                return null // this case is not supported yet
-
-            val expandedClassNode = classifiers.commonizedNodes.classNode(expandedClassId) ?: return null
-            val expandedClass = expandedClassNode.targetDeclarations[index]
-                ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classifierName")
-
-            for (supertype in expandedClass.supertypes) {
-                supertypesMap.getOrPut(supertype) { CommonizedGroup(targetDeclarations.size) }[index] = supertype
-            }
-        }
-        return supertypesMap
-    }
-
-    private fun CirClass.commonizeSupertypes(
-        supertypesMap: Map<CirType, CommonizedGroup<CirType>>?
-    ) {
-        val commonSupertypes = supertypesMap?.values?.compactMapNotNull { supertypesGroup ->
-            commonize(supertypesGroup, TypeCommonizer(classifiers).asCommonizer())
-        }.orEmpty()
-
-        supertypes = commonSupertypes
+        node.commonDeclaration() // commonize type alias
     }
 }

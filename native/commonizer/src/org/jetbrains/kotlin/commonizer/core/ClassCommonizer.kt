@@ -19,11 +19,13 @@ class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommon
     private var isInner = false
     private var isValue = false
     private var isCompanion = false
+    private val supertypes = ClassSuperTypeCommonizer(classifiers).asCommonizer()
 
     override fun commonizationResult() = CirClass.create(
         annotations = emptyList(),
         name = name,
         typeParameters = typeParameters.result,
+        supertypes = supertypes.result,
         visibility = visibility.result,
         modality = modality.result,
         kind = kind,
@@ -51,4 +53,5 @@ class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommon
                 && modality.commonizeWith(next.modality)
                 && visibility.commonizeWith(next)
                 && typeParameters.commonizeWith(next.typeParameters)
+                && supertypes.commonizeWith(next.supertypes)
 }

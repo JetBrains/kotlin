@@ -431,6 +431,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                         annotations = emptyList(),
                         name = type.classifierId.relativeNameSegments.last(),
                         typeParameters = emptyList(),
+                        supertypes = emptyList(),
                         visibility = Visibilities.Public,
                         modality = Modality.FINAL,
                         kind = ClassKind.CLASS,

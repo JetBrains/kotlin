@@ -96,7 +96,8 @@ class InlineTypeAliasCirNodeTransformerTest {
                     storageManager, 2, classifiers, null, CirEntityId.create("under/test/X")
                 ).apply {
                     targetDeclarations[1] = CirClass.create(
-                        name = CirName.create("X"), typeParameters = emptyList(), visibility = Visibilities.Public,
+                        name = CirName.create("X"), typeParameters = emptyList(),
+                        supertypes = emptyList(), visibility = Visibilities.Public,
                         companion = null, isCompanion = false, isData = false, isExternal = false,
                         isInner = false, isValue = false, kind = ClassKind.CLASS,
                         modality = Modality.FINAL, annotations = emptyList(),

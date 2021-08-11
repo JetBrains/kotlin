@@ -61,6 +61,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
                     annotations = emptyList(),
                     name = CirName.create("Any"),
                     typeParameters = emptyList(),
+                    supertypes = emptyList(),
                     visibility = Visibilities.Public,
                     modality = Modality.OPEN,
                     kind = ClassKind.CLASS,
