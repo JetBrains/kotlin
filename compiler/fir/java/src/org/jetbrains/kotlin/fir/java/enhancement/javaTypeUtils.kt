@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.*
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -41,24 +39,10 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.extractRadix
 
-internal class IndexedJavaTypeQualifiers(private val data: Array<JavaTypeQualifiers>) {
-    constructor(size: Int, compute: (Int) -> JavaTypeQualifiers) : this(Array(size) { compute(it) })
+typealias IndexedJavaTypeQualifiers = (Int) -> JavaTypeQualifiers
 
-    operator fun invoke(index: Int): JavaTypeQualifiers = data.getOrElse(index) { JavaTypeQualifiers.NONE }
-
-    val size: Int get() = data.size
-}
-
-internal fun FirJavaTypeRef.enhance(
-    session: FirSession,
-    qualifiers: IndexedJavaTypeQualifiers,
-    typeWithoutEnhancement: ConeKotlinType,
-): FirResolvedTypeRef =
-    buildResolvedTypeRef {
-        val subtreeSizes = mutableListOf<Int>().apply { typeWithoutEnhancement.computeSubtreeSizes(this) }
-        type = typeWithoutEnhancement.enhanceConeKotlinType(session, qualifiers, 0, subtreeSizes) ?: typeWithoutEnhancement
-        annotations += this@enhance.annotations
-    }
+internal fun ConeKotlinType.enhance(session: FirSession, qualifiers: IndexedJavaTypeQualifiers): ConeKotlinType? =
+    enhanceConeKotlinType(session, qualifiers, 0, mutableListOf<Int>().apply { computeSubtreeSizes(this) })
 
 // The index in the lambda is the position of the type component in a depth-first walk of the tree.
 // Example: A<B<C, D>, E<F>> - 0<1<2, 3>, 4<5>>. For flexible types, the number of nodes in the lower
@@ -229,8 +213,6 @@ internal data class TypeAndDefaultQualifiers(
     val type: ConeKotlinType?, // null denotes '*' here
     val defaultQualifiers: JavaDefaultQualifiers?
 )
-
-internal fun JavaType.typeArguments(): List<JavaType?> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
 
 internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String): FirExpression? {
     val lookupTagBasedType = when (this) {

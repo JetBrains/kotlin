@@ -309,7 +309,7 @@ class FirSignatureEnhancement(
         overriddenMembers: List<FirCallableDeclaration>,
         memberContext: FirJavaEnhancementContext
     ): FirResolvedTypeRef {
-        val signatureParts = ownerFunction.partsForValueParameter(
+        return ownerFunction.partsForValueParameter(
             typeQualifierResolver,
             overriddenMembers,
             // TODO: check me
@@ -317,7 +317,6 @@ class FirSignatureEnhancement(
             methodContext = memberContext,
             typeInSignature = TypeInSignature.Receiver
         ).enhance(session)
-        return signatureParts.type
     }
 
     private fun enhanceValueParameterType(
@@ -332,7 +331,7 @@ class FirSignatureEnhancement(
         if (ownerParameter.returnTypeRef is FirResolvedTypeRef) {
             return ownerParameter.returnTypeRef as FirResolvedTypeRef
         }
-        val signatureParts = ownerFunction.partsForValueParameter(
+        return ownerFunction.partsForValueParameter(
             typeQualifierResolver,
             overriddenMembers,
             parameterContainer = ownerParameter,
@@ -343,7 +342,6 @@ class FirSignatureEnhancement(
             predefinedEnhancementInfo?.parametersInfo?.getOrNull(index),
             forAnnotationMember = owner.classKind == ClassKind.ANNOTATION_CLASS
         )
-        return signatureParts.type
     }
 
     private fun enhanceReturnType(
@@ -352,7 +350,7 @@ class FirSignatureEnhancement(
         memberContext: FirJavaEnhancementContext,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
     ): FirResolvedTypeRef {
-        val signatureParts = owner.parts(
+        return owner.parts(
             typeQualifierResolver,
             overriddenMembers,
             typeContainer = owner, isCovariant = true,
@@ -364,7 +362,6 @@ class FirSignatureEnhancement(
         ).enhance(
             session, predefinedEnhancementInfo?.returnTypeInfo, forAnnotationMember = this.owner.classKind == ClassKind.ANNOTATION_CLASS
         )
-        return signatureParts.type
     }
 
     private sealed class TypeInSignature {
