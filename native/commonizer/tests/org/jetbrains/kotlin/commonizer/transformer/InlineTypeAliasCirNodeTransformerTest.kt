@@ -15,6 +15,7 @@ class InlineTypeAliasCirNodeTransformerTest {
     private val storageManager = LockBasedStorageManager("test")
 
     private val classifiers = CirKnownClassifiers(
+        classifierIndices = emptyList(),
         commonizedNodes = CirCommonizedClassifierNodes.default(),
         commonDependencies = CirProvidedClassifiers.EMPTY
     )

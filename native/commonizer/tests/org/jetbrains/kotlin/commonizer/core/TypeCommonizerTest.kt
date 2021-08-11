@@ -25,6 +25,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     fun initialize() {
         // reset cache
         classifiers = CirKnownClassifiers(
+            classifierIndices = emptyList(), // TODO NOW
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = object : CirProvidedClassifiers {
                 override fun hasClassifier(classifierId: CirEntityId) = classifierId.packageName.isUnderStandardKotlinPackages

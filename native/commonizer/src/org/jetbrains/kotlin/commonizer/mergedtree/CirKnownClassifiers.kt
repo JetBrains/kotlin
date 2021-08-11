@@ -9,6 +9,7 @@ import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 
 class CirKnownClassifiers(
+    val classifierIndices: List<CirClassifierIndex>,
     val commonizedNodes: CirCommonizedClassifierNodes,
     val commonDependencies: CirProvidedClassifiers
 )

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.types.Variance
@@ -69,7 +70,8 @@ object CirProvided {
     data class RegularClass(
         override val typeParameters: List<TypeParameter>,
         override val supertypes: List<Type>,
-        override val visibility: Visibility
+        override val visibility: Visibility,
+        val kind: ClassKind
     ) : Class
 
     data class ExportedForwardDeclarationClass(val syntheticClassId: CirEntityId) : Class {

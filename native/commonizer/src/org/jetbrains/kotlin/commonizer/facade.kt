@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.core.CommonizationVisitor
+import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonizedClassifierNodes
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
@@ -52,6 +53,7 @@ internal fun commonizeTarget(
 
     parameters.logger.progress(output, "Commonized declarations from ${inputs.targets}") {
         val classifiers = CirKnownClassifiers(
+            classifierIndices = availableTrees.toList().map(::CirClassifierIndex), // TODO NOW: Reuse for transformer!!
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = parameters.dependencyClassifiers(output)
         )

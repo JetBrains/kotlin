@@ -9,6 +9,7 @@ import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.types.Variance
 
@@ -39,7 +40,7 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
         }
 
         val classId = CirEntityId.create(PACKAGE_NAME, CirName.create("$prefix$arity"))
-        val clazz = CirProvided.RegularClass(typeParameters, emptyList(), Visibilities.Public)
+        val clazz = CirProvided.RegularClass(typeParameters, emptyList(), Visibilities.Public, ClassKind.INTERFACE)
 
         consumer(classId, clazz)
     }

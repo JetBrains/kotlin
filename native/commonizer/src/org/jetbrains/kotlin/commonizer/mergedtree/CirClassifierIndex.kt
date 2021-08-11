@@ -10,32 +10,55 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
+import org.jetbrains.kotlin.commonizer.cir.CirClass
+import org.jetbrains.kotlin.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.commonizer.tree.*
 import org.jetbrains.kotlin.commonizer.utils.compact
 import org.jetbrains.kotlin.commonizer.utils.compactMapValues
 
-internal fun CirClassifierIndex(tree: CirTreeRoot): CirClassifierIndex {
-    return CirUnderlyingTypeIndexBuilder().apply { invoke(tree) }.build()
+fun CirClassifierIndex(tree: CirTreeRoot): CirClassifierIndex {
+    return CirClassifierIndexBuilder().apply { invoke(tree) }.build()
 }
 
-internal interface CirClassifierIndex {
+interface CirClassifierIndex {
     val allClassifierIds: Set<CirEntityId>
+    fun findClassifier(id: CirEntityId): CirClassifier?
     fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirTreeTypeAlias>
 }
 
+internal fun CirClassifierIndex.findClass(id: CirEntityId): CirClass? = findClassifier(id) as? CirClass
+
+internal fun CirClassifierIndex.findTypeAlias(id: CirEntityId): CirTypeAlias? = findClassifier(id) as? CirTypeAlias
+
+internal fun CirClassifierIndex.getClass(id: CirEntityId): CirClass =
+    findClass(id) ?: throw NoSuchElementException("Missing class $id")
+
+internal fun CirClassifierIndex.getTypeAlias(id: CirEntityId): CirTypeAlias =
+    findTypeAlias(id) ?: throw NoSuchElementException("Missing type alias $id")
+
+internal fun CirClassifierIndex.getClassifier(id: CirEntityId): CirClassifier =
+    findClassifier(id) ?: throw NoSuchElementException("Missing classifier $id")
+
 private class CirClassifierIndexImpl(
     override val allClassifierIds: Set<CirEntityId>,
+    private val classifiersById: Map<CirEntityId, CirClassifier>,
     private val typeAliasesByUnderlyingType: Map<CirEntityId, List<CirTreeTypeAlias>>
 ) : CirClassifierIndex {
+
+    override fun findClassifier(id: CirEntityId): CirClassifier? {
+        return classifiersById[id]
+    }
 
     override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirTreeTypeAlias> {
         return typeAliasesByUnderlyingType[underlyingClassifier].orEmpty()
     }
 }
 
-private class CirUnderlyingTypeIndexBuilder {
-    private val index = mutableMapOf<CirEntityId, MutableList<CirTreeTypeAlias>>()
+private class CirClassifierIndexBuilder {
+    private val typeAliasesByUnderlyingType = mutableMapOf<CirEntityId, MutableList<CirTreeTypeAlias>>()
+    private val classifiersById = mutableMapOf<CirEntityId, CirClassifier>()
     private val classifierIds = mutableSetOf<CirEntityId>()
 
     operator fun invoke(tree: CirTreeRoot) {
@@ -53,18 +76,21 @@ private class CirUnderlyingTypeIndexBuilder {
 
     operator fun invoke(typeAlias: CirTreeTypeAlias) {
         classifierIds.add(typeAlias.id)
-        index.getOrPut(typeAlias.typeAlias.underlyingType.classifierId) { mutableListOf() }.add(typeAlias)
+        classifiersById[typeAlias.id] = typeAlias.typeAlias
+        typeAliasesByUnderlyingType.getOrPut(typeAlias.typeAlias.underlyingType.classifierId) { mutableListOf() }.add(typeAlias)
     }
 
     operator fun invoke(clazz: CirTreeClass) {
         classifierIds.add(clazz.id)
+        classifiersById[clazz.id] = clazz.clazz
         clazz.classes.forEach { innerClazz -> this(innerClazz) }
     }
 
     fun build(): CirClassifierIndex {
         return CirClassifierIndexImpl(
             allClassifierIds = classifierIds.toSet(),
-            typeAliasesByUnderlyingType = index.compactMapValues { (_, list) -> list.compact() }
+            classifiersById = classifiersById.compact(),
+            typeAliasesByUnderlyingType = typeAliasesByUnderlyingType.compactMapValues { (_, list) -> list.compact() }
         )
     }
 }

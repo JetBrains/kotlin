@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.commonizer.ModulesProvider.CInteropModuleAttributes
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
-import org.jetbrains.kotlin.commonizer.utils.NON_EXISTING_CLASSIFIER_ID
-import org.jetbrains.kotlin.commonizer.utils.compactMap
-import org.jetbrains.kotlin.commonizer.utils.compactMapIndexed
-import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
+import org.jetbrains.kotlin.commonizer.utils.*
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -64,7 +62,8 @@ internal class CirProvidedClassifiersByModules private constructor(
             return CirProvidedClassifiersByModules(hasForwardDeclarations, classifiers)
         }
 
-        private val FALLBACK_FORWARD_DECLARATION_CLASS = CirProvided.RegularClass(emptyList(), emptyList(), Visibilities.Public)
+        private val FALLBACK_FORWARD_DECLARATION_CLASS =
+            CirProvided.RegularClass(emptyList(), emptyList(), Visibilities.Public, ClassKind.CLASS)
     }
 }
 
@@ -166,11 +165,14 @@ private fun readClass(
     )
     val typeReadContext = TypeReadContext(classEntry.strings, TypeTable(classProto.typeTable), typeParameterNameToIndex)
 
-    val supertypes = classProto.supertypeList.map { readType(it, typeReadContext) } +
-            classProto.supertypeIdList.map { readType(classProto.typeTable.getType(it), typeReadContext) }
+    val supertypes = (classProto.supertypeList.map { readType(it, typeReadContext) } +
+            classProto.supertypeIdList.map { readType(classProto.typeTable.getType(it), typeReadContext) })
+        .filterNot { type -> type is CirProvided.ClassType && type.classId == ANY_CLASS_ID }
+
 
     val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
-    val clazz = CirProvided.RegularClass(typeParameters, supertypes, visibility)
+    val kind = ProtoEnumFlags.classKind(Flags.CLASS_KIND.get(classProto.flags))
+    val clazz = CirProvided.RegularClass(typeParameters, supertypes, visibility, kind)
 
     consumer(classId, clazz)
 

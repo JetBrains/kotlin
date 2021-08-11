@@ -52,6 +52,7 @@ private fun createValidClassifierId(classifierId: String): CirEntityId {
 }
 
 internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
+    classifierIndices = emptyList(),
     commonizedNodes = object : CirCommonizedClassifierNodes {
         override fun classNode(classId: CirEntityId) = CirClassNode(
             classId,
