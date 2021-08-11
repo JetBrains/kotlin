@@ -702,7 +702,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * expressed as a combination of numeric components, each in its own unit.
      *
      * Each component is a number followed by the unit abbreviated name: `d`, `h`, `m`, `s`:
-     * `5h`, `1d 12h`, `1h 0m 30.3340s`.
+     * `5h`, `1d 12h`, `1h 0m 30.340s`.
      * The last component, usually seconds, can be a number with a fractional part.
      *
      * If the duration is less than a second, it is represented as a single number
@@ -813,8 +813,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * and `f` is a fractional part of second. Depending on the roundness of the value the fractional part can be formatted with either
      * 0, 3, 6, or 9 decimal digits.
      *
-     * If the hours component absolute value of this duration is greater than [Int.MAX_VALUE], it is replaced with [Int.MAX_VALUE],
-     * so the infinite duration is formatted as `"PT2147483647H".
+     * The infinite duration is represented as `"PT9999999999999H"` which is larger than any possible finite duration in Kotlin.
      *
      * Negative durations are indicated with the sign `-` in the beginning of the returned string, for example, `"-PT5M30S"`.
      *
