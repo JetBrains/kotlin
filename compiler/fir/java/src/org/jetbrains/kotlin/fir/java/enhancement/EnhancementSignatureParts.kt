@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeWithoutEnhancement
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
 import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
@@ -40,40 +41,13 @@ internal class EnhancementSignatureParts(
         session: FirSession,
         predefined: TypeEnhancementInfo? = null,
         forAnnotationMember: Boolean = false
-    ): PartEnhancementResult {
+    ): FirResolvedTypeRef {
         val typeWithoutEnhancement = current.type
             .toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationMember)
-
-        val qualifiers = computeIndexedQualifiersForOverride(typeWithoutEnhancement)
-
-        val qualifiersWithPredefined = predefined?.let {
-            IndexedJavaTypeQualifiers(qualifiers.size) { index ->
-                predefined.map[index] ?: qualifiers(index)
-            }
-        }
-
-        val containsFunctionN = typeWithoutEnhancement.contains {
-            if (it is ConeClassErrorType) false
-            else {
-                val classId = it.lookupTag.classId
-                classId.shortClassName == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME.shortName() &&
-                        classId.asSingleFqName() == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME
-            }
-        }
-
-        val enhancedCurrent = current.enhance(
-            session, qualifiersWithPredefined ?: qualifiers,
-            typeWithoutEnhancement
-        )
-        return PartEnhancementResult(
-            enhancedCurrent, wereChanges = true, containsFunctionN = containsFunctionN
-        )
-    }
-
-    private fun ConeKotlinType.contains(isSpecialType: (ConeClassLikeType) -> Boolean): Boolean {
-        return when (this) {
-            is ConeClassLikeType -> isSpecialType(this)
-            else -> false
+        val qualifiers = computeIndexedQualifiersForOverride(typeWithoutEnhancement, predefined)
+        return buildResolvedTypeRef {
+            type = typeWithoutEnhancement.enhance(session, qualifiers) ?: typeWithoutEnhancement
+            annotations += current.annotations
         }
     }
 
@@ -152,7 +126,7 @@ internal class EnhancementSignatureParts(
         )
     }
 
-    private fun computeIndexedQualifiersForOverride(current: ConeKotlinType?): IndexedJavaTypeQualifiers {
+    private fun computeIndexedQualifiersForOverride(current: ConeKotlinType?, predefined: TypeEnhancementInfo?): IndexedJavaTypeQualifiers {
         val indexedFromSupertypes = fromOverridden.map { it.toConeKotlinType(context.session).toIndexed(context) }
         val indexedThisType = current.toIndexed(context)
 
@@ -169,16 +143,8 @@ internal class EnhancementSignatureParts(
             val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
             qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && isForVarargParameter)
         }
-
-        return IndexedJavaTypeQualifiers(computedResult)
+        return { index -> predefined?.map?.get(index) ?: computedResult.getOrNull(index) ?: JavaTypeQualifiers.NONE }
     }
-
-    @Suppress("unused")
-    internal open class PartEnhancementResult(
-        val type: FirResolvedTypeRef,
-        val wereChanges: Boolean,
-        val containsFunctionN: Boolean
-    )
 
     private data class TypeAndDefaultQualifiers(
         val type: ConeKotlinType?, // null denotes '*' here
