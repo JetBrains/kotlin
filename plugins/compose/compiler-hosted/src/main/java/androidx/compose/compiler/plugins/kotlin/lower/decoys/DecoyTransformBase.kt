@@ -176,6 +176,25 @@ internal interface DecoyTransformBase {
 fun IrDeclaration.isDecoy(): Boolean =
     hasAnnotationSafe(DecoyFqNames.Decoy)
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun IrDeclaration.isDecoyImplementation(): Boolean =
+    hasAnnotationSafe(DecoyFqNames.DecoyImplementation)
+
+private fun IrFunction.getDecoyImplementationDefaultValuesBitMask(): Int? {
+    val annotation = getAnnotation(DecoyFqNames.DecoyImplementationDefaultsBitMask) ?: return null
+
+    @Suppress("UNCHECKED_CAST")
+    val paramsDefaultsBitMask = annotation.getValueArgument(0) as IrConst<Int>
+
+    return paramsDefaultsBitMask.value
+}
+
+fun IrFunction.didDecoyHaveDefaultForValueParameter(paramIndex: Int): Boolean {
+    return getDecoyImplementationDefaultValuesBitMask()?.let {
+        it.shr(paramIndex).and(1) == 1
+    } ?: false
+}
+
 inline fun <reified T : IrElement> T.copyWithNewTypeParams(
     source: IrFunction,
     target: IrFunction
