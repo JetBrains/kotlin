@@ -14,5 +14,5 @@ public class Foo<T extends @Nullable Object> {
 
 // FILE: main.kt
 fun test(): Foo<String> {
-    return <!DEBUG_INFO_EXPRESSION_TYPE("Foo<kotlin.String>")!>Foo.create()<!>
+    return <!DEBUG_INFO_EXPRESSION_TYPE("Foo<kotlin.String..kotlin.String?!>")!>Foo.create()<!>
 }
