@@ -20,7 +20,9 @@ import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypeParams
+import androidx.compose.compiler.plugins.kotlin.lower.decoys.didDecoyHaveDefaultForValueParameter
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
+import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoyImplementation
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -87,6 +89,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -500,6 +503,11 @@ class ComposerParamTransformer(
         // have it as well...
         if (this !is IrSimpleFunction) return false
         if (valueParameters[index].defaultValue != null) return true
+
+        if (context.platform.isJs() && this.isDecoyImplementation()) {
+            if (didDecoyHaveDefaultForValueParameter(index)) return true
+        }
+
         return overriddenSymbols.any {
             it.owner.hasDefaultExpressionDefinedForValueParameter(index)
         }
