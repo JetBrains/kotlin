@@ -519,6 +519,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_Interop_IsObjectKindOfClass by lazyRtFunction
 
     val Kotlin_ObjCExport_refToObjC by lazyRtFunction
+    val Kotlin_ObjCExport_refToObjCRetained by lazyRtFunction
     val Kotlin_ObjCExport_refFromObjC by lazyRtFunction
     val Kotlin_ObjCExport_CreateNSStringFromKString by lazyRtFunction
     val Kotlin_ObjCExport_convertUnit by lazyRtFunction
@@ -560,6 +561,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         KonanTarget.MINGW_X64 -> "__gxx_personality_seh0"
         else -> "__gxx_personality_v0"
     }
+
+    val objcAutoreleaseReturnValue = externalNounwindFunction(
+            "objc_autoreleaseReturnValue",
+            functionType(int8TypePtr, false, int8TypePtr),
+            context.standardLlvmSymbolsOrigin
+    )
 
     val cxxStdTerminate = externalNounwindFunction(
             "_ZSt9terminatev", // mangled C++ 'std::terminate'

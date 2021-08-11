@@ -18,6 +18,7 @@
 #import "Memory.h"
 #include "Natives.h"
 #include "ObjCInterop.h"
+#include "ObjCMMAPI.h"
 
 #if KONAN_OBJC_INTEROP
 
@@ -523,6 +524,26 @@ static ALWAYS_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
   }
 
   return Kotlin_ObjCExport_refToObjC_slowpath(obj);
+}
+
+extern "C" id Kotlin_ObjCExport_refToObjCRetained(ObjHeader* obj) {
+  kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
+
+  if (obj == nullptr) return nullptr;
+
+  id associatedObject = GetAssociatedObject(obj);
+  if (associatedObject != nullptr) {
+    return objc_retain(associatedObject);
+  }
+
+  konan::AutoreleasePool pool;
+
+  convertReferenceToObjC converter = (convertReferenceToObjC)obj->type_info()->writableInfo_->objCExport.convert;
+  if (converter != nullptr) {
+    return objc_retain(converter(obj));
+  }
+
+  return objc_retain(Kotlin_ObjCExport_refToObjC_slowpath(obj));
 }
 
 extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj) {

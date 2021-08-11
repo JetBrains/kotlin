@@ -102,8 +102,8 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         return result
     }
 
-    fun FunctionGenerationContext.kotlinReferenceToObjC(value: LLVMValueRef) =
-            callFromBridge(context.llvm.Kotlin_ObjCExport_refToObjC, listOf(value))
+    fun FunctionGenerationContext.kotlinReferenceToObjC(value: LLVMValueRef, retained: Boolean = false) =
+            callFromBridge(if (retained) context.llvm.Kotlin_ObjCExport_refToObjCRetained else context.llvm.Kotlin_ObjCExport_refToObjC, listOf(value))
 
     fun FunctionGenerationContext.objCReferenceToKotlin(value: LLVMValueRef, resultLifetime: Lifetime) =
             callFromBridge(context.llvm.Kotlin_ObjCExport_refFromObjC, listOf(value), resultLifetime)
@@ -216,12 +216,13 @@ internal class ObjCExportCodeGenerator(
 
     fun FunctionGenerationContext.kotlinToObjC(
             value: LLVMValueRef,
-            typeBridge: TypeBridge
+            typeBridge: TypeBridge,
+            retained: Boolean = false
     ): LLVMValueRef = if (LLVMTypeOf(value) == voidType) {
         typeBridge.makeNothing()
     } else {
         when (typeBridge) {
-            is ReferenceBridge -> kotlinReferenceToObjC(value)
+            is ReferenceBridge -> kotlinReferenceToObjC(value, retained = retained)
             is BlockPointerBridge -> kotlinFunctionToObjCBlockPointer(typeBridge, value)
             is ValueTypeBridge -> kotlinToObjC(value, typeBridge.objCValueType)
         }
@@ -925,11 +926,11 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             val kotlinHashCode = targetResult!!
             if (codegen.context.is64BitNSInteger()) zext(kotlinHashCode, int64Type) else kotlinHashCode
         }
-        is MethodBridge.ReturnValue.Mapped -> kotlinToObjC(targetResult!!, returnBridge.bridge)
+        is MethodBridge.ReturnValue.Mapped -> kotlinToObjC(targetResult!!, returnBridge.bridge, retained = true)
         MethodBridge.ReturnValue.WithError.Success -> Int8(1).llvm // true
         is MethodBridge.ReturnValue.WithError.ZeroForError -> genReturnValueOnSuccess(returnBridge.successBridge)
         MethodBridge.ReturnValue.Instance.InitResult -> param(0)
-        MethodBridge.ReturnValue.Instance.FactoryResult -> kotlinReferenceToObjC(targetResult!!) // provided by [callKotlin]
+        MethodBridge.ReturnValue.Instance.FactoryResult -> kotlinReferenceToObjC(targetResult!!, retained = true) // provided by [callKotlin]
         MethodBridge.ReturnValue.Suspend -> {
             val coroutineSuspended = callFromBridge(
                     codegen.llvmFunction(context.ir.symbols.objCExportGetCoroutineSuspended.owner),
@@ -949,7 +950,24 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         }
     }
 
+    autoreleaseReturnValue = returnType.isObjCReference()
+
     ret(genReturnValueOnSuccess(returnType))
+}
+
+private fun MethodBridge.ReturnValue.isObjCReference(): Boolean = when (this) {
+    MethodBridge.ReturnValue.Instance.FactoryResult -> true
+    MethodBridge.ReturnValue.Instance.InitResult -> false
+    is MethodBridge.ReturnValue.Mapped -> when (this.bridge) {
+        is BlockPointerBridge -> false
+        ReferenceBridge -> true
+        is ValueTypeBridge -> false
+    }
+    MethodBridge.ReturnValue.Suspend,
+    MethodBridge.ReturnValue.Void,
+    MethodBridge.ReturnValue.HashCode,
+    MethodBridge.ReturnValue.WithError.Success -> false
+    is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.isObjCReference()
 }
 
 private fun ObjCExportCodeGenerator.generateExceptionTypeInfoArray(baseMethod: IrFunction): LLVMValueRef =

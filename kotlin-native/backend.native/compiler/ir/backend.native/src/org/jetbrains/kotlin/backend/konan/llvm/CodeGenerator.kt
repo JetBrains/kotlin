@@ -1327,6 +1327,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
     }
 
+    var autoreleaseReturnValue = false
+
     internal fun prologue() {
         assert(returns.isEmpty())
         if (isObjectType(returnType!!)) {
@@ -1408,7 +1410,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                     }
                     releaseVars()
                     handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
-                    LLVMBuildRet(builder, returnPhi)
+
+                    val result = if (autoreleaseReturnValue) {
+                        call(context.llvm.objcAutoreleaseReturnValue, listOf(returnPhi)).also {
+                            LLVMSetTailCall(it, 1)
+                        }
+                    } else {
+                        returnPhi
+                    }
+                    LLVMBuildRet(builder, result)
                 }
                 // Do nothing, all paths throw.
                 else -> LLVMBuildUnreachable(builder)
