@@ -15,7 +15,6 @@ import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.KOTLIN_COMPILER_NAME
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
-import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndex
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndexBuilder
@@ -71,7 +70,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     val isInstrumentationEnabled: Boolean by lazy {
         val value = System.getProperty("kotlin.jps.instrument.bytecode")?.toBoolean() ?: false
         if (value) {
-            val message = KotlinJpsBundle.message("compiler.text.experimental.bytecode.instrumentation.for.kotlin.classes.is.enabled")
+            val message = "Experimental bytecode instrumentation for Kotlin classes is enabled"
             jpsContext.processMessage(CompilerMessage(KOTLIN_COMPILER_NAME, BuildMessage.Kind.INFO, message))
         }
         value
@@ -127,7 +126,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
                 jpsContext.processMessage(
                     CompilerMessage(
                         "Kotlin", BuildMessage.Kind.WARNING,
-                        KotlinJpsBundle.message("compiler.text.incremental.caches.are.corrupted.all.kotlin.code.will.be.rebuilt")
+                        "Incremental caches are corrupted. All Kotlin code will be rebuilt."
                     )
                 )
                 KotlinBuilder.LOG.info(Error("Lookup storage is corrupted, probe failed: ${e.message}", e))
@@ -287,9 +286,11 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
             val msg =
                 if (kind == null) {
-                    KotlinJpsBundle.message("compiler.text.0.is.not.yet.supported.in.idea.internal.build.system.please.use.gradle.to.build.them.enable.delegate.ide.build.run.actions.to.gradle.in.settings", presentableChunksListString)
+                    "$presentableChunksListString is not yet supported in IDEA internal build system. " +
+                            "Please use Gradle to build them (enable 'Delegate IDE build/run actions to Gradle' in Settings)."
                 } else {
-                    KotlinJpsBundle.message("compiler.text.0.is.not.yet.supported.in.idea.internal.build.system.please.use.gradle.to.build.1.enable.delegate.ide.build.run.actions.to.gradle.in.settings", kind, presentableChunksListString)
+                    "$kind is not yet supported in IDEA internal build system. " +
+                            "Please use Gradle to build $presentableChunksListString (enable 'Delegate IDE build/run actions to Gradle' in Settings)."
                 }
 
             testingLogger?.addCustomMessage(msg)
