@@ -203,7 +203,6 @@ enum class LanguageFeature(
     ProhibitSelfCallsInNestedObjects(KOTLIN_1_6, kind = BUG_FIX),
     ApproximateIntegerLiteralTypesInReceiverPosition(KOTLIN_1_6),
     ProperCheckAnnotationsTargetInTypeUsePositions(KOTLIN_1_6, kind = BUG_FIX),
-    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_6, kind = BUG_FIX),
     AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_6, kind = BUG_FIX),
 
     SuspendFunctionAsSupertype(KOTLIN_1_6),
@@ -223,6 +222,7 @@ enum class LanguageFeature(
 
     // 1.7
 
+    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_7, kind = BUG_FIX),
     OptInRelease(KOTLIN_1_7),
     ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_7, kind = BUG_FIX),
     UseBuilderInferenceWithoutAnnotation(KOTLIN_1_7),

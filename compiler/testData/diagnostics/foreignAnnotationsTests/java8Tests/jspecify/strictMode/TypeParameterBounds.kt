@@ -33,7 +33,8 @@ fun <T : Test> main(a1: A<<!UPPER_BOUND_VIOLATED!>Any?<!>>, a2: A<Test>, b1: B<<
     a2.bar<<!UPPER_BOUND_VIOLATED!>T?<!>>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     a2.bar<T>(x)
 
-    b1.foo(null)
+    // jspecify_nullness_mismatch
+    b1.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     // jspecify_nullness_mismatch, jspecify_nullness_mismatch
     b1.bar<<!UPPER_BOUND_VIOLATED!>T?<!>>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     b1.bar<T>(x)
