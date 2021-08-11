@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 
 
 fun canInlineArgumentsInPlace(methodNode: MethodNode): Boolean {
@@ -45,8 +42,8 @@ fun canInlineArgumentsInPlace(methodNode: MethodNode): Boolean {
     //      GETSTATIC java/lang/System.out : Ljava/io/PrintStream;
     //      LDC "Hello, world!"
     //      INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V
-    // Such inlining is possible because we consider it OK to reorder GETSTATIC instruction with any argument evaluation instructions
-    // ('LDC "Hello, world!"' in this case).
+    // Such inlining is possible because we consider it OK to reorder 'GETSTATIC java/lang/System.out : Ljava/io/PrintStream;' instruction
+    // with any argument evaluation instructions ('LDC "Hello, world!"' in this case).
 
     val tcbStartLabels = methodNode.tryCatchBlocks.mapTo(HashSet()) { it.start }
 
@@ -76,6 +73,14 @@ fun canInlineArgumentsInPlace(methodNode: MethodNode): Boolean {
         // Some instructions break evaluation order.
         if (insn.isProhibitedDuringArgumentsEvaluation())
             return false
+
+        // Allow a limited list of 'GETSTATIC <owner> <name> <desc>' instructions.
+        if (insn.opcode == Opcodes.GETSTATIC) {
+            val fieldInsn = insn as FieldInsnNode
+            val fieldSignature = FieldSignature(fieldInsn.owner, fieldInsn.name, fieldInsn.desc)
+            if (fieldSignature !in whitelistedStaticFields)
+                return false
+        }
 
         // Writing to or incrementing an argument variable forbids in-place argument inlining.
         if (insn.opcode in Opcodes.ISTORE..Opcodes.ASTORE && (insn as VarInsnNode).`var` < argumentVarEnd)
@@ -139,6 +144,18 @@ fun canInlineArgumentsInPlace(methodNode: MethodNode): Boolean {
     return true
 }
 
+internal data class FieldSignature(
+    val owner: String,
+    val name: String,
+    val desc: String
+)
+
+private val whitelistedStaticFields: Set<FieldSignature> =
+    hashSetOf(
+        FieldSignature("java/lang/System", "out", "Ljava/io/PrintStream;"),
+        FieldSignature("kotlin/Result", "Companion", "Lkotlin/Result\$Companion;"),
+        FieldSignature("kotlin/_Assertions", "ENABLED", "Z")
+    )
 
 private fun AbstractInsnNode.isProhibitedDuringArgumentsEvaluation() =
     opcode in opcodeProhibitedDuringArgumentsEvaluation.indices &&
@@ -154,7 +171,7 @@ private val opcodeProhibitedDuringArgumentsEvaluation = BooleanArray(256).also {
     a[Opcodes.ATHROW] = true
 
     // Instruction with non-trivial side effects is a hazard.
-    // NB here we don't care about possible class initialization caused by GETSTATIC.
+    // NB GETSTATIC is taken care of separately.
     a[Opcodes.PUTSTATIC] = true
     a[Opcodes.PUTFIELD] = true
     a[Opcodes.INVOKEVIRTUAL] = true
