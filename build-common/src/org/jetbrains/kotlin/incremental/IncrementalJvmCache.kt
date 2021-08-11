@@ -184,7 +184,9 @@ open class IncrementalJvmCache(
             KotlinClassHeader.Kind.CLASS -> {
                 if (sourceFiles != null) {
                     assert(sourceFiles.size == 1) { "Class is expected to have only one source file: $sourceFiles" }
-                    addToClassStorage(kotlinClassInfo, sourceFiles.first())
+                    addToClassStorage(kotlinClassInfo, sourceFiles.single())
+                } else {
+                    addToClassStorage(kotlinClassInfo, null)
                 }
 
                 protoMap.process(kotlinClassInfo, changesCollector)
@@ -196,10 +198,10 @@ open class IncrementalJvmCache(
         }
     }
 
-    fun saveJavaClassProto(source: File, serializedJavaClass: SerializedJavaClass, collector: ChangesCollector) {
+    fun saveJavaClassProto(source: File?, serializedJavaClass: SerializedJavaClass, collector: ChangesCollector) {
         val jvmClassName = JvmClassName.byClassId(serializedJavaClass.classId)
         javaSourcesProtoMap.process(jvmClassName, serializedJavaClass, collector)
-        sourceToClassesMap.add(source, jvmClassName)
+        source?.let { sourceToClassesMap.add(source, jvmClassName) }
         val (proto, nameResolver) = serializedJavaClass.toProtoData()
         addToClassStorage(proto, nameResolver, source)
 //        collector.addJavaProto(ClassProtoData(proto, nameResolver))
@@ -501,7 +503,7 @@ open class IncrementalJvmCache(
             value.dumpCollection()
     }
 
-    private fun addToClassStorage(classInfo: KotlinClassInfo, srcFile: File) {
+    private fun addToClassStorage(classInfo: KotlinClassInfo, srcFile: File?) {
         val (nameResolver, proto) = JvmProtoBufUtil.readClassDataFrom(classInfo.classHeaderData, classInfo.classHeaderStrings)
         addToClassStorage(proto, nameResolver, srcFile)
     }

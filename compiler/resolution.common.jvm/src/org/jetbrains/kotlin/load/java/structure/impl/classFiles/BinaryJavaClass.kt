@@ -32,13 +32,15 @@ import java.text.CharacterIterator
 import java.text.StringCharacterIterator
 
 class BinaryJavaClass(
-    override val virtualFile: VirtualFile,
+    /** If virtualFile is not available, provide classContent & innerClassFinder below. */
+    override val virtualFile: VirtualFile? = null,
     override val fqName: FqName,
     internal val context: ClassifierResolutionContext,
     private val signatureParser: BinaryClassSignatureParser,
     override var access: Int = 0,
     override val outerClass: JavaClass?,
-    classContent: ByteArray? = null
+    classContent: ByteArray? = null,
+    private val innerClassFinder: ((Name) -> JavaClass?)? = null
 ) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
 
@@ -111,13 +113,17 @@ class BinaryJavaClass(
     }
 
     init {
+        if (virtualFile == null) {
+            checkNotNull(classContent) { "classContent must be provided when virtualFile is not available" }
+            checkNotNull(innerClassFinder) { "innerClassFinder must be provided when virtualFile is not available" }
+        }
         try {
-            ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
+            ClassReader(classContent ?: virtualFile!!.contentsToByteArray()).accept(
                 this,
                 ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
             )
         } catch (e: Throwable) {
-            throw IllegalStateException("Could not read class: $virtualFile", e)
+            throw IllegalStateException("Could not read class " + (virtualFile ?: ""), e)
         }
     }
 
@@ -247,11 +253,15 @@ class BinaryJavaClass(
     fun findInnerClass(name: Name, classFileContent: ByteArray?): JavaClass? {
         val access = ownInnerClassNameToAccess[name] ?: return null
 
-        return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.class")?.let {
-            BinaryJavaClass(
-                it, fqName.child(name), context.copyForMember(), signatureParser, access, this,
-                classFileContent
-            )
+        return if (virtualFile != null) {
+            virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.class")?.let {
+                BinaryJavaClass(
+                    it, fqName.child(name), context.copyForMember(), signatureParser, access, this,
+                    classFileContent
+                )
+            }
+        } else {
+            innerClassFinder!!(name)
         }
     }
 

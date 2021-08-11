@@ -46,7 +46,7 @@ abstract class KaptGenerateStubsTask : KotlinCompile(KotlinJvmOptionsImpl()) {
     ) : KotlinCompile.Configurator<KaptGenerateStubsTask>(kotlinCompilation, properties) {
 
         override fun getClasspathSnapshotDir(task: KaptGenerateStubsTask): Provider<Directory> =
-            task.project.objects.directoryProperty().dir(classpathSnapshotDir.path)
+            task.project.objects.directoryProperty().fileValue(classpathSnapshotDir)
 
         override fun configure(task: KaptGenerateStubsTask) {
             super.configure(task)

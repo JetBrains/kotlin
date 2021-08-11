@@ -118,7 +118,7 @@ abstract class AbstractIncrementalCache<ClassName>(
         }
     }
 
-    protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File) {
+    protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File?) {
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
         val parents = supertypes.map { nameResolver.getClassId(it.className).asSingleFqName() }
             .filter { it.asString() != "kotlin.Any" }
@@ -131,7 +131,7 @@ abstract class AbstractIncrementalCache<ClassName>(
         removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
 
         supertypesMap[child] = parents
-        classFqNameToSourceMap[child] = srcFile
+        srcFile?.let { classFqNameToSourceMap[child] = it }
         classAttributesMap[child] = ICClassesAttributes(ProtoBuf.Modality.SEALED == Flags.MODALITY.get(proto.flags))
     }
 
