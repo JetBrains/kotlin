@@ -42,7 +42,7 @@ fun foo2() {}
 
 fun foo(vararg i: Int) {}
 
-@Ann(s = "value")
+@Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!>"value"<!>)
 fun dep1() {
     foo(i = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>1<!>)
 }
