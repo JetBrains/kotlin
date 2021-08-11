@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 
 interface MetadataSerializer {
     fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>?
@@ -335,7 +334,7 @@ class ClassCodegen private constructor(
         }
     }
 
-    private val generatedInlineMethods = ConcurrentHashMap<IrFunction, SMAPAndMethodNode>()
+    private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
 
     fun generateMethodNode(method: IrFunction): SMAPAndMethodNode {
         if (!method.isInline && !method.isSuspendCapturingCrossinline()) {
