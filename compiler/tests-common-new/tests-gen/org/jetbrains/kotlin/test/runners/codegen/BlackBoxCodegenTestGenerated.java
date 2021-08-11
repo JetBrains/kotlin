@@ -40417,6 +40417,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("javaMapWithCustomEntries.kt")
+        public void testJavaMapWithCustomEntries() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/javaMapWithCustomEntries.kt");
+        }
+
+        @Test
         @TestMetadata("mapGetOrDefault.kt")
         public void testMapGetOrDefault() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/mapGetOrDefault.kt");

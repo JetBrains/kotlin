@@ -262,7 +262,9 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
  */
 internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode): IrSimpleFunction? {
     if (!isFakeOverride) return null
-    parent.let { if (it is IrClass && it.isJvmInterface) return null }
+
+    val parent = parent
+    if (parent is IrClass && (parent.isJvmInterface || parent.isFromJava())) return null
 
     val implementation = resolveFakeOverride(toSkip = ::isDefaultImplsBridge) ?: return null
 

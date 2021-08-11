@@ -2304,6 +2304,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             }
 
             @Test
+            @TestMetadata("implementsJavaMapWithCustomEntries.kt")
+            public void testImplementsJavaMapWithCustomEntries() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsJavaMapWithCustomEntries.kt");
+            }
+
+            @Test
             @TestMetadata("implementsMap.kt")
             public void testImplementsMap() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsMap.kt");
