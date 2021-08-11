@@ -1,6 +1,10 @@
 public abstract interface annotation class kotlin/BuilderInference : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/ContextFunctionTypeParams : java/lang/annotation/Annotation {
+	public abstract fun count ()I
+}
+
 public final class kotlin/DeepRecursiveFunction {
 	public fun <init> (Lkotlin/jvm/functions/Function3;)V
 }

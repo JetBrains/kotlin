@@ -1,0 +1,27 @@
+package
+
+public fun bar(/*0*/ receiver: Receiver, /*1*/ p: Param): kotlin.Unit
+public fun foo(/*0*/ context: Context, /*1*/ receiver: Receiver, /*2*/ p: Param): kotlin.Unit
+public fun main(): kotlin.Unit
+public fun Receiver.baz(/*0*/ p: Param): kotlin.Unit
+
+public final class Context {
+    public constructor Context()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Param {
+    public constructor Param()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Receiver {
+    public constructor Receiver()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

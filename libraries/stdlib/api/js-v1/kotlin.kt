@@ -1187,6 +1187,14 @@ public open class ConcurrentModificationException : kotlin.RuntimeException {
     public constructor ConcurrentModificationException(cause: kotlin.Throwable?)
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE})
+@kotlin.annotation.MustBeDocumented
+public final annotation class ContextFunctionTypeParams : kotlin.Annotation {
+    public constructor ContextFunctionTypeParams(count: kotlin.Int)
+
+    public final val count: kotlin.Int { get; }
+}
+
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalStdlibApi
 public final class DeepRecursiveFunction<T, R> {

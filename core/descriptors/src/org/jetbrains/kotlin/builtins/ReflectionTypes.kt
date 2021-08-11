@@ -58,13 +58,15 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     fun getKFunctionType(
         annotations: Annotations,
         receiverType: KotlinType?,
+        contextReceiverTypes: List<KotlinType>,
         parameterTypes: List<KotlinType>,
         parameterNames: List<Name>?,
         returnType: KotlinType,
         builtIns: KotlinBuiltIns,
         isSuspend: Boolean
     ): SimpleType {
-        val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, parameterNames, returnType, builtIns)
+        val arguments =
+            getFunctionTypeArgumentProjections(receiverType, contextReceiverTypes, parameterTypes, parameterNames, returnType, builtIns)
         val classDescriptor =
             if (isSuspend) getKSuspendFunction(arguments.size - 1 /* return type */) else getKFunction(arguments.size - 1 /* return type */)
         return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)

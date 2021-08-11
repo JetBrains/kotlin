@@ -100,6 +100,7 @@ class JvmRuntimeTypes(
             descriptor.builtIns,
             Annotations.EMPTY,
             actualFunctionDescriptor.extensionReceiverParameter?.type,
+            actualFunctionDescriptor.contextReceiverParameters.map { it.type },
             actualFunctionDescriptor.valueParameters.map { it.type },
             null,
             actualFunctionDescriptor.returnType!!
@@ -146,6 +147,7 @@ class JvmRuntimeTypes(
             Annotations.EMPTY,
             if (isBound) null else referencedFunction.extensionReceiverParameter?.type
                 ?: referencedFunction.dispatchReceiverParameter?.type,
+            referencedFunction.contextReceiverParameters.map { it.type },
             anonymousFunctionDescriptor.valueParameters.drop(receivers).map { it.type },
             null,
             anonymousFunctionDescriptor.returnType!!,

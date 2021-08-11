@@ -86,7 +86,7 @@ private fun preprocessLambdaArgument(
 
     if (expectedType != null) {
         val lambdaType = createFunctionType(
-            csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver,
+            csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver, emptyList(), // TODO: Context receivers?
             resolvedArgument.parameters, null, resolvedArgument.returnType, resolvedArgument.isSuspend
         )
         csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPositionImpl(argument))

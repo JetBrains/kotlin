@@ -540,6 +540,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         (statementGenerator.context.irBuiltIns as IrBuiltInsOverDescriptors).builtIns,
         annotations,
         null,
+        emptyList(),
         arguments.dropLast(1).map { it.type },
         null,
         arguments.last().type,
