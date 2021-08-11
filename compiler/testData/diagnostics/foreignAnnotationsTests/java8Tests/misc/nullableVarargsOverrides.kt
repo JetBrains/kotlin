@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SOURCE_RETENTION_ANNOTATIONS
 // FILE: BaseClass.java
 import org.checkerframework.checker.nullness.qual.*;

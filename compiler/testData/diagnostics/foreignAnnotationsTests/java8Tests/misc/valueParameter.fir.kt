@@ -50,7 +50,7 @@ fun <R> main(a: ValueParameter<R>) {
     a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNotNullString()<!>)
     a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNullableString()<!>)
     a.foo4(getArrayOfNotNullK())
-    a.foo4(getArrayOfNullableK())
+    a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNullableK()<!>)
 
     a.foo5(getArrayOfNotNullString())
     a.foo5(getArrayOfNullableString())
