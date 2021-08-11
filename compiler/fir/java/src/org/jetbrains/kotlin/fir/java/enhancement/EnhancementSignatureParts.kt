@@ -12,16 +12,10 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeWithoutEnhancement
-import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
-import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
-import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -38,8 +32,6 @@ internal class EnhancementSignatureParts(
 ) {
     private val isForVarargParameter get() = typeContainer.safeAs<FirValueParameter>()?.isVararg == true
 
-    private val attributesCache = mutableMapOf<FirTypeRef?, ConeAttributes>().withDefault { ConeAttributes.Empty }
-
     private fun ConeKotlinType.toFqNameUnsafe(): FqNameUnsafe? =
         ((this as? ConeLookupTagBasedType)?.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.toUnsafe()
 
@@ -48,7 +40,10 @@ internal class EnhancementSignatureParts(
         predefined: TypeEnhancementInfo? = null,
         forAnnotationMember: Boolean = false
     ): PartEnhancementResult {
-        val qualifiers = computeIndexedQualifiersForOverride(session)
+        val typeWithoutEnhancement = current.type
+            .toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationMember)
+
+        val qualifiers = computeIndexedQualifiersForOverride(typeWithoutEnhancement)
 
         val qualifiersWithPredefined = predefined?.let {
             IndexedJavaTypeQualifiers(qualifiers.size) { index ->
@@ -56,12 +51,6 @@ internal class EnhancementSignatureParts(
             }
         }
 
-        val typeWithoutEnhancement = current.type.toConeKotlinTypeWithoutEnhancement(
-            session,
-            javaTypeParameterStack,
-            forAnnotationMember,
-            attributes = attributesCache.getValue(current)
-        )
         val containsFunctionN = typeWithoutEnhancement.contains {
             if (it is ConeClassErrorType) false
             else {
@@ -87,43 +76,31 @@ internal class EnhancementSignatureParts(
         }
     }
 
+    private fun FirTypeRef.toConeKotlinType(session: FirSession): ConeKotlinType? =
+        when (this) {
+            is FirResolvedTypeRef -> type
+            is FirJavaTypeRef -> type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
+            else -> null
+        }
 
-    private fun FirTypeRef.toIndexed(
-        typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-        context: FirJavaEnhancementContext
-    ): List<TypeAndDefaultQualifiers> {
+    private fun ConeKotlinType?.toIndexed(context: FirJavaEnhancementContext): List<TypeAndDefaultQualifiers> {
         val list = ArrayList<TypeAndDefaultQualifiers>(1)
 
-        fun add(type: FirTypeRef?) {
+        fun add(type: ConeKotlinType?) {
             // TODO: should use the context from parent type
-            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, type?.annotations.orEmpty())
+            val annotations = type?.attributes?.customAnnotations.orEmpty()
+            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, annotations)
             list.add(TypeAndDefaultQualifiers(type, c.defaultTypeQualifiers?.get(AnnotationQualifierApplicabilityType.TYPE_USE)))
-
-            when (type) {
-                is FirJavaTypeRef -> {
-                    for (arg in type.type.typeArguments()) {
-                        add(arg.takeIf { it !is JavaWildcardType }?.toFirJavaTypeRef(context.session, javaTypeParameterStack))
-                    }
-                }
-                is FirUserTypeRef -> {
-                    for (arg in type.qualifier.lastOrNull()?.typeArgumentList?.typeArguments.orEmpty()) {
-                        add((arg as? FirTypeProjectionWithVariance)?.typeRef)
-                    }
-                }
-                is FirResolvedTypeRef -> {
-                    for (arg in type.type.typeArguments) {
-                        add(arg.type?.let { buildResolvedTypeRef { this.type = it } })
-                    }
-                }
-                else -> Unit
-            }
+            type?.typeArguments?.forEach { add(it.type) }
         }
 
         add(this)
         return list
     }
 
-    private fun extractQualifiers(lower: ConeKotlinType, upper: ConeKotlinType): JavaTypeQualifiers {
+    private fun ConeKotlinType.extractQualifiers(): JavaTypeQualifiers {
+        val lower = lowerBoundIfFlexible()
+        val upper = upperBoundIfFlexible()
         val mapping = JavaToKotlinClassMap
         return JavaTypeQualifiers(
             when {
@@ -140,29 +117,6 @@ internal class EnhancementSignatureParts(
         )
     }
 
-    private fun FirTypeRef.extractQualifiers(session: FirSession): JavaTypeQualifiers {
-        val (lower, upper) = when (this) {
-            is FirResolvedTypeRef -> {
-                val type = this.type
-                if (type is ConeFlexibleType) {
-                    Pair(type.lowerBound, type.upperBound)
-                } else {
-                    Pair(type, type)
-                }
-            }
-            is FirJavaTypeRef -> {
-                val convertedType = type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
-                Pair(
-                    convertedType.lowerBoundIfFlexible(),
-                    convertedType.upperBoundIfFlexible()
-                )
-            }
-            else -> return JavaTypeQualifiers.NONE
-        }
-
-        return extractQualifiers(lower, upper)
-    }
-
     private fun composeAnnotations(first: List<FirAnnotationCall>, second: List<FirAnnotationCall>): List<FirAnnotationCall> {
         return when {
             first.isEmpty() -> second
@@ -171,43 +125,35 @@ internal class EnhancementSignatureParts(
         }
     }
 
-    private fun FirTypeRef?.extractQualifiersFromAnnotations(
-        isHeadTypeConstructor: Boolean,
-        defaultQualifiersForType: JavaDefaultQualifiers?
-    ): JavaTypeQualifiers {
-        val composedAnnotation =
+    private fun TypeAndDefaultQualifiers.extractQualifiersFromAnnotations(isHeadTypeConstructor: Boolean): JavaTypeQualifiers {
+        val annotations = type?.attributes?.customAnnotations.orEmpty()
+        val composedAnnotations =
             if (isHeadTypeConstructor && typeContainer != null)
-                composeAnnotations(typeContainer.annotations, this?.annotations.orEmpty())
+                composeAnnotations(typeContainer.annotations, annotations)
             else
-                this?.annotations.orEmpty()
+                annotations
 
         val defaultTypeQualifier =
             if (isHeadTypeConstructor)
                 context.defaultTypeQualifiers?.get(containerApplicabilityType)
             else
-                defaultQualifiersForType
+                defaultQualifiers
 
-        val nullabilityInfo = typeQualifierResolver.extractNullability(composedAnnotation).also {
-            if (it?.qualifier == NullabilityQualifier.NOT_NULL) {
-                attributesCache[this] = composedAnnotation.computeTypeAttributesForJavaType()
-            }
-        } ?: defaultTypeQualifier?.nullabilityQualifier
+        val nullabilityInfo = typeQualifierResolver.extractNullability(composedAnnotations)
+            ?: defaultTypeQualifier?.nullabilityQualifier
 
-        @Suppress("SimplifyBooleanWithConstants")
         return JavaTypeQualifiers(
             nullabilityInfo?.qualifier,
-            typeQualifierResolver.extractMutability(composedAnnotation),
-            isNotNullTypeParameter = nullabilityInfo?.qualifier == NullabilityQualifier.NOT_NULL && this.isTypeParameterBasedType(),
+            typeQualifierResolver.extractMutability(composedAnnotations),
+            isNotNullTypeParameter = nullabilityInfo?.qualifier == NullabilityQualifier.NOT_NULL &&
+                    type?.lowerBoundIfFlexible() is ConeTypeParameterType,
             isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
         )
     }
 
-    private fun FirTypeRef?.isTypeParameterBasedType() =
-        ((this as? FirJavaTypeRef)?.type as? JavaClassifierType)?.classifier is JavaTypeParameter
-
-    private fun computeIndexedQualifiersForOverride(session: FirSession): IndexedJavaTypeQualifiers {
-        val indexedFromSupertypes = fromOverridden.map { it.toIndexed(typeQualifierResolver, context) }
-        val indexedThisType = current.toIndexed(typeQualifierResolver, context)
+    private fun computeIndexedQualifiersForOverride(current: ConeKotlinType?): IndexedJavaTypeQualifiers {
+        val indexedFromSupertypes = fromOverridden.map { it.toConeKotlinType(context.session).toIndexed(context) }
+        val indexedThisType = current.toIndexed(context)
 
         // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
         // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor
@@ -218,9 +164,8 @@ internal class EnhancementSignatureParts(
 
         val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
         val computedResult = Array(treeSize) { index ->
-            val (type, defaultQualifiers) = indexedThisType[index]
-            val qualifiers = type.extractQualifiersFromAnnotations(index == 0, defaultQualifiers)
-            val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers(session) }
+            val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations(index == 0)
+            val superQualifiers = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type?.extractQualifiers() }
             qualifiers.computeQualifiersForOverride(superQualifiers, index == 0 && isCovariant, index == 0 && isForVarargParameter)
         }
 

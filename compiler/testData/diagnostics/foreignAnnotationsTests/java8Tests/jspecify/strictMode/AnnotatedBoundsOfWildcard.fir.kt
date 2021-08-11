@@ -44,8 +44,10 @@ fun main(
 
             b: AnnotatedBoundsOfWildcard
 ): Unit {
-    b.superAsIs(aAnyNotNullNotNullNotNull)
-    b.superAsIs(aAnyNotNullNotNullNull)
+    // jspecify_nullness_mismatch
+    b.superAsIs(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.superAsIs(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
     b.superAsIs(aAnyNotNullNullNotNull)
     b.superAsIs(aAnyNotNullNullNull)
 
@@ -54,18 +56,19 @@ fun main(
     b.superNotNull(aAnyNotNullNullNotNull)
     b.superNotNull(aAnyNotNullNullNull)
 
-    b.superNullable(aAnyNotNullNotNullNotNull)
-    b.superNullable(aAnyNotNullNotNullNull)
-    b.superNullable(aAnyNotNullNullNotNull)
-    b.superNullable(aAnyNotNullNullNull)
+    // jspecify_nullness_mismatch
+    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
+    // jspecify_nullness_mismatch
+    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNullNotNull<!>)
+    // jspecify_nullness_mismatch
+    b.superNullable(<!ARGUMENT_TYPE_MISMATCH!>aAnyNotNullNullNull<!>)
 
     b.extendsAsIs(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
-    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
-    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
-    b.extendsAsIs(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.extendsAsIs(aNotNullNotNullNull)
+    b.extendsAsIs(aNotNullNullNotNull)
+    b.extendsAsIs(aNotNullNullNull)
 
     b.extendsNotNull(aNotNullNotNullNotNull)
     // jspecify_nullness_mismatch
@@ -76,18 +79,12 @@ fun main(
     b.extendsNotNull(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
 
     b.extendsNullable(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
-    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
-    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
-    b.extendsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.extendsNullable(aNotNullNotNullNull)
+    b.extendsNullable(aNotNullNullNotNull)
+    b.extendsNullable(aNotNullNullNull)
 
     b.noBounds(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
-    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
-    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
-    b.noBounds(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.noBounds(aNotNullNotNullNull)
+    b.noBounds(aNotNullNullNotNull)
+    b.noBounds(aNotNullNullNull)
 }

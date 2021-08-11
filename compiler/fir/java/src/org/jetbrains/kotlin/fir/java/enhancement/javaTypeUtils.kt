@@ -225,9 +225,8 @@ private fun ConeClassifierLookupTag.enhanceMutability(
     return this
 }
 
-
 internal data class TypeAndDefaultQualifiers(
-    val type: FirTypeRef?, // null denotes '*' here
+    val type: ConeKotlinType?, // null denotes '*' here
     val defaultQualifiers: JavaDefaultQualifiers?
 )
 

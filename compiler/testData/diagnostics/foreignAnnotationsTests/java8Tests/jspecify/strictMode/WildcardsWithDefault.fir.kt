@@ -29,10 +29,7 @@ fun main(
     b.noBoundsNotNull(aNotNullNullNull)
 
     b.noBoundsNullable(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
-    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    // jspecify_nullness_mismatch
-    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    // jspecify_nullness_mismatch
-    b.noBoundsNullable(<!ARGUMENT_TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.noBoundsNullable(aNotNullNotNullNull)
+    b.noBoundsNullable(aNotNullNullNotNull)
+    b.noBoundsNullable(aNotNullNullNull)
 }
