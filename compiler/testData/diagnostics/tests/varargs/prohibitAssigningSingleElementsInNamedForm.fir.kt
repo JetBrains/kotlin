@@ -15,6 +15,6 @@ fun f2() {}
 fun foo(vararg ints: Int) {}
 
 fun test() {
-    foo(ints = 1)
+    foo(ints = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>1<!>)
     foo(ints = *intArrayOf(1))
 }

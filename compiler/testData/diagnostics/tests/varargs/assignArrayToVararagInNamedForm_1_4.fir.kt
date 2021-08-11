@@ -15,7 +15,7 @@ fun test_fun(s: String, arr: Array<String>) {
     withVararg(s = *arr) // Warning
 
     withVararg(s) // OK
-    withVararg(s = <!ARGUMENT_TYPE_MISMATCH!>s<!>) // Error
+    withVararg(s = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>s<!>) // Error
 }
 
 fun test_ann(s: String, arr: Array<String>) {

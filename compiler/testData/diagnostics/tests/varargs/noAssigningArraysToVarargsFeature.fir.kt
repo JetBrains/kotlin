@@ -44,5 +44,5 @@ fun foo(vararg i: Int) {}
 
 @Ann(s = "value")
 fun dep1() {
-    foo(i = 1)
+    foo(i = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>1<!>)
 }
