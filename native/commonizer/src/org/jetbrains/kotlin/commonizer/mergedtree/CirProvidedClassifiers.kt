@@ -63,10 +63,12 @@ object CirProvided {
 
     sealed interface Class : Classifier {
         val visibility: Visibility
+        val supertypes: List<Type>
     }
 
     data class RegularClass(
         override val typeParameters: List<TypeParameter>,
+        override val supertypes: List<Type>,
         override val visibility: Visibility
     ) : Class
 
@@ -77,6 +79,8 @@ object CirProvided {
 
         override val typeParameters: List<TypeParameter> get() = emptyList()
         override val visibility: Visibility get() = Visibilities.Public
+        override val supertypes: List<Type>
+            get() = emptyList() // TODO!!
     }
 
     data class TypeAlias(

@@ -64,7 +64,7 @@ internal class CirProvidedClassifiersByModules private constructor(
             return CirProvidedClassifiersByModules(hasForwardDeclarations, classifiers)
         }
 
-        private val FALLBACK_FORWARD_DECLARATION_CLASS = CirProvided.RegularClass(emptyList(), Visibilities.Public)
+        private val FALLBACK_FORWARD_DECLARATION_CLASS = CirProvided.RegularClass(emptyList(), emptyList(), Visibilities.Public)
     }
 }
 
@@ -125,7 +125,9 @@ private fun readModule(metadata: SerializedMetadata, consumer: (CirEntityId, Cir
 }
 
 private class ClassProtosToRead {
-    data class ClassEntry(val classId: CirEntityId, val proto: ProtoBuf.Class)
+    data class ClassEntry(
+        val classId: CirEntityId, val proto: ProtoBuf.Class, val strings: NameResolver
+    )
 
     // key = parent class ID (or NON_EXISTING_CLASSIFIER_ID for top-level classes)
     // value = class protos under this parent class (MutableList to preserve order of classes)
@@ -138,7 +140,7 @@ private class ClassProtosToRead {
             val classId = CirEntityId.create(strings.getQualifiedClassName(classProto.fqName))
             val parentClassId: CirEntityId = classId.getParentEntityId() ?: NON_EXISTING_CLASSIFIER_ID
 
-            groupedByParentClassId.getValue(parentClassId) += ClassEntry(classId, classProto)
+            groupedByParentClassId.getValue(parentClassId) += ClassEntry(classId, classProto, strings)
         }
     }
 
@@ -155,12 +157,20 @@ private fun readClass(
 ) {
     val (classId, classProto) = classEntry
 
+    val typeParameterNameToIndex = HashMap<Int, Int>()
+
     val typeParameters = readTypeParameters(
         typeParameterProtos = classProto.typeParameterList,
-        typeParameterIndexOffset = typeParameterIndexOffset
+        typeParameterIndexOffset = typeParameterIndexOffset,
+        nameToIndexMapper = typeParameterNameToIndex::set
     )
+    val typeReadContext = TypeReadContext(classEntry.strings, TypeTable(classProto.typeTable), typeParameterNameToIndex)
+
+    val supertypes = classProto.supertypeList.map { readType(it, typeReadContext) } +
+            classProto.supertypeIdList.map { readType(classProto.typeTable.getType(it), typeReadContext) }
+
     val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
-    val clazz = CirProvided.RegularClass(typeParameters, visibility)
+    val clazz = CirProvided.RegularClass(typeParameters, supertypes, visibility)
 
     consumer(classId, clazz)
 
