@@ -186,9 +186,11 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             val funLiteral = funLiteralExpr.functionLiteral
 
             val receiverType = funLiteral.receiverTypeReference?.let { dynamicType }
+            val contextReceiversTypes = funLiteral.contextReceivers.map { dynamicType }
+
             val parameterTypes = funLiteral.valueParameters.map { dynamicType }
 
-            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, parameterTypes, null, dynamicType)
+            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, contextReceiversTypes, parameterTypes, null, dynamicType)
         }
 
         for (arg in call.valueArguments) {

@@ -346,7 +346,12 @@ class TypeResolver(
 
             override fun visitFunctionType(type: KtFunctionType) {
                 val receiverTypeRef = type.receiverTypeReference
-                val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
+                val receiverType = if (receiverTypeRef?.typeElement == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
+
+                val contextReceiversTypeRefs = type.contextReceiversTypeReferences
+                val contextReceiversTypes = contextReceiversTypeRefs?.mapNotNull {
+                    resolveType(c.noBareTypes(), it)
+                } ?: emptyList()
 
                 val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
                 checkParametersOfFunctionType(parameterDescriptors)
@@ -362,7 +367,7 @@ class TypeResolver(
 
                 result = type(
                     createFunctionType(
-                        moduleDescriptor.builtIns, annotations, receiverType,
+                        moduleDescriptor.builtIns, annotations, receiverType, contextReceiversTypes,
                         parameterDescriptors.map { it.type },
                         parameterDescriptors.map { it.name },
                         returnType,

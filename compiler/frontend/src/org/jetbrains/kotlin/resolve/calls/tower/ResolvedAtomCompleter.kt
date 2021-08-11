@@ -334,6 +334,7 @@ class ResolvedAtomCompleter(
             builtIns,
             existingLambdaType.annotations,
             substitutedLambdaTypes.receiverType?.substitutedType,
+            emptyList(),
             substitutedLambdaTypes.parameterTypes.map { it.substitutedType },
             null, // parameter names transforms to special annotations, so they are already taken from parameter types
             substitutedLambdaTypes.returnType.substitutedType,

@@ -10589,6 +10589,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("functionalType.kt")
+                public void testFunctionalType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/functionalType.kt");
+                }
+
+                @Test
                 @TestMetadata("genericOuterClass.kt")
                 public void testGenericOuterClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/genericOuterClass.kt");
@@ -10718,6 +10724,28 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 @TestMetadata("withExplicitReceiverError.kt")
                 public void testWithExplicitReceiverError() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/withExplicitReceiverError.kt");
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP")
+                @TestDataPath("$PROJECT_ROOT")
+                public class FromKEEP {
+                    @Test
+                    public void testAllFilesPresentInFromKEEP() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("clickHandler.kt")
+                    public void testClickHandler() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/clickHandler.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("functionalType.kt")
+                    public void testFunctionalType() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP/functionalType.kt");
+                    }
                 }
             }
         }

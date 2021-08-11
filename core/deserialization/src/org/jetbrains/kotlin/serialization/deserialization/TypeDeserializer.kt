@@ -226,6 +226,7 @@ class TypeDeserializer(
             funType.builtIns,
             funType.annotations,
             funType.getReceiverTypeFromFunctionType(),
+            funType.getContextReceiverTypesFromFunctionType(),
             funType.getValueParameterTypesFromFunctionType().dropLast(1).map(TypeProjection::getType),
             // TODO: names
             null,

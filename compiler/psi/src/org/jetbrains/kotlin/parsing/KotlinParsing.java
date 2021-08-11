@@ -2172,6 +2172,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         IElementType lookahead = lookahead(1);
         IElementType lookahead2 = lookahead(2);
         boolean typeBeforeDot = true;
+        boolean withContextReceiver = at(CONTEXT_KEYWORD) && lookahead == LPAR;
+
+        if (withContextReceiver) {
+            parseContextReceiverList();
+        }
+
         if (at(IDENTIFIER) && !(lookahead == DOT && lookahead2 == IDENTIFIER) && lookahead != LT && at(DYNAMIC_KEYWORD)) {
             PsiBuilder.Marker dynamicType = mark();
             advance(); // DYNAMIC_KEYWORD
@@ -2180,7 +2186,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
             parseUserType(allowSimpleIntersectionTypes);
         }
-        else if (at(LPAR)) {
+        else if (at(LPAR) && !withContextReceiver) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
 
             // This may be a function parameter list or just a parenthesized type
@@ -2211,7 +2217,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
 
         }
-        else {
+        else if (!withContextReceiver) {
             errorWithRecovery("Type expected",
                     TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
                                    TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
@@ -2240,8 +2246,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
             intersectionType.done(INTERSECTION_TYPE);
             wasIntersection = true;
         }
+        boolean withExtensionReceiver = typeBeforeDot && at(DOT);
 
-        if (typeBeforeDot && !wasIntersection && at(DOT)) {
+
+        if (withExtensionReceiver && !wasIntersection || withContextReceiver) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^
@@ -2253,7 +2261,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
             receiverTypeRef.done(TYPE_REFERENCE);
             receiverType.done(FUNCTION_TYPE_RECEIVER);
 
-            advance(); // DOT
+            if (withExtensionReceiver) {
+                advance(); // DOT
+            }
 
             if (at(LPAR)) {
                 parseFunctionTypeContents().drop();

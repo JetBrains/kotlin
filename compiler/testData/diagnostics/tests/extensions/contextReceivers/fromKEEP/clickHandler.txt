@@ -1,0 +1,18 @@
+package
+
+public fun handleClick(/*0*/ clickHandler: ClickHandler /* = @kotlin.ContextFunctionTypeParams(count = 1) (ClickEvent) -> kotlin.Unit */): kotlin.Unit
+
+public final class Button {
+    public constructor Button()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ClickEvent {
+    public constructor ClickEvent()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias ClickHandler = @kotlin.ContextFunctionTypeParams(count = 1) (ClickEvent) -> kotlin.Unit

@@ -1,0 +1,28 @@
+package
+
+public fun f2(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) (Param) -> kotlin.Unit): kotlin.Unit
+public fun f4(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) () -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun R.f1(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) (R.(Param) -> kotlin.Unit)): kotlin.Unit
+public fun R.f3(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) (R.() -> kotlin.Unit)): kotlin.Unit
+
+public final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Param {
+    public constructor Param()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class R {
+    public constructor R()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

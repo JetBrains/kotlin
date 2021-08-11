@@ -177,7 +177,7 @@ class BuilderInferenceSupport(
             approximationSubstitutor.buildSubstitutor().substitute(lambdaExpectedType, Variance.IN_VARIANCE) ?: return
 
         val newExpectedType = createFunctionType(
-            newReceiverType.builtIns, approximatedLambdaType.annotations, newReceiverType,
+            newReceiverType.builtIns, approximatedLambdaType.annotations, newReceiverType, emptyList(), // TODO: Context receivers?
             approximatedLambdaType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType),
             parameterNames = null, // TODO: parameterNames
             returnType = approximatedLambdaType.getReturnTypeFromFunctionType(),

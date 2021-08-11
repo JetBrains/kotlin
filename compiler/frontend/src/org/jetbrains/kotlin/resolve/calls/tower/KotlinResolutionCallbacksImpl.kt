@@ -171,8 +171,9 @@ class KotlinResolutionCallbacksImpl(
             @OptIn(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
         }
 
+        // TODO: Context receivers?
         val expectedType = createFunctionType(
-            builtIns, annotations, refinedReceiverType, parameters, null,
+            builtIns, annotations, refinedReceiverType, emptyList(), parameters, null,
             lambdaInfo.expectedType, isSuspend
         )
 

@@ -195,6 +195,12 @@ public interface Comparable</*0*/ in T> {
     public abstract operator fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented public final annotation class ContextFunctionTypeParams : kotlin.Annotation {
+    /*primary*/ public constructor ContextFunctionTypeParams(/*0*/ count: kotlin.Int)
+    public final val count: kotlin.Int
+        public final fun <get-count>(): kotlin.Int
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.MustBeDocumented public final annotation class Deprecated : kotlin.Annotation {
     /*primary*/ public constructor Deprecated(/*0*/ message: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ..., /*2*/ level: kotlin.DeprecationLevel = ...)
     public final val level: kotlin.DeprecationLevel

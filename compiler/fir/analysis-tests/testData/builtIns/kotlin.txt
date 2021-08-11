@@ -339,6 +339,14 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ContextFunctionTypeParams : R|kotlin/Annotation| {
+    public final val count: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(count: R|kotlin/Int|): R|kotlin/ContextFunctionTypeParams|
+
+}
+
 @R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
     public final val level: R|kotlin/DeprecationLevel|
         public get(): R|kotlin/DeprecationLevel|

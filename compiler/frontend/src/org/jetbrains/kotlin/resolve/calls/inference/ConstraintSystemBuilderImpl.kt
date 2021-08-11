@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
@@ -471,8 +469,9 @@ internal fun createTypeForFunctionPlaceholder(
         functionPlaceholderTypeConstructor.argumentTypes
     }
     val receiverType = if (isExtension) DONT_CARE else null
+    val contextReceiverTypes = (0 until expectedType.contextFunctionTypeParamsCount()).map { DONT_CARE }
     return createFunctionType(
-        functionPlaceholder.builtIns, Annotations.EMPTY, receiverType, newArgumentTypes, null, DONT_CARE,
+        functionPlaceholder.builtIns, Annotations.EMPTY, receiverType, contextReceiverTypes, newArgumentTypes, null, DONT_CARE,
         suspendFunction = expectedType.isSuspendFunctionType
     )
 }

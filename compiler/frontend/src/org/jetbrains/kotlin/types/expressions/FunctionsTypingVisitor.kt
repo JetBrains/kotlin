@@ -397,6 +397,7 @@ fun SimpleFunctionDescriptor.createFunctionType(
         builtIns,
         Annotations.EMPTY,
         extensionReceiverParameter?.type,
+        contextReceiverParameters.map { it.type },
         if (shouldUseVarargType) valueParameters.map { it.varargElementType ?: it.type } else valueParameters.map { it.type },
         null,
         returnType ?: return null,

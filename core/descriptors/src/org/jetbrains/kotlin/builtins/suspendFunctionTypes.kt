@@ -43,10 +43,11 @@ fun transformSuspendFunctionToRuntimeFunctionType(suspendFunType: KotlinType): S
     }
 
     return createFunctionType(
-        suspendFunType.builtIns,
-        suspendFunType.annotations,
-        suspendFunType.getReceiverTypeFromFunctionType(),
-        suspendFunType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType) +
+            suspendFunType.builtIns,
+            suspendFunType.annotations,
+            suspendFunType.getReceiverTypeFromFunctionType(),
+            suspendFunType.getContextReceiverTypesFromFunctionType(),
+            suspendFunType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType) +
                 KotlinTypeFactory.simpleType(
                     Annotations.EMPTY,
                     // Continuation interface is not a part of built-ins anymore, it has been moved to stdlib.

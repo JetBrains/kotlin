@@ -43,6 +43,7 @@ object SuspendTypeConversions : ParameterTypeConversion {
             candidate.callComponents.builtIns,
             expectedParameterType.annotations,
             expectedParameterType.getReceiverTypeFromFunctionType(),
+            expectedParameterType.getContextReceiverTypesFromFunctionType(),
             expectedParameterType.getValueParameterTypesFromFunctionType().map { it.type },
             parameterNames = null,
             expectedParameterType.getReturnTypeFromFunctionType(),
