@@ -10110,6 +10110,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("reifiedArguments.kt")
+            public void testReifiedArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/reifiedArguments.kt");
+            }
+
+            @Test
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/simple.kt");
