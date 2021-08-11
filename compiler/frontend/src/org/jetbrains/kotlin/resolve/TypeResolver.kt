@@ -308,11 +308,11 @@ class TypeResolver(
                     }
                 }
 
-                if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNotNullTypeParameters)) {
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
                     c.trace.report(
                         UNSUPPORTED_FEATURE.on(
                             intersectionType,
-                            LanguageFeature.DefinitelyNotNullTypeParameters to languageVersionSettings
+                            LanguageFeature.DefinitelyNonNullableTypes to languageVersionSettings
                         )
                     )
                     return

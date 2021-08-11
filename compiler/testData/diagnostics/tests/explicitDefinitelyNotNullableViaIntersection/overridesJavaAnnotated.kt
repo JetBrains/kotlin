@@ -1,4 +1,4 @@
-// !LANGUAGE: +DefinitelyNotNullTypeParameters +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// !LANGUAGE: +DefinitelyNonNullableTypes +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 
 // FILE: A.java
 import org.jetbrains.annotations.*;

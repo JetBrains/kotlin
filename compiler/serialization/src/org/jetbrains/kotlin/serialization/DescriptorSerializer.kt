@@ -193,7 +193,7 @@ class DescriptorSerializer private constructor(
 
         if (metDefinitelyNotNullType) {
             builder.addVersionRequirement(
-                writeLanguageVersionRequirement(LanguageFeature.DefinitelyNotNullTypeParameters, versionRequirementTable)
+                writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
             )
         }
 
@@ -320,7 +320,7 @@ class DescriptorSerializer private constructor(
             }
 
             if (local.metDefinitelyNotNullType) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNotNullTypeParameters))
+                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
         }
 
@@ -407,7 +407,7 @@ class DescriptorSerializer private constructor(
             }
 
             if (local.metDefinitelyNotNullType) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNotNullTypeParameters))
+                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
         }
 
@@ -447,7 +447,7 @@ class DescriptorSerializer private constructor(
             }
 
             if (local.metDefinitelyNotNullType) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNotNullTypeParameters))
+                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
         }
 
@@ -513,7 +513,7 @@ class DescriptorSerializer private constructor(
             builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(
-                    writeLanguageVersionRequirement(LanguageFeature.DefinitelyNotNullTypeParameters, versionRequirementTable)
+                    writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
                 )
             }
         }

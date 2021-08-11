@@ -1,5 +1,5 @@
 // SKIP_TXT
-// !LANGUAGE: +DefinitelyNotNullTypeParameters
+// !LANGUAGE: +DefinitelyNonNullableTypes
 
 inline fun <reified T : Any> foo() {}
 

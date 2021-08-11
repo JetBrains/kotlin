@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +DefinitelyNotNullTypeParameters
+// !LANGUAGE: +DefinitelyNonNullableTypes
 
 fun Any.bar() {}
 fun Boolean.baz() {}
