@@ -339,7 +339,7 @@ class FirCallResolver(
     fun resolveCallableReference(
         constraintSystemBuilder: ConstraintSystemBuilder,
         resolvedCallableReferenceAtom: ResolvedCallableReferenceAtom,
-    ): Boolean {
+    ): Pair<CandidateApplicability, Boolean> {
         val callableReferenceAccess = resolvedCallableReferenceAtom.reference
         val lhs = resolvedCallableReferenceAtom.lhs
         val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
@@ -383,7 +383,7 @@ class FirCallResolver(
                     callableReferenceAccess.source
                 )
                 resolvedCallableReferenceAtom.resultingReference = errorReference
-                return false
+                return applicability to false
             }
             reducedCandidates.size > 1 -> {
                 if (resolvedCallableReferenceAtom.hasBeenPostponed) {
@@ -393,10 +393,10 @@ class FirCallResolver(
                         callableReferenceAccess.source
                     )
                     resolvedCallableReferenceAtom.resultingReference = errorReference
-                    return false
+                    return applicability to false
                 }
                 resolvedCallableReferenceAtom.hasBeenPostponed = true
-                return true
+                return applicability to true
             }
         }
 
@@ -417,7 +417,7 @@ class FirCallResolver(
         resolvedCallableReferenceAtom.resultingReference = reference
         resolvedCallableReferenceAtom.resultingTypeForCallableReference = chosenCandidate.resultingTypeForCallableReference
 
-        return true
+        return applicability to true
     }
 
     fun resolveDelegatingConstructorCall(

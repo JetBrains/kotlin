@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 
 abstract class ResolutionStage {
@@ -179,8 +180,15 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
         if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms) {
             if (atom is ResolvedCallableReferenceAtom) {
-                if (!context.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)) {
+                val (applicability, success) =
+                    context.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)
+                if (!success) {
                     sink.yieldDiagnostic(InapplicableCandidate)
+                } else when (applicability) {
+                    CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY ->
+                        candidate.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
+                    else -> {
+                    }
                 }
             }
         }
