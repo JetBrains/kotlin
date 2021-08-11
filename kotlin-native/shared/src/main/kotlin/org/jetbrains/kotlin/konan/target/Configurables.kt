@@ -102,6 +102,7 @@ interface AppleConfigurables : Configurables, ClangFlags {
     val stripFlags get() = targetList("stripFlags")
     val additionalToolsDir get() = hostString("additionalToolsDir")
     val absoluteAdditionalToolsDir get() = absolute(additionalToolsDir)
+    val toolchainVersion: String
 }
 
 interface MingwConfigurables : Configurables, ClangFlags {
