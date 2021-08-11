@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/main.kt
       VALUE_PARAMETER name:x index:0 type:T1 of <root>.B
     FUN name:bar visibility:public modality:ABSTRACT <> ($this:<root>.B<T1 of <root>.B>, x:{T1 of <root>.B & Any}) returnType:{T1 of <root>.B & Any}
       overridden:
-        public abstract fun bar (x: @[EnhancedNullability] T of <root>.A): @[EnhancedNullability] T of <root>.A declared in <root>.A
+        public abstract fun bar (x: @[EnhancedNullability] {T of <root>.A & Any}): @[EnhancedNullability] {T of <root>.A & Any} declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.B<T1 of <root>.B>
       VALUE_PARAMETER name:x index:0 type:{T1 of <root>.B & Any}
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
