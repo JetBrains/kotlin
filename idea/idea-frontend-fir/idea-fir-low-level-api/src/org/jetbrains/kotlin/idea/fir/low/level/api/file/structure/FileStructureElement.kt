@@ -197,6 +197,7 @@ internal class ReanalyzablePropertyStructureElement(
                 getter?.replaceResolvePhase(upgradedPhase)
                 setter?.replaceResolvePhase(upgradedPhase)
                 replaceResolvePhase(upgradedPhase)
+                replaceInitializerAndAccessorsAreResolved(false)
             }
 
             firLazyDeclarationResolver.lazyResolveDeclaration(
