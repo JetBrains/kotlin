@@ -26,4 +26,11 @@ class A {
 
     val initiaizedWithExplicitBackingField = <!PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION!>listOf(1, 2)<!>
         <!PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER!>field: MutableList<Int><!>
+
+    val p = 5
+        get() = field
+}
+
+fun test() {
+    val b = A().p + 2
 }
