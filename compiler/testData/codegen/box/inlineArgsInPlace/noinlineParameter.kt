@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 
 // TODO separate bytecode text templates for FIR?
@@ -10,12 +9,10 @@
 // -- 2 ASTORE 1
 // -- 13 ALOAD 1
 
-@Suppress("DEPRECATION_ERROR")
-fun box(): String {
-    val seq = buildSequence {
-        yield("O")
-        yield("K")
-    }
-    val it = seq.iterator()
-    return it.next() + it.next()
-}
+// NB 'b' is evaluated before 's'
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@kotlin.internal.InlineOnly
+inline fun invokeNoInline(noinline b: (String) -> String, s: String) =
+    b(s)
+
+fun box(): String = invokeNoInline({ it + "K" }, "O")
