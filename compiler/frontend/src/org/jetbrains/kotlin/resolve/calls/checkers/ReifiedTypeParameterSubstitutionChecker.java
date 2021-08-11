@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Map;
@@ -50,6 +50,10 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
             KtTypeProjection typeProjection = CollectionsKt.getOrNull(resolvedCall.getCall().getTypeArguments(), parameter.getIndex());
 
             checkTypeArgument(typeProjection != null ? typeProjection : reportOn, context, argument, argumentDeclarationDescriptor, false);
+
+            if (typeProjection != null && argument instanceof DefinitelyNotNullTypeMarker) {
+                context.getTrace().report(Errors.DEFINITELY_NON_NULLABLE_AS_REIFIED.on(typeProjection));
+            }
         }
     }
 
