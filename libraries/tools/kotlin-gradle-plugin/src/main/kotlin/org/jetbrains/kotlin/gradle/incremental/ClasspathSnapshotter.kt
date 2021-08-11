@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import org.jetbrains.kotlin.incremental.JavaClassDescriptorCreator
-import org.jetbrains.kotlin.incremental.KotlinClassInfo
-import org.jetbrains.kotlin.incremental.toSerializedJavaClass
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.name.ClassId
 import java.io.File
-import java.security.MessageDigest
 import java.util.zip.ZipInputStream
 
 /** Computes a [ClasspathEntrySnapshot] of a classpath entry (directory or jar). */
@@ -46,20 +43,21 @@ object ClassSnapshotter {
     /**
      * Creates [ClassSnapshot]s of the given classes.
      *
-     * Note that creating a [JavaClassSnapshot] for a nested class may require accessing the outer class (and possibly vice versa).
-     * Therefore, for Java classes, outer classes and nested classes must be passed together in one invocation of this method.
+     * Note that for Java (non-Kotlin) classes, creating a [ClassSnapshot] for a nested class will require accessing the outer class (and
+     * possibly vice versa). Therefore, outer classes and nested classes must be passed together in one invocation of this method.
      */
     fun snapshot(classes: List<ClassFileWithContents>): List<ClassSnapshot> {
-        // For each class, try creating a KotlinClassSnapshot first, the result may be null if it's not a Kotlin class.
-        val kotlinClassSnapshots: Map<ClassFile, KotlinClassSnapshot?> =
-            classes.associate { it.classFile to trySnapshotKotlinClass(it) }
+        // Snapshot Kotlin classes first
+        val kotlinClassSnapshots: Map<ClassFile, KotlinClassSnapshot?> = classes.associate {
+            it.classFile to trySnapshotKotlinClass(it)
+        }
 
-        // Collect all classes that do not have a KotlinClassSnapshot, and create JavaClassSnapshots for them in one invocation
+        // Snapshot Java classes in one invocation
         val javaClasses: List<ClassFileWithContents> = classes.filter { kotlinClassSnapshots[it.classFile] == null }
         val snapshots: List<JavaClassSnapshot> = snapshotJavaClasses(javaClasses)
         val javaClassSnapshots: Map<ClassFile, JavaClassSnapshot> = javaClasses.map { it.classFile }.zip(snapshots).toMap()
 
-        // Return either a KotlinClassSnapshot or a JavaClassSnapshot for each class
+        // Return a snapshot for each class
         return classes.map { kotlinClassSnapshots[it.classFile] ?: javaClassSnapshots[it.classFile]!! }
     }
 
@@ -73,24 +71,51 @@ object ClassSnapshotter {
     /**
      * Creates [JavaClassSnapshot]s of the given Java classes.
      *
-     * Note that creating a [JavaClassSnapshot] for a nested class may require accessing the outer class (and possibly vice versa).
+     * Note that creating a [JavaClassSnapshot] for a nested class will require accessing the outer class (and possibly vice versa).
      * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
      */
     private fun snapshotJavaClasses(classes: List<ClassFileWithContents>): List<JavaClassSnapshot> {
-        val javaClassDescriptors: List<JavaClassDescriptor?> = JavaClassDescriptorCreator.create(classes.map { it.contents })
-        return javaClassDescriptors.mapIndexed { index, javaClassDescriptor ->
-            if (javaClassDescriptor != null) {
-                JavaClassSnapshot(
-                    serializedJavaClass = javaClassDescriptor.toSerializedJavaClass(),
-                    contentHash = null
-                )
+        val classFiles = classes.map { it.classFile }
+        val classesContents = classes.map { it.contents }
+        val classNames = classesContents.map { JavaClassName.compute(it) }
+        val classIds = computeJavaClassIds(classNames)
+
+        // Snapshot special cases first (map a class index to its snapshot, or `null` if it will be created in the next round)
+        val specialCaseSnapshots: Map<Int, JavaClassSnapshot?> = classFiles.indices.associateWith { index ->
+            val className = classNames[index]
+            val classId = classIds[index]
+            if (classId.isLocal) {
+                // A local class can't be compiled against, so any changes in a local class will not cause recompilation of other classes.
+                // Note that in this context, a nested class of a local class is also considered local (see ClassId's kdoc). Therefore, we
+                // checked `classId.isLocal` instead of `className is LocalClass`.
+                EmptyJavaClassSnapshot
             } else {
-                JavaClassSnapshot(
-                    serializedJavaClass = null,
-                    contentHash = MessageDigest.getInstance("MD5").digest(classes[index].contents)
-                )
+                when (className) {
+                    is TopLevelClass -> null
+                    is NestedNonLocalClass -> {
+                        if (className.isPossiblyAnonymous) {
+                            // TODO: Currently BinaryJavaClass is not able to handle anonymous classes, fix this later.
+                            FallBackJavaClassSnapshot(classesContents[index])
+                        } else null
+                    }
+                    is LocalClass -> error("ClassId '$classId' is not local, but JavaClassName '${className.name} is a LocalClass")
+                }
             }
         }
+
+        // Snapshot the remaining classes in one invocation
+        val remainingClassesIndices: List<Int> = classFiles.indices.filter { specialCaseSnapshots[it] == null }
+        val remainingClassIds: List<ClassId> = remainingClassesIndices.map { classIds[it] }
+        val remainingClassesContents: List<ByteArray> = remainingClassesIndices.map { classes[it].contents }
+
+        val snapshots: List<JavaClassSnapshot> = JavaClassDescriptorCreator.create(remainingClassIds, remainingClassesContents).map {
+            PlainJavaClassSnapshot(it.toSerializedJavaClass())
+        }
+        val remainingSnapshots: Map<Int, JavaClassSnapshot> /* maps a class index to its snapshot */ =
+            remainingClassesIndices.zip(snapshots).toMap()
+
+        // Return a snapshot for each class
+        return classFiles.indices.map { specialCaseSnapshots[it] ?: remainingSnapshots[it]!! }
     }
 }
 

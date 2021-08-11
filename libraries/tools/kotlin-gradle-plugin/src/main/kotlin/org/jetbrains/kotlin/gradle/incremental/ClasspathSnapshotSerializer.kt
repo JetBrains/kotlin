@@ -40,7 +40,7 @@ object ClasspathEntrySnapshotSerializer : DataSerializer<ClasspathEntrySnapshot>
 object ClassSnapshotDataSerializer : DataSerializer<ClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: ClassSnapshot) {
-        output.writeString(snapshot.javaClass.name)
+        output.writeBoolean(snapshot is KotlinClassSnapshot)
         when (snapshot) {
             is KotlinClassSnapshot -> KotlinClassSnapshotExternalizer.save(output, snapshot)
             is JavaClassSnapshot -> JavaClassSnapshotExternalizer.save(output, snapshot)
@@ -48,10 +48,11 @@ object ClassSnapshotDataSerializer : DataSerializer<ClassSnapshot> {
     }
 
     override fun read(input: DataInput): ClassSnapshot {
-        return when (val className = input.readString()) {
-            KotlinClassSnapshot::class.java.name -> KotlinClassSnapshotExternalizer.read(input)
-            JavaClassSnapshot::class.java.name -> JavaClassSnapshotExternalizer.read(input)
-            else -> error("Unrecognized class: $className")
+        val isKotlinClassSnapshot = input.readBoolean()
+        return if (isKotlinClassSnapshot) {
+            KotlinClassSnapshotExternalizer.read(input)
+        } else {
+            JavaClassSnapshotExternalizer.read(input)
         }
     }
 }
@@ -123,15 +124,54 @@ object FqNameExternalizer : DataExternalizer<FqName> {
 object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: JavaClassSnapshot) {
-        NullableValueExternalizer(JavaClassProtoMapValueExternalizer).save(output, snapshot.serializedJavaClass)
-        NullableValueExternalizer(ByteArrayExternalizer).save(output, snapshot.contentHash)
+        output.writeString(snapshot.javaClass.name)
+        when (snapshot) {
+            is PlainJavaClassSnapshot -> PlainJavaClassSnapshotExternalizer.save(output, snapshot)
+            is EmptyJavaClassSnapshot -> EmptyJavaClassSnapshotExternalizer.save(output, snapshot)
+            is FallBackJavaClassSnapshot -> FallBackJavaClassSnapshotExternalizer.save(output, snapshot)
+        }
     }
 
     override fun read(input: DataInput): JavaClassSnapshot {
-        return JavaClassSnapshot(
-            serializedJavaClass = NullableValueExternalizer(JavaClassProtoMapValueExternalizer).read(input),
-            contentHash = NullableValueExternalizer(ByteArrayExternalizer).read(input)
-        )
+        return when (val className = input.readString()) {
+            PlainJavaClassSnapshot::class.java.name -> PlainJavaClassSnapshotExternalizer.read(input)
+            EmptyJavaClassSnapshot::class.java.name -> EmptyJavaClassSnapshotExternalizer.read(input)
+            FallBackJavaClassSnapshot::class.java.name -> FallBackJavaClassSnapshotExternalizer.read(input)
+            else -> error("Unrecognized class: $className")
+        }
+    }
+}
+
+object PlainJavaClassSnapshotExternalizer : DataExternalizer<PlainJavaClassSnapshot> {
+
+    override fun save(output: DataOutput, snapshot: PlainJavaClassSnapshot) {
+        JavaClassProtoMapValueExternalizer.save(output, snapshot.serializedJavaClass)
+    }
+
+    override fun read(input: DataInput): PlainJavaClassSnapshot {
+        return PlainJavaClassSnapshot(serializedJavaClass = JavaClassProtoMapValueExternalizer.read(input))
+    }
+}
+
+object EmptyJavaClassSnapshotExternalizer : DataExternalizer<EmptyJavaClassSnapshot> {
+
+    override fun save(output: DataOutput, snapshot: EmptyJavaClassSnapshot) {
+        // Nothing to save
+    }
+
+    override fun read(input: DataInput): EmptyJavaClassSnapshot {
+        return EmptyJavaClassSnapshot
+    }
+}
+
+object FallBackJavaClassSnapshotExternalizer : DataExternalizer<FallBackJavaClassSnapshot> {
+
+    override fun save(output: DataOutput, snapshot: FallBackJavaClassSnapshot) {
+        ByteArrayExternalizer.save(output, snapshot.contentHash)
+    }
+
+    override fun read(input: DataInput): FallBackJavaClassSnapshot {
+        return FallBackJavaClassSnapshot(contentHash = ByteArrayExternalizer.read(input))
     }
 }
 

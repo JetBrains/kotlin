@@ -40,15 +40,21 @@ sealed class ClassSnapshot
 class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
 
 /** [ClassSnapshot] of a Java class. */
-class JavaClassSnapshot(
+sealed class JavaClassSnapshot : ClassSnapshot()
 
-    /** The [SerializedJavaClass], or `null` if it can't be computed (in which case [contentHash] is used instead). */
-    val serializedJavaClass: SerializedJavaClass?,
+/** [JavaClassSnapshot] of a typical Java class. */
+class PlainJavaClassSnapshot(
+    val serializedJavaClass: SerializedJavaClass
+) : JavaClassSnapshot()
 
-    /** The hash of the class contents in case [serializedJavaClass] can't be computed, or `null` if [serializedJavaClass] is not-null. */
-    val contentHash: ByteArray?
-) : ClassSnapshot() {
-    init {
-        check((serializedJavaClass != null) xor (contentHash != null))
-    }
-}
+/**
+ * [JavaClassSnapshot] of a Java class where there is nothing to capture (e.g., the snapshot of a local class is empty as a local class
+ * can't be compiled against and any changes in a local class will not cause recompilation of other classes).
+ */
+object EmptyJavaClassSnapshot : JavaClassSnapshot()
+
+/** [JavaClassSnapshot] of a Java class where a [PlainJavaClassSnapshot] can't be computed. */
+class FallBackJavaClassSnapshot(
+    /** The hash of the class contents. */
+    val contentHash: ByteArray
+) : JavaClassSnapshot()

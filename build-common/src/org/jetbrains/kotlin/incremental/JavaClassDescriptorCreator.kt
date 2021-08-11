@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.google.common.annotations.VisibleForTesting
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -39,17 +38,13 @@ object JavaClassDescriptorCreator {
     /**
      * Creates [JavaClassDescriptor]s of the given Java classes.
      *
-     * Note that creating a [JavaClassDescriptor] for a nested class may require accessing the outer class (and possibly vice versa).
+     * Note that creating a [JavaClassDescriptor] for a nested class will require accessing the outer class (and possibly vice versa).
      * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
-     *
-     * The returned list may contain `null` values for classes whose descriptors can't be created.
      */
-    fun create(classesContents: List<ByteArray>): List<JavaClassDescriptor?> {
-        val classIds = computeJavaClassIds(classesContents)
-        val binaryJavaClasses = classIds.indices.map { index ->
-            createBinaryJavaClass(classIds[index], classesContents[index])
+    fun create(classIds: List<ClassId>, classesContents: List<ByteArray>): List<JavaClassDescriptor> {
+        val binaryJavaClasses = classIds.mapIndexed { index, classId ->
+            createBinaryJavaClass(classId, classesContents[index])
         }
-
         val moduleDescriptor = createModuleData(
             kotlinClassFinder = NoOpKotlinClassFinder,
             jvmBuiltInsKotlinClassFinder = JvmBuiltInsKotlinClassFinder(),
@@ -59,66 +54,11 @@ object JavaClassDescriptorCreator {
             javaSourceElementFactory = NoSourceJavaSourceElementFactory
         ).deserializationComponentsForJava.components.moduleDescriptor
 
-        return classIds.map {
-            (moduleDescriptor.findClassAcrossModuleDependencies(it) as JavaClassDescriptor?)
-                ?: if (it.isLocal || it.isAnonymous()) {
-                    // TODO: Handle Java local and anonymous classes later, currently BinaryJavaClass is not able to handle them.
-                    null
-                } else {
-                    error("Failed to create JavaClassDescriptor for class '${it.asString()}'")
-                }
+        return classIds.map { classId ->
+            (moduleDescriptor.findClassAcrossModuleDependencies(classId) as JavaClassDescriptor?)
+                ?: error("Failed to create JavaClassDescriptor for class '$classId'")
         }
     }
-}
-
-/**
- * Computes [ClassId]s of the given Java classes.
- *
- * Note that creating a [ClassId] for a nested class will require accessing the outer class to disambiguate any '$' characters in the
- * class name (e.g., "com/example/Foo$Bar" can indicate either a top-level class with simple name "Foo$Bar" or a nested class with simple
- * name "Bar" inside a top-level class with simple name "Foo"). Also note that the outer class can in turn have '$' characters in its name.
- *
- * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
- */
-@VisibleForTesting
-internal fun computeJavaClassIds(classesContents: List<ByteArray>): List<ClassId> {
-    val classInfoList: List<JavaClassNameInfo> = classesContents.map { JavaClassNameInfo.compute(it) }
-    val classNameToClassInfo: Map<String, JavaClassNameInfo> = classInfoList.associateBy { it.name }
-    val classNameToClassId: MutableMap<String, ClassId?> = classNameToClassInfo.mapValues { null }.toMutableMap()
-
-    fun getOrCreateClassId(className: String): ClassId {
-        val classInfo = classNameToClassInfo[className] ?: error("Class name not found: $className")
-        val classId = classNameToClassId[className]
-        if (classId != null) {
-            return classId
-        }
-
-        val outerClassId: ClassId? = classInfo.outerName?.let { getOrCreateClassId(it) }
-
-        val packageName = FqName(classInfo.packageName.replace('/', '.'))
-        val relativeClassName =
-            outerClassId?.let {
-                FqName(outerClassId.relativeClassName.asString() + "." + (classInfo.nestedClassSimpleName ?: ""))
-            } ?: FqName(classInfo.relativeClassName)
-        val isLocal =
-            outerClassId?.let {
-                // For ClassId, a nested non-local class of a local class is also considered local (see the kdoc of ClassId).
-                check(!classInfo.isLocal)
-                it.isLocal
-            } ?: classInfo.isLocal
-
-        return ClassId(packageName, relativeClassName, isLocal).also {
-            classNameToClassId[className] = it
-        }
-    }
-
-    return classInfoList.map { getOrCreateClassId(it.name) }
-}
-
-/** Whether this is an anonymous class (e.g., "com/example/Foo.1"). */
-private fun ClassId.isAnonymous(): Boolean {
-    val simpleClassName = relativeClassName.asString().substringAfter('.')
-    return simpleClassName.isEmpty() || simpleClassName.toIntOrNull() != null
 }
 
 private fun createBinaryJavaClass(classId: ClassId, classContents: ByteArray): BinaryJavaClass {
@@ -150,8 +90,8 @@ private fun createBinaryJavaClass(classId: ClassId, classContents: ByteArray): B
 /**
  * [JavaClassFinder] that returns results based on the given [BinaryJavaClass] list.
  *
- * Note that some returned results are fake/empty (similar to ReflectJavaClassFinder), but it's probably acceptable for the purpose of this
- * class.
+ * Note that some returned results are fake/empty (similar to ReflectJavaClassFinder).
+ * TODO: Revise and see if there are any correct issues.
  */
 private class BinaryJavaClassFinder(binaryJavaClasses: List<BinaryJavaClass>) : JavaClassFinder {
 

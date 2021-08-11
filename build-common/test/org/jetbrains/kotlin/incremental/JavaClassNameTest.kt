@@ -15,15 +15,38 @@ import javax.tools.ToolProvider
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class JavaClassDescriptorCreatorTest {
+class JavaClassNameTest {
 
     @get:Rule
     val tmpDir = TemporaryFolder()
 
     @Test
+    fun `test compute JavaClassName`() {
+        val compiledClasses = compileJava(className, sourceCode)
+        val classNames = compiledClasses.map { JavaClassName.compute(it) }
+
+        assertEquals(
+            listOf(
+                "TopLevelClass: com/example/JavaClassWithNestedClasses",
+                "LocalClass: com/example/JavaClassWithNestedClasses\$1",
+                "LocalClass: com/example/JavaClassWithNestedClasses\$1LocalClass",
+                "NestedNonLocalClass: com/example/JavaClassWithNestedClasses\$1LocalClass\$InnerClassWithinLocalClass",
+                "LocalClass: com/example/JavaClassWithNestedClasses\$2",
+                "NestedNonLocalClass: com/example/JavaClassWithNestedClasses\$InnerClass",
+                "LocalClass: com/example/JavaClassWithNestedClasses\$InnerClass\$1LocalClassWithinInnerClass",
+                "NestedNonLocalClass: com/example/JavaClassWithNestedClasses\$InnerClass\$InnerClassWithinInnerClass",
+                "NestedNonLocalClass: com/example/JavaClassWithNestedClasses\$InnerClassWith\$Sign",
+                "NestedNonLocalClass: com/example/JavaClassWithNestedClasses\$StaticNestedClass"
+            ),
+            classNames.map { "${it.javaClass.simpleName}: ${it.name}" }
+        )
+    }
+
+    @Test
     fun `test computeJavaClassIds`() {
         val compiledClasses = compileJava(className, sourceCode)
-        val classIds = computeJavaClassIds(compiledClasses)
+        val classNames = compiledClasses.map { JavaClassName.compute(it) }
+        val classIds = computeJavaClassIds(classNames)
 
         assertEquals(
             listOf(

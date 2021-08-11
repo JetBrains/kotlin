@@ -61,7 +61,7 @@ abstract class ClasspathSnapshotTestCommon {
             val filePath = sourceFile.asFile().path
             return when {
                 filePath.endsWith(".kt") -> compileKotlin()
-                filePath.endsWith(".java") -> compileJavac()
+                filePath.endsWith(".java") -> compileJava()
                 else -> error("Unexpected file name extension: $filePath")
             }
         }
@@ -77,7 +77,7 @@ abstract class ClasspathSnapshotTestCommon {
             )
         }
 
-        private fun compileJavac(): List<ClassFile> {
+        private fun compileJava(): List<ClassFile> {
             val classesDir = tmpDir.newFolder()
             compileSources(listOf(sourceFile.asFile()), classesDir)
             return classesDir.walk().filter { it.isFile }
