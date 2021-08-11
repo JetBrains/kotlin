@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import org.jetbrains.kotlin.gradle.incremental.ClasspathEntryContentsReader.Companion.DEFAULT_CLASS_FILTER
-import org.jetbrains.kotlin.incremental.KotlinClassInfo
+import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.name.ClassId
 import java.io.File
 import java.util.zip.ZipInputStream
 
@@ -14,102 +14,158 @@ import java.util.zip.ZipInputStream
 @Suppress("SpellCheckingInspection")
 object ClasspathEntrySnapshotter {
 
+    private val DEFAULT_CLASS_FILTER = { unixStyleRelativePath: String, isDirectory: Boolean ->
+        !isDirectory
+                && unixStyleRelativePath.endsWith(".class", ignoreCase = true)
+                && !unixStyleRelativePath.endsWith("module-info.class", ignoreCase = true)
+                && !unixStyleRelativePath.startsWith("meta-inf", ignoreCase = true)
+    }
+
     fun snapshot(classpathEntry: File): ClasspathEntrySnapshot {
-        val pathsToContents: LinkedHashMap<String, ByteArray> =
-            ClasspathEntryContentsReader.from(classpathEntry).readContents(DEFAULT_CLASS_FILTER)
+        val classes =
+            DirectoryOrJarContentsReader.read(classpathEntry, DEFAULT_CLASS_FILTER)
+                .map { (unixStyleRelativePath, contents) ->
+                    ClassFileWithContents(ClassFile(classpathEntry, unixStyleRelativePath), contents)
+                }
 
-        val pathsToSnapshots = LinkedHashMap<String, ClassSnapshot>()
-        pathsToContents.mapValuesTo(pathsToSnapshots) { (_, classContents) ->
-            ClassSnapshotter.snapshot(classContents)
-        }
+        val snapshots = ClassSnapshotter.snapshot(classes)
 
-        return ClasspathEntrySnapshot(pathsToSnapshots)
+        val relativePathsToSnapshotsMap =
+            classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
+        return ClasspathEntrySnapshot(relativePathsToSnapshotsMap)
     }
 }
 
-/** Computes a [ClassSnapshot] of a class. */
+/** Creates [ClassSnapshot]s of classes. */
 @Suppress("SpellCheckingInspection")
 object ClassSnapshotter {
 
-    fun snapshot(classContents: ByteArray): ClassSnapshot {
-        return KotlinClassInfo.tryCreateFrom(classContents)?.let { KotlinClassSnapshot(it) }
-            ?: JavaClassSnapshot
-    }
-}
-
-/** Utility to read the contents of a classpath entry (directory or jar). */
-sealed class ClasspathEntryContentsReader {
-
-    companion object {
-
-        val DEFAULT_CLASS_FILTER = { invariantSeparatorsRelativePath: String, isDirectory: Boolean ->
-            !isDirectory
-                    && invariantSeparatorsRelativePath.endsWith(".class", ignoreCase = true)
-                    && !invariantSeparatorsRelativePath.endsWith("module-info.class", ignoreCase = true)
-                    && !invariantSeparatorsRelativePath.startsWith("meta-inf", ignoreCase = true)
+    /**
+     * Creates [ClassSnapshot]s of the given classes.
+     *
+     * Note that for Java (non-Kotlin) classes, creating a [ClassSnapshot] for a nested class will require accessing the outer class (and
+     * possibly vice versa). Therefore, outer classes and nested classes must be passed together in one invocation of this method.
+     */
+    fun snapshot(classes: List<ClassFileWithContents>): List<ClassSnapshot> {
+        // Snapshot Kotlin classes first
+        val kotlinClassSnapshots: Map<ClassFile, KotlinClassSnapshot?> = classes.associate {
+            it.classFile to trySnapshotKotlinClass(it)
         }
 
-        /** Creates a [ClasspathEntryContentsReader] for the given classpath entry (directory or jar). */
-        fun from(classpathEntry: File): ClasspathEntryContentsReader {
-            return if (classpathEntry.isDirectory) {
-                DirectoryContentsReader(classpathEntry)
-            } else {
-                JarContentsReader(classpathEntry)
-            }
+        // Snapshot Java classes in one invocation
+        val javaClasses: List<ClassFileWithContents> = classes.filter { kotlinClassSnapshots[it.classFile] == null }
+        val snapshots: List<JavaClassSnapshot> = snapshotJavaClasses(javaClasses)
+        val javaClassSnapshots: Map<ClassFile, JavaClassSnapshot> = javaClasses.map { it.classFile }.zip(snapshots).toMap()
+
+        // Return a snapshot for each class
+        return classes.map { kotlinClassSnapshots[it.classFile] ?: javaClassSnapshots[it.classFile]!! }
+    }
+
+    /** Creates [KotlinClassSnapshot] of the given class, or returns `null` if the class is not a Kotlin class. */
+    private fun trySnapshotKotlinClass(clazz: ClassFileWithContents): KotlinClassSnapshot? {
+        return KotlinClassInfo.tryCreateFrom(clazz.contents)?.let {
+            KotlinClassSnapshot(it)
         }
     }
 
     /**
-     * Returns a map from (Unix-like) relative paths of classes to their contents. The paths are relative to the containing classpath entry
-     * (directory or jar).
+     * Creates [JavaClassSnapshot]s of the given Java classes.
+     *
+     * Note that creating a [JavaClassSnapshot] for a nested class will require accessing the outer class (and possibly vice versa).
+     * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
+     */
+    private fun snapshotJavaClasses(classes: List<ClassFileWithContents>): List<JavaClassSnapshot> {
+        val classFiles = classes.map { it.classFile }
+        val classesContents = classes.map { it.contents }
+        val classNames = classesContents.map { JavaClassName.compute(it) }
+        val classIds = computeJavaClassIds(classNames)
+
+        // Snapshot special cases first
+        // Map a class index to its snapshot, or `null` if it will be created later
+        val specialCaseSnapshots: Map<Int, JavaClassSnapshot?> = classFiles.indices.associateWith { index ->
+            val className = classNames[index]
+            val classId = classIds[index]
+            if (classId.isLocal) {
+                // A local class can't be referenced from other source files, so any changes in a local class will not cause recompilation
+                // of other source files. Therefore, the snapshot of a local class is empty.
+                // In that regard, a nested class of a local class is also considered local (which matches the definition of
+                // ClassId.isLocal, see ClassId's kdoc). Therefore, we checked `classId.isLocal`, which is a super set of `className is
+                // LocalClass`.
+                EmptyJavaClassSnapshot
+            } else if (className is NestedNonLocalClass && (className.isAnonymous || className.isSynthetic)) {
+                // An anonymous or synthetic class also can't be referenced from other source files, so its snapshot is also empty.
+                EmptyJavaClassSnapshot
+            } else {
+                null
+            }
+        }
+
+        // Snapshot the remaining classes in one invocation
+        val remainingClassesIndices: List<Int> = classFiles.indices.filter { specialCaseSnapshots[it] == null }
+        val remainingClassIds: List<ClassId> = remainingClassesIndices.map { classIds[it] }
+        val remainingClassesContents: List<ByteArray> = remainingClassesIndices.map { classes[it].contents }
+
+        val snapshots: List<JavaClassSnapshot> = JavaClassDescriptorCreator.create(remainingClassIds, remainingClassesContents).map {
+            RegularJavaClassSnapshot(it.toSerializedJavaClass())
+        }
+        val remainingSnapshots: Map<Int, JavaClassSnapshot> /* maps a class index to its snapshot */ =
+            remainingClassesIndices.zip(snapshots).toMap()
+
+        // Return a snapshot for each class
+        return classFiles.indices.map { specialCaseSnapshots[it] ?: remainingSnapshots[it]!! }
+    }
+}
+
+/** Utility to read the contents of a directory or jar. */
+private object DirectoryOrJarContentsReader {
+
+    /**
+     * Returns a map from Unix-style relative paths of entries to their contents. The paths are relative to the container (directory or
+     * jar).
      *
      * The map entries need to satisfy the given filter.
      *
-     * The map entries are sorted based on their (Unix-like) relative paths (to ensure deterministic results across filesystems).
+     * The map entries are sorted based on their Unix-style relative paths (to ensure deterministic results across filesystems).
      *
      * Note: If a jar has duplicate entries, only one of them will be used (there is no guarantee which one will be used).
      */
-    abstract fun readContents(filter: ((invariantSeparatorsRelativePath: String, isDirectory: Boolean) -> Boolean)? = null):
-            LinkedHashMap<String, ByteArray>
-}
-
-/** Utility to read the contents of a directory. */
-class DirectoryContentsReader(private val directory: File) : ClasspathEntryContentsReader() {
-
-    init {
-        check(directory.isDirectory)
+    fun read(
+        directoryOrJar: File,
+        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
+    ): LinkedHashMap<String, ByteArray> {
+        return if (directoryOrJar.isDirectory) {
+            readDirectory(directoryOrJar, entryFilter)
+        } else {
+            check(directoryOrJar.isFile && directoryOrJar.path.endsWith(".jar", ignoreCase = true))
+            readJar(directoryOrJar, entryFilter)
+        }
     }
 
-    override fun readContents(
-        filter: ((invariantSeparatorsRelativePath: String, isDirectory: Boolean) -> Boolean)?
+    private fun readDirectory(
+        directory: File,
+        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
     ): LinkedHashMap<String, ByteArray> {
         val relativePathsToContents: MutableList<Pair<String, ByteArray>> = mutableListOf()
-        directory.walk().forEach {
-            val invariantSeparatorsRelativePath = it.relativeTo(directory).invariantSeparatorsPath
-            if (filter == null || filter(invariantSeparatorsRelativePath, it.isDirectory)) {
-                relativePathsToContents.add(invariantSeparatorsRelativePath to it.readBytes())
+        directory.walk().forEach { file ->
+            val unixStyleRelativePath = file.relativeTo(directory).invariantSeparatorsPath
+            if (entryFilter == null || entryFilter(unixStyleRelativePath, file.isDirectory)) {
+                relativePathsToContents.add(unixStyleRelativePath to file.readBytes())
             }
         }
         return relativePathsToContents.sortedBy { it.first }.toMap(LinkedHashMap())
     }
-}
 
-/** Utility to read the contents of a jar. */
-class JarContentsReader(private val jarFile: File) : ClasspathEntryContentsReader() {
-
-    init {
-        check(jarFile.path.endsWith(".jar", ignoreCase = true))
-    }
-
-    override fun readContents(
-        filter: ((invariantSeparatorsRelativePath: String, isDirectory: Boolean) -> Boolean)?
+    private fun readJar(
+        jarFile: File,
+        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
     ): LinkedHashMap<String, ByteArray> {
         val relativePathsToContents: MutableList<Pair<String, ByteArray>> = mutableListOf()
         ZipInputStream(jarFile.inputStream().buffered()).use { zipInputStream ->
             while (true) {
                 val entry = zipInputStream.nextEntry ?: break
-                if (filter == null || filter(entry.name, entry.isDirectory)) {
-                    relativePathsToContents.add(entry.name to zipInputStream.readBytes())
+                val unixStyleRelativePath = entry.name
+                if (entryFilter == null || entryFilter(unixStyleRelativePath, entry.isDirectory)) {
+                    relativePathsToContents.add(unixStyleRelativePath to zipInputStream.readBytes())
                 }
             }
         }

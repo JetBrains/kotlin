@@ -96,7 +96,7 @@ class DeserializationComponentsForJava(
             errorReporter: ErrorReporter,
             javaSourceElementFactory: JavaSourceElementFactory
         ): ModuleData {
-            val storageManager = LockBasedStorageManager("RuntimeModuleData")
+            val storageManager = LockBasedStorageManager("DeserializationComponentsForJava.ModuleData")
             val builtIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
             val module = ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, builtIns)
             builtIns.builtInsModule = module

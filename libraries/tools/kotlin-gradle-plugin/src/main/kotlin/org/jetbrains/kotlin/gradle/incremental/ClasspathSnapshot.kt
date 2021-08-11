@@ -6,16 +6,22 @@
 package org.jetbrains.kotlin.gradle.incremental
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
+import org.jetbrains.kotlin.incremental.SerializedJavaClass
 
 /** Snapshot of a classpath. It consists of a list of [ClasspathEntrySnapshot]s. */
 class ClasspathSnapshot(val classpathEntrySnapshots: List<ClasspathEntrySnapshot>)
 
-/** Snapshot of a classpath entry (directory or jar). It consists of a list of [ClassSnapshot]s. */
+/**
+ * Snapshot of a classpath entry (directory or jar). It consists of a list of [ClassSnapshot]s.
+ *
+ * NOTE: It's important that the path to the classpath entry is not part of this snapshot. The reason is that classpath entries produced by
+ * different builds or on different machines but having the same contents should be considered the same for better build performance.
+ */
 class ClasspathEntrySnapshot(
 
     /**
-     * Maps (Unix-like) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory or
-     * jar).
+     * Maps (Unix-style) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory
+     * or jar).
      */
     val classSnapshots: LinkedHashMap<String, ClassSnapshot>
 )
@@ -34,4 +40,17 @@ sealed class ClassSnapshot
 class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
 
 /** [ClassSnapshot] of a Java class. */
-object JavaClassSnapshot : ClassSnapshot()
+sealed class JavaClassSnapshot : ClassSnapshot()
+
+/** [JavaClassSnapshot] of a typical Java class. */
+class RegularJavaClassSnapshot(
+    val serializedJavaClass: SerializedJavaClass
+) : JavaClassSnapshot()
+
+/**
+ * [JavaClassSnapshot] of a Java class where there is nothing to capture.
+ *
+ * For example, the snapshot of a local class is empty as a local class can't be referenced from other source files and therefore any
+ * changes in a local class will not cause recompilation of other source files.
+ */
+object EmptyJavaClassSnapshot : JavaClassSnapshot()
