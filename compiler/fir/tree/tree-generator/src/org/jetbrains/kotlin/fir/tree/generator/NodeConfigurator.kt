@@ -312,7 +312,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         property.configure {
             +symbol("FirPropertySymbol")
-            +field("backingFieldSymbol", backingFieldSymbolType)
             +field("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
             +booleanField("isLocal")
             +booleanField("initializerAndAccessorsAreResolved", withReplace = true)
@@ -331,11 +330,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         propertyFieldDeclaration.configure {
-            +symbol("FirPropertyFieldDeclarationSymbol")
-            +field("backingFieldSymbol", backingFieldSymbolType, nullable = true).apply {
-                withBindThis = false
+            +field("symbol", backingFieldSymbolType).apply {
+//                withBindThis = false
             }
-            +field("propertySymbol", firPropertySymbolType, nullable = true).apply {
+            +field("propertySymbol", firPropertySymbolType).apply {
                 withBindThis = false
             }
             +initializer.withTransform().withReplace()

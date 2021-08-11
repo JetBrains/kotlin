@@ -1226,8 +1226,16 @@ class Fir2IrDeclarationStorage(
         return irProperty.symbol
     }
 
-    fun getIrBackingFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
-        return when (val fir = firVariableSymbol.fir) {
+    fun getIrBackingFieldSymbol(firBackingFieldSymbol: FirBackingFieldSymbol): IrSymbol {
+        return getIrPropertyForwardedSymbol(firBackingFieldSymbol.fir.propertySymbol.fir)
+    }
+
+    fun getIrDelegateFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
+        return getIrPropertyForwardedSymbol(firVariableSymbol.fir)
+    }
+
+    fun getIrPropertyForwardedSymbol(fir: FirVariable): IrSymbol {
+        return when (fir) {
             is FirProperty -> {
                 if (fir.isLocal) {
                     return localStorage.getDelegatedProperty(fir)?.delegate?.symbol ?: getIrVariableSymbol(fir)

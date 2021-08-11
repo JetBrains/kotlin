@@ -5,20 +5,25 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirPropertyFieldDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyFieldDeclarationSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -26,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirPropertyFieldDeclarationImpl(
+open class FirPropertyFieldDeclarationImpl @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
@@ -34,9 +39,19 @@ internal class FirPropertyFieldDeclarationImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
-    override val symbol: FirPropertyFieldDeclarationSymbol,
-    override val backingFieldSymbol: FirBackingFieldSymbol?,
-    override val propertySymbol: FirPropertySymbol?,
+    override var receiverTypeRef: FirTypeRef?,
+    override var deprecation: DeprecationsPerUseSite?,
+    override val containerSource: DeserializedContainerSource?,
+    override val dispatchReceiverType: ConeKotlinType?,
+    override val name: Name,
+    override var delegate: FirExpression?,
+    override val isVar: Boolean,
+    override val isVal: Boolean,
+    override var getter: FirPropertyAccessor?,
+    override var setter: FirPropertyAccessor?,
+    override var backingField: FirPropertyFieldDeclaration?,
+    override val symbol: FirBackingFieldSymbol,
+    override val propertySymbol: FirPropertySymbol,
     override var initializer: FirExpression?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
@@ -48,6 +63,11 @@ internal class FirPropertyFieldDeclarationImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
+        receiverTypeRef?.accept(visitor, data)
+        delegate?.accept(visitor, data)
+        getter?.accept(visitor, data)
+        setter?.accept(visitor, data)
+        backingField?.accept(visitor, data)
         initializer?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
@@ -56,15 +76,45 @@ internal class FirPropertyFieldDeclarationImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
         transformReturnTypeRef(transformer, data)
+        transformReceiverTypeRef(transformer, data)
+        transformDelegate(transformer, data)
+        transformGetter(transformer, data)
+        transformSetter(transformer, data)
+        transformBackingField(transformer, data)
         transformInitializer(transformer, data)
-        transformAnnotations(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
+        transformOtherChildren(transformer, data)
         return this
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
         returnTypeRef = returnTypeRef.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        delegate = delegate?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        getter = getter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        setter = setter?.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        backingField = backingField?.transform(transformer, data)
         return this
     }
 
@@ -88,12 +138,33 @@ internal class FirPropertyFieldDeclarationImpl(
         return this
     }
 
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirPropertyFieldDeclarationImpl {
+        transformAnnotations(transformer, data)
+        return this
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
+    }
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+        receiverTypeRef = newReceiverTypeRef
+    }
+
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
+        deprecation = newDeprecation
+    }
+
+    override fun replaceGetter(newGetter: FirPropertyAccessor?) {
+        getter = newGetter
+    }
+
+    override fun replaceSetter(newSetter: FirPropertyAccessor?) {
+        setter = newSetter
     }
 
     override fun replaceInitializer(newInitializer: FirExpression?) {

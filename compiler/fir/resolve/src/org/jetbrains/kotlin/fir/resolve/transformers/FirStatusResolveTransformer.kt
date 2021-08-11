@@ -467,6 +467,14 @@ abstract class AbstractFirStatusResolveTransformer(
 
         property.getter?.let { transformPropertyAccessor(it, property) }
         property.setter?.let { transformPropertyAccessor(it, property) }
+
+        property.backingField?.let {
+            it.transformStatus(
+                this,
+                statusResolver.resolveStatus(it, containingClass, property, isLocal = false)
+            )
+        }
+
         calculateDeprecations(property)
         return property
     }

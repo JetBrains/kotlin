@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeNotAnnotationContainer
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -358,7 +355,7 @@ open class RawFirBuilder(
             propertyTypeRef: FirTypeRef,
             propertySymbol: FirPropertySymbol,
             isGetter: Boolean,
-            hasBackingField: Boolean,
+            hasExplicitBackingField: Boolean,
         ): FirPropertyAccessor? {
             val accessorVisibility =
                 if (this?.visibility != null && this.visibility != Visibilities.Unknown) this.visibility else property.visibility
@@ -427,7 +424,7 @@ open class RawFirBuilder(
                 // the default accessors might not be compatible
                 // with it. We should check the types first, and
                 // only then see if we can create the default accessors.
-                !hasBackingField && (isGetter || property.isVar) -> {
+                !hasExplicitBackingField && (isGetter || property.isVar) -> {
                     // Default getter for val/var properties, and default setter for var properties.
                     val propertySource =
                         this?.toFirSourceElement() ?: property.toFirPsiSourceElement(FirFakeSourceElementKind.DefaultAccessor)
@@ -456,42 +453,63 @@ open class RawFirBuilder(
             }
         }
 
+        private fun obtainPropertyComponentStatus(
+            componentVisibility: Visibility,
+            declaration: KtDeclaration?,
+            property: KtProperty,
+        ): FirDeclarationStatus {
+            return FirDeclarationStatusImpl(componentVisibility, declaration?.modality).apply {
+                isInline = property.hasModifier(INLINE_KEYWORD) ||
+                        declaration?.hasModifier(INLINE_KEYWORD) == true
+                isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
+                        declaration?.hasModifier(EXTERNAL_KEYWORD) == true
+            }
+        }
+
         private fun KtPropertyFieldDeclaration?.toFirPropertyFieldDeclaration(
             property: KtProperty,
             propertySymbol: FirPropertySymbol,
-        ): FirPropertyFieldDeclaration? {
-            if (this == null) {
-                return null
+            propertyReturnType: FirTypeRef,
+        ): FirPropertyFieldDeclaration {
+            val componentVisibility = if (this?.visibility != null && this.visibility != Visibilities.Unknown) {
+                this.visibility
+            } else {
+                Visibilities.Private
             }
-            val accessorVisibility =
-                if (this.visibility != Visibilities.Unknown) this.visibility else property.visibility
-            // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
-            val status =
-                FirDeclarationStatusImpl(accessorVisibility, this.modality).apply {
-                    isInline = property.hasModifier(INLINE_KEYWORD) ||
-                            this@toFirPropertyFieldDeclaration.hasModifier(INLINE_KEYWORD) == true
-                    isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
-                            this@toFirPropertyFieldDeclaration.hasModifier(EXTERNAL_KEYWORD) == true
-                }
+            val status = obtainPropertyComponentStatus(componentVisibility, this, property)
             val backingFieldInitializer = when (mode) {
                 BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
-                    source = initializer?.toFirSourceElement()
+                    source = this@toFirPropertyFieldDeclaration?.initializer?.toFirSourceElement()
                 }
                 BodyBuildingMode.STUBS -> buildExpressionStub()
-                else -> initializer.toFirExpression("Should have initializer")
+                else -> this@toFirPropertyFieldDeclaration?.initializer.toFirExpression("Should have initializer")
             }
-            val returnType = this.returnTypeReference.toFirOrImplicitType()
-            val source = this.toFirSourceElement()
-            return buildPropertyFieldDeclaration {
-                this.source = source
-                moduleData = baseModuleData
-                origin = FirDeclarationOrigin.Source
-                returnTypeRef = returnType
-                this.status = status
-                extractAnnotationsTo(this)
-                symbol = FirPropertyFieldDeclarationSymbol()
-                this.propertySymbol = propertySymbol
-                this.initializer = backingFieldInitializer
+            val returnType = this?.returnTypeReference.toFirOrImplicitType()
+            val source = this?.toFirSourceElement()
+            return if (this != null) {
+                buildPropertyFieldDeclaration {
+                    this.source = source
+                    moduleData = baseModuleData
+                    origin = FirDeclarationOrigin.Source
+                    returnTypeRef = returnType
+                    this.status = status
+                    extractAnnotationsTo(this)
+                    name = NAME_FOR_BACKING_FIELD
+                    symbol = FirBackingFieldSymbol(CallableId(name))
+                    this.propertySymbol = propertySymbol
+                    this.initializer = backingFieldInitializer
+                    this.isVar = property.isVar
+                    this.isVal = !property.isVar
+                }
+            } else {
+                FirDefaultPropertyBackingField(
+                    moduleData = baseModuleData,
+                    annotations = mutableListOf(),
+                    returnTypeRef = propertyReturnType.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                    isVar = property.isVar,
+                    propertySymbol = propertySymbol,
+                    status = status,
+                )
             }
         }
 
@@ -1460,6 +1478,12 @@ open class RawFirBuilder(
                         }
                     }
 
+                    backingField = this@toFirProperty.fieldDeclaration.toFirPropertyFieldDeclaration(
+                        this@toFirProperty,
+                        propertySymbol = symbol,
+                        propertyType,
+                    )
+
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
                         isLateInit = hasModifier(LATEINIT_KEYWORD)
                     }
@@ -1499,20 +1523,23 @@ open class RawFirBuilder(
                         backingField = this@toFirProperty.fieldDeclaration.toFirPropertyFieldDeclaration(
                             this@toFirProperty,
                             propertySymbol = symbol,
+                            propertyType,
                         )
+
+                        val hasExplicitBackingField = backingField !is FirDefaultPropertyBackingField
                         getter = this@toFirProperty.getter.toFirPropertyAccessor(
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
                             isGetter = true,
-                            hasBackingField = backingField != null,
+                            hasExplicitBackingField,
                         )
                         setter = this@toFirProperty.setter.toFirPropertyAccessor(
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
                             isGetter = false,
-                            hasBackingField = backingField != null,
+                            hasExplicitBackingField,
                         )
 
                         status = FirDeclarationStatusImpl(visibility, modality).apply {

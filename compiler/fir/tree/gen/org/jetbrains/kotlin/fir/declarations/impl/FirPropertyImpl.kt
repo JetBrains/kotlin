@@ -62,11 +62,9 @@ internal class FirPropertyImpl(
 ) : FirProperty() {
     override val isVal: Boolean get() = !isVar
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
 
     init {
         symbol.bind(this)
-        backingFieldSymbol.bind(this)
         delegateFieldSymbol?.bind(this)
     }
 

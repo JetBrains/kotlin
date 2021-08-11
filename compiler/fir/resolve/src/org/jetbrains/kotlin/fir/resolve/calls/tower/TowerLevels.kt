@@ -235,9 +235,12 @@ class ScopeTowerLevel(
             }
         }
 
-        val lookupTag = candidate.dispatchReceiverClassOrNull()
+        if (candidate !is FirBackingFieldSymbol) {
+            return null
+        }
+
+        val lookupTag = candidate.fir.propertySymbol.dispatchReceiverClassOrNull()
         return when {
-            candidate !is FirBackingFieldSymbol -> null
             lookupTag != null -> {
                 bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
                     (implicitReceiverValue.type as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag == lookupTag

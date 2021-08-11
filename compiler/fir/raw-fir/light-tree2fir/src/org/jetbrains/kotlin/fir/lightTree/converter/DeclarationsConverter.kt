@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -1075,6 +1072,8 @@ class DeclarationsConverter(
 
             typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, symbol) }
 
+            backingField = fieldDeclaration.convertFieldDeclaration(symbol, modifiers, returnType, isVar)
+
             if (isLocal) {
                 this.isLocal = true
                 val delegateBuilder = delegateExpression?.let {
@@ -1123,22 +1122,24 @@ class DeclarationsConverter(
                             isExternal = modifiers.hasExternal()
                         }
 
-                    backingField = fieldDeclaration?.let { convertFieldDeclaration(it, propertyVisibility, symbol, modifiers) }
+                    val hasExplicitBackingField = backingField !is FirDefaultPropertyBackingField
                     val convertedAccessors = accessors.map {
-                        convertGetterOrSetter(it, returnType, propertyVisibility, symbol, modifiers, backingField != null)
+                        convertGetterOrSetter(it, returnType, propertyVisibility, symbol, modifiers, hasExplicitBackingField)
                     }
                     this.getter = convertedAccessors.find { it.isGetter }
-                        ?: backingField.ifNull {
+                        ?: if (!hasExplicitBackingField) {
                             FirDefaultPropertyGetter(
                                 null, moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility, symbol,
                             ).also {
                                 it.status = defaultAccessorStatus()
                                 it.initContainingClassAttr()
                             }
+                        } else {
+                            null
                         }
                     // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
                     this.setter = convertedAccessors.find { it.isSetter }
-                        ?: if (isVar && backingField == null) {
+                        ?: if (isVar && !hasExplicitBackingField) {
                             FirDefaultPropertySetter(
                                 null, moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility, symbol,
                             ).also {
@@ -1346,16 +1347,16 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyComponent
      */
-    private fun convertFieldDeclaration(
-        fieldDeclaration: LighterASTNode,
-        propertyVisibility: Visibility,
+    private fun LighterASTNode?.convertFieldDeclaration(
         propertySymbol: FirPropertySymbol,
         propertyModifiers: Modifier,
+        propertyReturnType: FirTypeRef,
+        isVar: Boolean,
     ): FirPropertyFieldDeclaration {
         var modifiers = Modifier()
         var returnType: FirTypeRef = implicitType
         var initializerExpression: LighterASTNode? = null
-        fieldDeclaration.forEachChildren {
+        this?.forEachChildren {
             when {
                 it.tokenType == MODIFIER_LIST -> modifiers = convertModifierList(it)
                 it.tokenType == TYPE_REFERENCE -> returnType = convertType(it)
@@ -1366,32 +1367,46 @@ class DeclarationsConverter(
             initializerExpression,
             "Should have initializer"
         )
-        val status = obtainPropertyComponentStatus(modifiers, propertyVisibility, propertyModifiers)
-        val sourceElement = fieldDeclaration.toFirSourceElement()
-        return buildPropertyFieldDeclaration {
-            source = sourceElement
-            moduleData = baseModuleData
-            origin = FirDeclarationOrigin.Source
-            returnTypeRef = returnType
-            symbol = FirPropertyFieldDeclarationSymbol()
-            this.status = status
-            annotations += modifiers.annotations
-            this.propertySymbol = propertySymbol
-            this.initializer = backingFieldInitializer
+        var componentVisibility = modifiers.getVisibility()
+        if (componentVisibility == Visibilities.Unknown) {
+            componentVisibility = Visibilities.Private
+        }
+        val status = obtainPropertyComponentStatus(componentVisibility, modifiers, propertyModifiers)
+        val sourceElement = this?.toFirSourceElement()
+        return if (this != null) {
+            buildPropertyFieldDeclaration {
+                source = sourceElement
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                returnTypeRef = returnType
+                name = NAME_FOR_BACKING_FIELD
+                symbol = FirBackingFieldSymbol(CallableId(name))
+                this.status = status
+                annotations += modifiers.annotations
+                this.propertySymbol = propertySymbol
+                this.initializer = backingFieldInitializer
+                this.isVar = isVar
+                this.isVal = !isVar
+            }
+        } else {
+            FirDefaultPropertyBackingField(
+                moduleData = baseModuleData,
+                annotations = modifiers.annotations,
+                returnTypeRef = propertyReturnType.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                isVar = isVar,
+                propertySymbol = propertySymbol,
+                status = status,
+            )
         }
     }
 
     private fun obtainPropertyComponentStatus(
+        componentVisibility: Visibility,
         modifiers: Modifier,
-        propertyVisibility: Visibility,
         propertyModifiers: Modifier,
     ): FirDeclarationStatus {
-        var accessorVisibility = modifiers.getVisibility()
-        if (accessorVisibility == Visibilities.Unknown) {
-            accessorVisibility = propertyVisibility
-        }
         // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
-        return FirDeclarationStatusImpl(accessorVisibility, modifiers.getModality(isClassOrObject = false)).apply {
+        return FirDeclarationStatusImpl(componentVisibility, modifiers.getModality(isClassOrObject = false)).apply {
             isInline = propertyModifiers.hasInline() || modifiers.hasInline()
             isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
         }

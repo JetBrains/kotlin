@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.utils
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.name.Name
 
 private object IsFromVarargKey : FirDeclarationDataKey()
@@ -42,12 +43,15 @@ val FirMemberDeclaration.containerSource: SourceElement?
         is FirTypeAlias -> sourceElement
     }
 
+val FirProperty.hasExplicitBackingField: Boolean
+    get() = backingField != null && backingField !is FirDefaultPropertyBackingField
+
 // See [BindingContext.BACKING_FIELD_REQUIRED]
 val FirProperty.hasBackingField: Boolean
     get() {
         if (isAbstract) return false
         if (delegate != null) return false
-        if (backingField != null) return true
+        if (hasExplicitBackingField) return true
         when (origin) {
             FirDeclarationOrigin.SubstitutionOverride -> return false
             FirDeclarationOrigin.IntersectionOverride -> return false
