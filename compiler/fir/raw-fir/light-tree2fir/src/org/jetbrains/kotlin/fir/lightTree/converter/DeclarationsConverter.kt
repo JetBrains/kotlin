@@ -1436,7 +1436,8 @@ class DeclarationsConverter(
         val target: FirFunctionTarget
         val functionSource = functionDeclaration.toFirSourceElement()
         val functionSymbol: FirFunctionSymbol<*>
-        val functionBuilder = if (identifier == null && isLocal) {
+        val isAnonymousFunction = identifier == null && isLocal
+        val functionBuilder = if (isAnonymousFunction) {
             val labelName = functionDeclaration.getLabelName() ?: context.calleeNamesForLambda.lastOrNull()?.identifier
             target = FirFunctionTarget(labelName = labelName, isLambda = false)
             functionSymbol = FirAnonymousFunctionSymbol()
@@ -1494,7 +1495,12 @@ class DeclarationsConverter(
             }
 
             withCapturedTypeParameters(true, actualTypeParameters) {
-                valueParametersList?.let { list -> valueParameters += convertValueParameters(list).map { it.firValueParameter } }
+                valueParametersList?.let { list ->
+                    valueParameters += convertValueParameters(
+                        list,
+                        if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.OTHER
+                    ).map { it.firValueParameter }
+                }
 
                 val hasContractEffectList = outerContractDescription != null
                 val bodyWithContractDescription = convertFunctionBody(block, expression, hasContractEffectList)

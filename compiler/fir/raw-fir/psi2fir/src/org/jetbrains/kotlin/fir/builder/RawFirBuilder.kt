@@ -1113,8 +1113,8 @@ open class RawFirBuilder(
             val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
 
             val labelName: String?
-            val functionIsAnonymousFunction = function.name == null && !function.parent.let { it is KtFile || it is KtClassBody }
-            val functionBuilder = if (functionIsAnonymousFunction) {
+            val isAnonymousFunction = function.name == null && !function.parent.let { it is KtFile || it is KtClassBody }
+            val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     receiverTypeRef = receiverType
                     symbol = FirAnonymousFunctionSymbol()
@@ -1159,7 +1159,11 @@ open class RawFirBuilder(
                     function.extractTypeParametersTo(this, symbol)
                 }
                 for (valueParameter in function.valueParameters) {
-                    valueParameters += valueParameter.convert<FirValueParameter>()
+                    valueParameters += convertValueParameter(
+                        valueParameter,
+                        null,
+                        if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.OTHER
+                    )
                 }
                 val actualTypeParameters = if (this is FirSimpleFunctionBuilder)
                     this.typeParameters
