@@ -101,6 +101,40 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Kotlin compile task should reuse build cache when toolchain is set and build is happening on different JDKs")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun differentBuildJDKBuildCacheHit(gradleVersion: GradleVersion) {
+        val buildCache = workingDir.resolve("custom-jdk-build-cache")
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            projectPathAdditionalSuffix = "1/cache-test",
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
+            buildJdk = getJdk9().javaHome!!
+        ) {
+            enableLocalBuildCache(buildCache)
+            useToolchainExtension(11)
+
+            build("assemble")
+        }
+
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            projectPathAdditionalSuffix = "2/cache-test",
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
+            buildJdk = getJdk11().javaHome!!
+        ) {
+            enableLocalBuildCache(buildCache)
+            useToolchainExtension(11)
+
+            build("assemble") {
+                assertTasksFromCache(":compileKotlin")
+            }
+        }
+    }
+
     @GradleTest
     @DisplayName("Kotlin compile task should not use build cache on using different JDK versions")
     internal fun differentJdkBuildCacheMiss(gradleVersion: GradleVersion) {
@@ -683,6 +717,55 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             useToolchainExtension(8)
 
             build("assemble", forceOutput = true)
+        }
+    }
+
+    @DisplayName("Kotlin toolchain should support configuration cache")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun testConfigurationCache(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = true,
+                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
+            )
+        ) {
+            useToolchainExtension(15)
+
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            build("assemble")
+            build("assemble")
+        }
+    }
+
+    @DisplayName("Should work with configuration cache when toolchain is not configured")
+    @GradleTest
+    internal fun testConfigurationCacheNoToolchain(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = true,
+                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
+            )
+        ) {
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            build("assemble")
+            build("assemble")
         }
     }
 

@@ -534,6 +534,11 @@ abstract class KotlinCompile @Inject constructor(
                 ignoreClasspathResolutionErrors
             )
         )
+
+        // This method could be called on configuration phase to calculate `filteredArgumentsMap` property
+        if (state.executing) {
+            defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
+        }
     }
 
     @get:Internal
