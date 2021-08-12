@@ -27,6 +27,12 @@ sealed interface TargetDependent<T> : Iterable<T> {
     fun getOrNull(target: CommonizerTarget): T? {
         return if (target in targets) get(target) else null
     }
+
+    operator fun get(index: Int): T = get(targets[index])
+
+    fun getOrNull(index: Int): T? {
+        return getOrNull(targets.getOrNull(index) ?: return null)
+    }
 }
 
 internal fun <T : Any> TargetDependent<T?>.filterNonNull(): TargetDependent<T> {
