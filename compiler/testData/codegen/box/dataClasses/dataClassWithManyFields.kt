@@ -1,3 +1,7 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// Needs string concatenation lowering working via the stdlib StringBuilder. Otherwise fails with intermitten StackOverflow exception.
+// WASM_MUTE_REASON: STDLIB_STRING_BUILDER
+
 data class DC(
     val d0: String = "", val d1: String = "", val d2: String = "", val d3: String = "", val d4: String = "", val d5: String = "",
     val d6: String = "", val d7: String = "", val d8: String = "", val d9: String = "", val d10: String = "", val d11: String = "",
