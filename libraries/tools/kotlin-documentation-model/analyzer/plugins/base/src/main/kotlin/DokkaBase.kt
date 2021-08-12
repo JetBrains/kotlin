@@ -86,6 +86,10 @@ class DokkaBase : DokkaPlugin() {
         preMergeDocumentableTransformer providing ::InheritedEntriesDocumentableFilterTransformer
     }
 
+    val kotlinArrayDocumentableReplacer by extending {
+        preMergeDocumentableTransformer providing ::KotlinArrayDocumentableReplacerTransformer
+    }
+
     val emptyPackagesFilter by extending {
         preMergeDocumentableTransformer providing ::EmptyPackagesFilterTransformer order {
             after(
