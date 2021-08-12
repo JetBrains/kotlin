@@ -53,7 +53,8 @@ internal fun commonizeTarget(
 
     parameters.logger.progress(output, "Commonized declarations from ${inputs.targets}") {
         val classifiers = CirKnownClassifiers(
-            classifierIndices = availableTrees.toList().map(::CirClassifierIndex),
+            classifierIndices = availableTrees.mapValue(::CirClassifierIndex),
+            targetDependencies = availableTrees.mapValue(CirTreeRoot::dependencies),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = parameters.dependencyClassifiers(output)
         )

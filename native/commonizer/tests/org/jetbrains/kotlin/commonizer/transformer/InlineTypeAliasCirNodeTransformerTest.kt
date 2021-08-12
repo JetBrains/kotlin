@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.commonizer.transformer
 
+import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -15,7 +16,8 @@ class InlineTypeAliasCirNodeTransformerTest {
     private val storageManager = LockBasedStorageManager("test")
 
     private val classifiers = CirKnownClassifiers(
-        classifierIndices = emptyList(),
+        classifierIndices = TargetDependent.empty(),
+        targetDependencies = TargetDependent.empty(),
         commonizedNodes = CirCommonizedClassifierNodes.default(),
         commonDependencies = CirProvidedClassifiers.EMPTY
     )

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.transformer
 
+import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.cir.CirClassType.Companion.copyInterned
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType.Companion.copyInterned
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.commonizer.tree.CirTreeTypeAlias
 
 internal class CirAliasTypeSubstitutor(
     private val commonDependencies: CirProvidedClassifiers,
-    private val classifierIndices: List<CirClassifierIndex>
+    private val classifierIndices: TargetDependent<CirClassifierIndex>
 ) : CirTypeSubstitutor {
 
     override fun substitute(targetIndex: Int, type: CirType): CirType {

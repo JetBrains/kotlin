@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.commonizer.mergedtree
 
 import gnu.trove.THashMap
+import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 
 class CirKnownClassifiers(
-    val classifierIndices: List<CirClassifierIndex>,
+    val classifierIndices: TargetDependent<CirClassifierIndex>,
+    val targetDependencies: TargetDependent<CirProvidedClassifiers>,
     val commonizedNodes: CirCommonizedClassifierNodes,
     val commonDependencies: CirProvidedClassifiers
 )
