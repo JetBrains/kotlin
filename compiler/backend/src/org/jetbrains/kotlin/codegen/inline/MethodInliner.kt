@@ -372,7 +372,7 @@ class MethodInliner(
             private fun getNewIndex(`var`: Int): Int {
                 val lambdaInfo = inliningContext.lambdaInfo
                 if (reorderIrLambdaParameters && lambdaInfo is IrExpressionLambda) {
-                    val extensionSize = if (lambdaInfo.isExtensionLambda) lambdaInfo.invokeMethod.argumentTypes[0].size else 0
+                    val extensionSize = lambdaInfo.invokeMethod.argumentTypes.take(lambdaInfo.capturedVarsStart).sumOf { it.size }
                     return when {
                         //                v-- extensionSize     v-- argsSizeOnStack
                         // |- extension -|- captured -|- real -|- locals -|    old descriptor

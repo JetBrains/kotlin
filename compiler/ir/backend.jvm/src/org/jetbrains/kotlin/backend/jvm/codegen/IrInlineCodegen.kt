@@ -118,8 +118,6 @@ class IrExpressionLambdaImpl(
     codegen: ExpressionCodegen,
     val reference: IrFunctionReference,
 ) : ExpressionLambda(), IrExpressionLambda {
-    override val isExtensionLambda: Boolean = function.extensionReceiverParameter != null && reference.extensionReceiver == null
-
     val function: IrFunction
         get() = reference.symbol.owner
 
@@ -134,6 +132,7 @@ class IrExpressionLambdaImpl(
         ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
 
     override val capturedVars: List<CapturedParamDesc>
+    override val capturedVarsStart: Int
     override val invokeMethod: Method
     override val invokeMethodParameters: List<KotlinType?>
     override val invokeMethodReturnType: KotlinType
@@ -141,8 +140,11 @@ class IrExpressionLambdaImpl(
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
         val capturedParameters = reference.getArgumentsWithIr()
-        val captureStart = if (isExtensionLambda) 1 else 0 // extension receiver comes before captures
+        // Assume captured parameters form a sublist of all parameters (`function.explicitParameters`).
+        val captureStart = if (reference.extensionReceiver != null) 0 else
+            (if (function.extensionReceiverParameter == null) 0 else 1) + (capturedParameters.firstOrNull()?.first?.index ?: 0)
         val captureEnd = captureStart + capturedParameters.size
+        capturedVarsStart = captureStart
         capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunctionTypeOrSubtype()
             capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[captureStart + index], isSuspend)
