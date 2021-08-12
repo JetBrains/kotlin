@@ -49,7 +49,9 @@ class NativePlatformLibsIT : BaseGradleIT() {
                     "kotlin.$it()"
                 }
             )
-            configureMemoryInGradleProperties()
+            gradleProperties().apply {
+                configureJvmMemory()
+            }
         }
 
     private fun CompilerVersion.isAtLeast(compilerVersion: CompilerVersion): Boolean {
@@ -116,7 +118,9 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
         val rootProject = Project("native-platform-libraries").apply {
             embedProject(Project("native-platform-libraries"), renameTo = "subproject")
-            configureMemoryInGradleProperties()
+            gradleProperties().apply {
+                configureJvmMemory()
+            }
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
             gradleBuildScript().appendText("\nkotlin.linuxX64()\n")
