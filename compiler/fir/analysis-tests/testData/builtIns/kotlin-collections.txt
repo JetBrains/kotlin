@@ -1,5 +1,5 @@
 public/*package*/ open class ArraysUtilJVM : R|kotlin/Any| {
-    public/*package*/ open static fun <T : R|ft<kotlin/Any, kotlin/Any?>|> asList(p0: T[]): java.util.List<T>
+    public/*package*/ open static fun <T : java.lang.Object> asList(p0: T[]): java.util.List<T>
 
     public/*package*/ constructor(): R|kotlin/collections/ArraysUtilJVM|
 
@@ -304,3 +304,4 @@ public abstract class ShortIterator : R|kotlin/collections/Iterator<kotlin/Short
     public constructor(): R|kotlin/collections/ShortIterator|
 
 }
+

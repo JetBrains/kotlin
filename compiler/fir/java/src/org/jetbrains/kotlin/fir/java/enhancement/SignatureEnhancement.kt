@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -68,6 +69,7 @@ class FirSignatureEnhancement(
         function: FirFunctionSymbol<*>,
         name: Name?
     ): FirFunctionSymbol<*> {
+        enhanceTypeParameterBounds(function.fir.typeParameters)
         return enhancements.getOrPut(function) {
             enhance(function, name).also { enhancedVersion ->
                 (enhancedVersion.fir.initialSignatureAttr as? FirSimpleFunction)?.let {
@@ -304,6 +306,44 @@ class FirSignatureEnhancement(
         return function.symbol
     }
 
+    fun enhanceTypeParameterBounds(typeParameters: List<FirTypeParameterRef>) {
+        // Type parameters can have interdependencies between them. Assuming that there are no top-level cycles
+        // (`A : B, B : A` - invalid), the cycles can still appear when type parameters use each other in argument
+        // position (`A : C<B>, B : D<A>` - valid). In this case the precise enhancement of each bound depends on
+        // the others' nullability, for which we need to enhance at least its head type constructor.
+        //
+        // While this is straightforward to do within a single class/method (enhance all bounds' head type
+        // constructors, then enhance fully), it's not so simple when two classes depend on each other (we need
+        // to enhance *both* classes' type parameters' bounds' heads first). This is why we replace each bound
+        // with an unenhanced version first: this ensures that the frontend at least doesn't fail.
+        //
+        // TODO: find a way to partially enhance type parameters of all classes before fully enhancing anything.
+        // TODO: should this be done in topological order on head type constructors?
+        //   I.e. for `A : B, B : C<A>` should we process `B` first?
+        typeParameters.replaceBounds { _, bound ->
+            bound.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
+        }
+        typeParameters.replaceBounds { typeParameter, bound ->
+            enhanceTypeParameterBound(typeParameter, bound, forceOnlyHeadTypeConstructor = true)
+        }
+        typeParameters.replaceBounds { typeParameter, bound ->
+            enhanceTypeParameterBound(typeParameter, bound, forceOnlyHeadTypeConstructor = false)
+        }
+    }
+
+    private inline fun List<FirTypeParameterRef>.replaceBounds(block: (FirTypeParameter, FirTypeRef) -> FirTypeRef) {
+        for (typeParameter in this) {
+            if (typeParameter is FirTypeParameter) {
+                typeParameter.replaceBounds(typeParameter.bounds.map { block(typeParameter, it) })
+            }
+        }
+    }
+
+    private fun enhanceTypeParameterBound(typeParameter: FirTypeParameter, bound: FirTypeRef, forceOnlyHeadTypeConstructor: Boolean) =
+        EnhancementSignatureParts(
+            session, typeQualifierResolver, typeParameter, isCovariant = false, forceOnlyHeadTypeConstructor,
+            AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS, context.defaultTypeQualifiers
+        ).enhance(bound, emptyList(), FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
 
     // ================================================================================================
 
@@ -354,10 +394,9 @@ class FirSignatureEnhancement(
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
     ): FirResolvedTypeRef {
         return owner.enhance(
-            typeQualifierResolver,
             overriddenMembers,
-            typeContainer = owner, isCovariant = true,
-            containerContext = memberContext,
+            typeContainer = owner,
+            isCovariant = true, containerContext = memberContext,
             containerApplicabilityType =
             if (owner is FirJavaField) AnnotationQualifierApplicabilityType.FIELD
             else AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
@@ -401,10 +440,9 @@ class FirSignatureEnhancement(
         predefined: TypeEnhancementInfo?,
         forAnnotationMember: Boolean
     ): FirResolvedTypeRef = (this as FirCallableDeclaration).enhance(
-        typeQualifierResolver,
         overriddenMembers,
-        parameterContainer, false,
-        parameterContainer?.let {
+        parameterContainer,
+        false, parameterContainer?.let {
             methodContext.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, it.annotations)
         } ?: methodContext,
         AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
@@ -414,7 +452,6 @@ class FirSignatureEnhancement(
     )
 
     private fun FirCallableDeclaration.enhance(
-        typeQualifierResolver: FirAnnotationTypeQualifierResolver,
         overriddenMembers: List<FirCallableDeclaration>,
         typeContainer: FirAnnotationContainer?,
         isCovariant: Boolean,
@@ -424,15 +461,22 @@ class FirSignatureEnhancement(
         predefined: TypeEnhancementInfo?,
         forAnnotationMember: Boolean
     ): FirResolvedTypeRef {
-        val parts = EnhancementSignatureParts(
-            session, typeQualifierResolver, typeContainer, isCovariant,
-            containerApplicabilityType, containerContext.defaultTypeQualifiers
-        )
         val typeRef = typeInSignature.getTypeRef(this)
+        val typeRefsFromOverridden = overriddenMembers.map { typeInSignature.getTypeRef(it) }
         val mode = if (forAnnotationMember) FirJavaTypeConversionMode.ANNOTATION_MEMBER else FirJavaTypeConversionMode.DEFAULT
+        return EnhancementSignatureParts(
+            session, typeQualifierResolver, typeContainer, isCovariant, forceOnlyHeadTypeConstructor = false,
+            containerApplicabilityType, containerContext.defaultTypeQualifiers
+        ).enhance(typeRef, typeRefsFromOverridden, mode, predefined)
+    }
+
+    private fun EnhancementSignatureParts.enhance(
+        typeRef: FirTypeRef, typeRefsFromOverridden: List<FirTypeRef>,
+        mode: FirJavaTypeConversionMode, predefined: TypeEnhancementInfo? = null
+    ): FirResolvedTypeRef {
         val typeWithoutEnhancement = typeRef.toConeKotlinType(mode)
-        val typesFromOverridden = overriddenMembers.map { typeInSignature.getTypeRef(it).toConeKotlinType(mode) }
-        val qualifiers = with(parts) { typeWithoutEnhancement.computeIndexedQualifiers(typesFromOverridden, predefined) }
+        val typesFromOverridden = typeRefsFromOverridden.map { it.toConeKotlinType(mode) }
+        val qualifiers = typeWithoutEnhancement.computeIndexedQualifiers(typesFromOverridden, predefined)
         return buildResolvedTypeRef {
             type = typeWithoutEnhancement.enhance(session, qualifiers) ?: typeWithoutEnhancement
             annotations += typeRef.annotations

@@ -7,5 +7,5 @@ public class J1<@NonNull T> {}
 
 // FILE: main.kt
 fun main() {
-    J1<Any?>() // violated nullability, no warnings; but there is an error with -Xtype-enhancement-improvements-strict-mode
+    J1<<!UPPER_BOUND_VIOLATED!>Any?<!>>() // violated nullability, no warnings; but there is an error with -Xtype-enhancement-improvements-strict-mode
 }

@@ -63,15 +63,21 @@ internal enum class FirJavaTypeConversionMode {
     DEFAULT, ANNOTATION_MEMBER, SUPERTYPE, TYPE_PARAMETER_BOUND
 }
 
+internal fun FirTypeRef.resolveIfJavaType(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
+    mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
+): FirTypeRef = when (this) {
+    is FirResolvedTypeRef -> this
+    is FirJavaTypeRef -> type.toFirResolvedTypeRef(session, javaTypeParameterStack, mode)
+    else -> this
+}
+
 internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): ConeKotlinType =
-    when (this) {
-        is FirResolvedTypeRef -> this
-        is FirJavaTypeRef -> type.toFirResolvedTypeRef(session, javaTypeParameterStack, mode)
-        else -> null
-    }?.type ?: ConeKotlinErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
+    (resolveIfJavaType(session, javaTypeParameterStack, mode) as? FirResolvedTypeRef)?.type
+        ?: ConeKotlinErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
     return buildJavaTypeRef {
@@ -212,6 +218,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                     classSymbol?.fir?.createRawArguments(session, javaTypeParameterStack, lowerBound != null) ?: defaultArgs
                 }
             } else {
+                // TODO: why is this condition needed?
                 val useTypeParameters = mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND && mode != FirJavaTypeConversionMode.SUPERTYPE
                 val typeParameters = runIf(useTypeParameters) {
                     val classSymbol = session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol

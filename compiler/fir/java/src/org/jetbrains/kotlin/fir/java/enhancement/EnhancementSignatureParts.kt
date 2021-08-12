@@ -28,6 +28,7 @@ internal class EnhancementSignatureParts(
     override val annotationTypeQualifierResolver: FirAnnotationTypeQualifierResolver,
     private val typeContainer: FirAnnotationContainer?,
     override val isCovariant: Boolean,
+    override val forceOnlyHeadTypeConstructor: Boolean,
     override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
     override val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
 ) : AbstractSignatureParts<FirAnnotationCall>() {

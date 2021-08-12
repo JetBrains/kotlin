@@ -54,17 +54,18 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
     VALUE_PARAMETER name:j index:0 type:<root>.J
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
-        VAR FOR_LOOP_ITERATOR name:tmp_2 type:kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> [val]
-          CALL 'public final fun iterator (): kotlin.collections.Iterator<T of kotlin.Array> [operator] declared in kotlin.Array' type=kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> origin=null
-            $this: CALL 'public open fun arrayOfNotNull (): @[EnhancedNullability] kotlin.Array<out @[FlexibleNullability] <root>.P?> declared in <root>.J' type=@[EnhancedNullability] kotlin.Array<out @[FlexibleNullability] <root>.P?> origin=null
+        VAR FOR_LOOP_ITERATOR name:tmp_2 type:kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> [val]
+          CALL 'public final fun iterator (): kotlin.collections.Iterator<T of kotlin.Array> [operator] declared in kotlin.Array' type=kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> origin=null
+            $this: CALL 'public open fun arrayOfNotNull (): @[EnhancedNullability] kotlin.Array<out @[EnhancedNullability] <root>.P> declared in <root>.J' type=@[EnhancedNullability] kotlin.Array<out @[EnhancedNullability] <root>.P> origin=null
               $this: GET_VAR 'j: <root>.J declared in <root>.testForInArrayUnused' type=<root>.J origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
           condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR 'val tmp_2: kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> [val] declared in <root>.testForInArrayUnused' type=kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> origin=null
+            $this: GET_VAR 'val tmp_2: kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> [val] declared in <root>.testForInArrayUnused' type=kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-            VAR FOR_LOOP_VARIABLE name:x type:@[FlexibleNullability] <root>.P? [val]
-              CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=@[FlexibleNullability] <root>.P? origin=FOR_LOOP_NEXT
-                $this: GET_VAR 'val tmp_2: kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> [val] declared in <root>.testForInArrayUnused' type=kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> origin=null
+            VAR FOR_LOOP_VARIABLE name:x type:<root>.P [val]
+              TYPE_OP type=<root>.P origin=IMPLICIT_NOTNULL typeOperand=<root>.P
+                CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=@[EnhancedNullability] <root>.P origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val tmp_2: kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> [val] declared in <root>.testForInArrayUnused' type=kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> origin=null
   FUN name:testForInListUse visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
@@ -88,23 +89,23 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
     VALUE_PARAMETER name:j index:0 type:<root>.J
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
-        VAR FOR_LOOP_ITERATOR name:tmp_4 type:kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> [val]
-          CALL 'public final fun iterator (): kotlin.collections.Iterator<T of kotlin.Array> [operator] declared in kotlin.Array' type=kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> origin=null
-            $this: CALL 'public open fun arrayOfNotNull (): @[EnhancedNullability] kotlin.Array<out @[FlexibleNullability] <root>.P?> declared in <root>.J' type=@[EnhancedNullability] kotlin.Array<out @[FlexibleNullability] <root>.P?> origin=null
+        VAR FOR_LOOP_ITERATOR name:tmp_4 type:kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> [val]
+          CALL 'public final fun iterator (): kotlin.collections.Iterator<T of kotlin.Array> [operator] declared in kotlin.Array' type=kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> origin=null
+            $this: CALL 'public open fun arrayOfNotNull (): @[EnhancedNullability] kotlin.Array<out @[EnhancedNullability] <root>.P> declared in <root>.J' type=@[EnhancedNullability] kotlin.Array<out @[EnhancedNullability] <root>.P> origin=null
               $this: GET_VAR 'j: <root>.J declared in <root>.testForInArrayUse' type=<root>.J origin=null
         WHILE label=null origin=FOR_LOOP_INNER_WHILE
           condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
-            $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> [val] declared in <root>.testForInArrayUse' type=kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> origin=null
+            $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> [val] declared in <root>.testForInArrayUse' type=kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> origin=null
           body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
-            VAR FOR_LOOP_VARIABLE name:x type:@[FlexibleNullability] <root>.P? [val]
-              CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=@[FlexibleNullability] <root>.P? origin=FOR_LOOP_NEXT
-                $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> [val] declared in <root>.testForInArrayUse' type=kotlin.collections.Iterator<@[FlexibleNullability] <root>.P?> origin=null
+            VAR FOR_LOOP_VARIABLE name:x type:<root>.P [val]
+              TYPE_OP type=<root>.P origin=IMPLICIT_NOTNULL typeOperand=<root>.P
+                CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=@[EnhancedNullability] <root>.P origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> [val] declared in <root>.testForInArrayUse' type=kotlin.collections.Iterator<@[EnhancedNullability] <root>.P> origin=null
             BLOCK type=kotlin.Unit origin=null
               CALL 'public final fun use (s: <root>.P): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                s: TYPE_OP type=@[FlexibleNullability] <root>.P origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleNullability] <root>.P
-                  GET_VAR 'val x: @[FlexibleNullability] <root>.P? [val] declared in <root>.testForInArrayUse' type=@[FlexibleNullability] <root>.P? origin=null
+                s: GET_VAR 'val x: <root>.P [val] declared in <root>.testForInArrayUse' type=<root>.P origin=null
               CALL 'public open fun use (s: @[EnhancedNullability] <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-                s: GET_VAR 'val x: @[FlexibleNullability] <root>.P? [val] declared in <root>.testForInArrayUse' type=@[FlexibleNullability] <root>.P? origin=null
+                s: GET_VAR 'val x: <root>.P [val] declared in <root>.testForInArrayUse' type=<root>.P origin=null
   CLASS INTERFACE name:K modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
     FUN name:arrayOfNotNull visibility:public modality:ABSTRACT <> ($this:<root>.K) returnType:kotlin.Array<<root>.P>

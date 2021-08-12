@@ -21,11 +21,9 @@ internal class JavaTypeParameterStack {
     }
 
     operator fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol {
-        return safeGet(javaTypeParameter)
+        return typeParameterMap[javaTypeParameter]
             ?: throw IllegalArgumentException("Cannot find Java type parameter $javaTypeParameter in stack")
     }
-
-    fun safeGet(javaTypeParameter: JavaTypeParameter) = typeParameterMap[javaTypeParameter]
 
     companion object {
         val EMPTY: JavaTypeParameterStack = JavaTypeParameterStack()
