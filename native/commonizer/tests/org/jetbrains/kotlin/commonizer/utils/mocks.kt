@@ -86,9 +86,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
 internal class MockModulesProvider private constructor(
     private val modules: Map<String, ModuleDescriptor>,
 ) : ModulesProvider {
-    private val moduleInfos = modules.keys.map { name -> fakeModuleInfo(name) }
-
-    override fun loadModuleInfos() = moduleInfos
+    override val moduleInfos = modules.keys.map { name -> fakeModuleInfo(name) }
 
     override fun loadModuleMetadata(name: String): SerializedMetadata {
         val module = modules[name] ?: error("No such module: $name")

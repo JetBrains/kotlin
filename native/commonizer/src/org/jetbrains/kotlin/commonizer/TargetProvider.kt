@@ -27,9 +27,9 @@ interface ModulesProvider {
 
     /**
      * Returns information about all modules that can be loaded by this [ModulesProvider] in the form of [ModuleInfo]s.
-     * This function is relatively light-weight and does not have significant impact on performance.
+     * The module infos are expected to be already loaded. Access should be lightweight
      */
-    fun loadModuleInfos(): Collection<ModuleInfo>
+    val moduleInfos: Collection<ModuleInfo>
 
     /**
      * Loads metadata for the specified module.

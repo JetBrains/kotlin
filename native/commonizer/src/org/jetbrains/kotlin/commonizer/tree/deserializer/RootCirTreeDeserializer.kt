@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
-import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.CommonizerParameters
+import org.jetbrains.kotlin.commonizer.TargetProvider
+import org.jetbrains.kotlin.commonizer.commonModuleNames
+import org.jetbrains.kotlin.commonizer.dependencyClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
@@ -17,7 +20,7 @@ internal class RootCirTreeDeserializer(
 
         val commonModuleNames = parameters.commonModuleNames(targetProvider)
 
-        val commonModuleInfos = targetProvider.modulesProvider.loadModuleInfos()
+        val commonModuleInfos = targetProvider.modulesProvider.moduleInfos
             .filter { moduleInfo -> moduleInfo.name in commonModuleNames }
 
         val typeResolver = CirTypeResolver.create(

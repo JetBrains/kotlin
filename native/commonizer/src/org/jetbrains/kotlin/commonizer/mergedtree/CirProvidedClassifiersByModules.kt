@@ -45,7 +45,7 @@ internal class CirProvidedClassifiersByModules private constructor(
             val classifiers = THashMap<CirEntityId, CirProvided.Classifier>()
             var hasForwardDeclarations = false
 
-            modulesProvider.loadModuleInfos().forEach { moduleInfo ->
+            modulesProvider.moduleInfos.forEach { moduleInfo ->
                 moduleInfo.cInteropAttributes?.let { cInteropAttributes ->
                     // this is a C-interop module
                     hasForwardDeclarations = true
