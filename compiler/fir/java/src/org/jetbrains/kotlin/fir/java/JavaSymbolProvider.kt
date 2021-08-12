@@ -195,25 +195,13 @@ class JavaSymbolProvider(
 
         // There's a bit of an ordering restriction here:
         // 1. annotations should be added after the symbol is bound, as annotations can refer to the class itself;
-        // 2. bound/supertype conversion should happen here for the same reason;
-        // 3. type enhancement requires annotations to be already present (and supertypes can refer to type parameters).
+        // 2. type enhancement requires annotations to be already present (and supertypes can refer to type parameters).
         firJavaClass.annotations.addFromJava(session, javaClass, javaTypeParameterStack)
         val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
         enhancement.enhanceTypeParameterBounds(firJavaClass.typeParameters)
-        firJavaClass.convertSuperTypes(javaClass, javaTypeParameterStack)
+        firJavaClass.superTypeRefs.replaceAll { enhancement.enhanceSuperType(it) }
         firJavaClass.replaceDeprecation(firJavaClass.getDeprecationInfos(session.languageVersionSettings.apiVersion))
         return firJavaClass
-    }
-
-    private fun FirJavaClass.convertSuperTypes(
-        javaClass: JavaClass,
-        javaTypeParameterStack: JavaTypeParameterStack
-    ) {
-        replaceSuperTypeRefs(
-            javaClass.supertypes.map { supertype ->
-                supertype.toFirResolvedTypeRef(session, javaTypeParameterStack, FirJavaTypeConversionMode.SUPERTYPE)
-            }
-        )
     }
 
     private fun createFirJavaClass(
@@ -255,6 +243,7 @@ class JavaSymbolProvider(
                     buildOuterClassTypeParameterRef { symbol = it.symbol }
                 }
             }
+            javaClass.supertypes.mapTo(superTypeRefs) { it.toFirJavaTypeRef(session, javaTypeParameterStack) }
 
             val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol })
 
