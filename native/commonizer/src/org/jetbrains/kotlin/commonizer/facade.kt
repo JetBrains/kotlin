@@ -53,7 +53,7 @@ internal fun commonizeTarget(
 
     parameters.logger.progress(output, "Commonized declarations from ${inputs.targets}") {
         val classifiers = CirKnownClassifiers(
-            classifierIndices = availableTrees.toList().map(::CirClassifierIndex), // TODO NOW: Reuse for transformer!!
+            classifierIndices = availableTrees.toList().map(::CirClassifierIndex),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = parameters.dependencyClassifiers(output)
         )
@@ -61,7 +61,7 @@ internal fun commonizeTarget(
         val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees)
 
         InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers).invoke(mergedTree)
-        TypeSubstitutionCirNodeTransformer(parameters.storageManager, classifiers, availableTrees).invoke(mergedTree)
+        TypeSubstitutionCirNodeTransformer(parameters.storageManager, classifiers).invoke(mergedTree)
 
         mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
 

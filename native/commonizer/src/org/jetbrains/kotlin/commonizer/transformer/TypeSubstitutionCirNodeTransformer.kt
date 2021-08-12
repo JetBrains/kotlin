@@ -10,18 +10,17 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.storage.StorageManager
 
-internal fun TypeSubstitutionCirNodeTransformer(
-    storageManager: StorageManager, classifiers: CirKnownClassifiers, roots: Iterable<CirTreeRoot>
-): TypeSubstitutionCirNodeTransformer {
-    val typeSubstitutor = CirAliasTypeSubstitutor(classifiers.commonDependencies, roots.map(::CirClassifierIndex))
-    return TypeSubstitutionCirNodeTransformer(storageManager, classifiers, typeSubstitutor)
-}
-
 internal class TypeSubstitutionCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
     private val typeSubstitutor: CirTypeSubstitutor
 ) : CirNodeTransformer {
+
+    constructor(storageManager: StorageManager, classifiers: CirKnownClassifiers) : this(
+        storageManager = storageManager,
+        classifiers = classifiers,
+        typeSubstitutor = CirAliasTypeSubstitutor(classifiers.commonDependencies, classifiers.classifierIndices)
+    )
 
     override fun invoke(root: CirRootNode) {
         for (index in 0 until root.targetDeclarations.size) {
