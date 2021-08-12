@@ -42,29 +42,22 @@ class IrInlineCodegen(
     private val inlineArgumentsInPlace = canInlineArgumentsInPlace()
 
     private fun canInlineArgumentsInPlace(): Boolean {
-        if (!function.isInlineOnly()) return false
-        if (function.isSuspend) return false
+        if (!function.isInlineOnly())
+            return false
 
         var actualParametersCount = function.valueParameters.size
-        function.dispatchReceiverParameter?.let { dispatchReceiverParameter ->
+        if (function.dispatchReceiverParameter != null)
             ++actualParametersCount
-            if (dispatchReceiverParameter.isFunctionOrSuspendFunction())
-                return false
-        }
-        function.extensionReceiverParameter?.let { extensionReceiverParameter ->
+        if (function.extensionReceiverParameter != null)
             ++actualParametersCount
-            if (extensionReceiverParameter.isFunctionOrSuspendFunction())
-                return false
-        }
         if (actualParametersCount == 0)
             return false
-        if (function.valueParameters.any { !it.isNoinline && it.isFunctionOrSuspendFunction() })
+
+        if (function.valueParameters.any { it.isInlineParameter() })
             return false
 
         return canInlineArgumentsInPlace(sourceCompiler.compileInlineFunction(jvmSignature).node)
     }
-
-    private fun IrValueParameter.isFunctionOrSuspendFunction() = type.isFunction() || type.isSuspendFunction()
 
     override fun beforeCallStart() {
         if (inlineArgumentsInPlace) {
