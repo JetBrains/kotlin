@@ -65,11 +65,11 @@ FILE fqName:<root> fileName:/rawTypeInSignature.kt
       RETURN type=kotlin.Nothing from='public final fun testReturnsRawGenericInv (j: <root>.JRaw): @[FlexibleNullability] <root>.GenericInv<*>? declared in <root>'
         CALL 'public abstract fun returnsRawGenericInv (): @[FlexibleNullability] <root>.GenericInv<*>? declared in <root>.JRaw' type=@[FlexibleNullability] <root>.GenericInv<*>? origin=null
           $this: GET_VAR 'j: <root>.JRaw declared in <root>.testReturnsRawGenericInv' type=<root>.JRaw origin=null
-  FUN name:testReturnsRawGenericIn visibility:public modality:FINAL <> (j:<root>.JRaw) returnType:@[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>?
+  FUN name:testReturnsRawGenericIn visibility:public modality:FINAL <> (j:<root>.JRaw) returnType:@[FlexibleNullability] <root>.GenericIn<*>?
     VALUE_PARAMETER name:j index:0 type:<root>.JRaw
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testReturnsRawGenericIn (j: <root>.JRaw): @[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? declared in <root>'
-        CALL 'public abstract fun returnsRawGenericIn (): @[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? declared in <root>.JRaw' type=@[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? origin=null
+      RETURN type=kotlin.Nothing from='public final fun testReturnsRawGenericIn (j: <root>.JRaw): @[FlexibleNullability] <root>.GenericIn<*>? declared in <root>'
+        CALL 'public abstract fun returnsRawGenericIn (): @[FlexibleNullability] <root>.GenericIn<*>? declared in <root>.JRaw' type=@[FlexibleNullability] <root>.GenericIn<*>? origin=null
           $this: GET_VAR 'j: <root>.JRaw declared in <root>.testReturnsRawGenericIn' type=<root>.JRaw origin=null
   FUN name:testReturnsRawGenericOut visibility:public modality:FINAL <> (j:<root>.JRaw) returnType:@[FlexibleNullability] <root>.GenericOut<*>?
     VALUE_PARAMETER name:j index:0 type:<root>.JRaw
@@ -122,23 +122,23 @@ FILE fqName:<root> fileName:/rawTypeInSignature.kt
           CALL 'public abstract fun returnsRawGenericInv (): @[FlexibleNullability] <root>.GenericInv<*>? declared in <root>.JRaw' type=@[FlexibleNullability] <root>.GenericInv<*>? origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.JRaw visibility:local [final]' type=<root>.JRaw origin=null
               receiver: GET_VAR '<this>: <root>.KRaw declared in <root>.KRaw.returnsRawGenericInv' type=<root>.KRaw origin=null
-    FUN DELEGATED_MEMBER name:takesRawGenericIn visibility:public modality:OPEN <> ($this:<root>.KRaw, g:@[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>?) returnType:kotlin.Unit
+    FUN DELEGATED_MEMBER name:takesRawGenericIn visibility:public modality:OPEN <> ($this:<root>.KRaw, g:@[FlexibleNullability] <root>.GenericIn<*>?) returnType:kotlin.Unit
       overridden:
-        public abstract fun takesRawGenericIn (g: @[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>?): kotlin.Unit declared in <root>.JRaw
+        public abstract fun takesRawGenericIn (g: @[FlexibleNullability] <root>.GenericIn<*>?): kotlin.Unit declared in <root>.JRaw
       $this: VALUE_PARAMETER name:<this> type:<root>.KRaw
-      VALUE_PARAMETER name:g index:0 type:@[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>?
+      VALUE_PARAMETER name:g index:0 type:@[FlexibleNullability] <root>.GenericIn<*>?
       BLOCK_BODY
-        CALL 'public abstract fun takesRawGenericIn (g: @[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>?): kotlin.Unit declared in <root>.JRaw' type=kotlin.Unit origin=null
+        CALL 'public abstract fun takesRawGenericIn (g: @[FlexibleNullability] <root>.GenericIn<*>?): kotlin.Unit declared in <root>.JRaw' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.JRaw visibility:local [final]' type=<root>.JRaw origin=null
             receiver: GET_VAR '<this>: <root>.KRaw declared in <root>.KRaw.takesRawGenericIn' type=<root>.KRaw origin=null
-          g: GET_VAR 'g: @[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? declared in <root>.KRaw.takesRawGenericIn' type=@[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? origin=null
-    FUN DELEGATED_MEMBER name:returnsRawGenericIn visibility:public modality:OPEN <> ($this:<root>.KRaw) returnType:@[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>?
+          g: GET_VAR 'g: @[FlexibleNullability] <root>.GenericIn<*>? declared in <root>.KRaw.takesRawGenericIn' type=@[FlexibleNullability] <root>.GenericIn<*>? origin=null
+    FUN DELEGATED_MEMBER name:returnsRawGenericIn visibility:public modality:OPEN <> ($this:<root>.KRaw) returnType:@[FlexibleNullability] <root>.GenericIn<*>?
       overridden:
-        public abstract fun returnsRawGenericIn (): @[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? declared in <root>.JRaw
+        public abstract fun returnsRawGenericIn (): @[FlexibleNullability] <root>.GenericIn<*>? declared in <root>.JRaw
       $this: VALUE_PARAMETER name:<this> type:<root>.KRaw
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun returnsRawGenericIn (): @[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? declared in <root>.KRaw'
-          CALL 'public abstract fun returnsRawGenericIn (): @[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? declared in <root>.JRaw' type=@[FlexibleNullability] <root>.GenericIn<kotlin.Nothing>? origin=null
+        RETURN type=kotlin.Nothing from='public open fun returnsRawGenericIn (): @[FlexibleNullability] <root>.GenericIn<*>? declared in <root>.KRaw'
+          CALL 'public abstract fun returnsRawGenericIn (): @[FlexibleNullability] <root>.GenericIn<*>? declared in <root>.JRaw' type=@[FlexibleNullability] <root>.GenericIn<*>? origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.JRaw visibility:local [final]' type=<root>.JRaw origin=null
               receiver: GET_VAR '<this>: <root>.KRaw declared in <root>.KRaw.returnsRawGenericIn' type=<root>.KRaw origin=null
     FUN DELEGATED_MEMBER name:takesRawGenericOut visibility:public modality:OPEN <> ($this:<root>.KRaw, g:@[FlexibleNullability] <root>.GenericOut<*>?) returnType:kotlin.Unit

@@ -40,10 +40,11 @@ internal fun ConeKotlinType.enhance(session: FirSession, qualifiers: IndexedJava
     enhanceConeKotlinType(session, qualifiers, 0, mutableListOf<Int>().apply { computeSubtreeSizes(this) })
 
 // The index in the lambda is the position of the type component in a depth-first walk of the tree.
-// Example: A<B<C, D>, E<F>> - 0<1<2, 3>, 4<5>>. For flexible types, the number of nodes in the lower
-// and upper bounds should be the same, and their indices match: (A<B>..C<D>) -> (0<1>..0<1>).
-// This function precomputes the size of each subtree so that we can quickly skip to the next
-// type argument; e.g. subtreeSizes[1] will give 3 for B<C, D>, indicating that E<F> is at 1 + 3 = 4.
+// Example: A<B<C, D>, E<F>> - 0<1<2, 3>, 4<5>>. For flexible types, some arguments in the lower bound
+// may be replaced with star projections in the upper bound, but otherwise corresponding arguments
+// have the same index: (A<B<C>, D>..E<*, F>) -> (0<1<2>, 3>..0<1, 3>). This function precomputes
+// the size of each subtree so that we can quickly skip to the next type argument; e.g. result[1] will
+// give 3 for B<C, D>, indicating that E<F> is at 1 + 3 = 4.
 private fun ConeKotlinType.computeSubtreeSizes(result: MutableList<Int>): Int {
     val index = result.size
     result.add(0) // reserve space at index
