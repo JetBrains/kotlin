@@ -1307,6 +1307,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
 
         @Test
+        @TestMetadata("kt48230.kt")
+        public void testKt48230() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/capture/kt48230.kt");
+        }
+
+        @Test
         @TestMetadata("simpleCapturingInClass.kt")
         public void testSimpleCapturingInClass() throws Exception {
             runTest("compiler/testData/codegen/boxInline/capture/simpleCapturingInClass.kt");
