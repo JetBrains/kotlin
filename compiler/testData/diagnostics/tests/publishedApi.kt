@@ -70,3 +70,11 @@ class D <!NON_INTERNAL_PUBLISHED_API!>@kotlin.PublishedApi<!> constructor() {
     @kotlin.PublishedApi
     internal constructor(a: String, b: String, c: String): this()
 }
+
+class InConstructor(
+    <!NON_INTERNAL_PUBLISHED_API!>@PublishedApi<!> val extensionPoint: Any
+)
+
+class FalsePositiveInConstructor(
+    @PublishedApi internal val extensionPoint: Any
+)
