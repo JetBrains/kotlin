@@ -8,45 +8,22 @@ package org.jetbrains.kotlin.kapt3.base.javac
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.*
 import com.sun.tools.javac.util.JCDiagnostic.DiagnosticType
-import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
-import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import java.io.*
 import javax.tools.Diagnostic
-import javax.tools.JavaFileObject
-import javax.tools.JavaFileObject.Kind
-import javax.tools.SimpleJavaFileObject
 
-interface KaptJavaLogBase {
-    val interceptorData: DiagnosticInterceptorData
-
-    val reportedDiagnostics: List<JCDiagnostic>
-
-    fun flush(kind: Log.WriterKind?)
-
-    fun flush()
-
-    class DiagnosticInterceptorData {
-        var files: Map<JavaFileObject, JCTree.JCCompilationUnit> = emptyMap()
-    }
-}
-
-class KaptJavaLog(
+// It's copy/paste as is of KaptJavaLog
+// TODO: most likely KaptJavaLog could be substituted with this version.
+// The only difference that is writers are passed through context
+class KaptJavaLog17(
     private val projectBaseDir: File?,
     context: Context,
-    errWriter: PrintWriter,
-    warnWriter: PrintWriter,
-    noticeWriter: PrintWriter,
     override val interceptorData: KaptJavaLogBase.DiagnosticInterceptorData,
     private val mapDiagnosticLocations: Boolean
-) : Log(context, errWriter, warnWriter, noticeWriter), KaptJavaLogBase {
+) : Log(context), KaptJavaLogBase {
     private val stubLineInfo = KaptStubLineInformation()
     private val javacMessages = JavacMessages.instance(context)
-
-    init {
-        context.put(Log.outKey, noticeWriter)
-    }
 
     override val reportedDiagnostics: List<JCDiagnostic>
         get() = _reportedDiagnostics
@@ -230,47 +207,4 @@ class KaptJavaLog(
             "compiler.err.not.def.public.cant.access"
         )
     }
-}
-
-private val LINE_SEPARATOR: String = System.getProperty("line.separator")
-
-fun KaptContext.kaptError(vararg line: String): JCDiagnostic {
-    val text = line.joinToString(LINE_SEPARATOR)
-    return JCDiagnostic.Factory.instance(context).errorJava9Aware(null, null, "proc.messager", text)
-}
-
-fun KaptContext.reportKaptError(vararg line: String) {
-    compiler.log.report(kaptError(*line))
-}
-
-private fun JCDiagnostic.Factory.errorJava9Aware(
-    source: DiagnosticSource?,
-    pos: JCDiagnostic.DiagnosticPosition?,
-    key: String,
-    vararg args: String
-): JCDiagnostic {
-    return if (isJava9OrLater()) {
-        val errorMethod = this::class.java.getDeclaredMethod(
-            "error",
-            JCDiagnostic.DiagnosticFlag::class.java,
-            DiagnosticSource::class.java,
-            JCDiagnostic.DiagnosticPosition::class.java,
-            String::class.java,
-            Array<Any>::class.java
-        )
-
-        errorMethod.invoke(this, JCDiagnostic.DiagnosticFlag.MANDATORY, source, pos, key, args) as JCDiagnostic
-    } else {
-        this.error(source, pos, key, *args)
-    }
-}
-
-/*private*/internal data class KotlinFileObject(val file: File) : SimpleJavaFileObject(file.toURI(), Kind.SOURCE) {
-    override fun openOutputStream() = file.outputStream()
-    override fun openWriter() = file.writer()
-    override fun openInputStream() = file.inputStream()
-    override fun getCharContent(ignoreEncodingErrors: Boolean) = file.readText()
-    override fun getLastModified() = file.lastModified()
-    override fun openReader(ignoreEncodingErrors: Boolean) = file.reader()
-    override fun delete() = file.delete()
 }
