@@ -18881,6 +18881,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("privateConstructorFunInterfaceMultiModule.kt")
+        public void testPrivateConstructorFunInterfaceMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModule.kt");
+        }
+
+        @Test
         @TestMetadata("propertyLoweringOrder.kt")
         public void testPropertyLoweringOrder() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrder.kt");
