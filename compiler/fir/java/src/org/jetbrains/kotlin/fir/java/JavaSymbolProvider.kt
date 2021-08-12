@@ -18,22 +18,23 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -96,50 +97,32 @@ class JavaSymbolProvider(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    private fun JavaTypeParameter.toFirTypeParameterSymbol(
-        javaTypeParameterStack: JavaTypeParameterStack
-    ): Pair<FirTypeParameterSymbol, Boolean> {
-        val stored = javaTypeParameterStack.safeGet(this)
-        if (stored != null) return stored to true
-        val firSymbol = FirTypeParameterSymbol()
-        javaTypeParameterStack.addParameter(this, firSymbol)
-        return firSymbol to false
-    }
-
-    private fun JavaTypeParameter.toFirTypeParameter(
-        firSymbol: FirTypeParameterSymbol,
-        javaTypeParameterStack: JavaTypeParameterStack
-    ): FirTypeParameter {
-        return FirTypeParameterBuilder().apply {
+    private fun JavaTypeParameter.toFirTypeParameter(javaTypeParameterStack: JavaTypeParameterStack): FirTypeParameter {
+        return buildTypeParameter {
             moduleData = this@JavaSymbolProvider.baseModuleData
             origin = FirDeclarationOrigin.Java
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            this.name = this@toFirTypeParameter.name
-            symbol = firSymbol
+            name = this@toFirTypeParameter.name
+            symbol = FirTypeParameterSymbol()
             variance = INVARIANT
             isReified = false
-            addBounds(this@toFirTypeParameter, javaTypeParameterStack)
-        }.build()
-    }
-
-    private fun FirTypeParameterBuilder.addBounds(
-        javaTypeParameter: JavaTypeParameter,
-        stack: JavaTypeParameterStack
-    ) {
-        for (upperBound in javaTypeParameter.upperBounds) {
-            bounds += upperBound.toFirResolvedTypeRef(session, stack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
-        }
-        addDefaultBoundIfNecessary(isFlexible = true)
-    }
-
-    private fun List<JavaTypeParameter>.convertTypeParameters(stack: JavaTypeParameterStack): List<FirTypeParameter> {
-        return map { it.toFirTypeParameterSymbol(stack) }.mapIndexed { index, (symbol, initialized) ->
-            // This nasty logic is required, because type parameter bound can refer other type parameter from the list
-            // So we have to create symbols first, and type parameters themselves after them
-            if (initialized) symbol.fir
-            else this[index].toFirTypeParameter(symbol, stack)
+            javaTypeParameterStack.addParameter(this@toFirTypeParameter, symbol)
+            // TODO: should be lazy (in case annotations refer to the containing class)
+            annotations.addFromJava(session, this@toFirTypeParameter, javaTypeParameterStack)
+            for (upperBound in this@toFirTypeParameter.upperBounds) {
+                bounds += upperBound.toFirJavaTypeRef(session, javaTypeParameterStack)
+            }
+            if (bounds.isEmpty()) {
+                val builtinTypes = baseModuleData.session.builtinTypes
+                bounds += buildResolvedTypeRef {
+                    type = ConeFlexibleType(builtinTypes.anyType.type, builtinTypes.nullableAnyType.type)
+                }
+            }
         }
     }
+
+    private fun List<JavaTypeParameter>.convertTypeParameters(stack: JavaTypeParameterStack): List<FirTypeParameter> =
+        map { it.toFirTypeParameter(stack) }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
         return try {
@@ -209,8 +192,15 @@ class JavaSymbolProvider(
         val firJavaClass = createFirJavaClass(javaClass, classSymbol, outerClassId, parentClassSymbol, classId, javaTypeParameterStack)
         parentClassTypeParameterStackCache.remove(classSymbol)
         parentClassEffectiveVisibilityCache.remove(classSymbol)
+
+        // There's a bit of an ordering restriction here:
+        // 1. annotations should be added after the symbol is bound, as annotations can refer to the class itself;
+        // 2. bound/supertype conversion should happen here for the same reason;
+        // 3. type enhancement requires annotations to be already present (and supertypes can refer to type parameters).
+        firJavaClass.annotations.addFromJava(session, javaClass, javaTypeParameterStack)
+        val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
+        enhancement.enhanceTypeParameterBounds(firJavaClass.typeParameters)
         firJavaClass.convertSuperTypes(javaClass, javaTypeParameterStack)
-        firJavaClass.addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
         firJavaClass.replaceDeprecation(firJavaClass.getDeprecationInfos(session.languageVersionSettings.apiVersion))
         return firJavaClass
     }
@@ -397,7 +387,8 @@ class JavaSymbolProvider(
                 returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = FirDeclarationOrigin.Java
-                addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                // TODO: check if this works properly with annotations that take the enum class as an argument
+                annotations.addFromJava(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
             }.apply {
                 containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
             }

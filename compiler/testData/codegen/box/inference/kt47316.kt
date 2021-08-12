@@ -1,6 +1,5 @@
 // !LANGUAGE: -ProperTypeInferenceConstraintsProcessing
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 
 // FILE: GoBuildingRunningState.java
 public abstract class GoBuildingRunningState<T extends GoBuildingRunConfiguration<? extends GoBuildingRunningState<T>>> implements RunProfileState {
