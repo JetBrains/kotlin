@@ -133,6 +133,8 @@ internal class KotlinRootNpmResolver internal constructor(
         YarnPlugin.apply(rootProject)
     }
 
+    internal val mayBeUpToDateTasksRegistry = MayBeUpToDatePackageJsonTasksRegistry.registerIfAbsent(rootProject)
+
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
     @Synchronized
