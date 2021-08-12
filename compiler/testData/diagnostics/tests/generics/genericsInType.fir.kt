@@ -22,7 +22,7 @@ fun test() {
     Foo<String>.Bar::class
     Foo<String>.Bar.Baz::class
 
-    a<Foo<String>.Bar>()
+    a<Foo<String>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Bar<!>>()
     a<Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar.Baz>()
 
     a<Foo.Bar<Int>>()
@@ -30,7 +30,7 @@ fun test() {
 }
 
 fun <T: Foo<<!UNRESOLVED_REFERENCE!>String.Bar<!>>> x() {}
-fun Foo<String>.Bar.ext() {}
+fun Foo<String>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Bar<!>.ext() {}
 
 fun ex1(a: Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar<String>): Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>.Bar<String> {
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

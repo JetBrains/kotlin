@@ -208,8 +208,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                                 parameterClass,
                                 index,
                                 symbol,
-                                typeRef,
-                                ignoreOuterClassCheck = true
+                                typeRef
                             )?.let { return it }
                         }
                     }
@@ -242,7 +241,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 currentClass = symbol.fir
             } else {
                 if (currentClass != null) {
-                    currentClass = getOuterClass(currentClass, session)
+                    currentClass = currentClass.getContainingDeclaration(session) as? FirRegularClass
                 }
             }
 
@@ -285,32 +284,21 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         qualifierPartIndex: Int,
         symbol: FirRegularClassSymbol,
         userTypeRef: FirUserTypeRef,
-        qualifierPartArgumentsCount: Int? = null,
-        ignoreOuterClassCheck: Boolean = false
+        qualifierPartArgumentsCount: Int? = null
     ): ConeClassErrorType? {
         // TODO: It should be TYPE_ARGUMENTS_NOT_ALLOWED diagnostics when parameterClass is null
-        val (outerClass, actualTypeParametersCount) = getOuterClassAndActualTypeParametersCount(
-            parameterClass ?: symbol.fir,
-            session
-        )
+        val actualTypeParametersCount = (parameterClass ?: symbol.fir).getActualTypeParametersCount(session)
 
         if (qualifierPartArgumentsCount == null || actualTypeParametersCount != qualifierPartArgumentsCount) {
-            // TODO: fix obtaining outer class for cases like
-            //  https://github.com/JetBrains/kotlin/blob/master/compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/fromSuperClassesLocal.kt#L16
-            if (ignoreOuterClassCheck ||
-                (parameterClass != null && parameterClass.classId.relativeClassName.parent().isRoot)
-                || outerClass != null
-            ) {
-                val source = getTypeArgumentsOrNameSource(userTypeRef, qualifierPartIndex)
-                if (source != null) {
-                    return ConeClassErrorType(
-                        ConeWrongNumberOfTypeArgumentsError(
-                            actualTypeParametersCount,
-                            parameterClass?.symbol ?: symbol,
-                            source
-                        )
+            val source = getTypeArgumentsOrNameSource(userTypeRef, qualifierPartIndex)
+            if (source != null) {
+                return ConeClassErrorType(
+                    ConeWrongNumberOfTypeArgumentsError(
+                        actualTypeParametersCount,
+                        parameterClass?.symbol ?: symbol,
+                        source
                     )
-                }
+                )
             }
         }
 

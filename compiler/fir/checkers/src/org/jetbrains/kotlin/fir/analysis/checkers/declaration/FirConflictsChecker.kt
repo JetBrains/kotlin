@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.getOuterClass
+import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.scopes.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -231,7 +231,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     }
                     else -> {
                         val factory = if (conflictingDeclaration is FirClassLikeDeclaration &&
-                            getOuterClass(conflictingDeclaration, context.session) == null &&
+                            conflictingDeclaration.getContainingDeclaration(context.session) == null &&
                             symbols.any { it is FirClassLikeSymbol<*> }
                         ) {
                             FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION

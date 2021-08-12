@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -487,28 +488,31 @@ fun isValidTypeParameterFromOuterClass(
     return containsTypeParameter(classDeclaration)
 }
 
-fun getOuterClassAndActualTypeParametersCount(klass: FirRegularClass, session: FirSession): Pair<FirRegularClass?, Int> {
-    var result = klass.typeParameters.size
+fun FirRegularClass.getActualTypeParametersCount(session: FirSession): Int {
+    var result = typeParameters.size
 
-    if (!klass.isInner) {
-        return Pair(null, result)
+    if (!isInner) {
+        return result
     }
 
-    val outerClass = getOuterClass(klass, session)
-    if (outerClass != null) {
-        result -= outerClass.typeParameters.size
+    val containingClass = getContainingDeclaration(session) as? FirRegularClass
+    if (containingClass != null) {
+        result -= containingClass.typeParameters.size
     }
 
-    return Pair(outerClass, result)
+    return result
 }
 
-fun getOuterClass(klass: FirClassLikeDeclaration, session: FirSession): FirRegularClass? {
-    val classId = klass.symbol.classId
-    val parentId = classId.relativeClassName.parent()
-    if (!parentId.isRoot) {
-        val outerClassId = ClassId(classId.packageFqName, parentId, false)
-        val parentSymbol = session.symbolProvider.getClassLikeSymbolByFqName(outerClassId)
-        return (parentSymbol as? FirRegularClassSymbol)?.fir
+fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
+    if (isLocal) {
+        return (this as? FirRegularClass)?.containingClassForLocalAttr?.toFirRegularClass(session)
+    } else {
+        val classId = symbol.classId
+        val parentId = classId.relativeClassName.parent()
+        if (!parentId.isRoot) {
+            val containingDeclarationId = ClassId(classId.packageFqName, parentId, false)
+            return session.symbolProvider.getClassLikeSymbolByFqName(containingDeclarationId)?.fir
+        }
     }
 
     return null
