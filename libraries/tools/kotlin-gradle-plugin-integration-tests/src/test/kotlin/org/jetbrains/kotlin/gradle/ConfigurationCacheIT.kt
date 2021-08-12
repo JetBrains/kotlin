@@ -145,6 +145,12 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 )
             )
         }
+
+    // KT-48241
+    @Test
+    fun testConfigurationCacheJsWithTestDependencies() = with(transformProjectWithPluginsDsl("kotlin-js-project-with-test-dependencies")) {
+        testConfigurationCacheOf("assemble", executedTaskNames = listOf(":kotlinNpmInstall"))
+    }
 }
 
 abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
