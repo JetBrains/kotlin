@@ -20,3 +20,4 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(T)
   ]
   visibility: Public
+  deprecationStatus: null

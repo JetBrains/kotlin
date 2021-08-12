@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
+import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
@@ -12,7 +15,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.InvocationTargetException
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty2
+import kotlin.reflect.full.declaredMemberExtensionProperties
 import kotlin.reflect.jvm.javaGetter
 
 public object DebugSymbolRenderer {
@@ -25,6 +31,23 @@ public object DebugSymbolRenderer {
     }
 
     public fun render(symbol: KtSymbol): String = buildString {
+        renderImpl(symbol)
+    }
+
+    public fun KtAnalysisSession.renderExtra(symbol: KtSymbol): String = buildString {
+        renderImpl(symbol)
+        KtSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties.forEach { prop ->
+            val symbolClass = prop.parameters[1].type.classifier as? KClass<*> ?: return@forEach
+            if (symbolClass.isInstance(symbol)) {
+                @Suppress("UNCHECKED_CAST")
+                val value = (prop as KProperty2<KtSymbolInfoProviderMixIn, KtSymbol, Any?>).invoke(this@renderExtra, symbol)
+                val stringValue = renderValue(value)
+                appendLine(INDENT, "${prop.name}: $stringValue")
+            }
+        }
+    }
+
+    private fun StringBuilder.renderImpl(symbol: KtSymbol) {
         val klass = symbol::class
         appendLine("${klass.simpleName}:")
         klass.members.filterIsInstance<KProperty<*>>().sortedBy { it.name }.forEach { property ->
@@ -79,6 +102,7 @@ public object DebugSymbolRenderer {
             append(INDENT, "psi: ${renderValue(value.psi)}")
         }
         is KtTypeAndAnnotations -> "${renderValue(value.annotations)} ${renderValue(value.type)}"
+        is Deprecation -> value.toString()
         else -> value::class.simpleName!!
     }
 

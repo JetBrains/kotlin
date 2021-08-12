@@ -10,6 +10,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -36,3 +37,4 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(x)
   ]
   visibility: Public
+  deprecationStatus: null

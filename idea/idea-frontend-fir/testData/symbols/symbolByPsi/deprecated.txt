@@ -1,0 +1,383 @@
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = don't use i)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /i
+  dispatchType: null
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 1
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: i
+  origin: SOURCE
+  receiverType: null
+  setter: null
+  symbolKind: TOP_LEVEL
+  visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i)
+  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i)
+  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i)
+
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = don't use getter of i2)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /i2
+  dispatchType: null
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 1
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: i2
+  origin: SOURCE
+  receiverType: null
+  setter: null
+  symbolKind: TOP_LEVEL
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use getter of i2)
+  setterDeprecationStatus: null
+
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = don't use getter of i3)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /i3
+  dispatchType: null
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: 1
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: i3
+  origin: SOURCE
+  receiverType: null
+  setter: KtFirPropertySetterSymbol(<setter>)
+  symbolKind: TOP_LEVEL
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use getter of i3)
+
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = don't use getter of i4)
+      psi: KtAnnotationEntry
+    kotlin/Deprecated(message = don't use getter of i4)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /i4
+  dispatchType: null
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: 1
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: i4
+  origin: SOURCE
+  receiverType: null
+  setter: KtFirPropertySetterSymbol(<setter>)
+  symbolKind: TOP_LEVEL
+  visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use getter of i4)
+  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use getter of i4)
+
+KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = don't use f)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /f
+  dispatchType: null
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: f
+  origin: SOURCE
+  receiverType: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use f)
+
+KtFirNamedClassOrObjectSymbol:
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = don't use MyClass)
+      psi: KtAnnotationEntry
+  ]
+  classIdIfNonLocal: MyClass
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: MyClass
+  origin: SOURCE
+  superTypes: [
+    [] kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use MyClass)
+
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = don't use i2)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /Foo.i2
+  dispatchType: Foo
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 1
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: i2
+  origin: SOURCE
+  receiverType: null
+  setter: null
+  symbolKind: MEMBER
+  visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i2)
+  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i2)
+  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i2)
+
+KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(message = don't use f2)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /Foo.f2
+  dispatchType: Foo
+  hasStableParameterNames: true
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: f2
+  origin: SOURCE
+  receiverType: null
+  symbolKind: MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use f2)
+
+KtFirNamedClassOrObjectSymbol:
+  annotationClassIds: []
+  annotations: []
+  classIdIfNonLocal: Foo
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: Foo
+  origin: SOURCE
+  superTypes: [
+    [] kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  deprecationStatus: null
+
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(level = KtUnsupportedConstantValue, message = don't use j)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /j
+  dispatchType: null
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 2
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: j
+  origin: SOURCE
+  receiverType: null
+  setter: null
+  symbolKind: TOP_LEVEL
+  visibility: Public
+  deprecationStatus: Deprecation(level=ERROR, inheritable=true, message=null)
+  getterDeprecationStatus: Deprecation(level=ERROR, inheritable=true, message=null)
+  setterDeprecationStatus: Deprecation(level=ERROR, inheritable=true, message=null)
+
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    kotlin/Deprecated
+  ]
+  annotations: [
+    kotlin/Deprecated(level = KtUnsupportedConstantValue, message = don't use j2)
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /j2
+  dispatchType: null
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 2
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: j2
+  origin: SOURCE
+  receiverType: null
+  setter: null
+  symbolKind: TOP_LEVEL
+  visibility: Public
+  deprecationStatus: Deprecation(level=HIDDEN, inheritable=true, message=null)
+  getterDeprecationStatus: Deprecation(level=HIDDEN, inheritable=true, message=null)
+  setterDeprecationStatus: Deprecation(level=HIDDEN, inheritable=true, message=null)
+
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: [
+    java/lang/Deprecated
+  ]
+  annotations: [
+    java/lang/Deprecated()
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /j2
+  dispatchType: null
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 2
+  isConst: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: j2
+  origin: SOURCE
+  receiverType: null
+  setter: null
+  symbolKind: TOP_LEVEL
+  visibility: Public
+  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=null)
+  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=false, message=null)
+  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=false, message=null)

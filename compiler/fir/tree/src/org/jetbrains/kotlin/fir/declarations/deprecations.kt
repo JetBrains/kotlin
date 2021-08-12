@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.descriptors.Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
@@ -81,23 +82,4 @@ class DeprecationsPerUseSite(
 
 }
 
-data class Deprecation(
-    val level: DeprecationLevelValue,
-    val inheritable: Boolean,
-    val message: String? = null
-) : Comparable<Deprecation> {
-    override fun compareTo(other: Deprecation): Int {
-        val lr = level.compareTo(other.level)
-        //to prefer inheritable deprecation
-        return if (lr == 0 && !inheritable && other.inheritable) 1
-        else lr
-    }
-}
-
-// values from kotlin.DeprecationLevel
-enum class DeprecationLevelValue {
-    WARNING, ERROR, HIDDEN
-}
-
 val EmptyDeprecationsPerUseSite = DeprecationsPerUseSite(null, null)
-

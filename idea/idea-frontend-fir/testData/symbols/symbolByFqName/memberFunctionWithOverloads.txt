@@ -21,6 +21,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/ListIterator<E>
@@ -47,3 +48,4 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(index)
   ]
   visibility: Public
+  deprecationStatus: null

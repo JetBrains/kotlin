@@ -6,6 +6,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
@@ -15,6 +16,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -39,3 +41,4 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(R)
   ]
   visibility: Public
+  deprecationStatus: null

@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.idea.fir.frontend.api.symbols
 
-import com.intellij.DynamicBundle
-import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
 import org.jetbrains.kotlin.idea.fir.analyseOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.fir.frontend.api.test.framework.AbstractHLApiSingleFileTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.KotlinOutOfBlockModificationTrackerFactory
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -41,7 +37,7 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
             collectSymbols(ktFile, testServices).map { symbol ->
                 PointerWithRenderedSymbol(
                     if (createPointers) symbol.createPointer() else null,
-                    DebugSymbolRenderer.render(symbol)
+                    with(DebugSymbolRenderer) { renderExtra(symbol) }
                 )
             }
         }
@@ -73,7 +69,7 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
             pointersWithRendered.map { (pointer, expectedRender) ->
                 val restored = pointer!!.restoreSymbol()
                     ?: error("Symbol $expectedRender was not not restored")
-                DebugSymbolRenderer.render(restored)
+                with(DebugSymbolRenderer) { renderExtra(restored) }
             }
         }
         val actual = restored.joinToString(separator = "\n")

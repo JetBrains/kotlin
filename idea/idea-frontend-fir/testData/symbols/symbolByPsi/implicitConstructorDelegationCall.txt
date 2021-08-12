@@ -10,6 +10,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] A
@@ -29,6 +30,7 @@ KtFirConstructorSymbol:
     KtFirValueParameterSymbol(i)
   ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -50,3 +52,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

@@ -18,3 +18,4 @@ KtFirConstructorSymbol:
     KtFirValueParameterSymbol(p0)
   ]
   visibility: Public
+  deprecationStatus: null

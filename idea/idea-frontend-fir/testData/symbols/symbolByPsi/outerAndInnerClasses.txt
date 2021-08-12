@@ -6,6 +6,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
@@ -15,6 +16,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -38,6 +40,7 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(T1)
   ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
@@ -47,6 +50,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -70,6 +74,7 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(T2)
   ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
@@ -79,6 +84,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
@@ -88,6 +94,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
@@ -97,6 +104,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -120,6 +128,7 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(T5)
   ]
   visibility: Local
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
@@ -129,6 +138,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -152,6 +162,7 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(T6)
   ]
   visibility: Local
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -175,6 +186,7 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(T4)
   ]
   visibility: Local
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -201,6 +213,7 @@ KtFirFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -224,3 +237,4 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(T)
   ]
   visibility: Public
+  deprecationStatus: null

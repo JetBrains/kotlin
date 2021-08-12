@@ -23,6 +23,7 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [
@@ -49,6 +50,7 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [
@@ -75,6 +77,7 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [
@@ -101,6 +104,7 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -122,6 +126,7 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirValueParameterSymbol:
   annotatedType: [
@@ -138,6 +143,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [
@@ -167,6 +173,7 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(arg)
   ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirKotlinPropertySymbol:
   annotatedType: [
@@ -196,6 +203,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -220,3 +230,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

@@ -21,6 +21,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -47,6 +48,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirAnonymousObjectSymbol:
   annotationClassIds: []
@@ -59,6 +63,7 @@ KtFirAnonymousObjectSymbol:
     [] java/lang/Runnable
   ]
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] java/lang/Runnable
@@ -85,6 +90,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -106,3 +114,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

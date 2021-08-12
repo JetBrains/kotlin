@@ -21,3 +21,4 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null

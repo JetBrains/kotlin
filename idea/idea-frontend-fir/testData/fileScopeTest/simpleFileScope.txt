@@ -3,6 +3,7 @@ KtFirFileSymbol:
   annotationClassIds: []
   annotations: []
   origin: SOURCE
+  deprecationStatus: null
 
 CALLABLE NAMES:
 [test, testVal]
@@ -31,6 +32,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -57,6 +59,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 CLASSIFIER NAMES:
 [C, I]
@@ -82,6 +87,7 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -103,3 +109,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

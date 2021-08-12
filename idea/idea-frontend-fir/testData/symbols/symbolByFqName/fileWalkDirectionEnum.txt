@@ -25,6 +25,7 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(element)
   ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
@@ -56,6 +57,7 @@ KtFirFunctionSymbol:
   ]
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
@@ -84,3 +86,4 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(elements)
   ]
   visibility: Public
+  deprecationStatus: null

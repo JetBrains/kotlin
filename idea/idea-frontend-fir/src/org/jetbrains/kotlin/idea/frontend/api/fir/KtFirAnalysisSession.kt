@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.*
@@ -81,6 +82,8 @@ private constructor(
     override val subtypingComponentImpl = KtFirSubtypingComponent(this, token)
 
     override val inheritorsProviderImpl: KtInheritorsProvider = KtFirInheritorsProvider(this, token)
+
+    override val symbolInfoProviderImpl: KtSymbolInfoProvider = KtFirSymbolInfoProvider(this, token)
 
     override val typesCreatorImpl: KtTypeCreator = KtFirTypeCreator(this, token)
 

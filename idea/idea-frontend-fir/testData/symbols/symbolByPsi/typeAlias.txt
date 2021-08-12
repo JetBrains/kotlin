@@ -6,6 +6,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -29,6 +30,7 @@ KtFirNamedClassOrObjectSymbol:
     KtFirTypeParameterSymbol(T)
   ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirTypeParameterSymbol:
   isReified: false
@@ -38,6 +40,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirTypeAliasSymbol:
   classIdIfNonLocal: Y
@@ -45,3 +48,4 @@ KtFirTypeAliasSymbol:
   name: Y
   origin: SOURCE
   symbolKind: TOP_LEVEL
+  deprecationStatus: null

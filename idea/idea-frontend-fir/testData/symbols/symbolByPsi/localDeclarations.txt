@@ -7,6 +7,7 @@ KtFirLocalVariableSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -31,6 +32,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Local
+  deprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -52,6 +54,7 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -76,3 +79,4 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null

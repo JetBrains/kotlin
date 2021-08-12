@@ -67,6 +67,12 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("deprecated.kt")
+    public void testDeprecated() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/deprecated.kt");
+    }
+
+    @Test
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/enum.kt");

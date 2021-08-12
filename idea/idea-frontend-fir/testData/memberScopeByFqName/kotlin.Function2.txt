@@ -24,6 +24,7 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(p2)
   ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -50,6 +51,7 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(other)
   ]
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -74,6 +76,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/String
@@ -98,3 +101,4 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
+  deprecationStatus: null

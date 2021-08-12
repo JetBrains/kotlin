@@ -6,6 +6,7 @@ KtFirTypeParameterSymbol:
     kotlin/Any?
   ]
   variance: INVARIANT
+  deprecationStatus: null
 
 KtFirValueParameterSymbol:
   annotatedType: [] X
@@ -19,6 +20,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -47,3 +49,4 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(x)
   ]
   visibility: Public
+  deprecationStatus: null

@@ -23,6 +23,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirPropertyGetterSymbol:
   annotatedType: [] kotlin/Int
@@ -40,6 +43,7 @@ KtFirPropertyGetterSymbol:
   receiverType: null
   symbolKind: ACCESSOR
   visibility: Public
+  deprecationStatus: null
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -66,6 +70,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -87,3 +94,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

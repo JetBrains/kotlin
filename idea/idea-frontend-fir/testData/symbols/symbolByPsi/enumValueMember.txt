@@ -10,6 +10,7 @@ KtFirValueParameterSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
+  deprecationStatus: null
 
 KtFirConstructorSymbol:
   annotatedType: [] Style
@@ -29,6 +30,7 @@ KtFirConstructorSymbol:
     KtFirValueParameterSymbol(value)
   ]
   visibility: Private
+  deprecationStatus: null
 
 KtFirPropertyGetterSymbol:
   annotatedType: [] kotlin/String
@@ -46,6 +48,7 @@ KtFirPropertyGetterSymbol:
   receiverType: null
   symbolKind: ACCESSOR
   visibility: Public
+  deprecationStatus: null
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/String
@@ -72,6 +75,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirEnumEntrySymbol:
   annotatedType: [] Style
@@ -82,6 +88,7 @@ KtFirEnumEntrySymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: MEMBER
+  deprecationStatus: null
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/String
@@ -108,6 +115,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  setterDeprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -129,3 +139,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
+  deprecationStatus: null

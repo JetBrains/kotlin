@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.descriptors.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -79,7 +81,7 @@ fun List<FirAnnotationCall>.getDeprecationInfosFromAnnotations(currentVersion: A
     return DeprecationsPerUseSite.fromMap(deprecationByUseSite)
 }
 
-private fun FirBasedSymbol<*>.getDeprecationForCallSite(
+fun FirBasedSymbol<*>.getDeprecationForCallSite(
     vararg sites: AnnotationUseSiteTarget
 ): Deprecation? {
     val deprecations = when (this) {
