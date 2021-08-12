@@ -62,12 +62,12 @@ class KpmCompilerPluginTest {
         }
         project.evaluate()
 
-        project.pluginDataOfTask("compileCommonMainKotlinMetadata").run {
+        project.pluginDataOfTask("compileCommonKotlinMetadata").run {
             assertEquals(setOf("metadata"), artifacts())
             assertEquals(listOf("plugin:test:a=b"), options.arguments)
         }
 
-        project.pluginDataOfTask("compileCommonMainKotlinNativeMetadata").run {
+        project.pluginDataOfTask("compileCommonKotlinNativeMetadata").run {
             assertEquals(setOf("metadata-native"), artifacts())
             assertEquals(listOf("plugin:test:a=b"), options.arguments)
         }
