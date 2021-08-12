@@ -139,15 +139,18 @@ internal class KotlinCompilationNpmResolver(
     @Synchronized
     fun getResolutionOrResolveIfForced(): KotlinCompilationNpmResolution? {
         if (resolution != null) return resolution
-        if (packageJsonTaskHolder == null || packageJsonTaskHolder.get().state.upToDate) return resolve(skipWriting = true)
-        if (rootResolver.forceFullResolve && resolution == null) {
+        if (rootResolver.mayBeUpToDateTasksRegistry.get().shouldResolveNpmDependenciesFor(npmProject.packageJsonTaskPath)) {
+            // when we need to resolve the compilation but the task is UP-TO-DATE, so we don't have ready resolution yet
+            return resolve(skipWriting = true)
+        }
+        if (rootResolver.forceFullResolve) {
             // need to force all NPM tasks to be configured in IDEA import
             rootResolver.gradleNodeModules.fileHasher = project.serviceOf()
             rootResolver.compositeNodeModules.fileHasher = project.serviceOf()
             project.tasks.implementing(RequiresNpmDependencies::class).all {}
             return resolve()
         }
-        return null
+        return null // we don't need to resolve NPM dependencies for the compilation
     }
 
     @Synchronized
