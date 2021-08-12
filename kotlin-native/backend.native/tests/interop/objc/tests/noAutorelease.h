@@ -27,3 +27,5 @@
 @end;
 
 id<NoAutoreleaseHelper> getNoAutoreleaseHelperImpl(void);
+
+NSString* testSend
