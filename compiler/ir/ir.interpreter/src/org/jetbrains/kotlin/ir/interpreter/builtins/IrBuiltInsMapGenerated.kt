@@ -52,6 +52,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "String" -> return (a as String).toString()
             "Any" -> return (a as Any).toString()
             "Any?" -> return a?.toString() ?: "null"
+            "Unit" -> return Unit.toString()
         }
         "dec" -> when (type) {
             "Char" -> return (a as Char).dec()
