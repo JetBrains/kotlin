@@ -70,6 +70,16 @@ public class IrCompileAgainstJvmAbiTestGenerated extends AbstractIrCompileAgains
         runTest("plugins/jvm-abi-gen/testData/compile/innerObjectRegeneration/");
     }
 
+    @TestMetadata("kt-40133")
+    public void testKt_40133() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/kt-40133/");
+    }
+
+    @TestMetadata("kt-40340")
+    public void testKt_40340() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/kt-40340/");
+    }
+
     @TestMetadata("privateOnlyConstructors")
     public void testPrivateOnlyConstructors() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/privateOnlyConstructors/");
