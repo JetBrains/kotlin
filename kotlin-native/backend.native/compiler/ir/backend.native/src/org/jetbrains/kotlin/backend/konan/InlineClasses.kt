@@ -33,16 +33,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-/**
- * TODO: there is [IrType::getInlinedClass] in [org.jetbrains.kotlin.ir.util] which isn't compatible with
- * Native's implementation. Please take a look while commonization.
- */
 fun IrType.getInlinedClassNative(): IrClass? = IrTypeInlineClassesSupport.getInlinedClass(this)
 
-/**
- * TODO: there is [IrType::isInlined] in [org.jetbrains.kotlin.ir.util] which isn't compatible with
- * Native's implementation. Please take a look while commonization.
- */
 fun IrType.isInlinedNative(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
 fun IrClass.isInlined(): Boolean = IrTypeInlineClassesSupport.isInlined(this)
 fun IrClass.isNativePrimitiveType() = IrTypeInlineClassesSupport.isTopLevelClass(this) &&
