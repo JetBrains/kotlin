@@ -19,5 +19,5 @@ class Test extends Base<@Nullable String> {}
 fun takeBaseOfNotNullStrings(x: Base<String>) {}
 
 fun main() {
-    val x = takeBaseOfNotNullStrings(Test())
+    val x = takeBaseOfNotNullStrings(<!ARGUMENT_TYPE_MISMATCH!>Test()<!>)
 }
