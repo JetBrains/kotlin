@@ -167,6 +167,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractIrAsmLikeInstructionListingTest> {
                 model("codegen/asmLike")
             }
+
+            testClass<AbstractIrInterpreterAfterFir2IrTest> {
+                model("ir/interpreter", excludeDirs = listOf("helpers"))
+            }
+
+            testClass<AbstractIrInterpreterAfterPsi2IrTest> {
+                model("ir/interpreter", excludeDirs = listOf("helpers"))
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------
@@ -220,14 +228,6 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractFirBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
-            }
-
-            testClass<AbstractIrInterpreterAfterFir2IrTest> {
-                model("ir/interpreter", excludeDirs = listOf("helpers"))
-            }
-
-            testClass<AbstractIrInterpreterAfterPsi2IrTest> {
-                model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
 
             testClass<AbstractFirSteppingTest> {
