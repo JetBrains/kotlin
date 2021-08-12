@@ -29,6 +29,7 @@ import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatCompilationResolverPlugin
@@ -114,13 +115,7 @@ abstract class AbstractKotlinTarget(
                             configuration.artifacts.addAll(kotlinUsageContext.artifacts)
 
                             val attributes = kotlinUsageContext.attributes
-                            attributes.keySet().forEach {
-                                // capture type parameter T
-                                fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                                    to.attribute(key, from.getAttribute(key)!!)
-                                }
-                                copyAttribute(it, attributes, configuration.attributes)
-                            }
+                            copyAttributes(attributes, configuration.attributes)
                         }
 
                     adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->

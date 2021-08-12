@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
 import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.Test
@@ -482,9 +483,7 @@ class HierarchicalMppIT : BaseGradleIT() {
                 "commonMain" to emptySet()
             ),
             sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { (_, pairs) ->
-                pairs.map {
-                    ModuleDependencyIdentifier(it.first, it.second)
-                }.toSet()
+                pairs.map { MavenModuleIdentifier(it.first, it.second, null) }.toSet()
             },
             hostSpecificSourceSets = emptySet(),
             sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },

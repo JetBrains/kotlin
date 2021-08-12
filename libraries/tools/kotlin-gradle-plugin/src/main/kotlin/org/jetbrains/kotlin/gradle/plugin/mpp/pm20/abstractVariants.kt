@@ -61,8 +61,12 @@ internal val KotlinGradleVariant.compileDependencyConfiguration: Configuration
 
 class DefaultSingleMavenPublishedModuleHolder(
     private var module: KotlinGradleModule,
-    override val defaultPublishedModuleSuffix: String?
+    private val defaultPublishedModuleSuffixProvider: () -> String?
 ) : SingleMavenPublishedModuleHolder {
+
+    override val defaultPublishedModuleSuffix: String?
+        get() = defaultPublishedModuleSuffixProvider()
+
     private val project get() = module.project
 
     private var assignedMavenPublication: MavenPublication? = null
@@ -77,8 +81,7 @@ class DefaultSingleMavenPublishedModuleHolder(
         MavenPublicationCoordinatesProvider(
             project,
             { assignedMavenPublication },
-            defaultPublishedModuleSuffix,
-            capabilities = listOfNotNull(ComputedCapability.capabilityStringFromModule(module))
+            defaultPublishedModuleSuffix
         )
 }
 
@@ -110,14 +113,17 @@ abstract class KotlinGradleVariantWithRuntimeInternal(
         get() = disambiguateName("runtimeElements")
 }
 
-private fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String): String =
-    dashSeparatedName(variantName, module.moduleClassifier)
+internal fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String): String =
+    dashSeparatedName(
+        variantName.toLowerCase(),
+        (module.publicationMode as? Standalone)?.defaultArtifactIdSuffix ?: module.moduleClassifier
+    )
 
 abstract class KotlinGradlePublishedVariantWithRuntime(containingModule: KotlinGradleModule, fragmentName: String) :
     KotlinGradleVariantWithRuntimeInternal(containingModule, fragmentName),
     SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(
         containingModule,
-        defaultModuleSuffix(containingModule, fragmentName)
+        { defaultModuleSuffix(containingModule, fragmentName) }
     ) {
 
     override val gradleVariantNames: Set<String>

@@ -28,10 +28,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
@@ -112,13 +110,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         setOf(binary.target.konanTarget.name)
                     )
                 }
-                // capture type parameter T
-                fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                    to.attribute(key, from.getAttribute(key)!!)
-                }
-                binary.attributes.keySet().filter { it != KotlinNativeTarget.konanTargetAttribute }.forEach {
-                    copyAttribute(it, binary.attributes, this.attributes)
-                }
+                copyAttributes(
+                    binary.attributes,
+                    attributes,
+                    binary.attributes.keySet().filter { it != KotlinNativeTarget.konanTargetAttribute }
+                )
             }
         }
 
@@ -268,11 +264,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 configuration.isCanBeResolved = false
 
                 configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
-
-                fun <T> copyAttribute(from: AttributeContainer, to: AttributeContainer, attribute: Attribute<T>) {
-                    to.attribute(attribute, from.getAttribute(attribute)!!)
-                }
-                with(apiElements.attributes) { keySet().forEach { copyAttribute(this, configuration.attributes, it) } }
+                copyAttributes(apiElements.attributes, configuration.attributes)
                 configuration.attributes.attribute(USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_METADATA))
             }
         }
@@ -432,8 +424,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 it.destinationDir = project.klibOutputDirectory(compilation).resolve("klib")
             }
 
-
-            compilation.output.classesDirs.from(compileTaskProvider.flatMap { it.outputFile })
+            compilation.output.classesDirs.from(compileTaskProvider.map { it.outputFile })
 
             project.project.tasks.getByName(compilation.compileAllTaskName).dependsOn(compileTaskProvider)
 
@@ -487,7 +478,12 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         internal fun createRegularKlibArtifact(
             compilation: KotlinNativeCompilationData<*>,
             compileTask: TaskProvider<out KotlinNativeCompile>
-        ) = createKlibArtifact(compilation, compileTask.map { it.outputFile.get() }, null, compileTask)
+        ) = createKlibArtifact(
+            compilation,
+            compileTask.map { it.outputFile.get() },
+            compilation.compilationPurpose.takeIf { it != KotlinGradleModule.MAIN_MODULE_NAME },
+            compileTask
+        )
 
         private fun createKlibArtifact(
             compilation: KotlinNativeCompilationData<*>,

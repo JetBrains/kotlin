@@ -14,6 +14,9 @@ internal fun lowerCamelCaseName(vararg nameParts: String?): String {
     )
 }
 
+internal fun lowerCaseDashSeparatedName(vararg nameParts: String?) = lowerCaseDashSeparatedName(nameParts.map { it?.toLowerCase() })
+internal fun lowerCaseDashSeparatedName(nameParts: Iterable<String?>) = dashSeparatedName(nameParts.map { it?.toLowerCase() })
+
 internal fun dashSeparatedName(nameParts: Iterable<String?>) = dashSeparatedName(*nameParts.toList().toTypedArray())
 
 internal fun dashSeparatedName(vararg nameParts: String?): String {

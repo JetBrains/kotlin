@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.ChooseVisibleSourceSetsImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.getMetadataExtractor
-import org.jetbrains.kotlin.gradle.plugin.mpp.getProjectStructureMetadata
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.ArrayDeque
@@ -28,7 +27,7 @@ internal class FragmentGranularMetadataResolver(
         get() = requestingFragment.containingModule.project
 
     private val parentResultsByModuleIdentifier: Map<KotlinModuleIdentifier, List<MetadataDependencyResolution>> by lazy {
-        refinesParentResolvers.value.flatMap { it.resolutions }.groupBy { it.dependency.toSingleModuleIdentifier() }
+        refinesParentResolvers.value.flatMap { it.resolutions }.groupBy { it.dependency.toModuleIdentifier() }
     }
 
     private val moduleResolver = GradleModuleDependencyResolver.getForCurrentBuild(project)
@@ -38,11 +37,9 @@ internal class FragmentGranularMetadataResolver(
 
     private fun doResolveMetadataDependencies(): Iterable<MetadataDependencyResolution> {
         val configurationToResolve = configurationToResolveMetadataDependencies(project, requestingFragment.containingModule)
-        val resolvedComponentsByModuleId =
-            configurationToResolve.incoming.resolutionResult.allComponents.associateBy { it.toSingleModuleIdentifier() }
         val resolvedDependenciesByModuleId =
             configurationToResolve.incoming.resolutionResult.allDependencies.filterIsInstance<ResolvedDependencyResult>()
-                .flatMap { dependency -> dependency.requested.toModuleIdentifiers().map { id -> id to dependency } }.toMap()
+                .associateBy { it.toModuleIdentifier() }
 
         val dependencyGraph = dependencyGraphResolver.resolveDependencyGraph(requestingFragment.containingModule)
 
@@ -73,16 +70,16 @@ internal class FragmentGranularMetadataResolver(
 
             fragmentResolutionQueue.addAll(visibleTransitiveDependencies.filter { it !in visited })
 
-            val resolvedComponentResult = dependencyNode.selectedComponent
-            val isResolvedAsProject = resolvedComponentResult.toProjectOrNull(project)
+            val resolvedDependencyResult = dependencyNode.gradleDependency
+            val isResolvedAsProject = resolvedDependencyResult.toProjectOrNull(project)
             val result = when (dependencyModule) {
                 is ExternalPlainKotlinModule -> {
-                    MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult, isResolvedAsProject)
+                    MetadataDependencyResolution.KeepOriginalDependency(resolvedDependencyResult, isResolvedAsProject)
                 }
                 else -> run {
-                    val metadataSourceComponent = dependencyNode.run { metadataSourceComponent ?: selectedComponent }
+                    val metadataSourceDependency = dependencyNode.run { metadataDependency ?: gradleDependency }
 
-                    val metadataExtractor = getMetadataExtractor(project, resolvedComponentResult, configurationToResolve, true)
+                    val metadataExtractor = getMetadataExtractor(project, resolvedDependencyResult, configurationToResolve, true)
 
                     if (dependencyModule is ExternalImportedKotlinModule &&
                         metadataExtractor is JarArtifactMppDependencyMetadataExtractor &&
@@ -97,10 +94,10 @@ internal class FragmentGranularMetadataResolver(
                     val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
                     val visibleFragmentNamesExcludingVisibleByParents =
                         visibleFragmentNames
-                            .minus(fragmentsNamesVisibleByParents(metadataSourceComponent.toSingleModuleIdentifier()))
+                            .minus(fragmentsNamesVisibleByParents(metadataSourceDependency.toModuleIdentifier()))
 
                     ChooseVisibleSourceSetsImpl(
-                        metadataSourceComponent,
+                        metadataSourceDependency,
                         isResolvedAsProject,
                         projectStructureMetadata,
                         visibleFragmentNames,
@@ -113,9 +110,8 @@ internal class FragmentGranularMetadataResolver(
             results.add(result)
         }
 
-        // FIXME this code is based on whole components; use module IDs with classifiers instead
         val resultSourceComponents = results.mapTo(mutableSetOf()) { it.dependency }
-        resolvedComponentsByModuleId.values.minus(resultSourceComponents).forEach {
+        resolvedDependenciesByModuleId.values.minus(resultSourceComponents).forEach {
             results.add(MetadataDependencyResolution.ExcludeAsUnrequested(it, it.toProjectOrNull(project)))
         }
 

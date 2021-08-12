@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
 import java.io.File
 import java.util.*
 
@@ -161,7 +163,7 @@ class DefaultKotlinSourceSet(
     internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
             dependencyTransformations[scope]?.metadataDependencyResolutions
-                ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
+                ?.associateBy { it.dependency }
                 ?: emptyMap()
 
         val baseDir = SourceSetMetadataStorageForIde.sourceSetStorageWithScope(project, this@DefaultKotlinSourceSet.name, scope)
@@ -173,14 +175,18 @@ class DefaultKotlinSourceSet(
             baseDir.mkdirs()
         }
 
-        return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
-            val (group, name) = groupAndName
+        return metadataDependencyResolutionByModule.mapNotNull { (dependency, resolution) ->
+            val (group, name) =
+                dependency.toProjectOrNull(project)?.run { listOf(group.toString(), name) } ?:
+                (dependency.toModuleIdentifier() as? MavenModuleIdentifier)?.run { listOf(group, name) } ?:
+                listOf(null, dependency.requested.displayName)
+
             val projectPath = resolution.projectDependency?.path
             when (resolution) {
                 is MetadataDependencyResolution.KeepOriginalDependency -> null
 
                 is MetadataDependencyResolution.ExcludeAsUnrequested ->
-                    MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
+                    MetadataDependencyTransformation(group, checkNotNull(name), projectPath, null, emptySet(), emptyMap())
 
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
                     val filesBySourceSet = resolution.getMetadataFilesBySourceSet(

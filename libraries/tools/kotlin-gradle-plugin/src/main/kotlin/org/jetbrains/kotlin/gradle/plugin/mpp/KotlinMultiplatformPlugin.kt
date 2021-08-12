@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -187,9 +188,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
             add(KotlinJvmWithJavaTargetPreset(project))
 
             // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
-            val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MACOS_ARM64, MINGW_X64)
-            val nativeTargetsWithSimulatorTests =
-                setOf(IOS_X64, IOS_SIMULATOR_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, TVOS_X64, TVOS_SIMULATOR_ARM64)
+            val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MINGW_X64)
+            val nativeTargetsWithSimulatorTests = setOf(IOS_X64, WATCHOS_X86, WATCHOS_X64, TVOS_X64)
 
             HostManager().targets
                 .forEach { (_, konanTarget) ->

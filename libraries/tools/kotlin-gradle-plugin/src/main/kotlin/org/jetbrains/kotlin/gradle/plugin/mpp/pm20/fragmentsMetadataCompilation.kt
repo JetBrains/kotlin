@@ -39,16 +39,14 @@ internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
     configureMetadataCompilationsAndCreateRegistry(module, metadataCompilationRegistry)
 
     configureMetadataJarTask(module, metadataCompilationRegistry)
-    generateAndExportProjectStructureMetadata(module)
 }
 
 internal fun configureMetadataExposure(module: KotlinGradleModule) {
     val project = module.project
+    generateAndExportProjectStructureMetadata(module)
     project.configurations.create(metadataElementsConfigurationName(module)).apply {
-        isCanBeConsumed = false
-        module.ifMadePublic {
-            isCanBeConsumed = true
-        }
+        isCanBeConsumed = true // but we don't allow this configuration to be consumed from outside, using the attribute, see below
+        makePublicIfModuleIsMadePublic(module)
         isCanBeResolved = false
         project.artifacts.add(name, project.tasks.named(metadataJarName(module)))
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
@@ -57,7 +55,7 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
             // FIXME: native api-implementation
             project.addExtendsFromRelation(name, fragment.apiConfigurationName)
         }
-        setModuleCapability(this, module)
+        setGradleProjectModuleCapability(this, module)
     }
 
     val sourcesArtifactAppendix = dashSeparatedName(module.moduleClassifier, "all", "sources")
@@ -68,8 +66,11 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
         sourcesArtifactAppendix
     )
     DocumentationVariantConfigurator().createSourcesElementsConfiguration(
-        project, sourceElementsConfigurationName(module),
-        sourcesArtifact.get(), "sources", ComputedCapability.fromModuleOrNull(module)
+        project,
+        sourceElementsConfigurationName(module),
+        sourcesArtifact.get(),
+        dashSeparatedName(module.moduleClassifier, "sources"),
+        ComputedCapability.forProjectDependenciesOnModule(module)
     )
 }
 
@@ -91,7 +92,7 @@ private fun generateAndExportProjectStructureMetadata(
         }
     }
     GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(project) {
-        buildProjectStructureMetadata(module)
+        buildKpmProjectStructureMetadata(module)
     }
 }
 
@@ -101,6 +102,7 @@ private fun createResolvableMetadataConfigurationForModule(module: KotlinGradleM
         isCanBeConsumed = false
         isCanBeResolved = true
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         module.fragments.all { fragment ->
             project.addExtendsFromRelation(name, fragment.apiConfigurationName)
             project.addExtendsFromRelation(name, fragment.implementationConfigurationName)
@@ -151,7 +153,9 @@ private fun configureMetadataJarTask(
         allMetadataJar.configure { jar ->
             val metadataOutput = project.files(Callable {
                 val compilationData = registry.byFragment(fragment)
-                project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
+                if (!fragment.isNativeHostSpecific())
+                    project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
+                else emptyList<Any>()
             })
             jar.from(metadataOutput) { spec ->
                 spec.into(fragment.fragmentName)

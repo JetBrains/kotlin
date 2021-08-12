@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.lowerCaseDashSeparatedName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.refinesClosure
 import kotlin.reflect.KClass
@@ -52,8 +53,8 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
             ?: return
 
         val hostSpecificMetadataJar = project.registerTask<Jar>(variant.disambiguateName("hostSpecificMetadataJar")) { jar ->
-            jar.archiveClassifier.set("metadata")
-            jar.archiveAppendix.set(variant.disambiguateName(""))
+            jar.archiveAppendix.set(lowerCaseDashSeparatedName(variant.name, variant.containingModule.moduleClassifier))
+            jar.archiveClassifier.set(lowerCaseDashSeparatedName(variant.containingModule.moduleClassifier, "metadata"))
             project.pm20Extension.metadataCompilationRegistryByModuleId.getValue(variant.containingModule.moduleIdentifier)
                 .withAll { metadataCompilation ->
                     val fragment = metadataCompilation.fragment
@@ -69,7 +70,7 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
         val apiElements = project.configurations.getByName(variant.apiElementsConfigurationName)
         project.configurations.create(hostSpecificConfigurationNameIfEnabled).apply {
             isCanBeResolved = false
-            isCanBeConsumed = false
+            isCanBeConsumed = false // with project-to-project dependencies, we expose the metadata compilation output directly, so no need
             setPlatformAttributesAndMetadataUsage(variant)
             project.artifacts.add(name, hostSpecificMetadataJar)
             dependencies.addAllLater(project.objects.listProperty(Dependency::class.java).apply {

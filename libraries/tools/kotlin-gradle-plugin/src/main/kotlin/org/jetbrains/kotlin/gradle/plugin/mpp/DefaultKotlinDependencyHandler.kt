@@ -10,8 +10,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
@@ -20,9 +19,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
 import org.jetbrains.kotlin.gradle.targets.js.npm.onlyNameNpmDependency
 import java.io.File
+import java.util.*
 
-class DefaultKotlinDependencyHandler(
-    val parent: HasKotlinDependencies,
+open class DefaultKotlinDependencyHandler(
+    val parent: HasKotlinDependencyConfigurations,
     val project: Project
 ) : KotlinDependencyHandler {
     override fun api(dependencyNotation: Any): Dependency? =
@@ -76,8 +76,9 @@ class DefaultKotlinDependencyHandler(
         val dependency = when (dependencyNotation) {
             is KotlinGradleModule -> project.dependencies.create(dependencyNotation.project).apply {
                 (this as ModuleDependency).capabilities {
-                    if (dependencyNotation.moduleClassifier != null) {
-                        it.requireCapability(ComputedCapability.fromModule(dependencyNotation))
+                    val capability = ComputedCapability.forProjectDependenciesOnModule(dependencyNotation)
+                    if (capability != null) {
+                        it.requireCapability(capability)
                     }
                 }
             }
@@ -279,4 +280,24 @@ class DefaultKotlinDependencyHandler(
             scope = scope,
             generateExternals = generateExternals
         )
+}
+
+class KpmKotlinDependencyHandlerImpl(parent: HasKpmKotlinDependencies, project: Project) : DefaultKotlinDependencyHandler(parent, project),
+    KpmKotlinDependencyHandler {
+    override fun kotlinAuxiliaryModule(dependencyNotation: Any, moduleName: String): Dependency {
+        require(moduleName != KotlinGradleModule.MAIN_MODULE_NAME) { "Dependencies on auxiliary modules cannot choose the 'main' module" }
+        return project.dependencies.create(dependencyNotation).apply {
+            require(this is ModuleDependency) { "Kotlin auxiliary module dependencies are only supported for Gradle ModuleDependency" }
+            capabilities {
+                it.requireCapability(
+                    ComputedCapability(
+                        project.provider { this@apply.group },
+                        project.provider { this@apply.name },
+                        project.provider { this@apply.version },
+                        moduleName
+                    )
+                )
+            }
+        }
+    }
 }

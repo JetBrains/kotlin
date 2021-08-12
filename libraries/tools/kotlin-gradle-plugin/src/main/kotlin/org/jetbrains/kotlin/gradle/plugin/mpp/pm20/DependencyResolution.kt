@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.getProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 import java.util.*
@@ -33,24 +32,23 @@ class CachingModuleDependencyResolver(private val actualResolver: ModuleDependen
 }
 
 open class GradleComponentResultCachingResolver {
-    private val cachedResultsByRequestingModule = mutableMapOf<KotlinGradleModule, Map<KotlinModuleIdentifier, ResolvedComponentResult>>()
+    private val cachedResultsByRequestingModule = mutableMapOf<KotlinGradleModule, Map<KotlinModuleIdentifier, ResolvedDependencyResult>>()
 
     protected open fun configurationToResolve(requestingModule: KotlinGradleModule): Configuration =
         configurationToResolveMetadataDependencies(requestingModule.project, requestingModule)
 
-    protected open fun resolveDependencies(module: KotlinGradleModule): Map<KotlinModuleIdentifier, ResolvedComponentResult> {
-        val allComponents = configurationToResolve(module).incoming.resolutionResult.allComponents
-        // FIXME handle multi-component results
-        return allComponents.flatMap { component -> component.toModuleIdentifiers().map { it to component } }.toMap()
+    protected open fun resolveDependencies(module: KotlinGradleModule): Map<KotlinModuleIdentifier, ResolvedDependencyResult> {
+        val allDependencies = configurationToResolve(module).incoming.resolutionResult.allDependencies
+        return allDependencies.filterIsInstance<ResolvedDependencyResult>().associateBy { it.toModuleIdentifier() }
     }
 
-    private fun getResultsForModule(module: KotlinGradleModule): Map<KotlinModuleIdentifier, ResolvedComponentResult> =
+    private fun getResultsForModule(module: KotlinGradleModule): Map<KotlinModuleIdentifier, ResolvedDependencyResult> =
         cachedResultsByRequestingModule.getOrPut(module) { resolveDependencies(module) }
 
-    fun resolveModuleDependencyAsComponentResult(
+    fun resolveModuleDependencyAsDependencyResult(
         requestingModule: KotlinGradleModule,
         moduleDependency: KotlinModuleDependency
-    ): ResolvedComponentResult? =
+    ): ResolvedDependencyResult? =
         getResultsForModule(requestingModule)[moduleDependency.moduleIdentifier]
 
     companion object {
@@ -73,25 +71,22 @@ class GradleModuleDependencyResolver(
         require(requestingModule is KotlinGradleModule)
         val project = requestingModule.project
 
-        val component = gradleComponentResultResolver.resolveModuleDependencyAsComponentResult(requestingModule, moduleDependency)
-        val id = component?.id
-
-        //FIXME multiple?
-        val classifier = moduleClassifiersFromCapabilities(component?.variants?.flatMap { it.capabilities }.orEmpty()).single()
+        val dependency = gradleComponentResultResolver.resolveModuleDependencyAsDependencyResult(requestingModule, moduleDependency)
+        val id = dependency?.selected?.id
 
         return when {
             id is ProjectComponentIdentifier && id.build.isCurrentBuild ->
                 projectModuleBuilder.buildModulesFromProject(project.project(id.projectPath))
-                    .find { it.moduleIdentifier.moduleClassifier == classifier }
+                    .find { it.moduleIdentifier.moduleClassifier == dependency.toModuleIdentifier().moduleClassifier }
             id is ModuleComponentIdentifier -> {
                 val metadata = getProjectStructureMetadata(
                     project,
-                    component,
+                    dependency,
                     // TODO: consistent choice of configurations across multiple resolvers?
                     configurationToResolveMetadataDependencies(requestingModule.project, requestingModule),
-                    moduleDependency.moduleIdentifier
+                    dependency.toModuleIdentifier()
                 ) ?: return null
-                val result = projectStructureMetadataModuleBuilder.getModule(component, metadata)
+                val result = projectStructureMetadataModuleBuilder.getModule(dependency, metadata)
                 result
             }
             else -> null
@@ -116,19 +111,15 @@ class GradleModuleDependencyResolver(
 // refactor extract to a separate class/interface
 // TODO think about multi-variant stub modules for non-Kotlin modules which got more than one chosen variant
 internal fun buildSyntheticPlainModule(
-    resolvedComponentResult: ResolvedComponentResult,
+    resolvedDependencyResult: ResolvedDependencyResult,
     singleVariantName: String,
     project: Project
 ): ExternalPlainKotlinModule {
-    val moduleDependency = resolvedComponentResult.toModuleDependency()
+    val moduleDependency = resolvedDependencyResult.toModuleDependency()
     return ExternalPlainKotlinModule(BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
         BasicKotlinModuleVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder(project)).apply {
             fragments.add(this)
-            this.declaredModuleDependencies.addAll(
-                resolvedComponentResult.dependencies
-                    .filterIsInstance<ResolvedDependencyResult>()
-                    .map { it.selected.toModuleDependency() }
-            )
+            this.declaredModuleDependencies.addAll(resolvedDependencyResult.resolvedDependencies.map { it.toModuleDependency() })
         }
     })
 }
@@ -151,66 +142,28 @@ internal class ExternalImportedKotlinModule(
     override fun toString(): String = "imported $moduleData"
 }
 
-private fun ModuleComponentIdentifier.toSingleModuleIdentifier(classifier: String? = null): MavenModuleIdentifier =
-    MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, classifier)
+internal const val KOTLIN_AUXILIARY_MODULE_CAPABILITY_INFIX_PART = ".kotlin.auxiliary.module."
 
-internal fun ComponentIdentifier.matchesModule(module: KotlinModule): Boolean =
-    matchesModuleIdentifier(module.moduleIdentifier)
-
-internal fun ResolvedComponentResult.toModuleIdentifiers(): List<KotlinModuleIdentifier> {
-    val classifiers = moduleClassifiersFromCapabilities(variants.flatMap { it.capabilities })
-    return classifiers.map { moduleClassifier ->
-        when (val id = id) {
-            is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
-            is ModuleComponentIdentifier -> id.toSingleModuleIdentifier()
-            else -> MavenModuleIdentifier(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty(), moduleClassifier)
-        }
-    }
+internal fun moduleClassifierFromCapabilities(capabilities: Iterable<Capability>): String? {
+    val classifierCapability = capabilities.firstOrNull { it.name.contains(KOTLIN_AUXILIARY_MODULE_CAPABILITY_INFIX_PART) }
+    // TODO: handle the erroneous case when there's more than one such capability?
+    return classifierCapability?.name?.substringAfterLast(KOTLIN_AUXILIARY_MODULE_CAPABILITY_INFIX_PART)
 }
 
-// FIXME this mapping doesn't have enough information to choose auxiliary modules
-internal fun ResolvedComponentResult.toSingleModuleIdentifier(): KotlinModuleIdentifier {
-    val classifiers = moduleClassifiersFromCapabilities(variants.flatMap { it.capabilities })
-    val moduleClassifier = classifiers.single() // FIXME handle multiple capabilities
-    return when (val id = id) {
-        is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
-        is ModuleComponentIdentifier -> id.toSingleModuleIdentifier()
-        else -> MavenModuleIdentifier(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty(), moduleClassifier)
-    }
-}
+internal fun ResolvedDependencyResult.toModuleIdentifier(): KotlinModuleIdentifier = requested.toModuleIdentifier()
 
-internal fun moduleClassifiersFromCapabilities(capabilities: Iterable<Capability>): Iterable<String?> {
-    val classifierCapabilities = capabilities.filter { it.name.contains("..") }
-    return if (classifierCapabilities.none()) listOf(null) else classifierCapabilities.map { it.name.substringAfterLast("..") /*FIXME invent a more stable scheme*/ }
-}
-
-internal fun ComponentSelector.toModuleIdentifiers(): Iterable<KotlinModuleIdentifier> {
-    val moduleClassifiers = moduleClassifiersFromCapabilities(requestedCapabilities)
+internal fun ComponentSelector.toModuleIdentifier(): KotlinModuleIdentifier {
+    val moduleClassifier = moduleClassifierFromCapabilities(requestedCapabilities)
     return when (this) {
-        is ProjectComponentSelector -> moduleClassifiers.map { LocalModuleIdentifier(buildName, projectPath, it) }
-        is ModuleComponentSelector -> moduleClassifiers.map { MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, it) }
+        is ProjectComponentSelector -> LocalModuleIdentifier(buildName, projectPath, moduleClassifier)
+        is ModuleComponentSelector -> MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, moduleClassifier)
         else -> error("unexpected component selector")
     }
 }
 
-internal fun ResolvedComponentResult.toModuleDependency(): KotlinModuleDependency = KotlinModuleDependency(toSingleModuleIdentifier())
+internal fun ResolvedDependencyResult.toModuleDependency(): KotlinModuleDependency = KotlinModuleDependency(toModuleIdentifier())
+
 internal fun ComponentSelector.toModuleDependency(): KotlinModuleDependency {
-    val moduleId = toModuleIdentifiers().single() // FIXME handle multiple
+    val moduleId = toModuleIdentifier()
     return KotlinModuleDependency(moduleId)
 }
-
-internal fun ComponentIdentifier.matchesModuleDependency(moduleDependency: KotlinModuleDependency) =
-    matchesModuleIdentifier(moduleDependency.moduleIdentifier)
-
-internal fun ComponentIdentifier.matchesModuleIdentifier(id: KotlinModuleIdentifier): Boolean =
-    when (id) {
-        is LocalModuleIdentifier -> {
-            val projectId = this as? ProjectComponentIdentifier
-            projectId?.build?.name == id.buildId && projectId.projectPath == id.projectId
-        }
-        is MavenModuleIdentifier -> {
-            val componentId = this as? ModuleComponentIdentifier
-            componentId?.toSingleModuleIdentifier() == id
-        }
-        else -> false
-    }

@@ -11,7 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -29,10 +29,10 @@ class ProjectStructureMetadataModuleBuilder {
     private val modulesCache = mutableMapOf<KotlinModuleIdentifier, KotlinModule>()
 
     private fun buildModuleFromProjectStructureMetadata(
-        component: ResolvedComponentResult,
+        moduleIdentifier: KotlinModuleIdentifier,
         metadata: KotlinProjectStructureMetadata
     ): KotlinModule {
-        val moduleData = BasicKotlinModule(component.toSingleModuleIdentifier()).apply {
+        val moduleData = BasicKotlinModule(moduleIdentifier).apply {
             metadata.sourceSetNamesByVariantName.keys.forEach { variantName ->
                 fragments.add(BasicKotlinModuleVariant(this@apply, variantName))
             }
@@ -49,17 +49,7 @@ class ProjectStructureMetadataModuleBuilder {
             }
             metadata.sourceSetModuleDependencies.forEach { (sourceSetName, dependencies) ->
                 val fragment = fragment(sourceSetName)
-                dependencies.forEach { dependency ->
-                    fragment.declaredModuleDependencies.add(
-                        KotlinModuleDependency(
-                            MavenModuleIdentifier(
-                                dependency.groupId.orEmpty(),
-                                dependency.moduleId,
-                                null /* TODO */
-                            )
-                        )
-                    )
-                }
+                dependencies.forEach { dependency -> fragment.declaredModuleDependencies.add(KotlinModuleDependency(dependency)) }
             }
 
             metadata.sourceSetsDependsOnRelation.forEach { (depending, dependencies) ->
@@ -76,13 +66,13 @@ class ProjectStructureMetadataModuleBuilder {
         )
     }
 
-    fun getModule(component: ResolvedComponentResult, projectStructureMetadata: KotlinProjectStructureMetadata): KotlinModule {
-        val moduleId = component.toSingleModuleIdentifier()
+    fun getModule(
+        resolvedDependencyResult: ResolvedDependencyResult,
+        projectStructureMetadata: KotlinProjectStructureMetadata
+    ): KotlinModule {
+        val moduleId = resolvedDependencyResult.toModuleIdentifier()
         return modulesCache.getOrPut(moduleId) {
-            buildModuleFromProjectStructureMetadata(
-                component,
-                projectStructureMetadata
-            )
+            buildModuleFromProjectStructureMetadata(moduleId, projectStructureMetadata)
         }
     }
 }
@@ -237,21 +227,21 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
 }
 
 internal fun Dependency.toModuleDependency(
-    project: Project
+    thisProject: Project
 ): KotlinModuleDependency {
     return KotlinModuleDependency(
         when (this) {
             is ProjectDependency ->
                 LocalModuleIdentifier(
-                    project.currentBuildId().name,
+                    thisProject.currentBuildId().name,
                     dependencyProject.path,
-                    moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
+                    moduleClassifierFromCapabilities(requestedCapabilities)
                 )
             is ModuleDependency ->
                 MavenModuleIdentifier(
                     group.orEmpty(),
                     name,
-                    moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
+                    moduleClassifierFromCapabilities(requestedCapabilities)
                 )
             else -> MavenModuleIdentifier(group.orEmpty(), name, null)
         }

@@ -14,6 +14,9 @@ import java.io.File
 
 open class GenerateProjectStructureMetadata : DefaultTask() {
     @get:Internal
+    internal var moduleName: String? = null
+
+    @get:Internal
     internal lateinit var lazyKotlinProjectStructureMetadata: Lazy<KotlinProjectStructureMetadata>
 
     @get:Nested
@@ -22,7 +25,9 @@ open class GenerateProjectStructureMetadata : DefaultTask() {
 
     @get:OutputFile
     val resultFile: File
-        get() = project.buildDir.resolve("kotlinProjectStructureMetadata/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")
+        get() = project.buildDir.resolve(
+            "kotlinProjectStructureMetadata/${moduleName?.let { "$it/" }.orEmpty()}$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME"
+        )
 
     @TaskAction
     fun generateMetadataXml() {

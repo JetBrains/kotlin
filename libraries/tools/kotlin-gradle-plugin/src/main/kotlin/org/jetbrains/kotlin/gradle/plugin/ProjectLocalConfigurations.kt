@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
 object ProjectLocalConfigurations {
     val ATTRIBUTE: Attribute<String> = Attribute.of("org.jetbrains.kotlin.localToProject", String::class.java)
@@ -37,13 +39,28 @@ object ProjectLocalConfigurations {
     }
 }
 
+internal fun Configuration.setupAsLocalToProject(project: Project) {
+    attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.LOCAL_TO_PROJECT_PREFIX + project.path)
+}
+
+internal fun Configuration.setupAsNonLocalForProjectDependencies() {
+    attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.PUBLIC_VALUE)
+}
+
+internal fun Configuration.makePublicIfModuleIsMadePublic(module: KotlinGradleModule) {
+    setupAsLocalToProject(module.project)
+    module.ifMadePublic {
+        setupAsNonLocalForProjectDependencies()
+    }
+}
+
 internal fun Configuration.setupAsLocalTargetSpecificConfigurationIfSupported(target: KotlinTarget) {
     // don't setup in old MPP common modules, as their output configurations with KotlinPlatformType attribute would
     // fail to resolve as transitive dependencies of the platform modules, just as we don't mark their
     // `api/RuntimeElements` with the KotlinPlatformType
     if ((target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)) {
         usesPlatformOf(target)
-        attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.LOCAL_TO_PROJECT_PREFIX + target.project.path)
+        setupAsLocalToProject(target.project)
     }
 }
 

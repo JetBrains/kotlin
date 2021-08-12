@@ -10,12 +10,12 @@ import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.HasKpmKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.KpmKotlinDependencyHandler
 import org.jetbrains.kotlin.project.model.KotlinModule
 import org.jetbrains.kotlin.project.model.KpmCompilerPlugin
 
-interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
+interface KotlinGradleModule : KotlinModule, Named, HasKpmKotlinDependencies {
     val project: Project
     val moduleClassifier: String?
 
@@ -26,11 +26,12 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
 
     override val plugins: Set<KpmCompilerPlugin>
 
-    val isPublic: Boolean
+    val isPublic: Boolean get() = publicationMode != Private
+    val publicationMode: ModulePublicationMode
 
     fun ifMadePublic(action: () -> Unit)
 
-    fun makePublic()
+    fun makePublic(modulePublicationMode: PublishedModulePublicationMode = Standalone(checkNotNull(moduleClassifier)))
 
     companion object {
         const val MAIN_MODULE_NAME = "main"
@@ -50,7 +51,7 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
     fun common(configure: KotlinGradleFragment.() -> Unit) =
         common.configure()
 
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) =
+    override fun dependencies(configure: KpmKotlinDependencyHandler.() -> Unit) =
         common.dependencies(configure)
 
     override fun dependencies(configureClosure: Closure<Any?>) =
@@ -68,3 +69,9 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
     override val runtimeOnlyConfigurationName: String
         get() = common.runtimeOnlyConfigurationName
 }
+
+sealed class ModulePublicationMode
+sealed class PublishedModulePublicationMode : ModulePublicationMode()
+object Private : ModulePublicationMode()
+object Embedded : PublishedModulePublicationMode()
+data class Standalone(val defaultArtifactIdSuffix: String?) : PublishedModulePublicationMode()

@@ -13,17 +13,19 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.replaceProjectDependenciesWithPublishedMavenDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.replaceProjectDependenciesWithPublishedMavenIdentifiers
+import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.isSharedNativeSourceSet
+import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -99,7 +101,7 @@ data class KotlinProjectStructureMetadata(
     val sourceSetBinaryLayout: Map<String, SourceSetMetadataLayout>,
 
     @Internal
-    val sourceSetModuleDependencies: Map<String, Set<ModuleDependencyIdentifier>>,
+    val sourceSetModuleDependencies: Map<String, Set<MavenModuleIdentifier>>,
 
     @Input
     val hostSpecificSourceSets: Set<String>,
@@ -113,7 +115,9 @@ data class KotlinProjectStructureMetadata(
     @Suppress("UNUSED") // Gradle input
     @get:Input
     internal val sourceSetModuleDependenciesInput: Map<String, Set<Pair<String, String>>>
-        get() = sourceSetModuleDependencies.mapValues { (_, ids) -> ids.map { (group, module) -> group.orEmpty() to module }.toSet() }
+        get() = sourceSetModuleDependencies.mapValues { (_, ids) ->
+            ids.map { it.group.orEmpty() to it.name }.toSet()
+        }
 
     companion object {
         internal const val FORMAT_VERSION_0_1 = "0.1"
@@ -167,7 +171,13 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
                     project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
                 }
             }
-            sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
+            val mavenDependencyModuleIds =
+                replaceProjectDependenciesWithPublishedMavenDependencies(project, sourceSetExportedDependencies)
+                    .mapNotNullTo(mutableSetOf()) {
+                        it.toModuleDependency(project).moduleIdentifier as? MavenModuleIdentifier
+                    }
+
+            sourceSet.name to mavenDependencyModuleIds
         },
         hostSpecificSourceSets = getHostSpecificSourceSets(project)
             .filter { it in sourceSetsWithMetadataCompilations }.map { it.name }
@@ -179,7 +189,7 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
     )
 }
 
-internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinProjectStructureMetadata {
+internal fun buildKpmProjectStructureMetadata(module: KotlinGradleModule): KotlinProjectStructureMetadata {
     val kotlinVariantToGradleVariantNames = module.variants.associate { it.name to it.gradleVariantNames }
 
     fun <T> expandVariantKeys(map: Map<String, T>) =
@@ -193,19 +203,16 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
         module.fragments.associate { it.name to it.directRefinesDependencies.map { it.fragmentName }.toSet() }
 
     // FIXME: support native implementation-as-api-dependencies
-    // FIXME: support dependencies on auxiliary modules
     val fragmentDependencies =
         module.fragments.associate { fragment ->
-            fragment.name to fragment.declaredModuleDependencies.map {
-                ModuleIds.lossyFromModuleIdentifier(module.project, it.moduleIdentifier)
-            }.toSet()
+            fragment.name to fragment.declaredModuleDependencies
         }
 
     return KotlinProjectStructureMetadata(
         expandVariantKeys(kotlinFragmentsPerKotlinVariant),
         fragmentRefinesRelation,
         module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
-        fragmentDependencies,
+        fragmentDependencies.mapValues { replaceProjectDependenciesWithPublishedMavenIdentifiers(module.project, it.value) },
         getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name },
         isPublishedAsRoot = true
     )
@@ -240,7 +247,9 @@ internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
                     value(NAME_NODE_NAME, sourceSet)
                     multiValue(DEPENDS_ON_NODE_NAME, sourceSetsDependsOnRelation[sourceSet].orEmpty().toList())
                     multiValue(MODULE_DEPENDENCY_NODE_NAME, sourceSetModuleDependencies[sourceSet].orEmpty().map { moduleDependency ->
-                        moduleDependency.groupId + ":" + moduleDependency.moduleId
+                        moduleDependency.group + ":" +
+                                moduleDependency.name +
+                                moduleDependency.moduleClassifier?.let { ":${it}" }.orEmpty()
                     })
                     sourceSetBinaryLayout[sourceSet]?.let { binaryLayout ->
                         value(BINARY_LAYOUT_NODE_NAME, binaryLayout.name)
@@ -329,7 +338,7 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     }
 
     val sourceSetDependsOnRelation = mutableMapOf<String, Set<String>>()
-    val sourceSetModuleDependencies = mutableMapOf<String, Set<ModuleDependencyIdentifier>>()
+    val sourceSetModuleDependencies = mutableMapOf<String, Set<MavenModuleIdentifier>>()
     val sourceSetBinaryLayout = mutableMapOf<String, SourceSetMetadataLayout>()
     val hostSpecificSourceSets = mutableSetOf<String>()
 
@@ -340,8 +349,10 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
 
         val dependsOn = sourceSetNode.multiValues(DEPENDS_ON_NODE_NAME).toSet()
         val moduleDependencies = sourceSetNode.multiValues(MODULE_DEPENDENCY_NODE_NAME).mapTo(mutableSetOf()) {
-            val (groupId, moduleId) = it.split(":")
-            ModuleDependencyIdentifier(groupId, moduleId)
+            val dependencyNotationParts = it.split(":")
+            val (groupId, moduleId) = dependencyNotationParts
+            val classifier = dependencyNotationParts.find { it.startsWith(MODULE_DEPENDENCY_CLASSIFIER_PREFIX) }
+            MavenModuleIdentifier(groupId, moduleId, classifier)
         }
 
         sourceSetNode.valueNamed(HOST_SPECIFIC_NODE_NAME)
@@ -401,5 +412,6 @@ private const val SOURCE_SETS_NODE_NAME = "sourceSets"
 private const val SOURCE_SET_NODE_NAME = "sourceSet"
 private const val DEPENDS_ON_NODE_NAME = "dependsOn"
 private const val MODULE_DEPENDENCY_NODE_NAME = "moduleDependency"
+private const val MODULE_DEPENDENCY_CLASSIFIER_PREFIX = "#kpm.classifier="
 private const val BINARY_LAYOUT_NODE_NAME = "binaryLayout"
 private const val HOST_SPECIFIC_NODE_NAME = "hostSpecific"

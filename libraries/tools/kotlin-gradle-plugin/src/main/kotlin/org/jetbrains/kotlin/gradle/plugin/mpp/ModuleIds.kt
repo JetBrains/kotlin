@@ -70,7 +70,6 @@ internal object ModuleIds {
     private fun idOfRootModuleByProjectPath(thisProject: Project, projectPath: String): ModuleDependencyIdentifier =
         idOfRootModule(thisProject.project(projectPath))
 
-    // FIXME use capabilities to point to auxiliary modules
     fun lossyFromModuleIdentifier(thisProject: Project, moduleIdentifier: KotlinModuleIdentifier): ModuleDependencyIdentifier {
         when (moduleIdentifier) {
             is LocalModuleIdentifier -> {
@@ -86,18 +85,10 @@ internal object ModuleIds {
                     }
                     else -> error("unexpected top-level extension $topLevelExtension")
                 }
-                val capabilities = when (topLevelExtension) {
-                    is KotlinMultiplatformExtension -> emptyList()
-                    is KotlinPm20ProjectExtension -> listOfNotNull(ComputedCapability.capabilityStringFromModule(
-                        topLevelExtension.modules.single { it.moduleIdentifier == moduleIdentifier }
-                    ))
-                    else -> error("unexpected top-level extension $topLevelExtension")
-                }
                 val coordinatesProvider = MavenPublicationCoordinatesProvider(
                     dependencyProject,
                     getRootPublication,
-                    defaultModuleSuffix = null,
-                    capabilities = capabilities
+                    defaultModuleSuffix = null
                 )
                 return ChangingModuleDependencyIdentifier({ coordinatesProvider.group }, { coordinatesProvider.name })
             }
@@ -112,8 +103,7 @@ internal object ModuleIds {
 open class MavenPublicationCoordinatesProvider(
     project: Project,
     val getPublication: () -> MavenPublication?,
-    defaultModuleSuffix: String?,
-    override val capabilities: Iterable<String> = emptyList()
+    defaultModuleSuffix: String?
 ) : PublishedModuleCoordinatesProvider {
 
     override val group: String by project.provider {

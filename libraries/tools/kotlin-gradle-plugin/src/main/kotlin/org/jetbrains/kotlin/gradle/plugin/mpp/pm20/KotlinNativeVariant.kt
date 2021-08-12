@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeCompileOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.isHostSpecificKonanTargetsSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
@@ -21,7 +22,10 @@ abstract class KotlinNativeVariantInternal(
     val konanTarget: KonanTarget
 ) : KotlinNativeVariant,
     KotlinGradleVariantInternal(containingModule, fragmentName),
-    SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(containingModule, fragmentName) {
+    SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(
+        containingModule,
+        { defaultModuleSuffix(containingModule, fragmentName) }
+    ) {
 
     final override val hostSpecificMetadataElementsConfigurationName: String?
         get() = disambiguateName("hostSpecificMetadataElements").takeIf { includesHostSpecificMetadata }

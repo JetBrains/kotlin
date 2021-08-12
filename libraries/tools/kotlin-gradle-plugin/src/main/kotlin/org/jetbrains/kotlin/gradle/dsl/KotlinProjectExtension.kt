@@ -57,6 +57,9 @@ internal val Project.multiplatformExtension: KotlinMultiplatformExtension
 internal val Project.pm20Extension: KotlinPm20ProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinPm20ProjectExtension
 
+internal val Project.pm20ExtensionOrNull: KotlinPm20ProjectExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as? KotlinPm20ProjectExtension
+
 open class KotlinTopLevelExtension (internal val project: Project) {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)

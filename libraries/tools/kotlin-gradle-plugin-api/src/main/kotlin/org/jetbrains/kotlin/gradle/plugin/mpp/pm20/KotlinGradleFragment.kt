@@ -11,12 +11,12 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.HasKpmKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.refinesClosure
 
-interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Named {
+interface KotlinGradleFragment : KotlinModuleFragment, HasKpmKotlinDependencies, Named {
     override val kotlinSourceRoots: SourceDirectorySet
 
     override val containingModule: KotlinGradleModule

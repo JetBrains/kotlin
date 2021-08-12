@@ -46,69 +46,95 @@ class GradleKotlinDependencyGraphResolver(
     private fun resolveAsGraph(requestingModule: KotlinGradleModule): GradleDependencyGraph {
         val nodeByModuleId = mutableMapOf<KotlinModuleIdentifier, GradleDependencyGraphNode>()
 
-        fun getKotlinModuleFromComponentResult(component: ResolvedComponentResult): KotlinModule =
-            moduleResolver.resolveDependency(requestingModule, component.toModuleDependency())
-                ?: buildSyntheticPlainModule(
-                    component,
-                    component.variants.singleOrNull()?.displayName ?: "default",
-                    requestingModule.project
-                )
+        fun getKotlinModuleFromDependencyResult(resolvedDependency: ResolvedDependencyResult): KotlinModule =
+            moduleResolver.resolveDependency(requestingModule, resolvedDependency.requested.toModuleDependency())
+                ?: buildSyntheticPlainModule(resolvedDependency, resolvedDependency.resolvedVariant.displayName, requestingModule.project)
 
-        fun nodeFromModule(componentResult: ResolvedComponentResult, kotlinModule: KotlinModule): GradleDependencyGraphNode {
+        fun moduleDependenciesByFragments(
+            kotlinModule: KotlinModule,
+            gradleDependencies: Iterable<ResolvedDependencyResult>
+        ): Map<KotlinModuleFragment, List<ResolvedDependencyResult>> {
+            val dependenciesRequestedByModule =
+                kotlinModule.fragments.flatMap { fragment -> fragment.declaredModuleDependencies.map { it.moduleIdentifier } }.toSet()
+
+            val resolvedComponentDependencies = gradleDependencies
+                // This filter statement is used to only visit the dependencies of the variant(s) of the requested Kotlin module and not
+                // other variants. This prevents infinite recursion when visiting multiple Kotlin modules within one Gradle components
+                .filter { dependency -> dependency.toModuleIdentifier() in dependenciesRequestedByModule }
+                .associate { dependency -> dependency.toModuleIdentifier() to dependency }
+                .toMap()
+
+            val fragmentDependencies = kotlinModule.fragments.associateWith { it.declaredModuleDependencies }
+
+            val nodeDependenciesMap = fragmentDependencies.mapValues { (_, deps) ->
+                deps.mapNotNull { resolvedComponentDependencies[it.moduleIdentifier] }
+            }
+            return nodeDependenciesMap
+        }
+
+        fun resolveDependenciesToGraphNodes(
+            gradleDependenciesByFragment: Map<KotlinModuleFragment, Iterable<ResolvedDependencyResult>>,
+            resolveOneDependency: (ResolvedDependencyResult) -> GradleDependencyGraphNode
+        ) = gradleDependenciesByFragment.mapValues { (_, dependencies) ->
+            dependencies.map(resolveOneDependency)
+        }
+
+        fun nodeFromModule(dependency: ResolvedDependencyResult): GradleDependencyGraphNode {
+            val kotlinModule = getKotlinModuleFromDependencyResult(dependency)
             val id = kotlinModule.moduleIdentifier
             return nodeByModuleId.getOrPut(id) {
-                val metadataSourceComponent =
+                val metadataModuleDependency =
                     (kotlinModule as? ExternalImportedKotlinModule)
                         ?.takeIf { it.hasLegacyMetadataModule }
-                        ?.let { (componentResult.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected }
-                        ?: componentResult
+                        // With the legacy publishing layout, the root module will have a single dependency (available-at) on the metadata
+                        ?.let { dependency.resolvedDependencies.singleOrNull() }
 
-                val dependenciesRequestedByModule =
-                    kotlinModule.fragments.flatMap { fragment -> fragment.declaredModuleDependencies.map { it.moduleIdentifier } }.toSet()
-
-                val resolvedComponentDependencies = metadataSourceComponent.dependencies
-                    .filterIsInstance<ResolvedDependencyResult>()
-                    // This filter statement is used to only visit the dependencies of the variant(s) of the requested Kotlin module and not
-                    // other variants. This prevents infinite recursion when visiting multiple Kotlin modules within one Gradle components
-                    .filter { dependency -> dependency.requested.toModuleIdentifiers().any { it in dependenciesRequestedByModule } }
-                    .flatMap { dependency -> dependency.requested.toModuleIdentifiers().map { id -> id to dependency.selected } }
-                    .toMap()
-
-                val fragmentDependencies = kotlinModule.fragments.associateWith { it.declaredModuleDependencies }
-
-                val nodeDependenciesMap = fragmentDependencies.mapValues { (_, deps) ->
-                    deps.mapNotNull { resolvedComponentDependencies[it.moduleIdentifier] }.map {
-                        val dependencyModule = getKotlinModuleFromComponentResult(it)
-                        nodeFromModule(it, dependencyModule)
-                    }
-                }
+                val metadataSource: ResolvedDependencyResult = metadataModuleDependency ?: dependency
+                val gradleDependencyResultsByFragment = moduleDependenciesByFragments(kotlinModule, metadataSource.resolvedDependencies)
+                val edgesToDependenciesByFragment = resolveDependenciesToGraphNodes(gradleDependencyResultsByFragment, ::nodeFromModule)
 
                 GradleDependencyGraphNode(
                     kotlinModule,
-                    componentResult,
-                    metadataSourceComponent,
-                    nodeDependenciesMap
+                    edgesToDependenciesByFragment,
+                    dependency,
+                    metadataModuleDependency
                 )
             }
         }
 
-        return GradleDependencyGraph(
-            requestingModule,
-            nodeFromModule(configurationToResolve(requestingModule).incoming.resolutionResult.root, requestingModule)
-        )
+        val gradleGraphRoot = configurationToResolve(requestingModule).incoming.resolutionResult.root
+        val gradleDependenciesByRootFragment = moduleDependenciesByFragments(requestingModule, gradleGraphRoot.resolvedDependencies)
+        val allKotlinDependenciesByRootFragment = resolveDependenciesToGraphNodes(gradleDependenciesByRootFragment, ::nodeFromModule)
+        val root = GradleDependencyGraphRoot(requestingModule, allKotlinDependenciesByRootFragment)
+
+        return GradleDependencyGraph(requestingModule, root)
     }
 }
 
-class GradleDependencyGraphNode(
+/** This hierarchy of sealed classes is only needed because the root of the dependency graph is special as it does not come from a
+ * Gradle dependency. */
+sealed class AbstractGradleDependencyGraphNode(
     override val module: KotlinModule,
-    val selectedComponent: ResolvedComponentResult,
-    /** If the Kotlin module description was provided by a different component, such as with legacy publishing layout using *-metadata
-     * modules, then this property points to the other component. */
-    val metadataSourceComponent: ResolvedComponentResult?,
-    override val dependenciesByFragment: Map<KotlinModuleFragment, Iterable<GradleDependencyGraphNode>>
+    final override val dependenciesByFragment: Map<KotlinModuleFragment, Iterable<GradleDependencyGraphNode>>
 ) : DependencyGraphNode(module, dependenciesByFragment)
+
+class GradleDependencyGraphRoot(
+    module: KotlinModule,
+    dependenciesByFragment: Map<KotlinModuleFragment, Iterable<GradleDependencyGraphNode>>
+) : AbstractGradleDependencyGraphNode(
+    module, dependenciesByFragment
+)
+
+class GradleDependencyGraphNode(
+    module: KotlinModule,
+    dependenciesByFragment: Map<KotlinModuleFragment, Iterable<GradleDependencyGraphNode>>,
+    val gradleDependency: ResolvedDependencyResult,
+    /** If the PSM was provided by a different dependency, such as with legacy publishing layout using *-metadata
+     * modules, then this property points to the PSM-providing dependency. */
+    val metadataDependency: ResolvedDependencyResult?
+) : AbstractGradleDependencyGraphNode(module, dependenciesByFragment)
 
 class GradleDependencyGraph(
     override val requestingModule: KotlinGradleModule,
-    override val root: GradleDependencyGraphNode
+    override val root: AbstractGradleDependencyGraphNode
 ) : DependencyGraphResolution.DependencyGraph(requestingModule, root)

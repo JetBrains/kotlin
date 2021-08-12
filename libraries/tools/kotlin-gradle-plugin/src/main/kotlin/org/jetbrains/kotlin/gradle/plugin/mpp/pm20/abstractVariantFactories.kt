@@ -10,6 +10,7 @@ import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.makePublicIfModuleIsMadePublic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTaskNamed
@@ -52,7 +53,7 @@ abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
             fragment.sourceArchiveTaskName,
             project,
             lazy { FragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(fragment).entries.associate { it.key.fragmentName to it.value.get() } },
-            fragment.name
+            fragment.disambiguateName("")
         )
     }
 
@@ -72,11 +73,10 @@ abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
     open fun createElementsConfigurations(fragment: T) {
         project.configurations.maybeCreate(fragment.apiElementsConfigurationName).apply {
             isCanBeResolved = false
-            isCanBeConsumed = false
-            module.ifMadePublic {
-                isCanBeConsumed = true
-            }
-            setModuleCapability(this, fragment.containingModule)
+            isCanBeConsumed = true // but we don't allow this configuration to be consumed from outside, using the attribute, see below
+            makePublicIfModuleIsMadePublic(fragment.containingModule)
+
+            setGradleProjectModuleCapability(this, fragment.containingModule)
             attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(project, fragment.platformType))
             extendsFrom(project.configurations.getByName(fragment.transitiveApiConfigurationName))
             // FIXME + compileOnly
@@ -122,7 +122,7 @@ abstract class AbstractKotlinGradleVariantWithRuntimeFactory<T : KotlinGradleVar
             isCanBeConsumed = false
             module.ifMadePublic {
                 isCanBeConsumed = true
-                setModuleCapability(this, fragment.containingModule)
+                setGradleProjectModuleCapability(this, fragment.containingModule)
             }
             configureRuntimeElementsConfiguration(fragment, this@apply)
             extendsFrom(project.configurations.getByName(fragment.transitiveApiConfigurationName))
@@ -146,8 +146,16 @@ abstract class AbstractKotlinGradleRuntimePublishedVariantFactory<T : KotlinGrad
     }
 }
 
-internal fun setModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
-    if (module.moduleClassifier != null) {
-        configuration.outgoing.capability(ComputedCapability.fromModule(module))
+internal fun setGradleProjectModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
+    val capability = ComputedCapability.forProjectDependenciesOnModule(module)
+    if (capability != null) {
+        configuration.outgoing.capability(capability)
+    }
+}
+
+internal fun setGradlePublishedModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
+    val capability = ComputedCapability.forPublishedModule(module)
+    if (capability != null) {
+        configuration.outgoing.capability(capability)
     }
 }

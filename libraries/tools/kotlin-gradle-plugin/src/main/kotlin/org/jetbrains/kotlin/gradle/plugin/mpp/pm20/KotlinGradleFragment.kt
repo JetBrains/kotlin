@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.KpmKotlinDependencyHandlerImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
@@ -63,8 +65,8 @@ open class KotlinGradleFragmentInternal @Inject constructor(
         check(containingModule == other.containingModule) { "Fragments can only refine each other within one module." }
     }
 
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, project).run(configure)
+    override fun dependencies(configure: KpmKotlinDependencyHandler.() -> Unit) =
+        KpmKotlinDependencyHandlerImpl(this, project).run(configure)
 
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
@@ -87,7 +89,11 @@ open class KotlinGradleFragmentInternal @Inject constructor(
         get() = _directRefinesDependencies.map { it.get() }
 
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
-        get() = project.configurations.getByName(apiConfigurationName).allDependencies.map { it.toModuleDependency(project) } // FIXME impl
+        get() = project.configurations
+            .getByName(apiConfigurationName)
+            .allDependencies
+            .withType(ModuleDependency::class.java)
+            .map { it.toModuleDependency(project) } // FIXME impl
 
     override val kotlinSourceRoots: SourceDirectorySet =
         project.objects.sourceDirectorySet(
@@ -104,7 +110,7 @@ open class KotlinGradleFragmentInternal @Inject constructor(
 }
 
 internal fun KotlinModuleFragment.disambiguateName(simpleName: String) =
-    lowerCamelCaseName(fragmentName, containingModule.moduleIdentifier.moduleClassifier ?: KotlinGradleModule.MAIN_MODULE_NAME, simpleName)
+    lowerCamelCaseName(fragmentName, containingModule.moduleIdentifier.moduleClassifier, simpleName)
 
 val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
     get() = (this as KotlinModuleFragment).refinesClosure.map { it as KotlinGradleFragment }.toSet()
