@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.scopeForSupertype
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.DFS
 
@@ -86,7 +87,7 @@ class JavaScopeProvider(
             val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
             val superTypes =
                 if (regularClass.isThereLoopInSupertypes(useSiteSession))
-                    listOf(StandardClassIds.Any.toConeKotlinType(emptyArray(), isNullable = false))
+                    listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false))
                 else
                     lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
 
