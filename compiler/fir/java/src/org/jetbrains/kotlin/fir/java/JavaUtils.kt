@@ -309,26 +309,3 @@ private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstEx
     session.lookupTracker?.recordTypeResolveAsLookup(typeRef, source, null)
     return this
 }
-
-private fun JavaType.toFirResolvedTypeRef(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): FirResolvedTypeRef {
-    return when (this) {
-        is JavaClassifierType -> toFirResolvedTypeRef(
-            session,
-            javaTypeParameterStack,
-            isForSupertypes = false,
-            forTypeParameterBounds = false
-        )
-        is JavaPrimitiveType -> buildResolvedTypeRef {
-            type = toConeKotlinTypeWithoutEnhancement(
-                session,
-                javaTypeParameterStack,
-            )
-            this@toFirResolvedTypeRef.annotations.mapTo(annotations) { it.toFirAnnotationCall(session, javaTypeParameterStack) }
-        }
-        else -> buildResolvedTypeRef {
-            type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: ${this@toFirResolvedTypeRef}", DiagnosticKind.Java))
-        }
-    }
-}
