@@ -345,6 +345,12 @@ class FirSignatureEnhancement(
             AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS, context.defaultTypeQualifiers
         ).enhance(bound, emptyList(), FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
 
+    fun enhanceSuperType(type: FirTypeRef): FirTypeRef =
+        EnhancementSignatureParts(
+            session, typeQualifierResolver, null, isCovariant = false, forceOnlyHeadTypeConstructor = false,
+            AnnotationQualifierApplicabilityType.TYPE_USE, context.defaultTypeQualifiers
+        ).enhance(type, emptyList(), FirJavaTypeConversionMode.SUPERTYPE)
+
     // ================================================================================================
 
     private fun enhanceReceiverType(
