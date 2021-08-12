@@ -433,6 +433,7 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
     intellij "plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.tests.iml"
     intellij "plugins/gradle/intellij.gradle.tests.iml"
     intellij "plugins/maven/intellij.maven.iml"
+    intellij "jvm-run-configurations/kotlin.jvm-run-configurations.iml"
 }
 
 include ":generators:frontend-api-generator",
