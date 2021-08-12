@@ -481,8 +481,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         if (erasedAdapteeClass.isInline) {
             // Inline classes mapped to non-null reference types are a special case because they can't be boxed trivially.
             // TODO consider adding a special type annotation to force boxing on an inline class type regardless of its underlying type.
-            val underlyingAdapteeType = getInlineClassUnderlyingType(erasedAdapteeClass) as? IrSimpleType
-                ?: throw AssertionError("Underlying type for inline class should be a simple type: ${erasedAdapteeClass.render()}")
+            val underlyingAdapteeType = getInlineClassUnderlyingType(erasedAdapteeClass)
             if (!underlyingAdapteeType.hasQuestionMark && !underlyingAdapteeType.isPrimitiveType()) {
                 return TypeAdaptationConstraint.CONFLICT
             }

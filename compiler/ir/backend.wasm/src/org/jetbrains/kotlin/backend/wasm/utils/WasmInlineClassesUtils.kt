@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.ir.backend.js.InlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.utils.erase
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 
 class WasmInlineClassesUtils(private val wasmSymbols: WasmSymbols) : InlineClassesUtils {
     override fun isTypeInlined(type: IrType): Boolean {
@@ -42,4 +44,17 @@ class WasmInlineClassesUtils(private val wasmSymbols: WasmSymbols) : InlineClass
 
     override val unboxIntrinsic: IrSimpleFunctionSymbol
         get() = wasmSymbols.unboxIntrinsic
+
+    /**
+     * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.inlineClassRepresentation] because
+     * for some reason it can be called for classes which are not inline, e.g. `kotlin.Double`.
+     */
+    fun getInlineClassUnderlyingType(irClass: IrClass): IrType {
+        for (declaration in irClass.declarations) {
+            if (declaration is IrConstructor && declaration.isPrimary) {
+                return declaration.valueParameters[0].type
+            }
+        }
+        error("Class has no primary constructor: ${irClass.fqNameWhenAvailable}")
+    }
 }

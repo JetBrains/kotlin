@@ -6,18 +6,13 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 
-fun getInlineClassUnderlyingType(irClass: IrClass): IrType {
-    for (declaration in irClass.declarations) {
-        if (declaration is IrConstructor && declaration.isPrimary) {
-            return declaration.valueParameters[0].type
-        }
-    }
-    error("Inline class has no primary constructor: ${irClass.fqNameWhenAvailable}")
+fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType {
+    val representation = irClass.inlineClassRepresentation ?: error("Not an inline class: ${irClass.render()}")
+    return representation.underlyingType
 }
 
 fun getInlineClassBackingField(irClass: IrClass): IrField {
