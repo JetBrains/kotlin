@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.*
 
-open class UserVisibleIrModulesSupport(protected val externalDependenciesLoader: ExternalDependenciesLoader) {
+open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDependenciesLoader) {
     /**
      * Load external [ResolvedDependency]s provided by the build system. These dependencies:
      * - all have [ResolvedDependency.selectedVersion] specified
@@ -23,30 +23,40 @@ open class UserVisibleIrModulesSupport(protected val externalDependenciesLoader:
      *   not visible to the build system
      */
     interface ExternalDependenciesLoader {
-        fun load(): Collection<ResolvedDependency>
+        fun load(): ResolvedDependencies
 
         companion object {
             val EMPTY = object : ExternalDependenciesLoader {
-                override fun load(): Collection<ResolvedDependency> = emptyList()
+                override fun load(): ResolvedDependencies = ResolvedDependencies.EMPTY
             }
 
             fun from(externalDependenciesFile: File?, onMalformedExternalDependencies: (String) -> Unit): ExternalDependenciesLoader =
                 if (externalDependenciesFile != null)
                     object : ExternalDependenciesLoader {
-                        override fun load(): Collection<ResolvedDependency> {
+                        override fun load(): ResolvedDependencies {
                             return if (externalDependenciesFile.exists) {
                                 // Deserialize external dependencies from the [externalDependenciesFile].
                                 val externalDependenciesText = String(externalDependenciesFile.readBytes())
                                 ResolvedDependenciesSupport.deserialize(externalDependenciesText) { lineNo, line ->
                                     onMalformedExternalDependencies("Malformed external dependencies at $externalDependenciesFile:$lineNo: $line")
                                 }
-                            } else emptyList()
+                            } else ResolvedDependencies.EMPTY
                         }
                     }
                 else
                     EMPTY
         }
     }
+
+    private val externalDependencies: ResolvedDependencies by lazy {
+        externalDependenciesLoader.load()
+    }
+
+    private val externalDependencyModules: Collection<ResolvedDependency>
+        get() = externalDependencies.modules
+
+    val sourceCodeModuleId: ResolvedDependencyId
+        get() = externalDependencies.sourceCodeModuleId
 
     fun getUserVisibleModuleId(deserializer: IrModuleDeserializer): ResolvedDependencyId {
         val nameFromMetadataModuleHeader: String = deserializer.moduleFragment.name.asStringStripSpecialMarkers()
@@ -65,23 +75,30 @@ open class UserVisibleIrModulesSupport(protected val externalDependenciesLoader:
      * (and therefore are missing in [ExternalDependenciesLoader.load]) but are provided by the compiler. For Kotlin/Native such
      * libraries are stdlib, endorsed and platform libraries.
      */
-    protected open fun modulesFromDeserializers(deserializers: Collection<IrModuleDeserializer>): Map<ResolvedDependencyId, ResolvedDependency> {
-        val modules: Map<ResolvedDependencyId, ModuleWithUninitializedDependencies> = deserializers.associate { deserializer ->
+    protected open fun modulesFromDeserializers(
+        deserializers: Collection<IrModuleDeserializer>,
+        excludedModuleIds: Set<ResolvedDependencyId>
+    ): Map<ResolvedDependencyId, ResolvedDependency> {
+        val modules: Map<ResolvedDependencyId, ModuleWithUninitializedDependencies> = deserializers.mapNotNull { deserializer ->
             val moduleId = getUserVisibleModuleId(deserializer)
+            if (moduleId in excludedModuleIds) return@mapNotNull null
+
             val module = ResolvedDependency(
                 id = moduleId,
                 // TODO: support extracting all the necessary details for non-Native libs: selectedVersion, requestedVersions, artifacts
                 selectedVersion = ResolvedDependencyVersion.EMPTY,
                 // Assumption: As we don't know for sure which modules the source code module depends on directly and which modules
                 // it depends on transitively, so let's assume it depends on all modules directly.
-                requestedVersionsByIncomingDependencies = mutableMapOf(ResolvedDependencyId.SOURCE_CODE_MODULE_ID to ResolvedDependencyVersion.EMPTY),
+                requestedVersionsByIncomingDependencies = mutableMapOf(
+                    ResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID to ResolvedDependencyVersion.EMPTY
+                ),
                 artifactPaths = mutableSetOf()
             )
 
             val outgoingDependencyIds = deserializer.moduleDependencies.map { getUserVisibleModuleId(it) }
 
             moduleId to ModuleWithUninitializedDependencies(module, outgoingDependencyIds)
-        }
+        }.toMap()
 
         // Stamp dependencies.
         return modules.stampDependenciesWithRequestedVersionEqualToSelectedVersion()
@@ -91,9 +108,6 @@ open class UserVisibleIrModulesSupport(protected val externalDependenciesLoader:
      * The result of the merge of [ExternalDependenciesLoader.load] and [modulesFromDeserializers].
      */
     protected fun mergedModules(deserializers: Collection<IrModuleDeserializer>): MutableMap<ResolvedDependencyId, ResolvedDependency> {
-        // First, load external dependencies.
-        val externalDependencyModules: Collection<ResolvedDependency> = externalDependenciesLoader.load()
-
         val externalDependencyModulesByNames: Map</* unique name */ String, ResolvedDependency> =
             mutableMapOf<String, ResolvedDependency>().apply {
                 externalDependencyModules.forEach { externalDependency ->
@@ -118,7 +132,10 @@ open class UserVisibleIrModulesSupport(protected val externalDependenciesLoader:
         val providedModules = mutableListOf<ResolvedDependency>()
 
         // Next, merge external dependencies with dependencies from deserializers.
-        modulesFromDeserializers(deserializers).forEach { (moduleId, module) ->
+        modulesFromDeserializers(
+            deserializers = deserializers,
+            excludedModuleIds = setOf(sourceCodeModuleId)
+        ).forEach { (moduleId, module) ->
             val externalDependencyModule = findMatchingExternalDependencyModule(moduleId)
             if (externalDependencyModule != null) {
                 // Just add missing dependencies to the same module in [mergedModules].
@@ -146,7 +163,7 @@ open class UserVisibleIrModulesSupport(protected val externalDependenciesLoader:
                     // Just keep the module as is. If it has no incoming dependencies, then treat it as
                     // the first-level dependency module (i.e. the module that only the source code module depends on).
                     if (module.requestedVersionsByIncomingDependencies.isEmpty()) {
-                        module.requestedVersionsByIncomingDependencies[ResolvedDependencyId.SOURCE_CODE_MODULE_ID] = module.selectedVersion
+                        module.requestedVersionsByIncomingDependencies[sourceCodeModuleId] = module.selectedVersion
                     }
                 }
 

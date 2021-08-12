@@ -45,7 +45,7 @@ class ResolvedDependencyId private constructor(val uniqueNames: Set<String>) {
     }
 
     companion object {
-        val SOURCE_CODE_MODULE_ID = ResolvedDependencyId("/")
+        val DEFAULT_SOURCE_CODE_MODULE_ID = ResolvedDependencyId("/")
     }
 }
 
@@ -58,8 +58,8 @@ class ResolvedDependencyId private constructor(val uniqueNames: Set<String>) {
  * - [requestedVersionsByIncomingDependencies] the mapping between ID of the dependee module (i.e. the module that depends on this module)
  *   and the version (requested version) that the dependee module requires from this module. The requested version can be different
  *   for different dependee modules, which is absolutely legal. The [selectedVersion] is always equal to one of the requested versions
- *   (the one that wins among others, which is typically handled inside of the build system). If the module is the top-level module,
- *   then it has [ResolvedDependencyId.SOURCE_CODE_MODULE_ID] in the mapping.
+ *   (the one that wins among others, which is typically handled inside the build system). If the module is the top-level module,
+ *   then it has [ResolvedDependencies.sourceCodeModuleId] in the mapping.
  * - [artifactPaths] absolute paths to every artifact represented by this module
  */
 class ResolvedDependency(
@@ -75,14 +75,27 @@ class ResolvedDependency(
     override fun toString() = moduleIdWithVersion
 }
 
+data class ResolvedDependencies(
+    val modules: Collection<ResolvedDependency>,
+    val sourceCodeModuleId: ResolvedDependencyId
+) {
+    companion object {
+        val EMPTY = ResolvedDependencies(emptyList(), ResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID)
+    }
+}
+
 object ResolvedDependenciesSupport {
-    fun serialize(modules: Collection<ResolvedDependency>): String {
-        val moduleIdToIndex = mutableMapOf(ResolvedDependencyId.SOURCE_CODE_MODULE_ID to 0).apply {
-            modules.forEachIndexed { index, module -> this[module.id] = index + 1 }
+    fun serialize(dependencies: ResolvedDependencies): String {
+        val moduleIdToIndex = mutableMapOf(dependencies.sourceCodeModuleId to 0).apply {
+            dependencies.modules.forEachIndexed { index, module -> this[module.id] = index + 1 }
         }
 
         return buildString {
-            modules.forEach { module ->
+            append("0 ")
+            dependencies.sourceCodeModuleId.uniqueNames.joinTo(this, separator = ",")
+            append('\n')
+
+            dependencies.modules.forEach { module ->
                 val moduleIndex = moduleIdToIndex.getValue(module.id)
                 append(moduleIndex.toString()).append(' ')
                 module.id.uniqueNames.joinTo(this, separator = ",")
@@ -100,17 +113,18 @@ object ResolvedDependenciesSupport {
         }
     }
 
-    fun deserialize(source: String, onMalformedLine: (lineNo: Int, line: String) -> Unit): Collection<ResolvedDependency> {
-        val moduleIndexToId: MutableMap<Int, ResolvedDependencyId> = mutableMapOf(0 to ResolvedDependencyId.SOURCE_CODE_MODULE_ID)
+    fun deserialize(source: String, onMalformedLine: (lineNo: Int, line: String) -> Unit): ResolvedDependencies {
+        val moduleIndexToId: MutableMap<Int, ResolvedDependencyId> = mutableMapOf()
         val requestedVersionsByIncomingDependenciesIndices: MutableMap<ResolvedDependencyId, Map<Int, ResolvedDependencyVersion>> =
             mutableMapOf()
 
+        var sourceCodeModuleId: ResolvedDependencyId? = null
         val modules = mutableListOf<ResolvedDependency>()
 
         source.lines().forEachIndexed { lineNo, line ->
-            fun malformedLine(): Collection<ResolvedDependency> {
+            fun malformedLine(): ResolvedDependencies {
                 onMalformedLine(lineNo, line)
-                return emptyList()
+                return ResolvedDependencies.EMPTY
             }
 
             when {
@@ -123,7 +137,13 @@ object ResolvedDependenciesSupport {
                     else
                         return malformedLine()
                 }
+                line[0] == '0' -> {
+                    val result = SOURCE_CODE_MODULE_REGEX.matchEntire(line) ?: return malformedLine()
+                    sourceCodeModuleId = ResolvedDependencyId(result.groupValues[1].split(','))
+                }
                 else -> {
+                    if (sourceCodeModuleId == null) return malformedLine()
+
                     val result = DEPENDENCY_MODULE_REGEX.matchEntire(line) ?: return malformedLine()
                     val moduleIndex = result.groupValues[1].toInt()
                     val moduleId = ResolvedDependencyId(result.groupValues[2].split(','))
@@ -156,14 +176,18 @@ object ResolvedDependenciesSupport {
         // Stamp incoming dependencies & requested versions.
         modules.forEach { module ->
             requestedVersionsByIncomingDependenciesIndices[module.id]?.forEach { (incomingDependencyIndex, requestedVersion) ->
-                val incomingDependencyId = moduleIndexToId.getValue(incomingDependencyIndex)
+                val incomingDependencyId = if (incomingDependencyIndex == 0)
+                    sourceCodeModuleId!!
+                else
+                    moduleIndexToId.getValue(incomingDependencyIndex)
                 module.requestedVersionsByIncomingDependencies[incomingDependencyId] = requestedVersion
             }
         }
 
-        return modules
+        return ResolvedDependencies(modules, sourceCodeModuleId!!)
     }
 
+    private val SOURCE_CODE_MODULE_REGEX = Regex("^0 ([^\\[]+)$")
     private val DEPENDENCY_MODULE_REGEX = Regex("^(\\d+) ([^\\[]+)\\[([^]]+)](.*)?$")
     private val REQUESTED_VERSION_BY_INCOMING_DEPENDENCY_REGEX = Regex("^#(\\d+)\\[(.*)]$")
 }

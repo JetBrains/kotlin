@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.utils.ResolvedDependency as KResolvedDependency
 import org.jetbrains.kotlin.utils.ResolvedDependencyId as KResolvedDependencyId
+import org.jetbrains.kotlin.utils.ResolvedDependencies as KResolvedDependencies
 import org.jetbrains.kotlin.utils.ResolvedDependenciesSupport as KResolvedDependenciesSupport
 import org.jetbrains.kotlin.utils.ResolvedDependencyArtifactPath as KResolvedDependencyArtifactPath
 import org.jetbrains.kotlin.utils.ResolvedDependencyVersion as KResolvedDependencyVersion
@@ -610,7 +612,7 @@ constructor(
     override fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
         addAll(super.buildCompilerArgs())
 
-        val externalDependenciesArgs = ExternalDependenciesBuilder(project, binary).buildCompilerArgs()
+        val externalDependenciesArgs = ExternalDependenciesBuilder(project, compilation).buildCompilerArgs()
         addAll(externalDependenciesArgs)
 
         addAll(CacheBuilder(project, binary, konanTarget, externalDependenciesArgs).buildCompilerArgs())
@@ -689,12 +691,20 @@ constructor(
     }
 }
 
-private class ExternalDependenciesBuilder(val project: Project, val binary: NativeBinary) {
-    private val compilation: KotlinNativeCompilation
-        get() = binary.compilation
+private class ExternalDependenciesBuilder(
+    val project: Project,
+    val compilation: KotlinCompilation<*>,
+    intermediateLibraryName: String?
+) {
+    constructor(project: Project, compilation: KotlinNativeCompilation) : this(
+        project, compilation, compilation.compileKotlinTask.moduleName
+    )
 
     private val compileDependencyConfiguration: Configuration
         get() = project.configurations.getByName(compilation.compileDependencyConfigurationName)
+
+    private val sourceCodeModuleId: KResolvedDependencyId =
+        intermediateLibraryName?.let { KResolvedDependencyId(it) } ?: KResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID
 
     fun buildCompilerArgs(): List<String> {
         val konanVersion = Distribution(project.konanHome).compilerVersion?.let(CompilerVersion.Companion::fromString)
@@ -771,7 +781,7 @@ private class ExternalDependenciesBuilder(val project: Project, val binary: Nati
         }
 
         compileDependencyConfiguration.incoming.resolutionResult.root.dependencies.forEach { dependencyResult ->
-            processModule(dependencyResult, incomingDependencyId = KResolvedDependencyId.SOURCE_CODE_MODULE_ID)
+            processModule(dependencyResult, incomingDependencyId = sourceCodeModuleId)
         }
 
         if (moduleIdsToMerge.isEmpty())
@@ -821,6 +831,15 @@ private class ExternalDependenciesBuilder(val project: Project, val binary: Nati
         return mergedModules.values
     }
 
+    private fun writeDependenciesFile(dependencies: Collection<KResolvedDependency>, deleteOnExit: Boolean): File? {
+        if (dependencies.isEmpty()) return null
+
+        val dependenciesFile = Files.createTempFile("kotlin-native-external-dependencies", ".deps").toAbsolutePath().toFile()
+        if (deleteOnExit) dependenciesFile.deleteOnExit()
+        dependenciesFile.writeText(KResolvedDependenciesSupport.serialize(KResolvedDependencies(dependencies, sourceCodeModuleId)))
+        return dependenciesFile
+    }
+
     private val ModuleComponentIdentifier.uniqueName: String
         get() = "$group:$module"
 
@@ -828,27 +847,18 @@ private class ExternalDependenciesBuilder(val project: Project, val binary: Nati
         @Suppress("unused") // Used for tests only. Accessed via reflection.
         @JvmStatic
         fun buildExternalDependenciesFileForTests(project: Project): File? {
-            val executable = project.tasks.asSequence()
+            val compilation = project.tasks.asSequence()
                 .filterIsInstance<KotlinNativeLink>()
                 .map { it.binary }
                 .filterIsInstance<Executable>() // Not TestExecutable or any other kind of NativeBinary. Strictly Executable!
                 .firstOrNull()
+                ?.compilation
                 ?: return null
 
-            val dependencies = ExternalDependenciesBuilder(project, executable)
-                .buildDependencies()
-                .sortedBy { it.id.toString() }
-
-            return writeDependenciesFile(dependencies, deleteOnExit = false)
-        }
-
-        private fun writeDependenciesFile(dependencies: Collection<KResolvedDependency>, deleteOnExit: Boolean): File? {
-            if (dependencies.isEmpty()) return null
-
-            val dependenciesFile = Files.createTempFile("kotlin-native-external-dependencies", ".deps").toAbsolutePath().toFile()
-            if (deleteOnExit) dependenciesFile.deleteOnExit()
-            dependenciesFile.writeText(KResolvedDependenciesSupport.serialize(dependencies))
-            return dependenciesFile
+            return with(ExternalDependenciesBuilder(project, compilation)) {
+                val dependencies = buildDependencies().sortedBy { it.id.toString() }
+                writeDependenciesFile(dependencies, deleteOnExit = false)
+            }
         }
     }
 }

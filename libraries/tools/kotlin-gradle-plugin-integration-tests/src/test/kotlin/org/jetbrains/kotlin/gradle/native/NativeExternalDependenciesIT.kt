@@ -31,6 +31,7 @@ class NativeExternalDependenciesIT : BaseGradleIT() {
 
         assertEquals(
             """
+            |0 native-external-dependencies
             |1 io.ktor:ktor-io,io.ktor:ktor-io-$MASKED_TARGET_NAME[1.5.4] #0[1.5.4]
             |${'\t'}/some/path/ktor-io.klib
             |${'\t'}/some/path/ktor-io-cinterop-bits.klib
@@ -55,6 +56,7 @@ class NativeExternalDependenciesIT : BaseGradleIT() {
 
         assertEquals(
             """
+            |0 native-external-dependencies
             |1 io.ktor:ktor-io,io.ktor:ktor-io-$MASKED_TARGET_NAME[1.5.4] #0[1.5.4]
             |${'\t'}/some/path/ktor-io.klib
             |${'\t'}/some/path/ktor-io-cinterop-bits.klib

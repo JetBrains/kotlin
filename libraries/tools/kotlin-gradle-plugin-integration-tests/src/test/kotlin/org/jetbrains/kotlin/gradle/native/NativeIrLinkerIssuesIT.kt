@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.MASKED_TARGET_NAME
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findKotlinNativeTargetName
 import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findParameterInOutput
+import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
+import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.io.File
@@ -24,83 +25,15 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test
-    fun `declaration that is gone (KT-41378)`() {
-        val repo = setupLocalRepo()
-
-        buildAndPublishLibrary("native-ir-linker-issues-gone-declaration", "liba-v1.0", repo)
-        buildAndPublishLibrary("native-ir-linker-issues-gone-declaration", "liba-v2.0", repo)
-        buildAndPublishLibrary("native-ir-linker-issues-gone-declaration", "libb", repo)
-
-        buildApplicationAndFail(
-            directory = "native-ir-linker-issues-gone-declaration",
-            projectName = "app",
-            localRepo = repo
-        ) { kotlinNativeCompilerVersion ->
-            """
-            |e: Module "org.sample:libb (org.sample:libb-native)" has a reference to symbol sample.liba/C|null[0]. Neither the module itself nor its dependencies contain such declaration.
-            |
-            |This could happen if the required dependency is missing in the project. Or if there is a dependency of "org.sample:libb (org.sample:libb-native)" that has a different version in the project than the version that "org.sample:libb (org.sample:libb-native): 1.0" was initially compiled with. Please check that the project configuration is correct and has consistent versions of all required dependencies.
-            |
-            |The list of "org.sample:libb (org.sample:libb-native): 1.0" dependencies that may lead to conflicts:
-            |1. "org.sample:liba (org.sample:liba-native): 2.0" (was initially compiled with "org.sample:liba (org.sample:liba-native): 1.0")
-            |
-            |Project dependencies:
-            |├─── org.sample:liba (org.sample:liba-native): 2.0
-            |│    └─── stdlib: $kotlinNativeCompilerVersion
-            |└─── org.sample:libb (org.sample:libb-native): 1.0
-            |     ^^^ This module requires symbol sample.liba/C|null[0].
-            |     ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            |     └─── stdlib: $kotlinNativeCompilerVersion
-            |
-            |(*) - dependencies omitted (listed previously)
-            """.trimMargin()
-        }
-    }
-
-    @Test
-    fun `symbol type mismatch (KT-47285)`() {
-        val repo = setupLocalRepo()
-
-        buildAndPublishLibrary("native-ir-linker-issues-symbol-mismatch", "liba-v1.0", repo)
-        buildAndPublishLibrary("native-ir-linker-issues-symbol-mismatch", "liba-v2.0", repo)
-        buildAndPublishLibrary("native-ir-linker-issues-symbol-mismatch", "libb", repo)
-
-        buildApplicationAndFail(
-            directory = "native-ir-linker-issues-symbol-mismatch",
-            projectName = "app",
-            localRepo = repo
-        ) { kotlinNativeCompilerVersion ->
-            """
-            |e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, sample.liba/B|null[0]. IrTypeAliasSymbol is expected.
-            |
-            |This could happen if there are two libraries, where one library was compiled against the different version of the other library than the one currently used in the project. Please check that the project configuration is correct and has consistent versions of dependencies.
-            |
-            |The list of libraries that depend on "org.sample:liba (org.sample:liba-native)" and may lead to conflicts:
-            |1. "org.sample:libb (org.sample:libb-native): 1.0" (was compiled against "org.sample:liba (org.sample:liba-native): 1.0" but "org.sample:liba (org.sample:liba-native): 2.0" is used in the project)
-            |
-            |Project dependencies:
-            |├─── org.sample:liba (org.sample:liba-native): 2.0
-            |│    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |│    └─── stdlib: $kotlinNativeCompilerVersion
-            |└─── org.sample:libb (org.sample:libb-native): 1.0
-            |     ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            |     │    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |     └─── stdlib: $kotlinNativeCompilerVersion
-            |
-            |(*) - dependencies omitted (listed previously)
-            """.trimMargin()
-        }
-    }
-
-    @Test
     fun `ktor 1_5_4 and coroutines 1_5_0-RC-native-mt (KT-46697)`() {
         // Run this test only on macOS.
         assumeTrue(HostManager.hostIsMac)
 
         buildApplicationAndFail(
-            directory = null,
+            directoryPrefix = null,
             projectName = "native-ir-linker-issues-ktor-and-coroutines",
-            localRepo = null
+            localRepo = null,
+            useCache = true
         ) { kotlinNativeCompilerVersion ->
             """
             |e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, kotlinx.coroutines/CancellationException|null[0]. IrTypeAliasSymbol is expected.
@@ -173,13 +106,154 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         }
     }
 
-    private fun buildApplicationAndFail(
-        directory: String?,
-        projectName: String,
-        localRepo: File?,
+    @Test
+    fun `declaration that is gone (KT-41378) - with cache`() {
+        // Don't run it on Windows. Caches are not supported there yet.
+        assumeFalse(HostManager.hostIsMingw)
+
+        buildConflictingLibrariesAndApplication(
+            directoryPrefix = "native-ir-linker-issues-gone-declaration",
+            useCache = true
+        ) { kotlinNativeCompilerVersion ->
+            """
+            |e: Module "org.sample:libb (org.sample:libb-native)" has a reference to symbol sample.liba/C|null[0]. Neither the module itself nor its dependencies contain such declaration.
+            |
+            |This could happen if the required dependency is missing in the project. Or if there is a dependency of "org.sample:libb (org.sample:libb-native)" that has a different version in the project than the version that "org.sample:libb (org.sample:libb-native): 1.0" was initially compiled with. Please check that the project configuration is correct and has consistent versions of all required dependencies.
+            |
+            |The list of "org.sample:libb (org.sample:libb-native): 1.0" dependencies that may lead to conflicts:
+            |1. "org.sample:liba (org.sample:liba-native): 2.0" (was initially compiled with "org.sample:liba (org.sample:liba-native): 1.0")
+            |
+            |Project dependencies:
+            |├─── org.sample:liba (org.sample:liba-native): 2.0
+            |│    └─── stdlib: $kotlinNativeCompilerVersion
+            |└─── org.sample:libb (org.sample:libb-native): 1.0
+            |     ^^^ This module requires symbol sample.liba/C|null[0].
+            |     ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            |     └─── stdlib: $kotlinNativeCompilerVersion
+            |
+            |(*) - dependencies omitted (listed previously)
+            """.trimMargin()
+        }
+    }
+
+    @Test
+    fun `declaration that is gone (KT-41378) - without cache`() {
+        buildConflictingLibrariesAndApplication(
+            directoryPrefix = "native-ir-linker-issues-gone-declaration",
+            useCache = false
+        ) { kotlinNativeCompilerVersion ->
+            """
+            |e: Module "org.sample:libb (org.sample:libb-native)" has a reference to symbol sample.liba/C|null[0]. Neither the module itself nor its dependencies contain such declaration.
+            |
+            |This could happen if the required dependency is missing in the project. Or if there is a dependency of "org.sample:libb (org.sample:libb-native)" that has a different version in the project than the version that "org.sample:libb (org.sample:libb-native): 1.0" was initially compiled with. Please check that the project configuration is correct and has consistent versions of all required dependencies.
+            |
+            |The list of "org.sample:libb (org.sample:libb-native): 1.0" dependencies that may lead to conflicts:
+            |1. "org.sample:liba (org.sample:liba-native): 2.0" (was initially compiled with "org.sample:liba (org.sample:liba-native): 1.0")
+            |
+            |Project dependencies:
+            |├─── org.sample:liba (org.sample:liba-native): 2.0
+            |│    └─── stdlib: $kotlinNativeCompilerVersion
+            |├─── org.sample:libb (org.sample:libb-native): 1.0
+            |│    ^^^ This module requires symbol sample.liba/C|null[0].
+            |│    ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            |│    └─── stdlib: $kotlinNativeCompilerVersion
+            |└─── org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
+            |     └─── stdlib: $kotlinNativeCompilerVersion
+            |
+            |(*) - dependencies omitted (listed previously)
+            """.trimMargin()
+        }
+    }
+
+    @Test
+    fun `symbol type mismatch (KT-47285) - with cache`() {
+        // Don't run it on Windows. Caches are not supported there yet.
+        assumeFalse(HostManager.hostIsMingw)
+
+        buildConflictingLibrariesAndApplication(
+            directoryPrefix = "native-ir-linker-issues-symbol-mismatch",
+            useCache = true
+        ) { kotlinNativeCompilerVersion ->
+            """
+            |e: The symbol of unexpected type encountered during IR deserialization: IrClassPublicSymbolImpl, sample.liba/B|null[0]. IrTypeAliasSymbol is expected.
+            |
+            |This could happen if there are two libraries, where one library was compiled against the different version of the other library than the one currently used in the project. Please check that the project configuration is correct and has consistent versions of dependencies.
+            |
+            |The list of libraries that depend on "org.sample:liba (org.sample:liba-native)" and may lead to conflicts:
+            |1. "org.sample:libb (org.sample:libb-native): 1.0" (was compiled against "org.sample:liba (org.sample:liba-native): 1.0" but "org.sample:liba (org.sample:liba-native): 2.0" is used in the project)
+            |
+            |Project dependencies:
+            |├─── org.sample:liba (org.sample:liba-native): 2.0
+            |│    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            |│    └─── stdlib: $kotlinNativeCompilerVersion
+            |└─── org.sample:libb (org.sample:libb-native): 1.0
+            |     ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            |     │    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            |     └─── stdlib: $kotlinNativeCompilerVersion
+            |
+            |(*) - dependencies omitted (listed previously)
+            """.trimMargin()
+        }
+    }
+
+    @Test
+    fun `symbol type mismatch (KT-47285) - without cache`() {
+        buildConflictingLibrariesAndApplication(
+            directoryPrefix = "native-ir-linker-issues-symbol-mismatch",
+            useCache = false
+        ) { kotlinNativeCompilerVersion ->
+            """
+            |e: The symbol of unexpected type encountered during IR deserialization: IrTypeAliasPublicSymbolImpl, sample.liba/B|null[0]. IrClassifierSymbol is expected.
+            |
+            |This could happen if there are two libraries, where one library was compiled against the different version of the other library than the one currently used in the project. Please check that the project configuration is correct and has consistent versions of dependencies.
+            |
+            |The list of libraries that depend on "org.sample:liba (org.sample:liba-native)" and may lead to conflicts:
+            |1. "org.sample:libb (org.sample:libb-native): 1.0" (was compiled against "org.sample:liba (org.sample:liba-native): 1.0" but "org.sample:liba (org.sample:liba-native): 2.0" is used in the project)
+            |
+            |Project dependencies:
+            |├─── org.sample:liba (org.sample:liba-native): 2.0
+            |│    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            |│    └─── stdlib: $kotlinNativeCompilerVersion
+            |├─── org.sample:libb (org.sample:libb-native): 1.0
+            |│    ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            |│    │    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            |│    └─── stdlib: $kotlinNativeCompilerVersion
+            |└─── org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
+            |     └─── stdlib: $kotlinNativeCompilerVersion
+            |
+            |(*) - dependencies omitted (listed previously)
+            """.trimMargin()
+        }
+    }
+
+    private fun buildConflictingLibrariesAndApplication(
+        directoryPrefix: String,
+        useCache: Boolean,
         expectedErrorMessage: (compilerVersion: String) -> String
     ) {
-        prepareProject(directory, projectName, localRepo) {
+        val repo = setupLocalRepo()
+
+        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v1.0", localRepo = repo)
+        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v2.0", localRepo = repo)
+        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "libb", localRepo = repo)
+
+        buildApplicationAndFail(
+            directoryPrefix = directoryPrefix,
+            projectName = "app",
+            localRepo = repo,
+            useCache = useCache,
+            expectedErrorMessage = expectedErrorMessage
+        )
+    }
+
+    private fun buildApplicationAndFail(
+        directoryPrefix: String?,
+        projectName: String,
+        localRepo: File?,
+        useCache: Boolean,
+        expectedErrorMessage: (compilerVersion: String) -> String
+    ) {
+        prepareProject(directoryPrefix, projectName, localRepo, useCache) {
             build("linkDebugExecutableNative") {
                 assertFailed()
 
@@ -192,6 +266,16 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
                 val errorMessage = ERROR_LINE_REGEX.findAll(getOutputForTask("linkDebugExecutableNative"))
                     .map { matchResult -> matchResult.groupValues[1] }
                     .map { line -> line.replace(kotlinNativeTargetName, MASKED_TARGET_NAME) }
+                    .map { line ->
+                        line.replace(COMPRESSED_PLATFORM_LIBS_REGEX) { result ->
+                            val rangeWithPlatformLibrariesCount = result.groups[1]!!.range
+                            buildString {
+                                append(line.substring(0, rangeWithPlatformLibrariesCount.first))
+                                append("NNN")
+                                append(line.substring(rangeWithPlatformLibrariesCount.last + 1))
+                            }
+                        }
+                    }
                     .joinToString("\n")
 
                 assertEquals(expectedErrorMessage(kotlinNativeCompilerVersion), errorMessage)
@@ -199,8 +283,8 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         }
     }
 
-    private fun buildAndPublishLibrary(directory: String, projectName: String, localRepo: File) {
-        prepareProject(directory, projectName, localRepo) {
+    private fun buildAndPublishLibrary(directoryPrefix: String, projectName: String, localRepo: File) {
+        prepareProject(directoryPrefix, projectName, localRepo, useCache = true) {
             build("publish") {
                 assertSuccessful()
             }
@@ -208,12 +292,13 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
     }
 
     private fun prepareProject(
-        directory: String?,
+        directoryPrefix: String?,
         projectName: String,
         localRepo: File?,
+        useCache: Boolean,
         block: Project.() -> Unit
     ) {
-        with(transformNativeTestProjectWithPluginDsl(directoryPrefix = directory, projectName = projectName)) {
+        with(transformNativeTestProjectWithPluginDsl(directoryPrefix = directoryPrefix, projectName = projectName)) {
             if (localRepo != null) {
                 val localRepoUri = localRepo.absoluteFile.toURI().toString()
                 gradleBuildScript().apply {
@@ -221,12 +306,16 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
                 }
             }
 
+            gradleProperties().appendText("\nkotlin.native.cacheKind=${if (useCache) "static" else "none"}\n")
+
             block()
         }
     }
 
     private companion object {
         private val ERROR_LINE_REGEX = "(?m)^.*\\[ERROR] \\[\\S+] (.*)$".toRegex()
+        private val COMPRESSED_PLATFORM_LIBS_REGEX =
+            ".*${KONAN_PLATFORM_LIBS_NAME_PREFIX.replace(".", "\\.")}\\* \\((\\d+) libraries\\).*".toRegex()
 
         private fun setupLocalRepo(): File = Files.createTempDirectory("localRepo").toAbsolutePath().toFile()
 

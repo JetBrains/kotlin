@@ -26,13 +26,19 @@ class KonanUserVisibleIrModulesSupport(
         return compressedModules(deserializers)
     }
 
-    override fun modulesFromDeserializers(deserializers: Collection<IrModuleDeserializer>): Map<ResolvedDependencyId, ResolvedDependency> {
+    override fun modulesFromDeserializers(
+            deserializers: Collection<IrModuleDeserializer>,
+            excludedModuleIds: Set<ResolvedDependencyId>
+    ): Map<ResolvedDependencyId, ResolvedDependency> {
         val moduleToCompilerVersion: MutableMap<ResolvedDependencyId, ResolvedDependencyVersion> = mutableMapOf()
         val kotlinNativeBundledLibraries: MutableSet<ResolvedDependencyId> = mutableSetOf()
 
         // Transform deserializers to [ModuleWithUninitializedDependencies]s.
         val modules: Map<ResolvedDependencyId, ModuleWithUninitializedDependencies> = deserializers.mapNotNull { deserializer ->
             val library: KotlinLibrary = deserializer.kotlinLibrary ?: return@mapNotNull null
+
+            val moduleId = getUserVisibleModuleId(deserializer)
+            if (moduleId in excludedModuleIds) return@mapNotNull null
 
             val compilerVersion: ResolvedDependencyVersion = library.compilerVersion
             val isDefaultLibrary = library.isDefaultLibrary
@@ -41,7 +47,6 @@ class KonanUserVisibleIrModulesSupport(
             // Note: Empty string means missing (unknown) version.
             val libraryVersion: ResolvedDependencyVersion = if (isDefaultLibrary) compilerVersion else ResolvedDependencyVersion.EMPTY
 
-            val moduleId = getUserVisibleModuleId(deserializer)
             val module = ResolvedDependency(
                     id = moduleId,
                     selectedVersion = libraryVersion,
@@ -54,7 +59,9 @@ class KonanUserVisibleIrModulesSupport(
 
             // Don't rely on dependencies in IrModuleDeserializer. In Kotlin/Native each module depends on all other modules,
             // and this contradicts with the real module dependencies as written in KLIB manifest files.
-            val outgoingDependencyIds = library.unresolvedDependencies.map { it.moduleId }
+            val outgoingDependencyIds = library.unresolvedDependencies.mapNotNull { unresolvedDependency ->
+                unresolvedDependency.moduleId.takeIf { it !in excludedModuleIds }
+            }
 
             moduleId to ModuleWithUninitializedDependencies(module, outgoingDependencyIds)
         }.toMap()
@@ -87,7 +94,7 @@ class KonanUserVisibleIrModulesSupport(
 
         for ((moduleId, module) in compressedModules) {
             if (moduleId.isKonanPlatformLibrary) {
-                if (ResolvedDependencyId.SOURCE_CODE_MODULE_ID !in module.requestedVersionsByIncomingDependencies) {
+                if (sourceCodeModuleId !in module.requestedVersionsByIncomingDependencies) {
                     continue
                 }
 
@@ -116,7 +123,7 @@ class KonanUserVisibleIrModulesSupport(
             val compressedModule = ResolvedDependency(
                     id = compressedModuleId,
                     selectedVersion = platformLibrariesVersion!!,
-                    requestedVersionsByIncomingDependencies = mutableMapOf(ResolvedDependencyId.SOURCE_CODE_MODULE_ID to platformLibrariesVersion),
+                    requestedVersionsByIncomingDependencies = mutableMapOf(sourceCodeModuleId to platformLibrariesVersion),
                     artifactPaths = mutableSetOf()
             )
 

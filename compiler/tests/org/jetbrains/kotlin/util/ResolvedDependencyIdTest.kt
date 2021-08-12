@@ -47,7 +47,7 @@ class ResolvedDependencyIdTest {
 
     @Test
     fun toStringImplementation() {
-        assertEquals("/", ResolvedDependencyId.SOURCE_CODE_MODULE_ID.toString())
+        assertEquals("/", ResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID.toString())
         assertEquals("foo", ResolvedDependencyId("foo").toString())
         assertEquals("bar (foo)", ResolvedDependencyId("foo", "bar").toString())
         assertEquals("bar (baz, foo)", ResolvedDependencyId("foo", "bar", "baz").toString())
