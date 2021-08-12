@@ -29,7 +29,7 @@ fun testReturnsRawGenericInv(j: JRaw): @FlexibleNullability GenericInv<*>? {
   return j.returnsRawGenericInv()
 }
 
-fun testReturnsRawGenericIn(j: JRaw): @FlexibleNullability GenericIn<Nothing>? {
+fun testReturnsRawGenericIn(j: JRaw): @FlexibleNullability GenericIn<*>? {
   return j.returnsRawGenericIn()
 }
 
@@ -60,11 +60,11 @@ class KRaw : JRaw {
     return <this>.#<$$delegate_0>.returnsRawGenericInv()
   }
 
-  override fun takesRawGenericIn(g: @FlexibleNullability GenericIn<Nothing>?) {
+  override fun takesRawGenericIn(g: @FlexibleNullability GenericIn<*>?) {
     <this>.#<$$delegate_0>.takesRawGenericIn(g = g)
   }
 
-  override fun returnsRawGenericIn(): @FlexibleNullability GenericIn<Nothing>? {
+  override fun returnsRawGenericIn(): @FlexibleNullability GenericIn<*>? {
     return <this>.#<$$delegate_0>.returnsRawGenericIn()
   }
 
