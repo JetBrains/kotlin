@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.commonizer.tree
 
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.commonizer.mergedtree.ConstructorApproximationKey
-import org.jetbrains.kotlin.commonizer.mergedtree.FunctionApproximationKey
-import org.jetbrains.kotlin.commonizer.mergedtree.PropertyApproximationKey
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 
 data class CirTreeRoot(
-    val modules: List<CirTreeModule> = emptyList()
+    val modules: List<CirTreeModule> = emptyList(),
+    val dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
 )
 
 data class CirTreeModule(

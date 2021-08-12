@@ -23,10 +23,11 @@ internal class RootCirTreeDeserializer(
         val commonModuleInfos = targetProvider.modulesProvider.moduleInfos
             .filter { moduleInfo -> moduleInfo.name in commonModuleNames }
 
+        val dependencies = parameters.dependencyClassifiers(targetProvider.target)
+
         val typeResolver = CirTypeResolver.create(
             providedClassifiers = CirProvidedClassifiers.of(
-                CirProvidedClassifiers.by(targetProvider.modulesProvider),
-                parameters.dependencyClassifiers(targetProvider.target)
+                CirProvidedClassifiers.by(targetProvider.modulesProvider), dependencies
             )
         )
 
@@ -34,7 +35,8 @@ internal class RootCirTreeDeserializer(
             modules = commonModuleInfos.map { moduleInfo ->
                 val metadata = targetProvider.modulesProvider.loadModuleMetadata(moduleInfo.name)
                 moduleDeserializer(metadata, typeResolver)
-            }
+            },
+            dependencies = dependencies
         )
     }
 }

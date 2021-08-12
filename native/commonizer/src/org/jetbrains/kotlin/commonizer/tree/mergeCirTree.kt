@@ -24,7 +24,7 @@ internal data class TargetBuildingContext(
 internal fun mergeCirTree(
     storageManager: StorageManager, classifiers: CirKnownClassifiers, roots: TargetDependent<CirTreeRoot>
 ): CirRootNode {
-    val node = buildRootNode(storageManager, roots.size)
+    val node = buildRootNode(storageManager, classifiers.commonDependencies, roots.size)
     roots.targets.withIndex().forEach { (targetIndex, target) ->
         node.targetDeclarations[targetIndex] = CirRoot.create(target)
         node.buildModules(

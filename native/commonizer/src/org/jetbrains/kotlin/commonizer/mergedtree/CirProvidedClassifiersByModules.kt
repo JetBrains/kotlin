@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.commonizer.ModulesProvider.CInteropModuleAttributes
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers.Companion.FALLBACK_FORWARD_DECLARATION_CLASS
 import org.jetbrains.kotlin.commonizer.utils.*
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -43,15 +42,8 @@ internal class CirProvidedClassifiersByModules private constructor(
     companion object {
         fun load(modulesProvider: ModulesProvider): CirProvidedClassifiers {
             val classifiers = THashMap<CirEntityId, CirProvided.Classifier>()
-            var hasForwardDeclarations = false
 
             modulesProvider.moduleInfos.forEach { moduleInfo ->
-                moduleInfo.cInteropAttributes?.let { cInteropAttributes ->
-                    // this is a C-interop module
-                    hasForwardDeclarations = true
-                    readExportedForwardDeclarations(cInteropAttributes, classifiers::set)
-                }
-
                 val metadata = modulesProvider.loadModuleMetadata(moduleInfo.name)
                 readModule(metadata, classifiers::set)
             }
@@ -59,11 +51,19 @@ internal class CirProvidedClassifiersByModules private constructor(
             if (classifiers.isEmpty)
                 return CirProvidedClassifiers.EMPTY
 
-            return CirProvidedClassifiersByModules(hasForwardDeclarations, classifiers)
+            return CirProvidedClassifiersByModules(false, classifiers)
         }
 
-        private val FALLBACK_FORWARD_DECLARATION_CLASS =
-            CirProvided.RegularClass(emptyList(), emptyList(), Visibilities.Public, ClassKind.CLASS)
+        fun loadExportedForwardDeclarations(modulesProvider: ModulesProvider): CirProvidedClassifiers {
+            val classifiers = THashMap<CirEntityId, CirProvided.Classifier>()
+
+            modulesProvider.moduleInfos.mapNotNull { moduleInfo -> moduleInfo.cInteropAttributes }
+                .forEach { attrs -> readExportedForwardDeclarations(attrs, classifiers::set) }
+
+            if (classifiers.isEmpty) return CirProvidedClassifiers.EMPTY
+            return CirProvidedClassifiersByModules(true, classifiers)
+        }
+
     }
 }
 
@@ -84,7 +84,10 @@ private fun readExportedForwardDeclarations(
         val syntheticClassId = CirEntityId.create(syntheticPackageName, className)
         val aliasedClassId = CirEntityId.create(mainPackageName, className)
 
-        consumer(aliasedClassId, CirProvided.ExportedForwardDeclarationClass(syntheticClassId))
+        val clazz = CirProvided.ExportedForwardDeclarationClass(syntheticClassId)
+
+        consumer(syntheticClassId, clazz)
+        consumer(aliasedClassId, clazz)
     }
 }
 

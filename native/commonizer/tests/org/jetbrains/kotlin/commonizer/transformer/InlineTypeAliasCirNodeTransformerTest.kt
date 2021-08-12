@@ -71,7 +71,7 @@ class InlineTypeAliasCirNodeTransformerTest {
     }
 
     private fun setup(typeAliasPointingTo: CirEntityId): CirRootNode {
-        val root = buildRootNode(storageManager, 1)
+        val root = buildRootNode(storageManager, CirProvidedClassifiers.EMPTY, 1)
         root.modules[CirName.create("test-module")] = buildModuleNode(storageManager, 1).apply {
             packages[CirPackageName.create("under.test")] = buildPackageNode(storageManager, 2).apply {
 

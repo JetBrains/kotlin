@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.commonizer.mergedtree.*
 
 internal fun CirRootNode.assembleCirTree(): CirTreeRoot {
     return CirTreeRoot(
-        modules = modules.values.mapNotNull { it.assembleCirTree() }
+        modules = modules.values.mapNotNull { it.assembleCirTree() },
+        dependencies = dependencies
     )
 }
 

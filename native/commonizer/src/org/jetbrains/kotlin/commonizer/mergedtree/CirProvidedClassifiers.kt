@@ -26,14 +26,21 @@ interface CirProvidedClassifiers {
     private class CompositeClassifiers(val delegates: List<CirProvidedClassifiers>) : CirProvidedClassifiers {
         override fun hasClassifier(classifierId: CirEntityId) = delegates.any { it.hasClassifier(classifierId) }
         override fun classifier(classifierId: CirEntityId): CirProvided.Classifier? {
+            var fallbackReturn: CirProvided.Classifier? = null
             for (delegate in delegates) {
-                delegate.classifier(classifierId)?.let { return it }
+                delegate.classifier(classifierId)?.let { classifier ->
+                    if (classifier !== FALLBACK_FORWARD_DECLARATION_CLASS) return classifier
+                    else fallbackReturn = classifier
+                }
             }
-            return null
+            return fallbackReturn
         }
     }
 
     companion object {
+        internal val FALLBACK_FORWARD_DECLARATION_CLASS =
+            CirProvided.RegularClass(emptyList(), emptyList(), Visibilities.Public, ClassKind.CLASS)
+
         fun of(vararg delegates: CirProvidedClassifiers): CirProvidedClassifiers {
             val unwrappedDelegates: List<CirProvidedClassifiers> = delegates.fold(ArrayList()) { acc, delegate ->
                 when (delegate) {

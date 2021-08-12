@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.cir.CirRoot
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
@@ -100,7 +101,9 @@ class CommonizerQueueTest {
             deserializers = EagerTargetDependent(providedTargets) { CommonizerQueue.Deserializer { null } },
             commonizer = { inputs, output ->
                 commonizerInvocations.add(CommonizerInvocation(inputs, output))
-                CirRootNode(CommonizedGroup(0), storageManager.createNullableLazyValue { CirRoot.create(output) })
+                CirRootNode(
+                    CirProvidedClassifiers.EMPTY, CommonizedGroup(0), storageManager.createNullableLazyValue { CirRoot.create(output) }
+                )
             },
             serializer = { _, _ -> },
         )
@@ -146,7 +149,10 @@ class CommonizerQueueTest {
             ) { CommonizerQueue.Deserializer { null } },
             commonizer = { inputs, output ->
                 commonizerInvocations.add(CommonizerInvocation(inputs, output))
-                CirRootNode(CommonizedGroup(0), LockBasedStorageManager.NO_LOCKS.createNullableLazyValue { CirRoot.create(output) })
+                CirRootNode(
+                    CirProvidedClassifiers.EMPTY,
+                    CommonizedGroup(0), LockBasedStorageManager.NO_LOCKS.createNullableLazyValue { CirRoot.create(output) }
+                )
             },
             serializer = { _, _ -> },
         )
