@@ -30,8 +30,6 @@ class BlackBoxCodegenSuppressor(
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (failedAssertions.isEmpty()) return failedAssertions
-
         val suppressionChecker = testServices.codegenSuppressionChecker
         val moduleStructure = testServices.moduleStructure
         val ignoreDirective = suppressionChecker.extractIgnoreDirective(moduleStructure.modules.first()) ?: return failedAssertions
