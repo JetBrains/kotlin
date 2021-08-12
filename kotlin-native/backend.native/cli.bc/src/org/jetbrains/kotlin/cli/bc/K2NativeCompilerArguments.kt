@@ -337,6 +337,13 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var workerExceptionHandling: String? = null
 
+    @Argument(
+            value = "-Xllvm-variant",
+            valueDescription = "{dev|user}",
+            description = "Choose LLVM distribution which will be used during compilation."
+    )
+    var llvmVariant: String? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector, languageVersion).also {
                 val useExperimental = it[AnalysisFlags.useExperimental] as List<*>

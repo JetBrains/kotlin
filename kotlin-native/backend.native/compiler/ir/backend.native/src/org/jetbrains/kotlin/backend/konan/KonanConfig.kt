@@ -29,12 +29,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
-    internal val distribution = Distribution(
-            configuration.get(KonanConfigKeys.KONAN_HOME) ?: KonanHomeProvider.determineKonanHome(),
-            false,
-            configuration.get(KonanConfigKeys.RUNTIME_FILE),
-            configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)
-    )
+    internal val distribution = run {
+        val overridenProperties = mutableMapOf<String, String>().apply {
+            configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
+            configuration.get(KonanConfigKeys.LLVM_VARIANT)?.getKonanPropertiesEntry()?.let { (key, value) ->
+                put(key, value)
+            }
+        }
+
+        Distribution(
+                configuration.get(KonanConfigKeys.KONAN_HOME) ?: KonanHomeProvider.determineKonanHome(),
+                false,
+                configuration.get(KonanConfigKeys.RUNTIME_FILE),
+                overridenProperties
+        )
+    }
 
     private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))

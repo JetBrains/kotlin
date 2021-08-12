@@ -353,6 +353,20 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 })
 
                 arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
+                putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
+                    "user" -> LlvmVariant.User
+                    "dev" -> LlvmVariant.Dev
+                    null -> null
+                    else -> {
+                        val file = File(variant)
+                        if (!file.exists) {
+                            configuration.report(ERROR, "`-Xllvm-variant` should be `user`, `dev` or an absolute path. Got: $variant")
+                            null
+                        } else {
+                            LlvmVariant.Custom(file)
+                        }
+                    }
+                })
             }
         }
     }
