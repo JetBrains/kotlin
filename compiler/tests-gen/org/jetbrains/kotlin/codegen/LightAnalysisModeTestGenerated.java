@@ -2014,6 +2014,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/builtinStubMethods/inheritedImplementations.kt");
         }
 
+        @TestMetadata("int2IntMap.kt")
+        public void testInt2IntMap() throws Exception {
+            runTest("compiler/testData/codegen/box/builtinStubMethods/int2IntMap.kt");
+        }
+
         @TestMetadata("Iterator.kt")
         public void testIterator() throws Exception {
             runTest("compiler/testData/codegen/box/builtinStubMethods/Iterator.kt");

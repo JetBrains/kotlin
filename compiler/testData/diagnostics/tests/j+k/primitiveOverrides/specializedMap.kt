@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: AbstractSpecializedMap.java
 public abstract class AbstractSpecializedMap implements java.util.Map<Integer, Double> {
     public abstract double put(int x, double y);

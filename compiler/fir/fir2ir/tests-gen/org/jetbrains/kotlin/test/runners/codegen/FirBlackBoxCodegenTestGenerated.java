@@ -2391,6 +2391,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("int2IntMap.kt")
+        public void testInt2IntMap() throws Exception {
+            runTest("compiler/testData/codegen/box/builtinStubMethods/int2IntMap.kt");
+        }
+
+        @Test
         @TestMetadata("Iterator.kt")
         public void testIterator() throws Exception {
             runTest("compiler/testData/codegen/box/builtinStubMethods/Iterator.kt");

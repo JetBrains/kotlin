@@ -66,11 +66,23 @@ class JavaOverrideChecker internal constructor(
         candidateTypeRef: FirTypeRef,
         baseTypeRef: FirTypeRef,
         substitutor: ConeSubstitutor
-    ) = isEqualTypes(
-        candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
-        baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
-        substitutor
-    )
+    ): Boolean {
+        val candidateType = candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+        val baseType = baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+
+        if (candidateType.isPrimitiveInJava() != baseType.isPrimitiveInJava()) return false
+
+        return isEqualTypes(
+            candidateType,
+            baseType,
+            substitutor
+        )
+    }
+
+    private fun ConeKotlinType.isPrimitiveInJava(): Boolean = with(context) {
+        // TODO: Support enhanced type like `@NotNull Integer` that are not nullable, but still aren't primitive
+        !isNullableType() && isPrimitiveOrNullablePrimitive
+    }
 
     private fun isEqualArrayElementTypeProjections(
         candidateTypeProjection: ConeTypeProjection,
