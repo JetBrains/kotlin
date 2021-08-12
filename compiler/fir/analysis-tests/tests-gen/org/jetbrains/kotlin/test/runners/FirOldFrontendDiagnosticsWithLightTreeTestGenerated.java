@@ -28059,6 +28059,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("otherModuleInheritance.kt")
+                public void testOtherModuleInheritance() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/publicVals/otherModuleInheritance.kt");
+                }
+
+                @Test
                 @TestMetadata("protected.kt")
                 public void testProtected() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/publicVals/protected.kt");
