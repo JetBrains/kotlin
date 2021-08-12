@@ -1,4 +1,4 @@
-// JSPECIFY_STATE: warn
+// JSPECIFY_STATE: strict
 // !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // FILE: J1.java
 import org.jetbrains.annotations.Nullable;
@@ -14,4 +14,4 @@ import org.jspecify.nullness.Nullable;
 public interface J2<V extends @Nullable Object> extends J1<V> { }
 
 // FILE: kotlin.kt
-private fun J2<*>.bar() = J1.foo(this)
+private fun J2<*>.bar() = <!NEW_INFERENCE_ERROR!>J1.foo(this)<!>

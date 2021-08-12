@@ -12,20 +12,10 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
-fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
+fun FirTypeParameterBuilder.addDefaultBoundIfNecessary() {
     if (bounds.isEmpty()) {
-        val builtinTypes = moduleData.session.builtinTypes
-        val type = if (isFlexible) {
-            buildResolvedTypeRef {
-                type = ConeFlexibleType(builtinTypes.anyType.type, builtinTypes.nullableAnyType.type)
-            }
-        } else {
-            builtinTypes.nullableAnyType
-        }
-        bounds += type
+        bounds += moduleData.session.builtinTypes.nullableAnyType
     }
 }
 

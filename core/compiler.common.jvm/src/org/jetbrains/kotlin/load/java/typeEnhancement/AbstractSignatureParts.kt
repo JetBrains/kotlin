@@ -27,6 +27,9 @@ abstract class AbstractSignatureParts<Annotation : Any> {
     abstract val skipRawTypeArguments: Boolean
     abstract val typeSystem: TypeSystemContext
 
+    open val forceOnlyHeadTypeConstructor: Boolean
+        get() = false
+
     abstract val Annotation.forceWarning: Boolean
 
     abstract val KotlinTypeMarker.annotations: Iterable<Annotation>
@@ -179,7 +182,8 @@ abstract class AbstractSignatureParts<Annotation : Any> {
         // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
         // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
         // Note that `this` is flexible here, so it's equal to it's bounds
-        val onlyHeadTypeConstructor = isCovariant && overrides.any { !this@computeIndexedQualifiers.isEqual(it) }
+        val onlyHeadTypeConstructor = forceOnlyHeadTypeConstructor ||
+                (isCovariant && overrides.any { !this@computeIndexedQualifiers.isEqual(it) })
 
         val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
         val computedResult = Array(treeSize) { index ->
