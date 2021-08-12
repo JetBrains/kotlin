@@ -102,7 +102,10 @@ object ClasspathChangesComputer {
                 collectKotlinClassChanges(current, previous, incrementalJvmCache, changesCollector)
             current is JavaClassSnapshot && previous is JavaClassSnapshot ->
                 collectJavaClassChanges(current, previous, incrementalJvmCache, changesCollector)
-            else -> error("Incompatible types: ${current.javaClass.name} vs. ${previous.javaClass.name}")
+            else -> {
+                // TODO: Handle current is KotlinClassSnapshot && previous is JavaClassSnapshot, and vice versa
+                error("Incompatible types: ${current.javaClass.name} vs. ${previous.javaClass.name}")
+            }
         }
 
         workingDir.deleteRecursively()
@@ -139,7 +142,7 @@ object ClasspathChangesComputer {
         changesCollector: ChangesCollector
     ) {
         // Store previous snapshot in incrementalJvmCache, the returned ChangesCollector result is not used.
-        val previousSnapshot = (previous as PlainJavaClassSnapshot).serializedJavaClass
+        val previousSnapshot = (previous as PlainJavaClassSnapshot).serializedJavaClass // TODO Handle unsafe cast
         incrementalJvmCache.saveJavaClassProto(/* source */ null, previousSnapshot, ChangesCollector())
         incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
 

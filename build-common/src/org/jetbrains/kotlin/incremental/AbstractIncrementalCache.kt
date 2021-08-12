@@ -118,6 +118,11 @@ abstract class AbstractIncrementalCache<ClassName>(
         }
     }
 
+    /**
+     * Updates class storage based on the given class proto.
+     *
+     * The `srcFile` argument may be `null` (e.g., if we are processing .class files in jars where source files are not available).
+     */
     protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File?) {
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
         val parents = supertypes.map { nameResolver.getClassId(it.className).asSingleFqName() }

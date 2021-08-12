@@ -92,7 +92,7 @@ class NestedNonLocalClass(
      * "com/example/OuterClass", the outer name of class "com/example/OuterClassWith$Sign$NestedClassWith$Sign" is
      * "com/example/OuterClassWith$Sign").
      *
-     * Note that the outer class can be a [TopLevelClass], [NestedNonLocalClass], or [LocalClass].
+     * The outer class can be of any type ([TopLevelClass], [NestedNonLocalClass], or [LocalClass]).
      */
     val outerName: String,
 ) : NestedClass(name) {
@@ -175,10 +175,10 @@ fun computeJavaClassIds(javaClassNames: List<JavaClassName>): List<ClassId> {
                 //             }
                 //         }
                 //     }
-                // The above class will compile into class "com/example/Foo" and "com/example/Foo$1Bar" (note: there's no restriction on the
-                // part of the class name after "com/example/Foo$", it may not even contain the string "Bar").
+                // The above class will compile into class "com/example/Foo" and "com/example/Foo$1Bar" (or
+                // "com/example/Foo$SomeOtherArbitraryUniqueName which need not contain the string "Bar").
                 //
-                // Computed ClassId vs. expected ClassId:
+                // Given that class, the difference between the computed ClassId and the expected ClassId is as follows:
                 //                         Value computed below        Expected value as defined in ClassId's kdoc
                 // relativeClassName            Foo$1Bar                          Foo$someMethod$Bar
                 // classId                com.example.Foo$1Bar              com.example.Foo$someMethod$Bar

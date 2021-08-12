@@ -55,7 +55,7 @@ object JavaClassDescriptorCreator {
         ).deserializationComponentsForJava.components.moduleDescriptor
 
         return classIds.map { classId ->
-            (moduleDescriptor.findClassAcrossModuleDependencies(classId) as JavaClassDescriptor?)
+            moduleDescriptor.findClassAcrossModuleDependencies(classId) as? JavaClassDescriptor
                 ?: error("Failed to create JavaClassDescriptor for class '$classId'")
         }
     }
@@ -70,28 +70,45 @@ private fun createBinaryJavaClass(classId: ClassId, classContents: ByteArray): B
         null // TODO: Implement this?
     }
 
-    // Instantiating BinaryJavaClass directly from the Gradle daemon (not the Kotlin daemon) would fail with NoSuchMethodError as one of the
-    // parameter types is shaded in kotlin-compiler-embeddable.jar (com.intellij.openapi.vfs.VirtualFile is shaded as
-    // org.jetbrains.kotlin.com.intellij.openapi.vfs.VirtualFile), so we have to use reflection here.
-    val binaryJavaClass = BinaryJavaClass::class.java
-    val constructor = binaryJavaClass.constructors.sortedBy { it.parameters.size }[0]
-    return constructor.newInstance(
-        /* virtualFile */ null,
-        /* fqName */ classId.asSingleFqName(),
-        /* context */ context,
-        /* signatureParser */ BinaryClassSignatureParser(),
-        /* access */ 0,
-        /* outerClass */ outerClass,
-        /* classContent */ classContents,
-        /* innerClassFinder */ innerClassFinder
-    ) as BinaryJavaClass
+    return try {
+        BinaryJavaClass(
+            virtualFile = null,
+            fqName = classId.asSingleFqName(),
+            context = context,
+            signatureParser = BinaryClassSignatureParser(),
+            access = 0,
+            outerClass = outerClass,
+            classContent = classContents,
+            innerClassFinder = innerClassFinder
+        )
+    } catch (e: NoSuchMethodError) {
+        // When running unit tests, the above call currently fails as JavaClassDescriptorCreator and BinaryJavaClass are located in
+        // different jars (kotlin-build-common.jar and kotlin-compiler-embeddable.jar), and in the second jar, `com.intellij.*` classes are
+        // repackaged as `org.jetbrains.kotlin.com.intellij.*`. The `virtualFile` argument above (even though it is null) has type
+        // `com.intellij.openapi.vfs.VirtualFile`, which has been repackaged, so the method signatures won't match at run time.
+        // In integrations tests or regular builds, JavaClassDescriptorCreator and BinaryJavaClass are both located in
+        // kotlin-compiler-embeddable.jar with all references renamed together, so there are no issues.
+        // We use reflection here as a workaround for unit tests.
+        val binaryJavaClass = BinaryJavaClass::class.java
+        val constructor = binaryJavaClass.constructors.sortedBy { it.parameters.size }[0]
+        return constructor.newInstance(
+            /* virtualFile */ null,
+            /* fqName */ classId.asSingleFqName(),
+            /* context */ context,
+            /* signatureParser */ BinaryClassSignatureParser(),
+            /* access */ 0,
+            /* outerClass */ outerClass,
+            /* classContent */ classContents,
+            /* innerClassFinder */ innerClassFinder
+        ) as BinaryJavaClass
+    }
 }
 
 /**
  * [JavaClassFinder] that returns results based on the given [BinaryJavaClass] list.
  *
  * Note that some returned results are fake/empty (similar to ReflectJavaClassFinder).
- * TODO: Revise and see if there are any correct issues.
+ * TODO: Revise and see if there are any correctness issues.
  */
 private class BinaryJavaClassFinder(binaryJavaClasses: List<BinaryJavaClass>) : JavaClassFinder {
 
@@ -157,7 +174,7 @@ private object ThrowImmediatelyErrorReporter : ErrorReporter {
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: MutableList<String>) {
         // BinaryJavaClassFinder doesn't have the whole classpath so it is unable to resolve classes such as java.lang.Object.
         // Ignore this error for now.
-        // FIXME: Revisit later to see how we can address this.
+        // TODO: Revisit later to see how we can address this or if we can safely ignore this error.
     }
 
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
@@ -179,17 +196,27 @@ private object NoSourceJavaSourceElementFactory : JavaSourceElementFactory {
 fun JavaClassDescriptor.toSerializedJavaClass(): SerializedJavaClass {
     val extension = JavaClassesSerializerExtension()
 
-    // Calling DescriptorSerializer.create() directly from the Gradle daemon (not the Kotlin daemon) would fail with NoSuchMethodError as
-    // one of the parameter types is shaded in kotlin-compiler-embeddable.jar (com.intellij.openapi.project.Project is shaded as
-    // org.jetbrains.kotlin.com.intellij.openapi.project.Project), so we have to use reflection here.
-    val createMethod = DescriptorSerializer::class.java.methods.single { it.name == "create" }
-    val descriptorSerializer = createMethod.invoke(
-        /* static method */ null,
-        /* descriptor */ this,
-        /* extension */ extension,
-        /* parentSerializer */ null,
-        /* project */ null
-    ) as DescriptorSerializer
+    val descriptorSerializer = try {
+        DescriptorSerializer.create(
+            descriptor = this,
+            extension = extension,
+            parentSerializer = null,
+            project = null
+        )
+    } catch (e: NoSuchMethodError) {
+        // When running unit tests, the above call currently fails as the `project` argument above has type
+        // `com.intellij.openapi.project.Project`, which is repackaged as `org.jetbrains.kotlin.com.intellij.openapi.project.Project` in
+        // kotlin-compiler-embeddable.jar (see the comment at the createBinaryJavaClass method for more context).
+        // We use reflection here as a workaround for unit tests.
+        val createMethod = DescriptorSerializer::class.java.methods.single { it.name == "create" }
+        createMethod.invoke(
+            /* static method */ null,
+            /* descriptor */ this,
+            /* extension */ extension,
+            /* parentSerializer */ null,
+            /* project */ null
+        ) as DescriptorSerializer
+    }
 
     val classProto = descriptorSerializer.classProto(this).build()
     val (stringTable, qualifiedNameTable) = extension.stringTable.buildProto()

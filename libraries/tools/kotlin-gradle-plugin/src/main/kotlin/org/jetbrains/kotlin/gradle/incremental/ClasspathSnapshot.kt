@@ -48,12 +48,18 @@ class PlainJavaClassSnapshot(
 ) : JavaClassSnapshot()
 
 /**
- * [JavaClassSnapshot] of a Java class where there is nothing to capture (e.g., the snapshot of a local class is empty as a local class
- * can't be compiled against and any changes in a local class will not cause recompilation of other classes).
+ * [JavaClassSnapshot] of a Java class where there is nothing to capture.
+ *
+ * For example, the snapshot of a local class is empty as a local class can't be referenced from other source files and therefore any
+ * changes in a local class will not cause recompilation of other source files.
  */
 object EmptyJavaClassSnapshot : JavaClassSnapshot()
 
-/** [JavaClassSnapshot] of a Java class where a [PlainJavaClassSnapshot] can't be computed. */
+/**
+ * [JavaClassSnapshot] of a Java class where a [PlainJavaClassSnapshot] can't be computed.
+ *
+ * TODO: Remove later if it's unused.
+ */
 class FallBackJavaClassSnapshot(
     /** The hash of the class contents. */
     val contentHash: ByteArray

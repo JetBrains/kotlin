@@ -80,26 +80,24 @@ object ClassSnapshotter {
         val classNames = classesContents.map { JavaClassName.compute(it) }
         val classIds = computeJavaClassIds(classNames)
 
-        // Snapshot special cases first (map a class index to its snapshot, or `null` if it will be created in the next round)
+        // Snapshot special cases first
+        // Map a class index to its snapshot, or `null` if it will be created later
         val specialCaseSnapshots: Map<Int, JavaClassSnapshot?> = classFiles.indices.associateWith { index ->
             val className = classNames[index]
             val classId = classIds[index]
             if (classId.isLocal) {
-                // A local class can't be compiled against, so any changes in a local class will not cause recompilation of other classes.
-                // Note that in this context, a nested class of a local class is also considered local (see ClassId's kdoc). Therefore, we
-                // checked `classId.isLocal` instead of `className is LocalClass`.
+                // A local class can't be referenced from other source files, so any changes in a local class will not cause recompilation
+                // of other source files. Therefore, the snapshot of a local class is empty.
+                // In that regard, a nested class of a local class is also considered local (which matches the definition of
+                // ClassId.isLocal, see ClassId's kdoc). Therefore, we checked `classId.isLocal`, which is a super set of `className is
+                // LocalClass`.
+                EmptyJavaClassSnapshot
+            } else if (className is NestedNonLocalClass && className.simpleName.toIntOrNull() != null) {
+                // A nested class whose simple name is a number also can't be referenced from other source files (whether it is an anonymous
+                // class or not, see NestedNonLocalClass.isPossiblyAnonymous). Therefore, the snapshot of this type of class is also empty.
                 EmptyJavaClassSnapshot
             } else {
-                when (className) {
-                    is TopLevelClass -> null
-                    is NestedNonLocalClass -> {
-                        if (className.isPossiblyAnonymous) {
-                            // TODO: Currently BinaryJavaClass is not able to handle anonymous classes, fix this later.
-                            FallBackJavaClassSnapshot(classesContents[index])
-                        } else null
-                    }
-                    is LocalClass -> error("ClassId '$classId' is not local, but JavaClassName '${className.name} is a LocalClass")
-                }
+                null
             }
         }
 
