@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.toConeKotlinTypeWithoutEnhancement
+import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -41,21 +42,14 @@ internal class EnhancementSignatureParts(
         predefined: TypeEnhancementInfo? = null,
         forAnnotationMember: Boolean = false
     ): FirResolvedTypeRef {
-        val typeWithoutEnhancement = current.type
-            .toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationMember)
+        val mode = if (forAnnotationMember) FirJavaTypeConversionMode.ANNOTATION_MEMBER else FirJavaTypeConversionMode.DEFAULT
+        val typeWithoutEnhancement = current.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, mode)
         val qualifiers = computeIndexedQualifiersForOverride(typeWithoutEnhancement, predefined)
         return buildResolvedTypeRef {
             type = typeWithoutEnhancement.enhance(session, qualifiers) ?: typeWithoutEnhancement
             annotations += current.annotations
         }
     }
-
-    private fun FirTypeRef.toConeKotlinType(session: FirSession): ConeKotlinType? =
-        when (this) {
-            is FirResolvedTypeRef -> type
-            is FirJavaTypeRef -> type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
-            else -> null
-        }
 
     private fun ConeKotlinType?.toIndexed(context: FirJavaEnhancementContext): List<TypeAndDefaultQualifiers> {
         val list = ArrayList<TypeAndDefaultQualifiers>(1)
@@ -126,7 +120,8 @@ internal class EnhancementSignatureParts(
     }
 
     private fun computeIndexedQualifiersForOverride(current: ConeKotlinType?, predefined: TypeEnhancementInfo?): IndexedJavaTypeQualifiers {
-        val indexedFromSupertypes = fromOverridden.map { it.toConeKotlinType(context.session).toIndexed(context) }
+        val indexedFromSupertypes =
+            fromOverridden.map { it.toConeKotlinTypeProbablyFlexible(context.session, javaTypeParameterStack).toIndexed(context) }
         val indexedThisType = current.toIndexed(context)
 
         // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which

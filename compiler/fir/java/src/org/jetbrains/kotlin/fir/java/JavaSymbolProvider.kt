@@ -127,12 +127,7 @@ class JavaSymbolProvider(
         stack: JavaTypeParameterStack
     ) {
         for (upperBound in javaTypeParameter.upperBounds) {
-            bounds += upperBound.toFirResolvedTypeRef(
-                this@JavaSymbolProvider.session,
-                stack,
-                isForSupertypes = false,
-                forTypeParameterBounds = true
-            )
+            bounds += upperBound.toFirResolvedTypeRef(session, stack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
         }
         addDefaultBoundIfNecessary(isFlexible = true)
     }
@@ -226,7 +221,7 @@ class JavaSymbolProvider(
     ) {
         replaceSuperTypeRefs(
             javaClass.supertypes.map { supertype ->
-                supertype.toFirResolvedTypeRef(session, javaTypeParameterStack, isForSupertypes = true, forTypeParameterBounds = false)
+                supertype.toFirResolvedTypeRef(session, javaTypeParameterStack, FirJavaTypeConversionMode.SUPERTYPE)
             }
         )
     }

@@ -309,17 +309,3 @@ private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstEx
     session.lookupTracker?.recordTypeResolveAsLookup(typeRef, source, null)
     return this
 }
-
-private fun JavaType.toFirResolvedTypeRef(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): FirResolvedTypeRef {
-    if (this is JavaClassifierType) return toFirResolvedTypeRef(
-        session,
-        javaTypeParameterStack,
-        isForSupertypes = false,
-        forTypeParameterBounds = false
-    )
-    return buildResolvedTypeRef {
-        type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this", DiagnosticKind.Java))
-    }
-}
