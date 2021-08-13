@@ -21,6 +21,7 @@ excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN add_profil         
 		    in6addr_linklocal_allv2routers                                  \
 		    pfctlinput regwnexec_l res_send_setqhook res_send_setrhook      \
 		    unwhiteout zopen profil openat acl_valid_link_np uuid_generate_early_random setgrfile
+excludedFunctions.macos_arm64 = getdirentries longjmperror
 linkerOpts = -ldl -lresolv
 
 ---

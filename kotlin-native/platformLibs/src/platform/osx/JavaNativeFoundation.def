@@ -1,7 +1,8 @@
-depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+depends = CFNetwork CoreFoundation CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
 language = Objective-C
 package = platform.JavaNativeFoundation
 
-modules = JavaNativeFoundation
-compilerOpts = -framework JavaNativeFoundation
-linkerOpts = -framework JavaNativeFoundation
+modules.macos_x64 = JavaNativeFoundation
+compilerOpts.macos_x64 = -framework JavaNativeFoundation
+linkerOpts.macos_x64 = -framework JavaNativeFoundation
+
