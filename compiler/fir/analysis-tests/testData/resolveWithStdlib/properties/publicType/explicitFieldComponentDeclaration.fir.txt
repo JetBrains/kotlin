@@ -40,7 +40,13 @@ FILE: explicitFieldComponentDeclaration.kt
                 ^ this@R|/A|.F|/A.p|
             }
 
+        public final fun test(): R|kotlin/Int| {
+            ^test this@R|/A|.R|/A.it|.R|kotlin/Int.plus|(Int(3))
+        }
+
     }
     public final fun test(): R|kotlin/Unit| {
         lval b: R|kotlin/Int| = R|/A.A|().R|/A.p|.R|kotlin/Int.plus|(Int(2))
+        lval c: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.it|.<Unresolved name: plus>#(Int(1))
+        lval d: R|kotlin/Unit| = R|/test|()
     }
