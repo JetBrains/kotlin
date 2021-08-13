@@ -80,9 +80,6 @@ class FirSyntheticProperty(
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
-    // ???
-    override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
-
     override val initializerAndAccessorsAreResolved: Boolean
         get() = true
 

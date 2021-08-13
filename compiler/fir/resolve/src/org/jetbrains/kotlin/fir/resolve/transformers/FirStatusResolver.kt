@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -58,6 +59,7 @@ class FirStatusResolver(
             is FirTypeAlias -> resolveStatus(declaration, containingClass, isLocal)
             is FirConstructor -> resolveStatus(declaration, containingClass, isLocal)
             is FirField -> resolveStatus(declaration, containingClass, isLocal)
+            is FirBackingField -> resolveStatus(declaration, containingClass, isLocal)
             else -> error("Unsupported declaration type: ${declaration.render()}")
         }
     }
@@ -130,6 +132,14 @@ class FirStatusResolver(
 
     fun resolveStatus(field: FirField, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
         return resolveStatus(field, field.status, containingClass, null, isLocal) { emptyList() }
+    }
+
+    fun resolveStatus(
+        backingField: FirBackingField,
+        containingClass: FirClass?,
+        isLocal: Boolean
+    ): FirResolvedDeclarationStatus {
+        return resolveStatus(backingField, backingField.status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(enumEntry: FirEnumEntry, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {

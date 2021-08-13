@@ -164,7 +164,7 @@ internal fun checkPropertyInitializer(
                 !isExpect &&
                 !isInitialized &&
                 !isExternal &&
-                property.backingField == null
+                !property.hasExplicitBackingField
             ) {
                 if (property.receiverTypeRef != null && !property.hasAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)

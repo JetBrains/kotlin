@@ -65,6 +65,12 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val containingDeclarations = callInfo.containingDeclarations
         val session = callInfo.session
 
+        // We won't resolve into the backing field
+        // in the first place, if it's not accessible.
+        if (declaration is FirBackingField) {
+            return true
+        }
+
         return isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
     }
 

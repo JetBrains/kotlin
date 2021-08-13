@@ -197,7 +197,12 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             source: FirSourceElement,
             context: CheckerContext
         ) {
-            if (calledDeclaration == null) return
+            if (
+                calledDeclaration == null ||
+                calledDeclaration.callableId.callableName == NAME_FOR_BACKING_FIELD
+            ) {
+                return
+            }
             val recordedEffectiveVisibility = calledDeclaration.publishedApiEffectiveVisibility ?: calledDeclaration.effectiveVisibility
             val calledFunEffectiveVisibility = recordedEffectiveVisibility.let {
                 if (it == EffectiveVisibility.Local) {

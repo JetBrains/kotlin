@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
@@ -514,7 +516,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Property -----------------------------------
 
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
-        if (property.initializer == null && property.delegate == null && property.backingField == null) return null
+        if (property.initializer == null && property.delegate == null && !property.hasExplicitBackingField) return null
 
         val graph = ControlFlowGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer)
         pushGraph(graph, Mode.PropertyInitializer)
@@ -532,7 +534,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
-        if (property.initializer == null && property.delegate == null && property.backingField == null) return null
+        if (property.initializer == null && property.delegate == null && !property.hasExplicitBackingField) return null
         val exitNode = exitTargetsForTry.pop() as PropertyInitializerExitNode
         popAndAddEdge(exitNode)
         val graph = popGraph()

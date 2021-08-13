@@ -48,8 +48,14 @@ class FirLocalScope private constructor(
     }
 
     fun storeBackingField(property: FirProperty): FirLocalScope {
+        val enhancedProperties = property.backingField?.symbol?.let {
+            properties.put(NAME_FOR_BACKING_FIELD, it)
+        }
+
         return FirLocalScope(
-            properties.put(NAME_FOR_BACKING_FIELD, property.backingFieldSymbol), functions, classes
+            enhancedProperties ?: properties,
+            functions,
+            classes
         )
     }
 

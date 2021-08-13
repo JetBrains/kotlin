@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
@@ -17,6 +18,10 @@ import org.jetbrains.kotlin.fir.types.isSubtypeOf
 object FirPropertyFieldTypeChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val backingField = declaration.backingField ?: return
+
+        if (!declaration.hasExplicitBackingField) {
+            return
+        }
 
         val typeCheckerContext = context.session.typeContext.newBaseTypeCheckerContext(
             errorTypesEqualToAnything = false,

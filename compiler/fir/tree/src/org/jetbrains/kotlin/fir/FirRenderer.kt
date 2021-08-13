@@ -1074,7 +1074,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {
         print("F|")
-        print(backingFieldReference.resolvedSymbol.callableId)
+        print(backingFieldReference.resolvedSymbol.fir.propertySymbol.callableId)
         print("|")
     }
 

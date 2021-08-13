@@ -267,11 +267,14 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildBackingFieldSymbol(fir: FirBackingFieldSymbol): KtFirBackingFieldSymbol {
-            return backingFieldCache.cache(fir) { KtFirBackingFieldSymbol(fir.fir, resolveState, token, this@KtSymbolByFirBuilder) }
+            return backingFieldCache.cache(fir) {
+                KtFirBackingFieldSymbol(fir.fir.propertySymbol.fir, resolveState, token, this@KtSymbolByFirBuilder)
+            }
         }
 
         fun buildBackingFieldSymbolByProperty(fir: FirProperty): KtFirBackingFieldSymbol {
-            val backingFieldSymbol = fir.backingFieldSymbol
+            val backingFieldSymbol = fir.backingField?.symbol
+                ?: error("FirProperty backingField is null")
             return buildBackingFieldSymbol(backingFieldSymbol)
         }
 
