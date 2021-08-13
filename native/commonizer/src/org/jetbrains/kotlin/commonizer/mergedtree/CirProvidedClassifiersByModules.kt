@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.Variance
 
-internal class CirProvidedClassifiersByModules private constructor(
+internal class CirProvidedClassifiersByModules internal constructor(
     private val hasForwardDeclarations: Boolean,
     private val classifiers: Map<CirEntityId, CirProvided.Classifier>,
 ) : CirProvidedClassifiers {
@@ -33,11 +33,8 @@ internal class CirProvidedClassifiersByModules private constructor(
         }
 
     override fun classifier(classifierId: CirEntityId) =
-        if (classifierId.packageName.isUnderKotlinNativeSyntheticPackages) {
-            if (hasForwardDeclarations) FALLBACK_FORWARD_DECLARATION_CLASS else null
-        } else {
-            classifiers[classifierId]
-        }
+        classifiers[classifierId] ?: if (hasForwardDeclarations && classifierId.packageName.isUnderKotlinNativeSyntheticPackages)
+            FALLBACK_FORWARD_DECLARATION_CLASS else null
 
     companion object {
         fun load(modulesProvider: ModulesProvider): CirProvidedClassifiers {

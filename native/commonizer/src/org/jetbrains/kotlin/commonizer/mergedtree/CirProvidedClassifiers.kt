@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.mergedtree.ArtificialSupertypes.artificialSupertypes
+import org.jetbrains.kotlin.commonizer.utils.CNAMES_STRUCTS_PACKAGE
+import org.jetbrains.kotlin.commonizer.utils.OBJCNAMES_CLASSES_PACKAGE
+import org.jetbrains.kotlin.commonizer.utils.OBJCNAMES_PROTOCOLS_PACKAGE
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -88,8 +92,7 @@ object CirProvided {
 
         override val typeParameters: List<TypeParameter> get() = emptyList()
         override val visibility: Visibility get() = Visibilities.Public
-        override val supertypes: List<Type>
-            get() = emptyList() // TODO!!
+        override val supertypes: List<Type> = syntheticClassId.artificialSupertypes()
     }
 
     data class TypeAlias(
@@ -129,3 +132,28 @@ object CirProvided {
     data class RegularTypeProjection(val variance: Variance, val type: Type) : TypeProjection
 }
 
+/**
+ * Analog to "KlibResolvedModuleDescriptorsFactoryImpl.createForwardDeclarationsModule" which also
+ * automatically assumes relevant supertypes for forward declarations based upon the package they are in.
+ */
+private object ArtificialSupertypes {
+    private fun createType(classId: String): CirProvided.ClassType {
+        return CirProvided.ClassType(
+            classId = CirEntityId.create(classId),
+            outerType = null, arguments = emptyList(), isMarkedNullable = false
+        )
+    }
+
+    private val cOpaqueType = listOf(createType("kotlinx/cinterop/COpaque"))
+    private val objcObjectBase = listOf(createType("kotlinx/cinterop/ObjCObjectBase"))
+    private val objcCObject = listOf(createType("kotlinx/cinterop/ObjCObject"))
+
+    fun CirEntityId.artificialSupertypes(): List<CirProvided.Type> {
+        return when (packageName) {
+            CNAMES_STRUCTS_PACKAGE -> cOpaqueType
+            OBJCNAMES_CLASSES_PACKAGE -> objcObjectBase
+            OBJCNAMES_PROTOCOLS_PACKAGE -> objcCObject
+            else -> emptyList()
+        }
+    }
+}

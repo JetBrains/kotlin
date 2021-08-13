@@ -1,123 +1,202 @@
 package org.jetbrains.kotlin.commonizer.transformer
 
+import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.TargetDependent
-import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.cir.CirClassType
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.CirName
+import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.commonizer.mapValue
 import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
+import org.jetbrains.kotlin.commonizer.tree.mergeCirTree
+import org.jetbrains.kotlin.commonizer.utils.InlineSourceBuilder
+import org.jetbrains.kotlin.commonizer.utils.KtInlineSourceCommonizerTestCase
+import org.jetbrains.kotlin.commonizer.utils.createCirTree
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
-class InlineTypeAliasCirNodeTransformerTest {
+class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase() {
 
-    private val storageManager = LockBasedStorageManager("test")
+    fun `test inlining typealias to common dependencies`() {
 
-    private val classifiers = CirKnownClassifiers(
-        classifierIndices = TargetDependent.empty(),
-        targetDependencies = TargetDependent.empty(),
-        commonizedNodes = CirCommonizedClassifierNodes.default(),
-        commonDependencies = CirProvidedClassifiers.EMPTY
-    )
-
-    @Test
-    fun `test artificial supertypes - regular package`() {
-        val root = setup(CirEntityId.create("regular/package/__X"))
-        InlineTypeAliasCirNodeTransformer(storageManager, classifiers).invoke(root)
-        val artificialXClass = root.assertInlinedXClass
-        assertEquals(
-            emptyList(), artificialXClass.supertypes,
-            "Expected no artificial supertype for artificial class X"
-        )
-    }
-
-    @Test
-    fun `test artificial supertypes - cnames structs`() {
-        val root = setup(CirEntityId.create("cnames/structs/__X"))
-        InlineTypeAliasCirNodeTransformer(storageManager, classifiers).invoke(root)
-        val artificialXClass = root.assertInlinedXClass
-
-        assertEquals(
-            setOf(CirEntityId.create("kotlinx/cinterop/COpaque")),
-            artificialXClass.supertypes.map { it as CirClassType }.map { it.classifierId }.toSet(),
-            "Expected 'COpaque' supertype being attached automatically"
-        )
-    }
-
-    @Test
-    fun `test artificial supertypes - objcnames classes`() {
-        val root = setup(CirEntityId.create("objcnames/classes/__X"))
-        InlineTypeAliasCirNodeTransformer(storageManager, classifiers).invoke(root)
-        val artificialXClass = root.assertInlinedXClass
-
-        assertEquals(
-            setOf(CirEntityId.create("kotlinx/cinterop/ObjCObjectBase")),
-            artificialXClass.supertypes.map { it as CirClassType }.map { it.classifierId }.toSet(),
-            "Expected 'ObjCObjectBase' supertype being attached automatically"
-        )
-    }
-
-    @Test
-    fun `test artificial supertypes - objcnames protocols`() {
-        val root = setup(CirEntityId.create("objcnames/protocols/__X"))
-        InlineTypeAliasCirNodeTransformer(storageManager, classifiers).invoke(root)
-        val artificialXClass = root.assertInlinedXClass
-
-        assertEquals(
-            setOf(CirEntityId.create("kotlinx/cinterop/ObjCObject")),
-            artificialXClass.supertypes.map { it as CirClassType }.map { it.classifierId }.toSet(),
-            "Expected 'ObjCObject' supertype being attached automatically"
-        )
-    }
-
-    private fun setup(typeAliasPointingTo: CirEntityId): CirRootNode {
-        val root = buildRootNode(storageManager, CirProvidedClassifiers.EMPTY, 1)
-        root.modules[CirName.create("test-module")] = buildModuleNode(storageManager, 1).apply {
-            packages[CirPackageName.create("under.test")] = buildPackageNode(storageManager, 2).apply {
-
-                typeAliases[CirName.create("X")] = buildTypeAliasNode(
-                    storageManager, 2, classifiers, CirEntityId.create("under/test/X")
-                ).apply {
-                    val underlyingType = CirClassType.createInterned(
-                        classId = typeAliasPointingTo,
-                        outerType = null, visibility = Visibilities.Public,
-                        arguments = emptyList(), isMarkedNullable = false
-                    )
-                    targetDeclarations[0] = CirTypeAlias.create(
-                        annotations = emptyList(),
-                        name = CirName.create("X"),
-                        typeParameters = emptyList(),
-                        visibility = Visibilities.Public,
-                        underlyingType = underlyingType,
-                        expandedType = underlyingType
-                    )
-                }
-
-                classes[CirName.create("X")] = buildClassNode(
-                    storageManager, 2, classifiers, null, CirEntityId.create("under/test/X")
-                ).apply {
-                    targetDeclarations[1] = CirClass.create(
-                        name = CirName.create("X"), typeParameters = emptyList(),
-                        supertypes = emptyList(), visibility = Visibilities.Public,
-                        companion = null, isCompanion = false, isData = false, isExternal = false,
-                        isInner = false, isValue = false, kind = ClassKind.CLASS,
-                        modality = Modality.FINAL, annotations = emptyList(),
-                    )
-                }
-            }
+        fun InlineSourceBuilder.ModuleBuilder.withDependencies() = dependency {
+            source(
+                """
+                package dep
+                class ClassA
+                class ClassB: ClassA()
+                """.trimIndent()
+            )
         }
 
-        return root
+        val targetARoot = CirTreeRoot(
+            modules = listOf(
+                createCirTree {
+                    withDependencies()
+                    source(
+                        """
+                       package pkg
+                       import dep.*
+                       class X : ClassA()
+                    """.trimIndent()
+                    )
+                }
+            )
+        )
+
+        val targetBRoot = CirTreeRoot(
+            modules = listOf(
+                createCirTree {
+                    withDependencies()
+                    source(
+                        """
+                        package pkg
+                        import dep.*
+                        typealias X = ClassB
+                    """.trimIndent()
+                    )
+                }
+            )
+        )
+
+        val roots = TargetDependent(
+            LeafCommonizerTarget("a") to targetARoot,
+            LeafCommonizerTarget("b") to targetBRoot
+        )
+
+        val classifiers = CirKnownClassifiers(
+            classifierIndices = roots.mapValue(::CirClassifierIndex),
+            targetDependencies = roots.mapValue(CirTreeRoot::dependencies),
+            commonizedNodes = CirCommonizedClassifierNodes.default(),
+            commonDependencies = CirProvidedClassifiersByModules(
+                true, mapOf(
+                    CirEntityId.create("dep/ClassA") to CirProvided.RegularClass(
+                        typeParameters = emptyList(),
+                        kind = ClassKind.CLASS,
+                        visibility = Visibilities.Public,
+                        supertypes = emptyList()
+                    ),
+                    CirEntityId.create("dep/ClassB") to CirProvided.RegularClass(
+                        typeParameters = emptyList(),
+                        kind = ClassKind.CLASS,
+                        visibility = Visibilities.Public,
+                        supertypes = listOf(
+                            CirProvided.ClassType(
+                                classId = CirEntityId.create("dep/ClassA"),
+                                outerType = null,
+                                arguments = emptyList(),
+                                isMarkedNullable = false
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        val mergedTree = mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots)
+        InlineTypeAliasCirNodeTransformer(LockBasedStorageManager.NO_LOCKS, classifiers).invoke(mergedTree)
+
+        val pkg = mergedTree.modules.values.single().packages.getValue(CirPackageName.create("pkg"))
+        val xClassNode = kotlin.test.assertNotNull(pkg.classes[CirName.create("X")])
+        val inlinedXClass = kotlin.test.assertNotNull(xClassNode.targetDeclarations[1])
+
+        kotlin.test.assertEquals(
+            setOf(CirEntityId.create("dep/ClassA")),
+            inlinedXClass.supertypes.map { (it as? CirClassType)?.classifierId }.toSet()
+        )
     }
 
-    private val CirRootNode.xClassNode: CirClassNode
-        get() = modules.getValue(CirName.create("test-module"))
-            .packages.getValue(CirPackageName.create("under.test"))
-            .classes.getValue(CirName.create("X"))
 
-    private val CirRootNode.assertInlinedXClass: CirClass
-        get() = assertNotNull(xClassNode.targetDeclarations[0], "Missing inlined class 'X' at index 0")
+    fun `test inlining typealias to target dependencies`() {
 
+        fun InlineSourceBuilder.ModuleBuilder.withDependencies() = dependency {
+            source(
+                """
+                package dep
+                class ClassA
+                class ClassB: ClassA()
+                """.trimIndent()
+            )
+        }
+
+        val targetARoot = CirTreeRoot(
+            modules = listOf(
+                createCirTree {
+                    withDependencies()
+                    source(
+                        """
+                       package pkg
+                       import dep.*
+                       class X : ClassA()
+                    """.trimIndent()
+                    )
+                }
+            )
+        )
+
+        val targetBRoot = CirTreeRoot(
+            dependencies = CirProvidedClassifiersByModules(
+                true, mapOf(
+                    CirEntityId.create("dep/ClassA") to CirProvided.RegularClass(
+                        typeParameters = emptyList(),
+                        kind = ClassKind.CLASS,
+                        visibility = Visibilities.Public,
+                        supertypes = emptyList()
+                    ),
+                    CirEntityId.create("dep/ClassB") to CirProvided.RegularClass(
+                        typeParameters = emptyList(),
+                        kind = ClassKind.CLASS,
+                        visibility = Visibilities.Public,
+                        supertypes = listOf(
+                            CirProvided.ClassType(
+                                classId = CirEntityId.create("dep/ClassA"),
+                                outerType = null,
+                                arguments = emptyList(),
+                                isMarkedNullable = false
+                            )
+                        )
+                    )
+                )
+            ),
+            modules = listOf(
+                createCirTree {
+                    withDependencies()
+                    source(
+                        """
+                        package pkg
+                        import dep.*
+                        typealias X = ClassB
+                    """.trimIndent()
+                    )
+                }
+            )
+        )
+
+        val roots = TargetDependent(
+            LeafCommonizerTarget("a") to targetARoot,
+            LeafCommonizerTarget("b") to targetBRoot
+        )
+
+        val classifiers = CirKnownClassifiers(
+            classifierIndices = roots.mapValue(::CirClassifierIndex),
+            targetDependencies = roots.mapValue(CirTreeRoot::dependencies),
+            commonizedNodes = CirCommonizedClassifierNodes.default(),
+            commonDependencies = CirProvidedClassifiers.EMPTY
+        )
+
+        val mergedTree = mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots)
+        InlineTypeAliasCirNodeTransformer(LockBasedStorageManager.NO_LOCKS, classifiers).invoke(mergedTree)
+
+        val pkg = mergedTree.modules.values.single().packages.getValue(CirPackageName.create("pkg"))
+        val xClassNode = kotlin.test.assertNotNull(pkg.classes[CirName.create("X")])
+        val inlinedXClass = kotlin.test.assertNotNull(xClassNode.targetDeclarations[1])
+
+        kotlin.test.assertEquals(
+            setOf(CirEntityId.create("dep/ClassA")),
+            inlinedXClass.supertypes.map { (it as? CirClassType)?.classifierId }.toSet()
+        )
+    }
 }
+

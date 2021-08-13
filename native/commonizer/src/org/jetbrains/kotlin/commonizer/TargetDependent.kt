@@ -82,6 +82,8 @@ internal fun <T> TargetDependent(keys: Iterable<CommonizerTarget>, factory: (tar
     return FactoryBasedTargetDependent(keys.toList(), factory)
 }
 
+internal fun <T> TargetDependent(vararg pairs: Pair<CommonizerTarget, T>) = pairs.toMap().toTargetDependent()
+
 internal fun <T> EagerTargetDependent(keys: Iterable<CommonizerTarget>, factory: (target: CommonizerTarget) -> T): TargetDependent<T> {
     return keys.associateWith(factory).toTargetDependent()
 }

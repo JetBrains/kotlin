@@ -10,18 +10,13 @@ import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Composite.Companion.plus
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.PreferredNode
-import org.jetbrains.kotlin.commonizer.transformer.ArtificialSupertypes.artificialSupertypes
-import org.jetbrains.kotlin.commonizer.utils.CNAMES_STRUCTS_PACKAGE
-import org.jetbrains.kotlin.commonizer.utils.OBJCNAMES_CLASSES_PACKAGE
-import org.jetbrains.kotlin.commonizer.utils.OBJCNAMES_PROTOCOLS_PACKAGE
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class InlineTypeAliasCirNodeTransformer(
     private val storageManager: StorageManager,
-    private val classifiers: CirKnownClassifiers
+    private val classifiers: CirKnownClassifiers,
 ) : CirNodeTransformer {
     override fun invoke(root: CirRootNode) {
         root.modules.values.forEach(::invoke)
@@ -70,7 +65,7 @@ internal class InlineTypeAliasCirNodeTransformer(
 
         val intoArtificialClass = ArtificialAliasedCirClass(
             pointingTypeAlias = fromTypeAlias,
-            pointedClass = fromAliasedClassNode?.targetDeclarations?.get(targetIndex) ?: fromTypeAlias.toArtificialCirClass()
+            pointedClass = fromAliasedClassNode?.targetDeclarations?.get(targetIndex) ?: fromTypeAlias.toArtificialCirClass(targetIndex)
         )
 
         intoClassNode.targetDeclarations[targetIndex] = intoArtificialClass
@@ -125,6 +120,23 @@ internal class InlineTypeAliasCirNodeTransformer(
         this.classes[typeAliasNode.classifierName] = classNode
         return classNode
     }
+
+    private fun CirTypeAlias.toArtificialCirClass(targetIndex: Int): CirClass = CirClass.create(
+        annotations = emptyList(), name = name, typeParameters = typeParameters, supertypes = resolveSupertypes(targetIndex),
+        visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
+        companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
+    )
+
+    private fun CirTypeAlias.resolveSupertypes(targetIndex: Int): List<CirType> {
+        if (expandedType.isMarkedNullable) return emptyList()
+        val resolver = SimpleCirSupertypesResolver(
+            classifiers = classifiers.classifierIndices[targetIndex],
+            dependencies = CirProvidedClassifiers.of(
+                classifiers.commonDependencies, classifiers.targetDependencies[targetIndex]
+            )
+        )
+        return resolver.supertypes(expandedType).toList()
+    }
 }
 
 private typealias ClassNodeIndex = Map<CirEntityId, CirClassNode>
@@ -143,38 +155,5 @@ private data class ArtificialAliasedCirClass(
         set(_) = throw UnsupportedOperationException("Can't set companion on artificial class (pointed by $pointingTypeAlias)")
 }
 
-private fun CirTypeAlias.toArtificialCirClass(): CirClass = CirClass.create(
-    annotations = emptyList(), name = name, typeParameters = typeParameters, supertypes = artificialSupertypes(),
-    visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
-    companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
-)
 
-/**
- * Analog to "KlibResolvedModuleDescriptorsFactoryImpl.createForwardDeclarationsModule" which also
- * automatically assumes relevant supertypes for forward declarations based upon the package they are in.
- */
-private object ArtificialSupertypes {
-    private fun createType(classId: String): CirClassType {
-        return CirClassType.createInterned(
-            classId = CirEntityId.create(classId),
-            outerType = null, visibility = Visibilities.Public, arguments = emptyList(), isMarkedNullable = false
-        )
-    }
-
-    private val cOpaqueType = listOf(createType("kotlinx/cinterop/COpaque"))
-    private val objcObjectBase = listOf(createType("kotlinx/cinterop/ObjCObjectBase"))
-    private val objcCObject = listOf(createType("kotlinx/cinterop/ObjCObject"))
-
-    fun CirTypeAlias.artificialSupertypes(): List<CirType> {
-        /* Not supported (yet). No real life examples known (yet), that would benefit */
-        if (this.expandedType.isMarkedNullable) return emptyList()
-
-        return when (underlyingType.classifierId.packageName) {
-            CNAMES_STRUCTS_PACKAGE -> cOpaqueType
-            OBJCNAMES_CLASSES_PACKAGE -> objcObjectBase
-            OBJCNAMES_PROTOCOLS_PACKAGE -> objcCObject
-            else -> emptyList()
-        }
-    }
-}
 

@@ -39,7 +39,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
             simpleSingleSourceTarget("d", "typealias X = Short")
         }
 
-        result.assertCommonized("(a, b)", "expect class X")
+        result.assertCommonized("(a, b)", "expect class X: Number")
         result.assertCommonized("(c, d)", "expect class X")
         result.assertCommonized("((a, b), (c, d))", "expect class X")
     }
@@ -558,7 +558,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(c, d)", """
-                expect class Proxy
+                expect class Proxy: Number
                 typealias X = Proxy
                 expect val x: X
             """.trimIndent()
@@ -566,7 +566,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b, c, d)", """
-                expect class Proxy
+                expect class Proxy: Number
                 typealias X = Proxy
                 expect val x: X
             """.trimIndent()
