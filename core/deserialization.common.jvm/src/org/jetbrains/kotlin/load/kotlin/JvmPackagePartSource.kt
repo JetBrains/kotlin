@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class JvmPackagePartSource(
-    val className: JvmClassName,
-    val facadeClassName: JvmClassName?,
+    override val className: JvmClassName,
+    override val facadeClassName: JvmClassName?,
     packageProto: ProtoBuf.Package,
     nameResolver: NameResolver,
     override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
     override val isPreReleaseInvisible: Boolean = false,
     override val abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
     val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
-) : DeserializedContainerSource {
+) : DeserializedContainerSource, FacadeClassSource {
     constructor(
         kotlinClass: KotlinJvmBinaryClass,
         packageProto: ProtoBuf.Package,

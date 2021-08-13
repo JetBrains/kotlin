@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
+import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
+import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
+import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentModuleGenerator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -52,7 +55,8 @@ class Psi2IrTranslator(
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext,
         symbolTable: SymbolTable,
-        extensions: GeneratorExtensions = GeneratorExtensions()
+        extensions: GeneratorExtensions = GeneratorExtensions(),
+        fragmentContext: FragmentContext? = null
     ): GeneratorContext {
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor, extensions = extensions)
         return GeneratorContext(
@@ -64,6 +68,7 @@ class Psi2IrTranslator(
             extensions,
             typeTranslator,
             IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable),
+            fragmentContext
         )
     }
 
@@ -72,9 +77,13 @@ class Psi2IrTranslator(
         ktFiles: Collection<KtFile>,
         irProviders: List<IrProvider>,
         linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
-        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
+        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
+        fragmentInfo: EvaluatorFragmentInfo? = null
     ): IrModuleFragment {
-        val moduleGenerator = ModuleGenerator(context, expectDescriptorToSymbol)
+        val moduleGenerator = fragmentInfo?.let {
+            FragmentModuleGenerator(context, it)
+        } ?: ModuleGenerator(context, expectDescriptorToSymbol)
+
         val irModule = moduleGenerator.generateModuleFragment(ktFiles)
 
         val deserializers = irProviders.filterIsInstance<IrDeserializer>()
