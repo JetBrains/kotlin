@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object PrimitiveTypes {
+object StandardTypes {
     val Boolean: ConeClassLikeType = StandardClassIds.Boolean.createType()
     val Char: ConeClassLikeType = StandardClassIds.Char.createType()
     val Byte: ConeClassLikeType = StandardClassIds.Byte.createType()

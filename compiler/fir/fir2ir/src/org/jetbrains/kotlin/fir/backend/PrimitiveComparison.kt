@@ -42,17 +42,17 @@ private fun leastCommonPrimitiveNumericType(t1: ConeClassLikeType, t2: ConeClass
     val pt2 = t2.promoteIntegerTypeToIntIfRequired()
 
     return when {
-        pt1.isDouble() || pt2.isDouble() -> PrimitiveTypes.Double
-        pt1.isFloat() || pt2.isFloat() -> PrimitiveTypes.Float
-        pt1.isLong() || pt2.isLong() -> PrimitiveTypes.Long
-        pt1.isInt() || pt2.isInt() -> PrimitiveTypes.Int
+        pt1.isDouble() || pt2.isDouble() -> StandardTypes.Double
+        pt1.isFloat() || pt2.isFloat() -> StandardTypes.Float
+        pt1.isLong() || pt2.isLong() -> StandardTypes.Long
+        pt1.isInt() || pt2.isInt() -> StandardTypes.Int
         else -> error("Unexpected types: t1=$t1, t2=$t2")
     }
 }
 
 private fun ConeClassLikeType.promoteIntegerTypeToIntIfRequired(): ConeClassLikeType =
     when (lookupTag.classId) {
-        StandardClassIds.Byte, StandardClassIds.Short -> PrimitiveTypes.Int
+        StandardClassIds.Byte, StandardClassIds.Short -> StandardTypes.Int
         StandardClassIds.Long, StandardClassIds.Int, StandardClassIds.Float, StandardClassIds.Double, StandardClassIds.Char -> this
         else -> error("Primitive number type expected: $this")
     }

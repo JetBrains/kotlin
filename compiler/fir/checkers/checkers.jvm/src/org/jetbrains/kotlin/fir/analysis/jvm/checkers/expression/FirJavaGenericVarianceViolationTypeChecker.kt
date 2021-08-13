@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
-import org.jetbrains.kotlin.fir.PrimitiveTypes
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -163,7 +163,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         return when (this) {
             is ConeKotlinTypeProjectionOut -> if (positive) type else this
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(type.removeOutProjection(!positive))
-            is ConeStarProjection -> if (positive) PrimitiveTypes.Any else this
+            is ConeStarProjection -> if (positive) StandardTypes.Any else this
             // Don't remove nested projections for types at invariant position.
             is ConeKotlinTypeConflictingProjection,
             is ConeKotlinType -> this
