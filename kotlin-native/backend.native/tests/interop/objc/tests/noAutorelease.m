@@ -4,68 +4,127 @@
 @end;
 
 @interface NoAutoreleaseHelperImpl : NSObject <NoAutoreleaseHelper>
-@property (weak) id weakRef;
+@property ObjCLivenessTracker* objCLivenessTracker;
+
+@property id kotlinObject;
+@property NoAutoreleaseCustomObject* objCObject;
+@property NSArray* array;
+@property NSString* string;
+@property int (^block)(void);
+
 @end;
 
-int globalBlockResult = 123;
-
 @implementation NoAutoreleaseHelperImpl
-
--(void)sendObject:(id)obj {
-    self.weakRef = obj;
+-(instancetype)init {
+    if (self = [super init]) {
+        self.objCObject = [NoAutoreleaseCustomObject new];
+        self.array = @[[NSObject new]];
+        self.string = [[NSObject new] description];
+        self.block = createBlock();
+    }
+    return self;
 }
 
--(id)sameObject:(id)obj {
-    self.weakRef = obj;
-    return obj;
+-(void)sendKotlinObject:(id)kotlinObject {
+    [self.objCLivenessTracker add:kotlinObject];
 }
 
--(void)sendCustomObject:(NoAutoreleaseCustomObject*)customObject {
-    self.weakRef = customObject;
+-(id)receiveKotlinObject {
+    id result = self.kotlinObject;
+    [self.objCLivenessTracker add:result];
+    return result;
 }
 
--(NoAutoreleaseCustomObject*)receiveCustomObject {
-    NoAutoreleaseCustomObject* result = [NoAutoreleaseCustomObject new];
-    self.weakRef = result;
+-(void)sendObjCObject:(NoAutoreleaseCustomObject*)objCObject {
+    [self.objCLivenessTracker add:objCObject];
+}
+
+-(NoAutoreleaseCustomObject*)receiveObjCObject {
+    NoAutoreleaseCustomObject* result = self.objCObject;
+    [self.objCLivenessTracker add:result];
     return result;
 }
 
 -(void)sendArray:(NSArray*)array {
-    self.weakRef = array;
+    [self.objCLivenessTracker add:array];
 }
 
 -(NSArray*)receiveArray {
-    NSArray* result = @[[NSObject new]];
-    self.weakRef = result;
+    NSArray* result = self.array;
+    [self.objCLivenessTracker add:result];
     return result;
 }
 
 -(void)sendString:(NSString*)string {
-    self.weakRef = string;
+    [self.objCLivenessTracker add:string];
 }
 
 -(NSString*)receiveString {
-    NSString* result = [NSObject new].description;
-    self.weakRef = result;
+    NSString* result = self.string;
+    [self.objCLivenessTracker add:result];
     return result;
 }
 
 -(void)sendBlock:(int (^)(void))block {
-    self.weakRef = block;
+    [self.objCLivenessTracker add:block];
 }
 
 -(int (^)(void))receiveBlock {
-    int blockResult = globalBlockResult; // To make block capturing.
-    int (^result)(void) = ^{ return blockResult; };
-    self.weakRef = result;
+    int (^result)(void) = self.block;
+    [self.objCLivenessTracker add:result];
     return result;
 }
 
--(Boolean)weakIsNull {
-    return self.weakRef == nil;
-}
 @end;
 
-id<NoAutoreleaseHelper> getNoAutoreleaseHelperImpl(void) {
-    return [NoAutoreleaseHelperImpl new];
+id<NoAutoreleaseHelper> getNoAutoreleaseHelperImpl(ObjCLivenessTracker* objCLivenessTracker) {
+    NoAutoreleaseHelperImpl* result = [NoAutoreleaseHelperImpl new];
+    result.objCLivenessTracker = objCLivenessTracker;
+    return result;
 }
+
+int blockResult = 42;
+
+@interface ObjCWeakRef : NSObject
+@property (weak) id value;
+@end;
+
+@implementation ObjCWeakRef;
+@end;
+
+@implementation ObjCLivenessTracker {
+    NSMutableArray<ObjCWeakRef*>* weakRefs;
+}
+
+-(instancetype)init {
+    if (self = [super init]) {
+        self->weakRefs = [NSMutableArray new];
+    }
+    return self;
+}
+
+-(void)add:(id)obj {
+    ObjCWeakRef* weakRef = [ObjCWeakRef new];
+    weakRef.value = obj;
+    [weakRefs addObject:weakRef];
+}
+
+-(Boolean)isEmpty {
+    return [weakRefs count] == 0;
+}
+
+-(Boolean)objectsAreAlive {
+    for (ObjCWeakRef* weakRef in weakRefs) {
+        if (weakRef.value == nil) return NO;
+    }
+    return YES;
+}
+
+-(Boolean)objectsAreDead {
+    for (ObjCWeakRef* weakRef in weakRefs) {
+        if (weakRef.value != nil) return NO;
+    }
+    return YES;
+}
+
+@end;
