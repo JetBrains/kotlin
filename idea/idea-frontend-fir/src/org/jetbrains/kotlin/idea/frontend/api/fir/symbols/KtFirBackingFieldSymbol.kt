@@ -39,4 +39,18 @@ internal class KtFirBackingFieldSymbol(
     override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> {
         return KtFirBackingFieldSymbolPointer(owningProperty.createPointer())
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KtFirBackingFieldSymbol
+
+        if (this.token != other.token) return false
+        return this.propertyFirRef == other.propertyFirRef
+    }
+
+    override fun hashCode(): Int {
+        return propertyFirRef.hashCode() * 31 + token.hashCode()
+    }
 }

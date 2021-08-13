@@ -74,4 +74,7 @@ internal class KtFirPropertySetterSymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Creating pointers for setters from library is not supported yet")
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.receiverType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.idea.frontend.api.*
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
@@ -17,12 +19,21 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.*
+import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal interface KtFirType : ValidityTokenOwner {
     val coneType: ConeKotlinType
 }
+
+private fun KtFirType.typeEquals(other: Any?): Boolean {
+    if (other !is KtFirType) return false
+    if (this.token != other.token) return false
+    return this.coneType == other.coneType
+}
+
+private fun KtFirType.typeHashcode(): Int = token.hashCode() * 31 + coneType.hashCode()
 
 internal class KtFirUsualClassType(
     _coneType: ConeClassLikeTypeImpl,
@@ -45,6 +56,8 @@ internal class KtFirUsualClassType(
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.canBeNull) }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
 }
 
 internal class KtFirFunctionalType(
@@ -96,6 +109,8 @@ internal class KtFirFunctionalType(
         get() = withValidityAssertion { (typeArguments.last() as KtTypeArgumentWithVariance).type }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
 }
 
 internal class KtFirClassErrorType(
@@ -106,6 +121,8 @@ internal class KtFirClassErrorType(
 
     override val error: String get() = withValidityAssertion { coneType.diagnostic.reason }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
 }
 
 internal class KtFirCapturedType(
@@ -114,6 +131,8 @@ internal class KtFirCapturedType(
 ) : KtCapturedType(), KtFirType {
     override val coneType by weakRef(_coneType)
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
 }
 
 internal class KtFirDefinitelyNotNullType(
@@ -127,6 +146,8 @@ internal class KtFirDefinitelyNotNullType(
     override val original: KtType by cached { builder.typeBuilder.buildKtType(this.coneType.original) }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
 }
 
 internal class KtFirTypeParameterType(
@@ -145,6 +166,8 @@ internal class KtFirTypeParameterType(
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.canBeNull) }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
 }
 
 internal class KtFirFlexibleType(
@@ -158,6 +181,8 @@ internal class KtFirFlexibleType(
     override val lowerBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.lowerBound) }
     override val upperBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.upperBound) }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
 }
 
 internal class KtFirIntersectionType(
@@ -173,4 +198,6 @@ internal class KtFirIntersectionType(
     }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun equals(other: Any?) = typeEquals(other)
+    override fun hashCode() = typeHashcode()
 }

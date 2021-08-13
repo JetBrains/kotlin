@@ -42,4 +42,7 @@ internal class KtFirTypeAliasSymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Creating symbols for library typealiases is not supported yet")
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

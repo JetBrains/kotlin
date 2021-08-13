@@ -114,4 +114,7 @@ internal class KtFirNamedClassOrObjectSymbol(
         }
         return KtFirClassOrObjectInLibrarySymbolPointer(classIdIfNonLocal!!)
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

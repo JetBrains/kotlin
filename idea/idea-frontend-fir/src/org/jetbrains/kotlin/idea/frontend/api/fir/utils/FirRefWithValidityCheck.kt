@@ -66,6 +66,19 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
         ValidityAwareCachedValue(token) {
             withFirByType(type) { fir -> createValue(fir) }
         }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is FirRefWithValidityCheck<*>) return false
+        return getRefFir() == other.getRefFir() && this.token == other.token
+    }
+
+    override fun hashCode(): Int {
+        return getRefFir().hashCode() * 31 + token.hashCode()
+    }
+
+    private fun getRefFir(): FirDeclaration {
+        return firWeakRef.get() ?: throw EntityWasGarbageCollectedException("FirElement")
+    }
 }
 
 @Suppress("NOTHING_TO_INLINE")

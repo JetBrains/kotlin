@@ -53,4 +53,7 @@ internal class KtFirAnonymousFunctionSymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         error("Could not create a pointer for anonymous function from library")
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

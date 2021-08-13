@@ -93,4 +93,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
     override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol> {
         TODO("pointers to KtSyntheticJavaPropertySymbol is not supported yet")
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

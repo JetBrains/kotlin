@@ -43,4 +43,14 @@ internal class KtFirAnnotationCall(
             KtNamedConstantValue(name, expression.convertConstantExpression())
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is KtFirAnnotationCall) return false
+        if (this.token != other.token) return false
+        return annotationCallRef == other.annotationCallRef
+    }
+
+    override fun hashCode(): Int {
+        return token.hashCode() * 31 + annotationCallRef.hashCode()
+    }
 }
