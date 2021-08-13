@@ -54,7 +54,7 @@ class FirIntersectionOverridePropertySymbol(
     override val intersections: Collection<FirCallableSymbol<*>>
 ) : FirPropertySymbol(callableId), FirIntersectionCallableSymbol
 
-class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId) {
+class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBackingField>(callableId) {
     val isVal: Boolean
         get() = fir.isVal
 
@@ -62,7 +62,7 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirPrope
         get() = fir.isVar
 
     val getterSymbol: FirPropertyAccessorSymbol?
-        get() = fir.getter?.symbol
+        get() = fir.propertySymbol.fir.getter?.symbol
 }
 
 class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)

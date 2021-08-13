@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -141,7 +138,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             val initializerIsAlreadyResolved = bodyResolveState >= FirPropertyBodyResolveState.INITIALIZER_RESOLVED
             context.withProperty(property) {
                 context.forPropertyInitializer {
-                    property.transformBackingField(transformer, ResolutionMode.ContextDependent)
                     property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
                     if (!initializerIsAlreadyResolved) {
                         property.transformChildrenWithoutComponents(returnTypeRef)
@@ -150,6 +146,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     if (property.initializer != null) {
                         storeVariableReturnType(property)
                     }
+                    property.transformBackingField(transformer, withExpectedType(property.returnTypeRef))
                 }
                 // In case an explicit backing field declaration
                 // is present, and the default accessors haven't
@@ -188,12 +185,19 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private fun FirProperty.generateMissingDefaultAccessors() {
         val fieldDeclaration = backingField ?: return
 
+        if (
+            !this.hasExplicitBackingField ||
+            fieldDeclaration.returnTypeRef !is FirResolvedTypeRef
+        ) {
+            return
+        }
+
         val typeCheckerContext = session.typeContext.newBaseTypeCheckerContext(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
 
-        if (fieldDeclaration.isSubtypeOf(this, typeCheckerContext)) {
+        if (getter == null && fieldDeclaration.isSubtypeOf(this, typeCheckerContext)) {
             this.replaceGetter(
                 FirDefaultPropertyGetter(
                     null,
@@ -341,12 +345,16 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             if (variable.delegateFieldSymbol != null) {
                 replacePropertyReferenceTypeInDelegateAccessors(variable)
             }
+            // This ensures there's no ImplicitTypeRef
+            // left in the backingField (witch is always present).
+            variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
         } else {
             val resolutionMode = withExpectedType(variable.returnTypeRef)
             if (variable.initializer != null) {
                 variable.transformInitializer(transformer, resolutionMode)
                 storeVariableReturnType(variable)
             }
+            variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
             variable.transformAccessors()
         }
         variable.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
@@ -875,18 +883,22 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         backingField: FirBackingField,
         data: ResolutionMode,
     ): FirStatement {
-        if (backingField.returnTypeRef is FirErrorTypeRef) {
-            return backingField
-        }
         backingField.transformInitializer(
             transformer,
             withExpectedType(backingField.returnTypeRef)
         )
-        if (backingField.returnTypeRef !is FirImplicitTypeRef) {
+        if (
+            backingField.returnTypeRef is FirErrorTypeRef ||
+            backingField.returnTypeRef is FirResolvedTypeRef
+        ) {
             return backingField
         }
-        val resultType = backingField.initializer
-            ?.unwrapSmartcastExpression()?.typeRef
+        val inferredType = if (backingField is FirDefaultPropertyBackingField) {
+            data.expectedType
+        } else {
+            backingField.initializer?.unwrapSmartcastExpression()?.typeRef
+        }
+        val resultType = inferredType
             ?: return backingField.transformReturnTypeRef(
                 transformer,
                 withExpectedType(

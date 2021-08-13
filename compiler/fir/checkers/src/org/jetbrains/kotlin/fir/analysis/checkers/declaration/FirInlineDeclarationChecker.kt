@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -231,7 +232,12 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             source: FirSourceElement,
             context: CheckerContext
         ) {
-            if (calledDeclaration == null) return
+            if (
+                calledDeclaration == null ||
+                calledDeclaration.callableId.callableName == BACKING_FIELD
+            ) {
+                return
+            }
             val recordedEffectiveVisibility = calledDeclaration.publishedApiEffectiveVisibility ?: calledDeclaration.effectiveVisibility
             val calledFunEffectiveVisibility = recordedEffectiveVisibility.let {
                 if (it == EffectiveVisibility.Local) {
