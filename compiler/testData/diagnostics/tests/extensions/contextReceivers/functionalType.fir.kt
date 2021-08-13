@@ -1,6 +1,10 @@
 class Param
-class C
-class R
+class C {
+    val c = 42
+}
+class R {
+    val r = 42
+}
 
 context(C)
 fun R.f1(g: context(C) R.(Param) -> Unit) {
@@ -23,10 +27,20 @@ fun f4(g: context(C) () -> Unit) {
 }
 
 fun test() {
-    val lf1: context(C) R.(Param) -> Unit = { _ -> }
-    val lf2: context(C) (Param) -> Unit = { _ -> }
-    val lf3: context(C) R.() -> Unit = { }
-    val lf4: context(C) () -> Unit = { }
+    val lf1: context(C) R.(Param) -> Unit = { _ ->
+        r
+        c
+    }
+    val lf2: context(C) (Param) -> Unit = { _ ->
+        c
+    }
+    val lf3: context(C) R.() -> Unit = {
+        r
+        c
+    }
+    val lf4: context(C) () -> Unit = {
+        c
+    }
 
     with(C()) {
         with(R()) {

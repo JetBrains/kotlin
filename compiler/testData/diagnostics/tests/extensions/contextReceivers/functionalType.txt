@@ -8,6 +8,7 @@ public fun R.f3(/*0*/ g: @kotlin.ContextFunctionTypeParams(count = 1) (R.() -> k
 
 public final class C {
     public constructor C()
+    public final val c: kotlin.Int = 42
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -22,6 +23,7 @@ public final class Param {
 
 public final class R {
     public constructor R()
+    public final val r: kotlin.Int = 42
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
