@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirDeclarationForCompiledElementSearcher
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
@@ -95,36 +95,27 @@ internal class FirModuleResolveStateImpl(
      * [ktDeclaration] should be either [KtDeclaration] or [KtLambdaExpression]
      */
     private fun findSourceFirDeclarationByExpression(ktDeclaration: KtExpression): FirDeclaration {
-        require(ktDeclaration.getModuleInfo() is ModuleSourceInfoBase) {
+        val moduleInfo = ktDeclaration.getModuleInfo() as? ModuleSourceInfoBase
+        require(moduleInfo != null) {
             "Declaration should have ModuleSourceInfo, instead it had ${ktDeclaration.getModuleInfo()}"
         }
         val nonLocalNamedDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: error("Declaration should have non-local container${ktDeclaration.getElementTextInContext()}")
 
-        val nonLocalFirForNamedDeclaration = nonLocalNamedDeclaration.findSourceNonLocalFirDeclaration(
-            firFileBuilder,
-            rootModuleSession.firIdeProvider.symbolProvider,
-            sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfoBase)
-        )
-
-        if (ktDeclaration == nonLocalNamedDeclaration) return nonLocalFirForNamedDeclaration
-
-        firLazyDeclarationResolver.lazyResolveDeclaration(
-            firDeclarationToResolve = nonLocalFirForNamedDeclaration,
-            scopeSession = ScopeSession(),
-            moduleFileCache = (nonLocalFirForNamedDeclaration.moduleData.session as FirIdeSourcesSession).cache,
-            toPhase = FirResolvePhase.BODY_RESOLVE,
-            checkPCE = false, /*TODO*/
-        )
-        val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(nonLocalFirForNamedDeclaration) { firDeclaration ->
-            when (val realPsi = firDeclaration.realPsi) {
-                is KtObjectLiteralExpression -> realPsi.objectDeclaration == ktDeclaration
-                is KtLambdaExpression -> realPsi.functionLiteral == ktDeclaration
-                else -> realPsi == ktDeclaration
-            }
+        if (ktDeclaration == nonLocalNamedDeclaration) {
+            return nonLocalNamedDeclaration.findSourceNonLocalFirDeclaration(
+                firFileBuilder = firFileBuilder,
+                firSymbolProvider = rootModuleSession.firIdeProvider.symbolProvider,
+                moduleFileCache = sessionProvider.getModuleCache(moduleInfo)
+            )
         }
-        return firDeclaration
-            ?: error("FirDeclaration was not found for\n${ktDeclaration.getElementTextInContext()}")
+
+        return when (val localFirElement = getOrBuildFirFor(ktDeclaration)) {
+            is FirDeclaration -> localFirElement
+            is FirAnonymousFunctionExpression -> localFirElement.anonymousFunction
+            is FirAnonymousObjectExpression -> localFirElement.anonymousObject
+            else -> error("FirDeclaration was not found for\n${ktDeclaration.getElementTextInContext()}")
+        }
     }
 
     @OptIn(InternalForInline::class)
@@ -151,14 +142,13 @@ internal class FirModuleResolveStateImpl(
             is FirIdeSourcesSession -> session.cache
             else -> return declaration
         }
-        firLazyDeclarationResolver.lazyResolveDeclaration(
+        return firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclarationToResolve = declaration,
             moduleFileCache = fileCache,
             scopeSession = ScopeSession(),
             toPhase = toPhase,
             checkPCE = true,
         )
-        return declaration
     }
 
     override fun <D : FirDeclaration> resolveFirToResolveType(declaration: D, type: ResolveType): D {
@@ -167,13 +157,12 @@ internal class FirModuleResolveStateImpl(
             is FirIdeSourcesSession -> session.cache
             else -> return declaration
         }
-        firLazyDeclarationResolver.lazyResolveDeclaration(
+        return firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclaration = declaration,
             moduleFileCache = fileCache,
             scopeSession = ScopeSession(),
             toResolveType = type,
             checkPCE = true,
         )
-        return declaration
     }
 }
