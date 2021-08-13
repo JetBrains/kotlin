@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -479,6 +480,10 @@ object FirErrors {
     val WRONG_SETTER_RETURN_TYPE by error0<KtTypeReference>()
     val WRONG_GETTER_RETURN_TYPE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
     val ACCESSOR_FOR_DELEGATED_PROPERTY by error0<KtPropertyAccessor>()
+    val PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION by error0<KtExpression>()
+    val PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER by error0<KtBackingField>()
+    val PROPERTY_MUST_HAVE_GETTER by error0<KtProperty>()
+    val PROPERTY_MUST_HAVE_SETTER by error0<KtProperty>()
     val ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS by error0<KtModifierListOwner>(SourceElementPositioningStrategies.ABSTRACT_MODIFIER)
     val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING by warning0<KtProperty>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS by error0<KtProperty>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)

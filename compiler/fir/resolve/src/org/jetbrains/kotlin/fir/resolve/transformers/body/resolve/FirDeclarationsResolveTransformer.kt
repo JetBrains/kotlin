@@ -121,6 +121,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             property.transformStatus(this, property.resolveStatus().mode())
             property.getter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             property.setter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
+            property.backingField?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             return transformLocalVariable(property)
         }
 
@@ -137,9 +138,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             val initializerIsAlreadyResolved = bodyResolveState >= FirPropertyBodyResolveState.INITIALIZER_RESOLVED
             context.withProperty(property) {
                 context.forPropertyInitializer {
+                    property.transformBackingField(transformer, ResolutionMode.ContextDependent)
                     property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
                     if (!initializerIsAlreadyResolved) {
-                        property.transformChildrenWithoutAccessors(returnTypeRef)
+                        property.transformChildrenWithoutComponents(returnTypeRef)
                         property.replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
                     }
                     if (property.initializer != null) {
@@ -301,7 +303,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return variable
     }
 
-    private fun FirProperty.transformChildrenWithoutAccessors(returnTypeRef: FirTypeRef): FirProperty {
+    private fun FirProperty.transformChildrenWithoutComponents(returnTypeRef: FirTypeRef): FirProperty {
         val data = withExpectedType(returnTypeRef)
         return transformReturnTypeRef(transformer, data)
             .transformInitializer(transformer, data)
@@ -817,6 +819,46 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return this
     }
 
+    override fun transformBackingField(
+        backingField: FirBackingField,
+        data: ResolutionMode,
+    ): FirStatement {
+        if (backingField.returnTypeRef is FirErrorTypeRef) {
+            return backingField
+        }
+        backingField.transformInitializer(
+            transformer,
+            withExpectedType(backingField.returnTypeRef)
+        )
+        if (backingField.returnTypeRef !is FirImplicitTypeRef) {
+            return backingField
+        }
+        val resultType = backingField.initializer
+            ?.unwrapSmartcastExpression()?.typeRef
+            ?: return backingField.transformReturnTypeRef(
+                transformer,
+                withExpectedType(
+                    buildErrorTypeRef {
+                        diagnostic = ConeSimpleDiagnostic(
+                            "Cannot infer variable type without an initializer",
+                            DiagnosticKind.InferenceError,
+                        )
+                    },
+                )
+            )
+        val expectedType = resultType.toExpectedTypeRef()
+        return backingField.transformReturnTypeRef(
+            transformer,
+            withExpectedType(
+                expectedType.approximatedIfNeededOrSelf(
+                    inferenceComponents.approximator,
+                    backingField.visibilityForApproximation(),
+                    inferenceComponents.session.typeContext,
+                )
+            )
+        )
+    }
+
     private fun storeVariableReturnType(variable: FirVariable) {
         val initializer = variable.initializer
         if (variable.returnTypeRef is FirImplicitTypeRef) {
@@ -829,26 +871,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 else -> null
             }
             if (resultType != null) {
-                val expectedType = when (resultType) {
-                    is FirImplicitTypeRef -> buildErrorTypeRef {
-                        diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
-                    }
-                    is FirErrorTypeRef -> buildErrorTypeRef {
-                        diagnostic = resultType.diagnostic
-                        resultType.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)?.let {
-                            source = it
-                        }
-                    }
-                    else -> {
-                        buildResolvedTypeRef {
-                            type = resultType.coneType
-                            annotations.addAll(resultType.annotations)
-                            resultType.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
-                                source = it
-                            }
-                        }
-                    }
-                }
+                val expectedType = resultType.toExpectedTypeRef()
                 variable.transformReturnTypeRef(
                     transformer,
                     withExpectedType(
@@ -872,6 +895,29 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
             if (variable.getter?.returnTypeRef is FirImplicitTypeRef) {
                 variable.getter?.transformReturnTypeRef(transformer, withExpectedType(variable.returnTypeRef))
+            }
+        }
+    }
+
+    private fun FirTypeRef.toExpectedTypeRef(): FirResolvedTypeRef {
+        return when (this) {
+            is FirImplicitTypeRef -> buildErrorTypeRef {
+                diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
+            }
+            is FirErrorTypeRef -> buildErrorTypeRef {
+                diagnostic = this@toExpectedTypeRef.diagnostic
+                this@toExpectedTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)?.let {
+                    source = it
+                }
+            }
+            else -> {
+                buildResolvedTypeRef {
+                    type = this@toExpectedTypeRef.coneType
+                    annotations.addAll(this@toExpectedTypeRef.annotations)
+                    this@toExpectedTypeRef.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
+                        source = it
+                    }
+                }
             }
         }
     }

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -1700,6 +1701,22 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class AccessorForDelegatedProperty : KtFirDiagnostic<KtPropertyAccessor>() {
         override val diagnosticClass get() = AccessorForDelegatedProperty::class
+    }
+
+    abstract class PropertyInitializerWithExplicitFieldDeclaration : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = PropertyInitializerWithExplicitFieldDeclaration::class
+    }
+
+    abstract class PropertyFieldDeclarationMissingInitializer : KtFirDiagnostic<KtBackingField>() {
+        override val diagnosticClass get() = PropertyFieldDeclarationMissingInitializer::class
+    }
+
+    abstract class PropertyMustHaveGetter : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = PropertyMustHaveGetter::class
+    }
+
+    abstract class PropertyMustHaveSetter : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = PropertyMustHaveSetter::class
     }
 
     abstract class AbstractPropertyInPrimaryConstructorParameters : KtFirDiagnostic<KtModifierListOwner>() {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -2401,6 +2402,30 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY) { firDiagnostic ->
         AccessorForDelegatedPropertyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION) { firDiagnostic ->
+        PropertyInitializerWithExplicitFieldDeclarationImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER) { firDiagnostic ->
+        PropertyFieldDeclarationMissingInitializerImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_MUST_HAVE_GETTER) { firDiagnostic ->
+        PropertyMustHaveGetterImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_MUST_HAVE_SETTER) { firDiagnostic ->
+        PropertyMustHaveSetterImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

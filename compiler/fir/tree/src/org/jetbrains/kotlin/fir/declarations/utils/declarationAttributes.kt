@@ -47,6 +47,7 @@ val FirProperty.hasBackingField: Boolean
     get() {
         if (isAbstract) return false
         if (delegate != null) return false
+        if (backingField != null) return true
         when (origin) {
             FirDeclarationOrigin.SubstitutionOverride -> return false
             FirDeclarationOrigin.IntersectionOverride -> return false
