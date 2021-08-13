@@ -1,7 +1,6 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM, JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 // Note: This fails on JVM (non-IR) with "Fail: should throw on get() in loop header". The not-null assertion is not generated when
