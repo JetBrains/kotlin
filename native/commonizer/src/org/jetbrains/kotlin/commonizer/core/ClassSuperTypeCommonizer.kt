@@ -16,11 +16,33 @@ import org.jetbrains.kotlin.commonizer.mergedtree.findClass
 import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.descriptors.ClassKind
 
-typealias Supertypes = List<CirType>
+private typealias Supertypes = List<CirType>
 
+/**
+ * Using the [TypeCommonizer] on all supertypes to find the list of common supertypes across
+ * all platforms. This commonizer will also resolve all transitive supertypes to find potential common supertypes.
+ *
+ * ```
+ * // dependencies
+ * interface A
+ * interface B: A
+ *
+ * // target A
+ * class X: A
+ *
+ * // target B
+ * class X: B
+ *
+ * ```
+ *
+ * will commonize to
+ * ```
+ * class X: A // <- common supertype
+ * ```
+ */
 internal class ClassSuperTypeCommonizer(
     private val classifiers: CirKnownClassifiers
-) : SingleInvocationCommonizer<List<CirType>> {
+) : SingleInvocationCommonizer<Supertypes> {
 
     private val typeCommonizer = TypeCommonizer(classifiers)
 
@@ -36,6 +58,28 @@ internal class ClassSuperTypeCommonizer(
         }
     }
 
+    /**
+     * For every supertype listed in [values] a full [SupertypesTree] will be resolved.
+     * This tree represents the supertype-hierarchy:
+     *
+     * ```
+     * interface A
+     * interface B: A
+     * interface C: B, A
+     * ```
+     *
+     * will become a tree like
+     * ```
+     *               C
+     *              |\
+     *             |  \
+     *            B    A
+     *            |
+     *            A
+     *
+     * ```
+     *
+     */
     private fun resolveSupertypesTree(values: List<Supertypes>): List<SupertypesTree> {
         return values.mapIndexed { index: Int, supertypes: Supertypes ->
             val classifierIndex = classifiers.classifierIndices[index]
@@ -45,12 +89,22 @@ internal class ClassSuperTypeCommonizer(
         }
     }
 
+    /**
+     * Builds [SupertypesGroup] (a group representing one type for every platform) that will be enqueued for type commonization.
+     * To find out which types shall  be grouped this implementation will go through every single node in all trees (BFS!)
+     * If a certain type can be found on all other platforms, then a group is build.
+     * This types and all transitively "covered" supertypes will be marked as 'consumed' and therefore will be 'effectively removed'
+     * from the tree.
+     *
+     * This grouping implementation will also be very careful about *not* grouping two groups that could effectively
+     * represent a 'ClassKind' (to avoid commonizing with two abstract class supertypes)
+     */
     private fun buildSupertypesGroups(trees: List<SupertypesTree>): List<SupertypesGroup> {
         val groups = mutableListOf<SupertypesGroup>()
         var allowClassTypes = true
 
         trees.flatMap { tree -> tree.allNodes }.forEach { node ->
-            if (node.assignedGroup != null) return@forEach
+            if (node.isConsumed) return@forEach
             val candidateGroup = buildTypeGroup(trees, node.type.classifierId) ?: return@forEach
             if (containsAnyClassKind(candidateGroup)) {
                 if (!allowClassTypes) return@forEach
@@ -87,7 +141,7 @@ internal class ClassSuperTypeCommonizer(
         group.nodes.forEach { rootNode ->
             rootNode.allNodes.forEach { visitingNode ->
                 if (visitingNode.type.classifierId in coveredClassifierIds) {
-                    visitingNode.assignedGroup = group
+                    visitingNode.isConsumed = true
                 }
             }
         }
@@ -95,7 +149,7 @@ internal class ClassSuperTypeCommonizer(
 
     private fun buildTypeGroup(trees: List<SupertypesTree>, classifierId: CirEntityId): SupertypesGroup? {
         val nodes = trees.map { otherTree: SupertypesTree ->
-            otherTree.allNodes.find { otherNode -> otherNode.type.classifierId == classifierId } ?: return null
+            otherTree.allNodes.find { otherNode -> otherNode.type.classifierId == classifierId && !otherNode.isConsumed } ?: return null
         }
         return SupertypesGroup(classifierId, nodes)
     }
@@ -133,7 +187,7 @@ private class TypeNode(
     val index: CirClassifierIndex,
     val type: CirClassType,
     val supertypes: List<TypeNode>,
-    var assignedGroup: SupertypesGroup? = null
+    var isConsumed: Boolean = false
 ) {
     val allNodes: List<TypeNode> by lazy {
         val allSupertypes = transitiveClosure(this, TypeNode::supertypes)

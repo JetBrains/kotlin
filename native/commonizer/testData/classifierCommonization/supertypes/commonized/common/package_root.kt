@@ -8,7 +8,7 @@ expect abstract class A2() : A1 {
     abstract fun function2(): Int
 }
 
-expect class A3() : A2, A1 {
+expect class A3() : A2 {
     override val property1: Int
     override val property2: Int
     val property3: Int
