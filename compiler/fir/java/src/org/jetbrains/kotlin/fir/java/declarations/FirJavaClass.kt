@@ -41,7 +41,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val declarations: MutableList<FirDeclaration>,
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol,
-    override val superTypeRefs: MutableList<FirTypeRef>,
+    override var superTypeRefs: List<FirTypeRef>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     internal val javaTypeParameterStack: JavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>
@@ -63,8 +63,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         get() = null
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
-        superTypeRefs.clear()
-        superTypeRefs.addAll(newSuperTypeRefs)
+        superTypeRefs = newSuperTypeRefs
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
@@ -95,7 +94,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass {
-        superTypeRefs.transformInplace(transformer, data)
+        superTypeRefs = superTypeRefs.map { it.transform(transformer, data) }
         return this
     }
 

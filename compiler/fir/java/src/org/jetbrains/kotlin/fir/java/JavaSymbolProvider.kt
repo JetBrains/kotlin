@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -48,7 +47,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @ThreadSafeMutableState
@@ -98,21 +96,22 @@ class JavaSymbolProvider(
     }
 
     private fun JavaTypeParameter.toFirTypeParameter(javaTypeParameterStack: JavaTypeParameterStack): FirTypeParameter {
-        return buildTypeParameter {
+        return buildJavaTypeParameter {
             moduleData = this@JavaSymbolProvider.baseModuleData
-            origin = FirDeclarationOrigin.Java
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             name = this@toFirTypeParameter.name
             symbol = FirTypeParameterSymbol()
-            variance = INVARIANT
-            isReified = false
             javaTypeParameterStack.addParameter(this@toFirTypeParameter, symbol)
-            // TODO: should be lazy (in case annotations refer to the containing class)
-            annotations.addFromJava(session, this@toFirTypeParameter, javaTypeParameterStack)
+            annotationBuilder = makeAnnotationBuilder(session, javaTypeParameterStack)
             for (upperBound in this@toFirTypeParameter.upperBounds) {
                 bounds += upperBound.toFirJavaTypeRef(session, javaTypeParameterStack)
             }
-            addDefaultBoundIfNecessary(isFlexible = true)
+            if (bounds.isEmpty()) {
+                val builtinTypes = moduleData.session.builtinTypes
+                bounds += buildResolvedTypeRef {
+                    type = ConeFlexibleType(builtinTypes.anyType.type, builtinTypes.nullableAnyType.type)
+                }
+            }
         }
     }
 
@@ -194,7 +193,7 @@ class JavaSymbolProvider(
         firJavaClass.annotations.addFromJava(session, javaClass, javaTypeParameterStack)
         val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
         enhancement.enhanceTypeParameterBounds(firJavaClass.typeParameters)
-        firJavaClass.superTypeRefs.replaceAll { enhancement.enhanceSuperType(it) }
+        firJavaClass.replaceSuperTypeRefs(enhancement.enhanceSuperTypes(firJavaClass.superTypeRefs))
         firJavaClass.replaceDeprecation(firJavaClass.getDeprecationInfos(session.languageVersionSettings.apiVersion))
         return firJavaClass
     }
@@ -396,7 +395,7 @@ class JavaSymbolProvider(
                 returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
-                annotationBuilder = { javaField.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
+                annotationBuilder = javaField.makeAnnotationBuilder(session, javaTypeParameterStack)
                 initializer = convertJavaInitializerToFir(javaField.initializerValue)
 
                 if (!javaField.isStatic) {
@@ -438,7 +437,7 @@ class JavaSymbolProvider(
                     this@JavaSymbolProvider.session, moduleData, index, javaTypeParameterStack,
                 )
             }
-            annotationBuilder = { javaMethod.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
+            annotationBuilder = javaMethod.makeAnnotationBuilder(session, javaTypeParameterStack)
             status = FirResolvedDeclarationStatusImpl(
                 javaMethod.visibility,
                 javaMethod.modality,
@@ -513,8 +512,8 @@ class JavaSymbolProvider(
             typeParameters += classTypeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
 
             if (javaConstructor != null) {
-                this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
-                annotationBuilder = { javaConstructor.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
+                typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
+                annotationBuilder = javaConstructor.makeAnnotationBuilder(session, javaTypeParameterStack)
                 for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
                     valueParameters += valueParameter.toFirValueParameter(
                         this@JavaSymbolProvider.session, moduleData, index, javaTypeParameterStack,

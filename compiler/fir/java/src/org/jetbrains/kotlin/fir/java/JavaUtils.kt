@@ -148,7 +148,15 @@ private fun buildArgumentMapping(
     return buildResolvedArgumentList(mapping)
 }
 
-internal fun JavaAnnotation.toFirAnnotationCall(
+internal fun JavaAnnotationOwner.convertAnnotationsToFir(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): List<FirAnnotationCall> = annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+
+internal fun JavaAnnotationOwner.makeAnnotationBuilder(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): () -> List<FirAnnotationCall> = { convertAnnotationsToFir(session, javaTypeParameterStack) }
+
+private fun JavaAnnotation.toFirAnnotationCall(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirAnnotationCall {
     return buildAnnotationCall {
@@ -204,7 +212,7 @@ internal fun JavaValueParameter.toFirValueParameter(
         name = this@toFirValueParameter.name ?: Name.identifier("p$index")
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack)
         isVararg = this@toFirValueParameter.isVararg
-        annotationBuilder = { annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }}
+        annotationBuilder = makeAnnotationBuilder(session, javaTypeParameterStack)
     }
 }
 
