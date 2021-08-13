@@ -90,10 +90,10 @@ class KlibBasedMppIT : BaseGradleIT() {
         checkTaskCompileClasspath(
             "compile${hostSpecificSourceSet.capitalize()}KotlinMetadata",
             listOf(
-                "published-producer-$hostSpecificSourceSet.klib",
-                "published-producer-commonMain.klib",
-                "published-dependency-$hostSpecificSourceSet.klib",
-                "published-dependency-commonMain.klib"
+                "published.producer-$hostSpecificSourceSet.klib",
+                "published.producer-commonMain.klib",
+                "published.dependency-$hostSpecificSourceSet.klib",
+                "published.dependency-commonMain.klib"
             ),
             isNative = true
         )
