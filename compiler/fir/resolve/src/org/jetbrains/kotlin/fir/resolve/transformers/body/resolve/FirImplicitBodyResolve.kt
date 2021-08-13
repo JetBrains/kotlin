@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -163,7 +164,9 @@ open class FirImplicitAwareBodyResolveTransformer(
             return transform()
         }
 
-        if (member.returnTypeRef is FirResolvedTypeRef) return member
+        val canHaveDeepImplicitTypeRefs = member is FirProperty && member.hasExplicitBackingField
+
+        if (member.returnTypeRef is FirResolvedTypeRef && !canHaveDeepImplicitTypeRefs) return member
         val symbol = member.symbol
         val status = implicitBodyResolveComputationSession.getStatus(symbol)
         if (status is ImplicitBodyResolveComputationStatus.Computed) {

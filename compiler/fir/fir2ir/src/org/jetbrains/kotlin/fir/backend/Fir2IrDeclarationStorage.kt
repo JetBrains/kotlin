@@ -609,6 +609,8 @@ class Fir2IrDeclarationStorage(
         ) { symbol ->
             val accessorReturnType = if (isSetter) {
                 irBuiltIns.unitType
+            } else if (property.canNarrowDownGetterType) {
+                property.backingField?.returnTypeRef?.toIrType() ?: propertyType
             } else {
                 property.getExposingGetter()?.returnTypeRef?.toIrType() ?: propertyType
             }

@@ -125,7 +125,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         val returnTypeRef = property.returnTypeRef
         if (property.initializerAndAccessorsAreResolved) return property
-        if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property
+
+        val canHaveDeepImplicitTypeRefs = property.hasExplicitBackingField
+
+        if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly && !canHaveDeepImplicitTypeRefs) {
+            return property
+        }
 
         property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterProperty(property)
