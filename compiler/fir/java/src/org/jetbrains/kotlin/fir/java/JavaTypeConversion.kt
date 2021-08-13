@@ -7,18 +7,15 @@ package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -31,7 +28,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private fun ClassId.toLookupTag(): ConeClassLikeLookupTag =
     ConeClassLikeLookupTagImpl(this)
@@ -190,33 +186,23 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             }
 
             val lookupTag = ConeClassLikeLookupTagImpl(classId)
-            if (lookupTag == lowerBound?.lookupTag && !isRaw) {
-                return lookupTag.constructClassType(lowerBound.typeArguments, isNullable = true, attributes)
-            }
-
-            val mappedTypeArguments = if (isRaw) {
-                val defaultArgs = Array(classifier.typeParameters.size) { ConeStarProjection }
-                // This isn't entirely correct, but it prevents infinite recursion in cases like A<T extends A>,
-                // where the upper bound would be an infinite type `X = A<X>..A<*>?`.
-                if (lowerBound != null || mode == FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND) {
-                    defaultArgs
-                } else {
-                    val classSymbol = session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
-                    classSymbol?.fir?.typeParameters?.eraseToUpperBounds(session, javaTypeParameterStack) ?: defaultArgs
-                }
-            } else {
-                // TODO: why is this condition needed?
-                val useTypeParameters = mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND && mode != FirJavaTypeConversionMode.SUPERTYPE
-                val typeParameters = runIf(useTypeParameters) {
-                    val classSymbol = session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
-                    classSymbol?.fir?.typeParameters
-                } ?: emptyList()
-
-                Array(typeArguments.size) { index ->
-                    val argument = typeArguments[index]
-                    val parameter = typeParameters.getOrNull(index)?.symbol?.fir
-                    argument.toConeProjectionWithoutEnhancement(session, javaTypeParameterStack, parameter, mode)
-                }
+            // When converting type parameter bounds we should not attempt to load any classes, as this may trigger
+            // enhancement of type parameter bounds on some other class that depends on this one. Also, in case of raw
+            // types specifically there could be an infinite recursion on the type parameter itself.
+            val typeParameters = lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND }
+                ?.toFirRegularClass(session)?.typeParameters
+            val mappedTypeArguments = when {
+                isRaw ->
+                    // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
+                    typeParameters.takeIf { lowerBound == null }?.eraseToUpperBounds(session)
+                        ?: Array(classifier.typeParameters.size) { ConeStarProjection }
+                lookupTag != lowerBound?.lookupTag ->
+                    Array(typeArguments.size) { index ->
+                        val argument = typeArguments[index]
+                        val parameter = typeParameters?.getOrNull(index)?.symbol?.fir
+                        argument.toConeProjectionWithoutEnhancement(session, javaTypeParameterStack, parameter, mode)
+                    }
+                else -> lowerBound.typeArguments
             }
 
             lookupTag.constructClassType(mappedTypeArguments, isNullable = lowerBound != null, attributes)
@@ -246,34 +232,27 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
 
     if (!typeArguments.lastOrNull().isSuperWildcard()) return false
     val mutableLastParameterVariance =
-        (mutableClassId.toLookupTag().toSymbol(session)?.fir as? FirRegularClass)?.typeParameters?.lastOrNull()?.symbol?.fir?.variance
+        mutableClassId.toLookupTag().toFirRegularClass(session)?.typeParameters?.lastOrNull()?.symbol?.fir?.variance
             ?: return false
 
     return mutableLastParameterVariance != Variance.OUT_VARIANCE
 }
 
-private fun List<FirTypeParameterRef>.eraseToUpperBounds(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): Array<ConeTypeProjection> {
+private fun List<FirTypeParameterRef>.eraseToUpperBounds(session: FirSession): Array<ConeTypeProjection> {
     val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
-    return Array(size) { index -> this[index].symbol.fir.eraseToUpperBound(session, javaTypeParameterStack, cache) }
+    return Array(size) { index -> this[index].symbol.fir.eraseToUpperBound(session, cache) }
 }
 
-private fun FirTypeParameter.eraseToUpperBound(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
-    cache: MutableMap<FirTypeParameter, ConeKotlinType>
-): ConeKotlinType {
+private fun FirTypeParameter.eraseToUpperBound(session: FirSession, cache: MutableMap<FirTypeParameter, ConeKotlinType>): ConeKotlinType {
     return cache.getOrPut(this) {
-        cache[this] = ConeKotlinErrorType(ConeIntermediateDiagnostic("self-recursive type parameter $name")) // mark to avoid loops
-        bounds.first().toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
-            .eraseAsUpperBound(session, javaTypeParameterStack, cache)
+        // Mark to avoid loops.
+        cache[this] = ConeKotlinErrorType(ConeIntermediateDiagnostic("self-recursive type parameter $name"))
+        // We can assume that Java type parameter bounds are already converted.
+        bounds.first().coneType.eraseAsUpperBound(session, cache)
     }
 }
 
-private fun ConeKotlinType.eraseAsUpperBound(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
-    cache: MutableMap<FirTypeParameter, ConeKotlinType>
-): ConeKotlinType =
+private fun ConeKotlinType.eraseAsUpperBound(session: FirSession, cache: MutableMap<FirTypeParameter, ConeKotlinType>): ConeKotlinType =
     when (this) {
         is ConeClassLikeType ->
             withArguments(typeArguments.map { ConeStarProjection }.toTypedArray())
@@ -282,16 +261,15 @@ private fun ConeKotlinType.eraseAsUpperBound(
             // so there is no exponential complexity here due to cache lookups.
             coneFlexibleOrSimpleType(
                 session.typeContext,
-                lowerBound.eraseAsUpperBound(session, javaTypeParameterStack, cache),
-                upperBound.eraseAsUpperBound(session, javaTypeParameterStack, cache)
+                lowerBound.eraseAsUpperBound(session, cache),
+                upperBound.eraseAsUpperBound(session, cache)
             )
         is ConeTypeParameterType ->
-            lookupTag.typeParameterSymbol.fir.eraseToUpperBound(session, javaTypeParameterStack, cache).let {
+            lookupTag.typeParameterSymbol.fir.eraseToUpperBound(session, cache).let {
                 if (isNullable) it.withNullability(nullability, session.typeContext) else it
             }
         is ConeDefinitelyNotNullType ->
-            original.eraseAsUpperBound(session, javaTypeParameterStack, cache)
-                .makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+            original.eraseAsUpperBound(session, cache).makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
         else -> error("unexpected Java type parameter upper bound kind: $this")
     }
 
