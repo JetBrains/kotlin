@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
@@ -102,7 +103,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         val explicitOutputDir = explicitOutputPath?.let { File(it).absoluteFile.parentFile }
         return@lazy explicitOutputDir
             ?: jpsModuleBuildTarget.outputDir
-            ?: throw ProjectBuildException("No output directory found for " + this)
+            ?: throw ProjectBuildException(KotlinJpsBundle.message("error.message.no.output.directory.found.for.0", this))
     }
 
     val friendBuildTargets: List<KotlinModuleBuildTarget<*>>
