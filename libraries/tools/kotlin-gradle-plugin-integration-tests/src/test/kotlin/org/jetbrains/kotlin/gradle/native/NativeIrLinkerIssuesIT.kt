@@ -48,57 +48,57 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             |5. "io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
             |
             |Project dependencies:
-            |├─── io.ktor:ktor-client-core (io.ktor:ktor-client-core-$MASKED_TARGET_NAME): 1.5.4
-            |│    ├─── io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4
-            |│    │    ├─── io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4
-            |│    │    │    ├─── io.ktor:ktor-io (io.ktor:ktor-io-$MASKED_TARGET_NAME): 1.5.4
-            |│    │    │    │    ├─── io.ktor:ktor-io-cinterop-bits: 1.5.4
-            |│    │    │    │    │    └─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
-            |│    │    │    │    ├─── io.ktor:ktor-io-cinterop-sockets: 1.5.4
-            |│    │    │    │    │    └─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
-            |│    │    │    │    ├─── stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
-            |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.CoreFoundation: 1.4.32 -> $kotlinNativeCompilerVersion
-            |│    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
-            |│    │    │    │    │    ├─── org.jetbrains.kotlin.native.platform.darwin: $kotlinNativeCompilerVersion
-            |│    │    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
-            |│    │    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion
-            |│    │    │    │    │    │         └─── stdlib: $kotlinNativeCompilerVersion
-            |│    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
-            |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.darwin: 1.4.32 -> $kotlinNativeCompilerVersion (*)
-            |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.iconv: 1.4.32 -> $kotlinNativeCompilerVersion
-            |│    │    │    │    │    ├─── stdlib: $kotlinNativeCompilerVersion
-            |│    │    │    │    │    └─── org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
-            |│    │    │    │    ├─── org.jetbrains.kotlin.native.platform.posix: 1.4.32 -> $kotlinNativeCompilerVersion (*)
-            |│    │    │    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1
-            |│    │    │    │    │    ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
-            |│    │    │    │    │    ├─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
-            |│    │    │    │    │    └─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1
-            |│    │    │    │    │         ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
-            |│    │    │    │    │         └─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
-            |│    │    │    │    ├─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
-            |│    │    │    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt
-            |│    │    │    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            |│    │    │    │         ├─── stdlib: 1.5 -> $kotlinNativeCompilerVersion
-            |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.CoreFoundation: 1.5 -> $kotlinNativeCompilerVersion (*)
-            |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.darwin: 1.5 -> $kotlinNativeCompilerVersion (*)
-            |│    │    │    │         ├─── org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
-            |│    │    │    │         ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.16.1 (*)
-            |│    │    │    │         └─── org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
-            |│    │    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-            |│    │    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
-            |│    │    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            |│    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-            |│    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
-            |│    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            |│    ├─── io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$MASKED_TARGET_NAME): 1.5.4
-            |│    │    ├─── io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4 (*)
-            |│    │    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-            |│    │    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
-            |│    │         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            |│    ├─── org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-            |│    └─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
-            |│         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            |└─── org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt (*)
+            |+--- io.ktor:ktor-client-core (io.ktor:ktor-client-core-$MASKED_TARGET_NAME): 1.5.4
+            ||    +--- io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4
+            ||    |    +--- io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4
+            ||    |    |    +--- io.ktor:ktor-io (io.ktor:ktor-io-$MASKED_TARGET_NAME): 1.5.4
+            ||    |    |    |    +--- io.ktor:ktor-io-cinterop-bits: 1.5.4
+            ||    |    |    |    |    \--- stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
+            ||    |    |    |    +--- io.ktor:ktor-io-cinterop-sockets: 1.5.4
+            ||    |    |    |    |    \--- stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
+            ||    |    |    |    +--- stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
+            ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.CoreFoundation: 1.4.32 -> $kotlinNativeCompilerVersion
+            ||    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
+            ||    |    |    |    |    +--- org.jetbrains.kotlin.native.platform.darwin: $kotlinNativeCompilerVersion
+            ||    |    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
+            ||    |    |    |    |    |    \--- org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion
+            ||    |    |    |    |    |         \--- stdlib: $kotlinNativeCompilerVersion
+            ||    |    |    |    |    \--- org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
+            ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.darwin: 1.4.32 -> $kotlinNativeCompilerVersion (*)
+            ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.iconv: 1.4.32 -> $kotlinNativeCompilerVersion
+            ||    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
+            ||    |    |    |    |    \--- org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
+            ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.posix: 1.4.32 -> $kotlinNativeCompilerVersion (*)
+            ||    |    |    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1
+            ||    |    |    |    |    +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
+            ||    |    |    |    |    +--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
+            ||    |    |    |    |    \--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1
+            ||    |    |    |    |         +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
+            ||    |    |    |    |         \--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
+            ||    |    |    |    +--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
+            ||    |    |    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt
+            ||    |    |    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            ||    |    |    |         +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
+            ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.CoreFoundation: 1.5 -> $kotlinNativeCompilerVersion (*)
+            ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.darwin: 1.5 -> $kotlinNativeCompilerVersion (*)
+            ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
+            ||    |    |    |         +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.16.1 (*)
+            ||    |    |    |         \--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
+            ||    |    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
+            ||    |    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            ||    |    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            ||    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
+            ||    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            ||    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            ||    +--- io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$MASKED_TARGET_NAME): 1.5.4
+            ||    |    +--- io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4 (*)
+            ||    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
+            ||    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            ||    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            ||    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
+            ||    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            ||         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
+            |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt (*)
             |     ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
             |
             |(*) - dependencies omitted (listed previously)
@@ -124,12 +124,12 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             |1. "org.sample:liba (org.sample:liba-native): 2.0" (was initially compiled with "org.sample:liba (org.sample:liba-native): 1.0")
             |
             |Project dependencies:
-            |├─── org.sample:liba (org.sample:liba-native): 2.0
-            |│    └─── stdlib: $kotlinNativeCompilerVersion
-            |└─── org.sample:libb (org.sample:libb-native): 1.0
+            |+--- org.sample:liba (org.sample:liba-native): 2.0
+            ||    \--- stdlib: $kotlinNativeCompilerVersion
+            |\--- org.sample:libb (org.sample:libb-native): 1.0
             |     ^^^ This module requires symbol sample.liba/C|null[0].
-            |     ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            |     └─── stdlib: $kotlinNativeCompilerVersion
+            |     +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            |     \--- stdlib: $kotlinNativeCompilerVersion
             |
             |(*) - dependencies omitted (listed previously)
             """.trimMargin()
@@ -151,14 +151,14 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             |1. "org.sample:liba (org.sample:liba-native): 2.0" (was initially compiled with "org.sample:liba (org.sample:liba-native): 1.0")
             |
             |Project dependencies:
-            |├─── org.sample:liba (org.sample:liba-native): 2.0
-            |│    └─── stdlib: $kotlinNativeCompilerVersion
-            |├─── org.sample:libb (org.sample:libb-native): 1.0
-            |│    ^^^ This module requires symbol sample.liba/C|null[0].
-            |│    ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            |│    └─── stdlib: $kotlinNativeCompilerVersion
-            |└─── org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
-            |     └─── stdlib: $kotlinNativeCompilerVersion
+            |+--- org.sample:liba (org.sample:liba-native): 2.0
+            ||    \--- stdlib: $kotlinNativeCompilerVersion
+            |+--- org.sample:libb (org.sample:libb-native): 1.0
+            ||    ^^^ This module requires symbol sample.liba/C|null[0].
+            ||    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            ||    \--- stdlib: $kotlinNativeCompilerVersion
+            |\--- org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
+            |     \--- stdlib: $kotlinNativeCompilerVersion
             |
             |(*) - dependencies omitted (listed previously)
             """.trimMargin()
@@ -183,13 +183,13 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             |1. "org.sample:libb (org.sample:libb-native): 1.0" (was compiled against "org.sample:liba (org.sample:liba-native): 1.0" but "org.sample:liba (org.sample:liba-native): 2.0" is used in the project)
             |
             |Project dependencies:
-            |├─── org.sample:liba (org.sample:liba-native): 2.0
-            |│    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |│    └─── stdlib: $kotlinNativeCompilerVersion
-            |└─── org.sample:libb (org.sample:libb-native): 1.0
-            |     ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            |     │    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |     └─── stdlib: $kotlinNativeCompilerVersion
+            |+--- org.sample:liba (org.sample:liba-native): 2.0
+            ||    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            ||    \--- stdlib: $kotlinNativeCompilerVersion
+            |\--- org.sample:libb (org.sample:libb-native): 1.0
+            |     +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            |     |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            |     \--- stdlib: $kotlinNativeCompilerVersion
             |
             |(*) - dependencies omitted (listed previously)
             """.trimMargin()
@@ -211,15 +211,15 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             |1. "org.sample:libb (org.sample:libb-native): 1.0" (was compiled against "org.sample:liba (org.sample:liba-native): 1.0" but "org.sample:liba (org.sample:liba-native): 2.0" is used in the project)
             |
             |Project dependencies:
-            |├─── org.sample:liba (org.sample:liba-native): 2.0
-            |│    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |│    └─── stdlib: $kotlinNativeCompilerVersion
-            |├─── org.sample:libb (org.sample:libb-native): 1.0
-            |│    ├─── org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
-            |│    │    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
-            |│    └─── stdlib: $kotlinNativeCompilerVersion
-            |└─── org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
-            |     └─── stdlib: $kotlinNativeCompilerVersion
+            |+--- org.sample:liba (org.sample:liba-native): 2.0
+            ||    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            ||    \--- stdlib: $kotlinNativeCompilerVersion
+            |+--- org.sample:libb (org.sample:libb-native): 1.0
+            ||    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
+            ||    |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
+            ||    \--- stdlib: $kotlinNativeCompilerVersion
+            |\--- org.jetbrains.kotlin.native.platform.* (NNN libraries): $kotlinNativeCompilerVersion
+            |     \--- stdlib: $kotlinNativeCompilerVersion
             |
             |(*) - dependencies omitted (listed previously)
             """.trimMargin()

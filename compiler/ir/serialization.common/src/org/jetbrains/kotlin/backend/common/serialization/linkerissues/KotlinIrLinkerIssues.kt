@@ -259,9 +259,9 @@ private class Data(val parent: Data?, val incomingDependencyId: ResolvedDependen
         get() {
             return generateSequence(this) { it.parent }.map {
                 if (it === this) {
-                    if (it.isLast) "\u2514\u2500\u2500\u2500 " /* └─── */ else "\u251C\u2500\u2500\u2500 " /* ├─── */
+                    if (it.isLast) "\\--- " else "+--- "
                 } else {
-                    if (it.isLast) "     " else "\u2502    " /* │ */
+                    if (it.isLast) "     " else "|    "
                 }
             }.toList().asReversed().joinToString(separator = "")
         }
@@ -269,7 +269,7 @@ private class Data(val parent: Data?, val incomingDependencyId: ResolvedDependen
     val errorLinePrefix: String
         get() {
             return generateSequence(this) { it.parent }.map {
-                if (it.isLast) "     " else "\u2502    " /* │ */
+                if (it.isLast) "     " else "|    "
             }.toList().asReversed().joinToString(separator = "")
         }
 }
