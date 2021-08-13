@@ -32030,6 +32030,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testLocalCaptureTests() throws Exception {
             runTest("compiler/testData/codegen/box/script/localCaptureTests.kt");
         }
+
+        @TestMetadata("scripInstance.kt")
+        public void testScripInstance() throws Exception {
+            runTest("compiler/testData/codegen/box/script/scripInstance.kt");
+        }
+
+        @TestMetadata("scriptNestedClassInstance.kt")
+        public void testScriptNestedClassInstance() throws Exception {
+            runTest("compiler/testData/codegen/box/script/scriptNestedClassInstance.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/sealed")

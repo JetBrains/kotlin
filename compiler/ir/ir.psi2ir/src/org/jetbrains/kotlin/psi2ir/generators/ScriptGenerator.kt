@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.assertCast
+import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -20,26 +21,25 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.toArrayOrPrimitiveArrayType
-import org.jetbrains.kotlin.ir.util.indexOrMinusOne
-import org.jetbrains.kotlin.ir.util.isCrossinline
-import org.jetbrains.kotlin.ir.util.isNoinline
-import org.jetbrains.kotlin.ir.util.varargElementType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
-import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+    @OptIn(ExperimentalStdlibApi::class)
     fun generateScriptDeclaration(ktScript: KtScript): IrDeclaration? {
         val descriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktScript) as ScriptDescriptor
 
@@ -66,7 +66,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                         descriptor.isCrossinline, descriptor.isNoinline,
                         isHidden = false, isAssignable = false
                     )
-                } .also { it.parent = irScript }
+                }.also { it.parent = irScript }
             }
 
             irScript.thisReceiver = makeParameter(descriptor.thisAsReceiverParameter, IrDeclarationOrigin.INSTANCE_RECEIVER)
@@ -139,6 +139,28 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     irScript.statements += irProperty
                     valueParameter to irProperty.symbol
                 }
+
+            irScript.constructor = with(IrFunctionBuilder().apply {
+                isPrimary = true
+                returnType = irScript.thisReceiver.type as IrSimpleType
+            }) {
+                irScript.factory.createConstructor(
+                    startOffset, endOffset, origin,
+                    context.symbolTable.referenceConstructor(descriptor.unsubstitutedPrimaryConstructor),
+                    SpecialNames.INIT,
+                    visibility, returnType,
+                    isInline = isInline, isExternal = isExternal, isPrimary = isPrimary, isExpect = isExpect,
+                    containerSource = containerSource
+                )
+            }.also { irConstructor ->
+                irConstructor.valueParameters = buildList {
+                    addIfNotNull(irScript.earlierScriptsParameter)
+                    addAll(irScript.explicitCallParameters)
+                    addAll(irScript.implicitReceiversParameters)
+                    irScript.providedProperties.forEach { add(it.first) }
+                }
+                irConstructor.parent = irScript
+            }
 
             for (d in ktScript.declarations) {
                 when (d) {

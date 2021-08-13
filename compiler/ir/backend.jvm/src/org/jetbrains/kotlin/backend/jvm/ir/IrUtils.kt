@@ -111,6 +111,7 @@ val IrType.erasedUpperBound: IrClass
     get() = when (val classifier = classifierOrNull) {
         is IrClassSymbol -> classifier.owner
         is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
+        is IrScriptSymbol -> classifier.owner.targetClass!!.owner
         else -> error(render())
     }
 

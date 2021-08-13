@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val scriptsToClassesPhase = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
     name = "ScriptsToClasses",
@@ -98,44 +99,20 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext) {
 
         irScriptClass.thisReceiver = irScript.thisReceiver.transform(scriptTransformer, null)
 
-        irScriptClass.addConstructor {
-            isPrimary = true
-        }.also { irConstructor ->
-
-            fun addConstructorParameter(valueParameter: IrValueParameter, createCorrespondingProperty: Boolean): IrValueParameter {
-                val newValueParameter = valueParameter.patchForClass() as IrValueParameter
-                irConstructor.valueParameters = irConstructor.valueParameters + newValueParameter
-                if (createCorrespondingProperty) {
-                    irScriptClass.addSimplePropertyFrom(
-                        newValueParameter,
-                        IrExpressionBodyImpl(
-                            IrGetValueImpl(
-                                newValueParameter.startOffset, newValueParameter.endOffset,
-                                newValueParameter.type,
-                                newValueParameter.symbol,
-                                IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-                            )
-                        )
-                    )
-                }
-                return newValueParameter
-            }
-
-            irScript.earlierScriptsParameter?.let { earlierScriptdParameter ->
-                addConstructorParameter(earlierScriptdParameter, false)
-            }
-            val copiedExplicitParameters = irScript.explicitCallParameters.map { addConstructorParameter(it, false) }
-            irScript.implicitReceiversParameters.forEach { addConstructorParameter(it, false) }
-            irScript.providedProperties.forEach { addConstructorParameter(it.first, false) }
-
-            irConstructor.body = context.createIrBuilder(irConstructor.symbol).irBlockBody {
+        irScript.constructor?.patchForClass()?.safeAs<IrConstructor>()!!.also { constructor ->
+            val explicitParamsStartIndex = if (irScript.earlierScriptsParameter == null) 0 else 1
+            val explicitParameters = constructor.valueParameters.subList(
+                explicitParamsStartIndex,
+                irScript.explicitCallParameters.size + explicitParamsStartIndex
+            )
+            constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
                 val baseClassCtor = irScript.baseClass.classOrNull?.owner?.constructors?.firstOrNull()
                 // TODO: process situation with multiple constructors (should probably be an error)
                 if (baseClassCtor == null) {
                     +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
                 } else {
                     +irDelegatingConstructorCall(baseClassCtor).also {
-                        copiedExplicitParameters.forEachIndexed { idx, valueParameter ->
+                        explicitParameters.forEachIndexed { idx, valueParameter ->
                             it.putValueArgument(
                                 idx,
                                 IrGetValueImpl(
@@ -153,7 +130,10 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext) {
                     context.irBuiltIns.unitType
                 )
             }
+            irScriptClass.declarations.add(constructor)
+            constructor.parent = irScriptClass
         }
+
         var hasMain = false
         irScript.statements.forEach { scriptStatement ->
             when (scriptStatement) {
