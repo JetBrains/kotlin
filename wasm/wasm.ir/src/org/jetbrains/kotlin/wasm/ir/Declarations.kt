@@ -15,6 +15,7 @@ class WasmModule(
     val importedMemories: List<WasmMemory> = emptyList(),
     val importedTables: List<WasmTable> = emptyList(),
     val importedGlobals: List<WasmGlobal> = emptyList(),
+    val importedTags: List<WasmTag> = emptyList(),
 
     val definedFunctions: List<WasmFunction.Defined> = emptyList(),
     val tables: List<WasmTable> = emptyList(),
@@ -22,6 +23,7 @@ class WasmModule(
     val globals: List<WasmGlobal> = emptyList(),
     val exports: List<WasmExport<*>> = emptyList(),
     val elements: List<WasmElement> = emptyList(),
+    val tags: List<WasmTag> = emptyList(),
 
     val startFunction: WasmFunction? = null,
 
@@ -103,6 +105,15 @@ class WasmElement(
     }
 }
 
+class WasmTag(
+    val type: WasmFunctionType,
+    val importPair: WasmImportPair? = null
+) : WasmNamedModuleField() {
+    init {
+        assert(type.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
+    }
+}
+
 class WasmLocal(
     val id: Int,
     val name: String,
@@ -128,6 +139,7 @@ sealed class WasmExport<T : WasmNamedModuleField>(
     class Table(name: String, field: WasmTable) : WasmExport<WasmTable>(name, field, 0x1, "table")
     class Memory(name: String, field: WasmMemory) : WasmExport<WasmMemory>(name, field, 0x2, "memory")
     class Global(name: String, field: WasmGlobal) : WasmExport<WasmGlobal>(name, field, 0x3, "global")
+    class Tag(name: String, field: WasmTag) : WasmExport<WasmTag>(name, field, 0x4, "tag")
 }
 
 sealed class WasmTypeDeclaration(
