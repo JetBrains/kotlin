@@ -48,7 +48,7 @@ internal class TestKpmGradleProject(val name: String) {
     }
 
     fun allModules(action: TestKpmModule.() -> Unit) {
-        modules.forEach(action)
+        modules.withAll(action)
     }
 
     fun module(name: String, configure: TestKpmModule.() -> Unit): TestKpmModule {
