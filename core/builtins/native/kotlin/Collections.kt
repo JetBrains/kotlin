@@ -172,9 +172,9 @@ public interface List<out E> : Collection<E> {
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 
     companion object {
-        fun <T> build(size: Int): List<T> {
-            return TODO()
-        }
+//        /*operator*/ fun <T> build(size: Int, init: CollectionLiteralBuilder<List<T>, T>.() -> Unit = {}): List<T> {
+//            return TODO()
+//        }
     }
 }
 
@@ -261,9 +261,9 @@ public interface Set<out E> : Collection<E> {
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
     companion object {
-        fun <T> build(size: Int): Set<T> {
-            return TODO()
-        }
+//        fun <T> build(size: Int, init: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
+//            return TODO()
+//        }
     }
 }
 
@@ -447,4 +447,9 @@ public interface MutableMap<K, V> : Map<K, V> {
          */
         public fun setValue(newValue: V): V
     }
+}
+
+public interface CollectionLiteralBuilder<T, E> {
+    public fun add(element: E)
+    public fun build(): T
 }

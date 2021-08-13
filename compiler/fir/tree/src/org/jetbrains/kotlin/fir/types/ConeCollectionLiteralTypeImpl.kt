@@ -10,7 +10,7 @@ class ConeCollectionLiteralTypeImpl(
     override val possibleTypes: Set<ConeKotlinType>
 ) : ConeCollectionLiteralType() {
 
-    override val typeArguments: Array<out ConeTypeProjection> = emptyArray()
+    override var argumentType: ConeKotlinType? = null
 
     override val attributes: ConeAttributes
         get() = ConeAttributes.Empty

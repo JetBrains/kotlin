@@ -245,6 +245,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 }
             }
             is ConeIntegerLiteralType -> 0
+            is ConeCollectionLiteralType -> 0 // TODO maybe 1?
             else -> unknownConstructorError()
         }
     }

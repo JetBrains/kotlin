@@ -88,7 +88,8 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckVisibility,
 //        MapArguments,
         MapTypeArguments,
-        CreateFreshTypeVariableSubstitutorStage
+        CreateFreshTypeVariableSubstitutorStage,
+        CheckCollectionLiteralArgumentsStage
     )
 
     internal class CustomForIde(vararg resolutionSequence: ResolutionStage) : CallKind(*resolutionSequence)

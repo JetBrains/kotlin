@@ -176,16 +176,12 @@ class FirCallResolver(
             CallKind.CollectionLiteral,
             OperatorNameConventions.BUILD_CL,
             null,
-            buildArgumentList { // TODO add arguments from CL
-                this.arguments.add(0, buildConstExpression(null, ConstantValueKind.Int, collectionLiteral.expressions.size))
+            buildArgumentList {
+                this.arguments.addAll(collectionLiteral.expressions)
             },
             isPotentialQualifierPart = false,
             isImplicitInvoke = false,
             emptyList(),
-//            listOf(buildTypeProjectionWithVariance {
-//                this.typeRef = buildImplicitTypeRef()
-//                this.variance = Variance.INVARIANT // TODO возможны ли in out?
-//            }),
             session,
             components.file,
             transformer.components.containingDeclarations

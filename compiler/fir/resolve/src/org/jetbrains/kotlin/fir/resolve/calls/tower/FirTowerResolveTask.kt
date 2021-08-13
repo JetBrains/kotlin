@@ -263,7 +263,8 @@ internal open class FirTowerResolveTask(
     ) {
         enumerateTowerLevels(
             onScope = { scope, group ->
-                processLevel(scope.toScopeTowerLevel(), info, group)
+//                processLevel(scope.toScopeTowerLevel(), info, group)
+                processLevel(scope.toScopeTowerLevel(extensionsOnly = true), info, group)
             },
             onImplicitReceiver = { _, _ ->
 //                processLevel(receiver.toMemberScopeTowerLevel(), info, group, ExplicitReceiverKind.DISPATCH_RECEIVER)

@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildLabel
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
@@ -26,24 +25,31 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
@@ -318,6 +324,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         collectionLiteral.transformChildren(transformer, data)
 
         val builders = callResolver.collectAvailableBuildersForCollectionLiteral(collectionLiteral)
+        val c = builders.firstOrNull()?.system?.asConstraintSystemCompleterContext() ?: error("")
 
         val possibleTypes = builders
             .map { components.initialTypeOfCandidate(it) }
@@ -330,9 +337,109 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 //            .filterIsInstance<ConeClassLikeType>()
 //            .toSet()
         val type = ConeCollectionLiteralTypeImpl(ConeNullability.NOT_NULL, possibleTypes)
+
+        type.argumentType = getTypeOfCLArguments(type, c) ?: error("cant infer type of CL arguments")
+
         collectionLiteral.resultType = collectionLiteral.resultType.resolvedTypeFromPrototype(type)
 
-        return collectionLiteral
+        return when (data) {
+            is ResolutionMode.WithExpectedType -> {
+                val buildCall = buildCLOperatorCall(collectionLiteral, data.expectedTypeRef)
+                transformer.transformFunctionCall(buildCall, data)
+            }
+            else -> collectionLiteral
+        }
+    }
+
+    private fun buildCLOperatorCall(cl: FirCollectionLiteral, expectedType: FirTypeRef): FirFunctionCall {
+        val clt = cl.typeRef.coneType as ConeCollectionLiteralType
+        // TODO decide what to do with source
+        val adds = cl.expressions.map {
+            buildFunctionCall {
+                this.calleeReference = buildSimpleNamedReference {
+                    this.name = Name.identifier("add")
+                }
+                this.argumentList = buildArgumentList {
+                    this.arguments.add(it)
+                }
+            }
+        }
+        // TODO simplify
+        val buildArguments = buildArgumentList {
+            this.arguments.add(
+                buildConstExpression(null, ConstantValueKind.Int, cl.expressions.size)
+            )
+            this.arguments.add(
+                buildLambdaArgumentExpression {
+                    this.expression = buildAnonymousFunctionExpression {
+                        this.anonymousFunction = buildAnonymousFunction {
+                            this.origin = FirDeclarationOrigin.Synthetic
+                            this.moduleData = session.moduleData
+                            this.body = buildBlock {
+                                this.statements.addAll(adds)
+                            }
+                            this.returnTypeRef = buildImplicitTypeRef()
+                            this.receiverTypeRef = buildImplicitTypeRef()
+                            this.symbol = FirAnonymousFunctionSymbol()
+                            this.isLambda = true
+                            this.label = buildLabel {
+                                name = "build"
+                            }
+
+                        }
+                    }
+                }
+            )
+        }
+        val expectedClassId = when (expectedType) {
+            is FirImplicitTypeRef -> StandardClassIds.List
+            is FirResolvedTypeRef -> expectedType.coneType.classId!!
+            is FirTypeRefWithNullability -> TODO()
+        }
+
+        val receiverName = if (clt.possibleTypes.map { it.classId }.contains(expectedClassId)) {
+            expectedClassId.shortClassName
+        } else {
+            // Some kind of diagnostic???
+            TODO()
+        }
+
+        val explicitReceiver = buildQualifiedAccessExpression {
+            this.calleeReference = buildSimpleNamedReference {
+                this.name = receiverName
+            }
+        }
+        return buildFunctionCall {
+            this.explicitReceiver = explicitReceiver
+            calleeReference = buildSimpleNamedReference {
+                name = Name.identifier("build")
+            }
+            typeArguments.add(buildTypeProjectionWithVariance {
+                typeRef = clt.argumentType!!.toFirResolvedTypeRef()
+                variance = Variance.INVARIANT
+            })
+            argumentList = buildArguments
+        }
+    }
+
+    // TODO вынести построение констр системы из чекера сюда
+    private fun getTypeOfCLArguments(
+//        collectionLiteral: FirCollectionLiteral,
+        clt: ConeCollectionLiteralType,
+        c: NewConstraintSystemImpl
+    ): ConeKotlinType? {
+        require(c.notFixedTypeVariables.size == 1) // TODO replace require
+        val (_, typeVariable) = c.notFixedTypeVariables.entries.first()
+
+        val direction = TypeVariableDirectionCalculator(c, emptyList(), clt)
+            .getDirection(typeVariable) // TODO add direction for CLT (now UNKNOWN)
+        val resultType = inferenceComponents.resultTypeResolver.findResultType(
+            c, typeVariable, direction
+        )
+        val variable = typeVariable.typeVariable
+
+        c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable))
+        return c.asReadOnlyStorage().fixedTypeVariables.entries.first().value as? ConeKotlinType
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
@@ -1132,7 +1239,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return anonymousFunctionExpression
     }
 
-    // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 
     internal fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
         val typeFromCallee = components.typeFromCallee(access)
