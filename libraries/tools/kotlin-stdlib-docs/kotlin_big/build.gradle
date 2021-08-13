@@ -3,7 +3,7 @@ apply plugin: 'base'
 final boolean isTeamcityBuild = System.getenv("TEAMCITY_VERSION") != null
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
-final String kotlinRootDir = rootProject.file("../../../").absolutePath
+final String kotlinRootDir = rootProject.file("../../../").absolutePath.replace('\\', '/')
 final String kotlinLibsDir = "$buildDir/libs"
 
 final String githubRevision = isTeamcityBuild ? project.property("githubRevision") : "master"
