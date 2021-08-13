@@ -7,18 +7,15 @@ package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -32,7 +29,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private fun ClassId.toLookupTag(): ConeClassLikeLookupTag {
     return ConeClassLikeLookupTagImpl(this)
@@ -199,28 +195,20 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 return lookupTag.constructClassType(lowerBound.typeArguments, isNullable = true, attributes)
             }
 
-            val mappedTypeArguments = if (isRaw) {
-                val defaultArgs = (1..classifier.typeParameters.size).map { ConeStarProjection }
-                // This isn't entirely correct, but it prevents infinite recursion in cases like A<T extends A>,
-                // where the upper bound would be an infinite type `X = A<X>..A<out X>?`.
-                // TODO: don't do this if there is no cycle.
-                if (mode == FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND) {
-                    defaultArgs
-                } else {
-                    val classSymbol = session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
-                    classSymbol?.fir?.createRawArguments(session, javaTypeParameterStack, lowerBound != null) ?: defaultArgs
-                }
-            } else {
-                // TODO: why is this condition needed?
-                val useTypeParameters = mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND && mode != FirJavaTypeConversionMode.SUPERTYPE
-                val typeParameters = runIf(useTypeParameters) {
-                    val classSymbol = session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
-                    classSymbol?.fir?.typeParameters
-                } ?: emptyList()
+            // Disregarding type parameters isn't entirely correct, but it prevents infinite recursion in cases
+            // like A<T extends A>, where the upper bound would be an infinite type `X = A<X>..A<out X>?`.
+            // TODO: don't do this if there is no cycle.
+            val mappedTypeParameters = if (!isRaw || mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND)
+                lookupTag.toFirRegularClass(session)?.typeParameters
+            else
+                null
 
-                typeArguments.indices.map { index ->
-                    val argument = typeArguments[index]
-                    val parameter = typeParameters.getOrNull(index)?.symbol?.fir
+            val mappedTypeArguments = if (isRaw) {
+                mappedTypeParameters?.createRawArguments(session, javaTypeParameterStack, lowerBound != null)
+                    ?: classifier.typeParameters.map { ConeStarProjection }
+            } else {
+                typeArguments.mapIndexed { index, argument ->
+                    val parameter = mappedTypeParameters?.getOrNull(index)?.symbol?.fir
                     argument.toConeProjectionWithoutEnhancement(session, javaTypeParameterStack, parameter, mode)
                 }
             }
@@ -252,18 +240,18 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
 
     if (!typeArguments.lastOrNull().isSuperWildcard()) return false
     val mutableLastParameterVariance =
-        (mutableClassId.toLookupTag().toSymbol(session)?.fir as? FirRegularClass)?.typeParameters?.lastOrNull()?.symbol?.fir?.variance
+        mutableClassId.toLookupTag().toFirRegularClass(session)?.typeParameters?.lastOrNull()?.symbol?.fir?.variance
             ?: return false
 
     return mutableLastParameterVariance != Variance.OUT_VARIANCE
 }
 
-private fun FirRegularClass.createRawArguments(
+private fun List<FirTypeParameterRef>.createRawArguments(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
     forUpperBound: Boolean
 ): List<ConeTypeProjection> {
     val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
-    return typeParameters.map { typeParameter ->
+    return map { typeParameter ->
         val erased = typeParameter.symbol.fir.eraseToUpperBound(session, javaTypeParameterStack, cache)
         when {
             !forUpperBound ->
@@ -272,8 +260,7 @@ private fun FirRegularClass.createRawArguments(
                 session.builtinTypes.nothingType.type // in T -> Comparable<Nothing>
             // These two cases are technically equivalent, but we need to produce types of the same size
             // for both bounds.
-            erased is ConeClassLikeType &&
-                    erased.lookupTag.toSymbol(session)!!.firUnsafe<FirRegularClass>().typeParameters.isNotEmpty() ->
+            erased is ConeClassLikeType && erased.lookupTag.toFirRegularClass(session)?.typeParameters?.isNotEmpty() == true ->
                 ConeKotlinTypeProjectionOut(erased) // T : Enum<E> -> out Enum<*>
             else ->
                 ConeStarProjection // T : String -> *
