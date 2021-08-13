@@ -41,6 +41,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
                         is WasmMemory -> appendMemory(it)
                         is WasmTable -> appendTable(it)
                         is WasmGlobal -> appendGlobal(it)
+                        is WasmTag -> appendTag(it)
                         else -> error("Unknown import kind ${it::class}")
                     }
                 }
@@ -64,7 +65,11 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
                 memories.forEach { appendMemory(it) }
             }
 
-            // Good
+            // tag section
+            appendSection(13u) {
+                appendVectorSize(tags.size)
+                tags.forEach { appendTag(it) }
+            }
 
             appendSection(6u) {
                 appendVectorSize(globals.size)
@@ -141,6 +146,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
             is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdx -> b.writeVarUInt32(x.value)
+            is WasmImmediate.TagIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.LabelIdxVector -> {
                 b.writeVarUInt32(x.value.size)
                 for (target in x.value) {
@@ -269,6 +275,18 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
         appendType(c.type)
         b.writeVarUInt1(c.isMutable)
         appendExpr(c.init)
+    }
+
+    private fun appendTag(t: WasmTag) {
+        if (t.importPair != null) {
+            b.writeString(t.importPair.moduleName)
+            b.writeString(t.importPair.declarationName)
+            b.writeByte(4)
+            return
+        }
+        b.writeByte(0) // attribute
+        assert(t.type.id != null) { "Unlinked tag id" }
+        b.writeVarUInt32(t.type.id!!)
     }
 
     private fun appendExpr(expr: Iterable<WasmInstr>) {

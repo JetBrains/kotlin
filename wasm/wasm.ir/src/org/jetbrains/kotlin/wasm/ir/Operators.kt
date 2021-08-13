@@ -27,6 +27,7 @@ enum class WasmImmediateKind {
     DATA_IDX,
     TABLE_IDX,
     LABEL_IDX,
+    TAG_IDX,
     LABEL_IDX_VECTOR,
     ELEM_IDX,
 
@@ -78,6 +79,7 @@ sealed class WasmImmediate {
     }
 
     class LabelIdx(val value: Int) : WasmImmediate()
+    class TagIdx(val value: Int) : WasmImmediate()
     class LabelIdxVector(val value: List<Int>) : WasmImmediate()
     class ElemIdx(val value: WasmElement) : WasmImmediate()
 
@@ -306,6 +308,12 @@ enum class WasmOp(
     RETURN("return", 0x0F),
     CALL("call", 0x10, FUNC_IDX),
     CALL_INDIRECT("call_indirect", 0x11, listOf(TYPE_IDX, TABLE_IDX)),
+    TRY("try", 0x06, BLOCK_TYPE),
+    CATCH("catch", 0x07, TAG_IDX),
+    CATCH_ALL("catch_all", 0x19),
+    DELEGATE("delegate", 0x18, LABEL_IDX),
+    THROW("throw", 0x08, TAG_IDX),
+    RETHROW("rethrow", 0x09, LABEL_IDX),
 
     // Parametric
     DROP("drop", 0x1A),

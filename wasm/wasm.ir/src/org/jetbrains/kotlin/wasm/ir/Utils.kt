@@ -21,10 +21,12 @@ fun WasmModule.calculateIds() {
     importedMemories.calculateIds()
     importedTables.calculateIds()
     importedGlobals.calculateIds()
+    importedTags.calculateIds()
     elements.calculateIds()
 
     definedFunctions.calculateIds(startIndex = importedFunctions.size)
     globals.calculateIds(startIndex = importedGlobals.size)
     memories.calculateIds(startIndex = importedMemories.size)
     tables.calculateIds(startIndex = importedTables.size)
+    tags.calculateIds(startIndex = importedTags.size)
 }
