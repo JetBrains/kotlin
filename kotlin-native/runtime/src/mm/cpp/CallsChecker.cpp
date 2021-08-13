@@ -194,6 +194,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "method_getName",
         "method_getTypeEncoding",
         "objc_alloc",
+        "objc_alloc_init",
         "objc_allocateClassPair",
         "objc_autorelease",
         "objc_autoreleasePoolPush",
