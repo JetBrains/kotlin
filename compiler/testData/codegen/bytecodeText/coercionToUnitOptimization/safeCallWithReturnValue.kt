@@ -13,5 +13,5 @@ fun test(x: A?) {
 // 0 ACONST_NULL
 
 // JVM_IR_TEMPLATES
-// 1 POP
+// 2 POP
 // 0 ACONST_NULL

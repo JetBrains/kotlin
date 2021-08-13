@@ -24,4 +24,4 @@ fun test(ss: List<String?>) {
 // 2 POP
 
 // JVM_IR_TEMPLATES
-// 1 POP
+// 2 POP

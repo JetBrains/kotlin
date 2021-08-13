@@ -350,6 +350,116 @@ fun AbstractInsnNode?.insnText(insnList: InsnList): String {
     }
 }
 
+fun MethodNode.dumpBody(): String {
+    val sw = StringWriter()
+    val pw = PrintWriter(sw)
+
+    fun LabelNode.labelRef() =
+        "L#${this@dumpBody.instructions.indexOf(this)}"
+
+    pw.println("${this.name} ${this.desc}")
+
+    for (tcb in this.tryCatchBlocks) {
+        pw.println("  TRYCATCHBLOCK start:${tcb.start.labelRef()} end:${tcb.end.labelRef()} handler:${tcb.handler.labelRef()}")
+    }
+
+    for ((i, insn) in this.instructions.toArray().withIndex()) {
+        when (insn.type) {
+            AbstractInsnNode.INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]}")
+            AbstractInsnNode.INT_INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${(insn as IntInsnNode).operand}")
+            AbstractInsnNode.VAR_INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${(insn as VarInsnNode).`var`}")
+            AbstractInsnNode.TYPE_INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${(insn as TypeInsnNode).desc}")
+            AbstractInsnNode.FIELD_INSN -> {
+                val fieldInsn = insn as FieldInsnNode
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${fieldInsn.owner}#${fieldInsn.name} ${fieldInsn.desc}")
+            }
+            AbstractInsnNode.METHOD_INSN -> {
+                val methodInsn = insn as MethodInsnNode
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${methodInsn.owner}#${methodInsn.name} ${methodInsn.desc}")
+            }
+            AbstractInsnNode.INVOKE_DYNAMIC_INSN -> {
+                val indyInsn = insn as InvokeDynamicInsnNode
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${indyInsn.name} ${indyInsn.desc}")
+                val bsmTag = when (val tag = indyInsn.bsm.tag) {
+                    Opcodes.H_GETFIELD -> "H_GETFIELD"
+                    Opcodes.H_GETSTATIC -> "H_GETSTATIC"
+                    Opcodes.H_PUTFIELD -> "H_PUTFIELD"
+                    Opcodes.H_PUTSTATIC -> "H_PUTSTATIC"
+                    Opcodes.H_INVOKEVIRTUAL -> "H_INVOKEVIRTUAL"
+                    Opcodes.H_INVOKESTATIC -> "H_INVOKESTATIC"
+                    Opcodes.H_INVOKESPECIAL -> "H_INVOKESPECIAL"
+                    Opcodes.H_NEWINVOKESPECIAL -> "H_NEWINVOKESPECIAL"
+                    Opcodes.H_INVOKEINTERFACE -> "H_INVOKEINTERFACE"
+                    else -> "<$tag>"
+                }
+                pw.println("\t$bsmTag ${indyInsn.bsm.owner}#${indyInsn.bsm.name} ${indyInsn.bsm.desc} [")
+                for (bsmArg in indyInsn.bsmArgs) {
+                    pw.println("\t$bsmArg")
+                }
+                pw.println("\t]")
+            }
+            AbstractInsnNode.JUMP_INSN ->
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${(insn as JumpInsnNode).label.labelRef()}")
+            AbstractInsnNode.LABEL ->
+                pw.println("$i\tL#$i")
+            AbstractInsnNode.LDC_INSN ->
+                pw.println("$i\tLDC ${(insn as LdcInsnNode).cst}")
+            AbstractInsnNode.IINC_INSN -> {
+                val iincInsn = insn as IincInsnNode
+                pw.println("$i\tIINC ${iincInsn.`var`} incr:${iincInsn.incr}")
+            }
+            AbstractInsnNode.TABLESWITCH_INSN -> {
+                val switchInsn = insn as TableSwitchInsnNode
+                pw.println("$i\tTABLESWITCH min:${switchInsn.min} max:${switchInsn.max}{")
+                for (k in switchInsn.labels.indices) {
+                    pw.println("\t${k + switchInsn.min}: ${switchInsn.labels[k].labelRef()}")
+                }
+                pw.println("\tdefault: ${switchInsn.dflt.labelRef()}")
+                pw.println("\t}")
+            }
+            AbstractInsnNode.LOOKUPSWITCH_INSN -> {
+                val switchInsn = insn as LookupSwitchInsnNode
+                pw.println("$i\tLOOKUPSWITCH {")
+                for (k in switchInsn.labels.indices) {
+                    val key = switchInsn.keys[k]
+                    val label = switchInsn.labels[k]
+                    pw.println("\t$key: ${label.labelRef()}")
+                }
+                pw.println("\t}")
+            }
+            AbstractInsnNode.MULTIANEWARRAY_INSN -> {
+                val manInsn = insn as MultiANewArrayInsnNode
+                pw.println("$i\t${Printer.OPCODES[insn.opcode]} ${manInsn.desc} dims:${manInsn.dims} ")
+            }
+            AbstractInsnNode.FRAME -> {
+                // TODO dump frame if needed
+                pw.println("$i\tFRAME {...}")
+            }
+            AbstractInsnNode.LINE -> {
+                val lineInsn = insn as LineNumberNode
+                pw.println("$i\tLINENUMBER ${lineInsn.line} ${lineInsn.start.labelRef()}")
+            }
+            else -> {
+                pw.println("$i\t??? $insn")
+            }
+        }
+    }
+
+    for (lv in this.localVariables) {
+        pw.println("  LOCALVARIABLE ${lv.index} ${lv.name} ${lv.desc} ${lv.start.labelRef()} ${lv.end.labelRef()}")
+        if (lv.signature != null) {
+            pw.println("    // signature: ${lv.signature}")
+        }
+    }
+
+    pw.flush()
+    return sw.toString()
+}
+
 internal val AbstractInsnNode?.insnOpcodeText: String
     get() = when (this) {
         null -> "null"

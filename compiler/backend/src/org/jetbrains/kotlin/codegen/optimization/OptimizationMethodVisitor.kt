@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTra
 import org.jetbrains.kotlin.codegen.optimization.boxing.StackPeepholeOptimizationsTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.prepareForEmitting
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckMethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.temporaryVals.CodeCompactionTransformer
 import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -47,6 +48,7 @@ class OptimizationMethodVisitor(
     )
 
     val optimizationTransformer = CompositeMethodTransformer(
+        CodeCompactionTransformer(),
         CapturedVarsOptimizationMethodTransformer(),
         RedundantNullCheckMethodTransformer(generationState),
         RedundantCheckCastEliminationMethodTransformer(),

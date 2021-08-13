@@ -57,9 +57,8 @@ class IrCallImpl(
             valueArgumentsCount: Int = symbol.descriptor.valueParameters.size,
             origin: IrStatementOrigin? = null,
             superQualifierSymbol: IrClassSymbol? = null,
-        ) = IrCallImpl(
-            startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol
-        )
+        ) =
+            IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
 
         fun fromSymbolOwner(
             startOffset: Int,
@@ -70,8 +69,24 @@ class IrCallImpl(
             valueArgumentsCount: Int = symbol.owner.valueParameters.size,
             origin: IrStatementOrigin? = null,
             superQualifierSymbol: IrClassSymbol? = null,
-        ) = IrCallImpl(
-            startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol
-        )
+        ) =
+            IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
+
+        fun fromSymbolOwner(
+            startOffset: Int,
+            endOffset: Int,
+            symbol: IrSimpleFunctionSymbol
+        ) =
+            IrCallImpl(
+                startOffset,
+                endOffset,
+                symbol.owner.returnType,
+                symbol,
+                typeArgumentsCount = symbol.owner.typeParameters.size,
+                valueArgumentsCount = symbol.owner.valueParameters.size,
+                origin = null,
+                superQualifierSymbol = null
+            )
+
     }
 }
