@@ -34,12 +34,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class ModuleGenerator(
+open class ModuleGenerator(
     override val context: GeneratorContext,
     private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
 ) : Generator {
 
-    fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
+    open fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
         IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
             ktFiles.toSet().mapTo(irModule.files) { ktFile ->
                 val fileContext = context.createFileScopeContext(ktFile)

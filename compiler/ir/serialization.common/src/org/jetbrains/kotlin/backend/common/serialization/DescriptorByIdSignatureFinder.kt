@@ -22,7 +22,9 @@ class DescriptorByIdSignatureFinder(
     private val lookupMode: LookupMode
 ) {
     init {
-        assert(lookupMode != LookupMode.MODULE_ONLY || moduleDescriptor is ModuleDescriptorImpl)
+        assert(lookupMode != LookupMode.MODULE_ONLY || moduleDescriptor is ModuleDescriptorImpl) {
+            "Incorrect lookup mode $lookupMode for $moduleDescriptor"
+        }
     }
 
     /**

@@ -60,7 +60,7 @@ interface ReferenceSymbolTable {
     fun leaveScope(owner: IrDeclaration)
 }
 
-class SymbolTable(
+open class SymbolTable(
     val signaturer: IdSignatureComposer,
     val irFactory: IrFactory,
     val nameProvider: NameProvider = NameProvider.DEFAULT
@@ -1000,11 +1000,12 @@ class SymbolTable(
         type: IrType,
         varargElementType: IrType? = null,
         name: Name? = null,
+        isAssignable: Boolean = false,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
                 startOffset, endOffset, origin, it, name ?: nameProvider.nameForDeclaration(descriptor),
                 descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline,
-                isHidden = false, isAssignable = false
+                isHidden = false, isAssignable = isAssignable
             )
         }
     ): IrValueParameter =
@@ -1110,7 +1111,7 @@ class SymbolTable(
         leaveScope(owner.symbol)
     }
 
-    fun referenceValue(value: ValueDescriptor): IrValueSymbol =
+    open fun referenceValue(value: ValueDescriptor): IrValueSymbol =
         when (value) {
             is ParameterDescriptor ->
                 valueParameterSymbolTable.referenced(value) { throw AssertionError("Undefined parameter referenced: $value") }

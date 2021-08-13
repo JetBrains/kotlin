@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
+import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.FqName
@@ -55,10 +56,12 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class JvmGeneratorExtensionsImpl(
     configuration: CompilerConfiguration,
@@ -81,6 +84,10 @@ open class JvmGeneratorExtensionsImpl(
         companion object Instance : JvmSamConversion()
     }
 
+    override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {
+        return descriptor.safeAs<DescriptorWithContainerSource>()?.containerSource
+    }
+
     override fun computeFieldVisibility(descriptor: PropertyDescriptor): DescriptorVisibility? =
         if (descriptor.hasJvmFieldAnnotation() || descriptor is JavaCallableMemberDescriptor)
             descriptor.visibility
@@ -98,7 +105,7 @@ open class JvmGeneratorExtensionsImpl(
         deserializedSource: DeserializedContainerSource,
         stubGenerator: DeclarationStubGenerator
     ): IrClass? {
-        if (!generateFacades || deserializedSource !is JvmPackagePartSource) return null
+        if (!generateFacades || deserializedSource !is FacadeClassSource) return null
         val facadeName = deserializedSource.facadeClassName ?: deserializedSource.className
         return JvmFileFacadeClass(
             if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,

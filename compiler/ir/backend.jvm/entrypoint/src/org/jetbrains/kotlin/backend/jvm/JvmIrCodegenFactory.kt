@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
+import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
+import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
@@ -44,6 +46,7 @@ open class JvmIrCodegenFactory(
     private val externalMangler: JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
+    private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null
 ) : CodegenFactory {
     data class JvmIrBackendInput(
         val irModuleFragment: IrModuleFragment,
@@ -65,7 +68,13 @@ open class JvmIrCodegenFactory(
             }
         val psi2ir = Psi2IrTranslator(input.languageVersionSettings, Psi2IrConfiguration(input.ignoreErrors))
         val messageLogger = input.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
-        val psi2irContext = psi2ir.createGeneratorContext(input.module, input.bindingContext, symbolTable, jvmGeneratorExtensions)
+        val psi2irContext = psi2ir.createGeneratorContext(
+            input.module,
+            input.bindingContext,
+            symbolTable,
+            jvmGeneratorExtensions,
+            fragmentContext = if (evaluatorFragmentInfoForPsi2Ir != null) FragmentContext() else null,
+        )
         val pluginExtensions = IrGenerationExtension.getInstances(input.project)
 
         val stubGenerator =
@@ -134,10 +143,22 @@ open class JvmIrCodegenFactory(
             }
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
         }
-        val irProviders = listOf(irLinker)
+
+        val irProviders = if (evaluatorFragmentInfoForPsi2Ir != null) {
+            listOf(stubGenerator, irLinker)
+        } else {
+            listOf(irLinker)
+        }
 
         val irModuleFragment =
-            psi2ir.generateModuleFragment(psi2irContext, input.files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
+            psi2ir.generateModuleFragment(
+                psi2irContext,
+                input.files,
+                irProviders,
+                pluginExtensions,
+                expectDescriptorToSymbol = null,
+                fragmentInfo = evaluatorFragmentInfoForPsi2Ir)
+
         irLinker.postProcess()
 
         stubGenerator.unboundSymbolGeneration = true

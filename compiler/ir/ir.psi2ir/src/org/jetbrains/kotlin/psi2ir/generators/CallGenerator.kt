@@ -89,8 +89,16 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         resolvedCall: ResolvedCall<*>?,
         origin: IrStatementOrigin?,
         smartCastIrType: IrType? = null
-    ): IrExpression =
-        when (descriptor) {
+    ): IrExpression {
+        context.fragmentContext?.capturedDescriptorToFragmentParameterMap?.get(descriptor)?.let {
+            val getValue = IrGetValueImpl(startOffset, endOffset, it.descriptor.type.toIrType(), it, origin)
+            return if (smartCastIrType != null) {
+                IrTypeOperatorCallImpl(startOffset, endOffset, smartCastIrType, IrTypeOperator.IMPLICIT_CAST, smartCastIrType, getValue)
+            } else {
+                getValue
+            }
+        }
+        return when (descriptor) {
             is FakeCallableDescriptorForObject ->
                 generateValueReference(startOffset, endOffset, descriptor.getReferencedDescriptor(), resolvedCall, origin, smartCastIrType)
             is TypeAliasDescriptor ->
@@ -117,6 +125,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor::class.java.simpleName}")
         }
+    }
 
     private fun generateGetVariable(
         startOffset: Int,
