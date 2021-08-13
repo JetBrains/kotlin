@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
+import org.junit.BeforeClass
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -312,7 +313,7 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         }
     }
 
-    private companion object {
+    companion object {
         private val ERROR_LINE_REGEX = "(?m)^.*\\[ERROR] \\[\\S+] (.*)$".toRegex()
         private val COMPRESSED_PLATFORM_LIBS_REGEX =
             ".*${KONAN_PLATFORM_LIBS_NAME_PREFIX.replace(".", "\\.")}\\* \\((\\d+) libraries\\).*".toRegex()
@@ -323,6 +324,11 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             "for_test_kotlin_native_compiler_version",
             output
         )
+
+        @BeforeClass
+        @JvmStatic
+        fun muted() {
+            assumeTrue(HostManager.hostIsMac)
+        }
     }
 }
-
