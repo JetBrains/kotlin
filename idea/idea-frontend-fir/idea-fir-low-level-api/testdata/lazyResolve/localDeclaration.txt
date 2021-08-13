@@ -22,19 +22,19 @@ FILE: localDeclaration.kt
 
 IMPORTS:
 FILE: localDeclaration.kt
-    public final [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [BODY_RESOLVE] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
-                public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit| {
+            local final? [RAW_FIR] [ContainingClassKey=A] class resolveMe : R|kotlin/Any| {
+                public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|A.resolveMe| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final [BODY_RESOLVE] val e: R|kotlin/Int| = Int(2)
-                    [BODY_RESOLVE] [ContainingClassKey=resolveMe] public get(): R|kotlin/Int|
+                public? final? [RAW_FIR] val e: <implicit> = IntegerLiteral(2)
+                    [TYPES] [ContainingClassKey=resolveMe] public? get(): <implicit>
 
             }
 

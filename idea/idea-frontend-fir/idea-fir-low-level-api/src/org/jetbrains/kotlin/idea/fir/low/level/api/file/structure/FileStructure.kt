@@ -116,17 +116,19 @@ internal class FileStructure private constructor(
             moduleFileCache,
             firFile
         )
-        firLazyDeclarationResolver.lazyResolveDeclaration(
+        val resolvedDeclaration = firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclarationToResolve = firDeclaration,
             moduleFileCache = moduleFileCache,
             scopeSession = ScopeSession(),
             toPhase = FirResolvePhase.BODY_RESOLVE,
             checkPCE = true,
         )
-        return FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile, moduleFileCache.firFileLockProvider)
-//        return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
-//            FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile, moduleFileCache.firFileLockProvider)
-//        }
+        return FileElementFactory.createFileStructureElement(
+            firDeclaration = resolvedDeclaration,
+            ktDeclaration = declaration,
+            firFile = firFile,
+            firFileLockProvider = moduleFileCache.firFileLockProvider
+        )
     }
 
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {

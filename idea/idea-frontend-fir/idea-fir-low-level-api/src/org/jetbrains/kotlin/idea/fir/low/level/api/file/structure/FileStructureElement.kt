@@ -140,13 +140,16 @@ internal class ReanalyzableFunctionStructureElement(
                 it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
             }
 
-            firLazyDeclarationResolver.lazyResolveDeclaration(
+            val resolvedDeclaration = firLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = originalFunction,
                 moduleFileCache = cache,
                 scopeSession = ScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true,
             )
+            check(resolvedDeclaration === originalFunction) {
+                "Reanalysed declaration not expected to be updated"
+            }
 
             ReanalyzableFunctionStructureElement(
                 firFile,
@@ -200,13 +203,16 @@ internal class ReanalyzablePropertyStructureElement(
                 replaceInitializerAndAccessorsAreResolved(false)
             }
 
-            firLazyDeclarationResolver.lazyResolveDeclaration(
+            val resolvedDeclaration = firLazyDeclarationResolver.lazyResolveDeclaration(
                 firDeclarationToResolve = originalProperty,
                 moduleFileCache = cache,
                 scopeSession = ScopeSession(),
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 checkPCE = true,
             )
+            check(resolvedDeclaration === originalProperty) {
+                "Reanalysed declaration not expected to be updated"
+            }
 
             ReanalyzablePropertyStructureElement(
                 firFile,

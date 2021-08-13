@@ -74,8 +74,8 @@ inline fun <R> KtDeclaration.withFirDeclaration(
     action: (FirDeclaration) -> R
 ): R {
     val firDeclaration = resolveState.findSourceFirDeclaration(this)
-    firDeclaration.resolvedFirToType(resolveType, resolveState)
-    return action(firDeclaration)
+    val resolvedDeclaration = firDeclaration.resolvedFirToType(resolveType, resolveState)
+    return action(resolvedDeclaration)
 }
 
 /**
@@ -124,8 +124,8 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (D) -> R,
 ): R {
-    resolvedFirToPhase(phase, resolveState)
-    return action(this)
+    val resolvedDeclaration = resolvedFirToPhase(phase, resolveState)
+    return action(resolvedDeclaration)
 }
 
 /**
@@ -137,8 +137,8 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
     resolveState: FirModuleResolveState,
     action: (D) -> R,
 ): R {
-    resolvedFirToType(type, resolveState)
-    return action(this)
+    val resolvedDeclaration = resolvedFirToType(type, resolveState)
+    return action(resolvedDeclaration)
 }
 
 /**

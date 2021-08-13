@@ -15,13 +15,13 @@ FILE: localFunction.kt
 
 IMPORTS:
 FILE: localFunction.kt
-    public final [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
-            local final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit| {
+            local final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }

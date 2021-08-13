@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.runCustomResolveUnderLock
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
 
 enum class ResolveType {
     NoResolve,
@@ -28,40 +26,43 @@ enum class ResolveType {
 //    ResolveForSuperMembers,
 }
 
-internal fun FirLazyDeclarationResolver.lazyResolveDeclaration(
-    firDeclaration: FirDeclaration,
+internal fun <D : FirDeclaration> FirLazyDeclarationResolver.lazyResolveDeclaration(
+    firDeclaration: D,
     moduleFileCache: ModuleFileCache,
     toResolveType: ResolveType,
     scopeSession: ScopeSession,
     checkPCE: Boolean = false,
-) {
-    when (toResolveType) {
-        ResolveType.NoResolve -> return
+): D {
+    return when (toResolveType) {
+        ResolveType.NoResolve -> return firDeclaration
         ResolveType.CallableReturnType -> {
             require(firDeclaration is FirCallableDeclaration) {
                 "CallableReturnType type cannot be applied to ${firDeclaration::class.qualifiedName}"
             }
-
-            if (firDeclaration.resolvePhase < FirResolvePhase.TYPES) {
-                if (firDeclaration.returnTypeRef is FirResolvedTypeRef) return
-                lazyResolveDeclaration(
-                    firDeclarationToResolve = firDeclaration,
+            var currentDeclaration = firDeclaration as FirCallableDeclaration
+            if (currentDeclaration.resolvePhase < FirResolvePhase.TYPES) {
+                if (currentDeclaration.returnTypeRef !is FirResolvedTypeRef) {
+                    currentDeclaration = lazyResolveDeclaration(
+                        firDeclarationToResolve = currentDeclaration,
+                        moduleFileCache = moduleFileCache,
+                        toPhase = FirResolvePhase.TYPES,
+                        scopeSession = scopeSession,
+                        checkPCE = checkPCE,
+                    )
+                }
+            }
+            if (currentDeclaration.returnTypeRef !is FirResolvedTypeRef) {
+                currentDeclaration = lazyResolveDeclaration(
+                    firDeclarationToResolve = currentDeclaration,
                     moduleFileCache = moduleFileCache,
-                    toPhase = FirResolvePhase.TYPES,
+                    toPhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
                     scopeSession = scopeSession,
                     checkPCE = checkPCE,
                 )
             }
-            if (firDeclaration.returnTypeRef is FirResolvedTypeRef) return
 
-            lazyResolveDeclaration(
-                firDeclarationToResolve = firDeclaration,
-                moduleFileCache = moduleFileCache,
-                toPhase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-                scopeSession = scopeSession,
-                checkPCE = checkPCE,
-            )
-            check(firDeclaration.returnTypeRef is FirResolvedTypeRef)
+            check(currentDeclaration.returnTypeRef is FirResolvedTypeRef)
+            currentDeclaration as D
         }
         ResolveType.BodyResolveWithChildren, ResolveType.CallableBodyResolve -> {
             require(firDeclaration is FirCallableDeclaration || toResolveType != ResolveType.CallableBodyResolve) {
@@ -84,6 +85,7 @@ internal fun FirLazyDeclarationResolver.lazyResolveDeclaration(
                     scopeSession = scopeSession,
                     checkPCE = checkPCE
                 )
+                firDeclaration
             } else {
                 val toPhase =
                     if (toResolveType == ResolveType.AnnotationType) FirResolvePhase.TYPES else FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS

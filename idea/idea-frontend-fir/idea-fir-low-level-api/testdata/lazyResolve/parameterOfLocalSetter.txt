@@ -18,16 +18,16 @@ FILE: parameterOfLocalSetter.kt
 
 IMPORTS:
 FILE: parameterOfLocalSetter.kt
-    public final [BODY_RESOLVE] fun ddd(): R|kotlin/Unit| {
-        local final [BODY_RESOLVE] class XX : R|kotlin/Any| {
-            public [BODY_RESOLVE] [ContainingClassKey=XX] constructor(): R|XX| {
+    public? final? [RAW_FIR] fun ddd(): R|kotlin/Unit| {
+        local final? [RAW_FIR] class XX : R|kotlin/Any| {
+            public? [RAW_FIR] [ContainingClassKey=XX] constructor(): R|XX| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-                [BODY_RESOLVE] [ContainingClassKey=XX] public get(): R|kotlin/Int|
-                [BODY_RESOLVE] [ContainingClassKey=XX] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                    ^ Q|kotlin/Unit|
+            public? final? [RAW_FIR] var x: Int = IntegerLiteral(2)
+                [TYPES] [ContainingClassKey=XX] public? get(): Int
+                [RAW_FIR] [ContainingClassKey=XX] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
+                    ^ Unit#
                 }
 
         }
