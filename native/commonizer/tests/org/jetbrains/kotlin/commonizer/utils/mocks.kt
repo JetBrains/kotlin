@@ -47,7 +47,7 @@ internal fun mockClassType(
 )
 
 private fun createValidClassifierId(classifierId: String): CirEntityId {
-    check(classifierId.none { it == '.' || it == '\\' || it == '?' }) { "Malformed classifier ID: $classifierId" }
+    check(classifierId.none { it == '\\' || it == '?' }) { "Malformed classifier ID: $classifierId" }
     return CirEntityId.create(classifierId)
 }
 
