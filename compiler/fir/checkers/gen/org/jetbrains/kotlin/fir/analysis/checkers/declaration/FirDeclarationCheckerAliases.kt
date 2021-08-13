@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -41,6 +42,7 @@ typealias FirAnnotatedDeclarationChecker = FirDeclarationChecker<FirAnnotatedDec
 typealias FirTypeAliasChecker = FirDeclarationChecker<FirTypeAlias>
 typealias FirAnonymousFunctionChecker = FirDeclarationChecker<FirAnonymousFunction>
 typealias FirPropertyAccessorChecker = FirDeclarationChecker<FirPropertyAccessor>
+typealias FirBackingFieldChecker = FirDeclarationChecker<FirBackingField>
 typealias FirValueParameterChecker = FirDeclarationChecker<FirValueParameter>
 typealias FirEnumEntryChecker = FirDeclarationChecker<FirEnumEntry>
 typealias FirAnonymousObjectChecker = FirDeclarationChecker<FirAnonymousObject>

@@ -41,6 +41,8 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
         get() = _anonymousFunctionCheckers
     override val propertyAccessorCheckers: Set<FirPropertyAccessorChecker>
         get() = _propertyAccessorCheckers
+    override val backingFieldCheckers: Set<FirBackingFieldChecker>
+        get() = _backingFieldCheckers
     override val valueParameterCheckers: Set<FirValueParameterChecker>
         get() = _valueParameterCheckers
     override val enumEntryCheckers: Set<FirEnumEntryChecker>
@@ -67,6 +69,7 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
     private val _typeAliasCheckers: MutableSet<FirTypeAliasChecker> = mutableSetOf()
     private val _anonymousFunctionCheckers: MutableSet<FirAnonymousFunctionChecker> = mutableSetOf()
     private val _propertyAccessorCheckers: MutableSet<FirPropertyAccessorChecker> = mutableSetOf()
+    private val _backingFieldCheckers: MutableSet<FirBackingFieldChecker> = mutableSetOf()
     private val _valueParameterCheckers: MutableSet<FirValueParameterChecker> = mutableSetOf()
     private val _enumEntryCheckers: MutableSet<FirEnumEntryChecker> = mutableSetOf()
     private val _anonymousObjectCheckers: MutableSet<FirAnonymousObjectChecker> = mutableSetOf()
@@ -89,6 +92,7 @@ class ComposedDeclarationCheckers : DeclarationCheckers() {
         _typeAliasCheckers += checkers.typeAliasCheckers
         _anonymousFunctionCheckers += checkers.anonymousFunctionCheckers
         _propertyAccessorCheckers += checkers.propertyAccessorCheckers
+        _backingFieldCheckers += checkers.backingFieldCheckers
         _valueParameterCheckers += checkers.valueParameterCheckers
         _enumEntryCheckers += checkers.enumEntryCheckers
         _anonymousObjectCheckers += checkers.anonymousObjectCheckers

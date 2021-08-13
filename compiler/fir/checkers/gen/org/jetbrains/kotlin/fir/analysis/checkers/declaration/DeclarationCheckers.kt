@@ -32,6 +32,7 @@ abstract class DeclarationCheckers {
     open val typeAliasCheckers: Set<FirTypeAliasChecker> = emptySet()
     open val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = emptySet()
     open val propertyAccessorCheckers: Set<FirPropertyAccessorChecker> = emptySet()
+    open val backingFieldCheckers: Set<FirBackingFieldChecker> = emptySet()
     open val valueParameterCheckers: Set<FirValueParameterChecker> = emptySet()
     open val enumEntryCheckers: Set<FirEnumEntryChecker> = emptySet()
     open val anonymousObjectCheckers: Set<FirAnonymousObjectChecker> = emptySet()
@@ -53,6 +54,7 @@ abstract class DeclarationCheckers {
     @CheckersComponentInternal internal val allTypeAliasCheckers: Set<FirTypeAliasChecker> by lazy { typeAliasCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allAnonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> by lazy { anonymousFunctionCheckers + functionCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allPropertyAccessorCheckers: Set<FirPropertyAccessorChecker> by lazy { propertyAccessorCheckers + functionCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allBackingFieldCheckers: Set<FirBackingFieldChecker> by lazy { backingFieldCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allValueParameterCheckers: Set<FirValueParameterChecker> by lazy { valueParameterCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allEnumEntryCheckers: Set<FirEnumEntryChecker> by lazy { enumEntryCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allAnonymousObjectCheckers: Set<FirAnonymousObjectChecker> by lazy { anonymousObjectCheckers + classCheckers + annotatedDeclarationCheckers + basicDeclarationCheckers }
