@@ -11,8 +11,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.SourceKind
 import org.gradle.api.*
-import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
-import org.gradle.api.artifacts.maven.MavenResolver
+import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileTree
@@ -29,6 +28,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
@@ -47,11 +47,14 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.net.URL
 import java.util.concurrent.Callable
 import java.util.jar.Manifest
-import org.gradle.api.artifacts.maven.MavenPom as OldMavenPom
+import kotlin.reflect.full.functions
+import kotlin.reflect.full.staticProperties
+import kotlin.reflect.jvm.isAccessible
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"
@@ -425,13 +428,6 @@ internal abstract class AbstractKotlinPlugin(
         }
     }
 
-    private fun rewritePom(pom: OldMavenPom, rewriter: PomDependenciesRewriter, shouldRewritePom: Provider<Boolean>) {
-        pom.withXml { xml ->
-            if (shouldRewritePom.get())
-                rewriter.rewritePomMppDependenciesToActualTargetModules(xml)
-        }
-    }
-
     private fun rewriteMppDependenciesInPom(target: AbstractKotlinTarget) {
         val project = target.project
 
@@ -448,17 +444,57 @@ internal abstract class AbstractKotlinPlugin(
             }
         }
 
-        project.pluginManager.withPlugin("maven") {
-            project.tasks.withType(Upload::class.java).all { uploadTask ->
-                uploadTask.repositories.withType(MavenResolver::class.java).all { mavenResolver ->
-                    val pomRewriter = PomDependenciesRewriter(project, target.kotlinComponents.single())
-                    rewritePom(mavenResolver.pom, pomRewriter, shouldRewritePoms)
+        if (GradleVersion.version(project.gradle.gradleVersion) < GradleVersion.version("7.0")) {
+            project.pluginManager.withPlugin("maven") {
+                project.tasks.withType(Upload::class.java).configureEach { uploadTask ->
+                    uploadTask
+                        .repositories
+                        .withType(
+                            Class.forName("org.gradle.api.artifacts.maven.MavenResolver")
+                                .cast<Class<ArtifactRepository>>()
+                        )
+                        .configureEach { mavenResolver ->
+                            val pomRewriter = PomDependenciesRewriter(project, target.kotlinComponents.single())
+                            val mavenPom = mavenResolver::class
+                                .functions
+                                .first { it.name == "getPom" }
+                                .also { it.isAccessible = true }
+                                .call(mavenResolver)!!
+                            mavenPom::class
+                                .functions
+                                .first { it.name == "withXml" }
+                                .call(mavenPom, Action<XmlProvider> { xml ->
+                                    if (shouldRewritePoms.get()) {
+                                        pomRewriter.rewritePomMppDependenciesToActualTargetModules(xml)
+                                    }
+                                })
+                        }
                 }
-            }
 
-            // Setup conf2ScopeMappings so that the API dependencies are written with the compile scope in the POMs in case of 'java' plugin
-            project.convention.getPlugin(MavenPluginConvention::class.java)
-                .conf2ScopeMappings.addMapping(0, project.configurations.getByName("api"), Conf2ScopeMappingContainer.COMPILE)
+                // Setup conf2ScopeMappings so that the API dependencies are written
+                // with compile scope in the POMs in case of 'java' plugin
+                val mavenPluginConvention = project
+                    .convention
+                    .getPlugin(Class.forName("org.gradle.api.plugins.MavenPluginConvention"))
+
+                val conf2ScopeMappingContainer = mavenPluginConvention::class
+                    .functions
+                    .first { it.name == "getConf2ScopeMappings" }
+                    .call(mavenPluginConvention)!!
+
+                conf2ScopeMappingContainer::class
+                    .functions
+                    .first { it.name == "addMapping" }
+                    .call(
+                        conf2ScopeMappingContainer,
+                        0,
+                        project.configurations.getByName("api"),
+                        conf2ScopeMappingContainer::class
+                            .staticProperties
+                            .first { it.name == "COMPILE" }
+                            .get()
+                    )
+            }
         }
     }
 

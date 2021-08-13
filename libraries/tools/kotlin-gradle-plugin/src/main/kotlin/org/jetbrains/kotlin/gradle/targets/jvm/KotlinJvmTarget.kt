@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.util.concurrent.Callable
 import javax.inject.Inject
+import kotlin.reflect.full.functions
 
 open class KotlinJvmTarget @Inject constructor(
     project: Project
@@ -165,7 +167,12 @@ open class KotlinJvmTarget @Inject constructor(
         // Add the Java source set dependencies to the Kotlin compilation compile & runtime configurations:
 
         val compileConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            javaSourceSet.compileConfigurationName.takeIf { project.configurations.findByName(it) != null }
+            javaSourceSet::class
+                .functions
+                .find { it.name == "getCompileConfigurationName" }
+                ?.call(javaSourceSet)
+                ?.cast<String>()
+                ?.takeIf { project.configurations.findByName(it) != null }
         } else null
 
         listOfNotNull(
@@ -178,7 +185,12 @@ open class KotlinJvmTarget @Inject constructor(
         }
 
         val runtimeConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            javaSourceSet.runtimeConfigurationName.takeIf { project.configurations.findByName(it) != null }
+            javaSourceSet::class
+                .functions
+                .find { it.name == "getRuntimeConfigurationName" }
+                ?.call(javaSourceSet)
+                ?.cast<String>()
+                ?.takeIf { project.configurations.findByName(it) != null }
         } else null
 
         listOfNotNull(
