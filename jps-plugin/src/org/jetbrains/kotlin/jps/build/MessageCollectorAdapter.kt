@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import org.jetbrains.annotations.Nls
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
@@ -21,7 +22,7 @@ class MessageCollectorAdapter(
 ) : MessageCollector {
     private var hasErrors = false
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+    override fun report(severity: CompilerMessageSeverity, @Nls message: String, location: CompilerMessageSourceLocation?) {
         hasErrors = hasErrors || severity.isError
 
         var prefix = ""
