@@ -34,22 +34,15 @@ public class KtPropertyFieldDeclarationElementType extends KtStubElementType<Kot
 
     @Override
     public KotlinPropertyFieldDeclarationStub createStub(@NotNull KtPropertyFieldDeclaration psi, StubElement parentStub) {
-        return new KotlinPropertyFieldDeclarationStubImpl(parentStub, psi.isGetter(), psi.hasBody(), psi.hasBlockBody());
+        return new KotlinPropertyFieldDeclarationStubImpl(parentStub);
     }
 
     @Override
-    public void serialize(@NotNull KotlinPropertyFieldDeclarationStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeBoolean(stub.isGetter());
-        dataStream.writeBoolean(stub.hasBody());
-        dataStream.writeBoolean(stub.hasBlockBody());
-    }
+    public void serialize(@NotNull KotlinPropertyFieldDeclarationStub stub, @NotNull StubOutputStream dataStream) throws IOException {}
 
     @NotNull
     @Override
     public KotlinPropertyFieldDeclarationStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        boolean isGetter = dataStream.readBoolean();
-        boolean hasBody = dataStream.readBoolean();
-        boolean hasBlockBody = dataStream.readBoolean();
-        return new KotlinPropertyFieldDeclarationStubImpl(parentStub, isGetter, hasBody, hasBlockBody);
+        return new KotlinPropertyFieldDeclarationStubImpl(parentStub);
     }
 }

@@ -23,29 +23,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinPropertyFieldDeclarationStubImpl extends KotlinStubBaseImpl<KtPropertyFieldDeclaration>
         implements KotlinPropertyFieldDeclarationStub {
-    private final boolean isGetter;
-    private final boolean hasBody;
-    private final boolean hasBlockBody;
-
-    public KotlinPropertyFieldDeclarationStubImpl(StubElement parent, boolean isGetter, boolean hasBody, boolean hasBlockBody) {
+    public KotlinPropertyFieldDeclarationStubImpl(StubElement parent) {
         super(parent, KtStubElementTypes.PROPERTY_ACCESSOR);
-        this.isGetter = isGetter;
-        this.hasBody = hasBody;
-        this.hasBlockBody = hasBlockBody;
-    }
-
-    @Override
-    public boolean isGetter() {
-        return isGetter;
-    }
-
-    @Override
-    public boolean hasBody() {
-        return hasBody;
-    }
-
-    @Override
-    public boolean hasBlockBody() {
-        return hasBlockBody;
     }
 }

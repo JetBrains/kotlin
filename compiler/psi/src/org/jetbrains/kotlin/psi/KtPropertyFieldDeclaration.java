@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class KtPropertyFieldDeclaration extends KtDeclarationStub<KotlinPropertyFieldDeclarationStub>
-        implements KtDeclarationWithBody, KtModifierListOwner, KtDeclarationWithInitializer {
+        implements KtModifierListOwner, KtDeclarationWithInitializer {
     public KtPropertyFieldDeclaration(@NotNull ASTNode node) {
         super(node);
     }
@@ -45,107 +45,9 @@ public class KtPropertyFieldDeclaration extends KtDeclarationStub<KotlinProperty
         return visitor.visitPropertyFieldDeclaration(this, data);
     }
 
-    public boolean isSetter() {
-        KotlinPropertyFieldDeclarationStub stub = getStub();
-        if (stub != null) {
-            return !stub.isGetter();
-        }
-        return findChildByType(KtTokens.SET_KEYWORD) != null;
-    }
-
-    public boolean isGetter() {
-        KotlinPropertyFieldDeclarationStub stub = getStub();
-        if (stub != null) {
-            return stub.isGetter();
-        }
-        return findChildByType(KtTokens.GET_KEYWORD) != null;
-    }
-
-    @Nullable
-    public KtParameterList getParameterList() {
-        return getStubOrPsiChild(KtStubElementTypes.VALUE_PARAMETER_LIST);
-    }
-
-    @Nullable
-    public KtParameter getParameter() {
-        KtParameterList parameterList = getParameterList();
-        if (parameterList == null) return null;
-        List<KtParameter> parameters = parameterList.getParameters();
-        if (parameters.isEmpty()) return null;
-        return parameters.get(0);
-    }
-
-    @NotNull
-    @Override
-    public List<KtParameter> getValueParameters() {
-        KtParameter parameter = getParameter();
-        if (parameter == null) {
-            return Collections.emptyList();
-        }
-        return Collections.singletonList(parameter);
-    }
-
-    @Nullable
-    @Override
-    public KtExpression getBodyExpression() {
-        KotlinPropertyFieldDeclarationStub stub = getStub();
-        if (stub != null && !stub.hasBody()) {
-            return null;
-        }
-
-        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
-                findChildByClass(KtExpression.class)
-        );
-    }
-
-    @Nullable
-    @Override
-    public KtBlockExpression getBodyBlockExpression() {
-        KotlinPropertyFieldDeclarationStub stub = getStub();
-        if (stub != null && !(stub.hasBlockBody() && stub.hasBody())) {
-            return null;
-        }
-
-        KtExpression bodyExpression = findChildByClass(KtExpression.class);
-        if (bodyExpression instanceof KtBlockExpression) {
-            return (KtBlockExpression) bodyExpression;
-        }
-
-        return null;
-    }
-
-    @Override
-    public boolean hasBlockBody() {
-        KotlinPropertyFieldDeclarationStub stub = getStub();
-        if (stub != null) {
-            return stub.hasBlockBody();
-        }
-        return getEqualsToken() == null;
-    }
-
-    @Override
-    public boolean hasBody() {
-        KotlinPropertyFieldDeclarationStub stub = getStub();
-        if (stub != null) {
-            return stub.hasBody();
-        }
-        return getBodyExpression() != null;
-    }
-
-    @Override
     @Nullable
     public PsiElement getEqualsToken() {
         return findChildByType(KtTokens.EQ);
-    }
-
-    @Override
-    public KtContractEffectList getContractDescription() {
-        return findChildByType(KtNodeTypes.CONTRACT_EFFECT_LIST);
-    }
-
-    @Override
-    public boolean hasDeclaredReturnType() {
-        return true;
     }
 
     @Nullable
@@ -163,16 +65,6 @@ public class KtPropertyFieldDeclaration extends KtDeclarationStub<KotlinProperty
     }
 
     @Nullable
-    public PsiElement getRightParenthesis() {
-        return findChildByType(KtTokens.RPAR);
-    }
-
-    @Nullable
-    public PsiElement getLeftParenthesis() {
-        return findChildByType(KtTokens.LPAR);
-    }
-
-    @Nullable
     @Override
     public KtExpression getInitializer() {
         return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), KtExpression.class);
@@ -181,11 +73,6 @@ public class KtPropertyFieldDeclaration extends KtDeclarationStub<KotlinProperty
     @Override
     public boolean hasInitializer() {
         return getInitializer() != null;
-    }
-
-    @NotNull
-    public KtProperty getProperty() {
-        return (KtProperty) getParent();
     }
 
     @Override

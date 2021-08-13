@@ -121,11 +121,7 @@ interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {
     fun hasBlockBody(): Boolean
 }
 
-interface KotlinPropertyFieldDeclarationStub : StubElement<KtPropertyFieldDeclaration> {
-    fun isGetter(): Boolean
-    fun hasBody(): Boolean
-    fun hasBlockBody(): Boolean
-}
+interface KotlinPropertyFieldDeclarationStub : StubElement<KtPropertyFieldDeclaration>
 
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     fun isVar(): Boolean
