@@ -157,7 +157,15 @@ internal fun checkPropertyInitializer(
         else -> {
             val propertySource = property.source ?: return
             val isExternal = property.isEffectivelyExternal(containingClass, context)
-            if (backingFieldRequired && !inInterface && !property.isLateInit && !isExpect && !isInitialized && !isExternal) {
+            if (
+                backingFieldRequired &&
+                !inInterface &&
+                !property.isLateInit &&
+                !isExpect &&
+                !isInitialized &&
+                !isExternal &&
+                property.backingField == null
+            ) {
                 if (property.receiverTypeRef != null && !property.hasAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
                 } else if (reachable) { // TODO: can be suppressed not to report diagnostics about no body
