@@ -33454,6 +33454,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticExtensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("firstCapitalizedProperty.kt")
+        public void testFirstCapitalizedProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticExtensions/firstCapitalizedProperty.kt");
+        }
+
         @TestMetadata("fromTwoBases.kt")
         public void testFromTwoBases() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticExtensions/fromTwoBases.kt");
