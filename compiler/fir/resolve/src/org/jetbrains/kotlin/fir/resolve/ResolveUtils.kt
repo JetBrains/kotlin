@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
@@ -194,6 +196,18 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             }
         is FirNamedReferenceWithCandidate -> {
             typeFromSymbol(newCallee.candidateSymbol, false)
+        }
+        is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
+            val backingField = newCallee.resolvedSymbol
+                .safeAs<FirPropertySymbol>()
+                ?.fir
+                ?.backingField
+
+            if (newCallee.hasVisibleBackingField && backingField != null) {
+                typeFromSymbol(backingField.symbol, false)
+            } else {
+                typeFromSymbol(newCallee.resolvedSymbol, false)
+            }
         }
         is FirResolvedNamedReference -> {
             typeFromSymbol(newCallee.resolvedSymbol, false)

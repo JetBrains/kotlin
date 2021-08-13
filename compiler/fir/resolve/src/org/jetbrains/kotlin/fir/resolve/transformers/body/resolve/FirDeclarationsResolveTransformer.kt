@@ -45,8 +45,6 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.name.SpecialNames
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
@@ -128,7 +126,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val returnTypeRef = property.returnTypeRef
         val bodyResolveState = property.bodyResolveState
         if (bodyResolveState == FirPropertyBodyResolveState.EVERYTHING_RESOLVED) return property
-        if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property
+
+        val canHaveDeepImplicitTypeRefs = property.hasExplicitBackingField
+
+        if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly && !canHaveDeepImplicitTypeRefs) {
+            return property
+        }
 
         property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterProperty(property)
@@ -727,8 +730,20 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     }
                 }
             }
-            is ResolutionMode.WithExpectedType, is ResolutionMode.ContextIndependent -> {
-                val expectedTypeRef = (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef ?: buildImplicitTypeRef()
+            is ResolutionMode.WithExpectedType,
+            is ResolutionMode.ContextIndependent,
+            is ResolutionMode.WithSuggestedType -> {
+                val expectedTypeRef = when (data) {
+                    is ResolutionMode.WithExpectedType -> {
+                        data.expectedTypeRef
+                    }
+                    is ResolutionMode.WithSuggestedType -> {
+                        data.suggestedTypeRef
+                    }
+                    else -> {
+                        buildImplicitTypeRef()
+                    }
+                }
                 val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
                     extractLambdaInfoFromFunctionalType(
                         it.type, it, anonymousFunction, returnTypeVariable = null, components, candidate = null
@@ -883,10 +898,15 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         backingField: FirBackingField,
         data: ResolutionMode,
     ): FirStatement {
-        backingField.transformInitializer(
-            transformer,
+        val propertyType = data.expectedType
+        val initializerData = if (backingField.returnTypeRef is FirResolvedTypeRef) {
             withExpectedType(backingField.returnTypeRef)
-        )
+        } else if (propertyType != null) {
+            ResolutionMode.WithSuggestedType(propertyType)
+        } else {
+            ResolutionMode.ContextDependent
+        }
+        backingField.transformInitializer(transformer, initializerData)
         if (
             backingField.returnTypeRef is FirErrorTypeRef ||
             backingField.returnTypeRef is FirResolvedTypeRef

@@ -64,6 +64,15 @@ fun FirPropertySymbol.getExplicitBackingField(): FirBackingField? {
     return fir.getExplicitBackingField()
 }
 
+val FirProperty.canNarrowDownGetterType: Boolean
+    get() {
+        val backingFieldHasDifferentType = backingField != null && backingField?.returnTypeRef?.coneType != returnTypeRef.coneType
+        return backingFieldHasDifferentType && getter is FirDefaultPropertyGetter
+    }
+
+val FirPropertySymbol.canNarrowDownGetterType: Boolean
+    get() = fir.canNarrowDownGetterType
+
 // See [BindingContext.BACKING_FIELD_REQUIRED]
 val FirProperty.hasBackingField: Boolean
     get() {

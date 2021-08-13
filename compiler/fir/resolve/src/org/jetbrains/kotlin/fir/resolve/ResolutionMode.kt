@@ -30,12 +30,36 @@ sealed class ResolutionMode {
     class WithExpectedTypeFromCast(
         val expectedTypeRef: FirTypeRef,
     ) : ResolutionMode()
+
+    /**
+     * This resolution mode is similar to
+     * WithExpectedType, but it's ok if the
+     * types turn out to be incompatible.
+     * Consider the following examples with
+     * properties and their backing fields:
+     *
+     * val items: List<T>
+     *     field = mutableListOf()
+     *
+     * val s: String
+     *     field = 10
+     *     get() = ...
+     *
+     * In these examples we should try using
+     * the property type information while
+     * resolving the initializer, but it's ok
+     * if it's not applicable.
+     */
+    class WithSuggestedType(
+        val suggestedTypeRef: FirTypeRef,
+    ) : ResolutionMode()
 }
 
 fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast: Boolean = false): FirTypeRef? = when (this) {
     is ResolutionMode.WithExpectedType -> expectedTypeRef
     is ResolutionMode.ContextIndependent -> components.noExpectedType
     is ResolutionMode.WithExpectedTypeFromCast -> expectedTypeRef.takeIf { allowFromCast }
+    is ResolutionMode.WithSuggestedType -> suggestedTypeRef
     else -> null
 }
 
