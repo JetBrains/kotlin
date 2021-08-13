@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.load.java.AbstractAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
-import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.name.FqName
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-class FirAnnotationTypeQualifierResolver(private val session: FirSession, javaTypeEnhancementState: JavaTypeEnhancementState) :
-    AbstractAnnotationTypeQualifierResolver<FirAnnotationCall>(javaTypeEnhancementState)
+class FirAnnotationTypeQualifierResolver(private val session: FirSession) :
+    AbstractAnnotationTypeQualifierResolver<FirAnnotationCall>(session.javaTypeEnhancementState)
 {
     override val FirAnnotationCall.annotations: Iterable<FirAnnotationCall>
         get() = coneClassLikeType?.lookupTag?.toSymbol(session)?.fir?.annotations.orEmpty()
