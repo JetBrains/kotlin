@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CreateML
+
+modules = CreateML
+compilerOpts = -framework CreateML
+linkerOpts = -framework CreateML
+#Disabled: Swift-only framework

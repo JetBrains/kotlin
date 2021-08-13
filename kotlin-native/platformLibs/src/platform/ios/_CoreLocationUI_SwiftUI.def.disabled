@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._CoreLocationUI_SwiftUI
+
+modules = _CoreLocationUI_SwiftUI
+compilerOpts = -framework _CoreLocationUI_SwiftUI
+linkerOpts = -framework _CoreLocationUI_SwiftUI
+#Disabled: Unavailable

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.TabularData
+
+modules = TabularData
+compilerOpts = -framework TabularData
+linkerOpts = -framework TabularData
+#Disabled: Swift-only framework

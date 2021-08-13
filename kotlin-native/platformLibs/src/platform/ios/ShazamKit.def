@@ -1,0 +1,7 @@
+depends = AVFAudio AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation IOSurface Metal OpenGLESCommon Security darwin posix
+language = Objective-C
+package = platform.ShazamKit
+
+modules = ShazamKit
+compilerOpts = -framework ShazamKit
+linkerOpts = -framework ShazamKit
