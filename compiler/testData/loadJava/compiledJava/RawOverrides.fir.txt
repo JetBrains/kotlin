@@ -1,4 +1,28 @@
 public open class RawOverrides : R|kotlin/Any| {
     public constructor(): R|test/RawOverrides|
 
+    public abstract interface A<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun <E : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> foo(x: R|ft<T, T?>|, y: R|ft<kotlin/collections/MutableList<out ft<T, T?>>, kotlin/collections/List<out ft<T, T?>>?>|): R|ft<E, E?>|
+
+    }
+    public open inner class B : R|kotlin/Any|, R|test/RawOverrides.A<ft<kotlin/Any, kotlin/Any?>>| {
+        @R|java/lang/Override|() public open fun foo(x: R|ft<kotlin/Any, kotlin/Any?>|, y: R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|): R|ft<kotlin/String, kotlin/String?>|
+
+        public constructor(): R|test/RawOverrides.B|
+
+    }
+    public open inner class C : R|kotlin/Any| {
+        public/*package*/ open fun <E : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|, F : R|ft<E, E?>|> bar(x: R|ft<F, F?>|, y: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableMap<ft<E, E?>, ft<F, F?>>, kotlin/collections/Map<ft<E, E?>, ft<F, F?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableMap<ft<E, E?>, ft<F, F?>>, kotlin/collections/Map<ft<E, E?>, ft<F, F?>>?>>?>|): R|ft<E, E?>|
+
+        public constructor(): R|test/RawOverrides.C|
+
+    }
+    public open inner class D : R|test/RawOverrides.C| {
+        @R|java/lang/Override|() public open fun bar(x: R|ft<kotlin/CharSequence, kotlin/CharSequence?>|, y: R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|): R|ft<kotlin/String, kotlin/String?>|
+
+        public/*package*/ open fun <E : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|, F : R|ft<E, E?>|> bar(x: R|ft<F, F?>|, y: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableMap<ft<E, E?>, ft<F, F?>>, kotlin/collections/Map<ft<E, E?>, ft<F, F?>>?>>, kotlin/collections/List<ft<kotlin/collections/MutableMap<ft<E, E?>, ft<F, F?>>, kotlin/collections/Map<ft<E, E?>, ft<F, F?>>?>>?>|): R|ft<E, E?>|
+
+        public constructor(): R|test/RawOverrides.D|
+
+    }
 }

@@ -1,2 +1,38 @@
 public abstract interface AnnotationInParam : R|kotlin/Any| {
+    @R|test/AnnotationInParam.MyAnnotationWithParam|(@R|test/AnnotationInParam.MyAnnotation|(String(test)) ) public open class A : R|kotlin/Any| {
+        public constructor(): R|test/AnnotationInParam.A|
+
+    }
+    @R|test/AnnotationInParam.MyAnnotationWithParam2|(@R|test/AnnotationInParam.MyAnnotation2|(<implicitArrayOf>(String(test), String(test2))) ) public open class B : R|kotlin/Any| {
+        public constructor(): R|test/AnnotationInParam.B|
+
+    }
+    @R|test/AnnotationInParam.MyAnnotationWithParam3|(@R|test/AnnotationInParam.MyAnnotation3|(String(f), String(s)) ) public open class C : R|kotlin/Any| {
+        public constructor(): R|test/AnnotationInParam.C|
+
+    }
+    public final annotation class MyAnnotation : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotationInParam.MyAnnotation|
+
+    }
+    public final annotation class MyAnnotation2 : R|kotlin/Annotation| {
+        public constructor(vararg value: R|kotlin/Array<kotlin/String>|): R|test/AnnotationInParam.MyAnnotation2|
+
+    }
+    public final annotation class MyAnnotation3 : R|kotlin/Annotation| {
+        public constructor(first: R|kotlin/String|, second: R|kotlin/String|): R|test/AnnotationInParam.MyAnnotation3|
+
+    }
+    public final annotation class MyAnnotationWithParam : R|kotlin/Annotation| {
+        public constructor(value: R|test/AnnotationInParam.MyAnnotation|): R|test/AnnotationInParam.MyAnnotationWithParam|
+
+    }
+    public final annotation class MyAnnotationWithParam2 : R|kotlin/Annotation| {
+        public constructor(value: R|test/AnnotationInParam.MyAnnotation2|): R|test/AnnotationInParam.MyAnnotationWithParam2|
+
+    }
+    public final annotation class MyAnnotationWithParam3 : R|kotlin/Annotation| {
+        public constructor(value: R|test/AnnotationInParam.MyAnnotation3|): R|test/AnnotationInParam.MyAnnotationWithParam3|
+
+    }
 }

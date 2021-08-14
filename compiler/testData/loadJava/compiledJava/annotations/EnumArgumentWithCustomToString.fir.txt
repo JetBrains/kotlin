@@ -3,4 +3,21 @@ public open class EnumArgumentWithCustomToString : R|kotlin/Any| {
 
     public constructor(): R|test/EnumArgumentWithCustomToString|
 
+    public final enum class E : R|kotlin/Enum<ft<test/EnumArgumentWithCustomToString.E, test/EnumArgumentWithCustomToString.E?>>| {
+        public final static enum entry CAKE: R|@EnhancedNullability test/EnumArgumentWithCustomToString.E|
+        public final static fun values(): R|kotlin/Array<test/EnumArgumentWithCustomToString.E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/EnumArgumentWithCustomToString.E| {
+        }
+
+    }
+    public final annotation class EnumAnno : R|kotlin/Annotation| {
+        public constructor(value: R|test/EnumArgumentWithCustomToString.E|): R|test/EnumArgumentWithCustomToString.EnumAnno|
+
+    }
+    public final annotation class EnumArrayAnno : R|kotlin/Annotation| {
+        public constructor(vararg value: R|kotlin/Array<test/EnumArgumentWithCustomToString.E>|): R|test/EnumArgumentWithCustomToString.EnumArrayAnno|
+
+    }
 }

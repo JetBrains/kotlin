@@ -1,2 +1,12 @@
 public abstract interface MutableToReadOnly : R|kotlin/Any| {
+    public abstract interface Sub : R|test/MutableToReadOnly.Super| {
+        public abstract fun foo(p: R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(p: R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

@@ -1,4 +1,8 @@
 public open class ConstructorInProtectedStaticNestedClass : R|kotlin/Any| {
     public constructor(): R|test/ConstructorInProtectedStaticNestedClass|
 
+    protected/*protected static*/ open class Inner : R|kotlin/Any| {
+        protected/*protected static*/ constructor(): R|test/ConstructorInProtectedStaticNestedClass.Inner|
+
+    }
 }

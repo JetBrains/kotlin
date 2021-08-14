@@ -1,2 +1,18 @@
 public abstract interface TwoSuperclassesReturnSameJavaType : R|kotlin/Any| {
+    public abstract interface Sub : R|test/TwoSuperclassesReturnSameJavaType.Super1|, R|test/TwoSuperclassesReturnSameJavaType.Super2| {
+        public abstract fun foo(): R|@EnhancedNullability kotlin/CharSequence|
+
+    }
+    public abstract interface Super1 : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<kotlin/CharSequence, kotlin/CharSequence?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+    public abstract interface Super2 : R|kotlin/Any| {
+        @R|org/jetbrains/annotations/NotNull|() public abstract fun foo(): R|@EnhancedNullability kotlin/CharSequence|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

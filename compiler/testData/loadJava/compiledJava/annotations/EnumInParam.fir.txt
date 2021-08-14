@@ -1,2 +1,10 @@
 public abstract interface EnumInParam : R|kotlin/Any| {
+    public final annotation class MyRetention : R|kotlin/Annotation| {
+        public constructor(value: R|java/lang/annotation/RetentionPolicy|): R|test/EnumInParam.MyRetention|
+
+    }
+    @R|test/EnumInParam.MyRetention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) public final annotation class RetentionAnnotation : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/EnumInParam.RetentionAnnotation|
+
+    }
 }

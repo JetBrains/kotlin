@@ -1,2 +1,16 @@
 public abstract interface OverriddenAmbiguousAdapters : R|kotlin/Any| {
+    public abstract interface Sub : R|test/OverriddenAmbiguousAdapters.Super| {
+        public abstract fun foo(r: R|ft<kotlin/Function0<ft<kotlin/Unit, kotlin/Unit?>>, kotlin/Function0<ft<kotlin/Unit, kotlin/Unit?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+        public abstract fun foo(r: R|ft<java/io/Closeable, java/io/Closeable?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+        public abstract fun foo(r: R|ft<java/io/Closeable, java/io/Closeable?>|): R|kotlin/Unit|
+
+    }
 }

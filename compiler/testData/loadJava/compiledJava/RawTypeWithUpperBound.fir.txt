@@ -1,2 +1,10 @@
 public abstract interface RawTypeWithUpperBound : R|kotlin/Any| {
+    public abstract interface Bar : R|kotlin/Any| {
+        public abstract fun f(f: R|ft<test/RawTypeWithUpperBound.Foo<ft<kotlin/CharSequence, kotlin/CharSequence?>>, test/RawTypeWithUpperBound.Foo<*>?>|): R|kotlin/Unit|
+
+        public abstract fun g(f: R|ft<kotlin/collections/MutableList<ft<test/RawTypeWithUpperBound.Foo<ft<kotlin/CharSequence, kotlin/CharSequence?>>, test/RawTypeWithUpperBound.Foo<*>?>>, kotlin/collections/List<ft<test/RawTypeWithUpperBound.Foo<ft<kotlin/CharSequence, kotlin/CharSequence?>>, test/RawTypeWithUpperBound.Foo<*>?>>?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Foo<T : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> : R|kotlin/Any| {
+    }
 }

@@ -11,6 +11,34 @@
 
     public constructor(): R|A|
 
+    @R|NullableApi|() public open inner class B : R|kotlin/Any| {
+        public open field field: R|kotlin/String?|
+
+        public open fun foo(x: R|kotlin/String?|, @R|javax/annotation/Nonnull|() y: R|@EnhancedNullability kotlin/CharSequence|): R|kotlin/String?|
+
+        @R|NonNullApi|() public open fun foobar(x: R|@EnhancedNullability kotlin/String|, @R|NullableApi|() y: R|kotlin/CharSequence?|): R|@EnhancedNullability kotlin/String|
+
+        public open fun bar(): R|kotlin/String?|
+
+        @R|javax/annotation/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>?, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public constructor(): R|A.B|
+
+    }
+    @R|FieldsAreNullable|() public open inner class C : R|kotlin/Any| {
+        public open field field: R|kotlin/String?|
+
+        public open fun foo(x: R|ft<kotlin/String, kotlin/String?>|, @R|javax/annotation/Nullable|() y: R|kotlin/CharSequence?|): R|ft<kotlin/String, kotlin/String?>|
+
+        @R|NullableApi|() public open fun foobar(x: R|kotlin/String?|, @R|javax/annotation/Nullable|() y: R|kotlin/CharSequence?|): R|kotlin/String?|
+
+        public open fun bar(): R|ft<kotlin/String, kotlin/String?>|
+
+        @R|javax/annotation/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>?, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public constructor(): R|A.C|
+
+    }
 }
 @R|kotlin/annotation/Retention|(R|kotlin/annotation/AnnotationRetention.RUNTIME|()) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/CheckForNull|() @R|javax/annotation/meta/TypeQualifierDefault|(<implicitArrayOf>(R|java/lang/annotation/ElementType.FIELD|())) public final annotation class FieldsAreNullable : R|kotlin/Annotation| {
     public constructor(): R|FieldsAreNullable|

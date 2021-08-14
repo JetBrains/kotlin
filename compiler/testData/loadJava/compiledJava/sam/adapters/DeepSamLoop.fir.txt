@@ -1,2 +1,10 @@
 public abstract interface DeepSamLoop : R|kotlin/Any| {
+    public abstract interface Bar : R|kotlin/Any| {
+        public abstract fun foo(p: R|ft<test/DeepSamLoop.Foo, test/DeepSamLoop.Foo?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Foo : R|kotlin/Any| {
+        public abstract fun foo(p: R|ft<test/DeepSamLoop.Bar, test/DeepSamLoop.Bar?>|): R|kotlin/Unit|
+
+    }
 }

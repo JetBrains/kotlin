@@ -1,2 +1,18 @@
 public abstract interface SubclassFromGenericAndNot : R|kotlin/Any| {
+    public abstract interface Generic<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<T, T?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+    public abstract interface NonGeneric : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<kotlin/String, kotlin/String?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+    public abstract interface Sub : R|test/SubclassFromGenericAndNot.NonGeneric|, R|test/SubclassFromGenericAndNot.Generic<ft<kotlin/String, kotlin/String?>>| {
+        @R|java/lang/Override|() public abstract fun foo(): R|ft<kotlin/String, kotlin/String?>|
+
+    }
 }

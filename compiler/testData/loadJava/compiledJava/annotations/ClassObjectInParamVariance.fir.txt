@@ -1,4 +1,8 @@
 public open class ClassObjectInParamVariance : R|kotlin/Any| {
     public constructor(): R|test/ClassObjectInParamVariance|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(arg1: R|kotlin/reflect/KClass<out ft<kotlin/Int, kotlin/Int?>>|, arg2: R|kotlin/reflect/KClass<in ft<kotlin/Int, kotlin/Int?>>|, arg3: R|kotlin/Array<kotlin/reflect/KClass<out ft<kotlin/Int, kotlin/Int?>>>|, arg4: R|kotlin/Array<kotlin/reflect/KClass<in ft<kotlin/Int, kotlin/Int?>>>|, arg5: R|kotlin/Array<kotlin/reflect/KClass<out ft<java/lang/Class<*>, java/lang/Class<*>?>>>|, arg6: R|kotlin/Array<kotlin/reflect/KClass<in ft<java/lang/Class<*>, java/lang/Class<*>?>>>|, arg7: R|kotlin/Array<kotlin/reflect/KClass<out ft<java/lang/Class<ft<kotlin/Int, kotlin/Int?>>, java/lang/Class<ft<kotlin/Int, kotlin/Int?>>?>>>|, arg8: R|kotlin/Array<kotlin/reflect/KClass<in ft<java/lang/Class<ft<kotlin/Int, kotlin/Int?>>, java/lang/Class<ft<kotlin/Int, kotlin/Int?>>?>>>|): R|test/ClassObjectInParamVariance.Anno|
+
+    }
 }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 @OptIn(SymbolInternals::class)
-fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: FirSession) {
+fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: FirSession, renderInnerClasses: () -> Unit) {
     val memberScope = javaClass.unsubstitutedScope(session, ScopeSession(), withForcedTypeCalculator = true)
 
     val staticScope = javaClass.scopeProvider.getStaticScope(javaClass, session, ScopeSession())
@@ -61,5 +61,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
                 }
             }
         }
+
+        renderInnerClasses()
     }
 }

@@ -1,4 +1,44 @@
 public open class AnnotationTargets : R|kotlin/Any| {
     public constructor(): R|test/AnnotationTargets|
 
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|())) public final annotation class annotation : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.annotation|
+
+    }
+    public final annotation class base : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.base|
+
+    }
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|())) public final annotation class constructor : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.constructor|
+
+    }
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.FIELD|())) public final annotation class field : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.field|
+
+    }
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|())) public final annotation class local : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.local|
+
+    }
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|())) public final annotation class method : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.method|
+
+    }
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.FIELD|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|())) public final annotation class multiple : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.multiple|
+
+    }
+    @R|kotlin/annotation/Target|(<implicitArrayOf>()) public final annotation class packag : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.packag|
+
+    }
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|())) public final annotation class parameter : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.parameter|
+
+    }
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.FILE|())) public final annotation class type : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationTargets.type|
+
+    }
 }

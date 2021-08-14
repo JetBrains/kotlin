@@ -1,2 +1,10 @@
 public abstract interface StringConcatenationInParam : R|kotlin/Any| {
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/StringConcatenationInParam.Anno|
+
+    }
+    @R|test/StringConcatenationInParam.Anno|(String(hello)) public open class Class : R|kotlin/Any| {
+        public constructor(): R|test/StringConcatenationInParam.Class|
+
+    }
 }

@@ -3,4 +3,8 @@ public open class AnnotatedMethod : R|kotlin/Any| {
 
     public constructor(): R|test/AnnotatedMethod|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/Int|): R|test/AnnotatedMethod.Anno|
+
+    }
 }

@@ -7,4 +7,8 @@ public open class ArrayInGenericArguments : R|kotlin/Any| {
 
     public constructor(): R|ArrayInGenericArguments|
 
+    public open class DataKey<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|ArrayInGenericArguments.DataKey<T>|
+
+    }
 }

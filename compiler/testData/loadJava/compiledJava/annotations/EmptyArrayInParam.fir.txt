@@ -1,2 +1,10 @@
 public abstract interface EmptyArrayInParam : R|kotlin/Any| {
+    @R|test/EmptyArrayInParam.MyAnnotation|(<implicitArrayOf>()) public open class A : R|kotlin/Any| {
+        public constructor(): R|test/EmptyArrayInParam.A|
+
+    }
+    public final annotation class MyAnnotation : R|kotlin/Annotation| {
+        public constructor(vararg value: R|kotlin/Array<kotlin/String>|): R|test/EmptyArrayInParam.MyAnnotation|
+
+    }
 }

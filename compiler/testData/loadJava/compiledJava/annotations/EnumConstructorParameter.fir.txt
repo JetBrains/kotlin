@@ -10,4 +10,8 @@ public final enum class EnumConstructorParameter : R|kotlin/Enum<ft<test/EnumCon
     public final static fun valueOf(value: R|kotlin/String|): R|test/EnumConstructorParameter| {
     }
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/EnumConstructorParameter.Anno|
+
+    }
 }
