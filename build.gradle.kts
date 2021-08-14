@@ -148,7 +148,7 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.6.0-dev-1728"
+    extra["versions.kotlin-native"] = "1.6.0-dev-2972"
 }
 
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
