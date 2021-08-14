@@ -1,4 +1,14 @@
 public open class InnerClassesInGeneric<P : R|ft<kotlin/Any, kotlin/Any?>|, Q : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
     public constructor<P : R|ft<kotlin/Any, kotlin/Any?>|, Q : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerClassesInGeneric<P, Q>|
 
+    public open inner class Inner<P : R|ft<kotlin/Any, kotlin/Any?>|, Q : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public constructor(): R|test/InnerClassesInGeneric.Inner<P, Q>|
+
+    }
+    public open inner class Inner2<P : R|ft<kotlin/Any, kotlin/Any?>|, Q : R|ft<kotlin/Any, kotlin/Any?>|> : R|test/InnerClassesInGeneric.Inner<ft<P, P?>, ft<Q, Q?>>| {
+        public open operator fun iterator(): R|ft<kotlin/collections/MutableIterator<ft<P, P?>>, kotlin/collections/Iterator<ft<P, P?>>?>|
+
+        public constructor(): R|test/InnerClassesInGeneric.Inner2<P, Q>|
+
+    }
 }

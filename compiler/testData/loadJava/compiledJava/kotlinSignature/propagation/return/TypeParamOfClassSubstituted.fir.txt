@@ -1,2 +1,12 @@
 public abstract interface TypeParamOfClassSubstituted : R|kotlin/Any| {
+    public abstract interface Sub : R|test/TypeParamOfClassSubstituted.Super<ft<kotlin/String, kotlin/String?>>| {
+        public abstract fun foo(): R|@EnhancedNullability kotlin/String|
+
+    }
+    public abstract interface Super<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        @R|org/jetbrains/annotations/NotNull|() public abstract fun foo(): R|@EnhancedNullability T!!|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

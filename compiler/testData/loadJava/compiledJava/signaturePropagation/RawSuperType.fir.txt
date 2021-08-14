@@ -1,4 +1,18 @@
 public open class RawSuperType : R|kotlin/Any| {
     public constructor(): R|test/RawSuperType|
 
+    public open inner class Derived : R|kotlin/Any|, R|test/RawSuperType.Super<ft<kotlin/Any, kotlin/Any?>>| {
+        @R|java/lang/Override|() public open fun foo(o: R|ft<kotlin/Any, kotlin/Any?>|): R|kotlin/Unit|
+
+        @R|java/lang/Override|() public open fun dummy(): R|kotlin/Unit|
+
+        public constructor(): R|test/RawSuperType.Derived|
+
+    }
+    public abstract interface Super<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun foo(t: R|ft<T, T?>|): R|kotlin/Unit|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

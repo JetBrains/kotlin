@@ -3,4 +3,6 @@ public final class StarProjection : R|kotlin/Any| {
 
     public constructor(): R|test/StarProjection|
 
+    public abstract interface MyClass<T : R|ft<kotlin/CharSequence, kotlin/CharSequence?>|> : R|kotlin/Any| {
+    }
 }

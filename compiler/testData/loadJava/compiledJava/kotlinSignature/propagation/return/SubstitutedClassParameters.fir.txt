@@ -1,2 +1,18 @@
 public abstract interface SubstitutedClassParameters : R|kotlin/Any| {
+    public abstract interface Sub : R|test/SubstitutedClassParameters.Super1<ft<kotlin/String, kotlin/String?>>|, R|test/SubstitutedClassParameters.Super2<ft<kotlin/String, kotlin/String?>>| {
+        public abstract fun foo(): R|ft<kotlin/String, kotlin/String?>|
+
+    }
+    public abstract interface Super1<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<T, T?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+    public abstract interface Super2<E : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<E, E?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

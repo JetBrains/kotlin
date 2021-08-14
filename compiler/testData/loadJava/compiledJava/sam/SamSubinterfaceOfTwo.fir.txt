@@ -1,2 +1,12 @@
 public abstract interface SamSubinterfaceOfTwo : R|kotlin/Any| {
+    public abstract interface Sub : R|test/SamSubinterfaceOfTwo.Super1|, R|test/SamSubinterfaceOfTwo.Super2<ft<kotlin/String, kotlin/String?>>| {
+    }
+    public abstract interface Super1 : R|kotlin/Any| {
+        public abstract fun f(): R|ft<kotlin/CharSequence, kotlin/CharSequence?>|
+
+    }
+    public abstract interface Super2<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public abstract fun f(): R|ft<T, T?>|
+
+    }
 }

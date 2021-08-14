@@ -1,4 +1,12 @@
 public open class ClassObjectArrayInParam : R|kotlin/Any| {
     public constructor(): R|test/ClassObjectArrayInParam|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(vararg value: R|kotlin/Array<kotlin/reflect/KClass<*>>|): R|test/ClassObjectArrayInParam.Anno|
+
+    }
+    @R|test/ClassObjectArrayInParam.Anno|(<implicitArrayOf>(<getClass>(<getClass>(R|ft<test/ClassObjectArrayInParam, test/ClassObjectArrayInParam?>|)), <getClass>(<getClass>(R|ft<test/ClassObjectArrayInParam.Nested, test/ClassObjectArrayInParam.Nested?>|)), <getClass>(<getClass>(R|ft<kotlin/String, kotlin/String?>|)), <getClass>(<getClass>(R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|)), <getClass>(<getClass>(R|ERROR CLASS: Unexpected JavaType: org.jetbrains.kotlin.fir.types.builder.FirResolvedTypeRefBuilder@4abd3f24|)), <getClass>(<getClass>(R|ERROR CLASS: Unexpected JavaType: org.jetbrains.kotlin.fir.types.builder.FirResolvedTypeRefBuilder@6214f104|)), <getClass>(<getClass>(R|ERROR CLASS: Unexpected JavaType: org.jetbrains.kotlin.fir.types.builder.FirResolvedTypeRefBuilder@5450f4f|)))) public open class Nested : R|kotlin/Any| {
+        public constructor(): R|test/ClassObjectArrayInParam.Nested|
+
+    }
 }

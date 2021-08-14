@@ -1,4 +1,12 @@
 public open class ArithmeticExpressionInParam : R|kotlin/Any| {
     public constructor(): R|test/ArithmeticExpressionInParam|
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/Int|): R|test/ArithmeticExpressionInParam.Anno|
+
+    }
+    @R|test/ArithmeticExpressionInParam.Anno|(Int(42)) public open class Class : R|kotlin/Any| {
+        public constructor(): R|test/ArithmeticExpressionInParam.Class|
+
+    }
 }

@@ -1,4 +1,36 @@
 public open class AnnotationRetentions : R|kotlin/Any| {
     public constructor(): R|test/AnnotationRetentions|
 
+    public final annotation class BaseAnnotation : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationRetentions.BaseAnnotation|
+
+    }
+    @R|test/AnnotationRetentions.BaseAnnotation|() public/*package*/ open inner class BaseClass : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/AnnotationRetentions.BaseClass|
+
+    }
+    @R|kotlin/annotation/Retention|(R|kotlin/annotation/AnnotationRetention.BINARY|()) public final annotation class BinaryAnnotation : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationRetentions.BinaryAnnotation|
+
+    }
+    @R|test/AnnotationRetentions.BinaryAnnotation|() public/*package*/ open inner class BinaryClass : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/AnnotationRetentions.BinaryClass|
+
+    }
+    @R|kotlin/annotation/Retention|(R|kotlin/annotation/AnnotationRetention.RUNTIME|()) public final annotation class RuntimeAnnotation : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationRetentions.RuntimeAnnotation|
+
+    }
+    @R|test/AnnotationRetentions.RuntimeAnnotation|() public/*package*/ open inner class RuntimeClass : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/AnnotationRetentions.RuntimeClass|
+
+    }
+    @R|kotlin/annotation/Retention|(R|kotlin/annotation/AnnotationRetention.SOURCE|()) public final annotation class SourceAnnotation : R|kotlin/Annotation| {
+        public constructor(): R|test/AnnotationRetentions.SourceAnnotation|
+
+    }
+    @R|test/AnnotationRetentions.SourceAnnotation|() public/*package*/ open inner class SourceClass : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/AnnotationRetentions.SourceClass|
+
+    }
 }

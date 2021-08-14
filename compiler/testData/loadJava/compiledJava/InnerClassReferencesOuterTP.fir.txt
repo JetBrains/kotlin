@@ -1,4 +1,8 @@
 public open class InnerClassReferencesOuterTP<P : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
     public constructor<P : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerClassReferencesOuterTP<P>|
 
+    public open inner class Inner<Q : R|ft<P, P?>|, P : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public constructor<Q : R|ft<P, P?>|>(): R|test/InnerClassReferencesOuterTP.Inner<Q, P>|
+
+    }
 }

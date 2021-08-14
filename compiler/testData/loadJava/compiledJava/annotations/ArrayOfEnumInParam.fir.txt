@@ -1,2 +1,6 @@
 public abstract interface ArrayOfEnumInParam : R|kotlin/Any| {
+    @R|kotlin/annotation/Target|(<implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.FIELD|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|())) public final annotation class targetAnnotation : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/ArrayOfEnumInParam.targetAnnotation|
+
+    }
 }

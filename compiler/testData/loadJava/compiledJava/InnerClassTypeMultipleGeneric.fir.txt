@@ -3,4 +3,22 @@ public open class InnerClassTypeMultipleGeneric : R|kotlin/Any| {
 
     public constructor(): R|test/InnerClassTypeMultipleGeneric|
 
+    public open inner class BaseOuter<H1 : R|ft<kotlin/Any, kotlin/Any?>|, H2 : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public constructor<H1 : R|ft<kotlin/Any, kotlin/Any?>|, H2 : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerClassTypeMultipleGeneric.BaseOuter<H1, H2>|
+
+        public abstract inner class BaseInner<H3 : R|ft<kotlin/Any, kotlin/Any?>|, H4 : R|ft<kotlin/Any, kotlin/Any?>|, H1 : R|ft<kotlin/Any, kotlin/Any?>|, H2 : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+            public constructor<H3 : R|ft<kotlin/Any, kotlin/Any?>|, H4 : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<H3, H4, H1, H2>|
+
+        }
+    }
+    public open inner class Outer<E1 : R|ft<kotlin/Any, kotlin/Any?>|, E2 : R|ft<kotlin/Any, kotlin/Any?>|> : R|test/InnerClassTypeMultipleGeneric.BaseOuter<ft<kotlin/Int, kotlin/Int?>, ft<E1, E1?>>| {
+        public open fun bar(): R|ft<test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<ft<java/lang/Class<*>, java/lang/Class<*>?>, ft<kotlin/CharSequence, kotlin/CharSequence?>, ft<kotlin/Int, kotlin/Int?>, ft<E1, E1?>>, test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<ft<java/lang/Class<*>, java/lang/Class<*>?>, ft<kotlin/CharSequence, kotlin/CharSequence?>, ft<kotlin/Int, kotlin/Int?>, ft<E1, E1?>>?>|
+
+        public constructor<E1 : R|ft<kotlin/Any, kotlin/Any?>|, E2 : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerClassTypeMultipleGeneric.Outer<E1, E2>|
+
+        public open inner class Inner<E3 : R|ft<kotlin/Any, kotlin/Any?>|, E1 : R|ft<kotlin/Any, kotlin/Any?>|, E2 : R|ft<kotlin/Any, kotlin/Any?>|> : R|test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<ft<kotlin/Double, kotlin/Double?>, ft<kotlin/String, kotlin/String?>, ft<E2, E2?>, ft<E3, E3?>>| {
+            public constructor<E3 : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/InnerClassTypeMultipleGeneric.Outer.Inner<E3, E1, E2>|
+
+        }
+    }
 }

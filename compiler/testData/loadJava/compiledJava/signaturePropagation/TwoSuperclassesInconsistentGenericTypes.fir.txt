@@ -3,4 +3,18 @@ public abstract interface TwoSuperclassesInconsistentGenericTypes : R|kotlin/Any
 
     public abstract fun dummy(): R|kotlin/Unit|
 
+    public abstract interface Other : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+    public open class Sub : R|kotlin/Any|, R|test/TwoSuperclassesInconsistentGenericTypes|, R|test/TwoSuperclassesInconsistentGenericTypes.Other| {
+        public open fun foo(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
+
+        public open fun dummy(): R|kotlin/Unit|
+
+        public constructor(): R|test/TwoSuperclassesInconsistentGenericTypes.Sub|
+
+    }
 }

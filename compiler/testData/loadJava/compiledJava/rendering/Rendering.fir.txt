@@ -1,4 +1,72 @@
 public open class Rendering : R|kotlin/Any| {
     public constructor(): R|test/Rendering|
 
+    public/*package*/ open inner class A_Plain : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/Rendering.A_Plain|
+
+    }
+    public/*package*/ open inner class B_Super : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/Rendering.B_Super|
+
+    }
+    public/*package*/ open inner class C_Sub : R|test/Rendering.B_Super| {
+        public/*package*/ constructor(): R|test/Rendering.C_Sub|
+
+    }
+    public/*package*/ open inner class D_SuperG<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        public/*package*/ constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/Rendering.D_SuperG<T>|
+
+    }
+    public/*package*/ open inner class E_SubG : R|test/Rendering.D_SuperG<ft<kotlin/String, kotlin/String?>>| {
+        public/*package*/ constructor(): R|test/Rendering.E_SubG|
+
+    }
+    public/*package*/ abstract interface F_Array : R|kotlin/Any| {
+        public abstract fun foo1(strings: R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo2(strings: R|ft<kotlin/Array<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/Array<out ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo3(vararg args: R|ft<kotlin/Array<ft<kotlin/Int, kotlin/Int?>>, kotlin/Array<out ft<kotlin/Int, kotlin/Int?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo4(vararg args: R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo5(vararg args: R|ft<kotlin/Array<ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>, kotlin/Array<out ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>>?>|): R|kotlin/Unit|
+
+    }
+    public/*package*/ abstract interface G_Collections : R|kotlin/Any| {
+        public abstract fun foo1(x: R|ft<kotlin/collections/MutableIterator<ft<kotlin/String, kotlin/String?>>, kotlin/collections/Iterator<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo2(x: R|ft<kotlin/collections/MutableIterable<ft<kotlin/String, kotlin/String?>>, kotlin/collections/Iterable<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo3(x: R|ft<kotlin/collections/MutableCollection<ft<kotlin/String, kotlin/String?>>, kotlin/collections/Collection<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo4(x: R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo5(x: R|ft<kotlin/collections/MutableSet<ft<kotlin/String, kotlin/String?>>, kotlin/collections/Set<ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo6(x: R|ft<kotlin/collections/MutableMap<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>, kotlin/collections/Map<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo7(x: R|ft<kotlin/collections/MutableMap.MutableEntry<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>, kotlin/collections/Map.Entry<ft<kotlin/String, kotlin/String?>, ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+    }
+    public/*package*/ abstract interface H_Raw : R|kotlin/Any| {
+        public abstract fun foo1(x: R|ft<kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|): R|kotlin/Unit|
+
+        public abstract fun foo2(x: R|ft<test/Rendering.D_SuperG<ft<kotlin/Any, kotlin/Any?>>, test/Rendering.D_SuperG<*>?>|): R|kotlin/Unit|
+
+    }
+    public/*package*/ abstract interface I_Wildcard : R|kotlin/Any| {
+        public abstract fun foo1(x: R|ft<kotlin/collections/MutableList<out ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<out ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo2(x: R|ft<kotlin/collections/MutableList<in ft<kotlin/String, kotlin/String?>>, kotlin/collections/MutableList<in ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo3(x: R|ft<kotlin/collections/MutableList<*>, kotlin/collections/List<*>?>|): R|kotlin/Unit|
+
+        public abstract fun foo4(x: R|ft<test/Rendering.D_SuperG<out ft<kotlin/String, kotlin/String?>>, test/Rendering.D_SuperG<out ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo5(x: R|ft<test/Rendering.D_SuperG<in ft<kotlin/String, kotlin/String?>>, test/Rendering.D_SuperG<in ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+
+        public abstract fun foo6(x: R|ft<test/Rendering.D_SuperG<*>, test/Rendering.D_SuperG<*>?>|): R|kotlin/Unit|
+
+    }
 }

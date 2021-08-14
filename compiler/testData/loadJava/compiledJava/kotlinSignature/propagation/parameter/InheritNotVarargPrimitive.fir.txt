@@ -1,2 +1,12 @@
 public abstract interface InheritNotVarargPrimitive : R|kotlin/Any| {
+    public abstract interface Sub : R|test/InheritNotVarargPrimitive.Super| {
+        public abstract fun foo(vararg p: R|ft<kotlin/IntArray, kotlin/IntArray?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(p: R|ft<kotlin/IntArray, kotlin/IntArray?>|): R|kotlin/Unit|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }
