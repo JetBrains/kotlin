@@ -1144,7 +1144,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advance(); // ARROW
             paramsFound = true;
         }
-        else if (at(IDENTIFIER) || at(COLON) || at(LPAR)) {
+        else if (at(IDENTIFIER) || at(COLON) || at(LPAR) || at(AT)) {
             // Try to parse a simple name list followed by an ARROW
             //   {a -> ...}
             //   {a, b -> ...}
@@ -1234,10 +1234,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
             PsiBuilder.Marker parameter = mark();
 
+            boolean annotationExists = myKotlinParsing.parseAnnotations(DEFAULT);
             if (at(COLON)) {
                 error("Expecting parameter name");
             }
-            else if (at(LPAR)) {
+            // multiVariableDeclaration after annotation is not allowed
+            else if (!annotationExists && at(LPAR)) {
                 PsiBuilder.Marker destructuringDeclaration = mark();
                 myKotlinParsing.parseMultiDeclarationName(TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA);
                 destructuringDeclaration.done(DESTRUCTURING_DECLARATION);
