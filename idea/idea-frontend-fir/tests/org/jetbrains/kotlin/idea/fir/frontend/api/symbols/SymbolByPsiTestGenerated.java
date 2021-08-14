@@ -121,6 +121,12 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("jvmName.kt")
+    public void testJvmName() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/jvmName.kt");
+    }
+
+    @Test
     @TestMetadata("localDeclarations.kt")
     public void testLocalDeclarations() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/localDeclarations.kt");

@@ -25,6 +25,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getX
+  javaSetterName: null
   setterDeprecationStatus: null
 
 KtFirPropertyGetterSymbol:
@@ -72,4 +74,6 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getY
+  javaSetterName: null
   setterDeprecationStatus: null

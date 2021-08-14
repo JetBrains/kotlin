@@ -9,9 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
@@ -74,13 +71,20 @@ internal class KtFirSyntheticJavaPropertySymbol(
     override val getter: KtPropertyGetterSymbol by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
         property.getter.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as KtPropertyGetterSymbol
     }
+    override val javaGetterSymbol: KtFunctionSymbol
+        get() {
+            return firRef.withFir { builder.functionLikeBuilder.buildFunctionSymbol(it.getter.delegate) }
+        }
+    override val javaSetterSymbol: KtFunctionSymbol?
+        get() {
+            return firRef.withFir { fir ->
+                fir.setter?.delegate?.let { setter -> builder.functionLikeBuilder.buildFunctionSymbol(setter) }
+            }
+        }
 
     override val setter: KtPropertySetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
         property.setter?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
     }
-
-    override val javaGetterName: Name get() = firRef.withFir { it.getter.delegate.name }
-    override val javaSetterName: Name? get() = firRef.withFir { it.setter?.delegate?.name }
 
     override val isFromPrimaryConstructor: Boolean get() = false
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }

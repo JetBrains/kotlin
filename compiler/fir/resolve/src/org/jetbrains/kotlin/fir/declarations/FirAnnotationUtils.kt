@@ -131,3 +131,13 @@ fun FirAnnotationCall.getStringArgument(name: Name): String? =
     findArgumentByName(name)?.let { expression ->
         expression.safeAs<FirConstExpression<*>>()?.value as? String
     }
+
+private val jvmNameAnnotationFqName = FqName.fromSegments(listOf("kotlin", "jvm", "JvmName"))
+
+fun FirAnnotationContainer.getJvmNameFromAnnotation(target: AnnotationUseSiteTarget? = null): String? {
+    val name = Name.identifier("name")
+    val annotationCalls = getAnnotationsByFqName(jvmNameAnnotationFqName)
+    return annotationCalls.firstNotNullOfOrNull { call ->
+        call.getStringArgument(name)?.takeIf { target == null || call.useSiteTarget == target }
+    }
+}

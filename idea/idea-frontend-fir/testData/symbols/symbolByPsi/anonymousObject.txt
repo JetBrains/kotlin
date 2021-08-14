@@ -50,6 +50,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getData
+  javaSetterName: null
   setterDeprecationStatus: null
 
 KtFirAnonymousObjectSymbol:
@@ -92,6 +94,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getAnonymousObject
+  javaSetterName: null
   setterDeprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:

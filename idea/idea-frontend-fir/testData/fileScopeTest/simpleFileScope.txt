@@ -61,6 +61,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getTestVal
+  javaSetterName: null
   setterDeprecationStatus: null
 
 CLASSIFIER NAMES:

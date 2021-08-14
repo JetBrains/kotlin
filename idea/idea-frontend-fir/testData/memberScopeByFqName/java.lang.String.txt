@@ -81,8 +81,8 @@ KtFirSyntheticJavaPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
-  javaGetterName: length
-  javaSetterName: null
+  javaGetterSymbol: KtFirFunctionSymbol(java/lang/String.length)
+  javaSetterSymbol: null
   modality: OPEN
   name: length
   origin: JAVA_SYNTHETIC_PROPERTY
@@ -92,6 +92,8 @@ KtFirSyntheticJavaPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: length
+  javaSetterName: null
   setterDeprecationStatus: null
 
 KtFirFunctionSymbol:

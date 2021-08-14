@@ -30,6 +30,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
   getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  javaGetterName: getI
+  javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
 
 KtFirKotlinPropertySymbol:
@@ -64,6 +66,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i2)
+  javaGetterName: getI2
+  javaSetterName: null
   setterDeprecationStatus: null
 
 KtFirKotlinPropertySymbol:
@@ -98,6 +102,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getI3
+  javaSetterName: setI3
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i3)
 
 KtFirKotlinPropertySymbol:
@@ -135,6 +141,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
+  javaGetterName: getI4
+  javaSetterName: setI4
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
 
 KtFirFunctionSymbol:
@@ -226,6 +234,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
   getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  javaGetterName: getI2
+  javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
 
 KtFirFunctionSymbol:
@@ -312,6 +322,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
   getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+  javaGetterName: getJ
+  javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
 
 KtFirKotlinPropertySymbol:
@@ -346,6 +358,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
   getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  javaGetterName: getJ2
+  javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
 
 KtFirKotlinPropertySymbol:
@@ -380,4 +394,6 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
   getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  javaGetterName: getJ2
+  javaSetterName: null
   setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

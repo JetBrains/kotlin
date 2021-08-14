@@ -77,6 +77,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getExitAnimation
+  javaSetterName: null
   setterDeprecationStatus: null
 
 KtFirEnumEntrySymbol:
@@ -117,6 +119,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getExitAnimation
+  javaSetterName: null
   setterDeprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:

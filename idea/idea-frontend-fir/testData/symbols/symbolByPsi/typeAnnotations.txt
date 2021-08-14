@@ -205,6 +205,8 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
+  javaGetterName: getX
+  javaSetterName: null
   setterDeprecationStatus: null
 
 KtFirNamedClassOrObjectSymbol:

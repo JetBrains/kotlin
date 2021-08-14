@@ -9,12 +9,16 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.name.Name
 
 public abstract class KtSymbolInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun getDeprecation(symbol: KtSymbol): DeprecationInfo?
     public abstract fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
     public abstract fun getGetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo?
     public abstract fun getSetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo?
+
+    public abstract fun getJavaGetterName(symbol: KtPropertySymbol): Name
+    public abstract fun getJavaSetterName(symbol: KtPropertySymbol): Name?
 }
 
 public interface KtSymbolInfoProviderMixIn : KtAnalysisSessionMixIn {
@@ -41,4 +45,7 @@ public interface KtSymbolInfoProviderMixIn : KtAnalysisSessionMixIn {
      */
     public val KtPropertySymbol.setterDeprecationStatus: DeprecationInfo?
         get() = analysisSession.symbolInfoProvider.getSetterDeprecation(this)
+
+    public val KtPropertySymbol.javaGetterName: Name get() = analysisSession.symbolInfoProvider.getJavaGetterName(this)
+    public val KtPropertySymbol.javaSetterName: Name? get() = analysisSession.symbolInfoProvider.getJavaSetterName(this)
 }

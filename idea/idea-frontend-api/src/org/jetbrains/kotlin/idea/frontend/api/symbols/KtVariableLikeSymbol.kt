@@ -115,8 +115,8 @@ public abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
 
     abstract override val getter: KtPropertyGetterSymbol
 
-    public abstract val javaGetterName: Name
-    public abstract val javaSetterName: Name?
+    public abstract val javaGetterSymbol: KtFunctionSymbol
+    public abstract val javaSetterSymbol: KtFunctionSymbol?
 
     abstract override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol>
 }
