@@ -110,12 +110,6 @@ class TowerResolver {
         name: Name
     ): Collection<C> = Task(this, processor, resultCollector, useOrder, name).run()
 
-    sealed interface ScopeResolutionStep {
-        data class LexicalScopesResolution(val resolveExtensionsForImplicitReceiver: Boolean) : ScopeResolutionStep
-        object ContextReceiversGroupsResolution : ScopeResolutionStep
-        object ImportingScopesResolution : ScopeResolutionStep
-    }
-
     private inner class Task<out C : Candidate>(
         private val implicitScopeTower: ImplicitScopeTower,
         private val processor: ScopeTowerProcessor<C>,
@@ -151,9 +145,7 @@ class TowerResolver {
                 }
             }
 
-            val parentScopes = lexicalScope.parentsWithSelf
-            val lexicalScopes = parentScopes.filterIsInstance<LexicalScope>()
-            lexicalScopes.forEach { scope ->
+            fun addLevelForLexicalScope(scope: LexicalScope) {
                 if (!scope.kind.withLocalDescriptors) {
                     addLevel(
                         ScopeBasedTowerLevel(this@createNonLocalLevels, scope),
@@ -169,23 +161,34 @@ class TowerResolver {
                 }
             }
 
-            lexicalScopes.forEach { scope ->
-                val contextReceiversGroup = getContextReceivers(scope)
-                if (contextReceiversGroup.isNotEmpty()) {
-                    addLevel(
-                        ContextReceiversGroupScopeTowerLevel(this@createNonLocalLevels, contextReceiversGroup),
-                        contextReceiversGroup.any { it.mayFitForName(name) }
-                    )
-                }
-            }
+            fun addLevelForContextReceiverGroup(contextReceiversGroup: List<ReceiverValueWithSmartCastInfo>) =
+                addLevel(
+                    ContextReceiversGroupScopeTowerLevel(this@createNonLocalLevels, contextReceiversGroup),
+                    contextReceiversGroup.any { it.mayFitForName(name) }
+                )
 
-            val importingScopes = parentScopes - lexicalScopes
-            importingScopes.forEach { scope ->
+            fun addLevelForImportingScope(scope: HierarchicalScope) =
                 addLevel(
                     ImportingScopeBasedTowerLevel(this@createNonLocalLevels, scope as ImportingScope),
                     scope.mayFitForName(name)
                 )
+
+            val parentScopes = lexicalScope.parentsWithSelf.toList()
+            val contextReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
+            var firstImportingScopeIndex = 0
+            for ((i, scope) in parentScopes.withIndex()) {
+                if (scope !is LexicalScope) {
+                    firstImportingScopeIndex = i
+                    break
+                }
+                addLevelForLexicalScope(scope)
+                val contextReceiversGroup = getContextReceivers(scope)
+                if (contextReceiversGroup.isNotEmpty()) {
+                    contextReceiversGroups.add(contextReceiversGroup)
+                }
             }
+            contextReceiversGroups.forEach(::addLevelForContextReceiverGroup)
+            parentScopes.subList(firstImportingScopeIndex, parentScopes.size).forEach(::addLevelForImportingScope)
 
             return mainResult
         }
@@ -218,65 +221,70 @@ class TowerResolver {
                 TowerData.TowerLevel(localLevel).process()?.let { return it }
             }
 
-            fun processScope(scope: HierarchicalScope, scopeResolutionStep: ScopeResolutionStep): Collection<C>? {
-                when (scopeResolutionStep) {
-                    is ScopeResolutionStep.LexicalScopesResolution -> if (scope is LexicalScope) {
-                        if (!scope.kind.withLocalDescriptors) {
-                            TowerData.TowerLevel(ScopeBasedTowerLevel(implicitScopeTower, scope))
-                                .process(scope.mayFitForName(name))?.let { return it }
-                        }
+            val contextReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
 
-                        implicitScopeTower.getImplicitReceiver(scope)?.let { rv ->
-                            processImplicitReceiver(rv, scopeResolutionStep.resolveExtensionsForImplicitReceiver)?.let { return it }
-                        }
-                    }
-                    is ScopeResolutionStep.ContextReceiversGroupsResolution -> if (scope is LexicalScope) {
-                        val contextReceiversGroup = implicitScopeTower.getContextReceivers(scope)
+            fun processLexicalScope(scope: LexicalScope, resolveExtensionsForImplicitReceiver: Boolean): Collection<C>? {
+                val contextReceiversGroup = implicitScopeTower.getContextReceivers(scope)
+                if (contextReceiversGroup.isNotEmpty()) {
+                    contextReceiversGroups.add(contextReceiversGroup)
+                }
 
-                        if (contextReceiversGroup.isNotEmpty()) {
-                            TowerData.TowerLevel(ContextReceiversGroupScopeTowerLevel(implicitScopeTower, contextReceiversGroup))
-                                .process()?.let { return it }
-                            TowerData.BothTowerLevelAndContextReceiversGroup(syntheticLevel, contextReceiversGroup).process()
-                                ?.let { return it }
-                            for (nonLocalLevel in nonLocalLevels) {
-                                TowerData.BothTowerLevelAndContextReceiversGroup(nonLocalLevel, contextReceiversGroup).process()
-                                    ?.let { return it }
+                if (!scope.kind.withLocalDescriptors) {
+                    TowerData.TowerLevel(ScopeBasedTowerLevel(implicitScopeTower, scope))
+                        .process(scope.mayFitForName(name))?.let { return it }
+                }
+                implicitScopeTower.getImplicitReceiver(scope)?.let { rv ->
+                    processImplicitReceiver(rv, resolveExtensionsForImplicitReceiver)?.let { return it }
+                }
+                return null
+            }
+
+            fun processContextReceiverGroup(contextReceiversGroup: List<ReceiverValueWithSmartCastInfo>): Collection<C>? {
+                TowerData.TowerLevel(ContextReceiversGroupScopeTowerLevel(implicitScopeTower, contextReceiversGroup))
+                    .process()?.let { return it }
+                TowerData.BothTowerLevelAndContextReceiversGroup(syntheticLevel, contextReceiversGroup).process()
+                    ?.let { return it }
+                for (nonLocalLevel in nonLocalLevels) {
+                    TowerData.BothTowerLevelAndContextReceiversGroup(nonLocalLevel, contextReceiversGroup).process()
+                        ?.let { return it }
+                }
+                return null
+            }
+
+            fun processImportingScope(scope: ImportingScope): Collection<C>? {
+                TowerData.TowerLevel(ImportingScopeBasedTowerLevel(implicitScopeTower, scope))
+                    .process(scope.mayFitForName(name))?.let { return it }
+                return null
+            }
+
+            fun processScopes(
+                scopes: Sequence<HierarchicalScope>,
+                resolveExtensionsForImplicitReceiver: (HierarchicalScope) -> Boolean
+            ): Collection<C>? {
+                var firstImportingScopePassed = false
+                for (scope in scopes) {
+                    if (scope is LexicalScope) {
+                        processLexicalScope(scope, resolveExtensionsForImplicitReceiver(scope))?.let { return it }
+                    } else {
+                        if (!firstImportingScopePassed) {
+                            firstImportingScopePassed = true
+                            contextReceiversGroups.forEach { contextReceiversGroup ->
+                                processContextReceiverGroup(contextReceiversGroup)?.let { return it }
                             }
                         }
-                    }
-                    is ScopeResolutionStep.ImportingScopesResolution -> if (scope is ImportingScope) {
-                        TowerData.TowerLevel(ImportingScopeBasedTowerLevel(implicitScopeTower, scope))
-                            .process(scope.mayFitForName(name))?.let { return it }
+                        processImportingScope(scope as ImportingScope)?.let { return it }
                     }
                 }
                 return null
             }
 
             if (implicitScopeTower.implicitsResolutionFilter === ImplicitsExtensionsResolutionFilter.Default) {
-                val scopes = implicitScopeTower.lexicalScope.parentsWithSelf
-                scopes.forEach { scope -> processScope(scope, ScopeResolutionStep.LexicalScopesResolution(true))?.let { return it } }
-                scopes.forEach { scope -> processScope(scope, ScopeResolutionStep.ContextReceiversGroupsResolution)?.let { return it } }
-                scopes.forEach { scope -> processScope(scope, ScopeResolutionStep.ImportingScopesResolution)?.let { return it } }
+                processScopes(implicitScopeTower.lexicalScope.parentsWithSelf) { true }
             } else {
                 val scopeInfos = implicitScopeTower.allScopesWithImplicitsResolutionInfo()
-                scopeInfos.forEach { scopeInfo ->
-                    processScope(
-                        scopeInfo.scope,
-                        ScopeResolutionStep.LexicalScopesResolution(scopeInfo.resolveExtensionsForImplicitReceiver)
-                    )?.let { return it }
-                }
-                scopeInfos.forEach { scopeInfo ->
-                    processScope(
-                        scopeInfo.scope,
-                        ScopeResolutionStep.ContextReceiversGroupsResolution
-                    )?.let { return it }
-                }
-                scopeInfos.forEach { scopeInfo ->
-                    processScope(
-                        scopeInfo.scope,
-                        ScopeResolutionStep.ImportingScopesResolution
-                    )?.let { return it }
-                }
+                val scopeToResolveExtensionsForImplicitReceiverMap =
+                    scopeInfos.map { it.scope to it.resolveExtensionsForImplicitReceiver }.toMap()
+                processScopes(scopeInfos.map { it.scope }) { scopeToResolveExtensionsForImplicitReceiverMap[it] ?: false }
             }
 
             recordLookups()
