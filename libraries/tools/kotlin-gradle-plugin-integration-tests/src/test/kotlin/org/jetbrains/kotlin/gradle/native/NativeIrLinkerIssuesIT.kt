@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
-import org.junit.BeforeClass
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -324,11 +323,5 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             "for_test_kotlin_native_compiler_version",
             output
         )
-
-        @BeforeClass
-        @JvmStatic
-        fun muted() {
-            assumeTrue(HostManager.hostIsMac)
-        }
     }
 }
