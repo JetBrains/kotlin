@@ -1234,7 +1234,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
             PsiBuilder.Marker parameter = mark();
 
+            PsiBuilder.Marker modifiers = mark();
             boolean annotationExists = myKotlinParsing.parseAnnotations(DEFAULT);
+            if (annotationExists) {
+                modifiers.done(MODIFIER_LIST);
+            } else {
+                modifiers.drop();
+            }
             if (at(COLON)) {
                 error("Expecting parameter name");
             }
