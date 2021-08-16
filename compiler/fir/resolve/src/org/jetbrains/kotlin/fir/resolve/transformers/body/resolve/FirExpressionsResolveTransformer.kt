@@ -219,7 +219,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 superReferenceContainer.resultType = superTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.SuperCallExplicitType)
             }
             superTypeRef !is FirImplicitTypeRef -> {
-                components.typeResolverTransformer.withAllowedBareTypes {
+                components.typeResolverTransformer.withBareTypes {
                     superReference.transformChildren(transformer, ResolutionMode.ContextIndependent)
                 }
 
@@ -621,7 +621,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode,
     ): FirStatement {
-        val resolved = components.typeResolverTransformer.withAllowedBareTypes {
+        val resolved = components.typeResolverTransformer.withBareTypes {
             if (typeOperatorCall.operation == FirOperation.IS || typeOperatorCall.operation == FirOperation.NOT_IS) {
                 components.typeResolverTransformer.withIsOperandOfIsOperator {
                     typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
