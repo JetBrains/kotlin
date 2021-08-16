@@ -39,6 +39,71 @@ class CustomCliTest : TestCaseWithTmpdir() {
         compileAndCheckMainClass(listOf(main1Kt, main2Kt), expectedMainClass = null)
     }
 
+    fun testObjectJvmStaticFunctionMainClass() {
+        val mainKt = tmpdir.resolve("main.kt").apply {
+            writeText(
+                """
+                    object ObjectMain {
+                        @JvmStatic
+                        fun main(args: Array<String>) = println("hello")
+                    }
+                """
+            )
+        }
+        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "ObjectMain")
+    }
+
+    fun testCompanionObjectJvmStaticFunctionMainClass() {
+        val mainKt = tmpdir.resolve("main.kt").apply {
+            writeText(
+                """
+                    class Test {
+                        companion object {
+                            @JvmStatic
+                            fun main(args: Array<String>) = println("hello")
+                        }
+                    }
+                """
+            )
+        }
+        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "Test")
+    }
+
+    fun testInterfaceCompanionObjectJvmStaticFunctionMainClass() {
+        val mainKt = tmpdir.resolve("main.kt").apply {
+            writeText(
+                """
+                    interface Test {
+                        companion object {
+                            @JvmStatic
+                            fun main(args: Array<String>) = println("hello")
+                        }
+                    }
+                """
+            )
+        }
+        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "Test")
+    }
+
+    fun testMultipleMainsInOneFile() {
+        val mainKt = tmpdir.resolve("main.kt").apply {
+            writeText(
+                """
+                    object ObjectMain {
+                        @JvmStatic
+                        fun main(args: Array<String>) = println("hello")
+                    }
+                    object ObjectMain2 {
+                        @JvmStatic
+                        fun main(args: Array<String>) = println("hello2")
+                    }
+                    fun main(args: Array<String>) = println("hello3")
+                """
+            )
+        }
+        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = null)
+    }
+
     private fun compileAndCheckMainClass(sourceFiles: List<File>, expectedMainClass: String?) {
         val jarFile = tmpdir.resolve("output.jar")
         val args = listOf("-include-runtime", "-d", jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
