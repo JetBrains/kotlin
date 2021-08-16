@@ -128,14 +128,16 @@ private class InlineCallableReferenceToLambdaTransformer(
         val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
             val (receiverParameter, receiverValue) = expression.getArgumentsWithIr().singleOrNull() ?: (null to null)
-            val argumentTypes = (expression.type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
+            val kFunctionArguments = (expression.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
+            val argumentTypes = kFunctionArguments.dropLast(1)
+            val resultType = kFunctionArguments.last()
 
             val function = context.irFactory.buildFun {
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier(STUB_FOR_INLINING)
                 visibility = DescriptorVisibilities.LOCAL
-                returnType = referencedFunction.returnType
+                returnType = resultType
                 isSuspend = referencedFunction.isSuspend
             }.apply {
                 parent = currentDeclarationParent!!
@@ -154,7 +156,7 @@ private class InlineCallableReferenceToLambdaTransformer(
                     expression.startOffset,
                     expression.endOffset
                 ).run {
-                    irExprBody(irCall(referencedFunction).apply {
+                    irExprBody(irCall(referencedFunction.symbol, resultType).apply {
                         symbol.owner.allTypeParameters.forEach {
                             putTypeArgument(it.index, expression.getTypeArgument(it.index))
                         }
