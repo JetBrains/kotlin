@@ -29,6 +29,9 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         symbol.originalIfFakeOverride()?.let {
             return getFirCallableContainerFile(it)
         }
+        if (symbol is FirBackingFieldSymbol) {
+            return getFirCallableContainerFile(symbol.fir.propertySymbol)
+        }
         if (symbol is FirAccessorSymbol) {
             val fir = symbol.fir
             if (fir is FirSyntheticProperty) {

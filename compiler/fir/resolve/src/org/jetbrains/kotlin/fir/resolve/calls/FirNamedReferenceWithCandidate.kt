@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class)
@@ -31,4 +34,19 @@ class FirErrorReferenceWithCandidate(
     val diagnostic: ConeDiagnostic
 ) : FirNamedReferenceWithCandidate(source, name, candidate) {
     override val isError: Boolean get() = true
+}
+
+class FirPropertyWithExplicitBackingFieldResolvedNamedReference(
+    override val source: FirSourceElement?,
+    override val name: Name,
+    override val resolvedSymbol: FirBasedSymbol<*>,
+    val hasVisibleBackingField: Boolean,
+) : FirResolvedNamedReference() {
+    override val candidateSymbol: FirBasedSymbol<*>? get() = null
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyWithExplicitBackingFieldResolvedNamedReference {
+        return this
+    }
 }

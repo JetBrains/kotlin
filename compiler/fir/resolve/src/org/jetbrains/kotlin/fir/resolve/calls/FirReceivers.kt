@@ -69,11 +69,6 @@ open class ExpressionReceiverValue(
     }
 }
 
-class NarrowedExpressionReceiverValue(
-    explicitReceiver: FirExpression,
-    override val type: ConeKotlinType,
-) : ExpressionReceiverValue(explicitReceiver)
-
 sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     val boundSymbol: S,
     type: ConeKotlinType,

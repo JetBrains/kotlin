@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -187,6 +189,30 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
     return null
 }
 
+private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(): FirBasedSymbol<*> {
+    val propertyReceiver = resolvedSymbol.safeAs<FirPropertySymbol>()
+        ?: return resolvedSymbol
+
+    // This can happen in case of 2 properties referencing
+    // each other recursively. See: Jet81.fir.kt
+    if (
+        propertyReceiver.fir.returnTypeRef is FirImplicitTypeRef ||
+        propertyReceiver.fir.backingField?.returnTypeRef is FirImplicitTypeRef
+    ) {
+        return resolvedSymbol
+    }
+
+    if (
+        propertyReceiver.isFinal &&
+        hasVisibleBackingField &&
+        propertyReceiver.canNarrowDownGetterType
+    ) {
+        return propertyReceiver.fir.backingField?.symbol ?: resolvedSymbol
+    }
+
+    return resolvedSymbol
+}
+
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
     return when (val newCallee = access.calleeReference) {
         is FirErrorNamedReference ->
@@ -198,16 +224,8 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             typeFromSymbol(newCallee.candidateSymbol, false)
         }
         is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
-            val backingField = newCallee.resolvedSymbol
-                .safeAs<FirPropertySymbol>()
-                ?.fir
-                ?.backingField
-
-            if (newCallee.hasVisibleBackingField && backingField != null) {
-                typeFromSymbol(backingField.symbol, false)
-            } else {
-                typeFromSymbol(newCallee.resolvedSymbol, false)
-            }
+            val symbol = newCallee.getNarrowedDownSymbol()
+            typeFromSymbol(symbol, false)
         }
         is FirResolvedNamedReference -> {
             typeFromSymbol(newCallee.resolvedSymbol, false)

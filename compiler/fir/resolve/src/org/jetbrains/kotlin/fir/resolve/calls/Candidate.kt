@@ -145,6 +145,8 @@ class Candidate(
     fun extensionReceiverExpression(): FirExpression =
         extensionReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
+    var hasVisibleBackingField = false
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

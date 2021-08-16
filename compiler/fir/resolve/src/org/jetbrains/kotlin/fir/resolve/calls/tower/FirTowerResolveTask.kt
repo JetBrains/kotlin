@@ -5,34 +5,21 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.asReversedFrozen
-import org.jetbrains.kotlin.fir.containingClass
-import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
 
 internal class TowerDataElementsForName(
     name: Name,
@@ -236,64 +223,12 @@ internal open class FirTowerResolveTask(
         )
     }
 
-    private fun FirPropertySymbol.hasAccessibleBackingField(info: CallInfo): Boolean {
-        val receiverContainer = containingClass()?.toSymbol(info.session)
-
-        if (!this.isFinal) {
-            return false
-        }
-
-        return when (fir.backingField?.visibility) {
-            Visibilities.Private -> {
-                info.containingDeclarations.any {
-                    it.symbol == receiverContainer
-                }
-            }
-            Visibilities.Internal -> {
-                receiverContainer?.moduleData == info.containingFile.moduleData
-            }
-            else -> {
-                false
-            }
-        }
-    }
-
-    private fun FirExpression.getNarrowedDownReturnType(info: CallInfo): ConeKotlinType? {
-        val propertyReceiver = this.safeAs<FirQualifiedAccessExpression>()
-            ?.calleeReference
-            ?.safeAs<FirResolvedNamedReference>()
-            ?.resolvedSymbol
-            ?.safeAs<FirPropertySymbol>()
-            ?: return null
-
-        // This can happen in case of 2 properties referencing
-        // each other recursively. See: Jet81.fir.kt
-        if (
-            propertyReceiver.fir.returnTypeRef is FirImplicitTypeRef ||
-            propertyReceiver.fir.backingField?.returnTypeRef is FirImplicitTypeRef
-        ) {
-            return null
-        }
-
-        if (propertyReceiver.hasAccessibleBackingField(info) && propertyReceiver.canNarrowDownGetterType) {
-            return propertyReceiver.fir.backingField?.returnTypeRef?.coneType
-        }
-
-        return null
-    }
-
     suspend fun runResolverForExpressionReceiver(
         info: CallInfo,
         receiver: FirExpression,
         parentGroup: TowerGroup = TowerGroup.EmptyRoot
     ) {
-        val narrowedType = receiver.getNarrowedDownReturnType(info)
-
-        val explicitReceiverValue = if (narrowedType != null) {
-            NarrowedExpressionReceiverValue(receiver, narrowedType)
-        } else {
-            ExpressionReceiverValue(receiver)
-        }
+        val explicitReceiverValue = ExpressionReceiverValue(receiver)
 
         processExtensionsThatHideMembers(info, explicitReceiverValue, parentGroup)
 
