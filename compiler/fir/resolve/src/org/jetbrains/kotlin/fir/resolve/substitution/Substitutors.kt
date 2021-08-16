@@ -84,7 +84,10 @@ abstract class AbstractConeSubstitutor(private val typeContext: ConeTypeContext)
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
-        val substituted = substituteOrNull(original)?.withNullability(ConeNullability.NOT_NULL, typeContext) ?: return null
+        val substituted = substituteOrNull(original)
+            ?.withNullability(ConeNullability.NOT_NULL, typeContext)
+            ?.withAttributes(original.attributes, typeContext)
+            ?: return null
         return ConeDefinitelyNotNullType.create(substituted, typeContext) ?: substituted
     }
 

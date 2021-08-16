@@ -16862,6 +16862,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("integerNotNullable.kt")
+            public void testIntegerNotNullable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/integerNotNullable.kt");
+            }
+
+            @Test
             @TestMetadata("invisiblePackagePrivateInheritedMember.kt")
             public void testInvisiblePackagePrivateInheritedMember() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/invisiblePackagePrivateInheritedMember.kt");

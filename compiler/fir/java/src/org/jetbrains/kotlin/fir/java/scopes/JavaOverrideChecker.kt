@@ -80,8 +80,7 @@ class JavaOverrideChecker internal constructor(
     }
 
     private fun ConeKotlinType.isPrimitiveInJava(): Boolean = with(context) {
-        // TODO: Support enhanced type like `@NotNull Integer` that are not nullable, but still aren't primitive
-        !isNullableType() && isPrimitiveOrNullablePrimitive
+        !isNullableType() && CompilerConeAttributes.EnhancedNullability !in attributes && isPrimitiveOrNullablePrimitive
     }
 
     private fun isEqualArrayElementTypeProjections(

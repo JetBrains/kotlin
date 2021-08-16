@@ -212,11 +212,10 @@ data class ConeCapturedType(
 
 data class ConeTypeVariableType(
     override val nullability: ConeNullability,
-    override val lookupTag: ConeClassifierLookupTag
+    override val lookupTag: ConeClassifierLookupTag,
+    override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeLookupTagBasedType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = emptyArray()
-
-    override val attributes: ConeAttributes get() = ConeAttributes.Empty
 }
 
 data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
@@ -227,7 +226,7 @@ data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleK
         get() = ConeNullability.NOT_NULL
 
     override val attributes: ConeAttributes
-        get() = ConeAttributes.Empty
+        get() = original.attributes
 
     companion object
 }

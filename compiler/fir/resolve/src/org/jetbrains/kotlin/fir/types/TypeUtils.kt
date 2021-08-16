@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -110,6 +110,13 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes, typeSystem
             lowerBound.withAttributes(attributes, typeSystemContext),
             upperBound.withAttributes(attributes, typeSystemContext)
         )
+        is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag, attributes)
+        is ConeCapturedType -> ConeCapturedType(
+            captureStatus, lowerType, nullability, constructor, attributes, isProjectionNotNull,
+        )
+        // TODO: Consider correct application of attributes to ConeIntersectionType
+        // Currently, ConeAttributes.union works a bit strange, because it lefts only `other` parts
+        is ConeIntersectionType -> this
         else -> error("Not supported: $this: ${this.render()}")
     } as T
 }
