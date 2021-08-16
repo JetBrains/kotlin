@@ -695,6 +695,7 @@ class Fir2IrDeclarationStorage(
 
     private val FirProperty.fieldVisibility: Visibility
         get() = when {
+            hasExplicitBackingField -> backingField?.visibility ?: status.visibility
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
             hasJvmFieldAnnotation -> status.visibility
@@ -794,7 +795,6 @@ class Fir2IrDeclarationStorage(
                         parent = irParent
                     }
                     val type = property.returnTypeRef.toIrType()
-                    val initializer = property.initializer
                     val delegate = property.delegate
                     val getter = property.getter
                     val setter = property.setter
@@ -806,14 +806,21 @@ class Fir2IrDeclarationStorage(
                                 Name.identifier("${property.name}\$delegate"), true, delegate
                             )
                         } else {
+                            val initializer = property.backingField?.initializer ?: property.initializer
+                            // There are cases when we get here for properties
+                            // that have no backing field. For example, in the
+                            // funExpression.kt test there's an attempt
+                            // to access the `javaClass` property of the `foo0`'s
+                            // `block` argument
+                            val typeToUse = property.backingField?.returnTypeRef?.toIrType() ?: type
                             createBackingField(
                                 property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                                 components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
-                                property.name, property.isVal, initializer, type
+                                property.name, property.isVal, initializer, typeToUse
                             ).also { field ->
                                 if (initializer is FirConstExpression<*>) {
                                     // TODO: Normally we shouldn't have error type here
-                                    val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
+                                    val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: typeToUse
                                     field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
                             }

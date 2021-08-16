@@ -17,12 +17,14 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class FirModuleVisibilityChecker : FirSessionComponent {
     abstract fun <T> isInFriendModule(declaration: T): Boolean where T : FirMemberDeclaration, T : FirDeclaration
@@ -51,6 +53,22 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
     }
 
+    private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField? {
+        val field = this.safeAs<FirProperty>()?.getExplicitBackingField()
+            ?: return null
+
+        // This check prevents resolving protected and
+        // public fields.
+        if (
+            field.visibility == Visibilities.Private ||
+            field.visibility == Visibilities.Internal
+        ) {
+            return field
+        }
+
+        return null
+    }
+
     fun isVisible(
         declaration: FirMemberDeclaration,
         candidate: Candidate
@@ -71,7 +89,20 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             return true
         }
 
-        return isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
+        val visible = isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
+        val backingField = declaration.getBackingFieldIfApplicable()
+
+        if (visible && backingField != null) {
+            candidate.hasVisibleBackingField = isVisible(
+                backingField,
+                session,
+                useSiteFile,
+                containingDeclarations,
+                candidate.dispatchReceiverValue,
+            )
+        }
+
+        return visible
     }
 
     fun isVisible(
@@ -240,6 +271,7 @@ val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComp
 
 fun FirBasedSymbol<*>.getOwnerId(): ClassId? {
     return when (this) {
+        is FirBackingFieldSymbol -> fir.propertySymbol.getOwnerId()
         is FirClassLikeSymbol<*> -> {
             val ownerId = classId.outerClassId
             if (classId.isLocal) {

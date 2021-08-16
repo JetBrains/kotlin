@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -639,6 +641,11 @@ class FirCallResolver(
                         this.source = source
                         resolvedSymbol = coneSymbol
                     }
+                }
+                if (coneSymbol.safeAs<FirPropertySymbol>()?.hasExplicitBackingField == true) {
+                    return FirPropertyWithExplicitBackingFieldResolvedNamedReference(
+                        source, name, candidate.symbol, candidate.hasVisibleBackingField
+                    )
                 }
                 /*
                  * This `if` is an optimization for local variables and properties without type parameters

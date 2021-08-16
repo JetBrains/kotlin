@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.asReversedFrozen
-import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
@@ -236,34 +232,13 @@ internal open class FirTowerResolveTask(
         )
     }
 
-    private fun FirPropertySymbol.hasAccessibleBackingField(info: CallInfo): Boolean {
-        val receiverContainer = containingClass()?.toSymbol(info.session)
-
-        if (!this.isFinal) {
-            return false
-        }
-
-        return when (fir.backingField?.visibility) {
-            Visibilities.Private -> {
-                info.containingDeclarations.any {
-                    it.symbol == receiverContainer
-                }
-            }
-            Visibilities.Internal -> {
-                receiverContainer?.moduleData == info.containingFile.moduleData
-            }
-            else -> {
-                false
-            }
-        }
-    }
-
-    private fun FirExpression.getNarrowedDownReturnType(info: CallInfo): ConeKotlinType? {
-        val propertyReceiver = this.safeAs<FirQualifiedAccessExpression>()
+    private fun FirExpression.getNarrowedDownReturnType(): ConeKotlinType? {
+        val reference = this.safeAs<FirQualifiedAccessExpression>()
             ?.calleeReference
-            ?.safeAs<FirResolvedNamedReference>()
-            ?.resolvedSymbol
-            ?.safeAs<FirPropertySymbol>()
+            ?.safeAs<FirPropertyWithExplicitBackingFieldResolvedNamedReference>()
+            ?: return null
+
+        val propertyReceiver = reference.resolvedSymbol.safeAs<FirPropertySymbol>()
             ?: return null
 
         // This can happen in case of 2 properties referencing
@@ -275,7 +250,11 @@ internal open class FirTowerResolveTask(
             return null
         }
 
-        if (propertyReceiver.hasAccessibleBackingField(info) && propertyReceiver.canNarrowDownGetterType) {
+        if (
+            propertyReceiver.isFinal &&
+            reference.hasVisibleBackingField &&
+            propertyReceiver.canNarrowDownGetterType
+        ) {
             return propertyReceiver.fir.backingField?.returnTypeRef?.coneType
         }
 
@@ -287,7 +266,7 @@ internal open class FirTowerResolveTask(
         receiver: FirExpression,
         parentGroup: TowerGroup = TowerGroup.EmptyRoot
     ) {
-        val narrowedType = receiver.getNarrowedDownReturnType(info)
+        val narrowedType = receiver.getNarrowedDownReturnType()
 
         val explicitReceiverValue = if (narrowedType != null) {
             NarrowedExpressionReceiverValue(receiver, narrowedType)

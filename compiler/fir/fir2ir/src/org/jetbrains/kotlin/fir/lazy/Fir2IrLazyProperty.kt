@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
 class Fir2IrLazyProperty(
@@ -88,6 +90,16 @@ class Fir2IrLazyProperty(
         with(typeConverter) { fir.returnTypeRef.toIrType() }
     }
 
+    private fun toIrInitializer(initializer: FirExpression?): IrExpressionBody? {
+        return if (initializer is FirConstExpression<*>) {
+            // TODO: Normally we shouldn't have error type here
+            val constType = with(typeConverter) { initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type }
+            factory.createExpressionBody(initializer.toIrConst(constType))
+        } else {
+            null
+        }
+    }
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override var backingField: IrField? by lazyVar(lock) {
         // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
@@ -96,6 +108,26 @@ class Fir2IrLazyProperty(
             !fir.isConst && (fir.modality == Modality.ABSTRACT || parent is IrClass && parent.isInterface) -> {
                 null
             }
+            fir.hasExplicitBackingField -> {
+                with(declarationStorage) {
+                    val backingFieldType = with(typeConverter) {
+                        fir.backingField?.returnTypeRef?.toIrType()
+                    }
+                    val initializer = fir.backingField?.initializer ?: fir.initializer
+                    val visibility = fir.backingField?.visibility ?: fir.visibility
+                    createBackingField(
+                        fir,
+                        IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                        components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                        fir.name,
+                        fir.isVal,
+                        initializer,
+                        backingFieldType
+                    ).also { field ->
+                        field.initializer = toIrInitializer(initializer)
+                    }
+                }
+            }
             fir.initializer != null || fir.getter is FirDefaultPropertyGetter || fir.isVar && fir.setter is FirDefaultPropertySetter -> {
                 with(declarationStorage) {
                     createBackingField(
@@ -103,12 +135,7 @@ class Fir2IrLazyProperty(
                         components.visibilityConverter.convertToDescriptorVisibility(fir.visibility), fir.name, fir.isVal, fir.initializer,
                         type
                     ).also { field ->
-                        val initializer = fir.initializer
-                        if (initializer is FirConstExpression<*>) {
-                            // TODO: Normally we shouldn't have error type here
-                            val constType = with(typeConverter) { initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type }
-                            field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
-                        }
+                        field.initializer = toIrInitializer(fir.initializer)
                     }
                 }
             }
