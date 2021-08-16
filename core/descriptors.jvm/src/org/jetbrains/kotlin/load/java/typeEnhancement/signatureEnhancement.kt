@@ -251,9 +251,6 @@ private class SignatureParts(
     override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
         containerContext.components.kotlinTypeChecker.equalTypes(this as KotlinType, other as KotlinType)
 
-    override val TypeParameterMarker.starProjectedType: KotlinType
-        get() = (this as TypeParameterDescriptor).starProjectionType()
-
     override val TypeParameterMarker.isFromJava: Boolean
         get() = this is LazyJavaTypeParameterDescriptor
 }

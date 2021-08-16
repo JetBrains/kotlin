@@ -34,7 +34,6 @@ abstract class AbstractSignatureParts<Annotation : Any> {
     abstract val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
     abstract fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean
 
-    abstract val TypeParameterMarker.starProjectedType: KotlinTypeMarker?
     abstract val TypeParameterMarker.isFromJava: Boolean
 
     open val KotlinTypeMarker.isNotNullTypeParameterCompat: Boolean
@@ -71,11 +70,11 @@ abstract class AbstractSignatureParts<Annotation : Any> {
         }
 
         val isHeadTypeConstructor = typeParameterForArgument == null
-        val typeOrBound = type ?: typeParameterForArgument?.starProjectedType ?: return JavaTypeQualifiers.NONE
-        val typeParameterUse = with(typeSystem) { typeOrBound.typeConstructor().getTypeParameterClassifier() }
+        val typeAnnotations = type?.annotations ?: emptyList()
+        val typeParameterUse = with(typeSystem) { type?.typeConstructor()?.getTypeParameterClassifier() }
         val typeParameterBounds = containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
         val composedAnnotation = when {
-            !isHeadTypeConstructor -> typeOrBound.annotations
+            !isHeadTypeConstructor -> typeAnnotations
             !typeParameterBounds && enableImprovementsInStrictMode ->
                 // We don't apply container type use annotations to avoid double applying them like with arrays:
                 //      @NotNull Integer [] f15();
@@ -83,14 +82,13 @@ abstract class AbstractSignatureParts<Annotation : Any> {
                 // and to entire array (as METHOD annotation).
                 // In other words, we prefer TYPE_USE target of an annotation, and apply the annotation only according to it, if it's present.
                 // See KT-24392 for more details.
-                containerAnnotations.filter { !annotationTypeQualifierResolver.isTypeUseAnnotation(it) } + typeOrBound.annotations
-            else -> containerAnnotations + typeOrBound.annotations
+                containerAnnotations.filter { !annotationTypeQualifierResolver.isTypeUseAnnotation(it) } + typeAnnotations
+            else -> containerAnnotations + typeAnnotations
         }
 
         val annotationsMutability = annotationTypeQualifierResolver.extractMutability(composedAnnotation)
         val annotationsNullability = annotationTypeQualifierResolver.extractNullability(composedAnnotation) { forceWarning }
-
-        if (type != null && annotationsNullability != null) {
+        if (annotationsNullability != null) {
             return JavaTypeQualifiers(
                 annotationsNullability.qualifier, annotationsMutability,
                 annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL && typeParameterUse != null,
@@ -98,7 +96,6 @@ abstract class AbstractSignatureParts<Annotation : Any> {
             )
         }
 
-        // TODO: check whether the code below works properly for star projections (when typeOrBound != type)
         val applicabilityType = when {
             isHeadTypeConstructor || typeParameterBounds -> containerApplicabilityType
             else -> AnnotationQualifierApplicabilityType.TYPE_USE
