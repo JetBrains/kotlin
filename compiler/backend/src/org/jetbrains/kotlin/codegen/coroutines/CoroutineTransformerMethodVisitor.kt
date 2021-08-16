@@ -83,7 +83,7 @@ class CoroutineTransformerMethodVisitor(
         RedundantLocalsEliminationMethodTransformer(suspensionPoints)
             .transform(containingClassInternalName, methodNode)
         ChangeBoxingMethodTransformer.transform(containingClassInternalName, methodNode)
-        updateMaxStack(methodNode)
+        methodNode.updateMaxStack()
 
         checkForSuspensionPointInsideMonitor(methodNode, suspensionPoints)
 
@@ -119,7 +119,7 @@ class CoroutineTransformerMethodVisitor(
         }
 
         // Actual max stack might be increased during the previous phases
-        updateMaxStack(methodNode)
+        methodNode.updateMaxStack()
 
         UninitializedStoresProcessor(methodNode, shouldPreserveClassInitialization).run()
 
@@ -425,20 +425,6 @@ class CoroutineTransformerMethodVisitor(
         putfield(
             Type.getObjectType(classBuilderForCoroutineState.thisName).internalName,
             COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
-        )
-    }
-
-    private fun updateMaxStack(methodNode: MethodNode) {
-        methodNode.instructions.resetLabels()
-        methodNode.accept(
-            MaxStackFrameSizeAndLocalsCalculator(
-                Opcodes.API_VERSION, methodNode.access, methodNode.desc,
-                object : MethodVisitor(Opcodes.API_VERSION) {
-                    override fun visitMaxs(maxStack: Int, maxLocals: Int) {
-                        methodNode.maxStack = maxStack
-                    }
-                }
-            )
         )
     }
 
