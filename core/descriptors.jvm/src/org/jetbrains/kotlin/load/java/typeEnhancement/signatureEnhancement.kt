@@ -317,6 +317,12 @@ class SignatureEnhancement(
             typeParameterForArgument: TypeParameterDescriptor?,
             isFromStarProjection: Boolean
         ): JavaTypeQualifiers {
+            if (isFromStarProjection && typeParameterForArgument?.variance == Variance.IN_VARIANCE) {
+                // Star projections can only be enhanced in one way: `?` -> `? extends <something>`. Given a Kotlin type `C<in T>
+                // (declaration-site variance), this is not a valid enhancement due to conflicting variances.
+                return JavaTypeQualifiers.NONE
+            }
+
             val areImprovementsInStrictMode = containerContext.components.settings.typeEnhancementImprovementsInStrictMode
 
             val composedAnnotation =
@@ -349,7 +355,7 @@ class SignatureEnhancement(
                     containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
                 else
                     defaultQualifiersForType)?.takeIf {
-                    it.affectsTypeParameterBasedTypes || !isTypeParameter()
+                    (it.affectsTypeParameterBasedTypes || !isTypeParameter()) && (it.affectsStarProjection || !isFromStarProjection)
                 }
 
             val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
@@ -362,8 +368,7 @@ class SignatureEnhancement(
                     ?: computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
                         nullabilityFromBoundsForTypeBasedOnTypeParameter,
                         defaultTypeQualifier,
-                        typeParameterForArgument,
-                        isFromStarProjection
+                        typeParameterForArgument
                     )
 
             val isNotNullTypeParameter =
@@ -390,8 +395,7 @@ class SignatureEnhancement(
         private fun computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
             nullabilityFromBoundsForTypeBasedOnTypeParameter: NullabilityQualifierWithMigrationStatus?,
             defaultTypeQualifier: JavaDefaultQualifiers?,
-            typeParameterForArgument: TypeParameterDescriptor?,
-            isFromStarProjection: Boolean
+            typeParameterForArgument: TypeParameterDescriptor?
         ): NullabilityQualifierWithMigrationStatus? {
 
             val result =
@@ -412,7 +416,7 @@ class SignatureEnhancement(
                 )
             }
 
-            if (result == null || isFromStarProjection) return boundsFromTypeParameterForArgument
+            if (result == null) return boundsFromTypeParameterForArgument
 
             return mostSpecific(boundsFromTypeParameterForArgument, result)
         }

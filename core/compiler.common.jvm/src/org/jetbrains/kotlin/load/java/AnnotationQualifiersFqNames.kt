@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.name.FqName
 data class JavaDefaultQualifiers(
     val nullabilityQualifier: NullabilityQualifierWithMigrationStatus,
     val qualifierApplicabilityTypes: Collection<AnnotationQualifierApplicabilityType>,
-    val affectsTypeParameterBasedTypes: Boolean = nullabilityQualifier.qualifier == NullabilityQualifier.NOT_NULL
+    val affectsTypeParameterBasedTypes: Boolean = nullabilityQualifier.qualifier == NullabilityQualifier.NOT_NULL,
+    val affectsStarProjection: Boolean = affectsTypeParameterBasedTypes
 ) {
     val makesTypeParameterNotNull get() = nullabilityQualifier.qualifier == NullabilityQualifier.NOT_NULL && affectsTypeParameterBasedTypes
 }
@@ -35,7 +36,8 @@ val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
     JSPECIFY_NULL_MARKED to JavaDefaultQualifiers(
         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
         DEFAULT_JSPECIFY_APPLICABILITY,
-        affectsTypeParameterBasedTypes = false
+        affectsTypeParameterBasedTypes = false,
+        affectsStarProjection = false
     )
 )
 
