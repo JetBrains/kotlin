@@ -12,6 +12,7 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -71,7 +72,9 @@ internal class FirLightParameterForReceiver private constructor(
     }
 
     private val _type: PsiType by lazyPub {
-        receiverTypeAndAnnotations.asPsiType(context, method, FirResolvePhase.TYPES)
+        analyzeWithSymbolAsContext(context) {
+            receiverTypeAndAnnotations.type.asPsiType(this@FirLightParameterForReceiver)
+        }
     }
 
     override fun getType(): PsiType = _type

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.parameters.FirLightSetterParameterForSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
@@ -144,11 +145,9 @@ internal class FirLightAccessorMethodForSymbol(
 
     private val _returnedType: PsiType? by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
-        return@lazyPub containingPropertySymbol.annotatedType.asPsiType(
-            context = containingPropertySymbol,
-            parent = this@FirLightAccessorMethodForSymbol,
-            phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
-        )
+        analyzeWithSymbolAsContext(containingPropertySymbol) {
+            containingPropertySymbol.annotatedType.type.asPsiType(this@FirLightAccessorMethodForSymbol)
+        }
     }
 
     override fun getReturnType(): PsiType? = _returnedType

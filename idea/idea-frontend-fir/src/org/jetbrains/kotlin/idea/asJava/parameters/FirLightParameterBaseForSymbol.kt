@@ -9,6 +9,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.psi.KtParameter
 
@@ -45,8 +46,9 @@ internal abstract class FirLightParameterBaseForSymbol(
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     private val _type by lazyPub {
-        val convertedType = parameterSymbol.asPsiType(this, FirResolvePhase.TYPES)
-
+        val convertedType = analyzeWithSymbolAsContext(parameterSymbol) {
+            parameterSymbol.annotatedType.type.asPsiType(this@FirLightParameterBaseForSymbol)
+        }
         if (convertedType is PsiArrayType && parameterSymbol.isVararg) {
             PsiEllipsisType(convertedType.componentType, convertedType.annotationProvider)
         } else convertedType

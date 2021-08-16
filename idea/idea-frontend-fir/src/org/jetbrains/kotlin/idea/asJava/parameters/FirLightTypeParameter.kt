@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.basicIsEquivalentTo
 import org.jetbrains.kotlin.idea.asJava.invalidAccess
-import org.jetbrains.kotlin.idea.asJava.mapSupertype
+import org.jetbrains.kotlin.idea.asJava.mapSuperType
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -61,17 +63,15 @@ internal class FirLightTypeParameter(
             language = language,
             role = PsiReferenceList.Role.EXTENDS_LIST
         )
-
-        typeParameterSymbol.upperBounds
-            .filterIsInstance<KtNonErrorClassType>()
-            .filter { it.classId != StandardClassIds.Any }
-            .mapNotNull {
-                it.mapSupertype(
-                    psiContext = this,
-                    kotlinCollectionAsIs = true,
-                )
-            }
-            .forEach { listBuilder.addReference(it) }
+        analyzeWithSymbolAsContext(typeParameterSymbol) {
+            typeParameterSymbol.upperBounds
+                .filterIsInstance<KtNonErrorClassType>()
+                .filter { it.classId != StandardClassIds.Any }
+                .mapNotNull {
+                    mapSuperType(it, this@FirLightTypeParameter, kotlinCollectionAsIs = true)
+                }
+                .forEach { listBuilder.addReference(it) }
+        }
 
         listBuilder
     }

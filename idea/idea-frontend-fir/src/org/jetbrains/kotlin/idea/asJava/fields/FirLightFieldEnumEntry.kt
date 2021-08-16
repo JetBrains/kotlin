@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -65,7 +66,9 @@ internal class FirLightFieldForEnumEntry(
     override fun getName(): String = enumEntrySymbol.name.asString()
 
     private val _type: PsiType by lazyPub {
-        enumEntrySymbol.annotatedType.asPsiType(enumEntrySymbol, this@FirLightFieldForEnumEntry, FirResolvePhase.TYPES)
+        analyzeWithSymbolAsContext(enumEntrySymbol) {
+            enumEntrySymbol.annotatedType.type.asPsiType(this@FirLightFieldForEnumEntry)
+        }
     }
 
     override fun getType(): PsiType = _type

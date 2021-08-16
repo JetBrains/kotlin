@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
@@ -30,11 +31,9 @@ internal class FirLightFieldForPropertySymbol(
     override val kotlinOrigin: KtDeclaration? = propertySymbol.psi as? KtDeclaration
 
     private val _returnedType: PsiType by lazyPub {
-        propertySymbol.annotatedType.asPsiType(
-            propertySymbol,
-            this@FirLightFieldForPropertySymbol,
-            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
-        )
+        analyzeWithSymbolAsContext(propertySymbol) {
+            propertySymbol.annotatedType.type.asPsiType(this@FirLightFieldForPropertySymbol)
+        }
     }
 
     private val _isDeprecated: Boolean by lazyPub {

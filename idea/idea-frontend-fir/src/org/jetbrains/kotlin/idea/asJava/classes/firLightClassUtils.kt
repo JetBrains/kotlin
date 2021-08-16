@@ -315,7 +315,13 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
     //TODO Add support for kotlin.collections.
     superTypes.asSequence()
         .filter { it.type.needToAddTypeIntoList() }
-        .mapNotNull { it.mapSupertype(this, kotlinCollectionAsIs = true) }
+        .mapNotNull { typeAnnotated ->
+            val type = typeAnnotated.type
+            if (type !is KtNonErrorClassType) return@mapNotNull null
+            analyzeWithSymbolAsContext(type.classSymbol) {
+                mapSuperType(type, this@createInheritanceList, kotlinCollectionAsIs = true)
+            }
+        }
         .forEach { listBuilder.addReference(it) }
 
     return listBuilder

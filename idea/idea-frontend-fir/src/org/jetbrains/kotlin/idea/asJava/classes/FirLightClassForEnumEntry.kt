@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class FirLightClassForEnumEntry(
@@ -83,10 +84,11 @@ internal class FirLightClassForEnumEntry(
     override fun isEnum(): Boolean = false
 
     private val _extendsList: PsiReferenceList? by lazyPub {
-
-        val mappedType = enumEntrySymbol.annotatedType
-            .mapSupertype(this@FirLightClassForEnumEntry)
-            ?: return@lazyPub null
+        val mappedType = analyzeWithSymbolAsContext(enumEntrySymbol) {
+            enumEntrySymbol.annotatedType
+                .type.asPsiType(this@FirLightClassForEnumEntry, TypeMappingMode.SUPER_TYPE) as? PsiClassType
+                ?: return@lazyPub null
+        }
 
         KotlinSuperTypeListBuilder(
             kotlinOrigin = enumClass.kotlinOrigin?.getSuperTypeList(),

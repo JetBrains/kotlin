@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -127,7 +128,9 @@ internal class FirLightSimpleMethodForSymbol(
 
     private val _returnedType: PsiType by lazyPub {
         if (isVoidReturnType) return@lazyPub PsiType.VOID
-        functionSymbol.asPsiType(this@FirLightSimpleMethodForSymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        analyzeWithSymbolAsContext(functionSymbol) {
+            functionSymbol.annotatedType.type.asPsiType(this@FirLightSimpleMethodForSymbol)
+        }
     }
 
     override fun getReturnType(): PsiType = _returnedType

@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal class FirLightFieldForObjectSymbol(
@@ -40,7 +42,9 @@ internal class FirLightFieldForObjectSymbol(
     override fun getModifierList(): PsiModifierList? = _modifierList
 
     private val _type: PsiType by lazyPub {
-        objectSymbol.typeForClassSymbol(this@FirLightFieldForObjectSymbol)
+        analyzeWithSymbolAsContext(objectSymbol) {
+            objectSymbol.buildSelfClassType().asPsiType(this@FirLightFieldForObjectSymbol)
+        }
     }
 
     private val _identifier: PsiIdentifier by lazyPub {
