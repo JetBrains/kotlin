@@ -40,6 +40,7 @@ val FirTypeRef.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing
 val FirTypeRef.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
 val FirTypeRef.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
 val FirTypeRef.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
+val FirTypeRef.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
 val FirTypeRef.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 val FirTypeRef.isArrayType: Boolean
     get() =

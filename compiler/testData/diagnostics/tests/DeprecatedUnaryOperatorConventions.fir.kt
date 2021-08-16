@@ -1,15 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Example {
-    operator fun plus(): String = ""
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(): String = ""
     operator fun unaryPlus(): Int = 0
 }
 
 class ExampleDeprecated {
-    operator fun plus(): String = ""
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(): String = ""
 }
 
-operator fun String.plus(): String = this
+<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun String.plus(): String = this
 operator fun String.unaryPlus(): Int = 0
 
 fun test() {
@@ -22,8 +22,8 @@ fun requireInt(n: Int) {}
 fun requireString(s: String) {}
 
 class Example2 {
-    operator fun plus() = this
-    operator fun minus() = this
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus() = this
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun minus() = this
 
     fun test() {
         <!INAPPLICABLE_CANDIDATE!>+<!>this

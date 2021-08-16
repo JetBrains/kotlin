@@ -13,13 +13,13 @@ interface B {
 }
 
 interface C {
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override operator fun toString(): String = "Rest"<!>
+    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun toString(): String = "Rest"<!>
     <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override operator fun equals(other: Any?): Boolean = false<!>
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override operator fun hashCode(): Int = 2<!>
+    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun hashCode(): Int = 2<!>
 }
 
 interface D {
-    override operator fun toString(): String
+    override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun toString(): String
     override operator fun equals(other: Any?): Boolean
-    override operator fun hashCode(): Int
+    override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun hashCode(): Int
 }

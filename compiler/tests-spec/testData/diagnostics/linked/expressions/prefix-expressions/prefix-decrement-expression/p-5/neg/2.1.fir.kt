@@ -12,7 +12,7 @@ fun case1() {
 
 class Case1() {
 
-    operator fun inc(): B {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun inc(): B {
         TODO()
     }
 }
@@ -29,7 +29,7 @@ fun case2() {
 class Case2() : C() {
     var i = 0
 
-    operator fun inc(): C {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun inc(): C {
         TODO()
     }
 

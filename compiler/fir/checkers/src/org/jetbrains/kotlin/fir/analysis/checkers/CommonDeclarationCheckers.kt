@@ -45,6 +45,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirFunctionNameChecker,
             FirFunctionTypeParametersSyntaxChecker,
+            FirOperatorModifierChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>

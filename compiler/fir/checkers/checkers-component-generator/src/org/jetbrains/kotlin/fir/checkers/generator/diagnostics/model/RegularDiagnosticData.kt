@@ -103,6 +103,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     ABSTRACT_MODIFIER,
     LABEL,
     COMMAS,
+    OPERATOR_MODIFIER,
 
     ;
 

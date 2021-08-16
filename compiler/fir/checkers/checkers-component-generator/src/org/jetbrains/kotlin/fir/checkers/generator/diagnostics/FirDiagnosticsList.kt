@@ -347,6 +347,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<KtModifierKeywordToken>("modifier")
             parameter<String>("target")
         }
+        val INAPPLICABLE_OPERATOR_MODIFIER by error<PsiElement>(PositioningStrategy.OPERATOR_MODIFIER) {
+            parameter<String>("message")
+        }
     }
 
     val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {

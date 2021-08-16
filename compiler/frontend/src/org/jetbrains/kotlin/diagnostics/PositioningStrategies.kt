@@ -378,6 +378,9 @@ object PositioningStrategies {
     val DATA_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.DATA_KEYWORD)
 
     @JvmField
+    val OPERATOR_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.OPERATOR_KEYWORD)
+
+    @JvmField
     val FOR_REDECLARATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val nameIdentifier = when (element) {

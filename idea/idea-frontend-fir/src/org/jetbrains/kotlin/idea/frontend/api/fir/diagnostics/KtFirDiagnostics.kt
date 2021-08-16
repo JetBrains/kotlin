@@ -796,6 +796,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val target: String
     }
 
+    abstract class InapplicableOperatorModifier : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InapplicableOperatorModifier::class
+        abstract val message: String
+    }
+
     abstract class InlineClassNotTopLevel : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = InlineClassNotTopLevel::class
     }
