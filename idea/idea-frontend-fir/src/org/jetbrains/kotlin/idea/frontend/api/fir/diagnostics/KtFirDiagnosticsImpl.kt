@@ -2788,6 +2788,22 @@ internal class LocalVariableWithTypeParametersImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class InapplicableBackingFieldVisibilityImpl(
+    override val modifier: KtModifierKeywordToken,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InapplicableBackingFieldVisibility(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
+internal class InapplicableBackingFieldModifierImpl(
+    override val modifier: KtModifierKeywordToken,
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InapplicableBackingFieldModifier(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class ExpectedDeclarationWithBodyImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

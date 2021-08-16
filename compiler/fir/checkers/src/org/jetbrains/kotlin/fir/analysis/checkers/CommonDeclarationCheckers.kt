@@ -60,6 +60,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirLocalVariableTypeParametersSyntaxChecker,
         )
 
+    override val backingFieldCheckers: Set<FirBackingFieldChecker>
+        get() = setOf(
+            FirBackingFieldModifiersChecker,
+        )
+
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
             FirOverrideChecker,
