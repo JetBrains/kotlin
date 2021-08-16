@@ -2260,6 +2260,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INAPPLICABLE_BACKING_FIELD_VISIBILITY) { firDiagnostic ->
+        InapplicableBackingFieldVisibilityImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INAPPLICABLE_BACKING_FIELD_MODIFIER) { firDiagnostic ->
+        InapplicableBackingFieldModifierImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_DECLARATION_WITH_BODY) { firDiagnostic ->
         ExpectedDeclarationWithBodyImpl(
             firDiagnostic as FirPsiDiagnostic,

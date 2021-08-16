@@ -59,6 +59,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirPropertyFieldTypeChecker,
         )
 
+    override val backingFieldCheckers: Set<FirBackingFieldChecker>
+        get() = setOf(
+            FirBackingFieldModifiersChecker,
+        )
+
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
             FirOverrideChecker,
