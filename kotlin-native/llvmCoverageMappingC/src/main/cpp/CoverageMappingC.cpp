@@ -19,8 +19,10 @@
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/Transforms/Instrumentation.h>
+#include <llvm/Transforms/ObjCARC.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
+
 #include <utility>
 #include <string>
 #include <vector>
@@ -228,6 +230,11 @@ void LLVMAddInstrProfPass(LLVMPassManagerRef passManagerRef, const char* outputF
 void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple) {
   legacy::PassManagerBase *passManager = unwrap(passManagerRef);
   passManager->add(new TargetLibraryInfoWrapperPass(Triple(targetTriple)));
+}
+
+void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef) {
+    legacy::PassManagerBase *passManager = unwrap(passManagerRef);
+    passManager->add(createObjCARCContractPass());
 }
 
 void LLVMKotlinInitializeTargets() {

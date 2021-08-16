@@ -22,6 +22,7 @@ private fun initializeLlvmGlobalPassRegistry() {
     LLVMInitializeIPA(passRegistry)
     LLVMInitializeCodeGen(passRegistry)
     LLVMInitializeTarget(passRegistry)
+    LLVMInitializeObjCARCOpts(passRegistry)
 }
 
 internal fun shouldRunLateBitcodePasses(context: Context): Boolean {
@@ -166,9 +167,15 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
         config.customInlineThreshold?.let { threshold ->
             LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
         }
+
         // Pipeline that is similar to `llvm-lto`.
-        // TODO: Add ObjC optimization passes.
         LLVMPassManagerBuilderPopulateLTOPassManager(passBuilder, modulePasses, Internalize = 0, RunInliner = 1)
+
+        // Lower ObjC ARC intrinsics (e.g. `@llvm.objc.clang.arc.use(...)`).
+        // While Kotlin/Native codegen itself doesn't produce these intrinsics, they might come
+        // from cinterop "glue" bitcode.
+        // TODO: Consider adding other ObjC passes.
+        LLVMAddObjCARCContractPass(modulePasses)
 
         LLVMRunPassManager(modulePasses, llvmModule)
 

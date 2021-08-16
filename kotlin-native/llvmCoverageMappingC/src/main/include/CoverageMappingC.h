@@ -74,6 +74,8 @@ void LLVMAddInstrProfPass(LLVMPassManagerRef passManagerRef, const char* outputF
 
 void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple);
 
+void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef);
+
 void LLVMKotlinInitializeTargets();
 
 # ifdef __cplusplus
