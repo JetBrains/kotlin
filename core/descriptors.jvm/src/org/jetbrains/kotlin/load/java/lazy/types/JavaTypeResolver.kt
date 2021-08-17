@@ -193,6 +193,49 @@ class JavaTypeResolver(
         return mutableLastParameterVariance != OUT_VARIANCE
     }
 
+    private fun computeRawTypeArguments(
+        javaType: JavaClassifierType,
+        typeParameters: List<TypeParameterDescriptor>,
+        constructor: TypeConstructor,
+        attr: JavaTypeAttributes
+    ) = typeParameters.map { parameter ->
+        /*
+         * We shouldn't erase recursive type parameters to avoid creating types unsatisfying upper bounds.
+         * E.g. if we got erased raw type of `class Foo<T: Foo<T>> {}` we'd create Foo<(raw) Foo<*>!>!,
+         * but it's wrong because Foo<*> isn't subtype of Foo<Foo<*>> in accordance with declared upper bound of Foo.
+         * So we should create Foo<*> in this case (CapturedType(*) is really subtype of Foo<CapturedType(*)>).
+         */
+        if (hasTypeParameterRecursiveBounds(parameter, selfConstructor = null, attr.visitedTypeParameters))
+            return@map makeStarProjection(parameter, attr)
+
+        // Some activity for preventing recursion in cases like `class A<T extends A, F extends T>`
+        //
+        // When calculating upper bound of some parameter (attr.upperBoundOfTypeParameter),
+        // do not try to start upper bound calculation of it again.
+        // If we met such recursive dependency it means that upper bound of `attr.upperBoundOfTypeParameter` based effectively
+        // on the current class, so we can manually erase default type of current constructor.
+        //
+        // In example above corner cases are:
+        // - Calculating first argument for raw upper bound of T. It depends on T, so we just get A<*, *>
+        // - Calculating second argument for raw upper bound of T. It depends on F, that again depends on upper bound of T,
+        //   so we get A<*, *>.
+        // Summary result for upper bound of T is `A<A<*, *>, A<*, *>>..A<out A<*, *>, out A<*, *>>`
+        val erasedUpperBound = LazyWrappedType(c.storageManager) {
+            typeParameterUpperBoundEraser.getErasedUpperBound(
+                parameter,
+                javaType.isRaw,
+                attr.withDefaultType(constructor.declarationDescriptor?.defaultType)
+            )
+        }
+
+        rawSubstitution.computeProjection(
+            parameter,
+            // if erasure happens due to invalid arguments number, use star projections instead
+            if (javaType.isRaw) attr else attr.withFlexibility(INFLEXIBLE),
+            erasedUpperBound
+        )
+    }
+
     private fun computeArguments(
         javaType: JavaClassifierType,
         attr: JavaTypeAttributes,
@@ -208,43 +251,7 @@ class JavaTypeResolver(
 
         val typeParameters = constructor.parameters
         if (eraseTypeParameters) {
-            return typeParameters.map { parameter ->
-                /*
-                 * We shouldn't erase recursive type parameters to avoid creating types unsatisfying upper bounds.
-                 * E.g. if we got erased raw type of `class Foo<T: Foo<T>> {}` we'd create Foo<(raw) Foo<*>!>!,
-                 * but it's wrong because Foo<*> isn't subtype of Foo<Foo<*>> in accordance with declared upper bound of Foo.
-                 * So we should create Foo<*> in this case (CapturedType(*) is really subtype of Foo<CapturedType(*)>).
-                 */
-                if (hasTypeParameterRecursiveBounds(parameter, selfConstructor = null, attr.visitedTypeParameters))
-                    return@map StarProjectionImpl(parameter)
-
-                // Some activity for preventing recursion in cases like `class A<T extends A, F extends T>`
-                //
-                // When calculating upper bound of some parameter (attr.upperBoundOfTypeParameter),
-                // do not try to start upper bound calculation of it again.
-                // If we met such recursive dependency it means that upper bound of `attr.upperBoundOfTypeParameter` based effectively
-                // on the current class, so we can manually erase default type of current constructor.
-                //
-                // In example above corner cases are:
-                // - Calculating first argument for raw upper bound of T. It depends on T, so we just get A<*, *>
-                // - Calculating second argument for raw upper bound of T. It depends on F, that again depends on upper bound of T,
-                //   so we get A<*, *>.
-                // Summary result for upper bound of T is `A<A<*, *>, A<*, *>>..A<out A<*, *>, out A<*, *>>`
-                val erasedUpperBound = LazyWrappedType(c.storageManager) {
-                    typeParameterUpperBoundEraser.getErasedUpperBound(
-                        parameter,
-                        isRaw,
-                        attr.withDefaultType(constructor.declarationDescriptor?.defaultType)
-                    )
-                }
-
-                rawSubstitution.computeProjection(
-                    parameter,
-                    // if erasure happens due to invalid arguments number, use star projections instead
-                    if (isRaw) attr else attr.withFlexibility(INFLEXIBLE),
-                    erasedUpperBound
-                )
-            }.toList()
+            return computeRawTypeArguments(javaType, typeParameters, constructor, attr)
         }
 
         if (typeParameters.size != javaType.typeArguments.size) {
