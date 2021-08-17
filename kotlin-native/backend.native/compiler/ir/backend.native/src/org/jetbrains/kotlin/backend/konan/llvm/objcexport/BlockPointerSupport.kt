@@ -30,11 +30,10 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         structType(codegen.kObjHeader)
     }
 
-    val invokeImpl = generateFunction(
-            codegen,
+    val invokeImpl = functionGenerator(
             codegen.getLlvmFunctionType(invokeMethod),
             "invokeFunction${bridge.nameSuffix}"
-    ) {
+    ).generate {
         val args = (0 until bridge.numberOfParameters).map { index ->
             kotlinReferenceToObjC(param(index + 1))
         }
@@ -71,11 +70,10 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             immutable = true
     )
 
-    return generateFunction(
-            codegen,
+    return functionGenerator(
             functionType(codegen.kObjHeaderPtr, false, int8TypePtr, codegen.kObjHeaderPtrPtr),
             "convertBlock${bridge.nameSuffix}"
-    ) {
+    ).generate {
         val blockPtr = param(0)
         ifThen(icmpEq(blockPtr, kNullInt8Ptr)) {
             ret(kNullObjHeaderPtr)
@@ -235,7 +233,9 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             invokeName: String,
             genBody: FunctionGenerationContext.(LLVMValueRef, List<LLVMValueRef>) -> Unit
     ): ConstPointer {
-        val result = generateFunction(codegen, blockType.blockInvokeLlvmType, invokeName, switchToRunnable = true) {
+        val result = functionGenerator(blockType.blockInvokeLlvmType, invokeName) {
+            switchToRunnable = true
+        }.generate {
             val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
             val kotlinObject = call(
                     context.llvm.kRefSharedHolderRef,
@@ -292,11 +292,10 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
                 generateDescriptorForBlock(blockType)
         )
 
-        return generateFunction(
-                codegen,
+        return functionGenerator(
                 functionType(int8TypePtr, false, codegen.kObjHeaderPtr),
                 convertName
-        ) {
+        ).generate {
             val kotlinRef = param(0)
             ifThen(icmpEq(kotlinRef, kNullObjHeaderPtr)) {
                 ret(kNullInt8Ptr)

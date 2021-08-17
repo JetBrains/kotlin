@@ -47,6 +47,35 @@ internal fun TypeBridge.makeNothing() = when (this) {
     is ValueTypeBridge -> LLVMConstNull(this.objCValueType.llvmType)!!
 }
 
+internal class ObjCExportFunctionGenerationContext(
+        builder: ObjCExportFunctionGenerationContextBuilder
+) : FunctionGenerationContext(builder) {
+    private val objCExportCodegen = builder.objCExportCodegen
+
+}
+
+internal class ObjCExportFunctionGenerationContextBuilder(
+        functionType: LLVMTypeRef,
+        functionName: String,
+        val objCExportCodegen: ObjCExportCodeGeneratorBase
+) : FunctionGenerationContextBuilder<ObjCExportFunctionGenerationContext>(
+        functionType,
+        functionName,
+        objCExportCodegen.codegen
+) {
+    override fun build() = ObjCExportFunctionGenerationContext(this)
+}
+
+internal inline fun ObjCExportCodeGeneratorBase.functionGenerator(
+        functionType: LLVMTypeRef,
+        functionName: String,
+        configure: ObjCExportFunctionGenerationContextBuilder.() -> Unit = {}
+): ObjCExportFunctionGenerationContextBuilder = ObjCExportFunctionGenerationContextBuilder(
+        functionType,
+        functionName,
+        this
+).apply(configure)
+
 internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCodeGenerator(codegen) {
     val symbols get() = context.ir.symbols
     val runtime get() = codegen.runtime
@@ -637,7 +666,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
     val boxClass = boxClassSymbol.owner
     val name = "${boxClass.name}ToNSNumber"
 
-    val converter = generateFunction(codegen, kotlinToObjCFunctionType, name) {
+    val converter = functionGenerator(kotlinToObjCFunctionType, name).generate {
         val unboxFunction = context.getUnboxFunction(boxClass).llvmFunction
         val kotlinValue = callFromBridge(
                 unboxFunction,
@@ -760,25 +789,24 @@ private fun ObjCExportCodeGenerator.emitCollectionConverters() {
     )
 }
 
+private fun ObjCExportFunctionGenerationContextBuilder.setupBridgeDebugInfo() {
+    val location = setupBridgeDebugInfo(this.objCExportCodegen.context, function)
+    startLocation = location
+    endLocation = location
+}
+
 private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         methodBridge: MethodBridge,
         debugInfo: Boolean = false,
         genBody: FunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
-    val result = addLlvmFunctionWithDefaultAttributes(
-            context,
-            context.llvmModule!!,
-            "objc2kotlin",
-            objCFunctionType(context, methodBridge)
-    )
+    val result = functionGenerator(objCFunctionType(context, methodBridge), "objc2kotlin") {
+        if (debugInfo) {
+            this.setupBridgeDebugInfo()
+        }
 
-    val location = if (debugInfo) {
-        setupBridgeDebugInfo(context, result)
-    } else {
-        null
-    }
-
-    generateFunction(codegen, result, startLocation = location, endLocation = location, switchToRunnable = true) {
+        switchToRunnable = true
+    }.generate {
         genBody()
     }
 
@@ -1019,7 +1047,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
     val functionType = codegen.getLlvmFunctionType(irFunction)
 
-    val result = generateFunction(codegen, functionType, "kotlin2objc") {
+    val result = functionGenerator(functionType, "kotlin2objc").generate {
         var errorOutPtr: LLVMValueRef? = null
 
         val parameters = irFunction.allParameters.mapIndexed { index, parameterDescriptor ->
@@ -1526,7 +1554,9 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
             MethodBridgeReceiver.Static, valueParameters = emptyList()
     )
 
-    val imp = generateFunction(codegen, objCFunctionType(context, methodBridge), "objc2kotlin", switchToRunnable = true) {
+    val imp = functionGenerator(objCFunctionType(context, methodBridge), "objc2kotlin") {
+        switchToRunnable = true
+    }.generate {
         block()
     }
 

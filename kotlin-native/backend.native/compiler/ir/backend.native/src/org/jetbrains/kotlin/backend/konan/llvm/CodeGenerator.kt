@@ -121,11 +121,13 @@ val LLVMValueRef.isConst:Boolean
     get() = (LLVMIsConstant(this) == 1)
 
 
-internal inline fun<R> generateFunction(codegen: CodeGenerator,
-                                        function: IrFunction,
-                                        startLocation: LocationInfo?,
-                                        endLocation: LocationInfo?,
-                                        code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
+internal inline fun generateFunction(
+        codegen: CodeGenerator,
+        function: IrFunction,
+        startLocation: LocationInfo?,
+        endLocation: LocationInfo?,
+        code: FunctionGenerationContext.() -> Unit
+) {
     val llvmFunction = codegen.llvmFunction(function)
 
     val isCToKotlinBridge = function.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
@@ -155,11 +157,24 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
         LLVMVerifyFunction(llvmFunction, LLVMVerifierFailureAction.LLVMAbortProcessAction)
 }
 
+internal inline fun <T : FunctionGenerationContext> FunctionGenerationContextBuilder<T>.generate(code: T.() -> Unit): LLVMValueRef {
+    val functionGenerationContext = this.build()
+    return try {
+        generateFunctionBody(functionGenerationContext, code)
+        functionGenerationContext.function
+    } finally {
+        functionGenerationContext.dispose()
+    }
+}
 
-internal inline fun<R> generateFunction(codegen: CodeGenerator, function: LLVMValueRef,
-                                        startLocation: LocationInfo? = null, endLocation: LocationInfo? = null,
-                                        switchToRunnable: Boolean = false,
-                                        code:FunctionGenerationContext.(FunctionGenerationContext) -> R) {
+internal inline fun generateFunction(
+        codegen: CodeGenerator,
+        function: LLVMValueRef,
+        startLocation: LocationInfo? = null,
+        endLocation: LocationInfo? = null,
+        switchToRunnable: Boolean = false,
+        code: FunctionGenerationContext.() -> Unit
+) {
     val functionGenerationContext = FunctionGenerationContext(
             function,
             codegen,
@@ -179,7 +194,7 @@ internal inline fun generateFunction(
         functionType: LLVMTypeRef,
         name: String,
         switchToRunnable: Boolean = false,
-        block: FunctionGenerationContext.(FunctionGenerationContext) -> Unit
+        block: FunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
     val function = addLlvmFunctionWithDefaultAttributes(
             codegen.context,
@@ -192,10 +207,10 @@ internal inline fun generateFunction(
 }
 
 // TODO: Consider using different abstraction than `FunctionGenerationContext` for `generateFunctionNoRuntime`.
-internal inline fun <R> generateFunctionNoRuntime(
+internal inline fun generateFunctionNoRuntime(
         codegen: CodeGenerator,
         function: LLVMValueRef,
-        code: FunctionGenerationContext.(FunctionGenerationContext) -> R,
+        code: FunctionGenerationContext.() -> Unit,
 ) {
     val functionGenerationContext = FunctionGenerationContext(function, codegen, null, null, switchToRunnable = false)
     try {
@@ -214,7 +229,7 @@ internal inline fun generateFunctionNoRuntime(
         codegen: CodeGenerator,
         functionType: LLVMTypeRef,
         name: String,
-        code: FunctionGenerationContext.(FunctionGenerationContext) -> Unit,
+        code: FunctionGenerationContext.() -> Unit,
 ): LLVMValueRef {
     val function = addLlvmFunctionWithDefaultAttributes(
             codegen.context,
@@ -226,11 +241,11 @@ internal inline fun generateFunctionNoRuntime(
     return function
 }
 
-private inline fun <R> generateFunctionBody(
-        functionGenerationContext: FunctionGenerationContext,
-        code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
+private inline fun <T : FunctionGenerationContext> generateFunctionBody(
+        functionGenerationContext: T,
+        code: T.() -> Unit) {
     functionGenerationContext.prologue()
-    functionGenerationContext.code(functionGenerationContext)
+    functionGenerationContext.code()
     if (!functionGenerationContext.isAfterTerminator())
         functionGenerationContext.unreachable()
     functionGenerationContext.epilogue()
@@ -387,12 +402,46 @@ internal class StackLocalsManagerImpl(
     }
 }
 
-internal class FunctionGenerationContext(val function: LLVMValueRef,
-                                         val codegen: CodeGenerator,
-                                         private val startLocation: LocationInfo?,
-                                         private val endLocation: LocationInfo?,
-                                         private val switchToRunnable: Boolean,
-                                         internal val irFunction: IrFunction? = null): ContextUtils {
+internal abstract class FunctionGenerationContextBuilder<T : FunctionGenerationContext>(
+        val function: LLVMValueRef,
+        val codegen: CodeGenerator
+) {
+    constructor(functionType: LLVMTypeRef, functionName: String, codegen: CodeGenerator) :
+            this(
+                    addLlvmFunctionWithDefaultAttributes(
+                            codegen.context,
+                            codegen.context.llvmModule!!,
+                            functionName,
+                            functionType
+                    ),
+                    codegen
+            )
+
+    var startLocation: LocationInfo? = null
+    var endLocation: LocationInfo? = null
+    var switchToRunnable = false
+    var irFunction: IrFunction? = null
+
+    abstract fun build(): T
+}
+
+internal open class FunctionGenerationContext(
+        val function: LLVMValueRef,
+        val codegen: CodeGenerator,
+        private val startLocation: LocationInfo?,
+        private val endLocation: LocationInfo?,
+        private val switchToRunnable: Boolean,
+        internal val irFunction: IrFunction? = null
+) : ContextUtils {
+
+    constructor(builder: FunctionGenerationContextBuilder<*>) : this(
+            function = builder.function,
+            codegen = builder.codegen,
+            startLocation = builder.startLocation,
+            endLocation = builder.endLocation,
+            switchToRunnable = builder.switchToRunnable,
+            irFunction = builder.irFunction
+    )
 
     override val context = codegen.context
     val vars = VariableManager(this)
