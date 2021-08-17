@@ -1,5 +1,5 @@
 KT element: KtOperationReferenceExpression
-FIR element: FirFunctionCallImpl
+FIR element: FirResolvedNamedReferenceImpl
 
 FIR element rendered:
-Int(1).R|kotlin/Int.plus|(Int(1))
+R|kotlin/Int.plus|

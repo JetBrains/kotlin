@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -189,7 +190,7 @@ internal object FirReferenceResolveHelper {
             is FirReturnExpression -> getSymbolsByReturnExpression(expression, fir, symbolBuilder)
             is FirErrorNamedReference -> getSymbolsByErrorNamedReference(fir, symbolBuilder)
             is FirVariableAssignment -> getSymbolsByVariableAssignment(fir, session, symbolBuilder)
-            is FirResolvedNamedReference -> getSymbolByResolvedNameReference(fir, session, symbolBuilder)
+            is FirResolvedNamedReference -> getSymbolByResolvedNameReference(fir, expression, analysisSession, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
@@ -206,9 +207,20 @@ internal object FirReferenceResolveHelper {
 
     private fun getSymbolByResolvedNameReference(
         fir: FirResolvedNamedReference,
+        expression: KtSimpleNameExpression,
+        analysisSession: KtFirAnalysisSession,
         session: FirSession,
         symbolBuilder: KtSymbolByFirBuilder
-    ): Collection<KtSymbol> = fir.toTargetSymbol(session, symbolBuilder)
+    ): Collection<KtSymbol> {
+        val parentAsCall = expression.parent as? KtCallExpression
+        if (parentAsCall != null) {
+            val firResolvable = parentAsCall.getOrBuildFirSafe<FirResolvable>(analysisSession.firResolveState)
+            if (firResolvable != null) {
+                return getSymbolsByResolvable(firResolvable, expression, session, symbolBuilder)
+            }
+        }
+        return fir.toTargetSymbol(session, symbolBuilder)
+    }
 
     private fun KtSimpleNameExpression.isSyntheticOperatorReference() = when (this) {
         is KtOperationReferenceExpression -> operationSignTokenType in syntheticTokenTypes
