@@ -3439,6 +3439,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JAVA_TYPE_MISMATCH) { firDiagnostic ->
+        JavaTypeMismatchImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.STRICTFP_ON_CLASS) { firDiagnostic ->
         StrictfpOnClassImpl(
             firDiagnostic as FirPsiDiagnostic,
@@ -3475,10 +3483,44 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.JAVA_TYPE_MISMATCH) { firDiagnostic ->
-        JavaTypeMismatchImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+    add(FirJvmErrors.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS) { firDiagnostic ->
+        OverloadsWithoutDefaultArgumentsImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.OVERLOADS_ABSTRACT) { firDiagnostic ->
+        OverloadsAbstractImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.OVERLOADS_INTERFACE) { firDiagnostic ->
+        OverloadsInterfaceImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.OVERLOADS_LOCAL) { firDiagnostic ->
+        OverloadsLocalImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR.errorFactory) { firDiagnostic ->
+        OverloadsAnnotationClassConstructorErrorImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR.warningFactory) { firDiagnostic ->
+        OverloadsAnnotationClassConstructorWarningImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.OVERLOADS_PRIVATE) { firDiagnostic ->
+        OverloadsPrivateImpl(
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

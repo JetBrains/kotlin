@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class C {
     <!OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS!>@kotlin.jvm.JvmOverloads<!> constructor() {

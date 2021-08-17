@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface T {
     <!OVERLOADS_INTERFACE!>@kotlin.jvm.JvmOverloads<!> fun foo(s: String = "OK")
 

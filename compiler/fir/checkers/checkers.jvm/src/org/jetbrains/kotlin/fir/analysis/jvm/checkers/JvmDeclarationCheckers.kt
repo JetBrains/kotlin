@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirJvmExternalDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirStrictfpApplicabilityChecker
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirSynchronizedAnnotationChecker
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirVolatileAnnotationChecker
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.*
 
 object JvmDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
@@ -30,5 +27,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirSynchronizedAnnotationChecker,
+            FirOverloadsChecker,
         )
 }
