@@ -13,55 +13,15 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.resolve.KeywordType.*
-import org.jetbrains.kotlin.resolve.KeywordType.Annotation
 import org.jetbrains.kotlin.resolve.calls.checkers.checkCoroutinesFeature
 
 object ModifierCheckerCore {
-    private val ktKeywordToKeywordTypeMap: Map<KtKeywordToken, KeywordType> = mapOf(
-        INNER_KEYWORD to Inner,
-        OVERRIDE_KEYWORD to Override,
-        PUBLIC_KEYWORD to Public,
-        PROTECTED_KEYWORD to Protected,
-        INTERNAL_KEYWORD to Internal,
-        PRIVATE_KEYWORD to Private,
-        COMPANION_KEYWORD to KeywordType.Companion,
-        FINAL_KEYWORD to Final,
-        VARARG_KEYWORD to Vararg,
-        ENUM_KEYWORD to KeywordType.Enum,
-        ABSTRACT_KEYWORD to Abstract,
-        OPEN_KEYWORD to Open,
-        SEALED_KEYWORD to Sealed,
-        IN_KEYWORD to In,
-        OUT_KEYWORD to Out,
-        REIFIED_KEYWORD to Reified,
-        LATEINIT_KEYWORD to Lateinit,
-        DATA_KEYWORD to Data,
-        INLINE_KEYWORD to Inline,
-        NOINLINE_KEYWORD to Noinline,
-        TAILREC_KEYWORD to Tailrec,
-        SUSPEND_KEYWORD to Suspend,
-        EXTERNAL_KEYWORD to External,
-        ANNOTATION_KEYWORD to Annotation,
-        CROSSINLINE_KEYWORD to Crossinline,
-        CONST_KEYWORD to Const,
-        OPERATOR_KEYWORD to Operator,
-        INFIX_KEYWORD to Infix,
-        HEADER_KEYWORD to Header,
-        IMPL_KEYWORD to Impl,
-        EXPECT_KEYWORD to Expect,
-        ACTUAL_KEYWORD to Actual,
-        FUN_KEYWORD to Fun,
-        VALUE_KEYWORD to Value
-    )
-
     fun check(
         listOwner: KtModifierListOwner,
         trace: BindingTrace,
@@ -123,10 +83,9 @@ object ModifierCheckerCore {
         owner: PsiElement,
         incorrectNodes: MutableSet<ASTNode>
     ) {
-        val (firstModifier, firstModifierType) = getModifierAndModifierType(firstNode)
-        val (secondModifier, secondModifierType) = getModifierAndModifierType(secondNode)
-
-        when (val compatibility = compatibility(firstModifierType, secondModifierType)) {
+        val firstModifier = firstNode.elementType as KtModifierKeywordToken
+        val secondModifier = secondNode.elementType as KtModifierKeywordToken
+        when (val compatibility = compatibility(firstModifier, secondModifier)) {
             Compatibility.COMPATIBLE -> {
             }
             Compatibility.REPEATED -> if (incorrectNodes.add(secondNode)) {
@@ -156,19 +115,19 @@ object ModifierCheckerCore {
 
     // Should return false if error is reported, true otherwise
     private fun checkTarget(trace: BindingTrace, node: ASTNode, actualTargets: List<KotlinTarget>): Boolean {
-        val (modifier, modifierType) = getModifierAndModifierType(node)
+        val modifier = node.elementType as KtModifierKeywordToken
 
-        val possibleTargets = possibleTargetMap[modifierType] ?: emptySet()
+        val possibleTargets = possibleTargetMap[modifier] ?: emptySet()
         if (!actualTargets.any { it in possibleTargets }) {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
-        val deprecatedModifierReplacement = deprecatedModifierMap[modifierType]
-        val deprecatedTargets = deprecatedTargetMap[modifierType] ?: emptySet()
-        val redundantTargets = redundantTargetMap[modifierType] ?: emptySet()
+        val deprecatedModifierReplacement = deprecatedModifierMap[modifier]
+        val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
+        val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
         when {
             deprecatedModifierReplacement != null ->
-                trace.report(Errors.DEPRECATED_MODIFIER.on(node.psi, modifier, deprecatedModifierReplacement.render()))
+                trace.report(Errors.DEPRECATED_MODIFIER.on(node.psi, modifier, deprecatedModifierReplacement))
             actualTargets.any { it in deprecatedTargets } ->
                 trace.report(
                     Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(
@@ -196,7 +155,7 @@ object ModifierCheckerCore {
         parentDescriptor: DeclarationDescriptor?,
         languageVersionSettings: LanguageVersionSettings
     ): Boolean {
-        val (modifier, modifierType) = getModifierAndModifierType(node)
+        val modifier = node.elementType as KtModifierKeywordToken
 
         val actualParents: List<KotlinTarget> = when (parentDescriptor) {
             is ClassDescriptor -> KotlinTarget.classActualTargets(
@@ -210,7 +169,7 @@ object ModifierCheckerCore {
             is FunctionDescriptor -> KotlinTarget.FUNCTION_LIST
             else -> KotlinTarget.FILE_LIST
         }
-        val deprecatedParents = deprecatedParentTargetMap[modifierType]
+        val deprecatedParents = deprecatedParentTargetMap[modifier]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
             trace.report(
                 Errors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION.on(
@@ -221,7 +180,7 @@ object ModifierCheckerCore {
             )
             return true
         }
-        val possibleParentPredicate = possibleParentTargetPredicateMap[modifierType] ?: return true
+        val possibleParentPredicate = possibleParentTargetPredicateMap[modifier] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, languageVersionSettings) }) return true
         trace.report(
             Errors.WRONG_MODIFIER_CONTAINING_DECLARATION.on(
@@ -239,9 +198,9 @@ object ModifierCheckerCore {
         languageVersionSettings: LanguageVersionSettings,
         actualTargets: List<KotlinTarget>
     ): Boolean {
-        val (_, modifierType) = getModifierAndModifierType(node)
+        val modifier = node.elementType as KtModifierKeywordToken
 
-        val dependencies = featureDependencies[modifierType] ?: return true
+        val dependencies = featureDependencies[modifier] ?: return true
         for (dependency in dependencies) {
             val restrictedTargets = featureDependenciesTargets[dependency]
             if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
@@ -281,10 +240,5 @@ object ModifierCheckerCore {
         }
 
         return true
-    }
-
-    private fun getModifierAndModifierType(node: ASTNode): Pair<KtModifierKeywordToken, KeywordType> {
-        val modifier = node.elementType as KtModifierKeywordToken
-        return Pair(modifier, ktKeywordToKeywordTypeMap[modifier]!!)
     }
 }

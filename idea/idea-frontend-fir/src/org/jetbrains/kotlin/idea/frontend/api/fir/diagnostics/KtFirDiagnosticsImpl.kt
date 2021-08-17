@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -1149,7 +1150,7 @@ internal class InapplicableInfixModifierImpl(
 }
 
 internal class RepeatedModifierImpl(
-    override val modifier: String,
+    override val modifier: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RepeatedModifier(), KtAbstractFirDiagnostic<PsiElement> {
@@ -1157,8 +1158,8 @@ internal class RepeatedModifierImpl(
 }
 
 internal class RedundantModifierImpl(
-    override val redundantModifier: String,
-    override val conflictingModifier: String,
+    override val redundantModifier: KtModifierKeywordToken,
+    override val conflictingModifier: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RedundantModifier(), KtAbstractFirDiagnostic<PsiElement> {
@@ -1166,8 +1167,8 @@ internal class RedundantModifierImpl(
 }
 
 internal class DeprecatedModifierImpl(
-    override val deprecatedModifier: String,
-    override val actualModifier: String,
+    override val deprecatedModifier: KtModifierKeywordToken,
+    override val actualModifier: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.DeprecatedModifier(), KtAbstractFirDiagnostic<PsiElement> {
@@ -1175,8 +1176,8 @@ internal class DeprecatedModifierImpl(
 }
 
 internal class DeprecatedModifierPairImpl(
-    override val deprecatedModifier: String,
-    override val conflictingModifier: String,
+    override val deprecatedModifier: KtModifierKeywordToken,
+    override val conflictingModifier: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.DeprecatedModifierPair(), KtAbstractFirDiagnostic<PsiElement> {
@@ -1184,7 +1185,7 @@ internal class DeprecatedModifierPairImpl(
 }
 
 internal class DeprecatedModifierForTargetImpl(
-    override val deprecatedModifier: String,
+    override val deprecatedModifier: KtModifierKeywordToken,
     override val target: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
@@ -1193,7 +1194,7 @@ internal class DeprecatedModifierForTargetImpl(
 }
 
 internal class RedundantModifierForTargetImpl(
-    override val redundantModifier: String,
+    override val redundantModifier: KtModifierKeywordToken,
     override val target: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
@@ -1202,8 +1203,8 @@ internal class RedundantModifierForTargetImpl(
 }
 
 internal class IncompatibleModifiersImpl(
-    override val modifier1: String,
-    override val modifier2: String,
+    override val modifier1: KtModifierKeywordToken,
+    override val modifier2: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.IncompatibleModifiers(), KtAbstractFirDiagnostic<PsiElement> {
@@ -1218,7 +1219,7 @@ internal class RedundantOpenInInterfaceImpl(
 }
 
 internal class WrongModifierTargetImpl(
-    override val modifier: String,
+    override val modifier: KtModifierKeywordToken,
     override val target: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
@@ -1244,7 +1245,7 @@ internal class InfixModifierRequiredImpl(
 }
 
 internal class WrongModifierContainingDeclarationImpl(
-    override val modifier: String,
+    override val modifier: KtModifierKeywordToken,
     override val target: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
@@ -1253,7 +1254,7 @@ internal class WrongModifierContainingDeclarationImpl(
 }
 
 internal class DeprecatedModifierContainingDeclarationImpl(
-    override val modifier: String,
+    override val modifier: KtModifierKeywordToken,
     override val target: String,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

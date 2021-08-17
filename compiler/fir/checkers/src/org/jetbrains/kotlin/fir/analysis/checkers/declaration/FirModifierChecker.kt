@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.*
 
 object FirModifierChecker : FirBasicDeclarationChecker() {
@@ -87,10 +89,10 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             }
             if (secondModifier !in reportedNodes) {
                 val modifierSource = secondModifier.source
-                val modifierType = getKeywordType(secondModifier)
+                val modifier = secondModifier.token
                 when {
-                    !checkTarget(modifierSource, modifierType, actualTargets, parent, context, reporter) -> reportedNodes += secondModifier
-                    !checkParent(modifierSource, modifierType, actualParents, context, reporter) -> reportedNodes += secondModifier
+                    !checkTarget(modifierSource, modifier, actualTargets, parent, context, reporter) -> reportedNodes += secondModifier
+                    !checkParent(modifierSource, modifier, actualParents, context, reporter) -> reportedNodes += secondModifier
                 }
             }
         }
@@ -104,21 +106,21 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         owner: FirDeclaration?,
         context: CheckerContext
     ) {
-        val firstModifierType = getKeywordType(firstModifier)
-        val secondModifierType = getKeywordType(secondModifier)
-        when (val compatibilityType = compatibility(firstModifierType, secondModifierType)) {
+        val firstModifierToken = firstModifier.token
+        val secondModifierToken = secondModifier.token
+        when (val compatibilityType = compatibility(firstModifierToken, secondModifierToken)) {
             Compatibility.COMPATIBLE -> {
             }
             Compatibility.REPEATED ->
                 if (reportedNodes.add(secondModifier)) {
-                    reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifierType.render(), context)
+                    reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifierToken, context)
                 }
             Compatibility.REDUNDANT -> {
                 reporter.reportOn(
                     secondModifier.source,
                     FirErrors.REDUNDANT_MODIFIER,
-                    secondModifierType.render(),
-                    firstModifierType.render(),
+                    secondModifierToken,
+                    firstModifierToken,
                     context
                 )
             }
@@ -126,8 +128,8 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 reporter.reportOn(
                     firstModifier.source,
                     FirErrors.REDUNDANT_MODIFIER,
-                    firstModifierType.render(),
-                    secondModifierType.render(),
+                    firstModifierToken,
+                    secondModifierToken,
                     context
                 )
             }
@@ -135,15 +137,15 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 reporter.reportOn(
                     firstModifier.source,
                     FirErrors.DEPRECATED_MODIFIER_PAIR,
-                    firstModifierType.render(),
-                    secondModifierType.render(),
+                    firstModifierToken,
+                    secondModifierToken,
                     context
                 )
                 reporter.reportOn(
                     secondModifier.source,
                     FirErrors.DEPRECATED_MODIFIER_PAIR,
-                    secondModifierType.render(),
-                    firstModifierType.render(),
+                    secondModifierToken,
+                    firstModifierToken,
                     context
                 )
             }
@@ -155,8 +157,8 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                     reporter.reportOn(
                         firstModifier.source,
                         FirErrors.INCOMPATIBLE_MODIFIERS,
-                        firstModifierType.render(),
-                        secondModifierType.render(),
+                        firstModifierToken,
+                        secondModifierToken,
                         context
                     )
                 }
@@ -164,8 +166,8 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                     reporter.reportOn(
                         secondModifier.source,
                         FirErrors.INCOMPATIBLE_MODIFIERS,
-                        secondModifierType.render(),
-                        firstModifierType.render(),
+                        secondModifierToken,
+                        firstModifierToken,
                         context
                     )
                 }
@@ -175,19 +177,19 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
 
     private fun checkTarget(
         modifierSource: FirSourceElement,
-        modifierType: KeywordType,
+        modifierToken: KtModifierKeywordToken,
         actualTargets: List<KotlinTarget>,
         parent: FirDeclaration?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): Boolean {
-        fun checkModifier(factory: FirDiagnosticFactory2<String, String>): Boolean {
+        fun checkModifier(factory: FirDiagnosticFactory2<KtModifierKeywordToken, String>): Boolean {
             val map = when (factory) {
                 FirErrors.WRONG_MODIFIER_TARGET -> possibleTargetMap
                 FirErrors.DEPRECATED_MODIFIER_FOR_TARGET -> deprecatedTargetMap
                 else -> redundantTargetMap
             }
-            val set = map[modifierType] ?: emptySet()
+            val set = map[modifierToken] ?: emptySet()
             val checkResult = if (factory == FirErrors.WRONG_MODIFIER_TARGET) {
                 actualTargets.none { it in set }
             } else {
@@ -197,7 +199,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 reporter.reportOn(
                     modifierSource,
                     factory,
-                    modifierType.render(),
+                    modifierToken,
                     actualTargets.firstOrThis(),
                     context
                 )
@@ -211,19 +213,19 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         }
 
         if (parent is FirRegularClass) {
-            if (modifierType == KeywordType.Expect || modifierType == KeywordType.Header) {
-                reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifierType.render(), "nested class", context)
+            if (modifierToken == KtTokens.EXPECT_KEYWORD || modifierToken == KtTokens.HEADER_KEYWORD) {
+                reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifierToken, "nested class", context)
                 return false
             }
         }
 
-        val deprecatedModifierReplacement = deprecatedModifierMap[modifierType]
+        val deprecatedModifierReplacement = deprecatedModifierMap[modifierToken]
         if (deprecatedModifierReplacement != null) {
             reporter.reportOn(
                 modifierSource,
                 FirErrors.DEPRECATED_MODIFIER,
-                modifierType.render(),
-                deprecatedModifierReplacement.render(),
+                modifierToken,
+                deprecatedModifierReplacement,
                 context
             )
         } else if (checkModifier(FirErrors.DEPRECATED_MODIFIER_FOR_TARGET)) {
@@ -235,30 +237,30 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
 
     private fun checkParent(
         modifierSource: FirSourceElement,
-        modifierType: KeywordType,
+        modifierToken: KtModifierKeywordToken,
         actualParents: List<KotlinTarget>,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): Boolean {
-        val deprecatedParents = deprecatedParentTargetMap[modifierType]
+        val deprecatedParents = deprecatedParentTargetMap[modifierToken]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
             reporter.reportOn(
                 modifierSource,
                 FirErrors.DEPRECATED_MODIFIER_CONTAINING_DECLARATION,
-                modifierType.render(),
+                modifierToken,
                 actualParents.firstOrThis(),
                 context
             )
             return true
         }
 
-        val possibleParentPredicate = possibleParentTargetPredicateMap[modifierType] ?: return true
+        val possibleParentPredicate = possibleParentTargetPredicateMap[modifierToken] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, context.session.languageVersionSettings) }) return true
 
         reporter.reportOn(
             modifierSource,
             FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
-            modifierType.render(),
+            modifierToken,
             actualParents.firstOrThis(),
             context
         )

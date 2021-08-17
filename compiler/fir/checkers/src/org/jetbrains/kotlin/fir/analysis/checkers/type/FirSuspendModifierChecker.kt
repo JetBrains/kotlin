@@ -38,7 +38,7 @@ object FirSuspendModifierChecker : FirTypeRefChecker() {
             reporter.reportOn(
                 suspendModifier.source,
                 FirErrors.WRONG_MODIFIER_TARGET,
-                suspendModifier.token.toString(),
+                suspendModifier.token,
                 "non-functional type",
                 context
             )

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -254,19 +255,19 @@ object FirErrors {
 
     // Modifiers
     val INAPPLICABLE_INFIX_MODIFIER by error0<PsiElement>()
-    val REPEATED_MODIFIER by error1<PsiElement, String>()
-    val REDUNDANT_MODIFIER by error2<PsiElement, String, String>()
-    val DEPRECATED_MODIFIER by warning2<PsiElement, String, String>()
-    val DEPRECATED_MODIFIER_PAIR by error2<PsiElement, String, String>()
-    val DEPRECATED_MODIFIER_FOR_TARGET by warning2<PsiElement, String, String>()
-    val REDUNDANT_MODIFIER_FOR_TARGET by warning2<PsiElement, String, String>()
-    val INCOMPATIBLE_MODIFIERS by error2<PsiElement, String, String>()
+    val REPEATED_MODIFIER by error1<PsiElement, KtModifierKeywordToken>()
+    val REDUNDANT_MODIFIER by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val DEPRECATED_MODIFIER by warning2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val DEPRECATED_MODIFIER_PAIR by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val DEPRECATED_MODIFIER_FOR_TARGET by warning2<PsiElement, KtModifierKeywordToken, String>()
+    val REDUNDANT_MODIFIER_FOR_TARGET by warning2<PsiElement, KtModifierKeywordToken, String>()
+    val INCOMPATIBLE_MODIFIERS by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val REDUNDANT_OPEN_IN_INTERFACE by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.OPEN_MODIFIER)
-    val WRONG_MODIFIER_TARGET by error2<PsiElement, String, String>()
+    val WRONG_MODIFIER_TARGET by error2<PsiElement, KtModifierKeywordToken, String>()
     val OPERATOR_MODIFIER_REQUIRED by error2<PsiElement, FirNamedFunctionSymbol, String>()
     val INFIX_MODIFIER_REQUIRED by error1<PsiElement, FirNamedFunctionSymbol>()
-    val WRONG_MODIFIER_CONTAINING_DECLARATION by error2<PsiElement, String, String>()
-    val DEPRECATED_MODIFIER_CONTAINING_DECLARATION by warning2<PsiElement, String, String>()
+    val WRONG_MODIFIER_CONTAINING_DECLARATION by error2<PsiElement, KtModifierKeywordToken, String>()
+    val DEPRECATED_MODIFIER_CONTAINING_DECLARATION by warning2<PsiElement, KtModifierKeywordToken, String>()
 
     // Inline classes
     val INLINE_CLASS_NOT_TOP_LEVEL by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
