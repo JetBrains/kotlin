@@ -252,7 +252,10 @@ class SignatureEnhancement(
      *      class A extends B<@NotNull Integer> {}
      */
     fun enhanceSuperType(type: KotlinType, context: LazyJavaResolverContext) =
-        SignatureParts(null, type, emptyList(), false, context, AnnotationQualifierApplicabilityType.TYPE_USE).enhance().type
+        SignatureParts(
+            typeContainer = null, type, emptyList(), isCovariant = false,
+            context, AnnotationQualifierApplicabilityType.TYPE_USE, isSuperTypesEnhancement = true
+        ).enhance().type
 
     private inner class SignatureParts(
         private val typeContainer: Annotated?,
@@ -261,7 +264,8 @@ class SignatureEnhancement(
         private val isCovariant: Boolean,
         private val containerContext: LazyJavaResolverContext,
         private val containerApplicabilityType: AnnotationQualifierApplicabilityType,
-        private val typeParameterBounds: Boolean = false
+        private val typeParameterBounds: Boolean = false,
+        private val isSuperTypesEnhancement: Boolean = false
     ) {
 
         private val isForVarargParameter get() = typeContainer.safeAs<ValueParameterDescriptor>()?.varargElementType != null
@@ -275,15 +279,21 @@ class SignatureEnhancement(
                 }
             }
 
-            val containsFunctionN = TypeUtils.contains(fromOverride) {
-                val classifier = it.constructor.declarationDescriptor ?: return@contains false
+            fun containsFunctionN(type: UnwrappedType): Boolean {
+                val classifier = type.constructor.declarationDescriptor ?: return false
 
-                classifier.name == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME.shortName() &&
+                return classifier.name == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME.shortName() &&
                         classifier.fqNameOrNull() == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME
             }
 
+            val containsFunctionN = if (isSuperTypesEnhancement) {
+                TypeUtils.containsStoppingAt(fromOverride, ::containsFunctionN) { it is RawType }
+            } else {
+                TypeUtils.contains(fromOverride, ::containsFunctionN)
+            }
+
             return with(typeEnhancement) {
-                fromOverride.enhance(qualifiersWithPredefined ?: qualifiers)?.let { enhanced ->
+                fromOverride.enhance(qualifiersWithPredefined ?: qualifiers, isSuperTypesEnhancement)?.let { enhanced ->
                     PartEnhancementResult(enhanced, wereChanges = true, containsFunctionN = containsFunctionN)
                 } ?: PartEnhancementResult(fromOverride, wereChanges = false, containsFunctionN = containsFunctionN)
             }
@@ -530,6 +540,8 @@ class SignatureEnhancement(
                         isFromStarProjection = false
                     )
                 )
+
+                if (isSuperTypesEnhancement && type is RawType) return
 
                 for ((arg, parameter) in type.arguments.zip(type.constructor.parameters)) {
                     if (arg.isStarProjection) {

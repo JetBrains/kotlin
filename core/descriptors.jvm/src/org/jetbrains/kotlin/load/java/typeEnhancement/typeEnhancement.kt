@@ -52,15 +52,24 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
     // Example: for `A<B, C<D, E>>`, indices go as follows: `0 - A<...>, 1 - B, 2 - C<D, E>, 3 - D, 4 - E`,
     // which corresponds to the left-to-right breadth-first walk of the tree representation of the type.
     // For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
-    fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = unwrap().enhancePossiblyFlexible(qualifiers, 0).type
+    fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers, isSuperTypesEnhancement: Boolean = false) =
+        unwrap().enhancePossiblyFlexible(qualifiers, 0, isSuperTypesEnhancement).type
 
-    private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
+    private fun UnwrappedType.enhancePossiblyFlexible(
+        qualifiers: (Int) -> JavaTypeQualifiers,
+        index: Int,
+        isSuperTypesEnhancement: Boolean = false
+    ): Result {
         if (isError) return Result(null, 1)
         return when (this) {
             is FlexibleType -> {
                 val isRawType = this is RawType
-                val lowerResult = lowerBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER, isRawType)
-                val upperResult = upperBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_UPPER, isRawType)
+                val lowerResult = lowerBound.enhanceInflexible(
+                    qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER, isRawType, isSuperTypesEnhancement
+                )
+                val upperResult = upperBound.enhanceInflexible(
+                    qualifiers, index, TypeComponentPosition.FLEXIBLE_UPPER, isRawType, isSuperTypesEnhancement
+                )
                 assert(lowerResult.subtreeSize == upperResult.subtreeSize) {
                     "Different tree sizes of bounds: " +
                             "lower = ($lowerBound, ${lowerResult.subtreeSize}), " +
@@ -80,7 +89,9 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
                 Result(type, lowerResult.subtreeSize)
             }
             is SimpleType -> {
-                val result = enhanceInflexible(qualifiers, index, TypeComponentPosition.INFLEXIBLE)
+                val result = enhanceInflexible(
+                    qualifiers, index, TypeComponentPosition.INFLEXIBLE, isSuperTypesEnhancement = isSuperTypesEnhancement
+                )
                 Result(if (result.forWarnings) wrapEnhancement(result.type) else result.type, result.subtreeSize)
             }
         }
@@ -90,7 +101,8 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
         qualifiers: (Int) -> JavaTypeQualifiers,
         index: Int,
         position: TypeComponentPosition,
-        isBoundOfRawType: Boolean = false
+        isBoundOfRawType: Boolean = false,
+        isSuperTypesEnhancement: Boolean = false
     ): SimpleResult {
         val shouldEnhance = position.shouldEnhance()
         if (!shouldEnhance && arguments.isEmpty()) return SimpleResult(null, 1, false)
@@ -105,24 +117,29 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
 
         var globalArgIndex = index + 1
         var wereChanges = enhancedMutabilityAnnotations != null
-        val enhancedArguments = arguments.mapIndexed { localArgIndex, arg ->
-            if (arg.isStarProjection) {
-                val qualifiersForStarProjection = qualifiers(globalArgIndex)
-                globalArgIndex++
+        val enhancedArguments = if (!isSuperTypesEnhancement || !isBoundOfRawType) {
+            arguments.mapIndexed { localArgIndex, arg ->
+                if (arg.isStarProjection) {
+                    val qualifiersForStarProjection = qualifiers(globalArgIndex)
+                    globalArgIndex++
 
-                if (qualifiersForStarProjection.nullability == NOT_NULL && !isBoundOfRawType) {
-                    val enhanced = arg.type.unwrap().makeNotNullable()
-                    createProjection(enhanced, arg.projectionKind, typeParameterDescriptor = typeConstructor.parameters[localArgIndex])
+                    if (qualifiersForStarProjection.nullability == NOT_NULL && !isBoundOfRawType) {
+                        val enhanced = arg.type.unwrap().makeNotNullable()
+                        createProjection(enhanced, arg.projectionKind, typeParameterDescriptor = typeConstructor.parameters[localArgIndex])
+                    } else {
+                        TypeUtils.makeStarProjection(enhancedClassifier.typeConstructor.parameters[localArgIndex])
+                    }
                 } else {
-                    TypeUtils.makeStarProjection(enhancedClassifier.typeConstructor.parameters[localArgIndex])
-                }
-            } else {
-                val unwrapped = arg.type.unwrap()
-                val enhanced = unwrapped.enhancePossiblyFlexible(qualifiers, globalArgIndex)
-                globalArgIndex += enhanced.subtreeSize
-                val type = enhanced.type?.also { wereChanges = true } ?: unwrapped
+                    val unwrapped = arg.type.unwrap()
+                val enhanced = unwrapped.enhancePossiblyFlexible(qualifiers, globalArgIndex, isSuperTypesEnhancement)
+                    globalArgIndex += enhanced.subtreeSize
+                    val type = enhanced.type?.also { wereChanges = true } ?: unwrapped
                 createProjection(type, arg.projectionKind, typeParameterDescriptor = typeConstructor.parameters[localArgIndex])
+                }
             }
+        } else {
+            globalArgIndex += arguments.size
+            arguments
         }
 
         val (enhancedNullability, enhancedNullabilityAnnotations) = this.getEnhancedNullability(effectiveQualifiers, position)

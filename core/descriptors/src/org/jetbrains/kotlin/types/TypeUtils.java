@@ -425,12 +425,21 @@ public class TypeUtils {
             @Nullable KotlinType type,
             @NotNull Function1<UnwrappedType, Boolean> isSpecialType
     ) {
-        return contains(type, isSpecialType, null);
+        return contains(type, isSpecialType, null, null);
+    }
+
+    public static boolean containsStoppingAt(
+            @Nullable KotlinType type,
+            @NotNull Function1<UnwrappedType, Boolean> isSpecialType,
+            @NotNull Function1<KotlinType, Boolean> shouldStopAt
+    ) {
+        return contains(type, isSpecialType, shouldStopAt, null);
     }
 
     private static boolean contains(
             @Nullable KotlinType type,
             @NotNull Function1<UnwrappedType, Boolean> isSpecialType,
+            @Nullable Function1<KotlinType, Boolean> shouldStopAt,
             SmartSet<KotlinType> visited
     ) {
         if (type == null) return false;
@@ -440,6 +449,7 @@ public class TypeUtils {
         if (noExpectedType(type)) return isSpecialType.invoke(unwrappedType);
         if (visited != null && visited.contains(type)) return false;
         if (isSpecialType.invoke(unwrappedType)) return true;
+        if (shouldStopAt != null && shouldStopAt.invoke(unwrappedType)) return false;
 
         if (visited == null) {
             visited = SmartSet.create();
@@ -448,12 +458,13 @@ public class TypeUtils {
 
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
-            && (contains(flexibleType.getLowerBound(), isSpecialType, visited) || contains(flexibleType.getUpperBound(), isSpecialType, visited))) {
+            && (contains(flexibleType.getLowerBound(), isSpecialType, shouldStopAt, visited)
+                || contains(flexibleType.getUpperBound(), isSpecialType, shouldStopAt, visited))) {
             return true;
         }
 
         if (unwrappedType instanceof DefinitelyNotNullType &&
-            contains(((DefinitelyNotNullType) unwrappedType).getOriginal(), isSpecialType, visited)) {
+            contains(((DefinitelyNotNullType) unwrappedType).getOriginal(), isSpecialType, shouldStopAt, visited)) {
             return true;
         }
 
@@ -461,13 +472,14 @@ public class TypeUtils {
         if (typeConstructor instanceof IntersectionTypeConstructor) {
             IntersectionTypeConstructor intersectionTypeConstructor = (IntersectionTypeConstructor) typeConstructor;
             for (KotlinType supertype : intersectionTypeConstructor.getSupertypes()) {
-                if (contains(supertype, isSpecialType, visited)) return true;
+                if (contains(supertype, isSpecialType, shouldStopAt, visited)) return true;
             }
             return false;
         }
 
         for (TypeProjection projection : type.getArguments()) {
-            if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType, visited)) return true;
+            if (projection.isStarProjection()) continue;
+            if (contains(projection.getType(), isSpecialType, shouldStopAt, visited)) return true;
         }
         return false;
     }
