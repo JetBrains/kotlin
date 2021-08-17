@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -42,6 +44,8 @@ class BuildCacheRelocationIT : BaseGradleIT() {
 
     @Test
     fun testRelocation() = with(testCase) {
+        assumeFalse(HostManager.hostIsMingw) // remove after fix of KT-48283
+
         val localBuildCacheDirectory = createTempDir("buildCache$projectName")
 
         val originalWorkingDir = workingDir
