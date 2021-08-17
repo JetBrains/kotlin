@@ -50,10 +50,7 @@ private class NoArgIrTransformer(
     override fun visitClass(declaration: IrClass) {
         super.visitClass(declaration)
 
-        if (declaration.kind == ClassKind.CLASS &&
-            declaration.isAnnotatedWithNoarg() &&
-            declaration.constructors.none { it.isZeroParameterConstructor() }
-        ) {
+        if (needsNoargConstructor(declaration)) {
             declaration.declarations.add(getOrGenerateNoArgConstructor(declaration))
         }
     }
@@ -66,7 +63,7 @@ private class NoArgIrTransformer(
                 ?: context.irBuiltIns.anyClass.owner
 
         val superConstructor =
-            if (superClass.isAnnotatedWithNoarg())
+            if (needsNoargConstructor(superClass))
                 getOrGenerateNoArgConstructor(superClass)
             else superClass.constructors.singleOrNull { it.isZeroParameterConstructor() }
                 ?: error("No noarg super constructor for ${klass.render()}:\n" + superClass.constructors.joinToString("\n") { it.render() })
@@ -89,6 +86,11 @@ private class NoArgIrTransformer(
             )
         }
     }
+
+    private fun needsNoargConstructor(declaration: IrClass): Boolean =
+        declaration.kind == ClassKind.CLASS &&
+                declaration.isAnnotatedWithNoarg() &&
+                declaration.constructors.none { it.isZeroParameterConstructor() }
 
     private fun IrClass.isAnnotatedWithNoarg(): Boolean =
         toIrBasedDescriptor().hasSpecialAnnotation(null)
