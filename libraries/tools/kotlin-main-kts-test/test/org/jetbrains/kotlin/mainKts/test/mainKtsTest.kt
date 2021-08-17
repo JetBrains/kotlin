@@ -122,6 +122,12 @@ class MainKtsTest {
     }
 
     @Test
+    fun testDuplicateImportError() {
+        val res = evalFile(File("$TEST_DATA_ROOT/import-duplicate-test.main.kts"))
+        assertFailed("Duplicate imports:", res)
+    }
+
+    @Test
     fun testCompilerOptions() {
 
         val out = captureOut {
