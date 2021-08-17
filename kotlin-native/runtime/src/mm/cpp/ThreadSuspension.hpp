@@ -36,6 +36,7 @@ public:
 private:
     std::atomic<ThreadState> state_;
     std::atomic<bool> suspended_;
+    bool suspendIfRequestedSlowPath() noexcept;
 };
 
 bool IsThreadSuspensionRequested() noexcept;

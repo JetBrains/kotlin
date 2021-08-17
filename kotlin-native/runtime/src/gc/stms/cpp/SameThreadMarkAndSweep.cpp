@@ -99,16 +99,23 @@ void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     PerformFullGC();
 }
 
-void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
-    size_t counterOverhead = gc_.GetThreshold() == 0 ? safePointsCounter_ : safePointsCounter_ % gc_.GetThreshold();
-    if (threadData_.suspensionData().suspendIfRequested()) {
-        safePointsCounter_ = 0;
-    } else if (counterOverhead + weight >= gc_.GetThreshold() && konan::getTimeMicros() - timeOfLastGcUs_ >= gc_.GetCooldownThresholdUs()) {
+void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegularSlowPath() noexcept {
+    safePointsCounter_ = 0;
+    if (konan::getTimeMicros() - timeOfLastGcUs_ >= gc_.GetCooldownThresholdUs()) {
         timeOfLastGcUs_ = konan::getTimeMicros();
-        safePointsCounter_ = 0;
         PerformFullGC();
     }
-    safePointsCounter_ += weight;
+}
+
+void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
+    if (threadData_.suspensionData().suspendIfRequested()) {
+        safePointsCounter_ = 0;
+    } else {
+        safePointsCounter_ += weight;
+        if (safePointsCounter_ >= gc_.GetThreshold()) {
+            SafePointRegularSlowPath();
+        }
+    }
 }
 
 gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep() noexcept {
