@@ -1007,6 +1007,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/capture/kt48230.kt");
         }
 
+        @TestMetadata("kt48230_2.kt")
+        public void testKt48230_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/capture/kt48230_2.kt");
+        }
+
         @TestMetadata("simpleCapturingInClass.kt")
         public void testSimpleCapturingInClass() throws Exception {
             runTest("compiler/testData/codegen/boxInline/capture/simpleCapturingInClass.kt");
