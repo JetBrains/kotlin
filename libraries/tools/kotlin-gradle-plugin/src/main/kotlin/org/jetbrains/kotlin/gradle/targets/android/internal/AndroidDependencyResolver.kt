@@ -29,6 +29,9 @@ import org.gradle.api.internal.artifacts.dependencies.ProjectDependencyInternal
 import org.gradle.api.internal.attributes.AttributeContainerInternal
 import org.gradle.api.internal.attributes.AttributesSchemaInternal
 import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.services.BuildServiceRegistry
 import org.gradle.internal.component.model.AttributeConfigurationSelector
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -51,8 +54,11 @@ object AndroidDependencyResolver {
         val useNioPath = versions[0].toInt() >= 7
 
         val sdkHandler = if (useNioPath) {
-            val getInstance = AndroidSdkHandler::class.java.getMethodOrNull("getInstance", Path::class.java) ?: return null
-            getInstance(null, androidExtension.sdkDirectory.toPath()) as AndroidSdkHandler
+            val androidLocationBuildService = getAndroidLocationBuildService(project) ?: return null
+            val androidLocationsProvider = getClassOrNull("com.android.prefs.AndroidLocationsProvider") ?: return null
+            val getInstance =
+                AndroidSdkHandler::class.java.getMethodOrNull("getInstance", androidLocationsProvider, Path::class.java) ?: return null
+            getInstance(null, androidLocationBuildService, androidExtension.sdkDirectory.toPath()) as AndroidSdkHandler
         } else {
             AndroidSdkHandler.getInstance(androidExtension.sdkDirectory)
         }
@@ -76,6 +82,20 @@ object AndroidDependencyResolver {
             sources
         )
     }
+
+    private fun getAndroidLocationBuildService(project: Project): BuildService<BuildServiceParameters.None>? =
+        getClassOrNull("com.android.build.gradle.internal.services.BuildServicesKt")?.let { buildServices ->
+            getClassOrNull("com.android.build.gradle.internal.services.AndroidLocationsBuildService")?.let { androidLocationsService ->
+                val getBuildService =
+                    buildServices.getMethodOrNull("getBuildService", BuildServiceRegistry::class.java, androidLocationsService.javaClass)
+                @Suppress("UNCHECKED_CAST")
+                (getBuildService?.invoke(
+                    null,
+                    project.gradle.sharedServices,
+                    androidLocationsService
+                ) as Provider<BuildService<BuildServiceParameters.None>>?)?.get()
+            }
+        }
 
     private fun getClassOrNull(s: String) =
         try {
