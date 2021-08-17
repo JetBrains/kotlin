@@ -39,11 +39,15 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
 
-    fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrSimpleFunction =
+    @JvmOverloads
+    fun generateFunctionDeclaration(
+        ktFunction: KtNamedFunction,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+    ): IrSimpleFunction =
         declareSimpleFunction(
             ktFunction,
             ktFunction.receiverTypeReference,
-            IrDeclarationOrigin.DEFINED,
+            origin,
             getOrFail(BindingContext.FUNCTION, ktFunction)
         ) {
             ktFunction.bodyExpression?.let { generateFunctionBody(it) }

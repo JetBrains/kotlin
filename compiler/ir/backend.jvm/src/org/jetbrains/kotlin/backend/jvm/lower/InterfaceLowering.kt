@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
 
     private val removedFunctions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    private val removedFunctionsWithoutRemapping = mutableSetOf<IrSimpleFunctionSymbol>()
 
     override fun lower(irClass: IrClass) {
         if (!irClass.isJvmInterface) return
@@ -50,7 +51,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         }
 
         irClass.declarations.removeAll {
-            it is IrFunction && removedFunctions.containsKey(it.symbol)
+            it is IrFunction && (removedFunctions.containsKey(it.symbol) || removedFunctionsWithoutRemapping.contains(it.symbol))
         }
 
         val defaultImplsIrClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
@@ -131,9 +132,17 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         (function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
                                 (isCompatibilityMode || jvmDefaultMode == JvmDefaultMode.ENABLE) &&
                                 function.isCompiledToJvmDefault(jvmDefaultMode)) -> {
-                    val defaultImpl = createDefaultImpl(function)
-                    defaultImpl.body = function.moveBodyTo(defaultImpl)
-                    removedFunctions[function.symbol] = defaultImpl.symbol
+                    if (function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || function.origin == IrDeclarationOrigin.LOCAL_FUNCTION) {
+                        //move as is
+                        val defaultImplsClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
+                        defaultImplsClass.declarations.add(function)
+                        removedFunctionsWithoutRemapping.add(function.symbol)
+                        function.parent = defaultImplsClass
+                    } else {
+                        val defaultImpl = createDefaultImpl(function)
+                        defaultImpl.body = function.moveBodyTo(defaultImpl)
+                        removedFunctions[function.symbol] = defaultImpl.symbol
+                    }
                 }
 
                 /**

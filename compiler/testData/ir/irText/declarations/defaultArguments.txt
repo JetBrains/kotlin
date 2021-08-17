@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/defaultArguments.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value="abc"
     BLOCK_BODY
-      FUN name:local visibility:local modality:FINAL <> (xx:kotlin.Int, yy:kotlin.Int, zz:kotlin.String) returnType:kotlin.Unit
+      FUN LOCAL_FUNCTION name:local visibility:local modality:FINAL <> (xx:kotlin.Int, yy:kotlin.Int, zz:kotlin.String) returnType:kotlin.Unit
         VALUE_PARAMETER name:xx index:0 type:kotlin.Int
           EXPRESSION_BODY
             GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
