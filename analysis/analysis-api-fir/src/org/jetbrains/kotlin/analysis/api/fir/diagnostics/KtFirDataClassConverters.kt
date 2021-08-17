@@ -2771,7 +2771,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.b,
             firDiagnostic.c.mapKeys { (incompatible, _) ->
                 incompatible
-            }.mapValues { (_, collection) -> 
+            }.mapValues { (_, collection) ->
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                 }
@@ -2785,7 +2785,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
             firDiagnostic.b.mapKeys { (incompatible, _) ->
                 incompatible
-            }.mapValues { (_, collection) -> 
+            }.mapValues { (_, collection) ->
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                 }
@@ -2820,7 +2820,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.b.map { pair ->
                 firSymbolBuilder.buildSymbol(pair.first.fir) to pair.second.mapKeys { (incompatible, _) ->
                                     incompatible
-                                }.mapValues { (_, collection) -> 
+                                }.mapValues { (_, collection) ->
                                     collection.map { firBasedSymbol ->
                                                             firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                                         }

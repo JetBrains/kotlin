@@ -469,10 +469,10 @@ fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAs
 
 
 
-fun FirRegularClass.getActualTypeParametersCount(session: FirSession): Int {
-    var result = typeParameters.size
+fun FirClassLikeDeclaration.getActualTypeParametersCount(session: FirSession): Int {
+    var result = (if (this is FirTypeAlias) this.typeParameters else (this as FirClass).typeParameters).size
 
-    if (!isInner) {
+    if (this is FirRegularClass && !isInner) {
         return result
     }
 

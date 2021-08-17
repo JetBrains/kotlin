@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDynamicType
@@ -234,11 +235,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        if (symbol is FirRegularClassSymbol) {
+        if (symbol is FirClassLikeSymbol<*>) {
             val isPossibleBareType = areBareTypesAllowed && allTypeArguments.isEmpty()
             if (!isPossibleBareType) {
                 val actualSubstitutor = substitutor ?: ConeSubstitutor.Empty
-                val typeParameters = symbol.fir.typeParameters
+
+                val typeParameters = calculateTypeParameters(symbol)
 
                 val (typeParametersAlignedToQualifierParts, outerClasses) = getClassesAlignedToQualifierParts(symbol, qualifier, session)
 
@@ -302,41 +304,82 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
+    private fun calculateTypeParameters(symbol: FirClassLikeSymbol<*>): List<FirTypeParameterRef> {
+        return if (symbol is FirTypeAliasSymbol) {
+            val typeAliasFir = symbol.fir
+            val typeAliasTypeParameters = typeAliasFir.typeParameters.toMutableList()
+            val fullyExpandedClass = typeAliasFir.fullyExpandedClass(session)
+            val newTypeParameters: MutableList<FirTypeParameterRef>
+
+            if (fullyExpandedClass != null) { // TODO: Should not be null, move to resolver?
+                val expandedTypeRef = typeAliasFir.expandedTypeRef
+
+                fun checkTypeArguments(typeArgument: ConeTypeProjection) {
+                    when (typeArgument) {
+                        is ConeTypeParameterType -> typeAliasTypeParameters.removeIf { it.symbol == typeArgument.lookupTag.symbol }
+                        is ConeClassLikeType -> {
+                            for (subTypeArgument in typeArgument.typeArguments) {
+                                checkTypeArguments(subTypeArgument)
+                            }
+                        }
+                        is ConeKotlinTypeProjection -> checkTypeArguments(typeArgument.type)
+                        else -> {
+                        }
+                    }
+                }
+
+                checkTypeArguments(expandedTypeRef.coneType)
+                newTypeParameters = fullyExpandedClass.typeParameters.toMutableList()
+            } else {
+                newTypeParameters = mutableListOf()
+            }
+
+            for (typeParameter in typeAliasTypeParameters) {
+                newTypeParameters.add(typeParameter)
+            }
+            newTypeParameters
+        } else {
+            (symbol as FirClassSymbol<*>).fir.typeParameters
+        }
+    }
+
     @OptIn(SymbolInternals::class)
     private fun getClassesAlignedToQualifierParts(
-        symbol: FirRegularClassSymbol,
+        symbol: FirClassLikeSymbol<*>,
         qualifier: List<FirQualifierPart>,
         session: FirSession
     ): ParametersMapAndOuterClasses {
-        var currentClass: FirRegularClass? = null
-        val outerClasses = mutableListOf<FirRegularClass?>()
+        var currentClassLikeDeclaration: FirClassLikeDeclaration? = null
+        val outerDeclarations = mutableListOf<FirClassLikeDeclaration?>()
 
         // Try to get at least qualifier.size classes that match qualifier parts
         var qualifierPartIndex = 0
-        while (qualifierPartIndex < qualifier.size || currentClass != null) {
+        while (qualifierPartIndex < qualifier.size || currentClassLikeDeclaration != null) {
             if (qualifierPartIndex == 0) {
-                currentClass = symbol.fir
+                currentClassLikeDeclaration = symbol.fir
             } else {
-                if (currentClass != null) {
-                    currentClass = currentClass.getContainingDeclaration(session) as? FirRegularClass
+                if (currentClassLikeDeclaration != null) {
+                    currentClassLikeDeclaration = currentClassLikeDeclaration.getContainingDeclaration(session)
                 }
             }
 
-            outerClasses.add(currentClass)
+            outerDeclarations.add(currentClassLikeDeclaration)
             qualifierPartIndex++
         }
 
-        val outerArgumentsCount = outerClasses.size - qualifier.size
-        val reversedOuterClasses = outerClasses.asReversed()
+        val outerArgumentsCount = outerDeclarations.size - qualifier.size
+        val reversedOuterClasses = outerDeclarations.asReversed()
         val result = mutableMapOf<FirTypeParameterSymbol, ClassWithQualifierPartIndex>()
 
         for (index in reversedOuterClasses.indices) {
-            currentClass = reversedOuterClasses[index]
-            if (currentClass != null) {
-                for (typeParameter in currentClass.typeParameters) {
+            currentClassLikeDeclaration = reversedOuterClasses[index]
+            val typeParameters = if (currentClassLikeDeclaration is FirTypeAlias) currentClassLikeDeclaration.typeParameters else
+                (currentClassLikeDeclaration as? FirClass)?.typeParameters
+            if (currentClassLikeDeclaration != null && typeParameters != null) {
+                for (typeParameter in typeParameters) {
                     val typeParameterSymbol = typeParameter.symbol
                     if (!result.containsKey(typeParameterSymbol)) {
-                        result[typeParameterSymbol] = ClassWithQualifierPartIndex(currentClass, index - outerArgumentsCount)
+                        result[typeParameterSymbol] = ClassWithQualifierPartIndex(currentClassLikeDeclaration, index - outerArgumentsCount)
                     }
                 }
             }
@@ -347,19 +390,19 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private data class ParametersMapAndOuterClasses(
         val parameters: Map<FirTypeParameterSymbol, ClassWithQualifierPartIndex>,
-        val outerClasses: List<FirRegularClass?>
+        val outerClasses: List<FirClassLikeDeclaration?>
     )
 
     private data class ClassWithQualifierPartIndex(
-        val klass: FirRegularClass,
+        val klass: FirClassLikeDeclaration,
         val index: Int
     )
 
     @OptIn(SymbolInternals::class)
     private fun createDiagnosticsIfExists(
-        parameterClass: FirRegularClass?,
+        parameterClass: FirClassLikeDeclaration?,
         qualifierPartIndex: Int,
-        symbol: FirRegularClassSymbol,
+        symbol: FirClassLikeSymbol<*>,
         userTypeRef: FirUserTypeRef,
         qualifierPartArgumentsCount: Int? = null
     ): ConeClassErrorType? {

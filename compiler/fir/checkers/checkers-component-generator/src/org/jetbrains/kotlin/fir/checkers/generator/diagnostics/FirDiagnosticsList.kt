@@ -534,14 +534,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val TYPE_ARGUMENTS_NOT_ALLOWED by error<PsiElement>()
         val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error<PsiElement> {
             parameter<Int>("expectedCount")
-            parameter<FirRegularClassSymbol>("classifier")
+            parameter<FirClassLikeSymbol<*>>("classifier")
         }
         val NO_TYPE_ARGUMENTS_ON_RHS by error<PsiElement> {
             parameter<Int>("expectedCount")
             parameter<FirClassLikeSymbol<*>>("classifier")
         }
         val OUTER_CLASS_ARGUMENTS_REQUIRED by error<PsiElement> {
-            parameter<FirRegularClassSymbol>("outer")
+            parameter<FirClassLikeSymbol<*>>("outer")
         }
         val TYPE_PARAMETERS_IN_OBJECT by error<PsiElement>(PositioningStrategy.TYPE_PARAMETERS_LIST)
         val TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT by error<PsiElement>(PositioningStrategy.TYPE_PARAMETERS_LIST)
