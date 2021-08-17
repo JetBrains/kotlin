@@ -19,11 +19,11 @@ internal class LockProvider<KEY> {
     val globalLock = ReentrantLock()
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withWriteLock(key: KEY, action: () -> R): R =
+    inline fun <R> withWriteLock(@Suppress("UNUSED_PARAMETER") key: KEY, action: () -> R): R =
         globalLock.withLock(action)
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withWriteLockPCECheck(key: KEY, lockingIntervalMs: Long, action: () -> R): R =
+    inline fun <R> withWriteLockPCECheck(@Suppress("UNUSED_PARAMETER") key: KEY, lockingIntervalMs: Long, action: () -> R): R =
         globalLock.lockWithPCECheck(lockingIntervalMs, action) //We temporary disable multi-locks to fix deadlocks problem
 }
 

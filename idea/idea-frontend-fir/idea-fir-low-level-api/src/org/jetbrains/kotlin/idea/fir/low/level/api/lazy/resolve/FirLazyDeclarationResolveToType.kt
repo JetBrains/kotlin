@@ -62,6 +62,7 @@ internal fun <D : FirDeclaration> FirLazyDeclarationResolver.lazyResolveDeclarat
             }
 
             check(currentDeclaration.returnTypeRef is FirResolvedTypeRef)
+            @Suppress("UNCHECKED_CAST")
             currentDeclaration as D
         }
         ResolveType.BodyResolveWithChildren, ResolveType.CallableBodyResolve -> {

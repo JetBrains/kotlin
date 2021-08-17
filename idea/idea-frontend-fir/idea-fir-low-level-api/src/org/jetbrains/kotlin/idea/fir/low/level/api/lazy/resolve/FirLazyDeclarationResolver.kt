@@ -312,6 +312,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         check(realPsi != null) {
             "Cannot remap element without PSI"
         }
+        @Suppress("UNCHECKED_CAST")
         val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(firContainer) {
             it.realPsi == realPsi
         } as? D

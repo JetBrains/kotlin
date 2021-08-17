@@ -13,7 +13,7 @@ internal class FirPhaseRunner {
      * We temporary disable multi-locks to fix deadlocks problem
      * @see org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.LockProvider
      */
-    inline fun runPhaseWithCustomResolve(phase: FirResolvePhase, crossinline resolve: () -> Unit) =
+    inline fun runPhaseWithCustomResolve(@Suppress("UNUSED_PARAMETER") phase: FirResolvePhase, crossinline resolve: () -> Unit) =
         runPhaseWithCustomResolveWithoutLock(resolve)
 
     private inline fun runPhaseWithCustomResolveWithoutLock(crossinline resolve: () -> Unit) {
