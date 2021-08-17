@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirJvmExternalDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirStrictfpApplicabilityChecker
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirSynchronizedAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirVolatileAnnotationChecker
 
 object JvmDeclarationCheckers : DeclarationCheckers() {
@@ -27,5 +25,10 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
             FirVolatileAnnotationChecker,
+        )
+
+    override val functionCheckers: Set<FirFunctionChecker>
+        get() = setOf(
+            FirSynchronizedAnnotationChecker,
         )
 }

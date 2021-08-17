@@ -21,6 +21,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val STRICTFP_ON_CLASS by error<KtAnnotationEntry>()
         val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
         val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
+        val SYNCHRONIZED_ON_ABSTRACT by error<KtAnnotationEntry>()
+        val SYNCHRONIZED_IN_INTERFACE by error<KtAnnotationEntry>()
+        val SYNCHRONIZED_ON_INLINE by warning<KtAnnotationEntry>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
