@@ -2402,6 +2402,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = StrictfpOnClass::class
     }
 
+    abstract class VolatileOnValue : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = VolatileOnValue::class
+    }
+
+    abstract class VolatileOnDelegate : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = VolatileOnDelegate::class
+    }
+
     abstract class JavaTypeMismatch : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = JavaTypeMismatch::class
         abstract val expectedType: KtType

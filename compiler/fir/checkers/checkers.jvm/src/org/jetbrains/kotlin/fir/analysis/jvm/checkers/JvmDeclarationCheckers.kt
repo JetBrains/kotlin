@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirJvmExternalDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirStrictfpApplicabilityChecker
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.FirVolatileAnnotationChecker
 
 object JvmDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
@@ -20,5 +22,10 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
             FirStrictfpApplicabilityChecker
+        )
+
+    override val propertyCheckers: Set<FirPropertyChecker>
+        get() = setOf(
+            FirVolatileAnnotationChecker,
         )
 }

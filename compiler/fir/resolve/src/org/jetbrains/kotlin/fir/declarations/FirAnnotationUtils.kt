@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -95,6 +96,10 @@ fun FirAnnotationContainer.getAnnotationByFqName(fqName: FqName): FirAnnotationC
     return annotations.find {
         it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId?.asSingleFqName() == fqName
     }
+}
+
+fun <D> FirBasedSymbol<out D>.getAnnotationByFqName(fqName: FqName): FirAnnotationCall? where D : FirAnnotationContainer, D : FirDeclaration {
+    return fir.getAnnotationByFqName(fqName)
 }
 
 fun FirAnnotationContainer.getAnnotationsByFqName(fqName: FqName): List<FirAnnotationCall> = annotations.getAnnotationsByFqName(fqName)

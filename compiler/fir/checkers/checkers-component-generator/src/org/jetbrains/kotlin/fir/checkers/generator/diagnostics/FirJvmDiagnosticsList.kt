@@ -19,6 +19,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     val DECLARATIONS by object : DiagnosticGroup("Declarations") {
         val CONFLICTING_JVM_DECLARATIONS by error<PsiElement>()
         val STRICTFP_ON_CLASS by error<KtAnnotationEntry>()
+        val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
+        val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

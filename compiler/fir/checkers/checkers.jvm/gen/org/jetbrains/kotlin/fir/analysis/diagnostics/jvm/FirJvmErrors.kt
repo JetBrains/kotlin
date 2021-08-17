@@ -20,6 +20,8 @@ object FirJvmErrors {
     // Declarations
     val CONFLICTING_JVM_DECLARATIONS by error0<PsiElement>()
     val STRICTFP_ON_CLASS by error0<KtAnnotationEntry>()
+    val VOLATILE_ON_VALUE by error0<KtAnnotationEntry>()
+    val VOLATILE_ON_DELEGATE by error0<KtAnnotationEntry>()
 
     // Types
     val JAVA_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
