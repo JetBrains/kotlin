@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.DefaultTypeClassIds
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
@@ -67,20 +65,6 @@ internal val KtType.nullabilityType: NullabilityType
         KtTypeNullability.NON_NULLABLE -> NullabilityType.NotNull
         KtTypeNullability.UNKNOWN -> NullabilityType.Unknown
     }
-
-
-internal fun FirMemberDeclaration.computeSimpleModality(): Set<String> {
-    require(this !is FirConstructor)
-
-    val modifier = when (modality) {
-        Modality.FINAL -> PsiModifier.FINAL
-        Modality.ABSTRACT -> PsiModifier.ABSTRACT
-        Modality.SEALED -> PsiModifier.ABSTRACT
-        else -> null
-    }
-
-    return modifier?.let { setOf(it) } ?: emptySet()
-}
 
 internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modality) {
     Modality.SEALED -> PsiModifier.ABSTRACT
