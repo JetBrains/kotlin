@@ -7,6 +7,7 @@ package kotlinx.validation.api
 
 import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
+import kotlinx.metadata.jvm.KotlinClassHeader.Companion.COMPATIBLE_METADATA_VERSION
 import org.objectweb.asm.tree.ClassNode
 
 class ClassVisibility(
@@ -59,6 +60,14 @@ val ClassNode.kotlinMetadata: KotlinClassMetadata?
             )
         }
         return KotlinClassMetadata.read(header)
+            ?: error(
+                """
+                Incompatible version of Kotlin metadata.
+                Maximal supported Kotlin metadata version: ${COMPATIBLE_METADATA_VERSION.joinToString(".")},
+                $name Kotlin metadata version: ${header.metadataVersion.joinToString(".")}.
+                As a workaround, it is possible to manually update 'kotlinx-metadata-jvm' version in your project.
+            """.trimIndent()
+            )
     }
 
 
