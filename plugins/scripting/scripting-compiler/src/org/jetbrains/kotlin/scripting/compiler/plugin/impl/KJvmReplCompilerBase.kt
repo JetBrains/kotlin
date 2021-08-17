@@ -150,25 +150,25 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
                 history.push(LineId(snippetNo, 0, snippet.hashCode()), scriptDescriptor)
 
                 val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
-                val compiledScript =
-                    makeCompiledScript(
-                        generationState,
-                        snippet,
-                        sourceFiles.first(),
-                        sourceDependencies
-                    ) { ktFile ->
-                        dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration
-                            ?: context.baseScriptCompilationConfiguration
-                    }
+                makeCompiledScript(
+                    generationState,
+                    snippet,
+                    sourceFiles.first(),
+                    sourceDependencies
+                ) { ktFile ->
+                    dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration
+                        ?: context.baseScriptCompilationConfiguration
+                }.onSuccess { compiledScript ->
 
-                lastCompiledSnippet = lastCompiledSnippet.add(compiledScript)
+                    lastCompiledSnippet = lastCompiledSnippet.add(compiledScript)
 
-                lastCompiledSnippet?.asSuccess(messageCollector.diagnostics)
-                    ?: failure(
-                        snippet,
-                        messageCollector,
-                        "last compiled snippet should not be null"
-                    )
+                    lastCompiledSnippet?.asSuccess(messageCollector.diagnostics)
+                        ?: failure(
+                            snippet,
+                            messageCollector,
+                            "last compiled snippet should not be null"
+                        )
+                }
             }
         }.last()
 

@@ -196,16 +196,15 @@ private fun doCompile(
     val generationState =
         generate(analysisResult, sourceFiles, context.environment.configuration)
 
-    val compiledScript =
-        makeCompiledScript(
-            generationState,
-            script,
-            sourceFiles.first(),
-            sourceDependencies,
-            getScriptConfiguration
-        )
-
-    return ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
+    return makeCompiledScript(
+        generationState,
+        script,
+        sourceFiles.first(),
+        sourceDependencies,
+        getScriptConfiguration
+    ).onSuccess { compiledScript ->
+        ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
+    }
 }
 
 private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult {

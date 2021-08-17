@@ -116,32 +116,41 @@ internal fun makeCompiledScript(
     ktFile: KtFile,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
     getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
-): KJvmCompiledScript {
+): ResultWithDiagnostics<KJvmCompiledScript> {
     val scriptDependenciesStack = ArrayDeque<KtScript>()
     val ktScript = ktFile.declarations.firstIsInstanceOrNull<KtScript>()
         ?: throw IllegalStateException("Expecting script file: KtScript is not found in ${ktFile.name}")
 
-    fun makeOtherScripts(script: KtScript): List<KJvmCompiledScript> {
+    fun makeOtherScripts(script: KtScript): ResultWithDiagnostics<List<KJvmCompiledScript>> {
 
         // TODO: ensure that it is caught earlier (as well) since it would be more economical
         if (scriptDependenciesStack.contains(script))
-            throw IllegalArgumentException("Unable to handle recursive script dependencies")
+            return ResultWithDiagnostics.Failure(
+                ScriptDiagnostic(
+                    ScriptDiagnostic.unspecifiedError,
+                    "Unable to handle recursive script dependencies",
+                    sourcePath = script.containingFile.virtualFile?.path
+                )
+            )
         scriptDependenciesStack.push(script)
 
         val containingKtFile = script.containingKtFile
-        val otherScripts: List<KJvmCompiledScript> =
-            sourceDependencies.find { it.scriptFile == containingKtFile }?.sourceDependencies?.valueOrThrow()?.mapNotNull { sourceFile ->
-                sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let {
-                    KJvmCompiledScript(
-                        containingKtFile.virtualFilePath,
-                        getScriptConfiguration(sourceFile),
-                        it.fqName.asString(),
-                        null,
-                        makeOtherScripts(it),
-                        null
-                    )
-                }
-            } ?: emptyList()
+        val otherScripts =
+            sourceDependencies.find { it.scriptFile == containingKtFile }?.sourceDependencies?.valueOrThrow()
+                ?.mapNotNullSuccess { sourceFile ->
+                    sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let { ktScript ->
+                        makeOtherScripts(ktScript).onSuccess { otherScripts ->
+                            KJvmCompiledScript(
+                                containingKtFile.virtualFilePath,
+                                getScriptConfiguration(sourceFile),
+                                ktScript.fqName.asString(),
+                                null,
+                                otherScripts,
+                                null
+                            ).asSuccess()
+                        }
+                    } ?: null.asSuccess()
+                } ?: emptyList<KJvmCompiledScript>().asSuccess()
 
         scriptDependenciesStack.pop()
         return otherScripts
@@ -154,13 +163,15 @@ internal fun makeCompiledScript(
         else resultFieldName!! to KotlinType(resultTypeString ?: DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(resultType!!))
     }
 
-    return KJvmCompiledScript(
-        script.locationId,
-        getScriptConfiguration(ktScript.containingKtFile),
-        ktScript.fqName.asString(),
-        resultField,
-        makeOtherScripts(ktScript),
-        module
-    )
+    return makeOtherScripts(ktScript).onSuccess { otherScripts ->
+        KJvmCompiledScript(
+            script.locationId,
+            getScriptConfiguration(ktScript.containingKtFile),
+            ktScript.fqName.asString(),
+            resultField,
+            otherScripts,
+            module
+        ).asSuccess()
+    }
 }
 
