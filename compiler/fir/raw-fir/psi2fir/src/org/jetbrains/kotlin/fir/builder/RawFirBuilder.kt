@@ -1058,9 +1058,7 @@ open class RawFirBuilder(
                         classOrObject.extractAnnotationsTo(this)
                         classOrObject.extractTypeParametersTo(this, symbol)
 
-                        context.applyToActualCapturedTypeParameters(true) {
-                            typeParameters += buildOuterClassTypeParameterRef { symbol = it }
-                        }
+                        context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
                         context.pushFirTypeParameters(
                             status.isInner,
                             typeParameters.subList(0, classOrObject.typeParameters.size)
@@ -1158,9 +1156,7 @@ open class RawFirBuilder(
                         scopeProvider = baseScopeProvider
                         symbol = FirAnonymousObjectSymbol()
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                        context.applyToActualCapturedTypeParameters(false) {
-                            typeParameters += buildOuterClassTypeParameterRef { symbol = it }
-                        }
+                        context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
                         val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
                         registerSelfType(delegatedSelfType)
                         objectDeclaration.extractAnnotationsTo(this)
