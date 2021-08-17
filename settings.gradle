@@ -360,7 +360,6 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
     intellij "core/kotlin.core.iml"
     intellij "common/kotlin.common.iml"
     intellij "tests-common/kotlin.tests-common.iml"
-    intellij "util/compiler-dependencies/kotlin.util.compiler-dependencies.iml"
     intellij "j2k/services/kotlin.j2k.services.iml"
     intellij "j2k/old/kotlin.j2k.old.iml"
     intellij "j2k/old/tests/kotlin.j2k.old.tests.iml"
