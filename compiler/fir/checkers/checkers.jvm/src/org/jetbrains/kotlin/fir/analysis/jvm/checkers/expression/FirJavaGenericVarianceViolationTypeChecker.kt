@@ -110,7 +110,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
             // actually created because of type projection from `get`. Hence, to workaround this problem, we simply remove all the out
             // projection and type capturing and compare the types after such erasure. This way, we won't incorrectly reject any valid code
             // though we may accept some invalid code. But in presence of the unsound flexible types, we are allowing invalid code already.
-            val argTypeWithoutOutProjection = argType.removeOutProjection(true)
+            val argTypeWithoutOutProjection = argType.removeOutProjection(isCovariant = true)
             val lowerBoundWithoutCapturing = context.session.inferenceComponents.approximator.approximateToSuperType(
                 lowerBound,
                 TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
@@ -127,31 +127,34 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         }
     }
 
-    private fun ConeKotlinType.removeOutProjection(positive: Boolean): ConeKotlinType {
+    private fun ConeKotlinType.removeOutProjection(isCovariant: Boolean): ConeKotlinType {
         return when (this) {
-            is ConeFlexibleType -> ConeFlexibleType(lowerBound.removeOutProjection(positive), upperBound.removeOutProjection(positive))
+            is ConeFlexibleType -> ConeFlexibleType(
+                lowerBound.removeOutProjection(isCovariant),
+                upperBound.removeOutProjection(isCovariant)
+            )
             is ConeCapturedType -> ConeCapturedType(
                 captureStatus,
-                lowerType?.removeOutProjection(positive),
+                lowerType?.removeOutProjection(isCovariant),
                 nullability,
                 constructor.apply {
                     ConeCapturedTypeConstructor(
-                        projection.removeOutProjection(positive),
-                        supertypes?.map { it.removeOutProjection(positive) },
+                        projection.removeOutProjection(isCovariant),
+                        supertypes?.map { it.removeOutProjection(isCovariant) },
                         typeParameterMarker
                     )
                 },
                 attributes,
                 isProjectionNotNull
             )
-            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(positive))
+            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
             is ConeIntersectionType -> ConeIntersectionType(
-                intersectedTypes.map { it.removeOutProjection(positive) },
-                alternativeType?.removeOutProjection(positive)
+                intersectedTypes.map { it.removeOutProjection(isCovariant) },
+                alternativeType?.removeOutProjection(isCovariant)
             )
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                 lookupTag,
-                typeArguments.map { it.removeOutProjection(positive) }.toTypedArray(),
+                typeArguments.map { it.removeOutProjection(isCovariant) }.toTypedArray(),
                 isNullable,
                 attributes
             )
@@ -159,11 +162,17 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         }
     }
 
-    private fun ConeTypeProjection.removeOutProjection(positive: Boolean): ConeTypeProjection {
+    /**
+     * @param isCovariant true if the current context is covariant and false if contravariant.
+     *
+     * This function only remove out projections in covariant context.
+     * 'in' projections are never removed, nor would an out projection in a contravariant context.
+     */
+    private fun ConeTypeProjection.removeOutProjection(isCovariant: Boolean): ConeTypeProjection {
         return when (this) {
-            is ConeKotlinTypeProjectionOut -> if (positive) type else this
-            is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(type.removeOutProjection(!positive))
-            is ConeStarProjection -> if (positive) StandardTypes.Any else this
+            is ConeKotlinTypeProjectionOut -> if (isCovariant) type else this
+            is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(type.removeOutProjection(!isCovariant))
+            is ConeStarProjection -> if (isCovariant) StandardTypes.Any else this
             // Don't remove nested projections for types at invariant position.
             is ConeKotlinTypeConflictingProjection,
             is ConeKotlinType -> this
@@ -182,7 +191,10 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         for (immediateSuperType in subTypeConstructor.supertypes()) {
             val immediateSuperTypeConstructor = immediateSuperType.typeConstructor()
             if (superTypeConstructor == immediateSuperTypeConstructor) return true
-            if (this@isTypeConstructorEqualOrSubClassOf.isTypeConstructorEqualOrSubClassOf(immediateSuperTypeConstructor, superTypeConstructor)) return true
+            if (this@isTypeConstructorEqualOrSubClassOf.isTypeConstructorEqualOrSubClassOf(
+                    immediateSuperTypeConstructor, superTypeConstructor
+                )
+            ) return true
         }
         return false
     }
