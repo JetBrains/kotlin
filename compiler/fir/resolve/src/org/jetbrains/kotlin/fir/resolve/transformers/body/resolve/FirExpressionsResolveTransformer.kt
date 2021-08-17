@@ -1148,7 +1148,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         anonymousObjectExpression.transformAnonymousObject(transformer, data)
         if (anonymousObjectExpression.typeRef !is FirResolvedTypeRef) {
             anonymousObjectExpression.resultType = buildResolvedTypeRef {
-                source = anonymousObjectExpression.source
+                source = anonymousObjectExpression.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
                 this.type = anonymousObjectExpression.anonymousObject.defaultType()
             }
         }
