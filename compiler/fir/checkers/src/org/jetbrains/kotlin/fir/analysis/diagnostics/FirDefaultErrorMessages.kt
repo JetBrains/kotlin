@@ -158,6 +158,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_IS_N
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPERIMENTAL_OVERRIDE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_FUNCTION_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PARAMETER_TYPE
@@ -1196,6 +1198,14 @@ class FirDefaultErrorMessages {
                 INAPPLICABLE_BACKING_FIELD_MODIFIER,
                 "Modifier ''{0}'' is not applicable to explicit backing field declarations",
                 TO_STRING
+            )
+            map.put(
+                EXPLICIT_BACKING_FIELD_IN_INTERFACE,
+                "Backing fields are not allowed inside interfaces"
+            )
+            map.put(
+                EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY,
+                "Abstract property cannot have a backing field"
             )
 
             map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects")

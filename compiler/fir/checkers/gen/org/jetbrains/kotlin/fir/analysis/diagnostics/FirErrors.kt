@@ -455,6 +455,8 @@ object FirErrors {
     val PROPERTY_MUST_HAVE_SETTER by error0<KtProperty>()
     val INAPPLICABLE_BACKING_FIELD_VISIBILITY by error1<PsiElement, KtModifierKeywordToken>()
     val INAPPLICABLE_BACKING_FIELD_MODIFIER by error1<PsiElement, KtModifierKeywordToken>()
+    val EXPLICIT_BACKING_FIELD_IN_INTERFACE by error0<KtBackingField>()
+    val EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY by error0<KtBackingField>()
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
