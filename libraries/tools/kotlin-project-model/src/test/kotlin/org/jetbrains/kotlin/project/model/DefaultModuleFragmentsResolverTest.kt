@@ -14,7 +14,7 @@ internal class DefaultModuleFragmentsResolverTest {
     val bundleFoo = simpleModuleBundle("foo")
     val bundleBar = simpleModuleBundle("bar")
 
-    val fragmentResolver = DefaultModuleFragmentsResolver(MatchVariantsByExactAttributes())
+    val dependencyExpander = DefaultModuleDependencyExpander(MatchVariantsByExactAttributes())
 
     @Test
     fun testFragmentVisibility() {
@@ -31,10 +31,10 @@ internal class DefaultModuleFragmentsResolverTest {
         )
 
         moduleBarMain.fragments.forEach { consumingFragment ->
-            val result = fragmentResolver.getChosenFragments(consumingFragment, moduleFooMain)
-            assertTrue(result is FragmentResolution.ChosenFragments)
+            val expansionResult = dependencyExpander.expandModuleDependency(consumingFragment, moduleFooMain)
+            assertTrue(expansionResult is ModuleDependencyExpansionResult.ChosenFragments)
             val expected = expectedVisibleFragments.getValue(consumingFragment.fragmentName)
-            assertEquals(expected, result.visibleFragments.map { it.fragmentName }.toSet())
+            assertEquals(expected, expansionResult.visibleFragments.map { it.fragmentName }.toSet())
         }
     }
 
@@ -51,9 +51,9 @@ internal class DefaultModuleFragmentsResolverTest {
         assumeTrue(variantResolution is VariantResolution.NoVariantMatch)
 
         val (commonMainResult, jsAndLinuxResult) = listOf("common", "jsAndLinux").map {
-            val chosenFragments = fragmentResolver.getChosenFragments(dependingModule.fragment(it), moduleFooMain)
-            assertTrue(chosenFragments is FragmentResolution.ChosenFragments)
-            chosenFragments.visibleFragments.map { it.fragmentName }.toSet()
+            val expansionResult = dependencyExpander.expandModuleDependency(dependingModule.fragment(it), moduleFooMain)
+            assertTrue(expansionResult is ModuleDependencyExpansionResult.ChosenFragments)
+            expansionResult.visibleFragments.map { it.fragmentName }.toSet()
         }
 
         assertEquals(setOf("common", "jvmAndJs"), commonMainResult)

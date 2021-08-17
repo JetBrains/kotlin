@@ -7,36 +7,41 @@ package org.jetbrains.kotlin.project.model
 
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 
-interface ModuleFragmentsResolver {
-    fun getChosenFragments(
+/**
+ * Performs Module Dependency Expansion Algorithm: given the fragment F [requestingFragment]
+ * and dependency on a module [dependencyModule], it finds the set of fragments of [dependencyModule]
+ * which should be visible from [requestingFragment] according to variant matching rules.
+ */
+interface ModuleDependencyExpander {
+    fun expandModuleDependency(
         requestingFragment: KotlinModuleFragment,
         dependencyModule: KotlinModule
-    ): FragmentResolution
+    ): ModuleDependencyExpansionResult
 }
 
-sealed class FragmentResolution(val requestingFragment: KotlinModuleFragment, val dependencyModule: KotlinModule) {
+sealed class ModuleDependencyExpansionResult(val requestingFragment: KotlinModuleFragment, val dependencyModule: KotlinModule) {
     class ChosenFragments(
         requestingFragment: KotlinModuleFragment,
         dependencyModule: KotlinModule,
         val visibleFragments: Iterable<KotlinModuleFragment>,
         val variantResolutions: Iterable<VariantResolution>
-    ) : FragmentResolution(requestingFragment, dependencyModule)
+    ) : ModuleDependencyExpansionResult(requestingFragment, dependencyModule)
 
     class NotRequested(requestingFragment: KotlinModuleFragment, dependencyModule: KotlinModule) :
-        FragmentResolution(requestingFragment, dependencyModule)
+        ModuleDependencyExpansionResult(requestingFragment, dependencyModule)
 
     // TODO: think about restricting calls with the type system to avoid partial functions in resolvers?
     class Unknown(requestingFragment: KotlinModuleFragment, dependencyModule: KotlinModule) :
-        FragmentResolution(requestingFragment, dependencyModule)
+        ModuleDependencyExpansionResult(requestingFragment, dependencyModule)
 }
 
-class DefaultModuleFragmentsResolver(
+class DefaultModuleDependencyExpander(
     private val variantResolver: ModuleVariantResolver
-) : ModuleFragmentsResolver {
-    override fun getChosenFragments(
+) : ModuleDependencyExpander {
+    override fun expandModuleDependency(
         requestingFragment: KotlinModuleFragment,
         dependencyModule: KotlinModule
-    ): FragmentResolution {
+    ): ModuleDependencyExpansionResult {
         val dependingModule = requestingFragment.containingModule
         val containingVariants = dependingModule.variantsContainingFragment(requestingFragment)
 
@@ -45,7 +50,7 @@ class DefaultModuleFragmentsResolver(
         // TODO: extend this to more cases with non-matching variants, revisit the behavior when no matching variant is found once we fix
         //       local publishing of libraries with missing host-specific parts (it breaks transitive dependencies now)
         if (chosenVariants.none { it is VariantResolution.VariantMatch })
-            return FragmentResolution.NotRequested(requestingFragment, dependencyModule)
+            return ModuleDependencyExpansionResult.NotRequested(requestingFragment, dependencyModule)
 
         val chosenFragments = chosenVariants.map { variantResolution ->
             when (variantResolution) {
@@ -61,6 +66,6 @@ class DefaultModuleFragmentsResolver(
             .filter { it.isNotEmpty() }
             .reduce { acc, it -> acc.intersect(it) }
 
-        return FragmentResolution.ChosenFragments(requestingFragment, dependencyModule, result, chosenVariants)
+        return ModuleDependencyExpansionResult.ChosenFragments(requestingFragment, dependencyModule, result, chosenVariants)
     }
 }
