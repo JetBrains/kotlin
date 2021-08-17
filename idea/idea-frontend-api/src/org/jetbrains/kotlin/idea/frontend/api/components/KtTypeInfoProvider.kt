@@ -25,7 +25,7 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
     public val KtType.canBeNull: Boolean get() = analysisSession.typeInfoProvider.canBeNull(this)
 
     /** Returns true if the type is explicitly marked as nullable. This means it's safe to assign `null` to a variable with this type. */
-    public val KtType.isMarkedNullable: Boolean get() = (this as? KtTypeWithNullability)?.nullability == KtTypeNullability.NULLABLE
+    public val KtType.isMarkedNullable: Boolean get() = this.nullability == KtTypeNullability.NULLABLE
 
     public val KtType.isUnit: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
     public val KtType.isInt: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.INT)

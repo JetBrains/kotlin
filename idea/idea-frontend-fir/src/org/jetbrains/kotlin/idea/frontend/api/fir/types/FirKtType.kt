@@ -54,7 +54,7 @@ internal class KtFirUsualClassType(
         }
     }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.canBeNull) }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
@@ -79,7 +79,7 @@ internal class KtFirFunctionalType(
         }
     }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.canBeNull) }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
     override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendFunctionType(builder.rootSession) }
     override val arity: Int
@@ -120,6 +120,7 @@ internal class KtFirClassErrorType(
     override val coneType by weakRef(_coneType)
 
     override val error: String get() = withValidityAssertion { coneType.diagnostic.reason }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
@@ -130,6 +131,7 @@ internal class KtFirCapturedType(
     override val token: ValidityToken,
 ) : KtCapturedType(), KtFirType {
     override val coneType by weakRef(_coneType)
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
@@ -164,7 +166,8 @@ internal class KtFirTypeParameterType(
             ?: error("Type parameter ${coneType.lookupTag} was not found")
     }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.canBeNull) }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
@@ -180,6 +183,9 @@ internal class KtFirFlexibleType(
 
     override val lowerBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.lowerBound) }
     override val upperBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.upperBound) }
+
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
@@ -197,7 +203,15 @@ internal class KtFirIntersectionType(
         coneType.intersectedTypes.map { conjunct -> builder.typeBuilder.buildKtType(conjunct) }
     }
 
+    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
+}
+
+private fun ConeNullability.asKtNullability(): KtTypeNullability = when (this) {
+    ConeNullability.NULLABLE -> KtTypeNullability.NULLABLE
+    ConeNullability.UNKNOWN -> KtTypeNullability.UNKNOWN
+    ConeNullability.NOT_NULL -> KtTypeNullability.NON_NULLABLE
 }

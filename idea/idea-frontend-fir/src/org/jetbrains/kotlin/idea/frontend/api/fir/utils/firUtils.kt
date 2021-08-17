@@ -95,4 +95,5 @@ internal fun FirExpression.convertConstantExpression(): KtConstantValue =
 internal fun KtTypeNullability.toConeNullability() = when (this) {
     KtTypeNullability.NULLABLE -> ConeNullability.NULLABLE
     KtTypeNullability.NON_NULLABLE -> ConeNullability.NOT_NULL
+    KtTypeNullability.UNKNOWN -> ConeNullability.UNKNOWN
 }

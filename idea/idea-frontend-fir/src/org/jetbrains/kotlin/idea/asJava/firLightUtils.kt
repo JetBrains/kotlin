@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotatio
 import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
-import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeWithNullability
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
@@ -71,11 +70,13 @@ internal enum class NullabilityType {
     Unknown
 }
 
+//todo get rid of NullabilityType as it corresponds to KtTypeNullability
 internal val KtType.nullabilityType: NullabilityType
-    get() =
-        (this as? KtTypeWithNullability)?.let {
-            if (it.nullability == KtTypeNullability.NULLABLE) NullabilityType.Nullable else NullabilityType.NotNull
-        } ?: NullabilityType.Unknown
+    get() = when (nullability) {
+        KtTypeNullability.NULLABLE -> NullabilityType.Nullable
+        KtTypeNullability.NON_NULLABLE -> NullabilityType.NotNull
+        KtTypeNullability.UNKNOWN -> NullabilityType.Unknown
+    }
 
 
 internal fun FirMemberDeclaration.computeSimpleModality(): Set<String> {
