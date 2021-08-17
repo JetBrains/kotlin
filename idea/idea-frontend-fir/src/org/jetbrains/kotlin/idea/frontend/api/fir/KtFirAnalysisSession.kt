@@ -75,6 +75,8 @@ private constructor(
 
     override val psiTypeProviderImpl = KtFirPsiTypeProvider(this, token)
 
+    override val jvmTypeMapperImpl = KtFirJvmTypeMapper(this, token)
+
     override val typeProviderImpl = KtFirTypeProvider(this, token)
 
     override val typeInfoProviderImpl = KtFirTypeInfoProvider(this, token)

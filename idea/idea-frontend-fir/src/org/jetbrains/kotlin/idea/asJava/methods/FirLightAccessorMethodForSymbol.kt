@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.parameters.FirLightSetterParameterForSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
@@ -72,9 +71,13 @@ internal class FirLightAccessorMethodForSymbol(
                 !isPrivate &&
                 !(isParameter && (containingClass.isAnnotationType || containingClass.isEnum))
 
-        val nullabilityType = if (nullabilityApplicable) containingPropertySymbol.annotatedType.type
-            .getTypeNullability(containingPropertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        else NullabilityType.Unknown
+        val nullabilityType = if (nullabilityApplicable) {
+            analyzeWithSymbolAsContext(containingPropertySymbol) {
+                getTypeNullability(
+                    containingPropertySymbol.annotatedType.type
+                )
+            }
+        } else NullabilityType.Unknown
 
         val annotationsFromProperty = containingPropertySymbol.computeAnnotations(
             parent = this,

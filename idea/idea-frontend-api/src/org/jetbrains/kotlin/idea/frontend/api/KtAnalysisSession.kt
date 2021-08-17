@@ -35,6 +35,7 @@ public abstract class KtAnalysisSession(final override val token: ValidityToken)
     KtSymbolDeclarationOverridesProviderMixIn,
     KtExpressionTypeProviderMixIn,
     KtPsiTypeProviderMixIn,
+    KtJvmTypeMapperMixIn,
     KtTypeProviderMixIn,
     KtTypeInfoProviderMixIn,
     KtSymbolProviderMixIn,
@@ -91,6 +92,9 @@ public abstract class KtAnalysisSession(final override val token: ValidityToken)
 
     internal val psiTypeProvider: KtPsiTypeProvider get() = psiTypeProviderImpl
     protected abstract val psiTypeProviderImpl: KtPsiTypeProvider
+
+    internal val jvmTypeMapper: KtJvmTypeMapper get() = jvmTypeMapperImpl
+    protected abstract val jvmTypeMapperImpl: KtJvmTypeMapper
 
     internal val typeProvider: KtTypeProvider get() = typeProviderImpl
     protected abstract val typeProviderImpl: KtTypeProvider

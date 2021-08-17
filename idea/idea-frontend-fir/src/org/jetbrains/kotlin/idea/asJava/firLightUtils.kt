@@ -12,27 +12,17 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.isPrimitiveType
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.DefaultTypeClassIds
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
-import org.jetbrains.kotlin.idea.frontend.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
+import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
@@ -154,39 +144,31 @@ internal fun basicIsEquivalentTo(`this`: PsiElement?, that: PsiElement?): Boolea
     return thisMemberOrigin.isEquivalentTo(thatMemberOrigin)
 }
 
-internal fun KtType.getTypeNullability(context: KtSymbol, phase: FirResolvePhase): NullabilityType {
+internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityType {
+    if (ktType.nullabilityType != NullabilityType.NotNull) return ktType.nullabilityType
 
-    if (nullabilityType != NullabilityType.NotNull) return nullabilityType
+    if (ktType.isUnit) return NullabilityType.NotNull
 
-    if (isUnit) return NullabilityType.NotNull
-
-    require(this is KtFirType)
-    require(context is KtFirSymbol<*>)
-
-    if (coneType is ConeTypeParameterType) {
+    if (ktType is KtTypeParameterType) {
 //        TODO Make supertype checking
 //        val subtypeOfNullableSuperType = context.firRef.withFir(phase) {
 //            it.session.typeCheckerContext.nullableAnyType().isSupertypeOf(it.session.typeCheckerContext, coneType)
 //        }
 //        if (!subtypeOfNullableSuperType) return NullabilityType.NotNull
 
-        if (!coneType.isMarkedNullable) return NullabilityType.Unknown
-        return NullabilityType.NotNull
+        return if (!ktType.isMarkedNullable) NullabilityType.Unknown else NullabilityType.NotNull
+    }
+    if (ktType !is KtClassType) return NullabilityType.NotNull
+
+    if (!ktType.isPrimitive) {
+        return ktType.nullabilityType
     }
 
-    val coneType = coneType as? ConeClassLikeType ?: return NullabilityType.NotNull
+    if (ktType !is KtNonErrorClassType) return NullabilityType.NotNull
+    if (ktType.typeArguments.any { it.type is KtClassErrorType }) return NullabilityType.NotNull
+    if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
 
-    if (!coneType.isPrimitiveType()) {
-        return nullabilityType
-    }
-
-    if (coneType is ConeClassErrorType) return NullabilityType.NotNull
-    if (coneType.typeArguments.any { it is ConeClassErrorType }) return NullabilityType.NotNull
-    if (coneType.classId?.shortClassName?.asString() == SpecialNames.ANONYMOUS_STRING) return NullabilityType.NotNull
-
-    val canonicalSignature = context.firRef.withFir(phase) {
-        it.moduleData.session.jvmTypeMapper.mapType(coneType, TypeMappingMode.DEFAULT).descriptor
-    }
+    val canonicalSignature = ktType.mapTypeToJvmType().descriptor
 
     if (canonicalSignature == "[L<error>;") return NullabilityType.NotNull
 

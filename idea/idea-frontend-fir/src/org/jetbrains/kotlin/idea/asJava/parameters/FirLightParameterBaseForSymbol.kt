@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.asJava
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.psi.KtParameter
@@ -36,10 +35,13 @@ internal abstract class FirLightParameterBaseForSymbol(
             val nullabilityApplicable = !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum } &&
                     !containingMethod.hasModifierProperty(PsiModifier.PRIVATE)
 
-            return if (nullabilityApplicable) parameterSymbol.annotatedType.type.getTypeNullability(
-                parameterSymbol,
-                FirResolvePhase.TYPES
-            )
+            return if (nullabilityApplicable) {
+                analyzeWithSymbolAsContext(parameterSymbol) {
+                    getTypeNullability(
+                        parameterSymbol.annotatedType.type
+                    )
+                }
+            }
             else NullabilityType.Unknown
         }
 

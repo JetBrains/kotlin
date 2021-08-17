@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.asJava
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
@@ -56,12 +55,15 @@ internal class FirLightSimpleMethodForSymbol(
         _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     private fun computeAnnotations(isPrivate: Boolean): List<PsiAnnotation> {
-        val nullability = if (isVoidReturnType || isPrivate)
+        val nullability = if (isVoidReturnType || isPrivate) {
             NullabilityType.Unknown
-        else functionSymbol.annotatedType.type.getTypeNullability(
-            context = functionSymbol,
-            phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
-        )
+        } else {
+            analyzeWithSymbolAsContext(functionSymbol) {
+                getTypeNullability(
+                    functionSymbol.annotatedType.type
+                )
+            }
+        }
 
         return functionSymbol.computeAnnotations(
             parent = this,
