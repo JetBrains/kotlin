@@ -13,9 +13,8 @@ If the name of a section of the document has an "Old JVM:" prefix, it explains o
 then it is JVM_IR back-end specific. If the prefix is common "JVM," the explanation applies to both the old back-end and the new one. 
 Otherwise, the section explains the general behavior of coroutines and shall apply to all back-ends.
 
-The document sticks to release coroutines since we deprecated experimental coroutines in 1.3, and JVM_IR does not support them. However,
-some sections explain differences in code generation between release and experimental coroutines wherever appropriate, since we technically
-still support them. Sections, which describe experimental coroutines, have a "1.2" prefix.
+The document sticks to release coroutines since we deprecated experimental coroutines in 1.3, and JVM_IR does not support them. Furthermore,
+experimental coroutines support was dropped from compiler in 1.6.
 
 If the current implementation is not ideal (or has a bug), there is a description of the difference, and the steps to implement the
 "correct" version. These subsections start with "FIXME."
@@ -543,14 +542,6 @@ caught in `BaseContinuationImpl.resumeWith` and wrapped again until it reaches r
 coroutine builder prints it. By the way, `resumeWithException` works in release coroutines precisely in the same way (except the catching
 part): it wraps the exception into `Result` like in a burrito. It passes it to continuation's `resumeWith`. `resume` also wraps the argument
 into `Result` and passes it to `resumeWith`.
-
-#### 1.2: Data and Exception
-Since 1.3 introduced inline classes and `Result` as one of them, experimental coroutines use a different approach to passing value and
-exception to `doResume`, which was the name of `invokeSuspend` in experimental coroutines.
-Instead of one parameter with type `returnType | COROUTINE_SUSPENDED | Result$Failure(Throwable)`, experimental
-coroutines' suspend lambda's `doResume` accepts two parameters: `data` and `exception`. `data` has type `returnType | COROUTINE_SUSPENDED`
-and `exception` has type `Throwable`. `resume` and `resumeWithException` used to be methods of `Continuation` interface and in 1.3 they
-were replaced by `resumeWith`. `resume` and `resumeWithException` are now extension functions on `Continuation`, which call `resumeWith`.
 
 ### Variables Spilling
 All the previous examples did not have local variables, and there is a reason for it. When a coroutine suspends, we should save its local
@@ -1305,20 +1296,6 @@ That, by the way, is the reason why `SuspendLambda`'s constructor accepts arity.
 
 Of course, all generated suspend lambdas implement `SuspendFunction` through `SuspendLambda` and `RestrcitedSuspendLambda`. Callable
 references to suspend functions implement the interface directly.
-
-#### 1.2: CoroutineImpl
-In experimental coroutines, the diagram is much simpler.
-```text
-+------------+
-|Continuation|
-+------+-----+
-       ^
-       |
-+------+------+
-|CoroutineImpl|
-+-------------+
-```
-Every suspending function's continuation or suspend lambda extends `CoroutineImpl`.
 
 ### Suspend Lambda Layout
 The ideal suspend lambda layout is the following:
