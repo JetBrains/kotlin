@@ -258,13 +258,16 @@ class ClassCodegen private constructor(
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_SCRIPT_FLAG
         }
 
-        // There are three kinds of classes which are regenerated during inlining.
+        // There are four kinds of classes which are regenerated during inlining.
         // 1) Anonymous classes which are in the scope of an inline function.
         // 2) SAM wrappers used in an inline function. These are identified by name, since they
         //    can be reused in different functions and are thus generated in the enclosing top-level
         //    class instead of inside of an inline function.
-        // 3) WhenMapping classes used from inline functions. These are collected in
+        // 3) WhenMapping classes used from public inline functions. These are collected in
         //    `JvmBackendContext.publicAbiSymbols` in `MappedEnumWhenLowering`.
+        // 4) Annotation implementation classes used from public inline function. Similar to
+        //    public WhenMapping classes, these are collected in `publicAbiSymbols` in
+        //    `JvmAnnotationImplementationTransformer`.
         val isPublicAbi = irClass.symbol in context.publicAbiSymbols || irClass.isInlineSamWrapper ||
                 type.isAnonymousClass && irClass.isInPublicInlineScope
 
