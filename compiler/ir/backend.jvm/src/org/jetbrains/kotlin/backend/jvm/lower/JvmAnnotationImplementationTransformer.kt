@@ -11,18 +11,20 @@ import org.jetbrains.kotlin.backend.common.lower.AnnotationImplementationTransfo
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.javaClassReference
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.findDeclaration
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val annotationImplementationPhase = makeIrFilePhase<JvmBackendContext>(
     { ctxt -> AnnotationImplementationLowering { JvmAnnotationImplementationTransformer(ctxt, it) } },
@@ -32,6 +34,20 @@ internal val annotationImplementationPhase = makeIrFilePhase<JvmBackendContext>(
 
 class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, file: IrFile) :
     AnnotationImplementationTransformer(jvmContext, file) {
+    private val publicAnnotationImplementationClasses = mutableSetOf<IrClassSymbol>()
+
+    // FIXME: Copied from JvmSingleAbstractMethodLowering
+    private val inInlineFunctionScope: Boolean
+        get() = allScopes.any { it.irElement.safeAs<IrDeclaration>()?.isInPublicInlineScope == true }
+
+    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+        val constructedClass = expression.type.classOrNull
+        if (constructedClass?.owner?.isAnnotationClass == true && inInlineFunctionScope) {
+            publicAnnotationImplementationClasses += constructedClass
+        }
+        return super.visitConstructorCall(expression)
+    }
+
     override fun IrType.kClassToJClassIfNeeded(): IrType = when {
         this.isKClass() -> jvmContext.ir.symbols.javaLangClass.starProjectedType
         this.isKClassArray() -> jvmContext.irBuiltIns.arrayClass.typeWith(
@@ -72,6 +88,12 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
     }
 
     override fun implementPlatformSpecificParts(annotationClass: IrClass, implClass: IrClass) {
+        // Mark the implClass as part of the public ABI if it was instantiated from a public
+        // inline function, since annotation implementation classes are regenerated during inlining.
+        if (annotationClass.symbol in publicAnnotationImplementationClasses) {
+            jvmContext.publicAbiSymbols += implClass.symbol
+        }
+
         implClass.addFunction(
             name = "annotationType",
             returnType = jvmContext.ir.symbols.javaLangClass.starProjectedType,
