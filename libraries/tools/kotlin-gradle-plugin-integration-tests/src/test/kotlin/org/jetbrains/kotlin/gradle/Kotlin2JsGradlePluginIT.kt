@@ -965,6 +965,44 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
             .let {
                 Gson().fromJson(it.readText(), PackageJson::class.java)
             }
+
+    @Test
+    fun testWebpackConfig() {
+        with(Project("kotlin-js-test-webpack-config")) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            build(
+                "browserDevelopmentWebpack"
+            ) {
+                assertSuccessful()
+            }
+
+            build(
+                "checkConfigDevelopmentWebpack",
+            ) {
+                assertSuccessful()
+            }
+
+            build(
+                "checkConfigProductionWebpack",
+            ) {
+                assertSuccessful()
+            }
+
+            build(
+                "checkConfigDevelopmentRun",
+            ) {
+                assertSuccessful()
+            }
+
+            build(
+                "checkConfigProductionRun",
+            ) {
+                assertSuccessful()
+            }
+        }
+    }
 }
 
 class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
