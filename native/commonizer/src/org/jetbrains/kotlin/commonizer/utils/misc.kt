@@ -100,3 +100,25 @@ inline fun Int.appendHashCode(value: Any?): Int = 31 * this + hashCode(value)
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun Int.appendHashCode(array: Array<*>?): Int = 31 * this + hashCode(array)
+
+/**
+ * Allocation Free 'forEach' implementation that won't use any underlying iterator.
+ * Note: This implementation therefore is unsafe when mutating the collection at the same time!!!
+ */
+inline fun <T> List<T>.fastForEach(action: (T) -> Unit) {
+    val size = this.size
+    for (index in 0 until size) {
+        action(this[index])
+    }
+}
+
+/**
+ * Allocation Free 'forEach' implementation that won't use any underlying iterator.
+ * Note: This implementation therefore is unsafe when mutating the collection at the same time!!!
+ */
+inline fun <T> Array<T>.fastForEach(action: (T) -> Unit) {
+    val size = this.size
+    for (index in 0 until size) {
+        action(this[index])
+    }
+}

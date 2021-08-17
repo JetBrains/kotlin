@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Companion.ParentNode
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
+import org.jetbrains.kotlin.commonizer.utils.fastForEach
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal data class TargetBuildingContext(
@@ -41,7 +42,7 @@ internal fun mergeCirTree(
 }
 
 internal fun CirRootNode.buildModules(context: TargetBuildingContext, modules: List<CirTreeModule>) {
-    modules.forEach { module -> buildModule(context, module) }
+    modules.fastForEach { module -> buildModule(context, module) }
 }
 
 internal fun CirRootNode.buildModule(context: TargetBuildingContext, treeModule: CirTreeModule) {
@@ -49,7 +50,7 @@ internal fun CirRootNode.buildModule(context: TargetBuildingContext, treeModule:
         buildModuleNode(context.storageManager, context.targets)
     }
     moduleNode.targetDeclarations[context.targetIndex] = treeModule.module
-    treeModule.packages.forEach { pkg -> moduleNode.buildPackage(context, pkg) }
+    treeModule.packages.fastForEach { pkg -> moduleNode.buildPackage(context, pkg) }
 }
 
 internal fun CirModuleNode.buildPackage(context: TargetBuildingContext, treePackage: CirTreePackage) {
@@ -57,10 +58,10 @@ internal fun CirModuleNode.buildPackage(context: TargetBuildingContext, treePack
         buildPackageNode(context.storageManager, context.targets)
     }
     packageNode.targetDeclarations[context.targetIndex] = treePackage.pkg
-    treePackage.functions.forEach { function -> packageNode.buildFunction(context, function) }
-    treePackage.properties.forEach { property -> packageNode.buildProperty(context, property) }
-    treePackage.typeAliases.forEach { typeAlias -> packageNode.buildTypeAlias(context, typeAlias) }
-    treePackage.classes.forEach { clazz -> packageNode.buildClass(context, clazz) }
+    treePackage.functions.fastForEach { function -> packageNode.buildFunction(context, function) }
+    treePackage.properties.fastForEach { property -> packageNode.buildProperty(context, property) }
+    treePackage.typeAliases.fastForEach { typeAlias -> packageNode.buildTypeAlias(context, typeAlias) }
+    treePackage.classes.fastForEach { clazz -> packageNode.buildClass(context, clazz) }
 }
 
 internal fun CirNodeWithMembers<*, *>.buildClass(
@@ -71,10 +72,10 @@ internal fun CirNodeWithMembers<*, *>.buildClass(
     }
     classNode.targetDeclarations[context.targetIndex] = treeClass.clazz
     val contextWithClass = context.withMemberContextOf(treeClass.clazz)
-    treeClass.functions.forEach { function -> classNode.buildFunction(contextWithClass, function, classNode) }
-    treeClass.properties.forEach { property -> classNode.buildProperty(contextWithClass, property, classNode) }
-    treeClass.constructors.forEach { constructor -> classNode.buildConstructor(contextWithClass, constructor, classNode) }
-    treeClass.classes.forEach { clazz -> classNode.buildClass(contextWithClass, clazz, classNode) }
+    treeClass.functions.fastForEach { function -> classNode.buildFunction(contextWithClass, function, classNode) }
+    treeClass.properties.fastForEach { property -> classNode.buildProperty(contextWithClass, property, classNode) }
+    treeClass.constructors.fastForEach { constructor -> classNode.buildConstructor(contextWithClass, constructor, classNode) }
+    treeClass.classes.fastForEach { clazz -> classNode.buildClass(contextWithClass, clazz, classNode) }
 }
 
 internal fun CirNodeWithMembers<*, *>.buildFunction(
