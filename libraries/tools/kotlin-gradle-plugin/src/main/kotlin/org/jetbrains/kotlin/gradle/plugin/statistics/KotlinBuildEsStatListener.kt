@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import java.net.InetAddress
 
 enum class TaskExecutionState {
     SKIPPED,
@@ -27,9 +28,11 @@ enum class TaskExecutionState {
     ;
 }
 
-class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: List<ReportStatistics>) : OperationCompletionListener, AutoCloseable, TaskExecutionListener {
+class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: List<ReportStatistics>, val buildUuid: String) :
+    OperationCompletionListener, AutoCloseable, TaskExecutionListener {
 
     val label by lazy { CompilerSystemProperties.KOTLIN_STAT_LABEl_PROPERTY.value }
+    val hostName by lazy { InetAddress.getLocalHost().hostName }
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
@@ -68,7 +71,8 @@ class KotlinBuildEsStatListener(val projectName: String, val reportStatistics: L
             duration = duration, taskResult = taskResult.name, label = label,
             statData = statData, projectName = projectName, taskName = taskPath, changes = changes,
             tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList(),
-            nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?: emptyMap()
+            nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap(),
+            hostName = hostName, kotlinVersion = "1.6", buildUuid = buildUuid, timeInMillis = System.currentTimeMillis()
         )
         reportStatistics.forEach { it.report(compileStatData) }
     }

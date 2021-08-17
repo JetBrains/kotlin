@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToBuildScan
 import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToElasticSearch
 import org.jetbrains.kotlin.gradle.report.configureReporting
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
+import java.util.*
 
 //Support Gradle 6 and less. Move to
 internal class KotlinGradleBuildServices private constructor(
@@ -78,8 +79,8 @@ internal class KotlinGradleBuildServices private constructor(
                 val listeners = project.rootProject.objects.listProperty(ReportStatistics::class.java)
                     .value(listOf<ReportStatistics>(ReportStatisticsToElasticSearch))
                 project.rootProject.extensions.findByName("buildScan")
-                    ?.also { listeners.add(ReportStatisticsToBuildScan(it as BuildScanExtension)) }
-                KotlinBuildEsStatListener(project.rootProject.name, listeners.get())
+                    ?.also { listeners.add(ReportStatisticsToBuildScan(it as BuildScanExtension, UUID.randomUUID().toString(), "kotlin_version")) }
+                KotlinBuildEsStatListener(project.rootProject.name, listeners.get(), UUID.randomUUID().toString())
             }
 
 

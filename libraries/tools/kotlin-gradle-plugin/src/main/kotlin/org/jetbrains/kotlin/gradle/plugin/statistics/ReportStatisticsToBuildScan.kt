@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 import org.jetbrains.kotlin.konan.file.File
 
-class ReportStatisticsToBuildScan(private val buildScan: BuildScanExtension) : ReportStatistics {
+class ReportStatisticsToBuildScan(private val buildScan: BuildScanExtension, private val buildUuid: String, private val kotlinVersion: String) : ReportStatistics {
     override fun report(data: CompileStatData) {
         buildScan.value(data.taskName, readableString(data))
         data.tags.forEach { buildScan.tag(it) }
