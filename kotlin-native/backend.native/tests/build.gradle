@@ -4222,6 +4222,11 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.extraOpts '-Xforeign-exception-mode', "objc-wrap"
     }
 
+    createInterop("exceptions") {
+        it.defFile 'interop/objc/exceptions/exceptions.def'
+        it.headers "$projectDir/interop/objc/exceptions/exceptions.h"
+    }
+
     createInterop("objcKt34467") {
         it.defFile 'interop/objc/kt34467/module_library.def'
         def moduleMap = file("interop/objc/kt34467/module_library.modulemap").absolutePath
@@ -4793,6 +4798,26 @@ if (PlatformInfo.isAppleTarget(project)) {
             mkdir(buildDir)
             execClangForCompilerTests(project.target) {
                 args "$projectDir/interop/objc/foreignException/objc_wrap.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjcexception.dylib"
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjcexception.dylib")
+            }
+        }
+    }
+
+    interopTest("interop_objc_exceptions") {
+        source = "interop/objc/exceptions/exceptions.kt"
+        interop = 'exceptions'
+        expectedExitStatusChecker = { it != 0 }
+        outputChecker = { s -> (s =~ /Uncaught Kotlin exception: MyException/).find() }
+        UtilsKt.dependsOnPlatformLibs(it)
+
+        doBeforeBuild {
+            mkdir(buildDir)
+            execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/exceptions/exceptions.m"
                 args "-lobjc", '-fobjc-arc'
                 args '-fPIC', '-shared', '-o', "$buildDir/libobjcexception.dylib"
             }

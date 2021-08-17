@@ -1,0 +1,4 @@
+language = Objective-C
+headerFilter = **/exceptions.h
+linkerOpts = -lobjcexception
+
