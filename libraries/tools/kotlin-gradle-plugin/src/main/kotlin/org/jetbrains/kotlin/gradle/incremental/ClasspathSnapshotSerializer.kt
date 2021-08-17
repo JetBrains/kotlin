@@ -124,32 +124,31 @@ object FqNameExternalizer : DataExternalizer<FqName> {
 object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: JavaClassSnapshot) {
-        output.writeString(snapshot.javaClass.name)
+        output.writeBoolean(snapshot is RegularJavaClassSnapshot)
         when (snapshot) {
-            is PlainJavaClassSnapshot -> PlainJavaClassSnapshotExternalizer.save(output, snapshot)
+            is RegularJavaClassSnapshot -> RegularJavaClassSnapshotExternalizer.save(output, snapshot)
             is EmptyJavaClassSnapshot -> EmptyJavaClassSnapshotExternalizer.save(output, snapshot)
-            is FallBackJavaClassSnapshot -> FallBackJavaClassSnapshotExternalizer.save(output, snapshot)
         }
     }
 
     override fun read(input: DataInput): JavaClassSnapshot {
-        return when (val className = input.readString()) {
-            PlainJavaClassSnapshot::class.java.name -> PlainJavaClassSnapshotExternalizer.read(input)
-            EmptyJavaClassSnapshot::class.java.name -> EmptyJavaClassSnapshotExternalizer.read(input)
-            FallBackJavaClassSnapshot::class.java.name -> FallBackJavaClassSnapshotExternalizer.read(input)
-            else -> error("Unrecognized class: $className")
+        val isPlainJavaClassSnapshot = input.readBoolean()
+        return if (isPlainJavaClassSnapshot) {
+            RegularJavaClassSnapshotExternalizer.read(input)
+        } else {
+            EmptyJavaClassSnapshotExternalizer.read(input)
         }
     }
 }
 
-object PlainJavaClassSnapshotExternalizer : DataExternalizer<PlainJavaClassSnapshot> {
+object RegularJavaClassSnapshotExternalizer : DataExternalizer<RegularJavaClassSnapshot> {
 
-    override fun save(output: DataOutput, snapshot: PlainJavaClassSnapshot) {
+    override fun save(output: DataOutput, snapshot: RegularJavaClassSnapshot) {
         JavaClassProtoMapValueExternalizer.save(output, snapshot.serializedJavaClass)
     }
 
-    override fun read(input: DataInput): PlainJavaClassSnapshot {
-        return PlainJavaClassSnapshot(serializedJavaClass = JavaClassProtoMapValueExternalizer.read(input))
+    override fun read(input: DataInput): RegularJavaClassSnapshot {
+        return RegularJavaClassSnapshot(serializedJavaClass = JavaClassProtoMapValueExternalizer.read(input))
     }
 }
 
@@ -161,17 +160,6 @@ object EmptyJavaClassSnapshotExternalizer : DataExternalizer<EmptyJavaClassSnaps
 
     override fun read(input: DataInput): EmptyJavaClassSnapshot {
         return EmptyJavaClassSnapshot
-    }
-}
-
-object FallBackJavaClassSnapshotExternalizer : DataExternalizer<FallBackJavaClassSnapshot> {
-
-    override fun save(output: DataOutput, snapshot: FallBackJavaClassSnapshot) {
-        ByteArrayExternalizer.save(output, snapshot.contentHash)
-    }
-
-    override fun read(input: DataInput): FallBackJavaClassSnapshot {
-        return FallBackJavaClassSnapshot(contentHash = ByteArrayExternalizer.read(input))
     }
 }
 

@@ -43,7 +43,7 @@ class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
 sealed class JavaClassSnapshot : ClassSnapshot()
 
 /** [JavaClassSnapshot] of a typical Java class. */
-class PlainJavaClassSnapshot(
+class RegularJavaClassSnapshot(
     val serializedJavaClass: SerializedJavaClass
 ) : JavaClassSnapshot()
 
@@ -54,13 +54,3 @@ class PlainJavaClassSnapshot(
  * changes in a local class will not cause recompilation of other source files.
  */
 object EmptyJavaClassSnapshot : JavaClassSnapshot()
-
-/**
- * [JavaClassSnapshot] of a Java class where a [PlainJavaClassSnapshot] can't be computed.
- *
- * TODO: Remove later if it's unused.
- */
-class FallBackJavaClassSnapshot(
-    /** The hash of the class contents. */
-    val contentHash: ByteArray
-) : JavaClassSnapshot()

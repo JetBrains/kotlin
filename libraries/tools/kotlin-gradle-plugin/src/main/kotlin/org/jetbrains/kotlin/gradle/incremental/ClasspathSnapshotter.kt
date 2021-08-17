@@ -92,9 +92,8 @@ object ClassSnapshotter {
                 // ClassId.isLocal, see ClassId's kdoc). Therefore, we checked `classId.isLocal`, which is a super set of `className is
                 // LocalClass`.
                 EmptyJavaClassSnapshot
-            } else if (className is NestedNonLocalClass && className.simpleName.toIntOrNull() != null) {
-                // A nested class whose simple name is a number also can't be referenced from other source files (whether it is an anonymous
-                // class or not, see NestedNonLocalClass.isPossiblyAnonymous). Therefore, the snapshot of this type of class is also empty.
+            } else if (className is NestedNonLocalClass && (className.isAnonymous || className.isSynthetic)) {
+                // An anonymous or synthetic class also can't be referenced from other source files, so its snapshot is also empty.
                 EmptyJavaClassSnapshot
             } else {
                 null
@@ -107,7 +106,7 @@ object ClassSnapshotter {
         val remainingClassesContents: List<ByteArray> = remainingClassesIndices.map { classes[it].contents }
 
         val snapshots: List<JavaClassSnapshot> = JavaClassDescriptorCreator.create(remainingClassIds, remainingClassesContents).map {
-            PlainJavaClassSnapshot(it.toSerializedJavaClass())
+            RegularJavaClassSnapshot(it.toSerializedJavaClass())
         }
         val remainingSnapshots: Map<Int, JavaClassSnapshot> /* maps a class index to its snapshot */ =
             remainingClassesIndices.zip(snapshots).toMap()

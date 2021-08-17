@@ -39,6 +39,8 @@ sealed class JavaClassName(
             val nameRef = Ref.create<String>()
             val isTopLevelRef = Ref.create<Boolean>()
             val outerNameRef = Ref.create<String>()
+            val isAnonymousInnerClassRef = Ref.create<Boolean>()
+            val isSyntheticInnerClassRef = Ref.create<Boolean>()
 
             ClassReader(classContents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
                 override fun visit(
@@ -52,17 +54,24 @@ sealed class JavaClassName(
                     if (name == nameRef.get()!!) {
                         isTopLevelRef.set(false)
                         outerNameRef.set(outerName)
+                        isAnonymousInnerClassRef.set(innerName == null)
+                        isSyntheticInnerClassRef.set((access and Opcodes.ACC_SYNTHETIC) != 0)
                     }
                 }
             }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
 
-            val isTopLevel = isTopLevelRef.get() ?: true
             val name = nameRef.get()!!
+            val isTopLevel = isTopLevelRef.get() ?: true
             val outerName = outerNameRef.get()
 
             return when {
                 isTopLevel -> TopLevelClass(name)
-                outerName != null -> NestedNonLocalClass(name, outerName)
+                outerName != null -> NestedNonLocalClass(
+                    name,
+                    outerName,
+                    isAnonymousInnerClassRef.get()!!,
+                    isSyntheticInnerClassRef.get()!!
+                )
                 else -> LocalClass(name)
             }
         }
@@ -95,6 +104,17 @@ class NestedNonLocalClass(
      * The outer class can be of any type ([TopLevelClass], [NestedNonLocalClass], or [LocalClass]).
      */
     val outerName: String,
+
+    /**
+     * Whether this class is an anonymous class.
+     *
+     * Note: Even though an anonymous class has no name in the source code, it always has a (not-null, not-empty) name in the compiled
+     * class. Therefore, [simpleName] is not `null` and not empty even for anonymous classes.
+     * */
+    val isAnonymous: Boolean,
+
+    /** Whether this class is a synthetic class. */
+    val isSynthetic: Boolean
 ) : NestedClass(name) {
 
     init {
@@ -105,25 +125,10 @@ class NestedNonLocalClass(
      * The simple name of this class (e.g., the simple name of "com/example/OuterClass$NestedClass" is "NestedClass", the simple name of
      * class "com/example/OuterClassWith$Sign$NestedClassWith$Sign" is "NestedClassWith$Sign").
      *
-     * Note: [simpleName] is not `null` and not empty even for anonymous classes (see [isPossiblyAnonymous]).
+     * Note: [simpleName] is not `null` and not empty even for anonymous classes (see [isAnonymous]).
      */
     val simpleName: String
         get() = name.substring("$outerName\$".length)
-
-    /**
-     * Whether this class is possibly an anonymous class.
-     *
-     * An anonymous class has no name in the source code, but it always has a (not-null, not-empty) name in the compiled class. Note that
-     * the compiled class can also be directly generated without any source code.
-     *
-     * The [simpleName] of an anonymous class is usually a number. However, it is also possible that the [simpleName] of an anonymous class
-     * is not a number, and the [simpleName] of a non-anonymous class is a number (e.g., if the class was directly generated).
-     *
-     * Therefore, the following property only indicates that this class was likely compiled from an anonymous class, but there is no
-     * guarantee.
-     */
-    val isPossiblyAnonymous: Boolean
-        get() = simpleName.toIntOrNull() != null
 }
 
 /** See [JavaClassName]. */

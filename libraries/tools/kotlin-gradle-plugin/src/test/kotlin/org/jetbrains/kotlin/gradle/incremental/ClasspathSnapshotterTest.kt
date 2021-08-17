@@ -72,7 +72,7 @@ class JavaClassWithNestedClassesClasspathSnapshotterTest : ClasspathSnapshotTest
         return compileAndSnapshotAll()[5].also {
             assertEquals(
                 testSourceFile.nestedClassToTest,
-                (it as PlainJavaClassSnapshot).serializedJavaClass.classId.asString().replace('.', '$')
+                (it as RegularJavaClassSnapshot).serializedJavaClass.classId.asString().replace('.', '$')
             )
         }
     }

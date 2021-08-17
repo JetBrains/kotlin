@@ -80,7 +80,7 @@ object ClasspathChangesComputer {
         @Suppress("UNUSED_PARAMETER") changesCollector: ChangesCollector
     ): ChangesCollectorResult {
         if (current is JavaClassSnapshot && previous is JavaClassSnapshot &&
-            (current !is PlainJavaClassSnapshot || previous !is PlainJavaClassSnapshot)
+            (current !is RegularJavaClassSnapshot || previous !is RegularJavaClassSnapshot)
         ) {
             return Failure.NotYetImplemented
         }
@@ -142,12 +142,12 @@ object ClasspathChangesComputer {
         changesCollector: ChangesCollector
     ) {
         // Store previous snapshot in incrementalJvmCache, the returned ChangesCollector result is not used.
-        val previousSnapshot = (previous as PlainJavaClassSnapshot).serializedJavaClass // TODO Handle unsafe cast
+        val previousSnapshot = (previous as RegularJavaClassSnapshot).serializedJavaClass // TODO Handle unsafe cast
         incrementalJvmCache.saveJavaClassProto(/* source */ null, previousSnapshot, ChangesCollector())
         incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
 
         // Compute changes between the current snapshot and the previously stored snapshot, and store the result in changesCollector.
-        val currentSnapshot = (current as PlainJavaClassSnapshot).serializedJavaClass
+        val currentSnapshot = (current as RegularJavaClassSnapshot).serializedJavaClass
         incrementalJvmCache.saveJavaClassProto(/* source */ null, currentSnapshot, changesCollector)
         incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
     }
