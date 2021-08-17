@@ -1,5 +1,6 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_FIR: JVM_IR
 // See KT-8135
 // We could generate runtime assertion on call site for 'generic<NOT_NULL_TYPE>()' below.
 
