@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirTypeSubstitutor
 import org.jetbrains.kotlin.commonizer.tree.CirTreeTypeAlias
 
-internal class CirAliasTypeSubstitutor(
+internal class AliasedTypeSubstitutor(
     private val commonDependencies: CirProvidedClassifiers,
     private val classifierIndices: TargetDependent<CirClassifierIndex>
 ) : CirTypeSubstitutor {

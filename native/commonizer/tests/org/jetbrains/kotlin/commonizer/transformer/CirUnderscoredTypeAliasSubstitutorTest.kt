@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.commonizer.transformer
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
 
-class CirUnderscoredTypeAliasSubstitutorTest : AbstractInlineSourcesCommonizationTest() {
+class UnderscoredTypeAliasTypeSubstitutorTest : AbstractInlineSourcesCommonizationTest() {
 
     fun `test inlined underscored typealias - single platform`() {
         val result = commonize {

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.commonizer.mergedtree.findTypeAlias
  * `platform/posix/mode_t -> platform/posix/__mode_t -> kotlin/UInt`
  * exists which is preferable
  */
-internal class CirUnderscoredTypeAliasSubstitutor(
+internal class UnderscoredTypeAliasTypeSubstitutor(
     private val classifierIndices: TargetDependent<CirClassifierIndex>
 ) : CirTypeSubstitutor {
 

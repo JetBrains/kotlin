@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
-import org.jetbrains.kotlin.commonizer.transformer.CirAliasTypeSubstitutor
-import org.jetbrains.kotlin.commonizer.transformer.CirUnderscoredTypeAliasSubstitutor
+import org.jetbrains.kotlin.commonizer.transformer.AliasedTypeSubstitutor
+import org.jetbrains.kotlin.commonizer.transformer.UnderscoredTypeAliasTypeSubstitutor
 import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.TypeSubstitutionCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
@@ -67,12 +67,12 @@ internal fun commonizeTarget(
 
         TypeSubstitutionCirNodeTransformer(
             parameters.storageManager, classifiers,
-            CirAliasTypeSubstitutor(classifiers.commonDependencies, classifiers.classifierIndices)
+            AliasedTypeSubstitutor(classifiers.commonDependencies, classifiers.classifierIndices)
         ).invoke(mergedTree)
 
         TypeSubstitutionCirNodeTransformer(
             parameters.storageManager, classifiers,
-            CirUnderscoredTypeAliasSubstitutor(classifiers.classifierIndices)
+            UnderscoredTypeAliasTypeSubstitutor(classifiers.classifierIndices)
         ).invoke(mergedTree)
 
         mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
