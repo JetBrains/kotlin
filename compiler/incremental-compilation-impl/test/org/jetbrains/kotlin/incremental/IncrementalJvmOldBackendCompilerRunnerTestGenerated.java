@@ -1350,6 +1350,11 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
                 runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature/");
             }
 
+            @TestMetadata("rawErrorTypeDuringSerialization")
+            public void testRawErrorTypeDuringSerialization() throws Exception {
+                runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization/");
+            }
+
             @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1594,6 +1599,19 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
 
                 public void testAllFilesPresentInNotChangeSignature() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
+                }
+            }
+
+            @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class RawErrorTypeDuringSerialization extends AbstractIncrementalJvmOldBackendCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInRawErrorTypeDuringSerialization() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
                 }
             }
 
