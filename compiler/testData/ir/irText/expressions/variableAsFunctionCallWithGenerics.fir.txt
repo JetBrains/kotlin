@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-kt26531Val> <T> (): kotlin.Function0<T of <root>.<get-kt26531Val>> declared in <root>'
           FUN_EXPR type=kotlin.Function0<T of <root>.<get-kt26531Val>> origin=LAMBDA
-            FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-kt26531Val>
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-kt26531Val>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <no name provided> (): T of <root>.<get-kt26531Val> declared in <root>.<get-kt26531Val>'
                   GET_VAR '<this>: T of <root>.<get-kt26531Val> declared in <root>.<get-kt26531Val>' type=T of <root>.<get-kt26531Val> origin=null

@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/lambdas.kt
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=LAMBDA
-          FUN name:<no name provided> visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.Int) returnType:kotlin.Unit
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<no name provided> visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.Int) returnType:kotlin.Unit
             VALUE_PARAMETER name:i index:0 type:kotlin.Int
             VALUE_PARAMETER name:j index:1 type:kotlin.Int
             BLOCK_BODY
