@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.isThrowable
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
@@ -49,7 +50,7 @@ private fun addTargetCpuAndFeaturesAttributes(context: Context, llvmFunction: LL
 }
 
 internal fun addLlvmAttributesForKotlinFunction(context: Context, irFunction: IrFunction, llvmFunction: LLVMValueRef) {
-    if (irFunction.returnType.isNothing()) {
+    if (irFunction.returnType.isNothing() && !irFunction.isSuspend) { // suspend function can return value in case of COROUTINE_SUSPENDED
         setFunctionNoReturn(llvmFunction)
     }
 
