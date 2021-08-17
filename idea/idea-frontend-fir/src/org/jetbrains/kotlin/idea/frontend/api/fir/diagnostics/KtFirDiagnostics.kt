@@ -1729,6 +1729,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val modifier: KtModifierKeywordToken
     }
 
+    abstract class ExplicitBackingFieldInInterface : KtFirDiagnostic<KtBackingField>() {
+        override val diagnosticClass get() = ExplicitBackingFieldInInterface::class
+    }
+
+    abstract class ExplicitBackingFieldInAbstractProperty : KtFirDiagnostic<KtBackingField>() {
+        override val diagnosticClass get() = ExplicitBackingFieldInAbstractProperty::class
+    }
+
     abstract class AbstractPropertyInPrimaryConstructorParameters : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = AbstractPropertyInPrimaryConstructorParameters::class
     }
