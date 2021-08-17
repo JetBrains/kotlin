@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm")
     `java-gradle-plugin`
     id("com.gradle.plugin-publish") apply false
-    `signing`
+    signing
     `maven-publish`
 }
 
@@ -38,7 +38,7 @@ tasks.check { dependsOn(tasks["functionalTest"]) }
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
     implementation("org.ow2.asm:asm:9.0")
     implementation("org.ow2.asm:asm-tree:9.0")
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
