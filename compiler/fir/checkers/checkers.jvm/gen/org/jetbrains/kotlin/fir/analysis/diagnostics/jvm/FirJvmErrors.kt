@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 
 /*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 object FirJvmErrors {
     // Declarations
     val CONFLICTING_JVM_DECLARATIONS by error0<PsiElement>()
+    val STRICTFP_ON_CLASS by error0<KtAnnotationEntry>()
 
     // Types
     val JAVA_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()

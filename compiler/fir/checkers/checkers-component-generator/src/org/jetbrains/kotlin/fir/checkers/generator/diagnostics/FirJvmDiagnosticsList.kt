@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     val DECLARATIONS by object : DiagnosticGroup("Declarations") {
         val CONFLICTING_JVM_DECLARATIONS by error<PsiElement>()
+        val STRICTFP_ON_CLASS by error<KtAnnotationEntry>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

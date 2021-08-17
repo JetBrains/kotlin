@@ -3878,6 +3878,13 @@ internal class ConflictingJvmDeclarationsImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class StrictfpOnClassImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.StrictfpOnClass(), KtAbstractFirDiagnostic<KtAnnotationEntry> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KtType,
     override val actualType: KtType,
