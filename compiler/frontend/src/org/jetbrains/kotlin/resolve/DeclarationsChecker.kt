@@ -591,6 +591,12 @@ class DeclarationsChecker(
         }
     }
 
+    private fun checkBackingField(property: KtProperty) {
+        property.fieldDeclaration?.let {
+            trace.report(EXPLICIT_BACKING_FIELDS_UNSUPPORTED.on(it))
+        }
+    }
+
     private fun checkProperty(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
         val containingDeclaration = propertyDescriptor.containingDeclaration
         if (containingDeclaration is ClassDescriptor) {
@@ -605,6 +611,7 @@ class DeclarationsChecker(
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
         checkImplicitCallableType(property, propertyDescriptor)
         checkPrivateExpectedDeclaration(property, propertyDescriptor)
+        checkBackingField(property)
     }
 
     private fun checkPrivateExpectedDeclaration(declaration: KtDeclaration, descriptor: MemberDescriptor) {
