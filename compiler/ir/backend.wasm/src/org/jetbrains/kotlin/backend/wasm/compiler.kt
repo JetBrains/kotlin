@@ -64,7 +64,7 @@ fun compileWasm(
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
-    val compiledWasmModule = WasmCompiledModuleFragment()
+    val compiledWasmModule = WasmCompiledModuleFragment(context.irBuiltIns)
     val codeGenerator = WasmModuleFragmentGenerator(context, compiledWasmModule)
     codeGenerator.generateModule(moduleFragment)
 

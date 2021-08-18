@@ -76,6 +76,12 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.THROW, WasmImmediate.TagIdx(tagIdx))
     }
 
+    @Suppress("UNUSED_PARAMETER")
+    fun buildTry(label: String?, resultType: WasmType? = null) {
+        numberOfNestedBlocks++
+        buildInstr(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
+    }
+
     fun buildCatch(tagIdx: Int) {
         buildInstr(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
     }
