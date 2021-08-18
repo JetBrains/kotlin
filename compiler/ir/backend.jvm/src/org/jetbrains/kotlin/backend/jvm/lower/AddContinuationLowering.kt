@@ -377,7 +377,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
 // the result is called 'view', just to be consistent with old backend.
 private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrSimpleFunction {
     if (!isSuspend) return this
-    return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
+    return context.suspendFunctionOriginalToView.getOrPut(this) { createSuspendFunctionStub(context) }
 }
 
 internal fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
