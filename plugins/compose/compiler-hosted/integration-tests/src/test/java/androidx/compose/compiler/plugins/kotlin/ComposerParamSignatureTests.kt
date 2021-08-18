@@ -423,7 +423,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             }
             final class TestKt%a%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
               <init>()V
-              public final invoke()I
+              public final invoke()Ljava/lang/Integer;
               public synthetic bridge invoke()Ljava/lang/Object;
               static <clinit>()V
               public final static LTestKt%a%1; INSTANCE
