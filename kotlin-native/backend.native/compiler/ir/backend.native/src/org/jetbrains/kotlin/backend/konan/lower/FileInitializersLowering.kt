@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
+import org.jetbrains.kotlin.backend.konan.llvm.needsGCRegistration
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -55,7 +56,7 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
         var kPropertiesField: IrField? = null
         for (declaration in irFile.declarations) {
             val irField = (declaration as? IrField) ?: (declaration as? IrProperty)?.backingField
-            if (irField == null || !irField.hasNonConstInitializer || irField.shouldBeInitializedEagerly) continue
+            if (irField == null || !irField.needsInitializationAtRuntime || irField.shouldBeInitializedEagerly) continue
             when {
                 irField.origin == DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION -> {
                     require(kPropertiesField == null) { "Expected at most one kProperties field" }
@@ -132,6 +133,9 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
         addValueParameter("isMainThread", context.irBuiltIns.booleanType)
         irFile.declarations.add(0, this)
     }
+
+    private val IrField.needsInitializationAtRuntime: Boolean
+        get() = hasNonConstInitializer || needsGCRegistration(context)
 
     private val IrField.hasNonConstInitializer: Boolean
         get() = initializer?.expression.let { it != null && it !is IrConst<*> }

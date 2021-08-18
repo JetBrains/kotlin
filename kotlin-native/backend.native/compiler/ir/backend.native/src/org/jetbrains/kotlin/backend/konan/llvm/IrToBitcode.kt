@@ -70,6 +70,12 @@ internal val IrField.storageKind: FieldStorageKind get() {
     }
 }
 
+internal fun IrField.needsGCRegistration(context: Context) =
+        context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
+                type.binaryTypeIsReference() && // only for references
+                (initializer?.expression !is IrConst<*>? || // which are initialized from heap object
+                        !isFinal) // or are not final
+
 internal fun IrClass.storageKind(context: Context): ObjectStorageKind = when {
     this.annotations.hasAnnotation(KonanFqNames.threadLocal) &&
             context.config.threadsAreAllowed -> ObjectStorageKind.THREAD_LOCAL
@@ -341,12 +347,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         } else {
             null
         }
-        val needRegistration =
-                context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
-                        irField.type.binaryTypeIsReference() && // only for references
-                        (initialValue != null || // which are initialized from heap object
-                                !irField.isFinal) // or are not final
-        if (needRegistration) {
+        if (irField.needsGCRegistration(context)) {
             call(context.llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
                     ?: kNullObjHeaderPtr))
         } else if (initialValue != null) {
