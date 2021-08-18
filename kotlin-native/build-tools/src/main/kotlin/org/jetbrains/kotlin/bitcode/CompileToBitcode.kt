@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.bitcode
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -161,7 +162,7 @@ open class CompileToBitcode @Inject constructor(
     @TaskAction
     fun compile() {
         objDir.mkdirs()
-        val plugin = project.convention.getPlugin(ExecClang::class.java)
+        val plugin = project.extensions.getByType<ExecClang>()
 
         plugin.execKonanClang(target) {
             workingDir = objDir

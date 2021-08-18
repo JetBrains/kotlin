@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.bitcode.CompileToBitcode
 import java.io.FileReader
 import java.io.FileWriter
@@ -63,7 +64,7 @@ open class GenerateCompilationDatabase @Inject constructor(@Input val target: St
 
     @TaskAction
     fun run() {
-        val plugin = project.convention.getPlugin(ExecClang::class.java)
+        val plugin = project.extensions.getByType<ExecClang>()
         val executable = plugin.resolveExecutable(executable)
         val args = listOf(executable) + compilerFlags + plugin.clangArgsForCppRuntime(target)
         val entries: List<Entry> = files.map { Entry.create(srcRoot, it, args, outputDir) }
