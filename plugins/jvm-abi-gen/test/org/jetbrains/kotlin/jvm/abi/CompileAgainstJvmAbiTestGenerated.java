@@ -65,6 +65,11 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/inlineReifiedFunction/");
     }
 
+    @TestMetadata("inlineWhenMappings")
+    public void testInlineWhenMappings() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineWhenMappings/");
+    }
+
     @TestMetadata("innerObjectRegeneration")
     public void testInnerObjectRegeneration() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/innerObjectRegeneration/");

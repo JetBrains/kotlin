@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
+import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -156,7 +157,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
             when {
                 publicAbi ->
                     abiClassInfo[internalName] = AbiClassInfo.Public
-                !localOrAnonymousClass -> {
+                !localOrAnonymousClass && !isWhenMappingClass -> {
                     for (method in maskedMethods) {
                         methodInfos.replace(method, AbiMethodInfo.STRIP)
                     }
@@ -165,5 +166,8 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
             }
             super.done()
         }
+
+        private val isWhenMappingClass: Boolean
+            get() = internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX)
     }
 }
