@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import java.io.File
+import java.io.FileOutputStream
 
 internal val Project.isNativeDistributionCommonizationCacheEnabled: Boolean
     get() = PropertiesProvider(this).enableNativeDistributionCommonizationCache
@@ -20,6 +21,7 @@ internal class NativeDistributionCommonizationCache(
     private val project: Project,
     private val commonizer: NativeDistributionCommonizer
 ) : NativeDistributionCommonizer {
+
 
     override fun commonizeNativeDistribution(
         konanHome: File,
@@ -31,31 +33,33 @@ internal class NativeDistributionCommonizationCache(
             logInfo("Cache disabled")
         }
 
-        val cachedOutputTargets = outputTargets
-            .filter { outputTarget -> isCached(resolveCommonizedDirectory(outputDirectory, outputTarget)) }
-            .onEach { outputTarget -> logInfo("Cache hit: $outputTarget already commonized") }
-            .toSet()
+        withLock(outputDirectory) {
+            val cachedOutputTargets = outputTargets
+                .filter { outputTarget -> isCached(resolveCommonizedDirectory(outputDirectory, outputTarget)) }
+                .onEach { outputTarget -> logInfo("Cache hit: $outputTarget already commonized") }
+                .toSet()
 
-        val enqueuedOutputTargets = if (project.isNativeDistributionCommonizationCacheEnabled) outputTargets - cachedOutputTargets
-        else outputTargets
+            val enqueuedOutputTargets = if (project.isNativeDistributionCommonizationCacheEnabled) outputTargets - cachedOutputTargets
+            else outputTargets
 
-        if (canReturnFast(konanHome, enqueuedOutputTargets)) {
-            logInfo("All available targets are commonized already - Nothing to do")
-            return
+            if (canReturnFast(konanHome, enqueuedOutputTargets)) {
+                logInfo("All available targets are commonized already - Nothing to do")
+                return
+            }
+
+            enqueuedOutputTargets
+                .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
+                .forEach { commonizedDirectory -> if (commonizedDirectory.exists()) commonizedDirectory.deleteRecursively() }
+
+            commonizer.commonizeNativeDistribution(
+                konanHome, outputDirectory, enqueuedOutputTargets, logLevel
+            )
+
+            enqueuedOutputTargets
+                .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
+                .filter { commonizedDirectory -> commonizedDirectory.isDirectory }
+                .forEach { commonizedDirectory -> commonizedDirectory.resolve(".success").createNewFile() }
         }
-
-        enqueuedOutputTargets
-            .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
-            .forEach { commonizedDirectory -> if (commonizedDirectory.exists()) commonizedDirectory.deleteRecursively() }
-
-        commonizer.commonizeNativeDistribution(
-            konanHome, outputDirectory, enqueuedOutputTargets, logLevel
-        )
-
-        enqueuedOutputTargets
-            .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
-            .filter { commonizedDirectory -> commonizedDirectory.isDirectory }
-            .forEach { commonizedDirectory -> commonizedDirectory.resolve(".success").createNewFile() }
     }
 
     private fun isCached(directory: File): Boolean {
@@ -76,9 +80,26 @@ internal class NativeDistributionCommonizationCache(
             .none { platformLibsDir -> platformLibsDir.exists() }
     }
 
+    private inline fun <T> withLock(outputDirectory: File, action: () -> T): T {
+        val lockfile = outputDirectory.resolve(".lock")
+        logInfo("Acquire lock: ${lockfile.path} ...")
+        FileOutputStream(outputDirectory.resolve(".lock")).use { stream ->
+            val lock = stream.channel.lock()
+            assert(lock.isValid)
+            return try {
+                logInfo("Lock acquired: ${lockfile.path}")
+                action()
+            } finally {
+                lock.release()
+                logInfo("Lock released: ${lockfile.path}")
+            }
+        }
+    }
+
     private fun logInfo(message: String) = project.logger.info("${Logging.prefix}: $message")
 
     private object Logging {
         const val prefix = "Native Distribution Commonization"
     }
 }
+

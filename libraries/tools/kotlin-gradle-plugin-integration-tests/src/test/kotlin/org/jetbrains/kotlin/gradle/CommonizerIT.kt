@@ -43,6 +43,8 @@ class CommonizerIT : BaseGradleIT() {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertContains("Native Distribution Commonization: Cache hit")
                 assertContains("Native Distribution Commonization: All available targets are commonized already")
+                assertContains("Native Distribution Commonization: Lock acquired")
+                assertContains("Native Distribution Commonization: Lock released")
                 assertNotContains(commonizerOutput)
                 assertSuccessful()
             }
