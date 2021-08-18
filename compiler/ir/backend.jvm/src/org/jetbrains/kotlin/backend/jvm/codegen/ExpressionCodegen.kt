@@ -1159,6 +1159,11 @@ class ExpressionCodegen(
 
     override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): PromisedValue {
         jump.markLineNumber(startOffset = true)
+        // Make sure that the line number has an instruction so that the debugger can always
+        // break on the break/continue. As an example, unwindBlockStack could otherwise
+        // generate a new line number immediately which would lead to the line number for
+        // the break/continue being ignored.
+        mv.nop()
         val endLabel = Label()
         val stackElement = unwindBlockStack(endLabel, data) { it.loop == jump.loop }
         if (stackElement == null) {
