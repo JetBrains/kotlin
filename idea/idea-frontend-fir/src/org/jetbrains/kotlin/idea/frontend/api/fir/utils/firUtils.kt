@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtUnsupportedConstantValue
@@ -37,15 +40,18 @@ internal fun KtExpression.unwrap(): KtExpression {
     } ?: this
 }
 
-internal fun FirNamedReference.getReferencedElementType(): ConeKotlinType {
+internal fun FirNamedReference.getReferencedElementType(resolveState: FirModuleResolveState): ConeKotlinType {
     val symbols = when (this) {
         is FirResolvedNamedReference -> listOf(resolvedSymbol)
         is FirErrorNamedReference -> FirReferenceResolveHelper.getFirSymbolsByErrorNamedReference(this)
         else -> error("Unexpected ${this::class}")
     }
     val firCallableDeclaration = symbols.singleOrNull()?.fir as? FirCallableDeclaration
-    return firCallableDeclaration?.returnTypeRef?.coneType
-        ?: ConeClassErrorType(ConeUnresolvedNameError(name))
+        ?: return ConeClassErrorType(ConeUnresolvedNameError(name))
+
+    return firCallableDeclaration.withFirDeclaration(ResolveType.CallableReturnType, resolveState) {
+        it.returnTypeRef.coneType
+    }
 }
 
 internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session: FirSession): Map<String, FirExpression> {

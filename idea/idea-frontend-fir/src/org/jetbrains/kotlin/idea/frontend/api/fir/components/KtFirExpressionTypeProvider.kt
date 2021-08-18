@@ -41,7 +41,7 @@ internal class KtFirExpressionTypeProvider(
     override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {
         when (val fir = expression.unwrap().getOrBuildFir(firResolveState)) {
             is FirExpression -> fir.typeRef.coneType.asKtType()
-            is FirNamedReference -> fir.getReferencedElementType().asKtType()
+            is FirNamedReference -> fir.getReferencedElementType(firResolveState).asKtType()
             is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
             is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel -> null
             else -> error("Unexpected ${fir?.let { it::class }} for ${expression::class} with text `${expression.text}`")
