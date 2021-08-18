@@ -51,7 +51,9 @@ package org.jetbrains.kotlin.runner
 
 //import kotlin.collections.Set.Companion.build
 //import kotlin.collections.CollectionLiteralBuilder
-import java.io.File
+//import java.io.File
+
+
 
 class A {
     companion object {
@@ -64,29 +66,33 @@ class A {
 fun <T> Set.Companion.build(size: Int, init: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
     return TODO()
 }
-
+//
 fun <T> List.Companion.build(size: Int, init: CollectionLiteralBuilder<List<T>, T>.() -> Unit = {}): List<T> {
     return TODO()
 //    return object : CollectionLiteralBuilder<List<T>, T> {
 //        private val buf = mutableSetOf<T>()
+//
 //        override fun add(element: T) {
 //            buf.add(element)
 //        }
+//
 //        override fun build(): List<T> {
 //            return buf
 //        }
 //    }.apply(init).build()
 }
 
-fun main() {
-//    listOf(1, 2 ,3, 0.3)
+fun foo(s: Set<Int>, i: String, l: List<Int>) {
+}
 
-//    val a = List.build<Int>(3) {
-//        add(1)
+fun main() {
+//    val a = A.build<Int>(1) {
 //        add(1)
 //        add(2)
 //        add(3)
 //    }
-    val a: Set<Number> = [1, 2, 3.0]
-    println(a.toString())
+//    val a: Set<Int> = [1, 2, 3]
+//    foo(a)
+    foo([1, 2, 3], "str", [4.2, 5, 6])
+//    println(a.toString())
 }

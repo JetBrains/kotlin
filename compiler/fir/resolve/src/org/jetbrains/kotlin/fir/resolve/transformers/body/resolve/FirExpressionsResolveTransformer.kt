@@ -273,6 +273,54 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return checkedSafeCallSubject
     }
 
+    private fun fixAndResolve(functionCall: FirFunctionCall): FirFunctionCall {
+        val newArgumentLists = cartesianProductOfArguments(functionCall.argumentList)
+        val newCalls = newArgumentLists.map {
+            functionCall.copy(argumentList = it)
+        }
+        val resolvedCalls = newCalls.map { it.transformSingle(this, ResolutionMode.ContextDependent) } // TODO не уверен на счёт контекста
+        val successful = resolvedCalls.filter { it.calleeReference !is FirErrorNamedReference }
+        return when {
+            successful.isEmpty() -> TODO("throw ambiguity error")
+            successful.size == 1 -> successful.first()
+            else -> TODO()
+        }
+    }
+
+
+    private fun cartesianProductOfArguments(arguments: FirArgumentList): List<FirArgumentList> {
+        @Suppress("NAME_SHADOWING")
+        val arguments = arguments.arguments.map { expression ->
+            if (expression is FirCollectionLiteral) {
+                expression.typeRef.coneTypeUnsafe<ConeCollectionLiteralType>().let {
+                    it.possibleTypes.map { type ->
+                        // TODO создавать один и тот же билдер только один раз
+                        createFunctionCallForCollectionLiteral(
+                            type.classId!!.shortClassName,
+                            expression.expressions,
+                            it.argumentType!!.toFirResolvedTypeRef()
+                        )
+                    }
+                }
+            } else {
+                setOf(expression)
+            }
+        }
+
+        fun cartesianProduct(vararg collections: Collection<FirExpression>): List<List<FirExpression>> =
+            (collections)
+                .fold(listOf(listOf())) { acc, set ->
+                    acc.flatMap { list -> set.map { element -> list + element } }
+                }
+
+
+        return cartesianProduct(*arguments.toTypedArray()).map {
+            buildArgumentList {
+                this.arguments.addAll(it)
+            }
+        }
+    }
+
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
         val calleeReference = functionCall.calleeReference
         if (
@@ -290,6 +338,17 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             return functionCall
         }
         if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
+        val collectionLiterals = functionCall.argumentList.arguments.mapIndexedNotNull { index: Int, firExpression: FirExpression ->
+            if (firExpression is FirCollectionLiteral) {
+                index to firExpression
+            } else {
+                null
+            }
+        }
+        if (collectionLiterals.isNotEmpty()) {
+            collectionLiterals.forEach { it.second.transformSingle(transformer, data) }
+            return fixAndResolve(functionCall)
+        }
         dataFlowAnalyzer.enterCall()
         functionCall.transformAnnotations(transformer, data)
         functionCall.transformSingle(InvocationKindTransformer, null)
@@ -342,71 +401,69 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         collectionLiteral.resultType = collectionLiteral.resultType.resolvedTypeFromPrototype(type)
 
-        return when (data) {
-            is ResolutionMode.WithExpectedType -> {
-                val buildCall = buildCLOperatorCall(collectionLiteral, data.expectedTypeRef)
+        return when {
+            data is ResolutionMode.WithExpectedType -> {
+                val expectedClassId = when (data.expectedTypeRef) {
+                    is FirImplicitTypeRef -> StandardClassIds.List
+                    is FirResolvedTypeRef -> data.expectedTypeRef.coneType.classId!!
+                    is FirTypeRefWithNullability -> TODO()
+                }
+
+                val receiverName = if (possibleTypes.map { it.classId }.contains(expectedClassId)) {
+                    expectedClassId.shortClassName
+                } else {
+                    // Some kind of diagnostic???
+                    TODO()
+                }
+                // TODO check for implicit
+                val buildCall = createFunctionCallForCollectionLiteral(
+                    receiverName,
+                    collectionLiteral.expressions,
+                    type.argumentType!!.toFirResolvedTypeRef()
+                )
                 transformer.transformFunctionCall(buildCall, data)
+            }
+            possibleTypes.size == 1 -> {
+                TODO("build")
             }
             else -> collectionLiteral
         }
     }
 
-    private fun buildCLOperatorCall(cl: FirCollectionLiteral, expectedType: FirTypeRef): FirFunctionCall {
-        val clt = cl.typeRef.coneType as ConeCollectionLiteralType
-        // TODO decide what to do with source
-        val adds = cl.expressions.map {
+    private fun createFunctionCallForCollectionLiteral(
+        receiverName: Name,
+        arguments: List<FirExpression>,
+        typeOfArguments: FirResolvedTypeRef? = null
+    ): FirFunctionCall {
+        val adds = arguments.map {
             buildFunctionCall {
-                this.calleeReference = buildSimpleNamedReference {
-                    this.name = Name.identifier("add")
-                }
-                this.argumentList = buildArgumentList {
-                    this.arguments.add(it)
+                calleeReference = buildSimpleNamedReference { name = Name.identifier("add") }
+                argumentList = buildUnaryArgumentList(it)
+            }
+        }
+        val lambda = buildLambdaArgumentExpression {
+            expression = buildAnonymousFunctionExpression {
+                anonymousFunction = buildAnonymousFunction {
+                    origin = FirDeclarationOrigin.Synthetic
+                    moduleData = session.moduleData
+                    body = buildBlock {
+                        statements.addAll(adds)
+                    }
+                    returnTypeRef = buildImplicitTypeRef()
+                    receiverTypeRef = buildImplicitTypeRef()
+                    symbol = FirAnonymousFunctionSymbol()
+                    isLambda = true
+                    label = buildLabel {
+                        name = "build"
+                    }
+
                 }
             }
         }
-        // TODO simplify
-        val buildArguments = buildArgumentList {
-            this.arguments.add(
-                buildConstExpression(null, ConstantValueKind.Int, cl.expressions.size)
-            )
-            this.arguments.add(
-                buildLambdaArgumentExpression {
-                    this.expression = buildAnonymousFunctionExpression {
-                        this.anonymousFunction = buildAnonymousFunction {
-                            this.origin = FirDeclarationOrigin.Synthetic
-                            this.moduleData = session.moduleData
-                            this.body = buildBlock {
-                                this.statements.addAll(adds)
-                            }
-                            this.returnTypeRef = buildImplicitTypeRef()
-                            this.receiverTypeRef = buildImplicitTypeRef()
-                            this.symbol = FirAnonymousFunctionSymbol()
-                            this.isLambda = true
-                            this.label = buildLabel {
-                                name = "build"
-                            }
-
-                        }
-                    }
-                }
-            )
-        }
-        val expectedClassId = when (expectedType) {
-            is FirImplicitTypeRef -> StandardClassIds.List
-            is FirResolvedTypeRef -> expectedType.coneType.classId!!
-            is FirTypeRefWithNullability -> TODO()
-        }
-
-        val receiverName = if (clt.possibleTypes.map { it.classId }.contains(expectedClassId)) {
-            expectedClassId.shortClassName
-        } else {
-            // Some kind of diagnostic???
-            TODO()
-        }
 
         val explicitReceiver = buildQualifiedAccessExpression {
-            this.calleeReference = buildSimpleNamedReference {
-                this.name = receiverName
+            calleeReference = buildSimpleNamedReference {
+                name = receiverName
             }
         }
         return buildFunctionCall {
@@ -414,11 +471,16 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             calleeReference = buildSimpleNamedReference {
                 name = Name.identifier("build")
             }
-            typeArguments.add(buildTypeProjectionWithVariance {
-                typeRef = clt.argumentType!!.toFirResolvedTypeRef()
-                variance = Variance.INVARIANT
-            })
-            argumentList = buildArguments
+            typeOfArguments?.let {
+                typeArguments.add(buildTypeProjectionWithVariance {
+                    typeRef = it
+                    variance = Variance.INVARIANT
+                })
+            }
+            argumentList = buildBinaryArgumentList(
+                buildConstExpression(null, ConstantValueKind.Int, arguments.size),
+                lambda
+            )
         }
     }
 
