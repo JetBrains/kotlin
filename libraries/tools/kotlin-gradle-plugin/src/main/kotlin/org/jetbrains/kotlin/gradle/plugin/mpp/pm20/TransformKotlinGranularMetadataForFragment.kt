@@ -22,7 +22,7 @@ internal open class TransformKotlinGranularMetadataForFragment
     @field:Transient
     val fragment: KotlinGradleFragment,
     //FIXME annotations
-    private val transformation: FragmentGranularMetadataResolver
+    private val granularMetadataDependenciesResolver: FragmentGranularMetadataResolver
 ) : DefaultTask() {
 
     @get:OutputDirectory
@@ -62,7 +62,7 @@ internal open class TransformKotlinGranularMetadataForFragment
     @get:Internal
     @delegate:Transient // exclude from Gradle instant execution state
     internal val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by project.provider {
-        transformation.resolutions
+        granularMetadataDependenciesResolver.getMetadataDependenciesForFragment(fragment)
     }
 
     @get:Internal

@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.FragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.utils.UnsafeApi
 
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.gradle.utils.UnsafeApi
 internal fun IdeaKotlinProjectModelBuilder.Companion.default(
     extension: KotlinPm20ProjectExtension
 ) = IdeaKotlinProjectModelBuilderImpl(extension).apply {
-    val fragmentMetadataResolverFactory = FragmentGranularMetadataResolverFactory()
-
     registerDependencyResolver(
         resolver = IdeaKotlinRefinesDependencyResolver,
         constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained,
@@ -26,21 +23,21 @@ internal fun IdeaKotlinProjectModelBuilder.Companion.default(
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinGranularFragmentDependencyResolver(fragmentMetadataResolverFactory),
+        resolver = IdeaKotlinGranularFragmentDependencyResolver(),
         constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained,
         phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,
         level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinMetadataBinaryDependencyResolver(fragmentMetadataResolverFactory),
+        resolver = IdeaKotlinMetadataBinaryDependencyResolver(),
         constraint = !IdeaKotlinProjectModelBuilder.FragmentConstraint.isVariant,
         phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
         level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinOriginalMetadataDependencyResolver(fragmentMetadataResolverFactory),
+        resolver = IdeaKotlinOriginalMetadataDependencyResolver(),
         constraint = !IdeaKotlinProjectModelBuilder.FragmentConstraint.isVariant,
         phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
         level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
