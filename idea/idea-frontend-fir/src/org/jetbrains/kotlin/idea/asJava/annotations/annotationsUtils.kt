@@ -9,16 +9,13 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.descriptors.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
+import org.jetbrains.kotlin.name.StandardClassIds
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
     hasAnnotation("kotlin/jvm/JvmSynthetic", annotationUseSiteTarget)
@@ -38,28 +35,14 @@ internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget:
     }
 }
 
-internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean {
-    require(this is KtFirSymbol<*>)
-
-    return this.firRef.withFir(FirResolvePhase.TYPES) {
-        if (it !is FirAnnotatedDeclaration) return@withFir false
-
-        val deprecatedAnnotationCall = it.annotations.firstOrNull { annotationCall ->
-            annotationCall.useSiteTarget == annotationUseSiteTarget &&
-                    annotationCall.classId?.asString() == "kotlin/Deprecated"
-        } ?: return@withFir false
-
-        val qualifiedExpression = mapAnnotationParameters(deprecatedAnnotationCall, it.moduleData.session)["level"] as? FirQualifiedAccessExpression
-            ?: return@withFir false
-
-        val calleeReference = (qualifiedExpression.calleeReference as? FirNamedReference)?.name?.asString()
-
-        calleeReference == "HIDDEN"
+internal fun isHiddenByDeprecation(symbol: KtAnnotatedSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean {
+    return analyzeWithSymbolAsContext(symbol) {
+        symbol.deprecationStatus?.level == DeprecationLevelValue.HIDDEN
     }
 }
 
 internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(annotationUseSiteTarget: AnnotationUseSiteTarget? = null) =
-    isHiddenByDeprecation(annotationUseSiteTarget) || hasJvmSyntheticAnnotation(annotationUseSiteTarget)
+    isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean =
     hasAnnotation("kotlin/jvm/JvmField", null)
