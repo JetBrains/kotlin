@@ -48,6 +48,7 @@ public abstract class KtAnalysisSession(final override val token: ValidityToken)
     KtSymbolsMixIn,
     KtReferenceResolveMixIn,
     KtReferenceShortenerMixIn,
+    KtImportOptimizerMixIn,
     KtSymbolDeclarationRendererMixIn,
     KtVisibilityCheckerMixIn,
     KtMemberSymbolProviderMixin,
@@ -87,6 +88,9 @@ public abstract class KtAnalysisSession(final override val token: ValidityToken)
 
     internal val referenceShortener: KtReferenceShortener get() = referenceShortenerImpl
     protected abstract val referenceShortenerImpl: KtReferenceShortener
+
+    internal val importOptimizer: KtImportOptimizer get() = importOptimizerImpl
+    protected abstract val importOptimizerImpl: KtImportOptimizer
 
     internal val symbolDeclarationRendererProvider: KtSymbolDeclarationRendererProvider get() = symbolDeclarationRendererProviderImpl
     protected abstract val symbolDeclarationRendererProviderImpl: KtSymbolDeclarationRendererProvider
