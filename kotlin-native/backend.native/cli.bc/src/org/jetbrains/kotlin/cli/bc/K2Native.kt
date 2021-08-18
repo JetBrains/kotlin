@@ -240,7 +240,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     }
                 }
 
-                put(MEMORY_MODEL, memoryModel)
+                // Can be overwritten after [parseBinaryOptions] below.
+                put(BinaryOptions.memoryModel, memoryModel)
 
                 when {
                     arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)

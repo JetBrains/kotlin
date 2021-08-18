@@ -54,7 +54,7 @@ class CacheSupport(
 
         val ignoreReason = when {
             configuration.getBoolean(KonanConfigKeys.OPTIMIZATION) -> "for optimized compilation"
-            configuration.get(KonanConfigKeys.MEMORY_MODEL) == MemoryModel.EXPERIMENTAL -> "with experimental memory model"
+            configuration.get(BinaryOptions.memoryModel) == MemoryModel.EXPERIMENTAL -> "with experimental memory model"
             configuration.getBoolean(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION) -> "with experimental lazy top levels initialization"
             else -> null
         }

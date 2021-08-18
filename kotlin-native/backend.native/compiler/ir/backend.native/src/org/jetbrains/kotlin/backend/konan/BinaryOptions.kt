@@ -13,6 +13,8 @@ import kotlin.properties.ReadOnlyProperty
 // users can pass these options using a -Xbinary=name=value compiler argument or corresponding Gradle DSL.
 object BinaryOptions : BinaryOptionRegistry() {
     val runtimeAssertionsMode by option<RuntimeAssertsMode>()
+
+    val memoryModel by option<MemoryModel>()
 }
 
 open class BinaryOption<T : Any>(

@@ -56,7 +56,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
 
-    val memoryModel: MemoryModel get() = configuration.get(KonanConfigKeys.MEMORY_MODEL)!!
+    val memoryModel: MemoryModel get() = configuration.get(BinaryOptions.memoryModel)!!
     val destroyRuntimeMode: DestroyRuntimeMode get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)!!
     val gc: GC get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR)!!
     val gcAggressive: Boolean get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR_AGRESSIVE)!!
