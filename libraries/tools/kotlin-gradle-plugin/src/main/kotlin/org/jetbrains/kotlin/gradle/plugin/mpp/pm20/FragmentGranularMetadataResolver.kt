@@ -30,6 +30,7 @@ internal class FragmentGranularMetadataResolver(
     private val requestingFragment: KotlinGradleFragment,
     private val refinesParentResolvers: Lazy<Iterable<FragmentGranularMetadataResolver>>
 ) {
+    // main usage: TransformKotlinGranularMetadataForFragment
     val resolutions: Iterable<MetadataDependencyResolution> by lazy {
         doResolveMetadataDependencies()
     }

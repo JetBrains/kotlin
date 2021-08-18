@@ -507,6 +507,7 @@ internal interface ResolvedMetadataFilesProvider {
     val metadataFilesByResolution: Map<MetadataDependencyResolution, FileCollection>
 }
 
+// Essentially this method applies "Hints" in form of "MetadataDependencyResolutions" to a "raw" Configuration
 internal fun createTransformedMetadataClasspath(
     project: Project,
     fromFiles: Configuration,
@@ -515,6 +516,8 @@ internal fun createTransformedMetadataClasspath(
 ): FileCollection {
     return project.files(
         Callable {
+            // Contains ComponentIdentifier incl. those from MetadataDependencyResolution.KeepOriginalDependency|NotRequested
+            // TODO NOW: Why multiple MetadataDependencyResolutions?
             val allResolutionsByGradleDependency: Map<ResolvedDependencyResult, List<MetadataDependencyResolution>> =
                 mutableMapOf<ResolvedDependencyResult, MutableList<MetadataDependencyResolution>>().apply {
                     metadataResolutionProviders.value.forEach {
@@ -531,6 +534,7 @@ internal fun createTransformedMetadataClasspath(
                 .filterValues { it.any { it !is ExcludeAsUnrequested } }
                 .keys.mapTo(mutableSetOf()) { it.selected.id }
 
+            // Contains only files from MetadataDependencyResolution.ChooseVisibleSourceSets
             val transformedFilesByResolution: Map<MetadataDependencyResolution, FileCollection> =
                 metadataResolutionProviders.value.flatMap { it.metadataFilesByResolution.toList() }.toMap()
 
