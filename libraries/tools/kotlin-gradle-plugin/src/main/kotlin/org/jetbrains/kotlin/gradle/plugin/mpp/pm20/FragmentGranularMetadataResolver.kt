@@ -15,6 +15,17 @@ import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.ArrayDeque
 
+/**
+ * Why we need it?
+ *
+ * 1. Need case: having some dependency, fragments, variants in terms KPM, we want to get files corresponding to them
+ *    See MetadataExtractor as Gradle implementation of getting the files
+ *
+ * 2. Drives the DefaultModuleDependencyExpander
+ *    ModuleDependencyExpander just expands given dependencies without much thought. We need some thing which would
+ *    read actual dependencies list and will call Expander
+ *
+ */
 internal class FragmentGranularMetadataResolver(
     private val requestingFragment: KotlinGradleFragment,
     private val refinesParentResolvers: Lazy<Iterable<FragmentGranularMetadataResolver>>

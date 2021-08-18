@@ -34,6 +34,51 @@ import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import javax.xml.parsers.DocumentBuilderFactory
 
+/**
+ * - describes what should be done with dependency from the POV of MPP:
+ *      a. it's an MPP-dependency, we should pull visible fragments (see content of ChooseVisibleSourceSets)
+ *      b. it's a non-MPP dependency, so resolution results for such dependency shouldn't be transformed
+ *      c. it's a non-requested (from MPP point of view) dependency, so we should remove it
+ *
+ * - almost all clients of MetadataDependencyResolution want  files in the  end
+ *      - IDE import needs additional info, e.g. MavenCoordinates to build Libraries representation
+ *
+ * - they already have RAW (i.e. Gradle-specific) results of resolution, they technically KNOW how to pull
+ *   files from that, but they don't know MPP specifics and need some hints
+ *
+ * So MetadataDependencyResolution is essentially a HINT for such clients which helps handling MPP-dependencies
+ */
+internal fun MetadataDependencyResolution.getFiles(): Set<File> {
+    return when (this) {
+        is MetadataDependencyResolution.ChooseVisibleSourceSets -> TODO("Technically can be done eagerly")
+        is MetadataDependencyResolution.ExcludeAsUnrequested -> emptySet()
+        is MetadataDependencyResolution.KeepOriginalDependency -> TODO("Can not be done, because it essentially says " +
+                                                                               "'pull artifacts for this  dependency from where you wanted to', " +
+                                                                               "and we don't know right now what clients wanteed to do")
+        // however, we could also pull that artifact and keep  it
+    }
+
+    // However, there's also laziness: it allows to get list of resulting files, but do not to create those files right away.
+    //
+    // This is important for case of composite  common artifact: in the end, it will be unpacked into multiple fragments in local FS, but
+    // we can't do it straight away because it will blow up Gradle's mind
+    //
+    // However, we do need to return Collection<File>
+    //
+    // So there's a very lingering contract on where one can start reading those Files.
+    // Note that MetadataDependencyResolution.ChooseVisibleSourceSets contains exactly those "not-created-yet" Files
+    //
+    // Some clients pass `doProcessFiles=false` because they need only list of Files
+    // Other clients, in particular, Gradle task, passes `doProcessFiles=true`
+    //
+    // Seems like we can simplify this abstraction by removing "laziness" from it, and moving it onto clients completely
+    // However, they sttil won't know where to get content of those files
+    // Maybe we need just a second abstraction for that, which will unpack needed fragments of composite common artifact
+    // into designated place.
+    // Note that this abstraction should probably be quite "global" (one per build?), to not duplicate effort and to be able
+    // to manage one single "cache" of unpacking results
+}
+
 internal sealed class MetadataDependencyResolution(
     @field:Transient // can't be used with Gradle Instant Execution, but fortunately not needed when deserialized
     val dependency: ResolvedDependencyResult,
@@ -357,13 +402,20 @@ internal fun requestedDependencies(
     return listOf(sourceSet, *otherContributingSourceSets.toTypedArray()).flatMap(::collectScopedDependenciesFromSourceSet)
 }
 
-
+// Accepts resolved published module (ResolvedComponentResult in terms of Gradle), and knows how to pull various
+// MPP-related information from that module.
+//
+// ArtifactReader? ArtifactManager?
+//      - not entirely true if we use Gradle-notion for "Artifact": there's an implementation which works with
+//        downloaded published modules (and then it is indeed artifacts), and there's an implementation which works
+//        with other projects (and in terms of gradle those are not Artfiacts)
+//
 internal abstract class MppDependencyMetadataExtractor(val project: Project, val component: ResolvedDependencyResult) {
     abstract fun getProjectStructureMetadata(): KotlinProjectStructureMetadata?
 
     abstract fun getExtractableMetadataFiles(
         visibleSourceSetNames: Set<String>,
-        baseDir: File
+        baseDir: File // TODO rename: destination
     ): ExtractableMetadataFiles
 }
 
