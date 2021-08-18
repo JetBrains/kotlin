@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.project.model
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import java.io.File
 
+// TODO NOW: equality contract
 interface KotlinModuleFragment {
     val containingModule: KotlinModule
 

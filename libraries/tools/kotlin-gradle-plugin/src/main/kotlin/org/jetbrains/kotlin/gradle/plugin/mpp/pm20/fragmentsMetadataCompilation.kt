@@ -115,15 +115,9 @@ private fun configureMetadataCompilationsAndCreateRegistry(
     metadataCompilationRegistry: MetadataCompilationRegistry
 ) {
     val project = module.project
-    val metadataResolutionByFragment = mutableMapOf<KotlinGradleFragment, FragmentGranularMetadataResolver>()
+    val resolver = FragmentGranularMetadataResolver(module)
     module.fragments.all { fragment ->
-        val transformation = FragmentGranularMetadataResolver(fragment, lazy {
-            fragment.refinesClosure.minus(fragment).map {
-                metadataResolutionByFragment.getValue(it)
-            }
-        })
-        metadataResolutionByFragment[fragment] = transformation
-        createExtractMetadataTask(project, fragment, transformation)
+        createExtractMetadataTask(project, fragment, resolver)
     }
     val compileAllTask = project.registerTask<DefaultTask>(lowerCamelCaseName(module.moduleClassifier, "metadataClasses"))
     module.fragments.all { fragment ->

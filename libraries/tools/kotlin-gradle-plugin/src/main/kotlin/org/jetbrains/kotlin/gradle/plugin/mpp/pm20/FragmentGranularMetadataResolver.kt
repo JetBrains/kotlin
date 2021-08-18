@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.getMetadataExtractor
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.ArrayDeque
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Why we need it?
@@ -26,28 +27,24 @@ import java.util.ArrayDeque
  *    read actual dependencies list and will call Expander
  *
  */
-internal class FragmentGranularMetadataResolver(
-    private val requestingFragment: KotlinGradleFragment,
-    private val refinesParentResolvers: Lazy<Iterable<FragmentGranularMetadataResolver>>
-) {
-    // main usage: TransformKotlinGranularMetadataForFragment
-    val resolutions: Iterable<MetadataDependencyResolution> by lazy {
-        doResolveMetadataDependencies()
-    }
-
+internal class FragmentGranularMetadataResolver(private val ownerModule: KotlinGradleModule) {
     private val project: Project
-        get() = requestingFragment.containingModule.project
+        get() = ownerModule.project
 
-    private val parentResultsByModuleIdentifier: Map<KotlinModuleIdentifier, List<MetadataDependencyResolution>> by lazy {
-        refinesParentResolvers.value.flatMap { it.resolutions }.groupBy { it.dependency.toModuleIdentifier() }
-    }
+    private val resolutionsCache: MutableMap<KotlinModuleFragment, Collection<MetadataDependencyResolution>> = ConcurrentHashMap()
 
     private val moduleResolver = GradleModuleDependencyResolver.getForCurrentBuild(project)
     private val variantResolver = GradleModuleVariantResolver.getForCurrentBuild(project)
     private val dependencyExpander = DefaultModuleDependencyExpander(variantResolver)
     private val dependencyGraphResolver = GradleKotlinDependencyGraphResolver(moduleResolver)
 
-    private fun doResolveMetadataDependencies(): Iterable<MetadataDependencyResolution> {
+    fun getMetadataDependenciesForFragment(requestingFragment: KotlinModuleFragment): Iterable<MetadataDependencyResolution> {
+        return resolutionsCache.getOrPut(requestingFragment) {
+            doResolveMetadataDependenciesForFragment(requestingFragment)
+        }
+    }
+
+    private fun doResolveMetadataDependenciesForFragment(requestingFragment: KotlinModuleFragment): Collection<MetadataDependencyResolution> {
         val configurationToResolve = configurationToResolveMetadataDependencies(project, requestingFragment.containingModule)
         val resolvedDependenciesByModuleId =
             configurationToResolve.incoming.resolutionResult.allDependencies.filterIsInstance<ResolvedDependencyResult>()
@@ -106,7 +103,7 @@ internal class FragmentGranularMetadataResolver(
                     val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
                     val visibleFragmentNamesExcludingVisibleByParents =
                         visibleFragmentNames
-                            .minus(fragmentsNamesVisibleByParents(metadataSourceDependency.toModuleIdentifier()))
+                            .minus(requestingFragment.fragmentsNamesVisibleByParents())
 
                     ChooseVisibleSourceSetsImpl(
                         metadataSourceDependency,
@@ -130,8 +127,8 @@ internal class FragmentGranularMetadataResolver(
         return results
     }
 
-    private fun fragmentsNamesVisibleByParents(kotlinModuleIdentifier: KotlinModuleIdentifier): MutableSet<String> {
-        val parentResolutionsForDependency = parentResultsByModuleIdentifier[kotlinModuleIdentifier].orEmpty()
+    private fun KotlinModuleFragment.fragmentsNamesVisibleByParents(): MutableSet<String> {
+        val parentResolutionsForDependency = resolutionsCache[this].orEmpty()
         return parentResolutionsForDependency.filterIsInstance<ChooseVisibleSourceSetsImpl>()
             .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
     }
