@@ -80,6 +80,26 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/kt-40340/");
     }
 
+    @TestMetadata("privateAnnotationsFromJavaApp")
+    public void testPrivateAnnotationsFromJavaApp() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaApp/");
+    }
+
+    @TestMetadata("privateAnnotationsFromJavaLib")
+    public void testPrivateAnnotationsFromJavaLib() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaLib/");
+    }
+
+    @TestMetadata("privateClassesFromJavaApp")
+    public void testPrivateClassesFromJavaApp() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaApp/");
+    }
+
+    @TestMetadata("privateClassesFromJavaLib")
+    public void testPrivateClassesFromJavaLib() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaLib/");
+    }
+
     @TestMetadata("privateOnlyConstructors")
     public void testPrivateOnlyConstructors() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/privateOnlyConstructors/");
