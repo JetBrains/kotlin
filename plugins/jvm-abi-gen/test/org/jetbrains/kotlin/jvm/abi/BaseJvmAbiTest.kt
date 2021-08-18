@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
+import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.CodegenTestUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
@@ -45,6 +49,9 @@ abstract class BaseJvmAbiTest : TestCase() {
         val abiDir: File
             get() = if (name == null) workingDir.resolve("abi") else workingDir.resolve("$name/abi")
 
+        val javaDestinationDir: File
+            get() = if (name == null) workingDir.resolve("javaOut") else workingDir.resolve("$name/javaOut")
+
         override fun toString(): String =
             "compilation '$name'"
     }
@@ -75,6 +82,23 @@ abstract class BaseJvmAbiTest : TestCase() {
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {
             val errorLines = listOf("Could not compile $compilation", "Exit code: $exitCode", "Errors:") + messageCollector.errors
             error(errorLines.joinToString("\n"))
+        }
+
+        // Compile Java files into both the destination and ABI directories in order make the
+        // results available to run and to downstream compilations.
+        val javaFiles = CodegenTestUtil.findJavaSourcesInDirectory(compilation.srcDir).map(::File)
+        if (javaFiles.isNotEmpty()) {
+            compilation.javaDestinationDir.mkdirs()
+            val javacOptions = listOf(
+                "-classpath",
+                (abiDependencies + compilation.destinationDir).joinToString(File.pathSeparator) { it.canonicalPath }
+                        + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
+                "-d",
+                compilation.javaDestinationDir.canonicalPath
+            )
+            KotlinTestUtils.compileJavaFiles(javaFiles, javacOptions)
+            FileUtil.copyDir(compilation.javaDestinationDir, compilation.destinationDir)
+            FileUtil.copyDir(compilation.javaDestinationDir, compilation.abiDir)
         }
     }
 
