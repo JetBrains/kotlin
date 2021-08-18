@@ -72,6 +72,14 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.BR, WasmImmediate.LabelIdx(relativeLevel))
     }
 
+    fun buildThrow(tagIdx: Int) {
+        buildInstr(WasmOp.THROW, WasmImmediate.TagIdx(tagIdx))
+    }
+
+    fun buildCatch(tagIdx: Int) {
+        buildInstr(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
+    }
+
     fun buildBrIf(absoluteBlockLevel: Int) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }

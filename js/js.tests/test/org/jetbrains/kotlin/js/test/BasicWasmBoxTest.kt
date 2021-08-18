@@ -86,6 +86,7 @@ abstract class BasicWasmBoxTest(
                 .run(
                     "--experimental-wasm-typed-funcref",
                     "--experimental-wasm-gc",
+                    "--experimental-wasm-eh",
                     outputJsFile
                 )
         }

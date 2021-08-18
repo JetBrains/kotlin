@@ -138,8 +138,6 @@ class WasmSymbols(
     val nullableFloatIeee754Equals = getInternalFunction("nullableFloatIeee754Equals")
     val nullableDoubleIeee754Equals = getInternalFunction("nullableDoubleIeee754Equals")
 
-    val wasmThrow = getInternalFunction("wasmThrow")
-
     val exportString = getInternalFunction("exportString")
     val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
 

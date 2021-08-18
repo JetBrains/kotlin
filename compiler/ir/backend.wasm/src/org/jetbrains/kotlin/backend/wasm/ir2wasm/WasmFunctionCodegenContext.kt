@@ -24,5 +24,8 @@ interface WasmFunctionCodegenContext : WasmBaseCodegenContext {
     fun defineLoopLevel(irLoop: IrLoop, labelType: LoopLabelType, level: Int)
     fun referenceLoopLevel(irLoop: IrLoop, labelType: LoopLabelType): Int
 
+    // So far always a single tag
+    val tagIdx: Int
+
     val bodyGen: WasmExpressionBuilder
 }
