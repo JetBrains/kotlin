@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
@@ -52,6 +53,9 @@ abstract class BaseJvmAbiTest : TestCase() {
         val javaDestinationDir: File
             get() = if (name == null) workingDir.resolve("javaOut") else workingDir.resolve("$name/javaOut")
 
+        val directives: File
+            get() = workingDir.resolve("directives.txt")
+
         override fun toString(): String =
             "compilation '$name'"
     }
@@ -77,6 +81,9 @@ abstract class BaseJvmAbiTest : TestCase() {
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
             useOldBackend = !useIrBackend
+            languageVersion = if (!compilation.directives.exists()) null else {
+                InTextDirectivesUtils.findStringWithPrefixes(compilation.directives.readText(), "// LANGUAGE_VERSION:")
+            }
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {
