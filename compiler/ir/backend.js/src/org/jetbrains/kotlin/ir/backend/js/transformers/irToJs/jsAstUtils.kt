@@ -92,6 +92,7 @@ private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean
 
     return simpleFunction.name == OperatorNameConventions.INVOKE
             && receiverType.isFunctionTypeOrSubtype()
+            && (!receiverType.isSuspendFunctionTypeOrSubtype() || receiverType.isSuspendFunction())
 }
 
 fun translateCall(
