@@ -8,12 +8,18 @@ package kotlin.script.experimental.jvmhost
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URI
+import java.net.URLClassLoader
 import java.util.jar.JarEntry
+import java.util.jar.JarInputStream
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.impl.*
+import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
 
 // TODO: generate execution code (main)
@@ -58,7 +64,8 @@ fun KJvmCompiledScript.saveToJar(outputJar: File) {
         classLoader = this::class.java.classLoader,
         wholeClasspath = false
     ) ?: emptyList()
-    val dependencies = (dependenciesFromScript + dependenciesForMain).distinct()
+    // saving only existing files, so the check for the existence in the loadScriptFromJar is meaningful
+    val dependencies = (dependenciesFromScript + dependenciesForMain).distinct().filter { it.exists() }
     FileOutputStream(outputJar).use { fileStream ->
         val manifest = Manifest()
         manifest.mainAttributes.apply {
@@ -86,6 +93,26 @@ fun KJvmCompiledScript.saveToJar(outputJar: File) {
     }
 }
 
+fun File.loadScriptFromJar(checkMissingDependencies: Boolean = true): CompiledScript? {
+    val (className: String?, classPathUrls) = this.inputStream().use { ostr ->
+        JarInputStream(ostr).use {
+            it.manifest.mainAttributes.getValue("Main-Class") to
+                    (it.manifest.mainAttributes.getValue("Class-Path")?.split(" ") ?: emptyList())
+        }
+    }
+    if (className == null) return null
+
+    val classPath = classPathUrls.mapNotNullTo(mutableListOf(this)) { cpEntry ->
+        File(URI(cpEntry)).takeIf { it.exists() } ?: File(cpEntry).takeIf { it.exists() }
+    }
+    if (!checkMissingDependencies || classPathUrls.size + 1 == classPath.size) {
+        return KJvmCompiledScriptLazilyLoadedFromClasspath(className, classPath)
+    } else {
+        // Assuming that some script dependencies are not accessible anymore so the script is not valid and should be recompiled to reresolve dependencies
+        return null
+    }
+}
+
 open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
 
     override suspend operator fun invoke(
@@ -103,6 +130,41 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
             )
         }
     }
+}
+
+private class KJvmCompiledScriptLazilyLoadedFromClasspath(
+    private val scriptClassFQName: String,
+    private val classPath: List<File>
+) : CompiledScript {
+
+    private var loadedScript: KJvmCompiledScript? = null
+
+    fun getScriptOrError(): KJvmCompiledScript = loadedScript ?: throw RuntimeException("Compiled script is not loaded yet")
+
+    override suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>> {
+        if (loadedScript == null) {
+            val actualEvaluationConfiguration = scriptEvaluationConfiguration ?: ScriptEvaluationConfiguration()
+            val baseClassLoader = actualEvaluationConfiguration[ScriptEvaluationConfiguration.jvm.baseClassLoader]
+            val classLoader = URLClassLoader(
+                classPath.map { it.toURI().toURL() }.toTypedArray(),
+                baseClassLoader
+            )
+            loadedScript = createScriptFromClassLoader(scriptClassFQName, classLoader)
+        }
+        return getScriptOrError().getClass(scriptEvaluationConfiguration)
+    }
+
+    override val compilationConfiguration: ScriptCompilationConfiguration
+        get() = getScriptOrError().compilationConfiguration
+
+    override val sourceLocationId: String?
+        get() = getScriptOrError().sourceLocationId
+
+    override val otherScripts: List<CompiledScript>
+        get() = getScriptOrError().otherScripts
+
+    override val resultField: Pair<String, KotlinType>?
+        get() = getScriptOrError().resultField
 }
 
 private fun failure(msg: String) =

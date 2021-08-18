@@ -5,7 +5,6 @@
 
 package kotlin.script.experimental.jvm.impl
 
-import org.jetbrains.annotations.TestOnly
 import java.io.*
 import java.net.URL
 import java.net.URLClassLoader
@@ -94,7 +93,6 @@ open class KJvmCompiledScript internal constructor(
         )
     }
 
-    @TestOnly
     fun getCompiledModule() = compiledModule
 
     private fun writeObject(outputStream: ObjectOutputStream) {

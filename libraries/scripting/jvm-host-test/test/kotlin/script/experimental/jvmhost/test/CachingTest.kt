@@ -7,13 +7,13 @@ package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
-import java.io.File
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import java.io.*
 import java.security.MessageDigest
-import java.util.ArrayList
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.host.with
@@ -24,13 +24,14 @@ import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
+import kotlin.script.experimental.jvmhost.loadScriptFromJar
 
 class CachingTest : TestCase() {
 
-    val simpleScript = "val x = 1\nprintln(\"x = \$x\")"
+    val simpleScript = "val x = 1\nprintln(\"x = \$x\")".toScriptSource()
     val simpleScriptExpectedOutput = listOf("x = 1")
 
-    val scriptWithImport = "println(\"Hello from imported \$helloScriptName script!\")"
+    val scriptWithImport = "println(\"Hello from imported \$helloScriptName script!\")".toScriptSource()
     val scriptWithImportExpectedOutput = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
 
     @Test
@@ -117,16 +118,78 @@ class CachingTest : TestCase() {
                 compilationConfiguration = {
                     updateClasspath(classpathFromClass<ScriptingHostTest>()) // the class defined here should be in the classpath
                     implicitReceivers(Implicit::class)
-                },
-                evaluationConfiguration = {
-                    implicitReceivers(Implicit)
                 }
+            ) {
+                implicitReceivers(Implicit)
+            }
+        }
+    }
+
+    @Test
+    @Ignore // does not work reliably probably due to file cashing TODO: rewrite to more reliable variant
+    fun ignoredTestLocalDependencyWithJarCacheInvalidation() {
+        withTempDir("scriptingTestDepDir") { depDir ->
+            val standardJars = KotlinJars.kotlinScriptStandardJars
+            val outJar = File(depDir, "dependency.jar")
+            val inKt = File(depDir, "Dependency.kt").apply { writeText("class Dependency(val v: Int)") }
+            val outStream = ByteArrayOutputStream()
+            val compileExitCode = K2JVMCompiler().exec(
+                PrintStream(outStream),
+                "-d", outJar.path, "-no-stdlib", "-cp", standardJars.joinToString(File.pathSeparator), inKt.path
             )
+            assertTrue(
+                "Compilation Failed:\n$outStream",
+                outStream.size() == 0 && compileExitCode == ExitCode.OK && outJar.exists()
+            )
+
+            withTempDir("scriptingTestJarChacheWithDep") { cacheDir ->
+                val cache = TestCompiledScriptJarsCache(cacheDir)
+                Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+
+                val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
+                    jvm {
+                        baseClassLoader.replaceOnlyDefault(null)
+                        compilationCache(cache)
+                    }
+                }
+                val host = BasicJvmScriptingHost(compiler = JvmScriptCompiler(hostConfiguration), evaluator = BasicJvmScriptEvaluator())
+
+                val scriptCompilationConfiguration = ScriptCompilationConfiguration {
+                    updateClasspath(standardJars +outJar)
+                    this.hostConfiguration.update { hostConfiguration }
+                }
+
+                val script = "Dependency(42).v".toScriptSource()
+
+                val res0 = host.eval(script, scriptCompilationConfiguration, null).valueOrThrow().returnValue
+                assertEquals(42, (res0 as? ResultValue.Value)?.value)
+                Assert.assertEquals(1, cache.storedScripts)
+                Assert.assertEquals(0, cache.retrievedScripts)
+
+                val res1 = host.eval(script, scriptCompilationConfiguration, null).valueOrThrow().returnValue
+                assertEquals(42, (res1 as? ResultValue.Value)?.value)
+                Assert.assertEquals(1, cache.storedScripts)
+                Assert.assertEquals(1, cache.retrievedScripts)
+
+                val outJar2 = File(depDir, "dependency2.jar")
+                outJar.renameTo(outJar2)
+
+                val cachedScriptJar = cache.baseDir.listFiles().single()
+                val loadedScript = cachedScriptJar.loadScriptFromJar(checkMissingDependencies = false)
+                val res2 = runBlocking {
+                    BasicJvmScriptEvaluator().invoke(loadedScript!!)
+                }.valueOrThrow().returnValue
+                assertEquals("Dependency", (res2 as? ResultValue.Error)?.error?.message)
+
+                assertNull(cachedScriptJar.loadScriptFromJar(checkMissingDependencies = true))
+                assertNull(cache.get(script, scriptCompilationConfiguration))
+                assertEquals(0, cacheDir.listFiles().size)
+            }
         }
     }
 
     private fun checkWithCache(
-        cache: ScriptingCacheWithCounters, script: String, expectedOutput: List<String>, checkDirectEval: Boolean = true,
+        cache: ScriptingCacheWithCounters, script: SourceCode, expectedOutput: List<String>, checkDirectEval: Boolean = true,
         compilationConfiguration: ScriptCompilationConfiguration.Builder.() -> Unit = {},
         evaluationConfiguration: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
     ) {
@@ -151,7 +214,7 @@ class CachingTest : TestCase() {
         var compiledScript: CompiledScript? = null
         val output = captureOut {
             runBlocking {
-                compiler(script.toScriptSource(), scriptCompilationConfiguration).onSuccess {
+                compiler(script, scriptCompilationConfiguration).onSuccess {
                     compiledScript = it
                     evaluator(it, scriptEvaluationConfiguration)
                 }.throwOnFailure()
@@ -162,7 +225,7 @@ class CachingTest : TestCase() {
         Assert.assertEquals(0, cache.retrievedScripts)
 
         if (checkDirectEval) {
-            val cachedScript = cache.get(script.toScriptSource(), scriptCompilationConfiguration)
+            val cachedScript = cache.get(script, scriptCompilationConfiguration)
             Assert.assertNotNull(cachedScript)
             Assert.assertEquals(1, cache.retrievedScripts)
 
@@ -184,7 +247,7 @@ class CachingTest : TestCase() {
         }
 
         val output3 = captureOut {
-            host.eval(script.toScriptSource(), scriptCompilationConfiguration, scriptEvaluationConfiguration).throwOnFailure()
+            host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).throwOnFailure()
         }.lines()
         Assert.assertEquals(if (checkDirectEval) 2 else 1, cache.retrievedScripts)
         Assert.assertEquals(output, output3)
