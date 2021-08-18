@@ -2456,4 +2456,9 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OverloadsPrivate::class
     }
 
+    abstract class DeprecatedJavaAnnotation : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = DeprecatedJavaAnnotation::class
+        abstract val kotlinName: FqName
+    }
+
 }

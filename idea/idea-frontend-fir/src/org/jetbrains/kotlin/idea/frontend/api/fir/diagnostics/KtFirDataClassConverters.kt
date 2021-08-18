@@ -3525,4 +3525,11 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.DEPRECATED_JAVA_ANNOTATION) { firDiagnostic ->
+        DeprecatedJavaAnnotationImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

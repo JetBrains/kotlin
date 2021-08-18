@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -37,5 +38,6 @@ object FirJvmErrors {
     val OVERLOADS_LOCAL by error0<KtAnnotationEntry>()
     val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR by deprecationError0<KtAnnotationEntry>(ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses)
     val OVERLOADS_PRIVATE by warning0<KtAnnotationEntry>()
+    val DEPRECATED_JAVA_ANNOTATION by warning1<KtAnnotationEntry, FqName>()
 
 }
