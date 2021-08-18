@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.psi2ir.intermediate.generateExpressionValue
 import org.jetbrains.kotlin.wasm.ir.*
 
 class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorVoid {
@@ -65,6 +64,26 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
         body.buildThrow(context.tagIdx)
+    }
+
+    override fun visitTry(aTry: IrTry) {
+        assert(aTry.isCanonical(irBuiltIns)) { "expected canonical try/catch" }
+        assert(aTry.type != irBuiltIns.nothingType) { "shouldn't happen" }
+
+        val resultType = context.transformBlockResultType(aTry.type)
+        body.buildTry(null, resultType)
+        generateExpression(aTry.tryResult)
+
+        body.buildCatch(context.tagIdx)
+
+        // Exception object is on top of the stack, store it into the local
+        aTry.catches.single().catchParameter.symbol.let {
+            context.defineLocal(it)
+            body.buildSetLocal(context.referenceLocal(it))
+        }
+        generateExpression(aTry.catches.single().result)
+
+        body.buildEnd()
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
