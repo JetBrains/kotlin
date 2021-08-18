@@ -23,6 +23,7 @@ fun box() {
 // test.kt:5 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String
 // test.kt:6 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String
 // test.kt:7 box: result:java.lang.String="":java.lang.String, x:java.lang.String="A":java.lang.String, y:java.lang.String="y":java.lang.String
+// test.kt:8 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String, y:java.lang.String="y":java.lang.String
 // test.kt:11 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String
 // test.kt:12 box: result:java.lang.String="y":java.lang.String, x:java.lang.String="A":java.lang.String, z:java.lang.String="z":java.lang.String
 // test.kt:15 box: result:java.lang.String="yz":java.lang.String

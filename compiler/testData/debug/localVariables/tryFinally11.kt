@@ -9,7 +9,7 @@ fun box(): String {
             } catch (e: Exception) {
                 val y = "y"
                 val z = "z"
-                break  // TODO: why does the break not have a line number so we can stop on it?
+                break
             } finally {
                 throw RuntimeException("$i")
             }
@@ -32,5 +32,6 @@ fun box(): String {
 // test.kt:9 box: i:int=0:int
 // test.kt:10 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException
 // test.kt:11 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String
+// test.kt:12 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String, z:java.lang.String="z":java.lang.String
 // test.kt:14 box: i:int=0:int
 // test.kt:18 box:
