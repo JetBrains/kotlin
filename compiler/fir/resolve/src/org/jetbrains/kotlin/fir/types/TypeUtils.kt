@@ -283,12 +283,15 @@ fun FirTypeRef.withReplacedConeType(
 fun FirTypeRef.approximated(
     typeApproximator: ConeTypeApproximator,
     toSuper: Boolean,
-    conf: TypeApproximatorConfiguration = TypeApproximatorConfiguration.PublicDeclaration
 ): FirTypeRef {
+    val alternativeType = (coneType as? ConeIntersectionType)?.alternativeType ?: coneType
+    if (alternativeType !== coneType && !alternativeType.requiresApproximationInPublicPosition()) {
+        return withReplacedConeType(alternativeType)
+    }
     val approximatedType = if (toSuper)
-        typeApproximator.approximateToSuperType(coneType, conf)
+        typeApproximator.approximateToSuperType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration)
     else
-        typeApproximator.approximateToSubType(coneType, conf)
+        typeApproximator.approximateToSubType(alternativeType, TypeApproximatorConfiguration.PublicDeclaration)
     return withReplacedConeType(approximatedType)
 }
 

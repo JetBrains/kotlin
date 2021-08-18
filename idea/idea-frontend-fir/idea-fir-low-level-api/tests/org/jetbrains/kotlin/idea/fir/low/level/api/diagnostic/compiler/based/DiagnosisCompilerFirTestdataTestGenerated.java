@@ -5052,6 +5052,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("ParentOfType.kt")
+            public void testParentOfType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/ParentOfType.kt");
+            }
+
+            @Test
             @TestMetadata("PersistentStateComponent.kt")
             public void testPersistentStateComponent() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/PersistentStateComponent.kt");

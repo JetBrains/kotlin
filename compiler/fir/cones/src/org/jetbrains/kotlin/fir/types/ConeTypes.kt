@@ -278,7 +278,7 @@ fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeI
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map(func))
+    return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
 }
 
 class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
