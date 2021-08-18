@@ -7,3 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols.pointers
 
 public class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(description: String) :
     IllegalStateException("Could not create a symbol pointer for local symbol $description")
+
+public class WrongSymbolForSamConstructor(symbolKind: String) :
+    IllegalStateException(
+        "For symbol with kind = KtSymbolKind.SAM_CONSTRUCTOR, KtSamConstructorSymbol should be created, but was $symbolKind"
+    )

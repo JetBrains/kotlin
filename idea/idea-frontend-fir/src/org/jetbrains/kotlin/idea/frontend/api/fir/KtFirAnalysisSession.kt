@@ -50,6 +50,8 @@ private constructor(
 
     override val callResolverImpl = KtFirCallResolver(this, token)
 
+    override val samResolverImpl = KtFirSamResolver(this, token)
+
     override val scopeProviderImpl by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
 
     override val symbolProviderImpl =

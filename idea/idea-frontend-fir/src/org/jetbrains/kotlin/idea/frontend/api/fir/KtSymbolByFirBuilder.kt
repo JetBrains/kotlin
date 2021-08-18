@@ -191,7 +191,13 @@ internal class KtSymbolByFirBuilder private constructor(
     inner class FunctionLikeSymbolBuilder {
         fun buildFunctionLikeSymbol(fir: FirFunction): KtFunctionLikeSymbol {
             return when (fir) {
-                is FirSimpleFunction -> buildFunctionSymbol(fir)
+                is FirSimpleFunction -> {
+                    if (fir.origin == FirDeclarationOrigin.SamConstructor) {
+                        buildSamConstructorSymbol(fir)
+                    } else {
+                        buildFunctionSymbol(fir)
+                    }
+                }
                 is FirConstructor -> buildConstructorSymbol(fir)
                 is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
                 else -> throwUnexpectedElementError(fir)
@@ -199,6 +205,7 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildFunctionSymbol(fir: FirSimpleFunction): KtFirFunctionSymbol {
+            check(fir.origin != FirDeclarationOrigin.SamConstructor)
             return symbolsCache.cache(fir) { KtFirFunctionSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
@@ -211,6 +218,11 @@ internal class KtSymbolByFirBuilder private constructor(
             return symbolsCache.cache(originalFir) {
                 KtFirConstructorSymbol(originalFir, resolveState, token, this@KtSymbolByFirBuilder)
             }
+        }
+
+        fun buildSamConstructorSymbol(fir: FirSimpleFunction): KtFirSamConstructorSymbol {
+            check(fir.origin == FirDeclarationOrigin.SamConstructor)
+            return symbolsCache.cache(fir) { KtFirSamConstructorSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
     }
 

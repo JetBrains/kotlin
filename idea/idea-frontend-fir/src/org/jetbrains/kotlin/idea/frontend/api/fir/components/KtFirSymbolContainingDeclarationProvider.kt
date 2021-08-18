@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
@@ -43,7 +42,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 getContainingDeclarationForLibrarySymbol(symbol)
             KtSymbolOrigin.PROPERTY_BACKING_FIELD -> getContainingDeclarationForBackingFieldSymbol(symbol)
             KtSymbolOrigin.INTERSECTION_OVERRIDE -> TODO()
-            KtSymbolOrigin.SAM_CONSTRUCTOR -> TODO()
+            KtSymbolOrigin.SAM_CONSTRUCTOR -> null
             KtSymbolOrigin.DELEGATED -> TODO()
         }
     }

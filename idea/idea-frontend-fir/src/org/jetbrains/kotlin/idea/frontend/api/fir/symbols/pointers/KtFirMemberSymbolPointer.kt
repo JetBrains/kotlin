@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
@@ -37,7 +36,3 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         firSession: FirSession
     ): S?
 }
-
-private fun KtFirAnalysisSession.getClassLikeSymbol(classId: ClassId) =
-    firResolveState.rootModuleSession.symbolProvider.getClassLikeSymbolByFqName(classId)?.fir
-

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 
 public abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKind {
     public abstract val valueParameters: List<KtValueParameterSymbol>
@@ -29,6 +28,12 @@ public abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
     final override val callableIdIfNonLocal: CallableId? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol>
+}
+
+public abstract class KtSamConstructorSymbol : KtFunctionLikeSymbol(), KtNamedSymbol {
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.SAM_CONSTRUCTOR
+
+    abstract override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol>
 }
 
 public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),

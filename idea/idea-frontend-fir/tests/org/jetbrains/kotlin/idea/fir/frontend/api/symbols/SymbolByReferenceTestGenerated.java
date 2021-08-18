@@ -35,4 +35,10 @@ public class SymbolByReferenceTestGenerated extends AbstractSymbolByReferenceTes
     public void testConstructorViaTypeAlias() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByReference/constructorViaTypeAlias.kt");
     }
+
+    @Test
+    @TestMetadata("samConstructor.kt")
+    public void testSamConstructor() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByReference/samConstructor.kt");
+    }
 }

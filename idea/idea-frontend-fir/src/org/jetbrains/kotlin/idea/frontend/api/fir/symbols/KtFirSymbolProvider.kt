@@ -47,7 +47,13 @@ internal class KtFirSymbolProvider(
     override fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirFunction, KtFunctionLikeSymbol>(resolveState) { fir ->
             when (fir) {
-                is FirSimpleFunction -> firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(fir)
+                is FirSimpleFunction -> {
+                    if (fir.origin == FirDeclarationOrigin.SamConstructor) {
+                        firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(fir)
+                    } else {
+                        firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(fir)
+                    }
+                }
                 is FirAnonymousFunction -> firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(fir)
                 else -> error("Unexpected ${fir.renderWithType()}")
             }

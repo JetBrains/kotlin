@@ -15,6 +15,10 @@ public interface KtSymbolWithKind : KtSymbol {
 }
 
 public enum class KtSymbolKind {
-    TOP_LEVEL, MEMBER, LOCAL, ACCESSOR
+    TOP_LEVEL,
+    MEMBER,
+    LOCAL,
+    ACCESSOR,
+    SAM_CONSTRUCTOR,
 }
 

@@ -68,7 +68,7 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
         val restored = analyseOnPooledThreadInReadAction(ktFile) {
             pointersWithRendered.map { (pointer, expectedRender) ->
                 val restored = pointer!!.restoreSymbol()
-                    ?: error("Symbol $expectedRender was not not restored")
+                    ?: error("Symbol $expectedRender was not restored")
                 with(DebugSymbolRenderer) { renderExtra(restored) }
             }
         }
@@ -84,7 +84,7 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
 
 private object SymbolTestDirectives : SimpleDirectivesContainer() {
     val DO_NOT_CHECK_SYMBOL_RESTORE by directive(
-        description = "Symbol restoring for some symbols in current test is not yet supported yet",
+        description = "Symbol restoring for some symbols in current test is not supported yet",
         applicability = DirectiveApplicability.Global
     )
 }
