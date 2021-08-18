@@ -323,26 +323,67 @@ class CommonizerIT : BaseGradleIT() {
             line.matches(Regex(""".*Dependency:.*[pP]osix"""))
         }
 
+        fun CompiledProject.containsDummyCInteropDependency(): Boolean = output.lineSequence().any { line ->
+            line.matches(Regex(""".*Dependency:.*cinterop-dummy.*"""))
+        }
+
         with(Project("commonize-kt-46248-singleNativeTargetPropagation")) {
             build(":p1:listNativeMainDependencies") {
                 assertSuccessful()
                 assertTrue(containsPosixDependency(), "Expected dependency on posix in nativeMain")
+                assertTrue(containsDummyCInteropDependency(), "Expected dependency on dummy cinterop in nativeMain")
             }
 
             build(":p1:listNativeMainParentDependencies") {
                 assertSuccessful()
                 assertTrue(containsPosixDependency(), "Expected dependency on posix in nativeMainParent")
+                assertTrue(containsDummyCInteropDependency(), "Expected dependency on dummy cinterop in nativeMain")
             }
 
             build(":p1:listCommonMainDependencies") {
                 assertSuccessful()
                 assertFalse(containsPosixDependency(), "Expected **no** dependency on posix in commonMain (because of jvm target)")
+                assertFalse(containsDummyCInteropDependency(), "Expected **no** dependency on dummy cinterop in nativeMain")
             }
 
             build("assemble") {
                 assertSuccessful()
                 assertTasksExecuted(":p1:compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":p1:compileKotlinNativePlatform")
+            }
+        }
+    }
+
+    @Test
+    fun `test KT-46248 single supported native target dependency propagation - cinterop`() {
+        fun CompiledProject.containsCinteropDependency(): Boolean {
+            val nativeMainContainsCInteropDependencyRegex = Regex(""".*Dependency:.*cinterop-dummy.*""")
+            return output.lineSequence().any { line ->
+                line.matches(nativeMainContainsCInteropDependencyRegex)
+            }
+        }
+
+        with(Project("commonize-kt-47523-singleNativeTargetPropagation-cinterop")) {
+            build("listNativePlatformMainDependencies") {
+                assertSuccessful()
+                assertFalse(
+                    containsCinteropDependency(),
+                    "Expected sourceSet 'nativeMain' to list cinterop dependency (not necessary, since included in compilation)"
+                )
+            }
+
+            build("listNativeMainDependencies") {
+                assertSuccessful()
+                assertTrue(containsCinteropDependency(), "Expected sourceSet 'nativeMain' to list cinterop dependency")
+            }
+
+            build("listCommonMainDependencies") {
+                assertSuccessful()
+                assertTrue(containsCinteropDependency(), "Expected sourceSet 'commonMain' to list cinterop dependency")
+            }
+
+            build("assemble") {
+                assertSuccessful()
             }
         }
     }
