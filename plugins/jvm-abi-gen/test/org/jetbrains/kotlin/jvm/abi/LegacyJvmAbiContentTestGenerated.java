@@ -35,6 +35,16 @@ public class LegacyJvmAbiContentTestGenerated extends AbstractLegacyJvmAbiConten
         runTest("plugins/jvm-abi-gen/testData/content/annotation/");
     }
 
+    @TestMetadata("annotationInstantiation")
+    public void testAnnotationInstantiation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/annotationInstantiation/");
+    }
+
+    @TestMetadata("anonymousAnnotationInstantiation")
+    public void testAnonymousAnnotationInstantiation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/anonymousAnnotationInstantiation/");
+    }
+
     @TestMetadata("anonymousWhenMapping")
     public void testAnonymousWhenMapping() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/anonymousWhenMapping/");
