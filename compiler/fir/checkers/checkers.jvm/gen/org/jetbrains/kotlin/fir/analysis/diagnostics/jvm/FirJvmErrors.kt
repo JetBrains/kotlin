@@ -25,6 +25,9 @@ object FirJvmErrors {
     // Types
     val JAVA_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
 
+    // Type parameters
+    val UPPER_BOUND_CANNOT_BE_ARRAY by error0<PsiElement>()
+
     // annotations
     val STRICTFP_ON_CLASS by error0<KtAnnotationEntry>()
     val VOLATILE_ON_VALUE by error0<KtAnnotationEntry>()

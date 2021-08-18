@@ -3887,6 +3887,13 @@ internal class JavaTypeMismatchImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class UpperBoundCannotBeArrayImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UpperBoundCannotBeArray(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class StrictfpOnClassImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

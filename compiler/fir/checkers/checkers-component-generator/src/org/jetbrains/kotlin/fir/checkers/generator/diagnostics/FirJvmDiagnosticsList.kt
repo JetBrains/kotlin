@@ -29,6 +29,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
     }
 
+    val TYPE_PARAMETERS by object : DiagnosticGroup("Type parameters") {
+        val UPPER_BOUND_CANNOT_BE_ARRAY by error<PsiElement>()
+    }
+
     val ANNOTATIONS by object : DiagnosticGroup("annotations") {
         val STRICTFP_ON_CLASS by error<KtAnnotationEntry>()
         val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()

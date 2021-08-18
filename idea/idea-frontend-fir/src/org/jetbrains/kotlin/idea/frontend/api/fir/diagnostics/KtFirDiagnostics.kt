@@ -2404,6 +2404,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualType: KtType
     }
 
+    abstract class UpperBoundCannotBeArray : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UpperBoundCannotBeArray::class
+    }
+
     abstract class StrictfpOnClass : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = StrictfpOnClass::class
     }
