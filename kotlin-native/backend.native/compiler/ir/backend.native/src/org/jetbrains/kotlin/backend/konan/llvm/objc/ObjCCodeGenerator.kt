@@ -35,6 +35,14 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
             context.stdlibModule.llvmSymbolOrigin
     )
 
+    val objcAutoreleaseReturnValue = context.llvm.externalFunction(
+            "llvm.objc.autoreleaseReturnValue",
+            functionType(int8TypePtr, false, int8TypePtr),
+            context.stdlibModule.llvmSymbolOrigin
+    ).also {
+        setFunctionNoUnwind(it)
+    }
+
     // TODO: this doesn't support stret.
     fun msgSender(functionType: LLVMTypeRef): LLVMValueRef =
             objcMsgSend.bitcast(pointerType(functionType)).llvm

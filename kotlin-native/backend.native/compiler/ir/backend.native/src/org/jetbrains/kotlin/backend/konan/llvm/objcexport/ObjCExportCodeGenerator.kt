@@ -52,6 +52,37 @@ internal class ObjCExportFunctionGenerationContext(
 ) : FunctionGenerationContext(builder) {
     private val objCExportCodegen = builder.objCExportCodegen
 
+    // Note: we could generate single "epilogue" and make all [ret]s just branch to it (like [DefaultFunctionGenerationContext]),
+    // but this would be useless for most of the usages, which have only one [ret].
+    // Remaining usages can be optimized ad hoc.
+
+    override fun ret(value: LLVMValueRef?): LLVMValueRef = if (value == null) {
+        retVoid()
+    } else {
+        retValue(value)
+    }
+
+    /**
+     * autoreleases and returns [value].
+     * It is equivalent to `ret(autorelease(value))`, but optimizes the autorelease out if the caller is prepared for it.
+     *
+     * See the Clang documentation and the Obj-C runtime source code for more details:
+     * https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-autoreleasereturnvalue
+     * https://github.com/opensource-apple/objc4/blob/cd5e62a5597ea7a31dccef089317abb3a661c154/runtime/objc-object.h#L930
+     */
+    fun autoreleaseAndRet(value: LLVMValueRef) {
+        onReturn()
+        // Note: it is important to make this call tail (otherwise the elimination magic won't work),
+        // so it should go after other "epilogue" instructions, and that's why we couldn't just use
+        // ret(autorelease(value))
+        val result = call(objCExportCodegen.objcAutoreleaseReturnValue, listOf(value))
+        LLVMSetTailCall(result, 1)
+        rawRet(result)
+    }
+
+    override fun processReturns() {
+        // Do nothing.
+    }
 }
 
 internal class ObjCExportFunctionGenerationContextBuilder(
