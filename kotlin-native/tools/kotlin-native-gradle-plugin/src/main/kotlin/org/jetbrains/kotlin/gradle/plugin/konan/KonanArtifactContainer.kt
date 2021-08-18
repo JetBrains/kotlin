@@ -23,7 +23,6 @@ import org.gradle.api.internal.CollectionCallbackActionDecorator
 import org.gradle.api.internal.DefaultPolymorphicDomainObjectContainer
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
-import org.gradle.util.ConfigureUtil
 import kotlin.reflect.KClass
 
 open class KonanArtifactContainer(val project: ProjectInternal) : DefaultPolymorphicDomainObjectContainer<KonanBuildingConfig<*>>(
@@ -96,7 +95,7 @@ open class KonanArtifactContainer(val project: ProjectInternal) : DefaultPolymor
     fun program(args: Map<String, Any?>, name: String, configureAction: KonanProgram.() -> Unit) =
             create(name, KonanProgram::class, args, configureAction)
     fun program(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
-            program(args, name, ConfigureUtil.configureUsing(configureAction))
+            program(args, name) { project.configure(this, configureAction) }
 
     fun dynamic(args: Map<String, Any?>, name: String) = create(name, KonanDynamic::class, args)
     fun dynamic(args: Map<String, Any?>, name: String, configureAction: Action<KonanDynamic>) =
@@ -104,7 +103,7 @@ open class KonanArtifactContainer(val project: ProjectInternal) : DefaultPolymor
     fun dynamic(args: Map<String, Any?>, name: String, configureAction: KonanDynamic.() -> Unit) =
             create(name, KonanDynamic::class, args, configureAction)
     fun dynamic(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
-            dynamic(args, name, ConfigureUtil.configureUsing(configureAction))
+            dynamic(args, name) { project.configure(this, configureAction) }
 
     fun framework(args: Map<String, Any?>, name: String) = create(name, KonanFramework::class, args)
     fun framework(args: Map<String, Any?>, name: String, configureAction: Action<KonanFramework>) =
@@ -112,7 +111,7 @@ open class KonanArtifactContainer(val project: ProjectInternal) : DefaultPolymor
     fun framework(args: Map<String, Any?>, name: String, configureAction: KonanFramework.() -> Unit) =
             create(name, KonanFramework::class, args, configureAction)
     fun framework(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
-            framework(args, name, ConfigureUtil.configureUsing(configureAction))
+            framework(args, name) { project.configure(this, configureAction) }
 
     fun library(args: Map<String, Any?>, name: String) = create(name, KonanLibrary::class, args)
     fun library(args: Map<String, Any?>, name: String, configureAction: Action<KonanLibrary>) =
@@ -120,7 +119,7 @@ open class KonanArtifactContainer(val project: ProjectInternal) : DefaultPolymor
     fun library(args: Map<String, Any?>, name: String, configureAction: KonanLibrary.() -> Unit) =
             create(name, KonanLibrary::class, args, configureAction)
     fun library(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
-            library(args, name, ConfigureUtil.configureUsing(configureAction))
+            library(args, name) { project.configure(this, configureAction) }
 
     fun bitcode(args: Map<String, Any?>, name: String) = create(name, KonanBitcode::class, args)
     fun bitcode(args: Map<String, Any?>, name: String, configureAction: Action<KonanBitcode>) =
@@ -128,7 +127,7 @@ open class KonanArtifactContainer(val project: ProjectInternal) : DefaultPolymor
     fun bitcode(args: Map<String, Any?>, name: String, configureAction: KonanBitcode.() -> Unit) =
             create(name, KonanBitcode::class, args, configureAction)
     fun bitcode(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
-            bitcode(args, name, ConfigureUtil.configureUsing(configureAction))
+            bitcode(args, name) { project.configure(this, configureAction) }
 
     fun interop(args: Map<String, Any?>, name: String) = create(name, KonanInteropLibrary::class, args)
     fun interop(args: Map<String, Any?>, name: String, configureAction: Action<KonanInteropLibrary>) =
@@ -136,7 +135,7 @@ open class KonanArtifactContainer(val project: ProjectInternal) : DefaultPolymor
     fun interop(args: Map<String, Any?>, name: String, configureAction: KonanInteropLibrary.() -> Unit) =
             create(name, KonanInteropLibrary::class, args, configureAction)
     fun interop(args: Map<String, Any?>, name: String, configureAction: Closure<*>) =
-            interop(args, name, ConfigureUtil.configureUsing(configureAction))
+            interop(args, name) { project.configure(this, configureAction) }
 
     fun program(name: String)                                           = program(emptyMap(), name)
     fun program(name: String, configureAction: Action<KonanProgram>)    = program(emptyMap(), name, configureAction)

@@ -20,18 +20,11 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
-import org.gradle.util.ConfigureUtil
-import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirectoriesSpec
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.library.defaultResolver
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -150,7 +143,7 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
 
     override fun includeDirs(vararg values: Any) = includeDirs.allHeaders(values.toList())
 
-    override fun includeDirs(closure: Closure<Unit>) = includeDirs(ConfigureUtil.configureUsing(closure))
+    override fun includeDirs(closure: Closure<Unit>) = includeDirs { project.configure(this, closure) }
     override fun includeDirs(action: Action<IncludeDirectoriesSpec>) = includeDirs { action.execute(this) }
     override fun includeDirs(configure: IncludeDirectoriesSpec.() -> Unit) = includeDirs.configure()
 

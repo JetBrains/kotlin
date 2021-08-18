@@ -22,7 +22,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.konan.target.*
 
 import java.io.*
@@ -38,7 +37,8 @@ import java.util.concurrent.TimeUnit
  * @see org.gradle.api.Project.exec
  */
 interface ExecutorService {
-    fun execute(closure: Closure<in ExecSpec>): ExecResult? = execute(ConfigureUtil.configureUsing(closure))
+    val project: Project
+    fun execute(closure: Closure<in ExecSpec>): ExecResult? = execute { project.configure(this, closure) }
     fun execute(action: Action<in ExecSpec>): ExecResult?
 }
 
@@ -62,6 +62,7 @@ fun create(project: Project): ExecutorService {
 private fun wasmExecutor(project: Project) = object : ExecutorService {
     val absoluteTargetToolchain = project.testTargetConfigurables.absoluteTargetToolchain
 
+    override val project: Project get() = project
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
         action.execute(this)
         val exe = executable
@@ -141,7 +142,7 @@ fun runProcessWithInput(executor: (Action<in ExecSpec>) -> ExecResult?,
  * @throws IllegalStateException if there are no executor in the project.
  */
 val Project.executor: ExecutorService
-    get() = this.convention.plugins["executor"] as? ExecutorService
+    get() = this.extensions.findByName("executor") as? ExecutorService
             ?: throw IllegalStateException("Executor wasn't found")
 
 /**
@@ -150,6 +151,7 @@ val Project.executor: ExecutorService
  * @code `executor.add(Action { it.environment = mapOf("JAVA_OPTS" to "-verbose:gc") })::execute`
  */
 fun ExecutorService.add(actionParameter: Action<in ExecSpec>) = object : ExecutorService {
+    override val project: Project get() = this@add.project
     override fun execute(action: Action<in ExecSpec>): ExecResult? =
             this@add.execute(Action {
                 action.execute(this)
@@ -182,6 +184,7 @@ fun Project.executeAndCheck(executable: Path, arguments: List<String> = emptyLis
 fun localExecutor(project: Project) = { a: Action<in ExecSpec> -> project.exec(a) }
 
 fun localExecutorService(project: Project): ExecutorService = object : ExecutorService {
+    override val project: Project get() = project
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec(action)
 }
 
@@ -189,6 +192,8 @@ private fun emulatorExecutor(project: Project, target: KonanTarget) = object : E
     val configurables = project.testTargetConfigurables as? ConfigurablesWithEmulator
             ?: error("$target does not support emulation!")
     val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
+
+    override val project: Project get() = project
 
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
         action.execute(this)
@@ -285,6 +290,8 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
         else -> error("${target.architecture} can't be used in simulator.")
     }.toTypedArray()
 
+    override val project: Project get() = project
+
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
         action.execute(this)
         // Starting Xcode 11 `simctl spawn` requires explicit `--standalone` flag.
@@ -319,6 +326,8 @@ private fun sshExecutor(project: Project, testTarget: KonanTarget): ExecutorServ
             listOf("export LD_LIBRARY_PATH=$remoteDir:\$LD_LIBRARY_PATH;")
         else -> emptyList()
     }
+
+    override val project: Project get() = project
 
     override fun execute(action: Action<in ExecSpec>): ExecResult {
         lateinit var executableWithLibs: ExecutableWithDynamicLibs
@@ -401,6 +410,8 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
     private val deviceName = project.findProperty("device_name") as? String
 
     private val bundleID = "org.jetbrains.kotlin.KonanTestLauncher"
+
+    override val project: Project get() = project
 
     override fun execute(action: Action<in ExecSpec>): ExecResult? {
         val result: ExecResult?

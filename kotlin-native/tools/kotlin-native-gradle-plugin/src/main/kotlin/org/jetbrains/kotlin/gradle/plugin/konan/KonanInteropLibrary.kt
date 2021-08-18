@@ -21,7 +21,6 @@ import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import java.io.File
@@ -72,7 +71,7 @@ open class KonanInteropLibrary(name: String,
     override fun headers(files: FileCollection) = tasks().forEach { it.configure { headers(files) } }
 
     override fun includeDirs(vararg values: Any) = tasks().forEach { it.configure { includeDirs(*values) } }
-    override fun includeDirs(closure: Closure<Unit>) = includeDirs(ConfigureUtil.configureUsing(closure))
+    override fun includeDirs(closure: Closure<Unit>) = includeDirs { project.configure(this, closure) }
     override fun includeDirs(action: Action<IncludeDirectoriesSpec>) = includeDirs { action.execute(this) }
     override fun includeDirs(configure: IncludeDirectoriesSpec.() -> Unit) = includeDirs.configure()
 

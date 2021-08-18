@@ -31,7 +31,6 @@ import org.gradle.api.tasks.*
 import org.gradle.language.cpp.CppBinary
 import org.gradle.language.cpp.internal.DefaultUsageContext
 import org.gradle.nativeplatform.Linkage
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.compatibleVariantIdentity
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -176,7 +175,7 @@ abstract class KonanArtifactWithLibrariesTask: KonanArtifactTask(), KonanArtifac
 
     // DSL
 
-    override fun libraries(closure: Closure<Unit>) = libraries(ConfigureUtil.configureUsing(closure))
+    override fun libraries(closure: Closure<Unit>) = libraries { project.configure(this, closure) }
     override fun libraries(action: Action<KonanLibrariesSpec>) = libraries { action.execute(this) }
     override fun libraries(configure: KonanLibrariesSpec.() -> Unit) { libraries.configure() }
 

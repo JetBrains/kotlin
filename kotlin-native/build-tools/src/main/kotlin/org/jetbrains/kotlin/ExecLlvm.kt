@@ -10,7 +10,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 fun execLlvmUtility(project: Project, utility: String, action: Action<in ExecSpec>): ExecResult {
@@ -22,5 +21,5 @@ fun execLlvmUtility(project: Project, utility: String, action: Action<in ExecSpe
 }
 
 fun execLlvmUtility(project: Project, utility: String, closure: Closure<in ExecSpec>): ExecResult {
-    return execLlvmUtility(project, utility, ConfigureUtil.configureUsing(closure))
+    return execLlvmUtility(project, utility) { project.configure(this, closure) }
 }
