@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.psi2ir.intermediate.generateExpressionValue
 import org.jetbrains.kotlin.wasm.ir.*
 
 class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorVoid {
@@ -59,6 +60,11 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
+    }
+
+    override fun visitThrow(expression: IrThrow) {
+        generateExpression(expression.value)
+        body.buildThrow(context.tagIdx)
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {

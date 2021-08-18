@@ -340,12 +340,6 @@ private val wasmVarargExpressionLoweringPhase = makeWasmModulePhase(
     description = "Lower varargs"
 )
 
-private val wasmThrowDebugLoweringPhase = makeWasmModulePhase(
-    ::WasmThrowDebugLowering,
-    name = "WasmThrowDebugLowering",
-    description = "Instrument throws with debug print information"
-)
-
 private val fieldInitializersLoweringPhase = makeWasmModulePhase(
     ::FieldInitializersLowering,
     name = "FieldInitializersLowering",
@@ -503,7 +497,6 @@ val wasmPhases = NamedCompilerPhase(
             builtInsLoweringPhase then
 
             virtualDispatchReceiverExtractionPhase then
-            wasmThrowDebugLoweringPhase then
             staticMembersLoweringPhase then
             wasmNullSpecializationLowering then
             validateIrAfterLowering

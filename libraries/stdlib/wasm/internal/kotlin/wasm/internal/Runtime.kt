@@ -67,8 +67,3 @@ internal fun <T, R> boxIntrinsic(x: T): R =
 @ExcludedFromCodegen
 internal fun <T, R> unboxIntrinsic(x: T): R =
     implementedAsIntrinsic
-
-internal fun wasmThrow(e: Throwable): Nothing {
-    println("Kotlin/Wasm exception wasm thrown: ${e.message}")
-    wasm_unreachable()
-}

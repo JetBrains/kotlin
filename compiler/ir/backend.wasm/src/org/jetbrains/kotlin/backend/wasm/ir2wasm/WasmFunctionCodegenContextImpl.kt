@@ -23,6 +23,9 @@ class WasmFunctionCodegenContextImpl(
     override val bodyGen: WasmExpressionBuilder =
         WasmIrExpressionBuilder(wasmFunction.instructions)
 
+    override val tagIdx: Int
+        get() = 0
+
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
 

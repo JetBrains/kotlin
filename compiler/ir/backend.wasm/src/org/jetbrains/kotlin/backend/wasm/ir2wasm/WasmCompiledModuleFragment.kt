@@ -33,6 +33,8 @@ class WasmCompiledModuleFragment {
         ReferencableElements<WasmSignature, Int>()
     val stringLiteralId =
         ReferencableElements<String, Int>()
+    val tagFuncType = WasmFunctionType("ex_handling_tag", listOf(WasmAnyRef), emptyList())
+    val tag = WasmTag(tagFuncType)
 
     val runtimeTypes =
         ReferencableAndDefinable<IrClassSymbol, WasmGlobal>()
@@ -250,7 +252,7 @@ class WasmCompiledModuleFragment {
         val sortedRttGlobals = runtimeTypes.elements.sortedBy { (it.type as WasmRtt).depth }
 
         val module = WasmModule(
-            functionTypes = functionTypes.elements,
+            functionTypes = functionTypes.elements + tagFuncType,
             gcTypes = gcTypes.elements,
             importsInOrder = importedFunctions,
             importedFunctions = importedFunctions,
@@ -261,7 +263,8 @@ class WasmCompiledModuleFragment {
             exports = exports,
             startFunction = startFunction!!,
             elements = listOf(elements) + interfaceTableElements,
-            data = data
+            data = data,
+            tags = listOf(tag)
         )
         module.calculateIds()
         return module
