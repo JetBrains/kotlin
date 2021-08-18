@@ -3532,4 +3532,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY) { firDiagnostic ->
+        JvmPackageNameCannotBeEmptyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_PACKAGE_NAME_MUST_BE_VALID_NAME) { firDiagnostic ->
+        JvmPackageNameMustBeValidNameImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES) { firDiagnostic ->
+        JvmPackageNameNotSupportedInFilesWithClassesImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

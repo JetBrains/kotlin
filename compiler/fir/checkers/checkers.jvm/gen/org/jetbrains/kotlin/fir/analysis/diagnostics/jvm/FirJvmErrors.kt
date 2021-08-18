@@ -39,5 +39,8 @@ object FirJvmErrors {
     val OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR by deprecationError0<KtAnnotationEntry>(ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses)
     val OVERLOADS_PRIVATE by warning0<KtAnnotationEntry>()
     val DEPRECATED_JAVA_ANNOTATION by warning1<KtAnnotationEntry, FqName>()
+    val JVM_PACKAGE_NAME_CANNOT_BE_EMPTY by error0<KtAnnotationEntry>()
+    val JVM_PACKAGE_NAME_MUST_BE_VALID_NAME by error0<KtAnnotationEntry>()
+    val JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES by error0<KtAnnotationEntry>()
 
 }

@@ -90,11 +90,6 @@ private fun FirBasedSymbol<*>.getDeprecationForCallSite(
     return (deprecations ?: EmptyDeprecationsPerUseSite).forUseSite(*sites)
 }
 
-private fun FirAnnotationCall.getStringArgument(name: Name): String? =
-    findArgumentByName(name)?.let { expression ->
-        expression.safeAs<FirConstExpression<*>>()?.value as? String
-    }
-
 private fun FirAnnotationCall.getVersionFromArgument(name: Name): ApiVersion? =
     getStringArgument(name)?.let { ApiVersion.parse(it) }
 

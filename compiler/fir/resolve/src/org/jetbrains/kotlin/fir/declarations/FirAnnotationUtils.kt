@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val RETENTION_CLASS_ID = ClassId.fromString("kotlin/annotation/Retention")
 private val TARGET_CLASS_ID = ClassId.fromString("kotlin/annotation/Target")
@@ -125,3 +126,8 @@ fun FirAnnotationCall.findArgumentByName(name: Name): FirExpression? {
     // TODO: this line is still needed. However it should be replaced with 'return null'
     return arguments.singleOrNull()
 }
+
+fun FirAnnotationCall.getStringArgument(name: Name): String? =
+    findArgumentByName(name)?.let { expression ->
+        expression.safeAs<FirConstExpression<*>>()?.value as? String
+    }
