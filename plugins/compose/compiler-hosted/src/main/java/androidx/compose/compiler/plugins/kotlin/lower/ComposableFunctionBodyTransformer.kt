@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -139,7 +140,6 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -3453,7 +3453,7 @@ class ComposableFunctionBodyTransformer(
 
                 parameters.forEachIndexed { originalIndex, parameter ->
                     if (expectedIndexes.first() == sortIndex[originalIndex] &&
-                        !parameter.type.isInlined()
+                        !parameter.type.isInlineClassType()
                     ) {
                         run++
                         expectedIndexes.removeAt(0)
@@ -3464,7 +3464,7 @@ class ComposableFunctionBodyTransformer(
                             ?: error("missing index $originalIndex")
                         builder.append(index)
                         expectedIndexes.remove(index)
-                        if (parameter.type.isInlined()) {
+                        if (parameter.type.isInlineClassType()) {
                             parameter.type.getClass()?.fqNameWhenAvailable?.let {
                                 builder.append(':')
                                 builder.append(
