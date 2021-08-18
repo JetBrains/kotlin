@@ -21,7 +21,6 @@ import java.io.File
 import java.net.URI
 import javax.inject.Inject
 
-@CacheableTask
 open class YarnSetupTask : DefaultTask() {
     @Transient
     private val settings = project.yarn

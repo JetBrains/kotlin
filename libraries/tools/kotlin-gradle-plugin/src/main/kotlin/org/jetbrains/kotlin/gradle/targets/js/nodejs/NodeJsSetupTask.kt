@@ -16,7 +16,6 @@ import java.io.File
 import java.net.URI
 import javax.inject.Inject
 
-@CacheableTask
 abstract class NodeJsSetupTask : DefaultTask() {
     @Transient
     private val settings = NodeJsRootPlugin.apply(project.rootProject)
