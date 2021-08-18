@@ -345,26 +345,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.SUPER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
-        SuperIsNotAnExpressionImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.SUPER_NOT_AVAILABLE) { firDiagnostic ->
-        SuperNotAvailableImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.ABSTRACT_SUPER_CALL) { firDiagnostic ->
-        AbstractSuperCallImpl(
-            firDiagnostic as FirPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL) { firDiagnostic ->
-        InstanceAccessBeforeSuperCallImpl(
+    add(FirJvmErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS) { firDiagnostic ->
+        SuperCallWithDefaultParametersImpl(
             firDiagnostic.a,
             firDiagnostic as FirPsiDiagnostic,
             token,

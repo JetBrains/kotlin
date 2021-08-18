@@ -55,4 +55,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES by error<KtAnnotationEntry>()
     }
 
+    val SUPER by object : DiagnosticGroup("Super") {
+        val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error<PsiElement>() {
+            parameter<String>("name")
+        }
+    }
+
 }

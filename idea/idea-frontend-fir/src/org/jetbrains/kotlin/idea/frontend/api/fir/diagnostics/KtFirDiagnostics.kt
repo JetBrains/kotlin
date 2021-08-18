@@ -270,21 +270,9 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val classSymbol: KtClassLikeSymbol
     }
 
-    abstract class SuperIsNotAnExpression : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = SuperIsNotAnExpression::class
-    }
-
-    abstract class SuperNotAvailable : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = SuperNotAvailable::class
-    }
-
-    abstract class AbstractSuperCall : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = AbstractSuperCall::class
-    }
-
-    abstract class InstanceAccessBeforeSuperCall : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = InstanceAccessBeforeSuperCall::class
-        abstract val target: String
+    abstract class SuperCallWithDefaultParameters : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SuperCallWithDefaultParameters::class
+        abstract val name: String
     }
 
     abstract class NotASupertype : KtFirDiagnostic<PsiElement>() {

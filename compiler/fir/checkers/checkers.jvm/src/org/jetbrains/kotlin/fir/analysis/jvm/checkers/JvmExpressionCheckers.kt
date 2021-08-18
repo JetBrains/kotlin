@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChec
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.FirDeprecatedJavaAnnotationsChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.FirJavaGenericVarianceViolationTypeChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.FirJvmPackageNameAnnotationsChecker
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.FirSuperCallWithDefaultsChecker
 
 object JvmExpressionCheckers : ExpressionCheckers() {
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = setOf(
             FirJavaGenericVarianceViolationTypeChecker,
+            FirSuperCallWithDefaultsChecker,
         )
 
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
