@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -199,7 +199,7 @@ class PostponedArgumentsAnalyzer(
                 val variable = variableWithConstraints.typeVariable
 
                 c.getBuilder().unmarkPostponedVariable(variable)
-                c.getBuilder().addEqualityConstraint(variable.defaultType(c), resultType, CoroutinePosition)
+                c.getBuilder().addEqualityConstraint(variable.defaultType(c), resultType, BuilderInferencePosition)
             }
         }
     }

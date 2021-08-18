@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.context.*;
-import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceUtilKt;
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
@@ -616,7 +616,7 @@ public class CallResolver {
         OverloadResolutionResultsImpl<D> results = doResolveCall(newContext, resolutionTask, tracing);
 
         // this is necessary because we already run CallCompleter for such calls
-        if (CoroutineInferenceUtilKt.isResultWithCoroutineInference(results)) {
+        if (BuilderInferenceUtilKt.isResultWithBuilderInference(results)) {
             traceToResolveCall.commit();
             return results;
         }

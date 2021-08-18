@@ -272,7 +272,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         for ((argument, parameter) in resolvedCall.argumentToCandidateParameter) {
-            if (!callComponents.statelessCallbacks.isCoroutineCall(argument, parameter)) continue
+            if (!callComponents.statelessCallbacks.isBuilderInferenceCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
 
             if (argument is LambdaKotlinCallArgument && !argument.hasBuilderInferenceAnnotation) {

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubsti
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -219,7 +219,7 @@ class FirBuilderInferenceSession(
             for ((variableConstructor, type) in storage.fixedTypeVariables) {
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
                 commonSystem.registerVariable(typeVariable)
-                commonSystem.addEqualityConstraint((typeVariable as ConeTypeVariable).defaultType, type, CoroutinePosition)
+                commonSystem.addEqualityConstraint((typeVariable as ConeTypeVariable).defaultType, type, BuilderInferencePosition)
                 introducedConstraint = true
             }
         }

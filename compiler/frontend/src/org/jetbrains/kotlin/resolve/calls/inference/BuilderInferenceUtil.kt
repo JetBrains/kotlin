@@ -48,7 +48,7 @@ import javax.inject.Inject
 
 class TypeTemplate(
     val typeVariable: TypeVariable,
-    val coroutineInferenceData: CoroutineInferenceData,
+    val builderInferenceData: BuilderInferenceData,
     nullable: Boolean = true
 ) : FlexibleType(
     typeVariable.originalTypeParameter.builtIns.nothingType,
@@ -56,7 +56,7 @@ class TypeTemplate(
 ) {
     override fun replaceAnnotations(newAnnotations: Annotations) = this
 
-    override fun makeNullableAsSpecified(newNullability: Boolean) = TypeTemplate(typeVariable, coroutineInferenceData, newNullability)
+    override fun makeNullableAsSpecified(newNullability: Boolean) = TypeTemplate(typeVariable, builderInferenceData, newNullability)
 
     override val delegate: SimpleType
         get() = upperBound
@@ -68,7 +68,7 @@ class TypeTemplate(
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) = this
 }
 
-class CoroutineInferenceData {
+class BuilderInferenceData {
     private val csBuilder = ConstraintSystemBuilderImpl()
     private val typeTemplates = HashMap<TypeVariable, TypeTemplate>()
     private var hereIsBadCall = false
@@ -129,7 +129,7 @@ class CoroutineInferenceData {
     }
 }
 
-class CoroutineInferenceSupport(
+class BuilderInferenceSupport(
     val argumentTypeResolver: ArgumentTypeResolver,
     val expressionTypingServices: ExpressionTypingServices
 ) {
@@ -138,7 +138,7 @@ class CoroutineInferenceSupport(
 
     private val languageVersionSettings get() = expressionTypingServices.languageVersionSettings
 
-    fun analyzeCoroutine(
+    fun analyzeBuilderInferenceCall(
         functionLiteral: KtFunction,
         valueArgument: ValueArgument,
         csBuilder: ConstraintSystem.Builder,
@@ -150,7 +150,7 @@ class CoroutineInferenceSupport(
 
         val lambdaReceiverType = lambdaExpectedType.getReceiverTypeFromFunctionType() ?: return
 
-        val inferenceData = CoroutineInferenceData()
+        val inferenceData = BuilderInferenceData()
 
         val constraintSystem = csBuilder.build()
         val newSubstitution = object : DelegatedTypeSubstitution(constraintSystem.currentSubstitutor.substitution) {
@@ -189,13 +189,13 @@ class CoroutineInferenceSupport(
         inferenceData.initSystem()
 
         // this trace shouldn't be committed
-        val temporaryForCoroutine = TemporaryTraceAndCache.create(
-            context, "trace for type argument inference for coroutine", functionLiteral
+        val temporaryForBuilderInference = TemporaryTraceAndCache.create(
+            context, "trace to infer a type argument using the builder inference", functionLiteral
         )
 
         val newContext = context.replaceExpectedType(newExpectedType)
             .replaceDataFlowInfo(context.candidateCall.dataFlowInfoForArguments.getInfo(valueArgument))
-            .replaceContextDependency(ContextDependency.INDEPENDENT).replaceTraceAndCache(temporaryForCoroutine)
+            .replaceContextDependency(ContextDependency.INDEPENDENT).replaceTraceAndCache(temporaryForBuilderInference)
         argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS, true)
 
         inferenceData.reportInferenceResult(csBuilder)
@@ -208,12 +208,12 @@ class CoroutineInferenceSupport(
             expectedType.isSuspendFunctionType
     }
 
-    fun checkCoroutineCalls(
+    fun checkBuilderInferenceCalls(
         context: BasicCallResolutionContext,
         tracingStrategy: TracingStrategy,
         overloadResults: OverloadResolutionResultsImpl<*>
     ) {
-        val inferenceData = overloadResults.getCoroutineInferenceData() ?: return
+        val inferenceData = overloadResults.getBuilderInferenceData() ?: return
 
         val resultingCall = overloadResults.resultingCall
 
@@ -232,7 +232,7 @@ class CoroutineInferenceSupport(
 
             with(NewKotlinTypeChecker.Default) {
                 val parameterType = getEffectiveExpectedType(argumentMatch.valueParameter, valueArgument, context)
-                CoroutineTypeCheckerContext(allowOnlyTrivialConstraints = false).isSubtypeOf(kotlinType.unwrap(), parameterType.unwrap())
+                BuilderInferenceTypeCheckerContext(allowOnlyTrivialConstraints = false).isSubtypeOf(kotlinType.unwrap(), parameterType.unwrap())
             }
         }
 
@@ -245,14 +245,14 @@ class CoroutineInferenceSupport(
 
         resultingCall.extensionReceiver?.let { actualReceiver ->
             with(NewKotlinTypeChecker.Default) {
-                CoroutineTypeCheckerContext(allowOnlyTrivialConstraints = allowOnlyTrivialConstraintsForReceiver).isSubtypeOf(
+                BuilderInferenceTypeCheckerContext(allowOnlyTrivialConstraints = allowOnlyTrivialConstraintsForReceiver).isSubtypeOf(
                     actualReceiver.type.unwrap(), extensionReceiver.value.type.unwrap()
                 )
             }
         }
     }
 
-    private class CoroutineTypeCheckerContext(
+    private class BuilderInferenceTypeCheckerContext(
         private val allowOnlyTrivialConstraints: Boolean
     ) : ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) {
 
@@ -260,7 +260,7 @@ class CoroutineInferenceSupport(
             require(subType is UnwrappedType)
             require(superType is UnwrappedType)
             val typeTemplate = subType as? TypeTemplate ?: superType as? TypeTemplate
-            typeTemplate?.coroutineInferenceData?.addConstraint(subType, superType, allowOnlyTrivialConstraints)
+            typeTemplate?.builderInferenceData?.addConstraint(subType, superType, allowOnlyTrivialConstraints)
             return null
         }
     }
@@ -302,7 +302,7 @@ fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, language
     if (languageVersionSettings.supportsFeature(LanguageFeature.UnrestrictedBuilderInference)) return true
 
     if (!languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference)) {
-        return isGoodCallForOldCoroutines(descriptor)
+        return isGoodCallForOldBuilderInference(descriptor)
     }
 
     if (descriptor.isExtension && !descriptor.hasBuilderInferenceAnnotation()) {
@@ -313,7 +313,7 @@ fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, language
     return !returnType.containsTypeTemplate()
 }
 
-private fun isGoodCallForOldCoroutines(resultingDescriptor: CallableDescriptor): Boolean {
+private fun isGoodCallForOldBuilderInference(resultingDescriptor: CallableDescriptor): Boolean {
     val returnType = resultingDescriptor.returnType ?: return false
     if (returnType.containsTypeTemplate()) return false
 
@@ -324,7 +324,7 @@ private fun isGoodCallForOldCoroutines(resultingDescriptor: CallableDescriptor):
     return true
 }
 
-fun isCoroutineCallWithAdditionalInference(
+fun isBuilderInferenceCall(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
     languageVersionSettings: LanguageVersionSettings
@@ -342,18 +342,18 @@ fun isCoroutineCallWithAdditionalInference(
             parameterDescriptor.type.let { it.isBuiltinFunctionalType && it.getReceiverTypeFromFunctionType() != null }
 }
 
-fun OverloadResolutionResultsImpl<*>.isResultWithCoroutineInference() = getCoroutineInferenceData() != null
+fun OverloadResolutionResultsImpl<*>.isResultWithBuilderInference() = getBuilderInferenceData() != null
 
-private fun OverloadResolutionResultsImpl<*>.getCoroutineInferenceData(): CoroutineInferenceData? {
+private fun OverloadResolutionResultsImpl<*>.getBuilderInferenceData(): BuilderInferenceData? {
     if (!isSingleResult) return null
 
-    fun getData(receiverValue: ReceiverValue?): CoroutineInferenceData? {
-        var coroutineInferenceData: CoroutineInferenceData? = null
+    fun getData(receiverValue: ReceiverValue?): BuilderInferenceData? {
+        var builderInferenceData: BuilderInferenceData? = null
         receiverValue?.type?.contains {
-            (it as? TypeTemplate)?.coroutineInferenceData?.let { coroutineInferenceData = it }
+            (it as? TypeTemplate)?.builderInferenceData?.let { builderInferenceData = it }
             false
         }
-        return coroutineInferenceData
+        return builderInferenceData
     }
     return getData(resultingCall.dispatchReceiver) ?: getData(resultingCall.extensionReceiver)
 }
