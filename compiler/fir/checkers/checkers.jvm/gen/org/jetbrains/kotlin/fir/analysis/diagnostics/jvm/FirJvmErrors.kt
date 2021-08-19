@@ -60,5 +60,6 @@ object FirJvmErrors {
     val JVM_RECORD_NOT_LAST_VARARG_PARAMETER by error0<PsiElement>()
     val INNER_JVM_RECORD by error0<PsiElement>(SourceElementPositioningStrategies.INNER_MODIFIER)
     val FIELD_IN_JVM_RECORD by error0<PsiElement>()
+    val DELEGATION_BY_IN_JVM_RECORD by error0<PsiElement>()
 
 }

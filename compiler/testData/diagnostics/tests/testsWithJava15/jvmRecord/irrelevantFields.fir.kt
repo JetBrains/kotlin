@@ -9,7 +9,7 @@ interface I
 val i: I = object : I {}
 
 @JvmRecord
-data class MyRec1(val name: String) : I by i
+data class MyRec1(val name: String) : I by <!DELEGATION_BY_IN_JVM_RECORD!>i<!>
 
 @JvmRecord
 data class MyRec2(val name: String) {

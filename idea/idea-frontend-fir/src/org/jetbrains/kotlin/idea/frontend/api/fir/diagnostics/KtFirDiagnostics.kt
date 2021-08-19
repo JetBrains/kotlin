@@ -2501,4 +2501,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = FieldInJvmRecord::class
     }
 
+    abstract class DelegationByInJvmRecord : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DelegationByInJvmRecord::class
+    }
+
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
@@ -83,6 +84,8 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
                 } else if (!fromConstructor && (decl.hasBackingField || decl.delegateFieldSymbol != null)) {
                     reporter.reportOn(decl.source, FirJvmErrors.FIELD_IN_JVM_RECORD, context)
                 }
+            } else if (decl is FirField && decl.isSynthetic) {
+                reporter.reportOn(decl.source, FirJvmErrors.DELEGATION_BY_IN_JVM_RECORD, context)
             }
         }
     }
