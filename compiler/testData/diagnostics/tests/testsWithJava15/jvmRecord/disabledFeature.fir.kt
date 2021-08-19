@@ -5,7 +5,7 @@
 public record JRecord(int x, CharSequence y) {}
 // FILE: main.kt
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class MyRec(
     val x: String,
     val y: Int,

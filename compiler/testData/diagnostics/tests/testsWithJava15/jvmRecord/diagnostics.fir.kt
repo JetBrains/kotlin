@@ -4,24 +4,24 @@
 // JVM_TARGET: 15
 // ENABLE_JVM_PREVIEW
 
-<!JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS!>@JvmRecord<!>
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A0
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A1 {
     constructor()
 }
 
-<!JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS!>@JvmRecord<!>
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A2()
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A3(name: String)
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A4(var name: String)
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A5(vararg val name: String, y: Int)
 
 @JvmRecord
@@ -38,7 +38,7 @@ class A5(vararg val name: String, y: Int)
     X("");
 }
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A10(
     val x: String,
     val y: Int,
@@ -51,6 +51,6 @@ fun main() {
 }
 
 class Outer {
-    @JvmRecord
+    <!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
     inner class Inner(val name: String)
 }

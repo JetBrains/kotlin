@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.primaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.name.FqName
 
 object FirJvmRecordChecker : FirRegularClassChecker() {
@@ -37,6 +34,11 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
 
         if (declaration.isEnumClass) {
             reporter.reportOn(declaration.source, FirJvmErrors.ENUM_JVM_RECORD, context)
+            return
+        }
+
+        if (!declaration.isData) {
+            reporter.reportOn(annotationSource, FirJvmErrors.NON_DATA_CLASS_JVM_RECORD, context)
             return
         }
 
