@@ -6220,6 +6220,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/coroutines/varValueConflictsWithTableSameSort.kt");
         }
 
+        @TestMetadata("varargCallFromSuspend.kt")
+        public void testVarargCallFromSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/varargCallFromSuspend.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/coroutines/bridges")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

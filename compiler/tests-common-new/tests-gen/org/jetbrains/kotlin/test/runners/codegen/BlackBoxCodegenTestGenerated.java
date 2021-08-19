@@ -9788,6 +9788,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/coroutines/varValueConflictsWithTableSameSort.kt");
         }
 
+        @Test
+        @TestMetadata("varargCallFromSuspend.kt")
+        public void testVarargCallFromSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/varargCallFromSuspend.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines/bridges")
         @TestDataPath("$PROJECT_ROOT")
