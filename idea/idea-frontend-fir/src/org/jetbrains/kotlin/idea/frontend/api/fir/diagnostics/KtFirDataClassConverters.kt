@@ -3574,4 +3574,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_RECORD_NOT_LAST_VARARG_PARAMETER) { firDiagnostic ->
+        JvmRecordNotLastVarargParameterImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

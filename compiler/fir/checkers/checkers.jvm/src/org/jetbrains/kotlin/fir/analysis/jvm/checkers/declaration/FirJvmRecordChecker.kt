@@ -58,9 +58,16 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
             return
         }
 
-        if (declaration.primaryConstructor?.valueParameters?.isEmpty() == true) {
-            reporter.reportOn(annotationSource, FirJvmErrors.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS, context)
-            return
+        declaration.primaryConstructor?.valueParameters?.let { params ->
+            if (params.isEmpty()) {
+                reporter.reportOn(annotationSource, FirJvmErrors.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS, context)
+                return
+            }
+            params.dropLast(1).forEach { param ->
+                if (param.isVararg) {
+                    reporter.reportOn(param.source, FirJvmErrors.JVM_RECORD_NOT_LAST_VARARG_PARAMETER, context)
+                }
+            }
         }
 
         declaration.declarations.forEach { decl ->

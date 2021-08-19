@@ -2489,4 +2489,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmRecordNotValParameter::class
     }
 
+    abstract class JvmRecordNotLastVarargParameter : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmRecordNotLastVarargParameter::class
+    }
+
 }
