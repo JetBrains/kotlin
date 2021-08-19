@@ -44,12 +44,12 @@ fun main(a: A) {
     a.field<!UNSAFE_CALL!>.<!>length
 
     a.foo2("", null)?.length
-    a.foo2("", null)<!UNSAFE_CALL!>.<!>length
-    a.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>, "")<!UNSAFE_CALL!>.<!>length
+    a.foo2("", null).length
+    a.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
 
     a.bar2().length
     a.bar2()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field2?.length
-    a.field2<!UNSAFE_CALL!>.<!>length
+    a.field2.length
 }

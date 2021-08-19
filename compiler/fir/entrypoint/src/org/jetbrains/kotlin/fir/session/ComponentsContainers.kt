@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 
 // -------------------------- Required components --------------------------
 
@@ -63,7 +63,8 @@ fun FirSession.registerCliCompilerOnlyComponents() {
 
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerCommonJavaComponents() {
-    register(FirJavaTypeEnhancementStateComponent::class, FirJavaTypeEnhancementStateComponent(JavaTypeEnhancementState.DEFAULT))
+    val jsr305State = languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
+    register(FirJavaTypeEnhancementStateComponent::class, FirJavaTypeEnhancementStateComponent(jsr305State))
 }
 
 // -------------------------- Resolve components --------------------------
