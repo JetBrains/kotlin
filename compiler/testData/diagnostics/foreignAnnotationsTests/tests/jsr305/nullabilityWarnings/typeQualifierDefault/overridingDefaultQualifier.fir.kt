@@ -162,15 +162,15 @@ fun main(a: A, b: A.B, c: A.C) {
     b.baz()!!.get(0)?.get(0)
 
     // c
-    c.foo("", null)?.length
+    c.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     c.foo("", null).length
-    c.foo(null, "").length
+    c.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
 
     c.foobar(null, "")<!UNSAFE_CALL!>.<!>length
     c.foobar("", null)?.length
 
     c.bar().length
-    c.bar()!!.length
+    c.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     c.field?.length
     c.field<!UNSAFE_CALL!>.<!>length

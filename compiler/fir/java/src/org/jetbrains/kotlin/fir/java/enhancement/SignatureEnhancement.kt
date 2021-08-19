@@ -62,10 +62,10 @@ class FirSignatureEnhancement(
     private val javaTypeParameterStack: JavaTypeParameterStack =
         if (owner is FirJavaClass) owner.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
 
-    private val typeQualifierResolver = FirAnnotationTypeQualifierResolver(session)
+    private val typeQualifierResolver = session.javaAnnotationTypeQualifierResolver
 
     private val contextQualifiers: JavaTypeQualifiersByElementType? =
-        typeQualifierResolver.extractAndMergeDefaultQualifiers(null, owner.annotations)
+        typeQualifierResolver.extractDefaultQualifiers(owner)
 
     private val enhancements = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>>()
 

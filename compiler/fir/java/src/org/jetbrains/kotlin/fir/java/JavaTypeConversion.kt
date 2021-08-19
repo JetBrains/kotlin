@@ -65,11 +65,7 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
     return buildJavaTypeRef {
-        annotationBuilder = {
-            (this@toFirJavaTypeRef as? JavaClassifierType)?.annotations.orEmpty().map {
-                it.toFirAnnotationCall(session, javaTypeParameterStack)
-            }
-        }
+        annotationBuilder = { convertAnnotationsToFir(session, javaTypeParameterStack) }
         type = this@toFirJavaTypeRef
     }
 }
@@ -89,13 +85,11 @@ private fun JavaType?.toConeKotlinTypeWithoutEnhancement(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
     mode: FirJavaTypeConversionMode
 ): ConeKotlinType {
-    val attributes = if (this != null && annotations.isNotEmpty()) {
-        ConeAttributes.create(
-            listOf(CustomAnnotationTypeAttribute(annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }))
-        )
-    } else {
+    val attributes = if (this != null && annotations.isNotEmpty())
+        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertAnnotationsToFir(session, javaTypeParameterStack))))
+    else
         ConeAttributes.Empty
-    }
+
     return when (this) {
         is JavaClassifierType ->
             toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, mode, attributes)

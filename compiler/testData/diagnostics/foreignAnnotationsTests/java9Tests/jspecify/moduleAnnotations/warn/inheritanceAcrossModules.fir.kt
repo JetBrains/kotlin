@@ -39,7 +39,7 @@ import test1.Test1
 import test2.Test2
 
 fun main(x: Test1, y: Test2) {
-    x.foo(null)
-    y.foo(null)
+    x.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    y.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     y.foo2(null)
 }

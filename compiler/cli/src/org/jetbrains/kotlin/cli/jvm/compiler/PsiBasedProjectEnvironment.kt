@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
 
 class PsiBasedProjectFileSearchScope(val psiSearchScope: GlobalSearchScope) : AbstractProjectFileSearchScope {
@@ -63,6 +64,9 @@ class PsiBasedProjectEnvironment(
         fileSearchScope: AbstractProjectFileSearchScope
     ): JavaSymbolProvider =
         JavaSymbolProvider(firSession, baseModuleData, project, fileSearchScope.asPsiSearchScope())
+
+    override fun getJavaModuleResolver(): JavaModuleResolver =
+        JavaModuleResolver.getInstance(project)
 
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider =
         getPackagePartProviderFn(fileSearchScope.asPsiSearchScope())
