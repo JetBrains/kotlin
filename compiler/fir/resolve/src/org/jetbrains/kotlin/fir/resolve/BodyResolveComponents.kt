@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -135,6 +136,16 @@ class FirTowerDataContext private constructor(
             implicitReceiverStack,
             localScopes,
             nonLocalTowerDataElements.add(element)
+        )
+    }
+
+    fun createSnapshot(): FirTowerDataContext {
+        return FirTowerDataContext(
+            towerDataElements.map { FirTowerDataElement(it.scope, it.implicitReceiver?.createSnapshot(), it.isLocal) }.toPersistentList(),
+            implicitReceiverStack.createSnapshot(),
+            localScopes.toPersistentList(),
+            nonLocalTowerDataElements.map { FirTowerDataElement(it.scope, it.implicitReceiver?.createSnapshot(), it.isLocal) }
+                .toPersistentList()
         )
     }
 }

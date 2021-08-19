@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -83,5 +80,14 @@ class PersistentImplicitReceiverStack private constructor(
     fun replaceReceiverType(index: Int, type: ConeKotlinType) {
         assert(index >= 0 && index < stack.size)
         stack[index].replaceType(type)
+    }
+
+    fun createSnapshot(): PersistentImplicitReceiverStack {
+        return PersistentImplicitReceiverStack(
+            stack.map { it.createSnapshot() }.toPersistentList(),
+            indexesPerLabel,
+            indexesPerSymbol,
+            originalTypes
+        )
     }
 }

@@ -37,7 +37,8 @@ internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextColl
 
     override fun addStatementContext(statement: FirStatement, context: FirTowerDataContext) {
         val closestStatementInBlock = statement.psi?.closestBlockLevelOrInitializerExpression() ?: return
-        elementsToContext[closestStatementInBlock] = context
+        // FIR body transform may alter the context if there are implicit receivers with smartcast
+        elementsToContext[closestStatementInBlock] = context.createSnapshot()
     }
 
     override fun addDeclarationContext(declaration: FirDeclaration, context: FirTowerDataContext) {
