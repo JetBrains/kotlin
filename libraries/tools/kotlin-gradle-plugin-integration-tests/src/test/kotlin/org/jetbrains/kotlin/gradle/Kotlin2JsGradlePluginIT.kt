@@ -1028,4 +1028,50 @@ class GeneralKotlin2JsGradlePluginIT : BaseGradleIT() {
             assertSuccessful()
         }
     }
+
+    @Test
+    fun testIncrementalDceDevModeOnExternalDependency() = with(transformProjectWithPluginsDsl("kotlin-js-browser-project")) {
+        val libBuildscript = projectDir.resolve("lib/build.gradle.kts")
+
+        build(":base:assemble") {
+            assertSuccessful()
+            fileInWorkingDir("base/build/libs/base-legacy.jar").copyTo(fileInWorkingDir("base.1.jar"))
+        }
+
+        projectFile("Base.kt").appendText("\nfun bestRandom() = 4")
+
+        build(":base:assemble") {
+            assertSuccessful()
+            fileInWorkingDir("base/build/libs/base-legacy.jar").copyTo(fileInWorkingDir("base.2.jar"))
+        }
+
+        libBuildscript.modify {
+            it.replace("implementation(project(\":base\"))", "implementation(files(\"../base.1.jar\"))")
+        }
+        libBuildscript.appendText("""
+            kotlin.js().browser {
+                dceTask {
+                    dceOptions.devMode = true 
+                }
+            }
+        """.trimIndent())
+
+        val baseDceFile = "build/js/packages/kotlin-js-browser-lib/kotlin-dce/kotlin-js-browser-base-js-legacy.js"
+
+        build(":lib:assemble") {
+            assertSuccessful()
+            assertFileExists(baseDceFile)
+            assert(!fileInWorkingDir(baseDceFile).readText().contains("bestRandom"))
+        }
+
+        libBuildscript.modify {
+            it.replace("../base.1.jar", "../base.2.jar")
+        }
+
+        build(":lib:assemble") {
+            assertSuccessful()
+            assertFileExists(baseDceFile)
+            assert(fileInWorkingDir(baseDceFile).readText().contains("bestRandom"))
+        }
+    }
 }
