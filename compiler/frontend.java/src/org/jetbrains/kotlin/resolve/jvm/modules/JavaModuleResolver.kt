@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.modules
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.load.java.lazy.JavaModuleAnnotationsProvider
+import org.jetbrains.kotlin.load.java.JavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.name.FqName
 
 interface JavaModuleResolver : JavaModuleAnnotationsProvider {

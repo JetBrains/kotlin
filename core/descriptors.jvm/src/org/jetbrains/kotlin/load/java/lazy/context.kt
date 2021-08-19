@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.*
+import org.jetbrains.kotlin.load.java.JavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator

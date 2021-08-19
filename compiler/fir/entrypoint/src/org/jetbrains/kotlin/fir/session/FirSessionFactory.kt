@@ -136,7 +136,7 @@ object FirSessionFactory {
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerCommonJavaComponents()
+            registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
             registerResolveComponents(lookupTracker)
             registerJavaSpecificResolveComponents()
 
@@ -208,7 +208,7 @@ object FirSessionFactory {
 
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerCommonJavaComponents()
+            registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.Delegates
 
@@ -43,6 +44,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val symbol: FirRegularClassSymbol,
     override val superTypeRefs: MutableList<FirTypeRef>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
+    internal val javaPackage: JavaPackage?,
     internal val javaTypeParameterStack: JavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>
 ) : FirRegularClass() {
@@ -131,6 +133,7 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
     var isTopLevel: Boolean by Delegates.notNull()
     var isStatic: Boolean by Delegates.notNull()
     var isNotSam: Boolean by Delegates.notNull()
+    var javaPackage: JavaPackage? = null
     lateinit var javaTypeParameterStack: JavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
 
@@ -157,6 +160,7 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
             symbol,
             superTypeRefs,
             typeParameters,
+            javaPackage,
             javaTypeParameterStack,
             existingNestedClassifierNames
         )

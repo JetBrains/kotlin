@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -91,7 +92,7 @@ internal object FirIdeSessionFactory {
 
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
-            registerCommonJavaComponents()
+            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
 
             val provider = FirIdeProvider(
@@ -193,7 +194,7 @@ internal object FirIdeSessionFactory {
             registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
-            registerCommonJavaComponents()
+            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerJavaSpecificResolveComponents()
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)

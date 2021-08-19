@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
-import org.jetbrains.kotlin.fir.java.enhancement.FirJavaTypeEnhancementStateComponent
-import org.jetbrains.kotlin.fir.java.enhancement.FirJsr305StateContainer
+import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 // -------------------------- Required components --------------------------
 
@@ -62,9 +62,9 @@ fun FirSession.registerCliCompilerOnlyComponents() {
 }
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCommonJavaComponents() {
+fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolver) {
     val jsr305State = languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
-    register(FirJavaTypeEnhancementStateComponent::class, FirJavaTypeEnhancementStateComponent(jsr305State))
+    register(FirAnnotationTypeQualifierResolver::class, FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver))
 }
 
 // -------------------------- Resolve components --------------------------
@@ -100,7 +100,6 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
-    register(FirJsr305StateContainer::class, FirJsr305StateContainer.Default)
     register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
 }
 

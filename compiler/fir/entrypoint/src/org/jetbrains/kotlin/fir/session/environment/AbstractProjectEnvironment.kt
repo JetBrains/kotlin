@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
 
 interface AbstractProjectFileSearchScope {
@@ -49,6 +50,8 @@ interface AbstractProjectEnvironment {
         baseModuleData: FirModuleData,
         fileSearchScope: AbstractProjectFileSearchScope
     ): JavaSymbolProvider
+
+    fun getJavaModuleResolver(): JavaModuleResolver
 
     fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider
 

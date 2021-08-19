@@ -148,7 +148,23 @@ private fun buildArgumentMapping(
     return buildResolvedArgumentList(mapping)
 }
 
-internal fun JavaAnnotation.toFirAnnotationCall(
+internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): List<FirAnnotationCall> = map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+
+internal fun JavaAnnotationOwner.convertAnnotationsToFir(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): List<FirAnnotationCall> = annotations.convertAnnotationsToFir(session, javaTypeParameterStack)
+
+internal fun MutableList<FirAnnotationCall>.addFromJava(
+    session: FirSession,
+    javaAnnotationOwner: JavaAnnotationOwner,
+    javaTypeParameterStack: JavaTypeParameterStack
+) {
+    javaAnnotationOwner.annotations.mapTo(this) { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+}
+
+private fun JavaAnnotation.toFirAnnotationCall(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirAnnotationCall {
     return buildAnnotationCall {
@@ -187,14 +203,6 @@ internal fun JavaAnnotation.toFirAnnotationCall(
     }
 }
 
-internal fun MutableList<FirAnnotationCall>.addFromJava(
-    session: FirSession,
-    javaAnnotationOwner: JavaAnnotationOwner,
-    javaTypeParameterStack: JavaTypeParameterStack
-) {
-    javaAnnotationOwner.annotations.mapTo(this) { it.toFirAnnotationCall(session, javaTypeParameterStack) }
-}
-
 internal fun JavaValueParameter.toFirValueParameter(
     session: FirSession, moduleData: FirModuleData, index: Int, javaTypeParameterStack: JavaTypeParameterStack
 ): FirValueParameter {
@@ -204,7 +212,7 @@ internal fun JavaValueParameter.toFirValueParameter(
         name = this@toFirValueParameter.name ?: Name.identifier("p$index")
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack)
         isVararg = this@toFirValueParameter.isVararg
-        annotationBuilder = { annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }}
+        annotationBuilder = { convertAnnotationsToFir(session, javaTypeParameterStack) }
     }
 }
 

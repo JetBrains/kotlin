@@ -35,9 +35,9 @@ public class Test {
 import test.Test
 
 fun main(x: Test) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int..kotlin.Int?!")!>x.Test3().foo(null)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int..kotlin.Int?!")!>x.Test3().Test5().foo(null)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x.Test3().foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x.Test3().Test5().foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int..kotlin.Int?!")!>Test.Test2().foo(null)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int..kotlin.Int?!")!>Test.Test2().Test5().foo(null)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>Test.Test2().foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>Test.Test2().Test5().foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>
 }

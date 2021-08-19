@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaPackageImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -214,6 +215,7 @@ class JavaSymbolProvider(
             modality = if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) Modality.FINAL else javaClass.modality
             this.isTopLevel = outerClassId == null
             isStatic = javaClass.isStatic
+            javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
             this.javaTypeParameterStack = javaTypeParameterStack
             existingNestedClassifierNames += javaClass.innerClassNames
             scopeProvider = this@JavaSymbolProvider.scopeProvider
@@ -390,7 +392,7 @@ class JavaSymbolProvider(
                 returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
-                annotationBuilder = { javaField.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
+                annotationBuilder = { javaField.convertAnnotationsToFir(session, javaTypeParameterStack) }
                 initializer = convertJavaInitializerToFir(javaField.initializerValue)
 
                 if (!javaField.isStatic) {
@@ -432,7 +434,7 @@ class JavaSymbolProvider(
                     this@JavaSymbolProvider.session, moduleData, index, javaTypeParameterStack,
                 )
             }
-            annotationBuilder = { javaMethod.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
+            annotationBuilder = { javaMethod.convertAnnotationsToFir(session, javaTypeParameterStack) }
             status = FirResolvedDeclarationStatusImpl(
                 javaMethod.visibility,
                 javaMethod.modality,
@@ -508,7 +510,7 @@ class JavaSymbolProvider(
 
             if (javaConstructor != null) {
                 this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
-                annotationBuilder = { javaConstructor.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
+                annotationBuilder = { javaConstructor.convertAnnotationsToFir(session, javaTypeParameterStack) }
                 for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
                     valueParameters += valueParameter.toFirValueParameter(
                         this@JavaSymbolProvider.session, moduleData, index, javaTypeParameterStack,
@@ -554,14 +556,14 @@ class JavaSymbolProvider(
     )
 
     override fun getPackage(fqName: FqName): FqName? {
-        return packageCache.getValue(fqName)
+        return packageCache.getValue(fqName)?.fqName
     }
 
-    private fun findPackage(fqName: FqName): FqName? {
+    private fun findPackage(fqName: FqName): JavaPackage? {
         return try {
             val facade = KotlinJavaPsiFacade.getInstance(project)
             val javaPackage = facade.findPackage(fqName.asString(), searchScope) ?: return null
-            FqName(javaPackage.qualifiedName)
+            JavaPackageImpl(javaPackage, searchScope)
         } catch (e: ProcessCanceledException) {
             return null
         }
