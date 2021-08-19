@@ -56,5 +56,6 @@ object FirJvmErrors {
     val ENUM_JVM_RECORD by error0<PsiElement>(SourceElementPositioningStrategies.ENUM_MODIFIER)
     val JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS by error0<PsiElement>()
     val NON_DATA_CLASS_JVM_RECORD by error0<PsiElement>()
+    val JVM_RECORD_NOT_VAL_PARAMETER by error0<PsiElement>()
 
 }
