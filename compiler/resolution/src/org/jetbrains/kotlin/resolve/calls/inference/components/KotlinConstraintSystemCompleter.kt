@@ -133,8 +133,12 @@ class KotlinConstraintSystemCompleter(
             if (analyzeNextReadyPostponedArgument(postponedArguments, completionMode, analyze))
                 continue
 
-            // Stage 6: fix type variables – fix if possible or report not enough information (if completion mode is full)
-            val wasFixedSomeVariable = fixVariablesOrReportNotEnoughInformation(
+            // Stage 6: fix next ready type variable with proper constraints
+            if (fixNextReadyVariable(completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments))
+                continue
+
+            // Stage 7: report "not enough information" for uninferred type variables
+            reportNotEnoughTypeInformation(
                 completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments, diagnosticsHolder
             )
             if (wasFixedSomeVariable)
@@ -271,69 +275,70 @@ class KotlinConstraintSystemCompleter(
         c.fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
     }
 
-    private fun ConstraintSystemCompletionContext.fixVariablesOrReportNotEnoughInformation(
+    private fun ConstraintSystemCompletionContext.fixNextReadyVariable(
+        completionMode: ConstraintSystemCompletionMode,
+        topLevelAtoms: List<ResolvedAtom>,
+        topLevelType: UnwrappedType,
+        collectVariablesFromContext: Boolean,
+        postponedArguments: List<PostponedResolvedAtom>,
+    ): Boolean {
+        val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
+            this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
+            postponedArguments, completionMode, topLevelType,
+        ) ?: return false
+
+        if (!variableForFixation.hasProperConstraint) return false
+
+        fixVariable(this, notFixedTypeVariables.getValue(variableForFixation.variable), topLevelAtoms)
+
+        return true
+    }
+
+    private fun ConstraintSystemCompletionContext.reportNotEnoughTypeInformation(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ResolvedAtom>,
         topLevelType: UnwrappedType,
         collectVariablesFromContext: Boolean,
         postponedArguments: List<PostponedResolvedAtom>,
         diagnosticsHolder: KotlinDiagnosticsHolder
-    ): Boolean {
+    ) {
         while (true) {
             val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-                this,
-                getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
-                postponedArguments,
-                completionMode,
-                topLevelType,
+                this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
+                postponedArguments, completionMode, topLevelType,
             ) ?: break
 
-            if (!variableForFixation.hasProperConstraint && completionMode == ConstraintSystemCompletionMode.PARTIAL)
-                break
+            assert(!variableForFixation.hasProperConstraint) {
+                "At this stage there should be no remaining variables with proper constraints"
+            }
+
+            if (completionMode == ConstraintSystemCompletionMode.PARTIAL) break
 
             val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
+            val typeVariable = variableWithConstraints.typeVariable
+            val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
 
-            when {
-                variableForFixation.hasProperConstraint -> {
-                    fixVariable(this, variableWithConstraints, topLevelAtoms)
-                    return true
-                }
-
-                else -> processVariableWhenNotEnoughInformation(this, variableWithConstraints, topLevelAtoms, diagnosticsHolder)
-            }
-        }
-
-        return false
-    }
-
-    private fun processVariableWhenNotEnoughInformation(
-        c: ConstraintSystemCompletionContext,
-        variableWithConstraints: VariableWithConstraints,
-        topLevelAtoms: List<ResolvedAtom>,
-        diagnosticsHolder: KotlinDiagnosticsHolder
-    ) {
-        val typeVariable = variableWithConstraints.typeVariable
-        val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
-
-        if (resolvedAtom != null) {
-            c.addError(
-                NotEnoughInformationForTypeParameterImpl(typeVariable, resolvedAtom, c.couldBeResolvedWithUnrestrictedBuilderInference())
-            )
-        }
-
-        val resultErrorType = when {
-            typeVariable is TypeVariableFromCallableDescriptor ->
-                ErrorUtils.createUninferredParameterType(typeVariable.originalTypeParameter)
-            typeVariable is TypeVariableForLambdaParameterType && typeVariable.atom is LambdaKotlinCallArgument -> {
-                diagnosticsHolder.addDiagnostic(
-                    NotEnoughInformationForLambdaParameter(typeVariable.atom, typeVariable.index)
+            if (resolvedAtom != null) {
+                addError(
+                    NotEnoughInformationForTypeParameterImpl(typeVariable, resolvedAtom, couldBeResolvedWithUnrestrictedBuilderInference())
                 )
-                ErrorUtils.createErrorType("Cannot infer lambda parameter type")
             }
-            else -> ErrorUtils.createErrorType("Cannot infer type variable $typeVariable")
-        }
 
-        c.fixVariable(typeVariable, resultErrorType, FixVariableConstraintPositionImpl(typeVariable, resolvedAtom))
+            val resultErrorType = when {
+                typeVariable is TypeVariableFromCallableDescriptor -> {
+                    ErrorUtils.createUninferredParameterType(typeVariable.originalTypeParameter)
+                }
+                typeVariable is TypeVariableForLambdaParameterType && typeVariable.atom is LambdaKotlinCallArgument -> {
+                    diagnosticsHolder.addDiagnostic(
+                        NotEnoughInformationForLambdaParameter(typeVariable.atom, typeVariable.index)
+                    )
+                    ErrorUtils.createErrorType("Cannot infer lambda parameter type")
+                }
+                else -> ErrorUtils.createErrorType("Cannot infer type variable $typeVariable")
+            }
+
+            fixVariable(typeVariable, resultErrorType, FixVariableConstraintPositionImpl(typeVariable, resolvedAtom))
+        }
     }
 
     private fun ConstraintSystemCompletionContext.getOrderedAllTypeVariables(
