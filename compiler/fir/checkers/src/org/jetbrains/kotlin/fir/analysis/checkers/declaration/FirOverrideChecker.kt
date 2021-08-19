@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
@@ -111,26 +112,99 @@ object FirOverrideChecker : FirClassChecker() {
         return overriddenSymbols.find { (it as? FirPropertySymbol)?.isVar == true }
     }
 
+    private inline fun Boolean.onTrue(callback: () -> Unit) {
+        if (this) {
+            callback()
+        }
+    }
+
+    /**
+     * Simplifies passing around visibility
+     * data.
+     */
+    private data class VisibilityInfo(
+        val symbol: FirCallableSymbol<*>,
+        /**
+         * There is no guarantee whether this visibility
+         * is the symbol.visibility.
+         */
+        val visibility: Visibility,
+    )
+
+    /**
+     * Prepares visibility information for
+     * further use.
+     */
+    private class VisibilityInfoProvider(val symbol: FirCallableSymbol<*>) {
+        val actualVisibility: Visibility
+            get() = symbol.visibility
+
+        val actualInfo: VisibilityInfo
+            get() = VisibilityInfo(symbol, actualVisibility)
+    }
+
+    /**
+     * Returns true if some diagnostic has been
+     * reported.
+     */
+    private fun VisibilityInfo.checkAccessPrivilegeOrOnWeaker(
+        other: VisibilityInfo,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+        onWeaker: () -> Unit
+    ): Boolean {
+        val compare = Visibilities.compare(visibility, other.visibility)
+
+        if (compare == null) {
+            reporter.reportCannotChangeAccessPrivilege(symbol, other.symbol, context)
+            return true
+        } else if (compare < 0) {
+            onWeaker()
+            return true
+        }
+
+        return false
+    }
+
+    /**
+     * Returns true if some diagnostic has been
+     * reported.
+     */
+    private fun VisibilityInfoProvider.compareWith(
+        other: VisibilityInfoProvider,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ): Boolean {
+        actualInfo.checkAccessPrivilegeOrOnWeaker(other.actualInfo, reporter, context) {
+            reporter.reportCannotWeakenAccessPrivilege(symbol, other.symbol, context)
+        }.onTrue {
+            return true
+        }
+
+        return false
+    }
+
     private fun FirCallableSymbol<*>.checkVisibility(
         containingClass: FirClass,
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
+        val selfInfo = VisibilityInfoProvider(this)
+
         val visibilities = overriddenSymbols.map {
-            it to it.visibility
-        }.sortedBy { pair ->
+            VisibilityInfoProvider(it)
+        }.sortedBy {
             // Regard `null` compare as Int.MIN so that we can report CANNOT_CHANGE_... first deterministically
-            Visibilities.compare(visibility, pair.second) ?: Int.MIN_VALUE
+            Visibilities.compare(selfInfo.actualVisibility, it.actualVisibility) ?: Int.MIN_VALUE
         }
 
-        for ((overridden, overriddenVisibility) in visibilities) {
-            val compare = Visibilities.compare(visibility, overriddenVisibility)
-            if (compare == null) {
-                reporter.reportCannotChangeAccessPrivilege(this, overridden, context)
-                return
-            } else if (compare < 0) {
-                reporter.reportCannotWeakenAccessPrivilege(this, overridden, context)
+        for (overriddenInfo in visibilities) {
+            selfInfo.compareWith(
+                overriddenInfo,
+                reporter,
+                context
+            ).onTrue {
                 return
             }
         }
@@ -147,6 +221,7 @@ object FirOverrideChecker : FirClassChecker() {
         if (!hasVisibleBase) {
             //NB: Old FE reports this in an attempt to override private member,
             //while the new FE doesn't treat super's private members as overridable, so you won't get them here
+            //(except for properties with exposing getters)
             //instead you will get NOTHING_TO_OVERRIDE, which seems acceptable
             reporter.reportOn(source, FirErrors.CANNOT_OVERRIDE_INVISIBLE_MEMBER, this, overriddenSymbols.first(), context)
         }
@@ -165,7 +240,9 @@ object FirOverrideChecker : FirClassChecker() {
             return null
         }
 
-        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it).coneType.upperBoundIfFlexible() }
+        val bounds = overriddenSymbols.map {
+            context.returnTypeCalculator.tryCalculateReturnType(it).coneType.upperBoundIfFlexible()
+        }
 
         for (it in bounds.indices) {
             val overriddenDeclaration = overriddenSymbols[it]
@@ -192,7 +269,7 @@ object FirOverrideChecker : FirClassChecker() {
         reporter: DiagnosticReporter,
         typeCheckerContext: AbstractTypeCheckerContext,
         firTypeScope: FirTypeScope,
-        context: CheckerContext
+        context: CheckerContext,
     ) {
         val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
 
@@ -249,18 +326,19 @@ object FirOverrideChecker : FirClassChecker() {
 
         member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
 
-        val restriction = member.checkReturnType(
+        member.checkReturnType(
             overriddenSymbols = overriddenMemberSymbols,
             typeCheckerContext = typeCheckerContext,
             context = context,
-        ) ?: return
-        when (member) {
-            is FirNamedFunctionSymbol -> reporter.reportReturnTypeMismatchOnFunction(member, restriction, context)
-            is FirPropertySymbol -> {
-                if (member.isVar) {
-                    reporter.reportTypeMismatchOnVariable(member, restriction, context)
-                } else {
-                    reporter.reportTypeMismatchOnProperty(member, restriction, context)
+        )?.let { restriction ->
+            when (member) {
+                is FirNamedFunctionSymbol -> reporter.reportReturnTypeMismatchOnFunction(member, restriction, context)
+                is FirPropertySymbol -> {
+                    if (member.isVar) {
+                        reporter.reportTypeMismatchOnVariable(member, restriction, context)
+                    } else {
+                        reporter.reportTypeMismatchOnProperty(member, restriction, context)
+                    }
                 }
             }
         }
