@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.computeTypeAttributes
@@ -218,6 +219,111 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
+    private fun loadPropertyGetter(
+        proto: ProtoBuf.Property,
+        classSymbol: FirClassSymbol<*>?,
+        defaultAccessorFlags: Int,
+        returnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        local: FirDeserializationContext,
+        propertyModality: Modality,
+    ): FirPropertyAccessor {
+        val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
+        val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
+        val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
+        val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
+        return if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
+            buildPropertyAccessor {
+                moduleData = c.moduleData
+                origin = FirDeclarationOrigin.Library
+                this.returnTypeRef = returnTypeRef
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                isGetter = true
+                status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
+                    isInline = Flags.IS_INLINE_ACCESSOR.get(getterFlags)
+                    isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
+                }
+                this.symbol = FirPropertyAccessorSymbol()
+                dispatchReceiverType = c.dispatchReceiver
+                this.propertySymbol = propertySymbol
+            }.apply {
+                versionRequirementsTable = c.versionRequirementTable
+            }
+        } else {
+            FirDefaultPropertyGetter(
+                null,
+                c.moduleData,
+                FirDeclarationOrigin.Library,
+                returnTypeRef,
+                visibility,
+                propertySymbol,
+                propertyModality,
+                effectiveVisibility
+            )
+        }.apply {
+            (annotations as MutableList<FirAnnotationCall>) +=
+                c.annotationDeserializer.loadPropertyGetterAnnotations(
+                    c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
+                )
+        }
+    }
+
+    private fun loadPropertySetter(
+        proto: ProtoBuf.Property,
+        classProto: ProtoBuf.Class? = null,
+        classSymbol: FirClassSymbol<*>?,
+        defaultAccessorFlags: Int,
+        returnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        local: FirDeserializationContext,
+        propertyModality: Modality,
+    ): FirPropertyAccessor {
+        val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else defaultAccessorFlags
+        val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
+        val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
+        val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
+        return if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
+            buildPropertyAccessor {
+                moduleData = c.moduleData
+                origin = FirDeclarationOrigin.Library
+                this.returnTypeRef = FirImplicitUnitTypeRef(source)
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                isGetter = false
+                status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
+                    isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
+                    isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
+                }
+                this.symbol = FirPropertyAccessorSymbol()
+                dispatchReceiverType = c.dispatchReceiver
+                valueParameters += local.memberDeserializer.valueParameters(
+                    listOf(proto.setterValueParameter),
+                    proto,
+                    AbstractAnnotationDeserializer.CallableKind.PROPERTY_SETTER,
+                    classProto
+                )
+                this.propertySymbol = propertySymbol
+            }.apply {
+                versionRequirementsTable = c.versionRequirementTable
+            }
+        } else {
+            FirDefaultPropertySetter(
+                null,
+                c.moduleData,
+                FirDeclarationOrigin.Library,
+                returnTypeRef,
+                visibility,
+                propertySymbol,
+                propertyModality,
+                effectiveVisibility
+            )
+        }.apply {
+            (annotations as MutableList<FirAnnotationCall>) +=
+                c.annotationDeserializer.loadPropertySetterAnnotations(
+                    c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
+                )
+        }
+    }
+
     fun loadProperty(
         proto: ProtoBuf.Property,
         classProto: ProtoBuf.Class? = null,
@@ -250,82 +356,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
 
         val propertyModality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
-
-        val getter = if (hasGetter) {
-            val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
-            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
-            val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
-            val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
-            if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
-                buildPropertyAccessor {
-                    moduleData = c.moduleData
-                    origin = FirDeclarationOrigin.Library
-                    this.returnTypeRef = returnTypeRef
-                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    isGetter = true
-                    status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
-                        isInline = Flags.IS_INLINE_ACCESSOR.get(getterFlags)
-                        isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
-                    }
-                    this.symbol = FirPropertyAccessorSymbol()
-                    dispatchReceiverType = c.dispatchReceiver
-                }.apply {
-                    versionRequirementsTable = c.versionRequirementTable
-                }
-            } else {
-                FirDefaultPropertyGetter(
-                    null, c.moduleData, FirDeclarationOrigin.Library, returnTypeRef, visibility, propertyModality, effectiveVisibility
-                )
-            }.apply {
-                (annotations as MutableList<FirAnnotationCall>) +=
-                    c.annotationDeserializer.loadPropertyGetterAnnotations(
-                        c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
-                    )
-            }
-        } else {
-            null
-        }
-
-        val setter = if (Flags.HAS_SETTER.get(flags)) {
-            val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else defaultAccessorFlags
-            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
-            val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
-            val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
-            if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
-                buildPropertyAccessor {
-                    moduleData = c.moduleData
-                    origin = FirDeclarationOrigin.Library
-                    this.returnTypeRef = FirImplicitUnitTypeRef(source)
-                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    isGetter = false
-                    status = FirResolvedDeclarationStatusImpl(visibility, accessorModality, effectiveVisibility).apply {
-                        isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
-                        isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
-                    }
-                    this.symbol = FirPropertyAccessorSymbol()
-                    dispatchReceiverType = c.dispatchReceiver
-                    valueParameters += local.memberDeserializer.valueParameters(
-                        listOf(proto.setterValueParameter),
-                        proto,
-                        AbstractAnnotationDeserializer.CallableKind.PROPERTY_SETTER,
-                        classProto
-                    )
-                }.apply {
-                    versionRequirementsTable = c.versionRequirementTable
-                }
-            } else {
-                FirDefaultPropertySetter(
-                    null, c.moduleData, FirDeclarationOrigin.Library, returnTypeRef, visibility, propertyModality, effectiveVisibility
-                )
-            }.apply {
-                (annotations as MutableList<FirAnnotationCall>) +=
-                    c.annotationDeserializer.loadPropertySetterAnnotations(
-                        c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
-                    )
-            }
-        } else {
-            null
-        }
 
         val isVar = Flags.IS_VAR.get(flags)
         return buildProperty {
@@ -362,8 +392,29 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 c.annotationDeserializer.loadPropertyDelegatedFieldAnnotations(
                     c.containerSource, proto, local.nameResolver, local.typeTable
                 )
-            this.getter = getter
-            this.setter = setter
+            if (hasGetter) {
+                this.getter = loadPropertyGetter(
+                    proto,
+                    classSymbol,
+                    defaultAccessorFlags,
+                    returnTypeRef,
+                    symbol,
+                    local,
+                    propertyModality
+                )
+            }
+            if (Flags.HAS_SETTER.get(flags)) {
+                this.setter = loadPropertySetter(
+                    proto,
+                    classProto,
+                    classSymbol,
+                    defaultAccessorFlags,
+                    returnTypeRef,
+                    symbol,
+                    local,
+                    propertyModality
+                )
+            }
             this.containerSource = c.containerSource
             this.initializer = c.constDeserializer.loadConstant(proto, symbol.callableId, c.nameResolver)
             deprecation = annotations.getDeprecationInfosFromAnnotations(c.session.languageVersionSettings.apiVersion, false)

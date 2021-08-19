@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
@@ -28,6 +29,7 @@ abstract class FirDefaultPropertyAccessor(
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     valueParameters: MutableList<FirValueParameter>,
+    propertySymbol: FirPropertySymbol,
     isGetter: Boolean,
     visibility: Visibility,
     modality: Modality = Modality.FINAL,
@@ -51,6 +53,7 @@ abstract class FirDefaultPropertyAccessor(
     body = null,
     contractDescription = FirEmptyContractDescription,
     symbol,
+    propertySymbol,
     isGetter,
     annotations = mutableListOf(),
     typeParameters = mutableListOf(),
@@ -70,12 +73,13 @@ abstract class FirDefaultPropertyAccessor(
             origin: FirDeclarationOrigin,
             propertyTypeRef: FirTypeRef,
             visibility: Visibility,
+            propertySymbol: FirPropertySymbol,
             isGetter: Boolean
         ): FirDefaultPropertyAccessor {
             return if (isGetter) {
-                FirDefaultPropertyGetter(source, moduleData, origin, propertyTypeRef, visibility, Modality.FINAL)
+                FirDefaultPropertyGetter(source, moduleData, origin, propertyTypeRef, visibility, propertySymbol, Modality.FINAL)
             } else {
-                FirDefaultPropertySetter(source, moduleData, origin, propertyTypeRef, visibility, Modality.FINAL)
+                FirDefaultPropertySetter(source, moduleData, origin, propertyTypeRef, visibility, propertySymbol, Modality.FINAL)
             }
         }
     }
@@ -87,6 +91,7 @@ class FirDefaultPropertyGetter(
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
+    propertySymbol: FirPropertySymbol,
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
@@ -96,6 +101,7 @@ class FirDefaultPropertyGetter(
     origin,
     propertyTypeRef,
     valueParameters = mutableListOf(),
+    propertySymbol,
     isGetter = true,
     visibility = visibility,
     modality = modality,
@@ -109,6 +115,7 @@ class FirDefaultPropertySetter(
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
+    propertySymbol: FirPropertySymbol,
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
@@ -126,6 +133,7 @@ class FirDefaultPropertySetter(
             this@builder.symbol = FirValueParameterSymbol(Name.special("<default-setter-parameter>"))
         }
     ),
+    propertySymbol,
     isGetter = false,
     visibility = visibility,
     modality = modality,
