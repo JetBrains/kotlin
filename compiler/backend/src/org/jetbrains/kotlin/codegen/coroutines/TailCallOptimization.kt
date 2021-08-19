@@ -39,7 +39,6 @@ internal class MethodNodeExaminer(
     private val popsBeforeSafeUnitInstances = mutableSetOf<AbstractInsnNode>()
     private val areturnsAfterSafeUnitInstances = mutableSetOf<AbstractInsnNode>()
     private val meaningfulSuccessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
-    private val meaningfulPredecessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
 
     init {
         if (!disableTailCallOptimizationForFunctionReturningUnit) {
@@ -52,10 +51,8 @@ internal class MethodNodeExaminer(
             for (pop in popsBeforeUnitInstances) {
                 val units = pop.meaningfulSuccessors()
                 val allUnitsAreSafe = units.all { unit ->
-                    // check no other predecessor exists
-                    unit.meaningfulPredecessors().all { it in popsBeforeUnitInstances } &&
-                            // check they have only returns among successors
-                            unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
+                    // check they have only returns among successors
+                    unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
                 }
                 if (!allUnitsAreSafe) continue
                 // save them all to the properties
@@ -74,35 +71,22 @@ internal class MethodNodeExaminer(
     private fun AbstractInsnNode.isAreturnAfterSafeUnitInstance(): Boolean = this in areturnsAfterSafeUnitInstances
 
     private fun AbstractInsnNode.meaningfulSuccessors(): List<AbstractInsnNode> = meaningfulSuccessorsCache.getOrPut(this) {
-        meaningfulSuccessorsOrPredecessors(true)
-    }
-
-    private fun AbstractInsnNode.meaningfulPredecessors(): List<AbstractInsnNode> = meaningfulPredecessorsCache.getOrPut(this) {
-        meaningfulSuccessorsOrPredecessors(false)
-    }
-
-    private fun AbstractInsnNode.meaningfulSuccessorsOrPredecessors(isSuccessors: Boolean): List<AbstractInsnNode> {
         fun AbstractInsnNode.isMeaningful() = isMeaningful && opcode != Opcodes.NOP && opcode != Opcodes.GOTO && this !is LineNumberNode
-
-        fun AbstractInsnNode.getIndices() =
-            if (isSuccessors) controlFlowGraph.getSuccessorsIndices(this)
-            else controlFlowGraph.getPredecessorsIndices(this)
 
         val visited = mutableSetOf<AbstractInsnNode>()
         fun dfs(insn: AbstractInsnNode) {
             if (insn in visited) return
             visited += insn
             if (!insn.isMeaningful()) {
-                for (succIndex in insn.getIndices()) {
+                for (succIndex in controlFlowGraph.getSuccessorsIndices(insn)) {
                     dfs(methodNode.instructions[succIndex])
                 }
             }
         }
-
-        for (succIndex in getIndices()) {
+        for (succIndex in controlFlowGraph.getSuccessorsIndices(this)) {
             dfs(methodNode.instructions[succIndex])
         }
-        return visited.filter { it.isMeaningful() }
+        visited.filter { it.isMeaningful() }
     }
 
     fun replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks() {
