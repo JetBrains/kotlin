@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
-public interface KtSymbolWithVisibility {
+public interface KtSymbolWithVisibility : KtSymbol {
     public val visibility: Visibility
 }
 
