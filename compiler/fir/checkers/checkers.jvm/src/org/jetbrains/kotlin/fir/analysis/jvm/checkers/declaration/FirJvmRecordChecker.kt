@@ -22,14 +22,26 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 object FirJvmRecordChecker : FirRegularClassChecker() {
 
     private val JVM_RECORD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmRecord")
+    private val JAVA_RECORD_CLASS_ID = ClassId.fromString("java/lang/Record")
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        declaration.superTypeRefs.firstOrNull()?.let { typeRef ->
+            if (typeRef.coneTypeSafe<ConeClassLikeType>()?.classId == JAVA_RECORD_CLASS_ID) {
+                reporter.reportOn(typeRef.source, FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, context)
+                return
+            }
+        }
+
         val annotationSource = declaration.getAnnotationByFqName(JVM_RECORD_ANNOTATION_FQ_NAME)?.source ?: return
 
         val languageVersionSettings = context.session.languageVersionSettings

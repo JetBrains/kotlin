@@ -75,6 +75,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_RECORD_EXTENDS_CLASS by error<PsiElement>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
             parameter<ConeKotlinType>("superType")
         }
+        val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error<PsiElement>()
     }
 
 }

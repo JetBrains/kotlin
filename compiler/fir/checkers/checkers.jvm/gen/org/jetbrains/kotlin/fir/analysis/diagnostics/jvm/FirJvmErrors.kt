@@ -62,5 +62,6 @@ object FirJvmErrors {
     val FIELD_IN_JVM_RECORD by error0<PsiElement>()
     val DELEGATION_BY_IN_JVM_RECORD by error0<PsiElement>()
     val JVM_RECORD_EXTENDS_CLASS by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
+    val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error0<PsiElement>()
 
 }

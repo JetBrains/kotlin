@@ -2510,4 +2510,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val superType: KtType
     }
 
+    abstract class IllegalJavaLangRecordSupertype : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = IllegalJavaLangRecordSupertype::class
+    }
+
 }
