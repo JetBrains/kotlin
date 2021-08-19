@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.FqName
 
 object FirJvmRecordChecker : FirRegularClassChecker() {
@@ -86,6 +90,13 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
                 }
             } else if (decl is FirField && decl.isSynthetic) {
                 reporter.reportOn(decl.source, FirJvmErrors.DELEGATION_BY_IN_JVM_RECORD, context)
+            }
+        }
+
+        declaration.superTypeRefs.firstOrNull()?.let { typeRef ->
+            if (typeRef.source?.kind != FirRealSourceElementKind) return@let
+            if (typeRef.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS) {
+                reporter.reportOn(declaration.source, FirJvmErrors.JVM_RECORD_EXTENDS_CLASS, typeRef.coneType, context)
             }
         }
     }

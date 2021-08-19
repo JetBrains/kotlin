@@ -3598,4 +3598,11 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_RECORD_EXTENDS_CLASS) { firDiagnostic ->
+        JvmRecordExtendsClassImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

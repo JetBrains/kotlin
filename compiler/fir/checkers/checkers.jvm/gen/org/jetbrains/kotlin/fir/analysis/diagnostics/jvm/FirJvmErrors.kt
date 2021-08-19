@@ -61,5 +61,6 @@ object FirJvmErrors {
     val INNER_JVM_RECORD by error0<PsiElement>(SourceElementPositioningStrategies.INNER_MODIFIER)
     val FIELD_IN_JVM_RECORD by error0<PsiElement>()
     val DELEGATION_BY_IN_JVM_RECORD by error0<PsiElement>()
+    val JVM_RECORD_EXTENDS_CLASS by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
 
 }

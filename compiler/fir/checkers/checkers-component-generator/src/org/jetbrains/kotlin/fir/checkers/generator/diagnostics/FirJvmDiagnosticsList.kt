@@ -72,6 +72,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val INNER_JVM_RECORD by error<PsiElement>(PositioningStrategy.INNER_MODIFIER)
         val FIELD_IN_JVM_RECORD by error<PsiElement>()
         val DELEGATION_BY_IN_JVM_RECORD by error<PsiElement>()
+        val JVM_RECORD_EXTENDS_CLASS by error<PsiElement>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
+            parameter<ConeKotlinType>("superType")
+        }
     }
 
 }
