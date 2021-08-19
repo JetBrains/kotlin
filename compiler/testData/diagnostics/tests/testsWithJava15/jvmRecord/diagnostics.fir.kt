@@ -46,7 +46,7 @@ class A10(
 )
 
 fun main() {
-    @JvmRecord
+    <!LOCAL_JVM_RECORD!>@JvmRecord<!>
     class Local
 }
 

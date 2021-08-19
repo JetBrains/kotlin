@@ -2465,4 +2465,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmPackageNameNotSupportedInFilesWithClasses::class
     }
 
+    abstract class LocalJvmRecord : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LocalJvmRecord::class
+    }
+
 }

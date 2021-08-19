@@ -49,4 +49,7 @@ object FirJvmErrors {
     // Super
     val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error1<PsiElement, String>()
 
+    // JVM Records
+    val LOCAL_JVM_RECORD by error0<PsiElement>()
+
 }
