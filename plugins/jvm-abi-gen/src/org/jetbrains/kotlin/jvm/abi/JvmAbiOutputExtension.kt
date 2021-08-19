@@ -16,12 +16,15 @@ import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtensio
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.AnnotationNode
+import org.jetbrains.org.objectweb.asm.tree.FieldNode
+import org.jetbrains.org.objectweb.asm.tree.ParameterNode
 import java.io.File
 
 class JvmAbiOutputExtension(
     private val outputPath: File,
     private val abiClassInfos: Map<String, AbiClassInfo>,
+    private val messageCollector: MessageCollector,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
@@ -29,7 +32,15 @@ class JvmAbiOutputExtension(
         val outputFiles = AbiOutputFiles(abiClassInfos, factory)
         if (outputPath.extension == "jar") {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
-            CompileEnvironmentUtil.writeToJar(outputPath, false, true, true, null, outputFiles, MessageCollector.NONE)
+            CompileEnvironmentUtil.writeToJar(
+                outputPath,
+                false,
+                true,
+                true,
+                null,
+                outputFiles,
+                messageCollector
+            )
         } else {
             outputFiles.writeAllTo(outputPath)
         }
