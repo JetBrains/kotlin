@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 open class FirLightIdentifier(
     private val lightOwner: PsiElement,
     private val firSymbol: KtSymbol
-) : LightIdentifier(lightOwner.manager, (firSymbol as? KtNamedSymbol)?.name?.identifier), PsiCompiledElement,
-    PsiElementWithOrigin<PsiElement> {
+) : LightIdentifier(
+    lightOwner.manager,
+    (firSymbol as? KtNamedSymbol)?.name?.identifierOrNullIfSpecial
+), PsiCompiledElement, PsiElementWithOrigin<PsiElement> {
 
     override val origin: PsiElement?
         get() = when (val ktDeclaration = firSymbol.psi) {
