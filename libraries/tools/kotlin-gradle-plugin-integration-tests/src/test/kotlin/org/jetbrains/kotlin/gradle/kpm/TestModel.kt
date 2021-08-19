@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm
 
 internal class TestKpmGradleProject(val name: String) {
     val modules: ConfigurableSet<TestKpmModule> = run {
-        val main = TestKpmModule(this, "main")
+        val main = TestKpmModule(this, "main").apply { publicationMode = KpmModulePublicationMode.STANDALONE }
         val test = TestKpmModule(this, "test").apply {
             fragmentNamed("common").moduleDependencies.add(TestKpmModuleDependency(main, TestDependencyKind.DIRECT))
         }
@@ -22,8 +22,7 @@ internal class TestKpmGradleProject(val name: String) {
     }
 
     fun module(name: String, configure: TestKpmModule.() -> Unit): TestKpmModule {
-        val module = modules.singleOrNull { it.name == name } ?: TestKpmModule(this, name)
-            .also(modules::add)
+        val module = modules.singleOrNull { it.name == name } ?: TestKpmModule(this, name).also(modules::add)
         configure(module)
         return module
     }
@@ -39,8 +38,7 @@ internal class TestKpmModule(
     val kpmGradleProject: TestKpmGradleProject,
     val name: String
 ) {
-    var publicationMode: KpmModulePublicationMode =
-        if (name == MAIN_NAME) KpmModulePublicationMode.STANDALONE else KpmModulePublicationMode.PRIVATE
+    var publicationMode: KpmModulePublicationMode = KpmModulePublicationMode.PRIVATE
 
     val fragments = ConfigurableSet<TestKpmFragment>().apply {
         add(TestKpmFragment(this@TestKpmModule, "common"))
