@@ -43,6 +43,11 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
             return
         }
 
+        if (declaration.isInner) {
+            reporter.reportOn(declaration.source, FirJvmErrors.INNER_JVM_RECORD, context)
+            return
+        }
+
         if (!declaration.isFinal) {
             reporter.reportOn(declaration.source, FirJvmErrors.NON_FINAL_JVM_RECORD, context)
             return

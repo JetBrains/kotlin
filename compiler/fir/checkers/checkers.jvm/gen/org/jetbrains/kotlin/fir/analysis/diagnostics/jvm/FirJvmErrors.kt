@@ -58,5 +58,6 @@ object FirJvmErrors {
     val NON_DATA_CLASS_JVM_RECORD by error0<PsiElement>()
     val JVM_RECORD_NOT_VAL_PARAMETER by error0<PsiElement>()
     val JVM_RECORD_NOT_LAST_VARARG_PARAMETER by error0<PsiElement>()
+    val INNER_JVM_RECORD by error0<PsiElement>(SourceElementPositioningStrategies.INNER_MODIFIER)
 
 }
