@@ -98,10 +98,10 @@ internal fun BaseGradleIT.prepare(
 }
 
 private fun generateBuildScript(
-  project: BaseGradleIT.Project,
-  subproject: TestKpmGradleProject,
-  group: String,
-  version: String
+    project: BaseGradleIT.Project,
+    subproject: TestKpmGradleProject,
+    group: String,
+    version: String
 ) {
     project.projectDir.resolve("${subproject.name}/build.gradle.kts").writeText(buildIndentedString {
         appendLine("import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*\n")
@@ -145,9 +145,9 @@ private fun generateBuildScript(
 }
 
 private fun moduleDependencyNotation(
-  dep: TestKpmModuleDependency,
-  group: String,
-  version: String
+    dep: TestKpmModuleDependency,
+    group: String,
+    version: String
 ): String {
     val moduleNotation = when (dep.dependencyKind) {
         TestDependencyKind.DIRECT -> "modules.getByName(\"${dep.module.name}\")"
@@ -157,7 +157,8 @@ private fun moduleDependencyNotation(
             KpmModulePublicationMode.STANDALONE -> {
                 val moduleName =
                     if (dep.module.name == TestKpmModule.MAIN_NAME)
-                        dep.module.kpmGradleProject.name else
+                        dep.module.kpmGradleProject.name
+                    else
                         "${dep.module.kpmGradleProject.name}-${dep.module.name.toLowerCase()}"
                 "\"$group:$moduleName:$version\""
             }
@@ -176,10 +177,10 @@ private fun moduleDependencyNotation(
 }
 
 private fun generateFragmentSources(
-  project: BaseGradleIT.Project,
-  subproject: TestKpmGradleProject,
-  fragment: TestKpmFragment,
-  module: TestKpmModule
+    project: BaseGradleIT.Project,
+    subproject: TestKpmGradleProject,
+    fragment: TestKpmFragment,
+    module: TestKpmModule
 ) {
     fun fragmentPackage(testKpmFragment: TestKpmFragment) =
         "${testKpmFragment.module.kpmGradleProject.name}.${testKpmFragment.module.name}.${testKpmFragment.name}"
