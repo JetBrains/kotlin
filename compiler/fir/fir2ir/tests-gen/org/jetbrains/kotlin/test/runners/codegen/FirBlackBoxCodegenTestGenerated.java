@@ -9777,6 +9777,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("suspendFunctionAsSupertypeCall.kt")
+        public void testSuspendFunctionAsSupertypeCall() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertypeCall.kt");
+        }
+
+        @Test
         @TestMetadata("suspendFunctionMethodReference.kt")
         public void testSuspendFunctionMethodReference() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");

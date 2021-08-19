@@ -6135,6 +6135,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertype.kt");
         }
 
+        @TestMetadata("suspendFunctionAsSupertypeCall.kt")
+        public void testSuspendFunctionAsSupertypeCall() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertypeCall.kt");
+        }
+
         @TestMetadata("suspendFunctionMethodReference.kt")
         public void testSuspendFunctionMethodReference() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendFunctionMethodReference.kt");
