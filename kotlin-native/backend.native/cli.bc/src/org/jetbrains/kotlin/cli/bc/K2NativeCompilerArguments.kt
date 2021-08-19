@@ -323,8 +323,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xgc-aggressive", description = "Make GC agressive. Works only with -memory-model experimental")
     var gcAggressive: Boolean = false
 
-    @Argument(value = "-Xir-property-lazy-initialization", description = "Initialize top level properties lazily per file")
-    var propertyLazyInitialization: Boolean = false
+    @Argument(value = "-Xir-property-lazy-initialization", valueDescription = "{disable|enable}", description = "Initialize top level properties lazily per file")
+    var propertyLazyInitialization: String? = null
 
     @Argument(value="-Xruntime-asserts-mode", valueDescription = "<mode>", description = "Enable asserts in runtime. Possible values: 'ignore', 'log', 'panic'")
     var runtimeAssertsMode: String? = "ignore"

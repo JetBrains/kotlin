@@ -1486,22 +1486,22 @@ standaloneTest("initializers_globalInitedBeforeThreadLocal") {
 }
 
 standaloneTest("initializers_eagerInitializationGlobal1") {
-    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization')
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
     source = "codegen/initializers/eagerInitializationGlobal1.kt"
 }
 
 standaloneTest("initializers_eagerInitializationGlobal2") {
-    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization')
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
     source = "codegen/initializers/eagerInitializationGlobal2.kt"
 }
 
 standaloneTest("initializers_eagerInitializationThreadLocal1") {
-    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization')
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
     source = "codegen/initializers/eagerInitializationThreadLocal1.kt"
 }
 
 standaloneTest("initializers_eagerInitializationThreadLocal2") {
-    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization')
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
     source = "codegen/initializers/eagerInitializationThreadLocal2.kt"
 }
 
@@ -1521,28 +1521,28 @@ standaloneTest("initializers_failInInitializer1") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer1.kt"
     goldValue = "caught\n"
-    flags = ['-Xir-property-lazy-initialization']
+    flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_failInInitializer2") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer2.kt"
     goldValue = "caught\ncaught2\n"
-    flags = ['-Xir-property-lazy-initialization']
+    flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_failInInitializer3") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer3.kt"
     goldValue = "caught\ncaught2\n"
-    flags = ['-Xir-property-lazy-initialization']
+    flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_failInInitializer4") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer4.kt"
     goldValue = "caught\ncaught2\n"
-    flags = ['-Xir-property-lazy-initialization']
+    flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_when1") {
@@ -2367,7 +2367,7 @@ standaloneTest("link_testLib_explicitly") {
     enabled = project.target.name == project.hostName
 
     dependsOn installTestLib
-    if (project.globalTestArgs.contains('-Xir-property-lazy-initialization'))
+    if (project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM)
         goldValue = "Hello\n"
     else
         goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"

@@ -328,7 +328,20 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         RuntimeAssertsMode.IGNORE
                     }
                 })
-                put(PROPERTY_LAZY_INITIALIZATION, arguments.propertyLazyInitialization)
+                put(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {
+                    null -> {
+                        when (memoryModel) {
+                            MemoryModel.EXPERIMENTAL -> true
+                            else -> false
+                        }
+                    }
+                    "enable" -> true
+                    "disable" -> false
+                    else -> {
+                        configuration.report(ERROR, "Expected 'enable' or 'disable' for lazy property initialization")
+                        false
+                    }
+                })
                 put(WORKER_EXCEPTION_HANDLING, when (arguments.workerExceptionHandling) {
                     null -> if (memoryModel == MemoryModel.EXPERIMENTAL) WorkerExceptionHandling.USE_HOOK else WorkerExceptionHandling.LEGACY
                     "legacy" -> WorkerExceptionHandling.LEGACY
