@@ -34,7 +34,7 @@ internal class KpmDependencyResolutionTestCase(val name: String?) {
     val projects = ConfigurableSet<TestKpmGradleProject>()
 
     fun project(name: String, configure: TestKpmGradleProject.() -> Unit = { }): TestKpmGradleProject {
-        val project = projects.singleOrNull { it.name == name } ?: TestKpmGradleProject(name).also(projects::add)
+        val project = projects.getOrPut(name) { TestKpmGradleProject(name) }
         configure(project)
         return project
     }

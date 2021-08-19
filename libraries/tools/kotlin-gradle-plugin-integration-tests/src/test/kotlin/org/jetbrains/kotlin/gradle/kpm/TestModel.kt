@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-internal class TestKpmGradleProject(val name: String) {
+internal interface Named<T : Named<T>> {
+    val name: String
+}
+
+internal class TestKpmGradleProject(override val name: String) : Named<TestKpmGradleProject> {
     val modules: ConfigurableSet<TestKpmModule> = run {
         val main = TestKpmModule(this, "main").apply { publicationMode = KpmModulePublicationMode.STANDALONE }
         val test = TestKpmModule(this, "test").apply {
@@ -22,12 +26,14 @@ internal class TestKpmGradleProject(val name: String) {
     }
 
     fun module(name: String, configure: TestKpmModule.() -> Unit): TestKpmModule {
-        val module = modules.singleOrNull { it.name == name } ?: TestKpmModule(this, name).also(modules::add)
+        val module = modules.getOrPut(name) { TestKpmModule(this, name) }
         configure(module)
         return module
     }
 
-    fun moduleNamed(name: String) = modules.single { it.name == name }
+    fun moduleNamed(name: String): TestKpmModule =
+        modules[name] ?: error("Module with name $name doesn't exist. Existing modules: $modules")
+
     val main get() = moduleNamed("main")
     val test get() = moduleNamed("test")
 
@@ -36,8 +42,8 @@ internal class TestKpmGradleProject(val name: String) {
 
 internal class TestKpmModule(
     val kpmGradleProject: TestKpmGradleProject,
-    val name: String
-) {
+    override val name: String
+) : Named<TestKpmModule> {
     var publicationMode: KpmModulePublicationMode = KpmModulePublicationMode.PRIVATE
 
     val fragments = ConfigurableSet<TestKpmFragment>().apply {
@@ -45,17 +51,13 @@ internal class TestKpmModule(
     }
 
     fun fragment(name: String, kind: FragmentKind, configure: TestKpmFragment.() -> Unit = { }): TestKpmFragment {
-        val result = fragments.singleOrNull { it.name == name }
-            ?.also { require(it.kind == kind) { "There's already a fragment with the name $name and kind $kind" } }
-            ?: TestKpmFragment(this, name, kind).also(fragments::add)
+        val result = fragments.getOrPut(name) { TestKpmFragment(this, name, kind) }
+        require(result.kind == kind) { "There's already a fragment with the name $name and kind $kind" }
         return result.also(configure)
     }
 
-    fun fragmentNamed(name: String): TestKpmFragment = fragments.single { it.name == name }
-
-    companion object {
-        const val MAIN_NAME = "main"
-    }
+    fun fragmentNamed(name: String): TestKpmFragment =
+        fragments[name] ?: error("Fragment with name $name doesn't exist. Existing fragments $fragments")
 
     fun depends(otherModule: TestKpmModule, kind: TestDependencyKind) {
         fragmentNamed("common").depends(otherModule, kind)
@@ -63,6 +65,10 @@ internal class TestKpmModule(
 
     fun makePublic(publicationMode: KpmModulePublicationMode) {
         this.publicationMode = publicationMode
+    }
+
+    companion object {
+        const val MAIN_NAME = "main"
     }
 }
 
@@ -76,9 +82,9 @@ internal enum class FragmentKind(val gradleType: String) {
 
 internal class TestKpmFragment(
     val module: TestKpmModule,
-    val name: String,
+    override val name: String,
     val kind: FragmentKind = FragmentKind.COMMON_FRAGMENT,
-) {
+) : Named<TestKpmFragment> {
     val refines = mutableSetOf<TestKpmFragment>()
     val moduleDependencies = mutableSetOf<TestKpmModuleDependency>()
 
@@ -136,18 +142,27 @@ internal enum class TestDependencyKind {
 }
 
 internal class TestKpmModuleDependency(val module: TestKpmModule, val dependencyKind: TestDependencyKind)
-internal class ConfigurableSet<T> private constructor(val _items: MutableSet<T>) : Set<T> by _items {
-    constructor() : this(mutableSetOf())
+internal class ConfigurableSet<T : Named<T>> private constructor(
+    private val _items: MutableMap<String, T>
+) : Collection<T> by _items.values {
+    constructor() : this(mutableMapOf())
 
     private val allItemsActions = mutableListOf<T.() -> Unit>()
 
     fun add(item: T) {
         allItemsActions.forEach { action -> action(item) }
-        _items.add(item)
+        _items[item.name] = item
     }
 
     fun withAll(action: T.() -> Unit) {
-        _items.forEach(action)
+        _items.values.forEach(action)
         allItemsActions.add(action)
+    }
+
+    fun getOrPut(name: String, defaultValue: () -> T): T = _items.getOrPut(name, defaultValue)
+
+    operator fun get(name: String): T? = _items[name]
+    operator fun set(name: String, value: T) {
+        _items[name] = value
     }
 }
