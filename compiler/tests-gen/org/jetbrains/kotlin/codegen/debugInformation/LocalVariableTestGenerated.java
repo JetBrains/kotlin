@@ -135,6 +135,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("tryFinally17.kt")
+    public void testTryFinally17() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally17.kt");
+    }
+
+    @Test
     @TestMetadata("tryFinally2.kt")
     public void testTryFinally2() throws Exception {
         runTest("compiler/testData/debug/localVariables/tryFinally2.kt");
