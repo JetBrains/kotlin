@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -17,13 +15,11 @@ import java.io.File
 internal fun Project.setupCInteropCommonizerDependencies() {
     val kotlin = this.multiplatformExtensionOrNull ?: return
 
-    kotlin.targets.withType(KotlinMetadataTarget::class.java).all { target ->
-        target.compilations.withType(KotlinSharedNativeCompilation::class.java).all { compilation ->
-            setupCInteropCommonizerDependenciesForCompilation(compilation)
-        }
+    kotlin.forAllSharedNativeCompilations { compilation ->
+        setupCInteropCommonizerDependenciesForCompilation(compilation)
     }
 
-    kotlin.sourceSets.withType(DefaultKotlinSourceSet::class.java).all { sourceSet ->
+    kotlin.forAllDefaultKotlinSourceSets { sourceSet ->
         setupCInteropCommonizerDependenciesForIde(sourceSet)
     }
 }
@@ -45,7 +41,7 @@ private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilatio
 private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: DefaultKotlinSourceSet) {
     val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask ?: return
 
-    addDependency(sourceSet, filesProvider files@{
+    addIntransitiveMetadataDependencyIfPossible(sourceSet, filesProvider files@{
         val directlyDependent = CInteropCommonizerDependent.from(project, sourceSet)
         val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(project, sourceSet)
 
@@ -53,17 +49,4 @@ private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: Default
             cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
         }
     })
-}
-
-/**
- * Dependencies here are using a special configuration called 'intransitiveMetadataConfiguration'.
- * This special configuration can tell the IDE that this dependencies shall *not* be transitively be visible
- * to dependsOn edges. This is necessary for the way the commonizer handles it's "expect refinement" approach.
- * In this mode, every source set will receive exactly one commonized library to analyze its source code with.
- */
-private fun Project.addDependency(sourceSet: DefaultKotlinSourceSet, dependency: FileCollection) {
-    val dependencyConfigurationName =
-        if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
-        else sourceSet.implementationMetadataConfigurationName
-    project.dependencies.add(dependencyConfigurationName, dependency)
 }

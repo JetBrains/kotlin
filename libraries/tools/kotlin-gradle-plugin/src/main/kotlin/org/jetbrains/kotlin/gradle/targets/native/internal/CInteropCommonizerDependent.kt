@@ -7,15 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
-import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
-import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier.Scope
 import org.jetbrains.kotlin.gradle.utils.UnsafeApi
 
@@ -80,7 +76,7 @@ internal fun CInteropCommonizerDependent.Factory.from(
 internal fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
     return from(
         compilation.project.getCommonizerTarget(compilation) as? SharedCommonizerTarget ?: return null,
-        compilation.findDependingNativeCompilations()
+        compilation.getImplicitlyDependingNativeCompilations()
     )
 }
 
@@ -103,24 +99,4 @@ internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(
             .filterIsInstance<KotlinNativeCompilation>()
             .toSet()
     )
-}
-
-private fun KotlinSharedNativeCompilation.findDependingNativeCompilations(): Set<KotlinNativeCompilation> {
-    val multiplatformExtension = project.multiplatformExtensionOrNull ?: return emptySet()
-    val allParticipatingSourceSetsOfCompilation = allParticipatingSourceSets()
-
-    return multiplatformExtension.targets
-        .flatMap { target -> target.compilations }
-        .filterIsInstance<KotlinNativeCompilation>()
-        .filter { nativeCompilation -> nativeCompilation.allParticipatingSourceSets().containsAll(allParticipatingSourceSetsOfCompilation) }
-        .toSet()
-}
-
-/**
- * Some implementations of [KotlinCompilation] do not contain the default source set in
- * [KotlinCompilation.kotlinSourceSets] or [KotlinCompilation.allKotlinSourceSets]
- * see KT-45412
- */
-private fun KotlinCompilation<*>.allParticipatingSourceSets(): Set<KotlinSourceSet> {
-    return kotlinSourceSetsIncludingDefault + kotlinSourceSetsIncludingDefault.resolveAllDependsOnSourceSets()
 }
