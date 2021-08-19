@@ -10,7 +10,7 @@ configurations {
     dokka
 }
 
-final String dokka_version = "0.10.2-SNAPSHOT"
+final String dokka_version = findProperty("dokka_version") ?: "0.10.2-SNAPSHOT"
 
 repositories {
     mavenLocal()
