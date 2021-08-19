@@ -1244,6 +1244,10 @@ class ExpressionCodegen(
             // Generate `try { ... } catch (e: Any?) { <finally>; throw e }` around every part of
             // the try-catch that is not a copy-pasted `finally` block.
             val defaultCatchStart = markNewLabel()
+            // Make sure the ASTORE generated below has the line number of the
+            // finally block and does not take over the line number of whatever
+            // was generated before.
+            tryInfo.onExit.markLineNumber(true)
             // While keeping this value on the stack should be enough, the bytecode validator will
             // complain if a catch block does not start with ASTORE.
             val savedException = frameMap.enterTemp(AsmTypes.JAVA_THROWABLE_TYPE)
