@@ -18020,6 +18020,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("changingResolveIfDontUseBuilderInferenceDisabledFeature.kt")
+            public void testChangingResolveIfDontUseBuilderInferenceDisabledFeature() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/changingResolveIfDontUseBuilderInferenceDisabledFeature.kt");
+            }
+
+            @Test
             @TestMetadata("commonSuperType.kt")
             public void testCommonSuperType() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/commonSuperType.kt");
@@ -18137,18 +18143,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("specialCallsWithCallableReferences.kt")
             public void testSpecialCallsWithCallableReferences() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferences.kt");
-            }
-
-            @Test
-            @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt")
-            public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExpression() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt");
-            }
-
-            @Test
-            @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
-            public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
             }
 
             @Test

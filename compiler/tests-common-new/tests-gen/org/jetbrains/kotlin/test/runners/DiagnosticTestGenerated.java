@@ -13333,6 +13333,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("changingResolveIfDontUseBuilderInference.kt")
+                public void testChangingResolveIfDontUseBuilderInference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/changingResolveIfDontUseBuilderInference.kt");
+                }
+
+                @Test
                 @TestMetadata("kt47744.kt")
                 public void testKt47744() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47744.kt");

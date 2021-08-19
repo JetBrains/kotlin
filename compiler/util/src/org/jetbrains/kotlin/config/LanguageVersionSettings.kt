@@ -220,6 +220,7 @@ enum class LanguageFeature(
     OptInContagiousSignatures(KOTLIN_1_6, kind = BUG_FIX),
     RepeatableAnnotations(KOTLIN_1_6),
     RepeatableAnnotationContainerConstraints(KOTLIN_1_6, kind = BUG_FIX),
+    UseBuilderInferenceOnlyIfNeeded(KOTLIN_1_6),
 
     // 1.7
 

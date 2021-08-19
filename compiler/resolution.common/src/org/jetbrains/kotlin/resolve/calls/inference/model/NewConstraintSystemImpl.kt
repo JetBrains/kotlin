@@ -482,6 +482,14 @@ class NewConstraintSystemImpl(
         }
     }
 
+    override fun containsOnlyFixedVariables(type: KotlinTypeMarker): Boolean {
+        checkState(State.BUILDING, State.COMPLETION)
+        return !type.contains {
+            val typeConstructor = it.typeConstructor()
+            storage.notFixedTypeVariables.containsKey(typeConstructor)
+        }
+    }
+
     // PostponedArgumentsAnalyzer.Context
     override fun buildCurrentSubstitutor(): TypeSubstitutorMarker {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)

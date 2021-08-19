@@ -25,6 +25,7 @@ interface ConstraintSystemCompletionContext : VariableFixationFinder.Context, Re
     fun canBeProper(type: KotlinTypeMarker): Boolean
 
     fun containsOnlyFixedOrPostponedVariables(type: KotlinTypeMarker): Boolean
+    fun containsOnlyFixedVariables(type: KotlinTypeMarker): Boolean
 
     // mutable operations
     fun addError(error: ConstraintSystemError)

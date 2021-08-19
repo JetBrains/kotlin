@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
@@ -274,10 +275,14 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
         for ((argument, parameter) in resolvedCall.argumentToCandidateParameter) {
             if (!callComponents.statelessCallbacks.isBuilderInferenceCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
+            val dontUseBuilderInferenceIfPossible =
+                callComponents.languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
 
             if (argument is LambdaKotlinCallArgument && !argument.hasBuilderInferenceAnnotation) {
                 argument.hasBuilderInferenceAnnotation = true
             }
+
+            if (dontUseBuilderInferenceIfPossible) continue
 
             for (freshVariable in resolvedCall.freshVariablesSubstitutor.freshVariables) {
                 if (resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(freshVariable.originalTypeParameter) is SimpleTypeArgument)

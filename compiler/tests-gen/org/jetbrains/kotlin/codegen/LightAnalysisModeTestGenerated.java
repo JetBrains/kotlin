@@ -14787,11 +14787,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class BuilderInference extends AbstractLightAnalysisModeTest {
-            @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
-            public void ignoreSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -14818,6 +14813,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("capturedTypes.kt")
             public void testCapturedTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/capturedTypes.kt");
+            }
+
+            @TestMetadata("changingResolveIfDontUseBuilderInferenceDisabledFeature.kt")
+            public void testChangingResolveIfDontUseBuilderInferenceDisabledFeature() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/changingResolveIfDontUseBuilderInferenceDisabledFeature.kt");
             }
 
             @TestMetadata("commonSuperType.kt")
@@ -14913,11 +14913,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("specialCallsWithCallableReferences.kt")
             public void testSpecialCallsWithCallableReferences() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferences.kt");
-            }
-
-            @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt")
-            public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExpression() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt");
             }
 
             @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
