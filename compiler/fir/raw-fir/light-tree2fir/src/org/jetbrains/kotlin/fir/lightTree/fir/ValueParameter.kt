@@ -80,14 +80,16 @@ class ValueParameter(
                 moduleData,
                 FirDeclarationOrigin.Source,
                 type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
-                modifiers.getVisibility()
+                modifiers.getVisibility(),
+                symbol,
             )
             setter = if (this.isVar) FirDefaultPropertySetter(
                 null,
                 moduleData,
                 FirDeclarationOrigin.Source,
                 type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
-                modifiers.getVisibility()
+                modifiers.getVisibility(),
+                symbol,
             ) else null
         }.apply {
             if (firValueParameter.isVararg) {

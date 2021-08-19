@@ -710,7 +710,7 @@ class DeclarationsConverter(
                             enumClassWrapper,
                             superTypeCallEntry?.toFirSourceElement(),
                             isEnumEntry = true,
-                        containingClassIsExpectClass = false
+                            containingClassIsExpectClass = false
                         )?.let { declarations += it.firConstructor }
                         classBodyNode?.also {
                             // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
@@ -1114,10 +1114,10 @@ class DeclarationsConverter(
                             isExternal = modifiers.hasExternal()
                         }
 
-                    val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility, modifiers) }
+                    val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility, symbol, modifiers) }
                     this.getter = convertedAccessors.find { it.isGetter }
                         ?: FirDefaultPropertyGetter(
-                            null, moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                            null, moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility, symbol,
                         ).also {
                             it.status = defaultAccessorStatus()
                             it.initContainingClassAttr()
@@ -1126,7 +1126,7 @@ class DeclarationsConverter(
                     this.setter = convertedAccessors.find { it.isSetter }
                         ?: if (isVar) {
                             FirDefaultPropertySetter(
-                                null, moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                                null, moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility, symbol,
                             ).also {
                                 it.status = defaultAccessorStatus()
                                 it.initContainingClassAttr()
@@ -1228,6 +1228,7 @@ class DeclarationsConverter(
         getterOrSetter: LighterASTNode,
         propertyTypeRef: FirTypeRef,
         propertyVisibility: Visibility,
+        propertySymbol: FirPropertySymbol,
         propertyModifiers: Modifier
     ): FirPropertyAccessor {
         var modifiers = Modifier()
@@ -1275,6 +1276,7 @@ class DeclarationsConverter(
                     FirDeclarationOrigin.Source,
                     propertyTypeRefToUse,
                     accessorVisibility,
+                    propertySymbol,
                     isGetter
                 )
                 .also { accessor ->
@@ -1307,6 +1309,7 @@ class DeclarationsConverter(
                 this.contractDescription = it
             }
             context.firFunctionTargets.removeLast()
+            this.propertySymbol = propertySymbol
         }.also {
             target.bind(it)
             it.initContainingClassAttr()

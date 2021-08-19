@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -73,6 +74,9 @@ class FirSyntheticPropertyAccessor(
     override val symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol().apply {
         bind(this@FirSyntheticPropertyAccessor)
     }
+
+    // NB: unused
+    override val propertySymbol: FirPropertySymbol? = null
 
     override val controlFlowGraphReference: FirControlFlowGraphReference? = null
 
