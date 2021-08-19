@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -82,7 +83,7 @@ class FirDelegatedPropertyInferenceSession(
 
         for ((_, candidate) in partiallyResolvedCalls) {
             for (error in commonSystem.errors) {
-                candidate.system.addError(error)
+                candidate.addDiagnostic(InferenceError(error))
             }
         }
 

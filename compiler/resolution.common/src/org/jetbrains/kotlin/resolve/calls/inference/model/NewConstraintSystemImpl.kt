@@ -77,10 +77,9 @@ class NewConstraintSystemImpl(
 
     private fun checkState(vararg allowedState: State) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
-        state in allowedState
-//        assert(state in allowedState) {
-//            "State $state is not allowed. AllowedStates: ${allowedState.joinToString()}"
-//        }
+        assert(state in allowedState) {
+            "State $state is not allowed. AllowedStates: ${allowedState.joinToString()}"
+        }
     }
 
     override val errors: List<ConstraintSystemError>

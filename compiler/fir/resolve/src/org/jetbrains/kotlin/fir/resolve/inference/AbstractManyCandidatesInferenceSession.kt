@@ -27,7 +27,7 @@ abstract class AbstractManyCandidatesInferenceSession(
         get() = partiallyResolvedCalls.lastOrNull()
             ?.second
             ?.system
-            ?.currentStorage()
+            ?.asReadOnlyStorage()
             ?: ConstraintStorage.Empty
 
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
