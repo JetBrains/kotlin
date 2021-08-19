@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -51,7 +50,7 @@ class CandidateFactory private constructor(
         extensionReceiverValue: ReceiverValue? = null,
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null
     ): Candidate {
-        return Candidate(
+        val result = Candidate(
             symbol, dispatchReceiverValue, extensionReceiverValue,
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
@@ -65,6 +64,16 @@ class CandidateFactory private constructor(
                 ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
             }
         )
+
+        // The counterpart in FE 1.0 checks if the given descriptor is VariableDescriptor yet not PropertyDescriptor.
+        // Here, we explicitly check if the referred declaration/symbol is value parameter, local variable, or backing field.
+        val callSite = callInfo.callSite
+        if (callSite is FirCallableReferenceAccess) {
+            if (symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol) {
+                result.addDiagnostic(Unsupported("References to variables aren't supported yet", callSite.calleeReference.source))
+            }
+        }
+        return result
     }
 
     private fun ReceiverValue?.isCandidateFromCompanionObjectTypeScope(): Boolean {

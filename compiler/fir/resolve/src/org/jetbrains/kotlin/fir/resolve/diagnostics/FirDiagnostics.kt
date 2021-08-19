@@ -156,9 +156,11 @@ class ConeImportFromSingleton(val name: Name) : ConeDiagnostic() {
     override val reason: String get() = "Import from singleton $name is not allowed"
 }
 
-class ConeUnsupportedDynamicType() : ConeDiagnostic() {
-    override val reason: String get() = "Dynamic types are not supported in this context"
+open class ConeUnsupported(val message: String, val source: FirSourceElement? = null) : ConeDiagnostic() {
+    override val reason: String get() = message
 }
+
+class ConeUnsupportedDynamicType : ConeUnsupported("Dynamic types are not supported in this context")
 
 class ConeDeprecated(val source: FirSourceElement?, val symbol: FirBasedSymbol<*>, val deprecation: Deprecation) : ConeDiagnostic() {
     override val reason: String get() = "Deprecated: ${deprecation.message}"

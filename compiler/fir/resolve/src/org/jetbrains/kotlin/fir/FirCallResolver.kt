@@ -378,7 +378,12 @@ class FirCallResolver(
             noSuccessfulCandidates -> {
                 val errorReference = buildErrorReference(
                     info,
-                    ConeUnresolvedReferenceError(info.name),
+                    if (applicability == CandidateApplicability.UNSUPPORTED) {
+                        val unsupportedResolutionDiagnostic = reducedCandidates.firstOrNull()?.diagnostics?.firstOrNull() as? Unsupported
+                        ConeUnsupported(unsupportedResolutionDiagnostic?.message ?: "", unsupportedResolutionDiagnostic?.source)
+                    } else {
+                        ConeUnresolvedReferenceError(info.name)
+                    },
                     callableReferenceAccess.source
                 )
                 resolvedCallableReferenceAtom.resultingReference = errorReference

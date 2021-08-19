@@ -89,7 +89,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeTypeParameterInQualifiedAccess -> null // reported in various checkers instead
     is ConeNotAnnotationContainer -> null
     is ConeImportFromSingleton -> FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.createOn(source, this.name)
-    is ConeUnsupportedDynamicType -> FirErrors.UNSUPPORTED.createOn(source, this.reason)
+    is ConeUnsupported -> FirErrors.UNSUPPORTED.createOn(this.source ?: source, this.reason)
     is ConeLocalVariableNoTypeOrInitializer ->
         runIf(variable.isLocalMember) { FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.createOn(source) }
     is ConeUnderscoreIsReserved -> FirErrors.UNDERSCORE_IS_RESERVED.createOn(this.source)
