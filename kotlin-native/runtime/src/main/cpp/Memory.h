@@ -120,6 +120,7 @@ ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
 }
 
 class ForeignRefManager;
+struct FrameOverlay;
 typedef ForeignRefManager* ForeignRefContext;
 
 #ifdef __cplusplus
@@ -241,6 +242,8 @@ void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Set current frame in case if exception catched.
 void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
+FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
+bool currentFrameIsEqual(FrameOverlay* frame) RUNTIME_NOTHROW;
 // Clears object subgraph references from memory subsystem, and optionally
 // checks if subgraph referenced by given root is disjoint from the rest of
 // object graph, i.e. no external references exists.

@@ -3680,6 +3680,14 @@ RUNTIME_NOTHROW void GC_RegisterWorker(void* worker) {
 #endif  // USE_CYCLIC_GC
 }
 
+RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
+    return currentFrame;
+}
+
+RUNTIME_NOTHROW bool currentFrameIsEqual(FrameOverlay* frame) {
+    return currentFrame == frame;
+}
+
 RUNTIME_NOTHROW void GC_UnregisterWorker(void* worker) {
 #if USE_CYCLIC_GC
   cyclicRemoveWorker(worker, g_hasCyclicCollector);

@@ -400,6 +400,14 @@ RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isLocal(KRef obj) {
     return obj->local();
 }
 
+KNativePtr Kotlin_Debugging_getCurrentFrame() {
+    return reinterpret_cast<KNativePtr>(getCurrentFrame());
+}
+
+KBoolean Kotlin_Debugging_currentFrameIsEqual(KNativePtr frame) {
+    return currentFrameIsEqual(reinterpret_cast<FrameOverlay*>(frame));
+}
+
 RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeededFromKotlin() {
     switch (CurrentMemoryModel) {
         case MemoryModel::kExperimental:
