@@ -1983,6 +1983,24 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             }
         }
 
+        @TestMetadata("compiler/testData/psi/propertyBackingField")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PropertyBackingField extends AbstractParsingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPropertyBackingField() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/propertyBackingField"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+            }
+
+            @TestMetadata("explicitBackingField.kt")
+            public void testExplicitBackingField() throws Exception {
+                runTest("compiler/testData/psi/propertyBackingField/explicitBackingField.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/psi/propertyDelegate")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
