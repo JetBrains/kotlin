@@ -423,6 +423,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private val entryBb = basicBlockInFunction("entry", startLocation)
     private val epilogueBb = basicBlockInFunction("epilogue", endLocation)
     private val fatalForeignExceptionBb by lazy { basicBlockInFunction("fatal_foreign_exception", endLocation) }
+    private val forwardExceptionLandingpadBb by lazy { basicBlockInFunction("forward_exception_landingpad", endLocation) }
+    private val forwardExceptionBb by lazy { basicBlockInFunction("forwardException", endLocation) }
+    private val unexpectedExceptionBb by lazy { basicBlockInFunction("unexpectedException", endLocation) }
     private val catchKotlinExceptionAndTerminateBb by lazy { basicBlockInFunction("catch_kotlin_exception_and_terminate", endLocation) }
     private val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
 
@@ -437,6 +440,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
      * TODO: consider merging this with [ExceptionHandler].
      */
     var forwardingForeignExceptionsTerminatedWith: LLVMValueRef? = null
+    var forwardingException: Boolean = false
     private val foreignExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
     private val kotlinExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
 
@@ -839,6 +843,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     fun extractElement(vector: LLVMValueRef, index: LLVMValueRef, name: String = ""): LLVMValueRef {
         return LLVMBuildExtractElement(builder, vector, index, name)!!
+    }
+
+    fun forwardExceptionHandler(): ExceptionHandler {
+        forwardingException = true
+
+        return object : ExceptionHandler.Local() {
+            override val unwind: LLVMBasicBlockRef
+                get() = forwardExceptionLandingpadBb
+        }
     }
 
     fun filteringExceptionHandler(
@@ -1414,6 +1427,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                     call(terminator, emptyList())
                     unreachable()
                 }
+
             }
         }
 
@@ -1483,6 +1497,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 }
             }
             br(localsInitBb)
+
             kotlinExceptionExtractInstructions.forEach {
                 positionBefore(it)
                 call(context.llvm.setCurrentFrameFunction, listOf(slots))
@@ -1554,6 +1569,40 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
             LLVMDeleteBasicBlock(cleanupLandingpad)
             catchKotlinExceptionBlock(null)
+        }
+
+        if (forwardingForeignExceptionsTerminatedWith != null && forwardingException) {
+            appendingTo(forwardExceptionLandingpadBb) {
+                val forwardingLandingpad = gxxLandingpad(numClauses = 0)
+                LLVMSetCleanup(forwardingLandingpad, 1)
+
+                val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
+                LLVMAddClause(forwardingLandingpad, clause.llvm)
+
+
+                val selector = extractValue(forwardingLandingpad, 1)
+                condBr(
+                        icmpLt(selector, Int32(0).llvm),
+                        unexpectedExceptionBb,
+                        forwardExceptionBb
+                )
+
+                appendingTo(unexpectedExceptionBb) {
+                    val exceptionRecord = extractValue(forwardingLandingpad, 0)
+
+                    val beginCatch = context.llvm.cxaBeginCatchFunction
+                    // So `terminator` is called from C++ catch block:
+                    call(beginCatch, listOf(exceptionRecord))
+                    call(forwardingForeignExceptionsTerminatedWith!!, emptyList())
+                    unreachable()
+                }
+
+                appendingTo(forwardExceptionBb) {
+                    releaseVars()
+                    handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+                    LLVMBuildResume(builder, forwardingLandingpad)
+                }
+            }
         }
 
         appendingTo(localsInitBb) {

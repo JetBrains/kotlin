@@ -76,7 +76,8 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
             function: LLVMValueRef,
             args: List<LLVMValueRef>,
             resultLifetime: Lifetime = Lifetime.IRRELEVANT,
-            toNative: Boolean = false
+            toNative: Boolean = false,
+            forwardException: Boolean = false
     ): LLVMValueRef {
 
         // TODO: it is required only for Kotlin-to-Objective-C bridges.
@@ -85,12 +86,18 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         val switchStateToNative = toNative && context.config.memoryModel == MemoryModel.EXPERIMENTAL
         val exceptionHandler: ExceptionHandler
 
+        val basicExceptionHandler = if (!forwardException) {
+            ExceptionHandler.Caller
+        } else {
+            forwardExceptionHandler()
+        }
+
         if (switchStateToNative) {
             switchThreadState(ThreadState.Native)
             // Note: this is suboptimal. We should forbid Kotlin exceptions thrown from native code, and use simple fatal handler here.
-            exceptionHandler = filteringExceptionHandler(ExceptionHandler.Caller, ForeignExceptionMode.default, switchThreadState = true)
+            exceptionHandler = filteringExceptionHandler(basicExceptionHandler, ForeignExceptionMode.default, switchThreadState = true)
         } else {
-            exceptionHandler = ExceptionHandler.Caller
+            exceptionHandler = basicExceptionHandler
         }
 
         val result = call(function, args, resultLifetime, exceptionHandler)
@@ -879,7 +886,8 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         errorOutPtr != null -> kotlinExceptionHandler { exception ->
             callFromBridge(
                     context.llvm.Kotlin_ObjCExport_RethrowExceptionAsNSError,
-                    listOf(exception, errorOutPtr!!, generateExceptionTypeInfoArray(baseMethod!!))
+                    listOf(exception, errorOutPtr!!, generateExceptionTypeInfoArray(baseMethod!!)),
+                    forwardException = true
             )
 
             val returnValue = when (returnType) {
@@ -1076,7 +1084,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         fun rethrow() {
             val error = load(errorOutPtr!!)
-            callFromBridge(context.llvm.Kotlin_ObjCExport_RethrowNSErrorAsException, listOf(error))
+            callFromBridge(context.llvm.Kotlin_ObjCExport_RethrowNSErrorAsException, listOf(error), forwardException = true)
             unreachable()
         }
 
