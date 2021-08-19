@@ -4495,12 +4495,12 @@ interopTest("interop_threadStates") {
     interop = "threadStates"
 }
 
-interopTest("interop_threadStates_callbacksWithExceptions") {
+/*interopTest("interop_threadStates_callbacksWithExceptions") {
     disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
             !isExperimentalMM // No thread state switching in the legacy MM.
     source = "interop/threadStates/callbacksWithExceptions.kt"
     interop = "threadStates"
-}
+}*/
 
 interopTest("interop_threadStates_unhandledException") {
     disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
