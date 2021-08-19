@@ -5,17 +5,16 @@
 
 package org.jetbrains.kotlin.gradle
 
-import com.sun.javafx.scene.CameraHelper.project
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.util.FragmentKind.*
+import org.jetbrains.kotlin.gradle.kpm.FragmentKind.*
 import org.jetbrains.kotlin.gradle.util.KpmDependencyResolutionTestCase
-import org.jetbrains.kotlin.gradle.util.KpmModulePublicationMode.STANDALONE
-import org.jetbrains.kotlin.gradle.util.TestDependencyKind.*
-import org.jetbrains.kotlin.gradle.util.TestKpmModule
+import org.jetbrains.kotlin.gradle.kpm.KpmModulePublicationMode.STANDALONE
+import org.jetbrains.kotlin.gradle.kpm.TestDependencyKind
+import org.jetbrains.kotlin.gradle.kpm.TestDependencyKind.*
+import org.jetbrains.kotlin.gradle.kpm.TestKpmModule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import java.io.File
 
 @RunWith(Parameterized::class)
 @ExperimentalStdlibApi
