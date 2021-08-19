@@ -1,0 +1,5 @@
+package
+
+public fun box(): kotlin.String
+public fun </*0*/ K, /*1*/ V> buildMap(/*0*/ builderAction: kotlin.collections.MutableMap<K, V>.() -> kotlin.Unit): kotlin.collections.Map<K, V>
+

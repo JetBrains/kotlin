@@ -176,9 +176,11 @@ class KotlinConstraintSystemCompleter(
         if (!useBuilderInferenceOnlyIfNeeded) return false
 
         val lambdaArguments = postponedArguments.filterIsInstance<ResolvedLambdaAtom>().takeIf { it.isNotEmpty() } ?: return false
+        val useBuilderInferenceWithoutAnnotation =
+            languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
 
         return lambdaArguments.any { argument ->
-            if (!argument.atom.hasBuilderInferenceAnnotation)
+            if (!argument.atom.hasBuilderInferenceAnnotation && !useBuilderInferenceWithoutAnnotation)
                 return@any false
 
             val notFixedInputTypeVariables = argument.inputTypes

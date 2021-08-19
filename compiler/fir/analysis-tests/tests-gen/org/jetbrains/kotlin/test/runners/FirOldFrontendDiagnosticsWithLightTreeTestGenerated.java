@@ -13404,6 +13404,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithLambdas.kt");
                 }
 
+                @Test
+                @TestMetadata("withoutAnnotationDisabledFeature.kt")
+                public void testWithoutAnnotationDisabledFeature() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/withoutAnnotationDisabledFeature.kt");
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/constraints")
                 @TestDataPath("$PROJECT_ROOT")
