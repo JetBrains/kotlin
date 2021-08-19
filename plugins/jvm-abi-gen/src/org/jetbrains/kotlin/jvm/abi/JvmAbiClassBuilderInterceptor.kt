@@ -65,14 +65,17 @@ sealed class AbiClassInfo {
 class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
     val abiClassInfo: MutableMap<String, AbiClassInfo> = mutableMapOf()
 
-    override fun interceptClassBuilderFactory(interceptedFactory: ClassBuilderFactory, bindingContext: BindingContext, diagnostics: DiagnosticSink): ClassBuilderFactory =
-        object : DelegatingClassBuilderFactory(interceptedFactory) {
-            override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
-                val descriptor = origin.descriptor as? ClassDescriptor
-                val isPrivate = descriptor?.visibility?.let(DescriptorVisibilities::isPrivate) ?: false
-                return AbiInfoClassBuilder(interceptedFactory.newClassBuilder(origin), isPrivate)
-            }
+    override fun interceptClassBuilderFactory(
+        interceptedFactory: ClassBuilderFactory,
+        bindingContext: BindingContext,
+        diagnostics: DiagnosticSink
+    ): ClassBuilderFactory = object : DelegatingClassBuilderFactory(interceptedFactory) {
+        override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
+            val descriptor = origin.descriptor as? ClassDescriptor
+            val isPrivate = descriptor?.visibility?.let(DescriptorVisibilities::isPrivate) ?: false
+            return AbiInfoClassBuilder(interceptedFactory.newClassBuilder(origin), isPrivate)
         }
+    }
 
     private inner class AbiInfoClassBuilder(
         private val delegate: ClassBuilder,
@@ -86,8 +89,17 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
 
         override fun getDelegate(): ClassBuilder = delegate
 
-        override fun defineClass(origin: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>) {
+        override fun defineClass(
+            origin: PsiElement?,
+            version: Int,
+            access: Int,
+            name: String,
+            signature: String?,
+            superName: String,
+            interfaces: Array<out String>
+        ) {
             // Always keep annotation classes
+            // TODO: Investigate whether there are cases where we can remove annotation classes from the ABI.
             if (access and Opcodes.ACC_ANNOTATION != 0) {
                 publicAbi = true
             }
@@ -101,7 +113,14 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
             super.visitOuterClass(owner, name, desc)
         }
 
-        override fun newMethod(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+        override fun newMethod(
+            origin: JvmDeclarationOrigin,
+            access: Int,
+            name: String,
+            desc: String,
+            signature: String?,
+            exceptions: Array<out String>?
+        ): MethodVisitor {
             if (publicAbi) {
                 return super.newMethod(origin, access, name, desc, signature, exceptions)
             }
@@ -121,8 +140,10 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
 
             // Remove private functions from the ABI jars
             val descriptor = origin.descriptor as? MemberDescriptor
-            if (access and Opcodes.ACC_PRIVATE != 0 && descriptor?.visibility?.let(DescriptorVisibilities::isPrivate) == true
-                || name == "<clinit>" || name.startsWith("access\$") && access and Opcodes.ACC_SYNTHETIC != 0) {
+            if (
+                access and Opcodes.ACC_PRIVATE != 0 && descriptor?.visibility?.let(DescriptorVisibilities::isPrivate) == true
+                || name == "<clinit>" || name.startsWith("access\$") && access and Opcodes.ACC_SYNTHETIC != 0
+            ) {
                 return super.newMethod(origin, access, name, desc, signature, exceptions)
             }
 
@@ -153,7 +174,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
 
         override fun done() {
             // Remove local or anonymous classes unless they are in the scope of an inline function and
-            // strip non-inline methods from all other classe.
+            // strip non-inline methods from all other classes.
             when {
                 publicAbi ->
                     abiClassInfo[internalName] = AbiClassInfo.Public

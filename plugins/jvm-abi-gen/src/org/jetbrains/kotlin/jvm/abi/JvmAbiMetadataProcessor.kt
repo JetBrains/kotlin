@@ -22,8 +22,12 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
         // update the metadata version if we encounter older metadata annotations.
-        val metadataVersion =
-            if (header.metadataVersion.let { it.size >= 2 && it[0] >= 1 && it[1] >= 4 }) header.metadataVersion else intArrayOf(1, 4)
+        val metadataVersion = header.metadataVersion.takeIf { v ->
+            val major = v.getOrNull(0) ?: 0
+            val minor = v.getOrNull(1) ?: 0
+            major > 1 || major == 1 && minor >= 4
+        } ?: intArrayOf(1, 4)
+
         val newHeader = when (val metadata = KotlinClassMetadata.read(header)) {
             is KotlinClassMetadata.Class -> {
                 val writer = KotlinClassMetadata.Class.Writer()
@@ -70,30 +74,31 @@ private fun kotlinClassHeaderVisitor(body: (KotlinClassHeader) -> Unit): Annotat
             }
         }
 
-        override fun visitArray(name: String): AnnotationVisitor {
+        override fun visitArray(name: String): AnnotationVisitor? {
             val destination = when (name) {
                 METADATA_DATA_FIELD_NAME -> data1
                 METADATA_STRINGS_FIELD_NAME -> data2
-                else -> error("Wrong array field in kotlin metadata: $name")
+                else -> return null
             }
-            return object : AnnotationVisitor(Opcodes.ASM7) {
+            return object : AnnotationVisitor(Opcodes.API_VERSION) {
                 override fun visit(name: String?, value: Any?) {
                     destination += value as String
                 }
             }
         }
 
-
         override fun visitEnd() {
-            body(KotlinClassHeader(
-                kind,
-                metadataVersion,
-                data1.toTypedArray(),
-                data2.toTypedArray(),
-                extraString,
-                packageName,
-                extraInt
-            ))
+            body(
+                KotlinClassHeader(
+                    kind,
+                    metadataVersion,
+                    data1.toTypedArray(),
+                    data2.toTypedArray(),
+                    extraString,
+                    packageName,
+                    extraInt
+                )
+            )
         }
     }
 
@@ -158,7 +163,8 @@ private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(deleg
 }
 
 /**
- * Class metadata adapter which removes private functions, properties, and type aliases.
+ * Class metadata adapter which removes private functions, properties, type aliases,
+ * and local delegated properties.
  */
 private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor(delegate) {
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
