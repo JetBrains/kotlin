@@ -19,7 +19,7 @@ object FirVolatileAnnotationChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind != FirRealSourceElementKind) return
 
-        val fieldAnnotation = declaration.backingFieldSymbol.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
+        val fieldAnnotation = declaration.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
         if (fieldAnnotation != null && !declaration.isVar) {
             reporter.reportOn(fieldAnnotation.source, FirJvmErrors.VOLATILE_ON_VALUE, context)
         }
