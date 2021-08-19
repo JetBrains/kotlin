@@ -214,11 +214,11 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     val backingField = property.backingField!!
                     val receiver = expression.dispatchReceiver
                     return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
-                        if (backingField.isStatic && receiver != null) {
+                        if (backingField.isStatic && receiver != null && receiver !is IrGetValue) {
                             // If the field is static, evaluate the receiver for potential side effects.
                             +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
                         }
-                        if (accessor.valueParameters.size > 0) {
+                        if (accessor.valueParameters.isNotEmpty()) {
                             +irSetField(
                                 receiver.takeUnless { backingField.isStatic },
                                 backingField,
