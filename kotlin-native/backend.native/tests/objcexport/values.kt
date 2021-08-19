@@ -504,17 +504,7 @@ fun runUnitBlock(block: () -> Unit): Boolean {
 
 fun asUnitBlock(block: () -> Any?): () -> Unit = { block() }
 
-fun runNothingBlock(block: () -> Nothing) = try {
-    block()
-    false
-} catch (e: Throwable) {
-    true
-}
-
-fun asNothingBlock(block: () -> Any?): () -> Nothing = {
-    block()
-    TODO()
-}
+fun runNothingBlock(block: () -> Nothing) { (block as () -> Any?)() }
 
 fun getNullBlock(): (() -> Unit)? = null
 fun isBlockNull(block: (() -> Unit)?): Boolean = block == null
