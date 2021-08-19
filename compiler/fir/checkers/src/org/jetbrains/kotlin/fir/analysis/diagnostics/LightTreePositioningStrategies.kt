@@ -933,6 +933,14 @@ object LightTreePositioningStrategies {
             }
         }
     }
+
+    val NON_FINAL_MODIFIER_OR_NAME: LightTreePositioningStrategy = ModifierSetBasedLightTreePositioningStrategy(
+        TokenSet.create(
+            KtTokens.ABSTRACT_KEYWORD,
+            KtTokens.OPEN_KEYWORD,
+            KtTokens.SEALED_KEYWORD
+        )
+    )
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =

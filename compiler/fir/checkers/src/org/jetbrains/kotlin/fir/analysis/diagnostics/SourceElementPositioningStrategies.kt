@@ -309,4 +309,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.OPERATOR_MODIFIER,
         PositioningStrategies.OPERATOR_MODIFIER
     )
+
+    val NON_FINAL_MODIFIER_OR_NAME = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.NON_FINAL_MODIFIER_OR_NAME,
+        PositioningStrategies.NON_FINAL_MODIFIER_OR_NAME
+    )
 }

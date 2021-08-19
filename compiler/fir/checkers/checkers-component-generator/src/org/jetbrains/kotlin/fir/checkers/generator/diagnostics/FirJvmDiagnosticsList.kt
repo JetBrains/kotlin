@@ -63,6 +63,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
     val RECORDS by object : DiagnosticGroup("JVM Records") {
         val LOCAL_JVM_RECORD by error<PsiElement>()
+        val NON_FINAL_JVM_RECORD by error<PsiElement>(PositioningStrategy.NON_FINAL_MODIFIER_OR_NAME)
     }
 
 }

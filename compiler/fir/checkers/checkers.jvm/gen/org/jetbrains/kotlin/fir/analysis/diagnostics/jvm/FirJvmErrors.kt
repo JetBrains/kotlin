@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -51,5 +52,6 @@ object FirJvmErrors {
 
     // JVM Records
     val LOCAL_JVM_RECORD by error0<PsiElement>()
+    val NON_FINAL_JVM_RECORD by error0<PsiElement>(SourceElementPositioningStrategies.NON_FINAL_MODIFIER_OR_NAME)
 
 }

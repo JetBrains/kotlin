@@ -3544,4 +3544,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.NON_FINAL_JVM_RECORD) { firDiagnostic ->
+        NonFinalJvmRecordImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

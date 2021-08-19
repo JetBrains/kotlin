@@ -25,13 +25,13 @@ class A4(var name: String)
 class A5(vararg val name: String, y: Int)
 
 @JvmRecord
-open class A6(val x: String)
+<!NON_FINAL_JVM_RECORD!>open<!> class A6(val x: String)
 
 @JvmRecord
-abstract class A7(val x: String)
+<!NON_FINAL_JVM_RECORD!>abstract<!> class A7(val x: String)
 
 @JvmRecord
-sealed class A8(val x: String)
+<!NON_FINAL_JVM_RECORD!>sealed<!> class A8(val x: String)
 
 @JvmRecord
 enum class A9(val x: String) {
