@@ -50,9 +50,9 @@ open class AnnotationImplementationTransformer(val context: BackendContext, val 
     internal val implementations: MutableMap<IrClass, IrClass> = mutableMapOf()
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val constructedClass = expression.type.classOrNull?.owner ?: return expression
-        if (!constructedClass.isAnnotationClass) return expression
-        if (constructedClass.typeParameters.isNotEmpty()) return expression // Not supported yet
+        val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
+        if (!constructedClass.isAnnotationClass) return super.visitConstructorCall(expression)
+        if (constructedClass.typeParameters.isNotEmpty()) return super.visitConstructorCall(expression) // Not supported yet
 
         val implClass = implementations.getOrPut(constructedClass) { createAnnotationImplementation(constructedClass) }
         val ctor = implClass.constructors.single()
