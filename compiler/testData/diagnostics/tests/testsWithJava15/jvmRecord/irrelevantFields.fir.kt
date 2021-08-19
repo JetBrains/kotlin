@@ -13,13 +13,13 @@ data class MyRec1(val name: String) : I by i
 
 @JvmRecord
 data class MyRec2(val name: String) {
-    val x: Int = 0
+    <!FIELD_IN_JVM_RECORD!>val x: Int = 0<!>
 }
 
 @JvmRecord
 data class MyRec3(val name: String) {
-    val y: String
-        get() = field + "1"
+    <!FIELD_IN_JVM_RECORD!>val y: String
+        get() = field + "1"<!>
 
     init {
         y = ""
@@ -28,7 +28,7 @@ data class MyRec3(val name: String) {
 
 @JvmRecord
 data class MyRec4(val name: String) {
-    val z: Int by lazy { 1 }
+    <!FIELD_IN_JVM_RECORD!>val z: Int by lazy { 1 }<!>
 }
 
 @JvmRecord

@@ -77,8 +77,11 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
 
         declaration.declarations.forEach { decl ->
             if (decl is FirProperty) {
-                if (decl.isVar && decl.source?.kind == FirFakeSourceElementKind.PropertyFromParameter) {
+                val fromConstructor = decl.source?.kind == FirFakeSourceElementKind.PropertyFromParameter
+                if (decl.isVar && fromConstructor) {
                     reporter.reportOn(decl.source, FirJvmErrors.JVM_RECORD_NOT_VAL_PARAMETER, context)
+                } else if (!fromConstructor && (decl.hasBackingField || decl.delegateFieldSymbol != null)) {
+                    reporter.reportOn(decl.source, FirJvmErrors.FIELD_IN_JVM_RECORD, context)
                 }
             }
         }
