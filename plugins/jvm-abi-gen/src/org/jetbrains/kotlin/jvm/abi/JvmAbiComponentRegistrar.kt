@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.jvm.abi
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -30,7 +32,8 @@ class JvmAbiComponentRegistrar : ComponentRegistrar {
             // Use the single-pass implementation, using the new ABI flag in the metadata.
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
             val builderExtension = JvmAbiClassBuilderInterceptor()
-            val outputExtension = JvmAbiOutputExtension(File(outputPath), builderExtension.abiClassInfo)
+            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+            val outputExtension = JvmAbiOutputExtension(File(outputPath), builderExtension.abiClassInfo, messageCollector)
             ClassBuilderInterceptorExtension.registerExtension(project, builderExtension)
             ClassFileFactoryFinalizerExtension.registerExtension(project, outputExtension)
         }
