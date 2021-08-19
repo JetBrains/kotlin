@@ -13,6 +13,7 @@ enum class CandidateApplicability {
     INAPPLICABLE_ARGUMENTS_MAPPING_ERROR, // arguments not mapped to parameters (i.e. different size of arguments and parameters)
     INAPPLICABLE, // arguments have wrong types
     INAPPLICABLE_MODIFIER, // no expected modifier (eg infix call on non-infix function)
+    NO_COMPANION_OBJECT, // Classifier does not have a companion object
     IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
     RUNTIME_ERROR, // problems with visibility
     UNSAFE_CALL, // receiver or argument nullability doesn't match

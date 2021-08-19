@@ -52,7 +52,8 @@ abstract class TowerScopeLevel {
             dispatchReceiverValue: ReceiverValue?,
             extensionReceiverValue: ReceiverValue?,
             scope: FirScope,
-            builtInExtensionFunctionReceiverValue: ReceiverValue? = null
+            builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
+            objectsByName: Boolean = false
         )
     }
 }
@@ -335,7 +336,8 @@ class ScopeTowerLevel(
             processor.consumeCandidate(
                 it, dispatchReceiverValue = null,
                 extensionReceiverValue = null,
-                scope = scope
+                scope = scope,
+                objectsByName = true
             )
         }
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND

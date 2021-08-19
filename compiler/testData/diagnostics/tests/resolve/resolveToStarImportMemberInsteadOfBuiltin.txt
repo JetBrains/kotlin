@@ -1,0 +1,34 @@
+package
+
+public fun test(): kotlin.Unit
+
+public final enum class TestEnum : kotlin.Enum<TestEnum> {
+    enum entry Annotation
+
+    enum entry Collection
+
+    enum entry Set
+
+    enum entry List
+
+    enum entry Map
+
+    enum entry Function
+
+    enum entry Enum
+
+    private constructor TestEnum()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: TestEnum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<TestEnum!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<TestEnum>
+}

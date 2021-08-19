@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 package test
 
 import test.C.E1
@@ -17,7 +16,6 @@ class A {
     }
 
     fun test() {
-        // Note: FIR resolve this to test/C instead of test/A.B.C
         C
         D()
     }

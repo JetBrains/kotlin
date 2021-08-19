@@ -75,7 +75,7 @@ class BodyResolveContext(
         get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
 
     @set:PrivateForInline
-    var containers: MutableList<FirDeclaration> = mutableListOf()
+    var containers: ArrayDeque<FirDeclaration> = ArrayDeque()
 
     @set:PrivateForInline
     var containingClass: FirRegularClass? = null
@@ -118,7 +118,7 @@ class BodyResolveContext(
         return try {
             f()
         } finally {
-            containers.removeAt(containers.size - 1)
+            containers.removeLast()
         }
     }
 
@@ -130,7 +130,7 @@ class BodyResolveContext(
         return try {
             f()
         } finally {
-            containers.removeAt(containers.size - 1)
+            containers.removeLast()
             containingClass = oldContainingClass
         }
     }
@@ -169,6 +169,17 @@ class BodyResolveContext(
             l()
         } finally {
             towerDataMode = initialMode
+        }
+    }
+
+    var qualifierPartIndexFromEnd: Int = -1
+
+    inline fun <R> withIncrementedQualifierPartIndex(l: () -> R): R {
+        qualifierPartIndexFromEnd++
+        return try {
+            l()
+        } finally {
+            qualifierPartIndexFromEnd--
         }
     }
 

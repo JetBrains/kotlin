@@ -70,6 +70,12 @@ class ConeInapplicableCandidateError(
     override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidate.symbol)}"
 }
 
+class ConeNoCompanionObject(
+    val symbol: FirRegularClassSymbol
+) : ConeDiagnostic() {
+    override val reason: String get() = "Classifier ''$symbol'' does not have a companion object, and thus must be initialized here"
+}
+
 class ConeConstraintSystemHasContradiction(
     val candidate: Candidate,
 ) : ConeDiagnostic() {

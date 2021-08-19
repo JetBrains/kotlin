@@ -24118,6 +24118,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("resolveToStarImportMemberInsteadOfBuiltin.kt")
+            public void testResolveToStarImportMemberInsteadOfBuiltin() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/resolveToStarImportMemberInsteadOfBuiltin.kt");
+            }
+
+            @Test
             @TestMetadata("resolveTypeArgsForUnresolvedCall.kt")
             public void testResolveTypeArgsForUnresolvedCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/resolveTypeArgsForUnresolvedCall.kt");

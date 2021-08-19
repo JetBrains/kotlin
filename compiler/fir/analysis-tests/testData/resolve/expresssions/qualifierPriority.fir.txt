@@ -59,8 +59,8 @@ FILE: qualifierPriority.kt
         }
     public final val def: R|D.E.F| = Q|D.E.F|
         public get(): R|D.E.F|
-    public final val de: R|kotlin/Unit| = Q|D.E|
-        public get(): R|kotlin/Unit|
+    public final val de: R|kotlin/String| = Q|D|.R|/E|
+        public get(): R|kotlin/String|
     public final enum class G : R|kotlin/Enum<G>| {
         private constructor(): R|G| {
             super<R|kotlin/Enum<G>|>()

@@ -837,9 +837,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         callableReferenceAccess.transformAnnotations(transformer, data)
         val explicitReceiver = callableReferenceAccess.explicitReceiver
-        val transformedLHS = explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)?.apply {
-            if (this is FirResolvedQualifier && callableReferenceAccess.hasQuestionMarkAtLHS) {
-                replaceIsNullableLHSForCallableReference(true)
+        val transformedLHS = context.withIncrementedQualifierPartIndex {
+            explicitReceiver?.transformSingle(this, ResolutionMode.ContextIndependent)?.apply {
+                if (this is FirResolvedQualifier && callableReferenceAccess.hasQuestionMarkAtLHS) {
+                    replaceIsNullableLHSForCallableReference(true)
+                }
             }
         }
 
@@ -867,7 +869,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         } else {
             data
         }
-        val transformedGetClassCall = transformExpression(getClassCall, dataWithExpectedType) as FirGetClassCall
+
+        val transformedGetClassCall = context.withIncrementedQualifierPartIndex {
+            transformExpression(getClassCall, dataWithExpectedType) as FirGetClassCall
+        }
 
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {

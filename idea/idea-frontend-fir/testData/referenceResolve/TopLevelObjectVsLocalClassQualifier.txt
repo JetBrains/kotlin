@@ -1,2 +1,2 @@
 Resolved to:
-0: (in <local>: test) class Conflict
+0: (in test) object Conflict

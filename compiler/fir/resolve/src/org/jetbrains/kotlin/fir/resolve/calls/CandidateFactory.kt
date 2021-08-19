@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -48,7 +49,8 @@ class CandidateFactory private constructor(
         scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
         extensionReceiverValue: ReceiverValue? = null,
-        builtInExtensionFunctionReceiverValue: ReceiverValue? = null
+        builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
+        objectsByName: Boolean = false
     ): Candidate {
         val result = Candidate(
             symbol, dispatchReceiverValue, extensionReceiverValue,
@@ -72,6 +74,13 @@ class CandidateFactory private constructor(
             if (symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol) {
                 result.addDiagnostic(Unsupported("References to variables aren't supported yet", callSite.calleeReference.source))
             }
+        } else if (objectsByName &&
+            context.bodyResolveContext.qualifierPartIndexFromEnd == 0 &&
+            symbol is FirRegularClassSymbol &&
+            symbol.classKind != ClassKind.OBJECT &&
+            symbol.companionObjectSymbol == null
+        ) {
+            result.addDiagnostic(NoCompanionObject)
         }
         return result
     }
