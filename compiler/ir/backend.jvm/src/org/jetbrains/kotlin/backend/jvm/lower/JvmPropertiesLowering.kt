@@ -116,7 +116,9 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         val receiver = expression.dispatchReceiver
         if (receiver != null) {
             val propertyParent = irProperty.parent
-            if (propertyParent is IrClass && propertyParent.symbol != receiver.type.classifierOrNull) {
+            if (propertyParent is IrClass && propertyParent.symbol != receiver.type.classifierOrNull &&
+                expression.superQualifierSymbol == null
+            ) {
                 return irImplicitCast(receiver, propertyParent.defaultType)
             }
         }
