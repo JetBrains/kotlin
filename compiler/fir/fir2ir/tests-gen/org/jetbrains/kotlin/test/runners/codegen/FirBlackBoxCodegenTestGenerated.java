@@ -454,6 +454,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testMultiplatformInstantiation() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/multiplatformInstantiation.kt");
             }
+
+            @Test
+            @TestMetadata("nestedAnnotationInstances.kt")
+            public void testNestedAnnotationInstances() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/nestedAnnotationInstances.kt");
+            }
         }
 
         @Nested
