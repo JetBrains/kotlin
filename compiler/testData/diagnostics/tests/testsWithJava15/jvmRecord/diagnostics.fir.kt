@@ -34,7 +34,7 @@ class A5(vararg val name: String, y: Int)
 <!NON_FINAL_JVM_RECORD!>sealed<!> class A8(val x: String)
 
 @JvmRecord
-enum class A9(val x: String) {
+<!ENUM_JVM_RECORD!>enum<!> class A9(val x: String) {
     X("");
 }
 

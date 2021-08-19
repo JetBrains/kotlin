@@ -314,4 +314,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.NON_FINAL_MODIFIER_OR_NAME,
         PositioningStrategies.NON_FINAL_MODIFIER_OR_NAME
     )
+
+    val ENUM_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ENUM_MODIFIER,
+        PositioningStrategies.ENUM_MODIFIER
+    )
 }
