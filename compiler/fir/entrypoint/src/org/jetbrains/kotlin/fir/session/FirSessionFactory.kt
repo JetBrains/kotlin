@@ -135,8 +135,8 @@ object FirSessionFactory {
             sessionProvider.registerSession(moduleData, this@session)
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents()
-            registerCommonJavaComponents()
             registerCommonComponents(languageVersionSettings)
+            registerCommonJavaComponents()
             registerResolveComponents(lookupTracker)
             registerJavaSpecificResolveComponents()
 
