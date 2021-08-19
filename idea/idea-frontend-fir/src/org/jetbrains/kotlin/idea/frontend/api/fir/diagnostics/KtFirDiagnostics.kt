@@ -2477,4 +2477,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = EnumJvmRecord::class
     }
 
+    abstract class JvmRecordWithoutPrimaryConstructorParameters : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmRecordWithoutPrimaryConstructorParameters::class
+    }
+
 }

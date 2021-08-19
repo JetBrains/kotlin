@@ -3556,4 +3556,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS) { firDiagnostic ->
+        JvmRecordWithoutPrimaryConstructorParametersImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

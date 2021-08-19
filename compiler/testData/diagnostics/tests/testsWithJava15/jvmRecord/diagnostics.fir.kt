@@ -4,7 +4,7 @@
 // JVM_TARGET: 15
 // ENABLE_JVM_PREVIEW
 
-@JvmRecord
+<!JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS!>@JvmRecord<!>
 class A0
 
 @JvmRecord
@@ -12,7 +12,7 @@ class A1 {
     constructor()
 }
 
-@JvmRecord
+<!JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS!>@JvmRecord<!>
 class A2()
 
 @JvmRecord
