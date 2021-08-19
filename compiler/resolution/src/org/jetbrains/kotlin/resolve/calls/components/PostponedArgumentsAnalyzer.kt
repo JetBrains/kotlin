@@ -205,7 +205,9 @@ class PostponedArgumentsAnalyzer(
                 val variable = variableWithConstraints.typeVariable
 
                 c.getBuilder().unmarkPostponedVariable(variable)
-                c.getBuilder().addEqualityConstraint(variable.defaultType(c), resultType, BuilderInferencePosition)
+
+                // We add <inferred type> <: TypeVariable(T) to be able to contribute type info from several builder inference lambdas
+                c.getBuilder().addSubtypeConstraint(resultType, variable.defaultType(c), BuilderInferencePosition)
             }
         }
     }

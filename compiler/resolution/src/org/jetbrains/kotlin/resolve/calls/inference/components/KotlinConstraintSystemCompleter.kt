@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -178,31 +179,34 @@ class KotlinConstraintSystemCompleter(
         val lambdaArguments = postponedArguments.filterIsInstance<ResolvedLambdaAtom>().takeIf { it.isNotEmpty() } ?: return false
         val useBuilderInferenceWithoutAnnotation =
             languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
+        val allNotFixedInputTypeVariables = mutableSetOf<TypeVariableTypeConstructorMarker>()
 
-        return lambdaArguments.any { argument ->
+        for (argument in lambdaArguments) {
             if (!argument.atom.hasBuilderInferenceAnnotation && !useBuilderInferenceWithoutAnnotation)
-                return@any false
+                continue
 
             val notFixedInputTypeVariables = argument.inputTypes
                 .map { it.extractTypeVariables() }.flatten().filter { it !in fixedTypeVariables }
 
-            if (notFixedInputTypeVariables.isEmpty()) return@any false
+            if (notFixedInputTypeVariables.isEmpty()) continue
+
+            allNotFixedInputTypeVariables.addAll(notFixedInputTypeVariables)
 
             for (variable in notFixedInputTypeVariables) {
                 getBuilder().markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
             }
 
             analyze(argument)
-
-            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-                this, notFixedInputTypeVariables, postponedArguments, completionMode, topLevelType
-            )
-
-            // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
-            // (after analysing a lambda with the builder inference)
-            // otherwise we report "not enough type information" error
-            return variableForFixation?.hasProperConstraint == true
         }
+
+        val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
+            this, allNotFixedInputTypeVariables.toList(), postponedArguments, completionMode, topLevelType
+        )
+
+        // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
+        // (after analysing a lambda with the builder inference)
+        // otherwise we don't continue and report "not enough type information" error
+        return variableForFixation?.hasProperConstraint == true
     }
 
     private fun transformToAtomWithNewFunctionalExpectedType(

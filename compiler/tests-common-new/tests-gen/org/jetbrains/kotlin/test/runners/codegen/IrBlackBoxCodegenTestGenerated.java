@@ -18062,6 +18062,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("cstBasedOnTwoBuilderInferenceLambda.kt")
+            public void testCstBasedOnTwoBuilderInferenceLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/cstBasedOnTwoBuilderInferenceLambda.kt");
+            }
+
+            @Test
             @TestMetadata("inferFromExpectedType.kt")
             public void testInferFromExpectedType() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/inferFromExpectedType.kt");

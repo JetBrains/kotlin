@@ -339,6 +339,8 @@ class BuilderInferenceSession(
         val callSubstitutor = storage.buildResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false)
 
         for (initialConstraint in storage.initialConstraints) {
+            if (initialConstraint.position is BuilderInferencePosition) continue
+
             val substitutedConstraint = initialConstraint.substitute(callSubstitutor)
             val (lower, upper) = substituteNotFixedVariables(
                 substitutedConstraint.a as KotlinType,
