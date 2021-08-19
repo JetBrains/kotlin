@@ -312,18 +312,7 @@ internal object FirReferenceResolveHelper {
         fir: FirErrorNamedReference,
         symbolBuilder: KtSymbolByFirBuilder
     ): List<KtSymbol> =
-        getFirSymbolsByErrorNamedReference(fir).map { it.fir.buildSymbol(symbolBuilder) }
-
-
-    fun getFirSymbolsByErrorNamedReference(
-        errorNamedReference: FirErrorNamedReference,
-    ): Collection<FirBasedSymbol<*>> = when (val diagnostic = errorNamedReference.diagnostic) {
-        is ConeAmbiguityError -> diagnostic.candidates.map { it.symbol }
-        is ConeOperatorAmbiguityError -> diagnostic.candidates
-        is ConeInapplicableCandidateError -> listOf(diagnostic.candidate.symbol)
-        else -> emptyList()
-    }
-
+        fir.getCandidateSymbols().map { it.fir.buildSymbol(symbolBuilder) }
 
     private fun getSymbolsByReturnExpression(
         expression: KtSimpleNameExpression,

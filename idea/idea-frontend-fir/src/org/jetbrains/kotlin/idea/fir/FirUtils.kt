@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir
 
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -36,17 +37,26 @@ internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KtSymbolBy
     getResolvedSymbolOfNameReference()?.fir?.let(builder::buildSymbol)
 
 internal fun FirErrorNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
-    when (val diagnostic = diagnostic) {
-        is ConeInapplicableCandidateError -> listOf(diagnostic.candidate.symbol)
-        is ConeHiddenCandidateError -> listOf(diagnostic.candidateSymbol)
-        is ConeAmbiguityError -> diagnostic.candidates.map { it.symbol }
-        is ConeOperatorAmbiguityError -> diagnostic.candidates
-        is ConeUnsupportedCallableReferenceTarget -> listOf(diagnostic.fir.symbol)
-        else -> emptyList()
-    }
+    diagnostic.getCandidateSymbols()
 
-internal fun FirNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> = when(this) {
+internal fun FirNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> = when (this) {
     is FirResolvedNamedReference -> listOf(resolvedSymbol)
     is FirErrorNamedReference -> getCandidateSymbols()
     else -> emptyList()
 }
+
+internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
+    when (this) {
+        is ConeInapplicableCandidateError -> listOf(candidate.symbol)
+        is ConeHiddenCandidateError -> listOf(candidateSymbol)
+        is ConeAmbiguityError -> candidates.map { it.symbol }
+        is ConeOperatorAmbiguityError -> candidates
+        is ConeUnsupportedCallableReferenceTarget -> listOf(fir.symbol)
+        is ConeUnmatchedTypeArgumentsError -> listOf(symbol)
+        is ConeConstraintSystemHasContradiction -> listOf(candidate.symbol)
+        is ConeDeprecated -> listOf(symbol)
+        is ConeNoTypeArgumentsOnRhsError -> listOf(symbol)
+        is ConeResolutionToClassifierError -> listOf(classSymbol)
+        is ConeWrongNumberOfTypeArgumentsError -> listOf(symbol)
+        else -> emptyList()
+    }

@@ -332,7 +332,7 @@ internal class KtSymbolByFirBuilder private constructor(
                         else KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
                     }
                     is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this@KtSymbolByFirBuilder)
-                    is ConeClassErrorType -> KtFirClassErrorType(coneType, token)
+                    is ConeClassErrorType -> KtFirClassErrorType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeDefinitelyNotNullType -> KtFirDefinitelyNotNullType(coneType, token, this@KtSymbolByFirBuilder)

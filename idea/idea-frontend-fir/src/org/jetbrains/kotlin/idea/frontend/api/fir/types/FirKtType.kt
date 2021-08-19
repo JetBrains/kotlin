@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.types
 
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.receiverType
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
@@ -116,11 +118,19 @@ internal class KtFirFunctionalType(
 internal class KtFirClassErrorType(
     _coneType: ConeClassErrorType,
     override val token: ValidityToken,
+    _builder: KtSymbolByFirBuilder,
 ) : KtClassErrorType(), KtFirType {
     override val coneType by weakRef(_coneType)
+    private val builder by weakRef(_builder)
 
     override val error: String get() = withValidityAssertion { coneType.diagnostic.reason }
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
+    override val candidateClassSymbols: Collection<KtClassLikeSymbol> by cached {
+        val symbols = coneType.diagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
+        symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it.fir) }
+    }
+
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
