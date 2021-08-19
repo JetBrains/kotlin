@@ -5,7 +5,7 @@
 public record JRecord(int x, CharSequence y) {}
 // FILE: main.kt
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!UNSUPPORTED_FEATURE!>@JvmRecord<!>
 class MyRec(
     val x: String,
     val y: Int,
