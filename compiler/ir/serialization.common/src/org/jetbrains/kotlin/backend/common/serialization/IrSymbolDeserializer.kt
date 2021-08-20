@@ -103,7 +103,7 @@ class IrSymbolDeserializer(
         }
     }
 
-    private val signatureDeserializer = IdSignatureDeserializer(fileReader, fileSymbol)
+    val signatureDeserializer = IdSignatureDeserializer(fileReader, fileSymbol)
 
     fun deserializeIdSignature(index: Int): IdSignature {
         return signatureDeserializer.deserializeIdSignature(index)

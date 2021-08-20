@@ -323,6 +323,11 @@ abstract class KotlinIrLinker(
 
     fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
         deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.WITH_INLINE_BODIES)
+
+    @Suppress("UNUSED_PARAMETER")
+    fun deserializeDirtyFiles(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
+        return deserializeFullModule(moduleDescriptor, kotlinLibrary)
+    }
 }
 
 enum class DeserializationStrategy(

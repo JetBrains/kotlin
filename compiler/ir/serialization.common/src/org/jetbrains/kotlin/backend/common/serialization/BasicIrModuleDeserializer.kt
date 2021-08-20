@@ -142,6 +142,13 @@ abstract class BasicIrModuleDeserializer(
     override fun deserializeReachableDeclarations() {
         moduleDeserializationState.deserializeReachableDeclarations()
     }
+
+    override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
+        val fileDeserializer = fileToDeserializerMap.entries.find { it.key.fileEntry.name == fileName }?.value
+            ?: error("No file deserializer for $fileName")
+
+        return fileDeserializer.symbolDeserializer.signatureDeserializer
+    }
 }
 
 private class ModuleDeserializationState(val linker: KotlinIrLinker, val moduleDeserializer: BasicIrModuleDeserializer) {

@@ -96,7 +96,7 @@ private val CompilerConfiguration.expectActualLinker: Boolean
 
 class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
-private fun IrMessageLogger?.toResolverLogger(): Logger {
+fun IrMessageLogger?.toResolverLogger(): Logger {
     if (this == null) return DummyLogger
 
     return object : Logger {
