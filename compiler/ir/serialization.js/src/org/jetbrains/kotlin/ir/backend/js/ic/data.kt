@@ -31,6 +31,35 @@ class SerializedOrder(
     val declarationSignatures: ByteArray,
 )
 
+fun newFile(fileDir: File, name: String): File {
+    val f = File(fileDir, name)
+    if (f.exists()) f.delete()
+    return f
+}
+
+fun SerializedIcDataForFile.writeData(fileDir: File) {
+    // .file
+    newFile(fileDir, "file.fileData").writeBytes(file.fileData)
+    newFile(fileDir, "file.path").writeBytes(file.path.toByteArray(Charsets.UTF_8))
+    newFile(fileDir, "file.declarations").writeBytes(file.declarations)
+    newFile(fileDir, "file.types").writeBytes(file.types)
+    newFile(fileDir, "file.signatures").writeBytes(file.signatures)
+    newFile(fileDir, "file.strings").writeBytes(file.strings)
+    newFile(fileDir, "file.bodies").writeBytes(file.bodies)
+    // .carriers
+    newFile(fileDir, "carriers.signatures").writeBytes(carriers.signatures)
+    newFile(fileDir, "carriers.declarationCarriers").writeBytes(carriers.declarationCarriers)
+    newFile(fileDir, "carriers.bodyCarriers").writeBytes(carriers.bodyCarriers)
+    newFile(fileDir, "carriers.removedOn").writeBytes(carriers.removedOn)
+    // .mappings
+    newFile(fileDir, "mappings.keys").writeBytes(mappings.keyBytes())
+    newFile(fileDir, "mappings.values").writeBytes(mappings.valueBytes())
+    // .order
+    newFile(fileDir, "order.topLevelSignatures").writeBytes(order.topLevelSignatures)
+    newFile(fileDir, "order.containerSignatures").writeBytes(order.containerSignatures)
+    newFile(fileDir, "order.declarationSignatures").writeBytes(order.declarationSignatures)
+}
+
 fun SerializedIcData.writeTo(dir: File) {
     if (!dir.exists()) error("Directory doesn't exist: ${dir.absolutePath}")
     if (!dir.isDirectory) error("Not a directory: ${dir.absolutePath}")
@@ -46,66 +75,51 @@ fun SerializedIcData.writeTo(dir: File) {
             if (!fileDir.mkdirs()) error("Failed to create output dir for file ${fileDir.absolutePath}")
         }
 
-        // .file
-        File(fileDir, "file.fileData").writeBytes(it.file.fileData)
-        File(fileDir, "file.path").writeBytes(it.file.path.toByteArray(Charsets.UTF_8))
-        File(fileDir, "file.declarations").writeBytes(it.file.declarations)
-        File(fileDir, "file.types").writeBytes(it.file.types)
-        File(fileDir, "file.signatures").writeBytes(it.file.signatures)
-        File(fileDir, "file.strings").writeBytes(it.file.strings)
-        File(fileDir, "file.bodies").writeBytes(it.file.bodies)
-        // .carriers
-        File(fileDir, "carriers.signatures").writeBytes(it.carriers.signatures)
-        File(fileDir, "carriers.declarationCarriers").writeBytes(it.carriers.declarationCarriers)
-        File(fileDir, "carriers.bodyCarriers").writeBytes(it.carriers.bodyCarriers)
-        File(fileDir, "carriers.removedOn").writeBytes(it.carriers.removedOn)
-        // .mappings
-        File(fileDir, "mappings.keys").writeBytes(it.mappings.keyBytes())
-        File(fileDir, "mappings.values").writeBytes(it.mappings.valueBytes())
-        // .order
-        File(fileDir, "order.topLevelSignatures").writeBytes(it.order.topLevelSignatures)
-        File(fileDir, "order.containerSignatures").writeBytes(it.order.containerSignatures)
-        File(fileDir, "order.declarationSignatures").writeBytes(it.order.declarationSignatures)
+        it.writeData(fileDir)
     }
 }
 
 private fun SerializedMappings.keyBytes() = IrMemoryArrayWriter(mappings.map { it.keys }).writeIntoMemory()
 private fun SerializedMappings.valueBytes() = IrMemoryArrayWriter(mappings.map { it.values }).writeIntoMemory()
 
+fun File.readIcDataBinary(): SerializedIcDataForFile {
+    val file = SerializedIrFile(
+        fileData = File(this, "file.fileData").readBytes(),
+        fqName = name.split('.').dropLast(2).joinToString(separator = "."),
+        path = File(this, "file.path").readBytes().toString(Charsets.UTF_8),
+        types = File(this, "file.types").readBytes(),
+        signatures = File(this, "file.signatures").readBytes(),
+        strings = File(this, "file.strings").readBytes(),
+        bodies = File(this, "file.bodies").readBytes(),
+        declarations = File(this, "file.declarations").readBytes(),
+        debugInfo = null
+    )
+
+    val carriers = SerializedCarriers(
+        signatures = File(this, "carriers.signatures").readBytes(),
+        declarationCarriers = File(this, "carriers.declarationCarriers").readBytes(),
+        bodyCarriers = File(this, "carriers.bodyCarriers").readBytes(),
+        removedOn = File(this, "carriers.removedOn").readBytes(),
+    )
+
+    val mappingKeys = IrArrayMemoryReader(File(this, "mappings.keys").readBytes()).toArray()
+    val mappingValues = IrArrayMemoryReader(File(this, "mappings.values").readBytes()).toArray()
+    assert(mappingKeys.size == mappingValues.size)
+    val mappings = SerializedMappings(mappingKeys.zip(mappingValues).map { (k, v) -> SerializedMapping(k, v) })
+
+    val order = SerializedOrder(
+        topLevelSignatures = File(this, "order.topLevelSignatures").readBytes(),
+        containerSignatures = File(this, "order.containerSignatures").readBytes(),
+        declarationSignatures = File(this, "order.declarationSignatures").readBytes(),
+    )
+
+    return SerializedIcDataForFile(file, carriers, mappings, order)
+}
+
 fun File.readIcData(): SerializedIcData {
     if (!this.isDirectory) error("Directory doesn't exist: ${this.absolutePath}")
 
-    return SerializedIcData(this.listFiles()!!.filter { it.isDirectory}.map { fileDir ->
-        val file = SerializedIrFile(
-            fileData = File(fileDir, "file.fileData").readBytes(),
-            fqName = fileDir.name.split('.').dropLast(2).joinToString(separator = "."),
-            path = File(fileDir, "file.path").readBytes().toString(Charsets.UTF_8),
-            types = File(fileDir, "file.types").readBytes(),
-            signatures = File(fileDir, "file.signatures").readBytes(),
-            strings = File(fileDir, "file.strings").readBytes(),
-            bodies = File(fileDir, "file.bodies").readBytes(),
-            declarations = File(fileDir, "file.declarations").readBytes(),
-            debugInfo = null
-        )
-
-        val carriers = SerializedCarriers(
-            signatures = File(fileDir, "carriers.signatures").readBytes(),
-            declarationCarriers = File(fileDir, "carriers.declarationCarriers").readBytes(),
-            bodyCarriers = File(fileDir, "carriers.bodyCarriers").readBytes(),
-            removedOn = File(fileDir, "carriers.removedOn").readBytes(),
-        )
-
-        val mappingKeys = IrArrayMemoryReader(File(fileDir, "mappings.keys").readBytes()).toArray()
-        val mappingValues = IrArrayMemoryReader(File(fileDir, "mappings.values").readBytes()).toArray()
-        assert(mappingKeys.size == mappingValues.size)
-        val mappings = SerializedMappings(mappingKeys.zip(mappingValues).map { (k, v) -> SerializedMapping(k, v) })
-
-        val order = SerializedOrder(
-            topLevelSignatures = File(fileDir, "order.topLevelSignatures").readBytes(),
-            containerSignatures = File(fileDir, "order.containerSignatures").readBytes(),
-            declarationSignatures = File(fileDir, "order.declarationSignatures").readBytes(),
-        )
-
-        SerializedIcDataForFile(file, carriers, mappings, order)
+    return SerializedIcData(this.listFiles()!!.filter { it.isDirectory && it.name.startsWith("ic-") }.map { fileDir ->
+        fileDir.readIcDataBinary()
     })
 }
