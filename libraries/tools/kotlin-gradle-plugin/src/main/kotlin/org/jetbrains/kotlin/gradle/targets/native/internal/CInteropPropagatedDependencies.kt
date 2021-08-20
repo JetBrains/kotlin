@@ -79,9 +79,10 @@ private fun Project.getPropagatedCInteropDependenciesOrEmpty(compilation: Kotlin
     getAllCInteropOutputFiles(platformCompilation)
 }
 
-private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): List<File> {
-    return compilation.cinterops
-        .map { interop -> interop.interopProcessingTaskName }
+private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): FileCollection {
+    val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
         .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
-        .map { it.outputFile }
+
+    return project.filesProvider { cinteropTasks.map { it.outputFile } }
+        .builtBy(*cinteropTasks.toTypedArray())
 }
