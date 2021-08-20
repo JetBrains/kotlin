@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 private fun ClassId.toLookupTag(): ConeClassLikeLookupTag =
     ConeClassLikeLookupTagImpl(this)
@@ -75,89 +74,73 @@ internal fun JavaType?.toFirResolvedTypeRef(
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): FirResolvedTypeRef {
     return buildResolvedTypeRef {
-        type = toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, mode)
+        type = toConeKotlinType(session, javaTypeParameterStack, mode)
             .let { if (mode == FirJavaTypeConversionMode.SUPERTYPE) it.lowerBoundIfFlexible() else it }
         annotations += type.attributes.customAnnotations
     }
 }
 
-private fun JavaType?.toConeKotlinTypeWithoutEnhancement(
+private fun JavaType?.toConeKotlinType(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
     mode: FirJavaTypeConversionMode
-): ConeKotlinType {
+): ConeKotlinType =
+    toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode).type
+        ?: StandardClassIds.Any.toConeFlexibleType(emptyArray(), emptyArray(), ConeAttributes.Empty)
+
+private fun JavaType?.toConeTypeProjection(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
+    parameterVariance: Variance, mode: FirJavaTypeConversionMode
+): ConeTypeProjection {
     val attributes = if (this != null && annotations.isNotEmpty())
         ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertAnnotationsToFir(session, javaTypeParameterStack))))
     else
         ConeAttributes.Empty
 
     return when (this) {
-        is JavaClassifierType ->
-            toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, mode, attributes)
-        is JavaPrimitiveType -> {
-            val primitiveType = type
-            val kotlinPrimitiveName = when (val javaName = primitiveType?.typeName?.asString()) {
-                null -> "Unit"
-                else -> javaName.capitalizeAsciiOnly()
+        is JavaClassifierType -> {
+            val lowerBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes)
+            if (mode == FirJavaTypeConversionMode.ANNOTATION_MEMBER) {
+                return lowerBound // TODO: `KClass<Any>` is wrong for raw `Class`
             }
-
-            val classId = StandardClassIds.byName(kotlinPrimitiveName)
-            classId.constructClassLikeType(emptyArray(), isNullable = false, attributes)
+            val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, lowerBound)
+            if (isRaw) ConeRawType(lowerBound, upperBound) else ConeFlexibleType(lowerBound, upperBound)
         }
-        is JavaArrayType ->
-            toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, mode, attributes)
-        is JavaWildcardType ->
-            bound?.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, mode)
-        null -> null
+
+        is JavaArrayType -> {
+            val (classId, arguments) = when (val componentType = componentType) {
+                is JavaPrimitiveType ->
+                    StandardClassIds.byName(componentType.type!!.arrayTypeName.identifier) to arrayOf()
+                else ->
+                    StandardClassIds.Array to arrayOf(componentType.toConeKotlinType(session, javaTypeParameterStack, mode))
+            }
+            if (mode == FirJavaTypeConversionMode.ANNOTATION_MEMBER) {
+                classId.constructClassLikeType(arguments, isNullable = false, attributes)
+            } else {
+                val argumentsForUpper = Array(arguments.size) { ConeKotlinTypeProjectionOut(arguments[it]) }
+                classId.toConeFlexibleType(arguments, argumentsForUpper, attributes)
+            }
+        }
+
+        is JavaPrimitiveType ->
+            StandardClassIds.byName(type?.typeName?.identifier ?: "Unit")
+                .constructClassLikeType(emptyArray(), isNullable = false, attributes)
+
+        is JavaWildcardType -> {
+            // TODO: this discards annotations on wildcards, allowed since Java 8 - what do they mean?
+            //    List<@NotNull ? extends @Nullable Object>
+            val bound = this.bound
+            val argumentVariance = if (isExtends) Variance.OUT_VARIANCE else Variance.IN_VARIANCE
+            if (bound == null || (parameterVariance != Variance.INVARIANT && parameterVariance != argumentVariance)) {
+                ConeStarProjection
+            } else {
+                val boundType = bound.toConeKotlinType(session, javaTypeParameterStack, mode)
+                if (isExtends) ConeKotlinTypeProjectionOut(boundType) else ConeKotlinTypeProjectionIn(boundType)
+            }
+        }
+
+        null -> ConeStarProjection
         else -> error("Strange JavaType: ${this::class.java}")
-    } ?: StandardClassIds.Any.toConeFlexibleType(emptyArray(), emptyArray(), attributes = attributes)
-}
-
-private fun JavaArrayType.toConeKotlinTypeWithoutEnhancement(
-    session: FirSession,
-    javaTypeParameterStack: JavaTypeParameterStack,
-    mode: FirJavaTypeConversionMode,
-    attributes: ConeAttributes
-): ConeKotlinType {
-    val componentType = componentType
-    return if (componentType !is JavaPrimitiveType) {
-        val classId = StandardClassIds.Array
-        val argumentType = componentType.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, mode)
-        if (mode == FirJavaTypeConversionMode.ANNOTATION_MEMBER) {
-            classId.constructClassLikeType(arrayOf(argumentType), isNullable = false, attributes = attributes)
-        } else {
-            classId.toConeFlexibleType(
-                arrayOf(argumentType),
-                typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType)),
-                attributes = attributes
-            )
-        }
-    } else {
-        val javaComponentName = componentType.type?.typeName?.asString()?.capitalizeAsciiOnly() ?: error("Array of voids")
-        val classId = StandardClassIds.byName(javaComponentName + "Array")
-
-        if (mode == FirJavaTypeConversionMode.ANNOTATION_MEMBER) {
-            classId.constructClassLikeType(emptyArray(), isNullable = false, attributes = attributes)
-        } else {
-            classId.toConeFlexibleType(emptyArray(), emptyArray(), attributes = attributes)
-        }
     }
-}
-
-private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
-    session: FirSession,
-    javaTypeParameterStack: JavaTypeParameterStack,
-    mode: FirJavaTypeConversionMode,
-    attributes: ConeAttributes
-): ConeKotlinType {
-    val lowerBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes)
-    if (mode == FirJavaTypeConversionMode.ANNOTATION_MEMBER) {
-        return lowerBound
-    }
-    val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, lowerBound)
-    return if (isRaw)
-        ConeRawType(lowerBound, upperBound)
-    else
-        ConeFlexibleType(lowerBound, upperBound)
 }
 
 private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
@@ -192,9 +175,11 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                         ?: Array(classifier.typeParameters.size) { ConeStarProjection }
                 lookupTag != lowerBound?.lookupTag ->
                     Array(typeArguments.size) { index ->
+                        // TODO: check this
+                        val newMode = if (mode == FirJavaTypeConversionMode.ANNOTATION_MEMBER) FirJavaTypeConversionMode.DEFAULT else mode
                         val argument = typeArguments[index]
-                        val parameter = typeParameters?.getOrNull(index)?.symbol?.fir
-                        argument.toConeProjectionWithoutEnhancement(session, javaTypeParameterStack, parameter, mode)
+                        val variance = typeParameters?.getOrNull(index)?.symbol?.fir?.variance ?: Variance.INVARIANT
+                        argument.toConeTypeProjection(session, javaTypeParameterStack, variance, newMode)
                     }
                 else -> lowerBound.typeArguments
             }
@@ -266,32 +251,3 @@ private fun ConeKotlinType.eraseAsUpperBound(session: FirSession, cache: Mutable
             original.eraseAsUpperBound(session, cache).makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
         else -> error("unexpected Java type parameter upper bound kind: $this")
     }
-
-private fun JavaType?.toConeProjectionWithoutEnhancement(
-    session: FirSession,
-    javaTypeParameterStack: JavaTypeParameterStack,
-    boundTypeParameter: FirTypeParameter?,
-    mode: FirJavaTypeConversionMode
-): ConeTypeProjection {
-    // TODO: check this
-    val newMode = mode.takeIf { it == FirJavaTypeConversionMode.SUPERTYPE } ?: FirJavaTypeConversionMode.DEFAULT
-    return when (this) {
-        null -> ConeStarProjection
-        is JavaWildcardType -> {
-            val bound = this.bound
-            val argumentVariance = if (isExtends) Variance.OUT_VARIANCE else Variance.IN_VARIANCE
-            val parameterVariance = boundTypeParameter?.variance ?: Variance.INVARIANT
-            if (bound == null || parameterVariance != Variance.INVARIANT && parameterVariance != argumentVariance) {
-                ConeStarProjection
-            } else {
-                val boundType = bound.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, newMode)
-                if (argumentVariance == Variance.OUT_VARIANCE) {
-                    ConeKotlinTypeProjectionOut(boundType)
-                } else {
-                    ConeKotlinTypeProjectionIn(boundType)
-                }
-            }
-        }
-        else -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, newMode)
-    }
-}
