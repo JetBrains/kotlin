@@ -72,8 +72,6 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ICONST_1
           ISTORE (3)
           ICONST_0
-          ISTORE (4)
-          ICONST_0
           ISTORE (5)
           ACONST_NULL
           ASTORE (6)
@@ -385,8 +383,6 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ASTORE (2)
           ICONST_1
           ISTORE (3)
-          ICONST_0
-          ISTORE (4)
           ICONST_0
           ISTORE (5)
           ACONST_NULL
@@ -772,8 +768,6 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ASTORE (2)
           ICONST_1
           ISTORE (3)
-          ICONST_0
-          ISTORE (4)
           ICONST_0
           ISTORE (5)
           ACONST_NULL

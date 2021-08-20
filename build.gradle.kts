@@ -752,6 +752,8 @@ tasks {
         dependsOn("jvmCompilerIntegrationTest")
 
         dependsOn(":plugins:parcelize:parcelize-compiler:test")
+        dependsOn(":kotlinx-serialization-compiler-plugin:test")
+
 
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
@@ -881,7 +883,6 @@ tasks {
             ":kotlin-sam-with-receiver-compiler-plugin:test",
             ":plugins:uast-kotlin:test",
             ":kotlin-annotation-processing-gradle:test",
-            ":kotlinx-serialization-compiler-plugin:test",
             ":kotlinx-serialization-ide-plugin:test",
             ":idea:jvm-debugger:jvm-debugger-test:test",
             "idea-plugin-additional-tests",

@@ -20,8 +20,16 @@ dependencies {
     runtimeOnly(kotlinStdlib())
 
     testCompile(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":generators:test-generator"))
     testCompile(commonDep("junit:junit"))
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0")
+    testApiJUnit5(vintageEngine = true)
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
@@ -43,6 +51,9 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnit5Enabled = true) {
     workingDir = rootDir
+    useJUnitPlatform()
 }
+
+val generateTests by generator("org.jetbrains.kotlinx.serialization.TestGeneratorKt")
