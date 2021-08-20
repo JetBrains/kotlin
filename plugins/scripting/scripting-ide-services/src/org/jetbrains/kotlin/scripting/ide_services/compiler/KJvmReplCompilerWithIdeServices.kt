@@ -12,16 +12,27 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.*
-import org.jetbrains.kotlin.scripting.ide_services.compiler.impl.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
+import org.jetbrains.kotlin.scripting.ide_services.compiler.impl.IdeLikeReplCodeAnalyzer
+import org.jetbrains.kotlin.scripting.ide_services.compiler.impl.KotlinResolutionFacadeForRepl
+import org.jetbrains.kotlin.scripting.ide_services.compiler.impl.getKJvmCompletion
+import org.jetbrains.kotlin.scripting.ide_services.compiler.impl.prepareCodeForCompletion
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.calcAbsolute
 
 class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration) :
-    KJvmReplCompilerBase<IdeLikeReplCodeAnalyzer>(hostConfiguration, { sharedScriptCompilationContext, scopeProcessor ->
-        IdeLikeReplCodeAnalyzer(sharedScriptCompilationContext.environment, scopeProcessor)
-    }),
+    KJvmReplCompilerBase<IdeLikeReplCodeAnalyzer>(
+        hostConfiguration,
+        JvmReplCompilerState(
+            {
+                createCompilationState(it, hostConfiguration) { sharedScriptCompilationContext, scopeProcessor ->
+                    IdeLikeReplCodeAnalyzer(sharedScriptCompilationContext.environment, scopeProcessor)
+                }
+            }
+        )
+    ),
     ReplCompleter, ReplCodeAnalyzer {
 
     override suspend fun complete(
@@ -96,7 +107,6 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
         cursor: SourceCode.Position? = null,
         getNewSnippet: (SourceCode, Int) -> SourceCode = { code, _ -> code }
     ): ResultWithDiagnostics<AnalyzeWithCursorResult> {
-        updateResolutionFilter(configuration)
 
         val initialConfiguration = configuration.refineBeforeParsing(snippet).valueOr {
             return it
@@ -105,7 +115,9 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
         val cursorAbs = cursor?.calcAbsolute(snippet) ?: -1
         val newSnippet = if (cursorAbs == -1) snippet else getNewSnippet(snippet, cursorAbs)
 
-        val compilationState = state.getCompilationState(initialConfiguration)
+        val compilationState = state.getCompilationState(initialConfiguration) as ReplCompilationState<*>
+
+        updateResolutionFilterWithHistory(configuration)
 
         val (_, errorHolder, snippetKtFile) = prepareForAnalyze(
             newSnippet,
@@ -114,8 +126,9 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
             failOnSyntaxErrors = false
         ).valueOr { return it }
 
+        val analyzerEngine = compilationState.analyzerEngine as IdeLikeReplCodeAnalyzer
         val analysisResult =
-            compilationState.analyzerEngine.statelessAnalyzeWithImportedScripts(snippetKtFile, emptyList(), scriptPriority.get() + 1)
+            analyzerEngine.statelessAnalyzeWithImportedScripts(snippetKtFile, emptyList(), state.getNextLineNo() + 1)
         AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
 
         val (_, bindingContext, resolutionFacade, moduleDescriptor, resultProperty) = when (analysisResult) {
