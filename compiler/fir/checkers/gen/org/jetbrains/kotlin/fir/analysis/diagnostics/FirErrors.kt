@@ -484,8 +484,6 @@ object FirErrors {
     val PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER by error0<KtBackingField>()
     val PROPERTY_MUST_HAVE_GETTER by error0<KtProperty>()
     val PROPERTY_MUST_HAVE_SETTER by error0<KtProperty>()
-    val INAPPLICABLE_BACKING_FIELD_VISIBILITY by error1<PsiElement, KtModifierKeywordToken>()
-    val INAPPLICABLE_BACKING_FIELD_MODIFIER by error1<PsiElement, KtModifierKeywordToken>()
     val EXPLICIT_BACKING_FIELD_IN_INTERFACE by error0<KtBackingField>()
     val EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY by error0<KtBackingField>()
     val ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS by error0<KtModifierListOwner>(SourceElementPositioningStrategies.ABSTRACT_MODIFIER)

@@ -56,6 +56,8 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     TOP_LEVEL_PROPERTY_WITH_DELEGATE("top level property with delegate", false),
     TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE("top level property without backing field or delegate", false),
 
+    BACKING_FIELD("backing field"),
+
     INITIALIZER("initializer", false),
     DESTRUCTURING_DECLARATION("destructuring declaration", false),
     LAMBDA_EXPRESSION("lambda expression", false),

@@ -742,6 +742,7 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
         }
         is FirTypeAlias -> TargetLists.T_TYPEALIAS
         is FirPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
+        is FirBackingField -> TargetLists.T_BACKING_FIELD
         is FirFile -> TargetLists.T_FILE
         is FirTypeParameter -> TargetLists.T_TYPE_PARAMETER
         is FirAnonymousInitializer -> TargetLists.T_INITIALIZER

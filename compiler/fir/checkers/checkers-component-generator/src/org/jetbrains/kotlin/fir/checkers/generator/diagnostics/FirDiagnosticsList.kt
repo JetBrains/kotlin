@@ -877,12 +877,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER by error<KtBackingField>()
         val PROPERTY_MUST_HAVE_GETTER by error<KtProperty>()
         val PROPERTY_MUST_HAVE_SETTER by error<KtProperty>()
-        val INAPPLICABLE_BACKING_FIELD_VISIBILITY by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier")
-        }
-        val INAPPLICABLE_BACKING_FIELD_MODIFIER by error<PsiElement> {
-            parameter<KtModifierKeywordToken>("modifier")
-        }
         val EXPLICIT_BACKING_FIELD_IN_INTERFACE by error<KtBackingField>()
         val EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY by error<KtBackingField>()
         val ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS by error<KtModifierListOwner>(PositioningStrategy.ABSTRACT_MODIFIER)

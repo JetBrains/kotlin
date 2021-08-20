@@ -270,8 +270,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_LAMBDA_EXPRE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_BACKING_FIELD_MODIFIER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_BACKING_FIELD_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
@@ -1290,16 +1288,6 @@ class FirDefaultErrorMessages {
             map.put(
                 PROPERTY_MUST_HAVE_SETTER,
                 "This property needs a custom setter, because it's type is not a subtype of the backing field's type"
-            )
-            map.put(
-                INAPPLICABLE_BACKING_FIELD_VISIBILITY,
-                "Explicit backing field declarations may only be private or internal, but not ''{0}''",
-                TO_STRING
-            )
-            map.put(
-                INAPPLICABLE_BACKING_FIELD_MODIFIER,
-                "Modifier ''{0}'' is not applicable to explicit backing field declarations",
-                TO_STRING
             )
             map.put(
                 EXPLICIT_BACKING_FIELD_IN_INTERFACE,
