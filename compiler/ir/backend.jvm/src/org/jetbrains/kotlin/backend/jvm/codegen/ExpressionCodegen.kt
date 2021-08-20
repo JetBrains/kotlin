@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedC
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE_AS
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
-import org.jetbrains.kotlin.codegen.optimization.temporaryVals.addTemporaryValInitMarker
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
@@ -630,9 +629,6 @@ class ExpressionCodegen(
             initializer.markLineNumber(startOffset = true)
             value.materializeAt(varType, declaration.type)
             declaration.markLineNumber(startOffset = true)
-            if (declaration.isTemporaryVal()) {
-                mv.addTemporaryValInitMarker()
-            }
             mv.store(index, varType)
         } else if (declaration.isVisibleInLVT) {
             pushDefaultValueOnStack(varType, mv)

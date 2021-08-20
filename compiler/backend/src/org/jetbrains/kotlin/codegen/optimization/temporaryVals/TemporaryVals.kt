@@ -5,46 +5,16 @@
 
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
-import org.jetbrains.kotlin.codegen.inline.INLINE_MARKER_CLASS_NAME
-import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
+import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.common.isStoreOperation
-import org.jetbrains.kotlin.codegen.optimization.fixStack.BasicTypeInterpreter
-import org.jetbrains.kotlin.codegen.optimization.removeNodeGetNext
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
+import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
-import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-
-private const val TEMPORARY_VAL_INIT_MARKER = "<TEMPORARY-VAL-INIT>"
-
-fun InstructionAdapter.addTemporaryValInitMarker() {
-    invokestatic(INLINE_MARKER_CLASS_NAME, TEMPORARY_VAL_INIT_MARKER, "()V", false)
-}
-
-fun AbstractInsnNode.isTemporaryValInitMarker(): Boolean {
-    if (opcode != Opcodes.INVOKESTATIC) return false
-    val methodInsn = this as MethodInsnNode
-    return methodInsn.owner == INLINE_MARKER_CLASS_NAME && methodInsn.name == TEMPORARY_VAL_INIT_MARKER
-}
-
-fun MethodNode.stripTemporaryValInitMarkers() {
-    var insn = this.instructions.first
-    while (insn != null) {
-        insn = if (insn.isTemporaryValInitMarker()) {
-            this.instructions.removeNodeGetNext(insn)
-        } else {
-            insn.next
-        }
-    }
-}
 
 // A temporary val is a local variables that is:
 //  - initialized once (with some xSTORE instruction)
@@ -59,11 +29,68 @@ class TemporaryVal(
 class TemporaryValsAnalyzer {
 
     fun analyze(internalClassName: String, methodNode: MethodNode): List<TemporaryVal> {
-        val temporaryValStores = methodNode.instructions.filter { it.isStoreOperation() && it.previous.isTemporaryValInitMarker() }
-        if (temporaryValStores.isEmpty()) return emptyList()
+        val insnList = methodNode.instructions
+        val insnArray = insnList.toArray()
 
-        val storeInsnToStoreData = temporaryValStores.associateWith { StoreData(it) }
-        FastMethodAnalyzer(internalClassName, methodNode, StoreTrackingInterpreter(storeInsnToStoreData)).analyze()
+        val potentiallyTemporaryStores = insnList.filterTo(LinkedHashSet()) { it.isStoreOperation() }
+
+        for (lv in methodNode.localVariables) {
+            // Exclude stores within LVT entry liveness ranges.
+            for (i in insnList.indexOf(lv.start) until insnList.indexOf(lv.end)) {
+                val insn = insnArray[i]
+                if (insn.isStoreOperation() && (insn as VarInsnNode).`var` == lv.index) {
+                    potentiallyTemporaryStores.remove(insn)
+                }
+            }
+
+            // Remove 1st store that would definitely be observed at local variable liveness start.
+            var p = lv.start.previous
+            while (p != null) {
+                if (p.isStoreOperation() && (p as VarInsnNode).`var` == lv.index) {
+                    potentiallyTemporaryStores.remove(p)
+                    break
+                } else if (
+                    p.type == AbstractInsnNode.LABEL ||
+                    p.opcode in Opcodes.IRETURN..Opcodes.RETURN ||
+                    p.opcode == Opcodes.GOTO ||
+                    p.opcode == Opcodes.ATHROW
+                ) {
+                    // Label might be a jump target;
+                    // return/goto/throw instructions don't pass control to the next instruction.
+                    break
+                } else {
+                    p = p.previous
+                }
+            }
+        }
+
+        // If the method is big, and we couldn't eliminate enough temporary variable store candidates,
+        // bail out, treat all variables as non-temporary.
+        // Here we estimate memory required to store all relevant information as O(N * M * K),
+        //  N = number of method instructions
+        //  M = number of local variables
+        //  K = number of potential temporary variables so far
+        val memoryComplexity = methodNode.instructions.size().toLong() *
+                methodNode.localVariables.size *
+                potentiallyTemporaryStores.size /
+                (1024 * 1024)
+        if (memoryComplexity > OptimizationMethodVisitor.MEMORY_LIMIT_BY_METHOD_MB)
+            return emptyList()
+
+        val storeInsnToStoreData = potentiallyTemporaryStores.associateWith { StoreData(it) }
+
+        val frames = FastStoreLoadAnalyzer(internalClassName, methodNode, StoreTrackingInterpreter(storeInsnToStoreData)).analyze()
+
+        // Exclude stores observed at LVT liveness range start using information from bytecode analysis.
+        for (lv in methodNode.localVariables) {
+            val frameAtStart = frames[insnList.indexOf(lv.start)] ?: continue
+            when (val valueAtStart = frameAtStart[lv.index]) {
+                is StoredValue.Store ->
+                    valueAtStart.temporaryVal.isDirty = true
+                is StoredValue.DirtyStore ->
+                    valueAtStart.temporaryVals.forEach { it.isDirty = true }
+            }
+        }
 
         return storeInsnToStoreData.values
             .filterNot { it.isDirty }
@@ -72,34 +99,22 @@ class TemporaryValsAnalyzer {
                 val loadInsns = it.loads.map { load -> load as VarInsnNode }
                 TemporaryVal(storeInsn.`var`, storeInsn, loadInsns)
             }
-            .sortedBy { methodNode.instructions.indexOf(it.storeInsn) }
+            .sortedBy { insnList.indexOf(it.storeInsn) }
     }
 
     private class StoreData(val storeInsn: AbstractInsnNode) {
         var isDirty = false
 
-        val storeOpcode = storeInsn.opcode
-
-        val value =
-            StoredValue.Store(
-                this,
-                when (storeOpcode) {
-                    Opcodes.LSTORE, Opcodes.DSTORE -> 2
-                    else -> 1
-                }
-            )
+        val value = StoredValue.Store(this)
 
         val loads = LinkedHashSet<AbstractInsnNode>()
     }
 
-    private sealed class StoredValue(private val _size: Int) : Value {
-        override fun getSize(): Int = _size
+    private sealed class StoredValue : StoreLoadValue {
 
-        object Small : StoredValue(1)
+        object Unknown : StoredValue()
 
-        object Big : StoredValue(2)
-
-        class Store(val temporaryVal: StoreData, size: Int) : StoredValue(size) {
+        class Store(val temporaryVal: StoreData) : StoredValue() {
             override fun equals(other: Any?): Boolean =
                 other is Store && other.temporaryVal === temporaryVal
 
@@ -107,7 +122,7 @@ class TemporaryValsAnalyzer {
                 temporaryVal.hashCode()
         }
 
-        class DirtyStore(val temporaryVals: Collection<StoreData>, size: Int) : StoredValue(size) {
+        class DirtyStore(val temporaryVals: Collection<StoreData>) : StoredValue() {
             override fun equals(other: Any?): Boolean =
                 other is DirtyStore && other.temporaryVals == temporaryVals
 
@@ -118,44 +133,44 @@ class TemporaryValsAnalyzer {
 
     private class StoreTrackingInterpreter(
         private val storeInsnToStoreData: Map<AbstractInsnNode, StoreData>
-    ) : BasicTypeInterpreter<StoredValue>() {
+    ) : StoreLoadInterpreter<StoredValue> {
 
-        override fun uninitializedValue(): StoredValue = StoredValue.Small
-        override fun booleanValue(): StoredValue = StoredValue.Small
-        override fun charValue(): StoredValue = StoredValue.Small
-        override fun byteValue(): StoredValue = StoredValue.Small
-        override fun shortValue(): StoredValue = StoredValue.Small
-        override fun intValue(): StoredValue = StoredValue.Small
-        override fun longValue(): StoredValue = StoredValue.Big
-        override fun floatValue(): StoredValue = StoredValue.Small
-        override fun doubleValue(): StoredValue = StoredValue.Big
-        override fun nullValue(): StoredValue = StoredValue.Small
-        override fun objectValue(type: Type): StoredValue = StoredValue.Small
-        override fun arrayValue(type: Type): StoredValue = StoredValue.Small
-        override fun methodValue(type: Type): StoredValue = StoredValue.Small
-        override fun handleValue(handle: Handle): StoredValue = StoredValue.Small
-        override fun typeConstValue(typeConst: Type): StoredValue = StoredValue.Small
-        override fun aaLoadValue(arrayValue: StoredValue): StoredValue = StoredValue.Small
+        override fun uninitialized(): StoredValue =
+            StoredValue.Unknown
 
-        override fun copyOperation(insn: AbstractInsnNode, value: StoredValue): StoredValue {
-            if (insn.isStoreOperation()) {
-                val temporaryValData = storeInsnToStoreData[insn]
-                if (temporaryValData != null) {
-                    return temporaryValData.value
-                }
-            } else if (insn.isLoadOperation()) {
-                if (value is StoredValue.DirtyStore) {
-                    // If we load a dirty value, invalidate all related temporary vals.
-                    for (temporaryValData in value.temporaryVals) {
-                        temporaryValData.isDirty = true
-                    }
-                } else if (value is StoredValue.Store) {
-                    // Keep track of a load instruction
-                    value.temporaryVal.loads.add(insn)
+        override fun valueParameter(type: Type): StoredValue =
+            StoredValue.Unknown
+
+        override fun store(insn: VarInsnNode): StoredValue {
+            val temporaryValData = storeInsnToStoreData[insn]
+            if (temporaryValData != null) {
+                return temporaryValData.value
+            }
+            return StoredValue.Unknown
+        }
+
+        override fun load(insn: VarInsnNode, value: StoredValue) {
+            if (value is StoredValue.DirtyStore) {
+                // If we load a dirty value, invalidate all related temporary vals.
+                value.temporaryVals.forEach { it.isDirty = true }
+            } else if (value is StoredValue.Store) {
+                // Keep track of a load instruction
+                value.temporaryVal.loads.add(insn)
+            }
+        }
+
+        override fun iinc(insn: IincInsnNode, value: StoredValue): StoredValue {
+            when (value) {
+                is StoredValue.Store ->
+                    value.temporaryVal.isDirty = true
+                is StoredValue.DirtyStore ->
+                    value.temporaryVals.forEach { it.isDirty = true }
+                else -> {
                 }
             }
             return value
         }
+
 
         override fun merge(a: StoredValue, b: StoredValue): StoredValue {
             return when {
@@ -167,10 +182,10 @@ class TemporaryValsAnalyzer {
                     // Loading such value invalidates all related temporary vals.
                     val dirtySet = SmartSet.create(a.temporaryVals())
                     dirtySet.addAll(b.temporaryVals())
-                    StoredValue.DirtyStore(dirtySet, a.size)
+                    StoredValue.DirtyStore(dirtySet)
                 }
                 else ->
-                    StoredValue.Small
+                    StoredValue.Unknown
             }
         }
 

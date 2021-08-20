@@ -21,6 +21,6 @@ fun foo() : String {
     )
 }
 
-// 12 ALOAD
-// 2 ASTORE
+// 11 ALOAD
+// 1 ASTORE
 // 0 InlineMarker

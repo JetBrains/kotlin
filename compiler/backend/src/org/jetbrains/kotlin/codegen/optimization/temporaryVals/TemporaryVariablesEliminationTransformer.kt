@@ -15,7 +15,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.max
 
-class CodeCompactionTransformer : MethodTransformer() {
+class TemporaryVariablesEliminationTransformer : MethodTransformer() {
     private val temporaryValsAnalyzer = TemporaryValsAnalyzer()
     private val deadCodeElimination = DeadCodeEliminationMethodTransformer()
 
@@ -32,7 +32,6 @@ class CodeCompactionTransformer : MethodTransformer() {
             optimizeTemporaryVals(cfg, temporaryVals)
         }
 
-        methodNode.stripTemporaryValInitMarkers()
         methodNode.removeUnusedLocalVariables()
     }
 

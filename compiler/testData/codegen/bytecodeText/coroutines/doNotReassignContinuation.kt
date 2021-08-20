@@ -12,4 +12,4 @@ suspend fun suspendThere(param: Int, param2: String, param3: Long): String {
     return a + b
 }
 
-// 1 ASTORE 4
+// 0 ASTORE 4
