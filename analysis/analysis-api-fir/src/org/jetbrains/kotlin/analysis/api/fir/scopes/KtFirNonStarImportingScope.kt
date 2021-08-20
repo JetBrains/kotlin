@@ -5,26 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.scopes.KtNonStarImportingScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.scopes.NonStarImport
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirNonStarImportingScope(
-    private val firScope : FirAbstractSimpleImportingScope,
+    private val firScope: FirAbstractSimpleImportingScope,
     private val builder: KtSymbolByFirBuilder,
-    override val token: ValidityToken
+    override val token: ValidityToken,
+    private val firSession: FirSession
 ) : KtNonStarImportingScope, ValidityTokenOwner {
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -32,10 +35,15 @@ internal class KtFirNonStarImportingScope(
         buildList {
             firScope.simpleImports.values.forEach { imports ->
                 imports.forEach { import ->
+                    val importedClassId = import.importedName?.let { importedName ->
+                        val importedClassId =
+                            import.resolvedParentClassId?.createNestedClassId(importedName) ?: ClassId(import.packageFqName, importedName)
+                        importedClassId.takeIf { firSession.symbolProvider.getClassLikeSymbolByClassId(it) != null }
+                    }
                     NonStarImport(
                         import.packageFqName,
-                        import.relativeParentClassName,
-                        import.resolvedParentClassId,
+                        importedClassId?.relativeClassName,
+                        importedClassId,
                         import.importedName
                     ).let(::add)
                 }
