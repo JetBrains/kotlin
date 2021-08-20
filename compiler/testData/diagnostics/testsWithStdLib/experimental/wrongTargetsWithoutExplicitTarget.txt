@@ -1,0 +1,26 @@
+package
+
+public fun foo(): kotlin.Unit
+
+public final class IntWrapper {
+    public constructor IntWrapper(/*0*/ @SomeOptInMarker @OtherOptInMarker value: kotlin.Int)
+    @get:SomeOptInMarker @get:OtherOptInMarker public final val isEven: kotlin.Boolean
+    public final val value: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.RequiresOptIn @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE}) public final annotation class OtherOptInMarker : kotlin.Annotation {
+    public constructor OtherOptInMarker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.RequiresOptIn public final annotation class SomeOptInMarker : kotlin.Annotation {
+    public constructor SomeOptInMarker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
