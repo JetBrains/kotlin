@@ -1803,7 +1803,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             ws
             when (import) {
                 is FirResolvedImport -> {
-                    val classId = import.resolvedClassId
+                    val classId = import.resolvedParentClassId
                     if (classId == null) {
                         val importedFqName = import.importedFqName
                         if (importedFqName != null) {

@@ -431,8 +431,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         resolvedImport.configure {
             +field("delegate", import)
             +field("packageFqName", fqNameType)
-            +field("relativeClassName", fqNameType, nullable = true)
-            +field("resolvedClassId", classIdType, nullable = true)
+            +field("relativeParentClassName", fqNameType, nullable = true)
+            +field("resolvedParentClassId", classIdType, nullable = true)
             +field(
                 "importedName",
                 nameType,

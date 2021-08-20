@@ -84,7 +84,7 @@ open class FirImportResolveTransformer protected constructor(
         return buildResolvedImport {
             this.delegate = delegate
             this.packageFqName = packageFqName
-            relativeClassName = relativeClassFqName
+            this.relativeParentClassName = relativeClassFqName
         }
     }
 }

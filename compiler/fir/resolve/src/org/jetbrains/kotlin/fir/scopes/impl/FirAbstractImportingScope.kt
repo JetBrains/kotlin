@@ -76,7 +76,7 @@ abstract class FirAbstractImportingScope(
         var result: FirClassLikeSymbol<*>? = null
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
-            val classId = import.resolvedClassId?.createNestedClassId(importedName)
+            val classId = import.resolvedParentClassId?.createNestedClassId(importedName)
                 ?: ClassId.topLevel(import.packageFqName.child(importedName))
             val symbol = provider.getClassLikeSymbolByClassId(classId) ?: continue
             if (!filter.check(symbol, session)) continue
@@ -101,7 +101,7 @@ abstract class FirAbstractImportingScope(
         if (filter == FirImportingScopeFilter.INVISIBLE_CLASSES) return
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
-            val staticsScope = import.resolvedClassId?.let(::getStaticsScope)
+            val staticsScope = import.resolvedParentClassId?.let(::getStaticsScope)
             if (staticsScope != null) {
                 staticsScope.processFunctionsByName(importedName, processor)
             } else if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
@@ -117,7 +117,7 @@ abstract class FirAbstractImportingScope(
         if (filter == FirImportingScopeFilter.INVISIBLE_CLASSES) return
         for (import in imports) {
             val importedName = name ?: import.importedName ?: continue
-            val staticsScope = import.resolvedClassId?.let(::getStaticsScope)
+            val staticsScope = import.resolvedParentClassId?.let(::getStaticsScope)
             if (staticsScope != null) {
                 staticsScope.processPropertiesByName(importedName, processor)
             } else if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {

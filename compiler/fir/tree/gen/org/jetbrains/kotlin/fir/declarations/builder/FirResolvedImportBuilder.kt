@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.name.Name
 class FirResolvedImportBuilder {
     lateinit var delegate: FirImport
     lateinit var packageFqName: FqName
-    var relativeClassName: FqName? = null
+    var relativeParentClassName: FqName? = null
 
     fun build(): FirResolvedImport {
         return FirResolvedImportImpl(
             delegate,
             packageFqName,
-            relativeClassName,
+            relativeParentClassName,
         )
     }
 

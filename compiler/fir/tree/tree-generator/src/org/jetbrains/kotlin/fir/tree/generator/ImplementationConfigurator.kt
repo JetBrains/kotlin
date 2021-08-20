@@ -52,8 +52,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 delegate = "delegate"
             }
 
-            default("resolvedClassId") {
-                delegate = "relativeClassName"
+            default("resolvedParentClassId") {
+                delegate = "relativeParentClassName"
                 delegateCall = "let { ClassId(packageFqName, it, false) }"
                 withGetter = true
             }

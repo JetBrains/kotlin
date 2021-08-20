@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirResolvedImportImpl(
     override var delegate: FirImport,
     override val packageFqName: FqName,
-    override val relativeClassName: FqName?,
+    override val relativeParentClassName: FqName?,
 ) : FirResolvedImport() {
     override val source: FirSourceElement? get() = delegate.source
     override val importedFqName: FqName? get() = delegate.importedFqName
     override val isAllUnder: Boolean get() = delegate.isAllUnder
     override val aliasName: Name? get() = delegate.aliasName
     override val aliasSource: FirSourceElement? get() = delegate.aliasSource
-    override val resolvedClassId: ClassId? get() = relativeClassName?.let { ClassId(packageFqName, it, false) }
+    override val resolvedParentClassId: ClassId? get() = relativeParentClassName?.let { ClassId(packageFqName, it, false) }
     override val importedName: Name? get() = importedFqName?.shortName()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

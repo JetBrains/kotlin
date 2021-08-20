@@ -59,7 +59,7 @@ object FirImportsChecker : FirFileChecker() {
         //empty name come from LT in some erroneous cases
         if (importedName.isSpecial || importedName.identifier.isEmpty()) return
 
-        val classId = (import as? FirResolvedImport)?.resolvedClassId
+        val classId = (import as? FirResolvedImport)?.resolvedParentClassId
         if (classId != null) {
             val classSymbol = classId.resolveToClass(context) ?: return
             if (classSymbol.classKind.isSingleton) return
@@ -103,7 +103,7 @@ object FirImportsChecker : FirFileChecker() {
         val alias = import.aliasName ?: return
         val importedName = import.importedName ?: return
         if (!OperatorConventions.isConventionName(alias)) return
-        val classId = import.resolvedClassId
+        val classId = import.resolvedParentClassId
         val illegalRename = if (classId != null) {
             val classFir = classId.resolveToClass(context) ?: return
             classFir.classKind.isSingleton && classFir.hasFunction(context, importedName) { it.isOperator }
@@ -118,10 +118,10 @@ object FirImportsChecker : FirFileChecker() {
     }
 
     private fun FirResolvedImport.resolvesToClass(context: CheckerContext): Boolean {
-        if (resolvedClassId != null) {
+        if (resolvedParentClassId != null) {
             if (isAllUnder) return true
-            val parentClass = resolvedClassId!!
-            val relativeClassName = this.relativeClassName ?: return false
+            val parentClass = resolvedParentClassId!!
+            val relativeClassName = this.relativeParentClassName ?: return false
             val importedName = this.importedName ?: return false
             val innerClassId = ClassId(parentClass.packageFqName, relativeClassName.child(importedName), false)
             return innerClassId.resolveToClass(context) != null
@@ -181,7 +181,7 @@ object FirImportsChecker : FirFileChecker() {
     private fun checkDeprecatedImport(import: FirImport, context: CheckerContext, reporter: DiagnosticReporter) {
         val importedFqName = import.importedFqName ?: return
         if (importedFqName.isRoot || importedFqName.shortName().asString().isEmpty()) return
-        val classId = (import as? FirResolvedImport)?.resolvedClassId ?: ClassId.topLevel(importedFqName)
+        val classId = (import as? FirResolvedImport)?.resolvedParentClassId ?: ClassId.topLevel(importedFqName)
         val classLike: FirRegularClassSymbol = classId.resolveToClass(context) ?: return
         FirDeprecationChecker.reportDeprecationIfNeeded(import.source, classLike, null, context, reporter)
     }
