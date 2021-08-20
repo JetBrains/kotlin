@@ -37,6 +37,10 @@ class JvmReplCompilerState<CompilationT : JvmReplCompilerState.Compilation>(
         }
     }
 
+    protected fun finalize() {
+        dispose()
+    }
+
     fun getCompilationState(scriptCompilationConfiguration: ScriptCompilationConfiguration): CompilationT = lock.write {
         if (_compilation == null) {
             initializeCompilation(scriptCompilationConfiguration)
