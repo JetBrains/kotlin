@@ -336,6 +336,9 @@ fun IrBuilderWithScope.irVararg(elementType: IrType, values: List<IrExpression>)
 fun IrBuilderWithScope.irRawFunctionReferefence(type: IrType, symbol: IrFunctionSymbol) =
     IrRawFunctionReferenceImpl(startOffset, endOffset, type, symbol)
 
+fun IrBuilderWithScope.irTry(type: IrType, tryResult: IrExpression, catches: List<IrCatch>, finallyExpression: IrExpression?) =
+    IrTryImpl(startOffset, endOffset, type, tryResult, catches, finallyExpression)
+
 inline fun IrBuilderWithScope.irBlock(
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
