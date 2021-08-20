@@ -46,7 +46,8 @@ fun buildCache(
     }
 
     val icDir = File(cachePath)
-    icDir.deleteRecursively()
+    icDir.listFiles { file: File -> file.name.startsWith("ic-") }!!.forEach { it.deleteRecursively() }
+    File(icDir, "info").delete()
     icDir.mkdirs()
 
     val icData = prepareSingleLibraryIcCache(project, configuration, mainModule.libPath, dependencies, friendDependencies, exportedDeclarations, icCache.data)
