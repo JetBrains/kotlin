@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.extractRadix
 
@@ -71,10 +69,7 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             when {
                 lowerResult == null && upperResult == null -> null
                 this is ConeRawType -> ConeRawType(lowerResult ?: lowerBound, upperResult ?: upperBound)
-                else -> coneFlexibleOrSimpleType(
-                    session, lowerResult ?: lowerBound, upperResult ?: upperBound,
-                    isNotNullTypeParameter = qualifiers(index).isNotNullTypeParameter
-                )
+                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound)
             }
         }
         is ConeSimpleKotlinType -> enhanceInflexibleType(
@@ -82,34 +77,6 @@ private fun ConeKotlinType.enhanceConeKotlinType(
         )
         else -> null
     }
-}
-
-private fun coneFlexibleOrSimpleType(
-    session: FirSession,
-    lowerBound: ConeKotlinType,
-    upperBound: ConeKotlinType,
-    isNotNullTypeParameter: Boolean
-): ConeKotlinType {
-    if (AbstractStrictEqualityTypeChecker.strictEqualTypes(session.typeContext, lowerBound, upperBound)) {
-        val lookupTag = (lowerBound as? ConeLookupTagBasedType)?.lookupTag
-        if (isNotNullTypeParameter && lookupTag is ConeTypeParameterLookupTag && !lowerBound.isMarkedNullable) {
-            // TODO: we need enhancement for type parameter bounds for this code to work properly
-            // At this moment, this condition is always true
-            if (lookupTag.typeParameterSymbol.fir.bounds.any {
-                    val type = it.coneType
-                    type is ConeTypeParameterType || type.isNullable
-                }
-            ) {
-                return ConeDefinitelyNotNullType.create(
-                    lowerBound,
-                    session.typeContext,
-                    useCorrectedNullabilityForFlexibleTypeParameters = true
-                ) ?: lowerBound
-            }
-        }
-        return lowerBound
-    }
-    return ConeFlexibleType(lowerBound, upperBound)
 }
 
 private val KOTLIN_COLLECTIONS = FqName("kotlin.collections")
@@ -174,7 +141,12 @@ private fun ConeKotlinType.enhanceInflexibleType(
     // TODO: val nullabilityForWarning = enhancedNullabilityAttribute != null && effectiveQualifiers.isNullabilityQualifierForWarning
     val mergedArguments = Array(typeArguments.size) { enhancedArguments[it] ?: typeArguments[it] }
     val mergedAttributes = if (shouldAddAttribute) attributes + CompilerConeAttributes.EnhancedNullability else attributes
-    return enhancedTag.constructType(mergedArguments, enhancedNullability, mergedAttributes)
+    val enhancedType = enhancedTag.constructType(mergedArguments, enhancedNullability, mergedAttributes)
+    return if (effectiveQualifiers.isNotNullTypeParameter)
+        ConeDefinitelyNotNullType.create(enhancedType, session.typeContext, useCorrectedNullabilityForFlexibleTypeParameters = true)
+            ?: enhancedType
+    else
+        enhancedType
 }
 
 private fun ConeClassifierLookupTag.enhanceMutability(
