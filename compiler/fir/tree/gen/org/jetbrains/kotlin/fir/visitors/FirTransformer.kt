@@ -80,6 +80,9 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntry
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntrySingle
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntryPair
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
@@ -438,6 +441,18 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: D): FirStatement {
         return transformElement(collectionLiteral, data)
+    }
+
+    open fun transformCollectionLiteralEntry(collectionLiteralEntry: FirCollectionLiteralEntry, data: D): FirCollectionLiteralEntry {
+        return transformElement(collectionLiteralEntry, data)
+    }
+
+    open fun transformCollectionLiteralEntrySingle(collectionLiteralEntrySingle: FirCollectionLiteralEntrySingle, data: D): FirCollectionLiteralEntry {
+        return transformElement(collectionLiteralEntrySingle, data)
+    }
+
+    open fun transformCollectionLiteralEntryPair(collectionLiteralEntryPair: FirCollectionLiteralEntryPair, data: D): FirCollectionLiteralEntry {
+        return transformElement(collectionLiteralEntryPair, data)
     }
 
     open fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): FirStatement {
@@ -954,6 +969,18 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: D): FirStatement {
         return transformCollectionLiteral(collectionLiteral, data)
+    }
+
+    final override fun visitCollectionLiteralEntry(collectionLiteralEntry: FirCollectionLiteralEntry, data: D): FirCollectionLiteralEntry {
+        return transformCollectionLiteralEntry(collectionLiteralEntry, data)
+    }
+
+    final override fun visitCollectionLiteralEntrySingle(collectionLiteralEntrySingle: FirCollectionLiteralEntrySingle, data: D): FirCollectionLiteralEntry {
+        return transformCollectionLiteralEntrySingle(collectionLiteralEntrySingle, data)
+    }
+
+    final override fun visitCollectionLiteralEntryPair(collectionLiteralEntryPair: FirCollectionLiteralEntryPair, data: D): FirCollectionLiteralEntry {
+        return transformCollectionLiteralEntryPair(collectionLiteralEntryPair, data)
     }
 
     final override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): FirStatement {

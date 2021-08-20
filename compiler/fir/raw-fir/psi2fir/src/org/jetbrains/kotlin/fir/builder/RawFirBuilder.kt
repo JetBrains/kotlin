@@ -2321,11 +2321,26 @@ open class RawFirBuilder(
         }
 
         override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression, data: Unit): FirElement {
+            val firKind = when (expression.literalKind) {
+                KtCollectionLiteralKind.LIST -> CollectionLiteralKind.LIST_LITERAL
+                KtCollectionLiteralKind.MAP -> CollectionLiteralKind.MAP_LITERAL
+            }
+            val newExpressions = expression.getInnerEntries().map {
+                when (it) {
+                    is KtCollectionLiteralEntrySingle -> buildCollectionLiteralEntrySingle {
+                        this.expression = it.expression.toFirExpression("Incorrect collection literal entry")
+                    }
+                    is KtCollectionLiteralEntryPair -> buildCollectionLiteralEntryPair {
+                        key = it.key.toFirExpression("Incorrect key of collection literal pair entry")
+                        value = it.value.toFirExpression("Incorrect value of collection literal pair entry")
+                    }
+                }
+            }
             return buildCollectionLiteral {
                 source = expression.toFirPsiSourceElement()
-                kind = CollectionLiteralKind.LIST_LITERAL // TODO
+                kind = firKind
                 expressions.addAll(
-                    expression.getInnerExpressions().map { it.toFirExpression("Incorrect collection literal argument") }
+                    newExpressions
                 )
             }
         }

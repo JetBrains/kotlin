@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.CollectionLiteralKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntry
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirCollectionLiteralImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -29,7 +29,7 @@ class FirCollectionLiteralBuilder : FirAnnotationContainerBuilder, FirExpression
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var kind: CollectionLiteralKind
-    val expressions: MutableList<FirExpression> = mutableListOf()
+    val expressions: MutableList<FirCollectionLiteralEntry> = mutableListOf()
 
     override fun build(): FirCollectionLiteral {
         return FirCollectionLiteralImpl(

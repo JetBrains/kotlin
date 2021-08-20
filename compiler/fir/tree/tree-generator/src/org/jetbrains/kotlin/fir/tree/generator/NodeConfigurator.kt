@@ -188,7 +188,16 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         collectionLiteral.configure {
             +field("kind", collectionLiteralKindType)
-            +fieldList("expressions", expression).withTransform()
+            +fieldList("expressions", collectionLiteralEntry).withTransform()
+        }
+
+        collectionLiteralEntrySingle.configure {
+            +field("expression", expression).withTransform()
+        }
+
+        collectionLiteralEntryPair.configure {
+            +field("key", expression).withTransform()
+            +field("value", expression).withTransform()
         }
 
         qualifiedAccess.configure {

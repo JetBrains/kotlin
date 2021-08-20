@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
@@ -281,9 +282,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val resolvedCalls = newCalls.map { it.transformSingle(this, ResolutionMode.ContextDependent) } // TODO не уверен на счёт контекста
         val successful = resolvedCalls.filter { it.calleeReference !is FirErrorNamedReference }
         return when {
-            successful.isEmpty() -> TODO("throw ambiguity error")
+            successful.isEmpty() -> functionCall // TODO some diagnostic
             successful.size == 1 -> successful.first()
-            else -> TODO()
+            else -> functionCall
         }
     }
 
@@ -296,6 +297,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     it.possibleTypes.map { type ->
                         // TODO создавать один и тот же билдер только один раз
                         createFunctionCallForCollectionLiteral(
+                            expression.kind,
                             type.classId!!.shortClassName,
                             expression.expressions,
                             it.argumentType!!.toFirResolvedTypeRef()
@@ -417,6 +419,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 }
                 // TODO check for implicit
                 val buildCall = createFunctionCallForCollectionLiteral(
+                    collectionLiteral.kind,
                     receiverName,
                     collectionLiteral.expressions,
                     type.argumentType!!.toFirResolvedTypeRef()
@@ -431,14 +434,20 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     private fun createFunctionCallForCollectionLiteral(
+        kind: CollectionLiteralKind,
         receiverName: Name,
-        arguments: List<FirExpression>,
+        arguments: List<FirCollectionLiteralEntry>,
         typeOfArguments: FirResolvedTypeRef? = null
     ): FirFunctionCall {
         val adds = arguments.map {
             buildFunctionCall {
                 calleeReference = buildSimpleNamedReference { name = Name.identifier("add") }
-                argumentList = buildUnaryArgumentList(it)
+                argumentList = when (kind) {
+                    CollectionLiteralKind.LIST_LITERAL -> buildUnaryArgumentList((it as FirCollectionLiteralEntrySingle).expression)
+                    CollectionLiteralKind.MAP_LITERAL -> (it as FirCollectionLiteralEntryPair).let { entry ->
+                        buildBinaryArgumentList(entry.key, entry.value)
+                    }
+                }
             }
         }
         val lambda = buildLambdaArgumentExpression {
@@ -454,7 +463,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     symbol = FirAnonymousFunctionSymbol()
                     isLambda = true
                     label = buildLabel {
-                        name = "build"
+                        name = when (kind) {
+                            CollectionLiteralKind.LIST_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
+                            CollectionLiteralKind.MAP_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
+                        }.identifier
                     }
 
                 }
@@ -469,7 +481,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return buildFunctionCall {
             this.explicitReceiver = explicitReceiver
             calleeReference = buildSimpleNamedReference {
-                name = Name.identifier("build")
+                name = when (kind) {
+                    CollectionLiteralKind.LIST_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
+                    CollectionLiteralKind.MAP_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
+                }
             }
             typeOfArguments?.let {
                 typeArguments.add(buildTypeProjectionWithVariance {

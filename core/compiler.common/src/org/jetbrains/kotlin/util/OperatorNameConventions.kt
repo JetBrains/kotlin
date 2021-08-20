@@ -68,7 +68,8 @@ object OperatorNameConventions {
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
 
-    @JvmField val BUILD_CL = Name.identifier("build")
+    @JvmField val BUILD_LIST_CL = Name.identifier("buildList")
+    @JvmField val BUILD_MAP_CL = Name.identifier("buildMap")
     @JvmField val ADD_CL = Name.identifier("add")
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well

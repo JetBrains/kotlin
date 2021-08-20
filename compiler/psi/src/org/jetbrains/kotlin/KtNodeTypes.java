@@ -157,6 +157,16 @@ public interface KtNodeTypes {
 
     IElementType COLLECTION_LITERAL_EXPRESSION = new KtNodeType("COLLECTION_LITERAL_EXPRESSION", KtCollectionLiteralExpression.class);
 
+    IElementType COLLECTION_LITERAL_EXPRESSION_ENTRY_SINGLE = new KtNodeType(
+            "COLLECTION_LITERAL_EXPRESSION_ENTRY_SINGLE",
+            KtCollectionLiteralEntrySingle.class
+    );
+    IElementType COLLECTION_LITERAL_EXPRESSION_ENTRY_PAIR = new KtNodeType(
+            "COLLECTION_LITERAL_EXPRESSION_ENTRY_PAIR",
+            KtCollectionLiteralEntryPair.class
+    );
+
+
     IElementType PACKAGE_DIRECTIVE = KtStubElementTypes.PACKAGE_DIRECTIVE;
 
     IElementType SCRIPT = KtStubElementTypes.SCRIPT;

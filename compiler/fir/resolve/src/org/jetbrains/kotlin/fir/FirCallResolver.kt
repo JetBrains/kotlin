@@ -174,10 +174,19 @@ class FirCallResolver(
         val info = CallInfo(
             collectionLiteral,
             CallKind.CollectionLiteral,
-            OperatorNameConventions.BUILD_CL,
+            when (collectionLiteral.kind) {
+                CollectionLiteralKind.LIST_LITERAL -> OperatorNameConventions.BUILD_LIST_CL
+                CollectionLiteralKind.MAP_LITERAL -> OperatorNameConventions.BUILD_MAP_CL
+            },
             null,
             buildArgumentList {
-                this.arguments.addAll(collectionLiteral.expressions)
+                // TODO size and init
+                when (collectionLiteral.kind) {
+                    CollectionLiteralKind.LIST_LITERAL -> this.arguments.addAll(
+                        collectionLiteral.expressions.map { (it as FirCollectionLiteralEntrySingle).expression }
+                    )
+                    CollectionLiteralKind.MAP_LITERAL -> TODO()
+                }
             },
             isPotentialQualifierPart = false,
             isImplicitInvoke = false,

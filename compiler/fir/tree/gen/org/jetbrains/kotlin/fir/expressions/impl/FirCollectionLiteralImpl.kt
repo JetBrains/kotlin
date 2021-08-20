@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.CollectionLiteralKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntry
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -23,7 +23,7 @@ internal class FirCollectionLiteralImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val kind: CollectionLiteralKind,
-    override val expressions: MutableList<FirExpression>,
+    override val expressions: MutableList<FirCollectionLiteralEntry>,
 ) : FirCollectionLiteral() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 

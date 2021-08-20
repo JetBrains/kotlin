@@ -22,10 +22,22 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.getTrailingCommaByClosingElement
 
-class KtCollectionLiteralExpression(node: ASTNode) : KtExpressionImpl(node), KtReferenceExpression {
+open class KtCollectionLiteralExpression(node: ASTNode) : KtExpressionImpl(node), KtReferenceExpression {
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitCollectionLiteralExpression(this, data)
     }
+
+    val literalKind: KtCollectionLiteralKind
+        get() {
+            val entries = getInnerEntries()
+            if (entries.all { it is KtCollectionLiteralEntrySingle }) {
+                return KtCollectionLiteralKind.LIST
+            }
+            if (entries.all { it is KtCollectionLiteralEntryPair }) {
+                return KtCollectionLiteralKind.MAP
+            }
+            error("The literal type cannot be determined")
+        }
 
     val leftBracket: PsiElement?
         get() = findChildByType(KtTokens.LBRACKET)
@@ -37,6 +49,15 @@ class KtCollectionLiteralExpression(node: ASTNode) : KtExpressionImpl(node), KtR
         get() = getTrailingCommaByClosingElement(rightBracket)
 
     fun getInnerExpressions(): List<KtExpression> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, KtExpression::class.java)
+        require(literalKind == KtCollectionLiteralKind.LIST)
+        return getInnerEntries().map { (it as KtCollectionLiteralEntrySingle).expression }
     }
+
+    fun getInnerEntries(): List<KtCollectionLiteralEntry> {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, KtCollectionLiteralEntry::class.java)
+    }
+}
+
+enum class KtCollectionLiteralKind {
+    LIST, MAP
 }

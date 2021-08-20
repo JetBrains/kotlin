@@ -80,6 +80,9 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntry
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntrySingle
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntryPair
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
@@ -290,6 +293,12 @@ abstract class FirVisitor<out R, in D> {
     open fun visitElvisExpression(elvisExpression: FirElvisExpression, data: D): R  = visitElement(elvisExpression, data)
 
     open fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: D): R  = visitElement(collectionLiteral, data)
+
+    open fun visitCollectionLiteralEntry(collectionLiteralEntry: FirCollectionLiteralEntry, data: D): R  = visitElement(collectionLiteralEntry, data)
+
+    open fun visitCollectionLiteralEntrySingle(collectionLiteralEntrySingle: FirCollectionLiteralEntrySingle, data: D): R  = visitElement(collectionLiteralEntrySingle, data)
+
+    open fun visitCollectionLiteralEntryPair(collectionLiteralEntryPair: FirCollectionLiteralEntryPair, data: D): R  = visitElement(collectionLiteralEntryPair, data)
 
     open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): R  = visitElement(arrayOfCall, data)
 

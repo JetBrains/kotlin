@@ -1036,10 +1036,27 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             if (at(RBRACKET)) {
                 break;
             }
-            parseExpression();
+            parseCollectionLiteralEntry();
 
             if (!at(COMMA)) break;
             advance(); // COMMA
+        }
+    }
+
+    /**
+     * collectionLiteralEntry
+     *   : expression [":" expression]{","}
+     */
+    private void parseCollectionLiteralEntry() {
+        PsiBuilder.Marker entry = mark();
+
+        parseExpression();
+        if(at(COLON)) {
+            advance(); // COLON
+            parseExpression();
+            entry.done(COLLECTION_LITERAL_EXPRESSION_ENTRY_PAIR);
+        } else {
+            entry.done(COLLECTION_LITERAL_EXPRESSION_ENTRY_SINGLE);
         }
     }
 

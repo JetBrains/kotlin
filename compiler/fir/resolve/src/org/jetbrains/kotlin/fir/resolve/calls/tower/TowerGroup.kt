@@ -85,7 +85,7 @@ private constructor(
 
         private val EMPTY_KIND_ARRAY = emptyArray<TowerGroupKind>()
 
-        private const val DEBUG = false // enables tower group debugging
+        private const val DEBUG = true // enables tower group debugging
 
         private fun appendDebugKind(kinds: Array<TowerGroupKind>, kind: TowerGroupKind): Array<TowerGroupKind> {
             return if (DEBUG) {

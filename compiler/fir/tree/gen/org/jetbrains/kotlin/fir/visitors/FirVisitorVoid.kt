@@ -80,6 +80,9 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntry
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntrySingle
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntryPair
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
@@ -437,6 +440,18 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral) {
         visitElement(collectionLiteral)
+    }
+
+    open fun visitCollectionLiteralEntry(collectionLiteralEntry: FirCollectionLiteralEntry) {
+        visitElement(collectionLiteralEntry)
+    }
+
+    open fun visitCollectionLiteralEntrySingle(collectionLiteralEntrySingle: FirCollectionLiteralEntrySingle) {
+        visitElement(collectionLiteralEntrySingle)
+    }
+
+    open fun visitCollectionLiteralEntryPair(collectionLiteralEntryPair: FirCollectionLiteralEntryPair) {
+        visitElement(collectionLiteralEntryPair)
     }
 
     open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall) {
@@ -953,6 +968,18 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: Nothing?) {
         visitCollectionLiteral(collectionLiteral)
+    }
+
+    final override fun visitCollectionLiteralEntry(collectionLiteralEntry: FirCollectionLiteralEntry, data: Nothing?) {
+        visitCollectionLiteralEntry(collectionLiteralEntry)
+    }
+
+    final override fun visitCollectionLiteralEntrySingle(collectionLiteralEntrySingle: FirCollectionLiteralEntrySingle, data: Nothing?) {
+        visitCollectionLiteralEntrySingle(collectionLiteralEntrySingle)
+    }
+
+    final override fun visitCollectionLiteralEntryPair(collectionLiteralEntryPair: FirCollectionLiteralEntryPair, data: Nothing?) {
+        visitCollectionLiteralEntryPair(collectionLiteralEntryPair)
     }
 
     final override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: Nothing?) {

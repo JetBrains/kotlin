@@ -20,7 +20,7 @@ abstract class FirCollectionLiteral : FirExpression() {
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract val kind: CollectionLiteralKind
-    abstract val expressions: List<FirExpression>
+    abstract val expressions: List<FirCollectionLiteralEntry>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCollectionLiteral(this, data)
 
