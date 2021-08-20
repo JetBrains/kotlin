@@ -29,22 +29,16 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.analyzeSpecia
 class SerializableProperty(
     val descriptor: PropertyDescriptor,
     val isConstructorParameterWithDefault: Boolean,
-    hasBackingField: Boolean
+    hasBackingField: Boolean,
+    declaresDefaultValue: Boolean
 ) {
     val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
     val type = descriptor.type
     val genericIndex = type.genericIndex
     val module = descriptor.module
     val serializableWith = descriptor.serializableWith ?: analyzeSpecialSerializers(module, descriptor.annotations)?.defaultType
-    val optional = !descriptor.annotations.serialRequired && descriptor.declaresDefaultValue
+    val optional = !descriptor.annotations.serialRequired && declaresDefaultValue
     val transient = descriptor.annotations.serialTransient || !hasBackingField
     val annotationsWithArguments: List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
         descriptor.annotationsWithArguments()
 }
-
-val PropertyDescriptor.declaresDefaultValue: Boolean
-    get() = when (val declaration = this.source.getPsi()) {
-        is KtDeclarationWithInitializer -> declaration.initializer != null
-        is KtParameter -> declaration.defaultValue != null
-        else -> false
-    }

@@ -87,12 +87,11 @@ open class CompilerConfigurationProviderImpl(
         val initialConfiguration = createCompilerConfiguration(module)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, initialConfiguration)
         val project = projectEnv.project
-        configurators.forEach { it.registerCompilerExtensions(project) }
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
             initialConfiguration,
             configFiles
-        )
+        ).also { configurators.forEach { it.registerCompilerExtensions(project) } }
     }
 
     @TestInfrastructureInternals
