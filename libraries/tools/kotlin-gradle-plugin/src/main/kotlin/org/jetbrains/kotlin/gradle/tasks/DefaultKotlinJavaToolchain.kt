@@ -43,6 +43,9 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         .chainedFinalizeValueOnRead()
 
     @get:Internal
+    internal var providedJvmExplicitlySet = false
+
+    @get:Internal
     internal val providedJvm: Property<Jvm> = objects
         .propertyWithConvention(currentJvm)
         .chainedFinalizeValueOnRead()
@@ -115,6 +118,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         providedJvm,
         currentGradleVersion,
         objects,
+        { providedJvmExplicitlySet = true },
         kotlinCompileTaskProvider
     )
 
@@ -146,7 +150,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
             "\"updateJvmTarget()\" method should be called only on task execution!"
         }
 
-        if (providedJvm.isPresent) {
+        if (providedJvmExplicitlySet) {
             val jdkVersion = javaVersion.get()
 
             // parentKotlinOptionsImpl is set from 'kotlin-android' plugin
@@ -195,6 +199,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         private val providedJvm: Property<Jvm>,
         private val currentGradleVersion: GradleVersion,
         private val objects: ObjectFactory,
+        private val updateProvidedJdkCallback: () -> Unit,
         kotlinCompileTaskProvider: () -> KotlinCompile?
     ) : JvmTargetUpdater(kotlinCompileTaskProvider),
         KotlinJavaToolchain.JdkSetter {
@@ -210,6 +215,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 "Supplied jdkHomeLocation does not exists. You supplied: $jdkHomeLocation"
             }
 
+            updateProvidedJdkCallback.invoke()
             providedJvm.set(
                 objects.providerWithLazyConvention {
                     updateJvmTarget(jdkVersion)
@@ -234,6 +240,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         override fun use(
             javaLauncher: Provider<JavaLauncher>
         ) {
+            providedJvmExplicitlySet = true
             providedJvm.set(
                 javaLauncher.map {
                     val metadata = javaLauncher.get().metadata
