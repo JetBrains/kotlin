@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -26,17 +27,22 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantVa
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtUnsupportedConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
-import org.jetbrains.kotlin.psi.KtAnnotatedExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLabeledExpression
-import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
+import org.jetbrains.kotlin.psi.*
+
+internal fun PsiElement.unwrap(): PsiElement {
+    return when (this) {
+        is KtExpression -> this.unwrap()
+        else -> this
+    }
+}
 
 internal fun KtExpression.unwrap(): KtExpression {
     return when (this) {
         is KtLabeledExpression -> baseExpression?.unwrap()
         is KtAnnotatedExpression -> baseExpression?.unwrap()
         is KtObjectLiteralExpression -> objectDeclaration
-        else -> null
+        is KtFunctionLiteral -> (parent as? KtLambdaExpression)?.unwrap()
+        else -> this
     } ?: this
 }
 

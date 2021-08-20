@@ -1,0 +1,2 @@
+expression: { /* Variable */ }
+expected type: java/lang/Runnable

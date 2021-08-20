@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirPackageDirective
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalType
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -59,28 +58,55 @@ internal class KtFirExpressionTypeProvider(
     }
 
     override fun getExpectedType(expression: PsiElement): KtType? {
-        val expectedType = getExpectedTypeByReturnExpression(expression)
-            ?: getExpressionTypeByIfOrBooleanCondition(expression)
-            ?: getExpectedTypeOfFunctionParameter(expression)
-            ?: getExpectedTypeOfInfixFunctionParameter(expression)
-            ?: getExpectedTypeByVariableAssignment(expression)
-            ?: getExpectedTypeByPropertyDeclaration(expression)
-            ?: getExpectedTypeByFunctionExpressionBody(expression)
+        val unwrapped = expression.unwrap()
+        val expectedType = getExpectedTypeByReturnExpression(unwrapped)
+            ?: getExpressionTypeByIfOrBooleanCondition(unwrapped)
+            ?: getExpectedTypeByTypeCast(unwrapped)
+            ?: getExpectedTypeOfFunctionParameter(unwrapped)
+            ?: getExpectedTypeOfInfixFunctionParameter(unwrapped)
+            ?: getExpectedTypeByVariableAssignment(unwrapped)
+            ?: getExpectedTypeByPropertyDeclaration(unwrapped)
+            ?: getExpectedTypeByFunctionExpressionBody(unwrapped)
         return expectedType.takeIf { it !is KtClassErrorType }
     }
 
+    private fun getExpectedTypeByTypeCast(expression: PsiElement): KtType? {
+        val typeCastExpression =
+            expression.unwrapQualified<KtBinaryExpressionWithTypeRHS> { castExpr, expr -> castExpr.left == expr } ?: return null
+        with(analysisSession) {
+            return typeCastExpression.right?.getKtType()
+        }
+    }
+
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KtType? {
-        val (ktCallExpression, ktArgument) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
+        val (ktCallExpression, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
         val firCall = ktCallExpression.getOrBuildFirSafe<FirFunctionCall>(firResolveState) ?: return null
+
+        val callee = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
+        if (callee?.fir?.origin == FirDeclarationOrigin.SamConstructor) {
+            return (callee.fir as FirSimpleFunction).returnTypeRef.coneType.asKtType()
+        }
+
         val arguments = firCall.argumentMapping ?: return null
-        val firParameterForExpression = arguments.entries.firstOrNull { (arg, _) -> arg.psi == ktArgument }?.value ?: return null
+        val firParameterForExpression =
+            arguments.entries.firstOrNull { (arg, _) ->
+                when (arg) {
+                    // TODO: better to utilize. See `createArgumentMapping` in [KtFirCallResolver]
+                    is FirLambdaArgumentExpression, is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
+                        arg.psi == argumentExpression.parent
+                    else ->
+                        arg.psi == argumentExpression
+                }
+            }?.value ?: return null
         return firParameterForExpression.returnTypeRef.coneType.asKtType()
     }
 
     private fun PsiElement.getFunctionCallAsWithThisAsParameter(): KtCallWithArgument? {
         val valueArgument = unwrapQualified<KtValueArgument> { valueArg, expr -> valueArg.getArgumentExpression() == expr } ?: return null
-        val argumentsList = valueArgument.parent as? KtValueArgumentList ?: return null
-        val callExpression = argumentsList.parent as? KtCallExpression ?: return null
+        val callExpression =
+            (valueArgument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+                ?: valueArgument.parent as? KtCallExpression // KtLambdaArgument
+                ?: return null
         val argumentExpression = valueArgument.getArgumentExpression() ?: return null
         return KtCallWithArgument(callExpression, argumentExpression)
     }
@@ -131,6 +157,11 @@ internal class KtFirExpressionTypeProvider(
         // Given: `fun f(): T = expression`
         // Expected type of `expression` is `T`
         val function = expression.unwrapQualified<KtFunction> { function, expr -> function.bodyExpression == expr } ?: return null
+        if (function.bodyBlockExpression != null) {
+            // Given `fun f(...): R { blockExpression }`, `{ blockExpression }` is mapped to the enclosing anonymous function,
+            // which may raise an exception if we attempt to retrieve, e.g., callable declaration from it.
+            return null
+        }
         return getReturnTypeForKtDeclaration(function)
     }
 
