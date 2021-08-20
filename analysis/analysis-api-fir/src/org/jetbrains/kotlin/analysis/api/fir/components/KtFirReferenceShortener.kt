@@ -9,7 +9,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -20,11 +22,13 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -34,10 +38,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
@@ -214,7 +215,7 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
         towerContextProvider: FirTowerContextProvider
     ): List<FirScope>? {
         val towerDataContext = towerContextProvider.getClosestAvailableParentContext(position) ?: return null
-        val result = buildList<FirScope> {
+        val result = buildList {
             addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope })
             addIfNotNull(createFakeImportingScope(newImports))
             addAll(towerDataContext.localScopes)
@@ -289,6 +290,10 @@ private class ElementsToShortenCollector(
         element.acceptChildren(this)
     }
 
+    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+        visitResolvedTypeRef(errorTypeRef)
+    }
+
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         processTypeRef(resolvedTypeRef)
 
@@ -324,13 +329,26 @@ private class ElementsToShortenCollector(
         val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
         if (!wholeTypeReference.textRange.intersects(selection)) return
 
-        val wholeClassifierId = resolvedTypeRef.type.lowerBoundIfFlexible().classId ?: return
+        val wholeClassifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
         val wholeTypeElement = wholeTypeReference.typeElement?.unwrapNullability() as? KtUserType ?: return
 
         if (wholeTypeElement.qualifier == null) return
 
         findTypeToShorten(wholeClassifierId, wholeTypeElement)?.let(::addElementToShorten)
     }
+
+    val ConeKotlinType.candidateClassId: ClassId?
+        get() {
+            return when (this) {
+                is ConeClassErrorType -> when (val diagnostic = this.diagnostic) {
+                    // Tolerate code that misses type parameters while shortening it.
+                    is ConeUnmatchedTypeArgumentsError -> diagnostic.candidateSymbol.classId
+                    else -> null
+                }
+                is ConeClassLikeType -> lookupTag.classId
+                else -> null
+            }
+        }
 
     private fun findTypeToShorten(wholeClassifierId: ClassId, wholeTypeElement: KtUserType): ElementToShorten? {
         val positionScopes = shorteningContext.findScopesAtPosition(wholeTypeElement, namesToImport, towerContextProvider) ?: return null
