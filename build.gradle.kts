@@ -706,7 +706,7 @@ tasks {
         dependsOn("compiler:visualizer:test")
     }
 
-    register("scriptingTest") {
+    register("scriptingJvmTest") {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
         dependsOn(":kotlin-scripting-compiler:test")
@@ -725,6 +725,10 @@ tasks {
         dependsOn(":kotlin-main-kts-test:testWithIr")
         dependsOn(":kotlin-scripting-ide-services-test:test")
         dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
+    }
+
+    register("scriptingTest") {
+        dependsOn("scriptingJvmTest")
         dependsOn(":kotlin-scripting-js-test:test")
     }
 
