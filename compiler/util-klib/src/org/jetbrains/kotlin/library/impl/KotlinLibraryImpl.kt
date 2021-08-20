@@ -156,6 +156,26 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
             it.irFiles
         })
     }
+
+    override fun types(fileIndex: Int): ByteArray {
+        return types.tableItemBytes(fileIndex)
+    }
+
+    override fun signatures(fileIndex: Int): ByteArray {
+        return signatures.tableItemBytes(fileIndex)
+    }
+
+    override fun strings(fileIndex: Int): ByteArray {
+        return strings.tableItemBytes(fileIndex)
+    }
+
+    override fun declarations(fileIndex: Int): ByteArray {
+        return combinedDeclarations.tableItemBytes(fileIndex)
+    }
+
+    override fun bodies(fileIndex: Int): ByteArray {
+        return bodies.tableItemBytes(fileIndex)
+    }
 }
 
 class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibraryImpl(_access) {
@@ -188,13 +208,17 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
         return dataReader.tableItemBytes(index)
     }
 
-    override fun signature(index: Int, fileIndex: Int): ByteArray {
-        val dataReader = fileToTypeMap.getOrPut(fileIndex) {
+    private fun signatureDataReader(fileIndex: Int): IrArrayFileReader {
+        return fileToTypeMap.getOrPut(fileIndex) {
             val fileDirectory = directories[fileIndex]
             IrArrayFileReader(access.realFiles {
                 it.irSignatures(fileDirectory)
             })
         }
+    }
+
+    override fun signature(index: Int, fileIndex: Int): ByteArray {
+        val dataReader = signatureDataReader(fileIndex)
         return dataReader.tableItemBytes(index)
     }
 
@@ -245,6 +269,26 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
 
     override fun fileCount(): Int {
         return directories.size
+    }
+
+    override fun types(fileIndex: Int): ByteArray {
+        TODO("Not yet implemented")
+    }
+
+    override fun signatures(fileIndex: Int): ByteArray {
+        TODO("Not yet implemented")
+    }
+
+    override fun strings(fileIndex: Int): ByteArray {
+        TODO("Not yet implemented")
+    }
+
+    override fun declarations(fileIndex: Int): ByteArray {
+        TODO("Not yet implemented")
+    }
+
+    override fun bodies(fileIndex: Int): ByteArray {
+        TODO("Not yet implemented")
     }
 }
 
