@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.types.KtFlexibleType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
@@ -72,6 +73,9 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
 
     public fun KtType.withNullability(newNullability: KtTypeNullability): KtType =
         analysisSession.typeProvider.withNullability(this, newNullability)
+
+    public fun KtType.upperBoundIfFlexible(): KtType = (this as? KtFlexibleType)?.upperBound ?: this
+    public fun KtType.lowerBoundIfFlexible(): KtType = (this as? KtFlexibleType)?.lowerBound ?: this
 }
 
 @Suppress("PropertyName")
