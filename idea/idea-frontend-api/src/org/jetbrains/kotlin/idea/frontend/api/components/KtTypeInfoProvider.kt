@@ -12,10 +12,17 @@ import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 
 public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
+    public abstract fun isFunctionalInterfaceType(type: KtType): Boolean
     public abstract fun canBeNull(type: KtType): Boolean
 }
 
 public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
+    /**
+     * Returns true if this type is a functional interface type, a.k.a. SAM type, e.g., Runnable.
+     */
+    public val KtType.isFunctionalInterfaceType: Boolean
+        get() = analysisSession.typeInfoProvider.isFunctionalInterfaceType(this)
+
     /**
      * Returns true if a public value of this type can potentially be null. This means this type is not a subtype of [Any]. However, it does not
      * mean one can assign `null` to a variable of this type because it may be unknown if this type can accept `null`. For example, a public value
