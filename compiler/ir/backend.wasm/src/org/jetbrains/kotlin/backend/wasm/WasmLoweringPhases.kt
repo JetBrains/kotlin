@@ -298,6 +298,13 @@ private val returnableBlockLoweringPhase = makeWasmModulePhase(
     prerequisite = setOf(functionInliningPhase)
 )
 
+private val tryCatchCanonicalization = makeWasmModulePhase(
+    ::TryCatchCanonicalization,
+    name = "TryCatchCanonicalization",
+    description = "Transforms try/catch statements into canonical form supported by the wasm codegen",
+    prerequisite = setOf(functionInliningPhase)
+)
+
 private val bridgesConstructionPhase = makeWasmModulePhase(
     ::WasmBridgesConstruction,
     name = "BridgesConstruction",
@@ -461,6 +468,7 @@ val wasmPhases = NamedCompilerPhase(
 
             stringConstructorLowering then
             returnableBlockLoweringPhase then
+            tryCatchCanonicalization then
 
             forLoopsLoweringPhase then
             propertyAccessorInlinerLoweringPhase then

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-
 fun foo() {}
 
 inline fun test1(v: Int) {
