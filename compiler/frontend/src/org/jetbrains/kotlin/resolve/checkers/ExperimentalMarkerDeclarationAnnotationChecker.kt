@@ -59,7 +59,8 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
             }
             val annotationClass = annotation.annotationClass ?: continue
             if (annotationClass.annotations.any { it.fqName in OptInNames.EXPERIMENTAL_FQ_NAMES }) {
-                val possibleTargets = AnnotationChecker.applicableTargetSet(annotationClass).orEmpty().intersect(actualTargets)
+                val applicableTargets = AnnotationChecker.applicableTargetSet(annotationClass) ?: KotlinTarget.DEFAULT_TARGET_SET
+                val possibleTargets = applicableTargets.intersect(actualTargets)
                 val annotationUseSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
                 if (PROPERTY_GETTER in possibleTargets ||
                     annotationUseSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER

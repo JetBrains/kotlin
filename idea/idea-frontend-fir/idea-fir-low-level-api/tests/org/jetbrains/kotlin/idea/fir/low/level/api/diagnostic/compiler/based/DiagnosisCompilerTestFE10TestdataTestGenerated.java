@@ -34794,6 +34794,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             public void testWasExperimental() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/wasExperimental.kt");
             }
+
+            @Test
+            @TestMetadata("wrongTargetsWithoutExplicitTarget.kt")
+            public void testWrongTargetsWithoutExplicitTarget() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/wrongTargetsWithoutExplicitTarget.kt");
+            }
         }
 
         @Nested
