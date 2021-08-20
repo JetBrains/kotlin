@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightFacade
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getModuleInfo
-import org.jetbrains.kotlin.idea.fir.low.level.api.createDeclarationProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.createPackageProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
@@ -29,6 +27,8 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 
 class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport() {
 

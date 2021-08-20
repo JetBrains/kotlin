@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
+import org.jetbrains.kotlin.analysis.providers.createLibrariesModificationTracker
+import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.fir.BuiltinTypes
@@ -18,8 +20,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveStateConfigurator
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.createLibraryOutOfBlockModificationTracker
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.addValueFor
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
@@ -29,7 +29,7 @@ class FirIdeSessionProviderStorage(val project: Project) {
     private val sessionsCache = ConcurrentHashMap<ModuleSourceInfoBase, FromModuleViewSessionCache>()
     private val configurator = ServiceManager.getService(project, FirModuleResolveStateConfigurator::class.java)
 
-    private val librariesCache by cachedValue(project, project.createLibraryOutOfBlockModificationTracker()) { LibrariesCache() }
+    private val librariesCache by cachedValue(project, project.createLibrariesModificationTracker()) { LibrariesCache() }
 
     fun getSessionProvider(
         rootModule: ModuleSourceInfoBase,

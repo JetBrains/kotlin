@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.providers
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -19,8 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.name.ClassId
@@ -35,8 +35,8 @@ internal class FirIdeProvider(
     val kotlinScopeProvider: FirKotlinScopeProvider,
     firFileBuilder: FirFileBuilder,
     val cache: ModuleFileCache,
-    private val declarationProvider: DeclarationProvider,
-    packageExistenceChecker: KtPackageProvider,
+    private val declarationProvider: KotlinDeclarationProvider,
+    packageProvider: KotlinPackageProvider,
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
@@ -44,7 +44,7 @@ internal class FirIdeProvider(
         cache,
         firFileBuilder,
         declarationProvider,
-        packageExistenceChecker,
+        packageProvider,
     )
 
     override val isPhasedFirAllowed: Boolean get() = true

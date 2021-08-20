@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
+package org.jetbrains.kotlin.analysis.providers.impl
 
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.SimpleModificationTracker
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.KotlinOutOfBlockModificationTrackerFactory
 
-internal class KotlinOutOfBlockModificationTrackerFactoryTestImpl : KotlinOutOfBlockModificationTrackerFactory() {
+public class KotlinStaticModificationTrackerFactory : KotlinModificationTrackerFactory() {
     private val projectWide = SimpleModificationTracker()
     private val library = SimpleModificationTracker()
     private val forModule = mutableMapOf<ModuleSourceInfoBase, SimpleModificationTracker>()
@@ -25,7 +25,7 @@ internal class KotlinOutOfBlockModificationTrackerFactoryTestImpl : KotlinOutOfB
         return forModule.getOrPut(moduleInfo) { SimpleModificationTracker() }
     }
 
-    override fun createLibraryOutOfBlockModificationTracker(): ModificationTracker {
+    override fun createLibrariesModificationTracker(): ModificationTracker {
         return library
     }
 

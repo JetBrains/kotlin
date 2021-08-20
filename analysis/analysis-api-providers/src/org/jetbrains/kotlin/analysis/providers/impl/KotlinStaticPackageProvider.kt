@@ -3,19 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
+package org.jetbrains.kotlin.analysis.providers.impl
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class KtPackageProviderTestImpl(
+public class KotlinStaticPackageProvider(
     scope: GlobalSearchScope,
     files: Collection<KtFile>
-) : KtPackageProvider() {
-
+) : KotlinPackageProvider() {
     private val packageToSubPackageNames: Map<FqName, Set<Name>> = run {
         val filesInScope = files.filter { scope.contains(it.virtualFile) }
         val packages = mutableMapOf<FqName, MutableSet<Name>>()
@@ -36,5 +36,11 @@ internal class KtPackageProviderTestImpl(
 
     override fun getKotlinSubPackageFqNames(packageFqName: FqName): Set<Name> {
         return packageToSubPackageNames[packageFqName] ?: emptySet()
+    }
+}
+
+public class KotlinStaticPackageProviderFactory(private val files: Collection<KtFile>) : KotlinPackageProviderFactory() {
+    override fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider {
+        return KotlinStaticPackageProvider(searchScope, files)
     }
 }

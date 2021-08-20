@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.idea.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.KtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.idea.fir.low.level.api.createDeclarationProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName

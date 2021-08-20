@@ -17,6 +17,7 @@ dependencies {
     compile(project(":idea-frontend-api"))
     compile(project(":compiler:light-classes"))
     compile(intellijCoreDep())
+    implementation(project(":analysis:analysis-api-providers"))
 
     testCompile(projectTests(":idea-frontend-fir:idea-fir-low-level-api"))
     testCompile(projectTests(":compiler:tests-common"))

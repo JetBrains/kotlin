@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
-import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtElement

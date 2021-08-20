@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.providers
 
 import com.google.common.collect.Sets
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.KtPackageProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
@@ -28,8 +28,8 @@ import java.util.*
 internal class FirProviderHelper(
     private val cache: ModuleFileCache,
     private val firFileBuilder: FirFileBuilder,
-    private val declarationProvider: DeclarationProvider,
-    private val packageProvider: KtPackageProvider,
+    private val declarationProvider: KotlinDeclarationProvider,
+    private val packageProvider: KotlinPackageProvider,
 ) {
     fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
         if (classId.isLocal) return null

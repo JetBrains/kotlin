@@ -3,26 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir.low.level.api.test.base
+package org.jetbrains.kotlin.analysis.providers.impl
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.fir.low.level.api.DeclarationProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 
-internal class DeclarationProviderTestImpl(
-    override val searchScope: GlobalSearchScope,
+public class KotlinStaticDeclarationProvider(
+    scope: GlobalSearchScope,
     ktFiles: Collection<KtFile>
-) : DeclarationProvider() {
-
-    private val filesInScope = ktFiles.filter { searchScope.contains(it.virtualFile) }
+) : KotlinDeclarationProvider() {
+    private val filesInScope = ktFiles.filter { scope.contains(it.virtualFile) }
 
     private fun filesByPackage(packageFqName: FqName) =
         filesInScope.asSequence()
@@ -91,4 +89,10 @@ internal class DeclarationProviderTestImpl(
             .flatMap { it.declarations }
             .filterIsInstance<KtClassOrObject>()
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+}
+
+public class KotlinStaticDeclarationProviderFactory(private val files: Collection<KtFile>) : KotlinDeclarationProviderFactory() {
+    override fun createDeclarationProvider(searchScope: GlobalSearchScope): KotlinDeclarationProvider {
+        return KotlinStaticDeclarationProvider(searchScope, files)
+    }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.resolve.AbstractInnerDeclarat
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestSpec
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -156,6 +157,15 @@ fun main(args: Array<String>) {
                     "diagnostics",
                     excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
                     excludedPattern = excludedFirTestdataPattern,
+                )
+            }
+        }
+        testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH) {
+            testClass<AbstractFirDiagnosticTestSpec> {
+                model(
+                    "diagnostics",
+                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludedPattern = excludedFirTestdataPattern
                 )
             }
         }

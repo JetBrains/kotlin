@@ -326,7 +326,8 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
             ":prepare:ide-plugin-dependencies:high-level-api-for-ide",
             ":prepare:ide-plugin-dependencies:high-level-api-fir-for-ide",
-            ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide"
+            ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
+            ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide"
 }
 
 void intellij(String imlPath) {
@@ -367,6 +368,7 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
     intellij "j2k/new/tests/kotlin.j2k.new.tests.iml"
     intellij "j2k/new/kotlin.j2k.new.iml"
     intellij "fir-low-level-api-ide-impl/kotlin.fir.fir-low-level-api-ide-impl.iml"
+    intellij "analysis-api-providers-ide-impl/kotlin.fir.analysis-api-providers-ide-impl.iml"
     intellij "native/kotlin.native.iml"
     intellij "performance-tests/kotlin.performance-tests.iml"
     intellij "injection/kotlin.injection.iml"
@@ -439,7 +441,8 @@ include ":generators:frontend-api-generator",
         ":idea-frontend-fir:idea-fir-low-level-api",
         ":idea-frontend-fir:idea-frontend-fir-generator",
         ":idea-frontend-fir",
-        ":idea-frontend-api"
+        ":idea-frontend-api",
+        ":analysis:analysis-api-providers"
 
 if (buildProperties.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"

@@ -12,6 +12,12 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderFactory
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleSourceInfoBase
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
@@ -29,9 +35,6 @@ import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
 import org.jetbrains.kotlin.idea.asJava.IDEKotlinAsJavaFirSupport
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.DeclarationProviderTestImpl
-import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KotlinOutOfBlockModificationTrackerFactoryTestImpl
-import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.KtPackageProviderTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.SealedClassInheritorsProviderTestImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
@@ -298,19 +301,11 @@ fun MockProject.registerTestServices(
     )
     registerService(FirIdeResolveStateService::class.java)
     registerService(
-        KotlinOutOfBlockModificationTrackerFactory::class.java,
-        KotlinOutOfBlockModificationTrackerFactoryTestImpl::class.java
+        KotlinModificationTrackerFactory::class.java,
+        KotlinStaticModificationTrackerFactory::class.java
     )
-    registerService(KtDeclarationProviderFactory::class.java, object : KtDeclarationProviderFactory() {
-        override fun createDeclarationProvider(searchScope: GlobalSearchScope): DeclarationProvider {
-            return DeclarationProviderTestImpl(searchScope, allKtFiles.filter { searchScope.contains(it.virtualFile) })
-        }
-    })
-    registerService(KtPackageProviderFactory::class.java, object : KtPackageProviderFactory() {
-        override fun createPackageProvider(searchScope: GlobalSearchScope): KtPackageProvider {
-            return KtPackageProviderTestImpl(searchScope, allKtFiles.filter { searchScope.contains(it.virtualFile) })
-        }
-    })
+    registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
+    registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
     reRegisterJavaElementFinder(this)
 }
 

@@ -17,7 +17,7 @@ dependencies {
     testCompile(project(":idea-frontend-fir"))
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:fir:entrypoint"))
-
+    implementation(project(":analysis:analysis-api-providers"))
 
     compile(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 

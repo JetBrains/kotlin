@@ -298,6 +298,7 @@ extra["compilerArtifactsForIde"] = listOf(
     ":prepare:ide-plugin-dependencies:high-level-api-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fir-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
     ":kotlin-script-runtime",
     ":kotlin-script-util",
     ":kotlin-scripting-common",

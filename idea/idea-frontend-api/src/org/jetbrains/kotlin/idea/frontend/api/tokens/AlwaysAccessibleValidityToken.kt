@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.tokens
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
 public class AlwaysAccessibleValidityToken(project: Project) : ValidityToken() {

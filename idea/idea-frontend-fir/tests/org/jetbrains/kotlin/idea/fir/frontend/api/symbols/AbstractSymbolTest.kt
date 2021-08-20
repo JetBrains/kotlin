@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.fir.frontend.api.symbols
 
 import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.idea.fir.analyseOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.fir.frontend.api.test.framework.AbstractHLApiSingleFileTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.KotlinOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -77,7 +77,7 @@ abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
     }
 
     private fun doOutOfBlockModification(ktFile: KtFile) {
-        ServiceManager.getService(ktFile.project, KotlinOutOfBlockModificationTrackerFactory::class.java)
+        ServiceManager.getService(ktFile.project, KotlinModificationTrackerFactory::class.java)
             .incrementModificationsCount()
     }
 }
