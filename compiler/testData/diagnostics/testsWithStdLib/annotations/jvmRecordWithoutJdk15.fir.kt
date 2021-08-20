@@ -2,7 +2,7 @@
 // !API_VERSION: 1.5
 // SKIP_TXT
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class MyRec(
     val x: String,
     val y: Int,
