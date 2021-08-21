@@ -55,6 +55,36 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("functionCallWithLambdaArgument.kt")
+    public void testFunctionCallWithLambdaArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithLambdaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithNamedArgument.kt")
+    public void testFunctionCallWithNamedArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithNamedArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithNonTrailingLambdaArgument.kt")
+    public void testFunctionCallWithNonTrailingLambdaArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithNonTrailingLambdaArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithSpreadArgument.kt")
+    public void testFunctionCallWithSpreadArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithSpreadArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithVarargArgument.kt")
+    public void testFunctionCallWithVarargArgument() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionCallWithVarargArgument.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithReceiverCall.kt")
     public void testFunctionWithReceiverCall() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/functionWithReceiverCall.kt");

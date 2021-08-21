@@ -180,10 +180,10 @@ internal class KtFirCallResolver(
         val ktArgumentMapping = LinkedHashMap<KtExpression, KtValueParameterSymbol>()
         argumentMapping?.let {
             fun FirExpression.findKtExpression(): KtExpression? {
-                // For spread and named arguments, the source is the KtValueArgument.
+                // For spread, named, and lambda arguments, the source is the KtValueArgument.
                 // For other arguments (including array indices), the source is the KtExpression.
                 return when (this) {
-                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
+                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression, is FirLambdaArgumentExpression ->
                         realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
                     else -> realPsi as? KtExpression
                 }
