@@ -8,5 +8,3 @@ fun call() {
 class JavaClass {
     void javaMethod() {}
 }
-
-// CALL: KtFunctionCall: targetFunction = /JavaClass.javaMethod(): kotlin.Unit
