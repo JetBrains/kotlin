@@ -253,11 +253,11 @@ public final inline class Duration : kotlin.Comparable<kotlin.time.Duration> {
 
     public final operator fun times(scale: kotlin.Int): kotlin.time.Duration
 
-    public final inline fun <T> toComponents(action: (days: kotlin.Int, hours: kotlin.Int, minutes: kotlin.Int, seconds: kotlin.Int, nanoseconds: kotlin.Int) -> T): T
+    public final inline fun <T> toComponents(action: (days: kotlin.Long, hours: kotlin.Int, minutes: kotlin.Int, seconds: kotlin.Int, nanoseconds: kotlin.Int) -> T): T
 
-    public final inline fun <T> toComponents(action: (hours: kotlin.Int, minutes: kotlin.Int, seconds: kotlin.Int, nanoseconds: kotlin.Int) -> T): T
+    public final inline fun <T> toComponents(action: (hours: kotlin.Long, minutes: kotlin.Int, seconds: kotlin.Int, nanoseconds: kotlin.Int) -> T): T
 
-    public final inline fun <T> toComponents(action: (minutes: kotlin.Int, seconds: kotlin.Int, nanoseconds: kotlin.Int) -> T): T
+    public final inline fun <T> toComponents(action: (minutes: kotlin.Long, seconds: kotlin.Int, nanoseconds: kotlin.Int) -> T): T
 
     public final inline fun <T> toComponents(action: (seconds: kotlin.Long, nanoseconds: kotlin.Int) -> T): T
 
