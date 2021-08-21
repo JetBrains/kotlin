@@ -210,33 +210,38 @@ class DurationTest {
     @Test
     fun componentsOfProperSum() {
         repeat(100) {
-            val d = Random.nextInt(365 * 50) // fits in Int seconds
+            val isNsRange = Random.nextBoolean()
+            val d = if (isNsRange)
+                Random.nextLong(365L * 146)
+            else
+                Random.nextLong(365L * 150, 365L * 146_000_000)
             val h = Random.nextInt(24)
             val m = Random.nextInt(60)
             val s = Random.nextInt(60)
             val ns = Random.nextInt(1e9.toInt())
+            val expectedNs = if (isNsRange) ns else ns - (ns % NANOS_IN_MILLIS)
             (Duration.days(d) + Duration.hours(h) + Duration.minutes(m) + Duration.seconds(s) + Duration.nanoseconds(ns)).run {
                 toComponents { seconds, nanoseconds ->
-                    assertEquals(d.toLong() * 86400 + h * 3600 + m * 60 + s, seconds)
-                    assertEquals(ns, nanoseconds)
+                    assertEquals(d * 86400 + h * 3600 + m * 60 + s, seconds)
+                    assertEquals(expectedNs, nanoseconds)
                 }
                 toComponents { minutes, seconds, nanoseconds ->
                     assertEquals(d * 1440 + h * 60 + m, minutes)
                     assertEquals(s, seconds)
-                    assertEquals(ns, nanoseconds)
+                    assertEquals(expectedNs, nanoseconds)
                 }
                 toComponents { hours, minutes, seconds, nanoseconds ->
                     assertEquals(d * 24 + h, hours)
                     assertEquals(m, minutes)
                     assertEquals(s, seconds)
-                    assertEquals(ns, nanoseconds)
+                    assertEquals(expectedNs, nanoseconds)
                 }
                 toComponents { days, hours, minutes, seconds, nanoseconds ->
                     assertEquals(d, days)
                     assertEquals(h, hours)
                     assertEquals(m, minutes)
                     assertEquals(s, seconds)
-                    assertEquals(ns, nanoseconds)
+                    assertEquals(expectedNs, nanoseconds)
                 }
             }
         }
@@ -251,6 +256,35 @@ class DurationTest {
                 assertEquals(31, minutes)
                 assertEquals(31, seconds)
                 assertEquals(500_000_000, nanoseconds)
+            }
+        }
+    }
+
+    @Test
+    fun componentsOfInfinity() {
+        for (d in listOf(Duration.INFINITE, -Duration.INFINITE)) {
+            val expected = if (d.isPositive()) Long.MAX_VALUE else Long.MIN_VALUE
+            d.toComponents { seconds, nanoseconds ->
+                assertEquals(expected, seconds)
+                assertEquals(0, nanoseconds)
+            }
+            d.toComponents { minutes: Long, seconds: Int, nanoseconds: Int ->
+                assertEquals(expected, minutes)
+                assertEquals(0, seconds)
+                assertEquals(0, nanoseconds)
+            }
+            d.toComponents { hours, minutes, seconds, nanoseconds ->
+                assertEquals(expected, hours)
+                assertEquals(0, minutes)
+                assertEquals(0, seconds)
+                assertEquals(0, nanoseconds)
+            }
+            d.toComponents { days, hours, minutes, seconds, nanoseconds ->
+                assertEquals(expected, days)
+                assertEquals(0, hours)
+                assertEquals(0, minutes)
+                assertEquals(0, seconds)
+                assertEquals(0, nanoseconds)
             }
         }
     }

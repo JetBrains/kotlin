@@ -444,12 +444,13 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * - `minutes` represents the whole number of minutes in this duration, and its absolute value is less than 60;
      * - `hours` represents the whole number of hours in this duration, and its absolute value is less than 24;
      * - `days` represents the whole number of days in this duration.
-     *   If the value doesn't fit in [Int] range, i.e. it's greater than [Int.MAX_VALUE] or less than [Int.MIN_VALUE],
-     *   it is coerced into that range.
+     *
+     *   Infinite durations are represented as either [Long.MAX_VALUE] days, or [Long.MIN_VALUE] days (depending on the sign of infinity),
+     *   and zeroes in the lower components.
      */
-    public inline fun <T> toComponents(action: (days: Int, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T {
+    public inline fun <T> toComponents(action: (days: Long, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T {
         contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
-        return action(toInt(DurationUnit.DAYS), hoursComponent, minutesComponent, secondsComponent, nanosecondsComponent)
+        return action(inWholeDays, hoursComponent, minutesComponent, secondsComponent, nanosecondsComponent)
     }
 
     /**
@@ -460,12 +461,13 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * - `seconds` represents the whole number of seconds in this duration, and its absolute value is less than 60;
      * - `minutes` represents the whole number of minutes in this duration, and its absolute value is less than 60;
      * - `hours` represents the whole number of hours in this duration.
-     *   If the value doesn't fit in [Int] range, i.e. it's greater than [Int.MAX_VALUE] or less than [Int.MIN_VALUE],
-     *   it is coerced into that range.
+     *
+     *   Infinite durations are represented as either [Long.MAX_VALUE] hours, or [Long.MIN_VALUE] hours (depending on the sign of infinity),
+     *   and zeroes in the lower components.
      */
-    public inline fun <T> toComponents(action: (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T {
+    public inline fun <T> toComponents(action: (hours: Long, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T {
         contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
-        return action(toInt(DurationUnit.HOURS), minutesComponent, secondsComponent, nanosecondsComponent)
+        return action(inWholeHours, minutesComponent, secondsComponent, nanosecondsComponent)
     }
 
     /**
@@ -475,12 +477,13 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * - `nanoseconds` represents the whole number of nanoseconds in this duration, and its absolute value is less than 1_000_000_000;
      * - `seconds` represents the whole number of seconds in this duration, and its absolute value is less than 60;
      * - `minutes` represents the whole number of minutes in this duration.
-     *   If the value doesn't fit in [Int] range, i.e. it's greater than [Int.MAX_VALUE] or less than [Int.MIN_VALUE],
-     *   it is coerced into that range.
+     *
+     *   Infinite durations are represented as either [Long.MAX_VALUE] minutes, or [Long.MIN_VALUE] minutes (depending on the sign of infinity),
+     *   and zeroes in the lower components.
      */
-    public inline fun <T> toComponents(action: (minutes: Int, seconds: Int, nanoseconds: Int) -> T): T {
+    public inline fun <T> toComponents(action: (minutes: Long, seconds: Int, nanoseconds: Int) -> T): T {
         contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
-        return action(toInt(DurationUnit.MINUTES), secondsComponent, nanosecondsComponent)
+        return action(inWholeMinutes, secondsComponent, nanosecondsComponent)
     }
 
     /**
@@ -489,8 +492,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      *
      * - `nanoseconds` represents the whole number of nanoseconds in this duration, and its absolute value is less than 1_000_000_000;
      * - `seconds` represents the whole number of seconds in this duration.
-     *   If the value doesn't fit in [Long] range, i.e. it's greater than [Long.MAX_VALUE] or less than [Long.MIN_VALUE],
-     *   it is coerced into that range.
+     *
+     *   Infinite durations are represented as either [Long.MAX_VALUE] seconds, or [Long.MIN_VALUE] seconds (depending on the sign of infinity),
+     *   and zero nanoseconds.
      */
     public inline fun <T> toComponents(action: (seconds: Long, nanoseconds: Int) -> T): T {
         contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
@@ -728,41 +732,38 @@ public value class Duration internal constructor(private val rawValue: Long) : C
             val isNegative = isNegative()
             buildString {
                 if (isNegative) append('-')
-                absoluteValue.run {
-                    toComponents { _, hours, minutes, seconds, nanoseconds ->
-                        val days = inWholeDays
-                        val hasDays = days != 0L
-                        val hasHours = hours != 0
-                        val hasMinutes = minutes != 0
-                        val hasSeconds = seconds != 0 || nanoseconds != 0
-                        var components = 0
-                        if (hasDays) {
-                            append(days).append('d')
-                            components++
-                        }
-                        if (hasHours || (hasDays && (hasMinutes || hasSeconds))) {
-                            if (components++ > 0) append(' ')
-                            append(hours).append('h')
-                        }
-                        if (hasMinutes || (hasSeconds && (hasHours || hasDays))) {
-                            if (components++ > 0) append(' ')
-                            append(minutes).append('m')
-                        }
-                        if (hasSeconds) {
-                            if (components++ > 0) append(' ')
-                            when {
-                                seconds != 0 || hasDays || hasHours || hasMinutes ->
-                                    appendFractional(seconds, nanoseconds, 9, "s", isoZeroes = false)
-                                nanoseconds >= 1_000_000 ->
-                                    appendFractional(nanoseconds / 1_000_000, nanoseconds % 1_000_000, 6, "ms", isoZeroes = false)
-                                nanoseconds >= 1_000 ->
-                                    appendFractional(nanoseconds / 1_000, nanoseconds % 1_000, 3, "us", isoZeroes = false)
-                                else ->
-                                    append(nanoseconds).append("ns")
-                            }
-                        }
-                        if (isNegative && components > 1) insert(1, '(').append(')')
+                absoluteValue.toComponents { days, hours, minutes, seconds, nanoseconds ->
+                    val hasDays = days != 0L
+                    val hasHours = hours != 0
+                    val hasMinutes = minutes != 0
+                    val hasSeconds = seconds != 0 || nanoseconds != 0
+                    var components = 0
+                    if (hasDays) {
+                        append(days).append('d')
+                        components++
                     }
+                    if (hasHours || (hasDays && (hasMinutes || hasSeconds))) {
+                        if (components++ > 0) append(' ')
+                        append(hours).append('h')
+                    }
+                    if (hasMinutes || (hasSeconds && (hasHours || hasDays))) {
+                        if (components++ > 0) append(' ')
+                        append(minutes).append('m')
+                    }
+                    if (hasSeconds) {
+                        if (components++ > 0) append(' ')
+                        when {
+                            seconds != 0 || hasDays || hasHours || hasMinutes ->
+                                appendFractional(seconds, nanoseconds, 9, "s", isoZeroes = false)
+                            nanoseconds >= 1_000_000 ->
+                                appendFractional(nanoseconds / 1_000_000, nanoseconds % 1_000_000, 6, "ms", isoZeroes = false)
+                            nanoseconds >= 1_000 ->
+                                appendFractional(nanoseconds / 1_000, nanoseconds % 1_000, 3, "us", isoZeroes = false)
+                            else ->
+                                append(nanoseconds).append("ns")
+                        }
+                    }
+                    if (isNegative && components > 1) insert(1, '(').append(')')
                 }
             }
         }
@@ -822,9 +823,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     public fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
         append("PT")
-        val absoluteValue = this@Duration.absoluteValue
-        absoluteValue.toComponents { _, minutes, seconds, nanoseconds ->
-            var hours = absoluteValue.inWholeHours
+        this@Duration.absoluteValue.toComponents { hours, minutes, seconds, nanoseconds ->
+            @Suppress("NAME_SHADOWING")
+            var hours = hours
             if (isInfinite()) {
                 // use large enough value instead of Long.MAX_VALUE
                 hours = 9_999_999_999_999
