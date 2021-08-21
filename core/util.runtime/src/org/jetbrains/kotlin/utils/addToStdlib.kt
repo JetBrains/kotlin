@@ -184,3 +184,13 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
         value
     }
 }
+
+inline fun <T> T.applyIf(`if`: Boolean, body: T.() -> T): T =
+    if (`if`) body() else this
+
+
+inline fun <T> Boolean.ifTrue(body: () -> T?): T? =
+    if (this) body() else null
+
+inline fun <T> Boolean.ifFalse(body: () -> T?): T? =
+    if (!this) body() else null

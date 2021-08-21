@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.providers.getModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic

@@ -9,6 +9,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.analysis.providers.KotlinModuleInfoProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.ModuleRegistrarPreAnalysisHandler
 import org.jetbrains.kotlin.idea.fir.low.level.api.compiler.based.TestModuleInfoProvider

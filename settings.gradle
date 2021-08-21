@@ -327,7 +327,8 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:high-level-api-for-ide",
             ":prepare:ide-plugin-dependencies:high-level-api-fir-for-ide",
             ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide"
+            ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
+            ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide"
 }
 
 void intellij(String imlPath) {
@@ -442,7 +443,9 @@ include ":generators:frontend-api-generator",
         ":idea-frontend-fir:idea-frontend-fir-generator",
         ":idea-frontend-fir",
         ":idea-frontend-api",
-        ":analysis:analysis-api-providers"
+        ":analysis:analysis-api-providers",
+        ":analysis:symbol-light-classes"
+
 
 if (buildProperties.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"

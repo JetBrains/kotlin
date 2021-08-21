@@ -19,12 +19,12 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.idea.asJava.applyIf
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.tryCollectDesignation
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class ConeTypeIdeRenderer(
     private val session: FirSession,

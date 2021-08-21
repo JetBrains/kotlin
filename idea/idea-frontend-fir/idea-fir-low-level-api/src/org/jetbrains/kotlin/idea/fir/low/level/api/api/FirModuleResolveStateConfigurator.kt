@@ -29,13 +29,9 @@ abstract class FirModuleResolveStateConfigurator {
     abstract fun getModuleSourceScope(moduleInfo: ModuleSourceInfoBase): GlobalSearchScope
     abstract fun createScopeForModuleLibraries(moduleInfo: ModuleSourceInfoBase): GlobalSearchScope
     abstract fun createSealedInheritorsProvider(): SealedClassInheritorsProvider
-    abstract fun getModuleInfoFor(element: KtElement): ModuleInfo
 
     abstract fun configureSourceSession(session: FirSession)
 }
 
 val Project.stateConfigurator: FirModuleResolveStateConfigurator
     get() = ServiceManager.getService(this, FirModuleResolveStateConfigurator::class.java)
-
-fun KtElement.getModuleInfo(): ModuleInfo =
-    project.stateConfigurator.getModuleInfoFor(this)

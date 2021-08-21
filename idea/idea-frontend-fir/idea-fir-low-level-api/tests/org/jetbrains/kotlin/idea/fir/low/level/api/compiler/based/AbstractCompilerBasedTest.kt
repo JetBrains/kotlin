@@ -14,6 +14,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.providers.KotlinModuleInfoProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticModificationTrackerFactory
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
-import org.jetbrains.kotlin.idea.asJava.IDEKotlinAsJavaFirSupport
 import org.jetbrains.kotlin.idea.fir.low.level.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.test.base.SealedClassInheritorsProviderTestImpl
@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransform
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider
+import org.jetbrains.kotlin.light.classes.symbol.IDEKotlinAsJavaFirSupport
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -190,7 +191,7 @@ class ModuleRegistrarPreAnalysisHandler(
                 testServices,
                 parentDisposable
             )
-            (project as MockProject).registerTestServices(configurator, allKtFiles)
+            (project as MockProject).registerTestServices(configurator, allKtFiles, testServices)
         }
     }
 }
@@ -233,7 +234,6 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
     testServices: TestServices,
     private val parentDisposable: Disposable,
 ) : FirModuleResolveStateConfigurator() {
-    private val moduleInfoProvider = testServices.moduleInfoProvider
     private val compilerConfigurationProvider = testServices.compilerConfigurationProvider
     private val librariesScope = ProjectScope.getLibrariesScope(project)//todo incorrect?
     private val sealedClassInheritorsProvider = SealedClassInheritorsProviderTestImpl()
@@ -282,11 +282,6 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
         return sealedClassInheritorsProvider
     }
 
-    override fun getModuleInfoFor(element: KtElement): ModuleInfo {
-        val containingFile = element.containingKtFile
-        return moduleInfoProvider.getModuleInfoByKtFile(containingFile)
-    }
-
     override fun configureSourceSession(session: FirSession) {
     }
 }
@@ -294,6 +289,7 @@ class FirModuleResolveStateConfiguratorForSingleModuleTestImpl(
 fun MockProject.registerTestServices(
     configurator: FirModuleResolveStateConfiguratorForSingleModuleTestImpl,
     allKtFiles: List<KtFile>,
+    testServices: TestServices,
 ) {
     registerService(
         FirModuleResolveStateConfigurator::class.java,
@@ -306,7 +302,17 @@ fun MockProject.registerTestServices(
     )
     registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
     registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
+    registerService(KotlinModuleInfoProvider::class.java, TestKotlinModuleInfoProvider(testServices))
     reRegisterJavaElementFinder(this)
+}
+
+private class TestKotlinModuleInfoProvider(testServices: TestServices): KotlinModuleInfoProvider() {
+    private val moduleInfoProvider = testServices.moduleInfoProvider
+    override fun getModuleInfo(element: KtElement): ModuleInfo {
+        val containingFile = element.containingKtFile
+        return moduleInfoProvider.getModuleInfoByKtFile(containingFile)
+    }
+
 }
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)

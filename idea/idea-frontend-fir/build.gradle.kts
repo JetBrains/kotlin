@@ -28,6 +28,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(toolsJar())
     testApiJUnit5()
+    testRuntime(project(":analysis:symbol-light-classes"))
 
     testRuntimeOnly(intellijDep()) {
         includeJars(
