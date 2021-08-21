@@ -92,12 +92,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Test
-    @TestMetadata("delegatedPropertiesInCompanionObject.kt")
-    public void testDelegatedPropertiesInCompanionObject() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/delegatedPropertiesInCompanionObject.kt");
-    }
-
-    @Test
     @TestMetadata("delegationToJavaInterfaceWithWildcardType.kt")
     public void testDelegationToJavaInterfaceWithWildcardType() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/delegationToJavaInterfaceWithWildcardType.kt");
@@ -1054,6 +1048,28 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("internalNameMangling.kt")
         public void testInternalNameMangling() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/internalNameMangling.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/delegatedProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DelegatedProperty {
+        @Test
+        public void testAllFilesPresentInDelegatedProperty() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("delegateMethodIsNonOverridable.kt")
+        public void testDelegateMethodIsNonOverridable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/delegatedProperty/delegateMethodIsNonOverridable.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatedPropertiesInCompanionObject.kt")
+        public void testDelegatedPropertiesInCompanionObject() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/delegatedProperty/delegatedPropertiesInCompanionObject.kt");
         }
     }
 

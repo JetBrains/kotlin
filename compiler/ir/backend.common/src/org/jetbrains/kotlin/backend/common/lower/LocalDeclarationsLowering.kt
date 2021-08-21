@@ -185,7 +185,8 @@ class LocalDeclarationsLowering(
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
             val field = classContext.capturedValueToField[valueDeclaration] ?: return null
 
-            val receiver = member.dispatchReceiverParameter!!
+            val receiver = member.dispatchReceiverParameter
+                ?: error("No dispatch receiver parameter for ${member.render()}")
             return IrGetFieldImpl(
                 startOffset, endOffset, field.symbol, field.type,
                 receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)

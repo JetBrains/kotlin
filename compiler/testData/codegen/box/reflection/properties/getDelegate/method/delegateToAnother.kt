@@ -11,6 +11,8 @@ class C(var x: Int) {
 
 class D(val c: C) {
     var y by c::x
+    var C.w by C::x
+    var Int.q by Int::x
 }
 
 var x = 1
@@ -40,6 +42,9 @@ fun <T> KMutableProperty1<T, Int>.test(receiver: T) =
 fun <T> KMutableProperty1<T, Int>.test(receiver: T, receiver2: T) =
     test({ getDelegate(receiver) as KMutableProperty1<T, Int> }, { get(receiver2) }, { set(receiver2, it) })
 
+fun <R1, R2> KMutableProperty2<R1, R2, Int>.test(receiver1: R1, receiver2: R2) =
+    test({ getDelegate(receiver1, receiver2) as KMutableProperty1<R2, Int> }, { get(receiver2) }, { set(receiver2, it) })
+
 fun box(): String {
     C::y.test(C(100), C(1))
     C::z.test(C(1))
@@ -47,5 +52,12 @@ fun box(): String {
     ::y.test()
     ::z.test()
     Int::y.test({ getExtensionDelegate() as KMutableProperty1<Int, Int> }, { get(100) }, { set(100, it) })
+
+    val w = D::class.members.single { it.name == "w" } as KMutableProperty2<D, C, Int>
+    w.test(D(C(100)), C(1))
+
+    val q = D::class.members.single { it.name == "q" } as KMutableProperty2<D, Int, Int>
+    q.test({ getExtensionDelegate(D(C(100))) as KMutableProperty1<Int, Int> }, { get(100) }, { set(100, it) })
+
     return "OK"
 }
