@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
 public abstract class KtSymbolInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun getDeprecation(symbol: KtSymbol): Deprecation?
+    public abstract fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): Deprecation?
     public abstract fun getGetterDeprecation(symbol: KtPropertySymbol): Deprecation?
     public abstract fun getSetterDeprecation(symbol: KtPropertySymbol): Deprecation?
 }
@@ -20,6 +22,12 @@ public interface KtSymbolInfoProviderMixIn : KtAnalysisSessionMixIn {
      * Gets the deprecation status of the given symbol. Returns null if the symbol it not deprecated.
      */
     public val KtSymbol.deprecationStatus: Deprecation? get() = analysisSession.symbolInfoProvider.getDeprecation(this)
+
+    /**
+     * Gets the deprecation status of the given symbol. Returns null if the symbol it not deprecated.
+     */
+    public fun KtSymbol.getDeprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): Deprecation? =
+        analysisSession.symbolInfoProvider.getDeprecation(this)
 
     /**
      * Gets the deprecation status of the getter of this property symbol. Returns null if the getter it not deprecated.

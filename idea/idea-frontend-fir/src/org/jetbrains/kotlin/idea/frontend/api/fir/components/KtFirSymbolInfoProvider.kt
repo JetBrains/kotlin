@@ -35,6 +35,17 @@ internal class KtFirSymbolInfoProvider(
         }
     }
 
+    override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): Deprecation? {
+        require(symbol is KtFirSymbol<*>)
+        return symbol.firRef.withFir { firDeclaration ->
+            if (annotationUseSiteTarget != null) {
+                firDeclaration.symbol.getDeprecationForCallSite(annotationUseSiteTarget)
+            } else {
+                firDeclaration.symbol.getDeprecationForCallSite()
+            }
+        }
+    }
+
     override fun getGetterDeprecation(symbol: KtPropertySymbol): Deprecation? {
         require(symbol is KtFirSymbol<*>)
         return symbol.firRef.withFir {

@@ -41,7 +41,7 @@ internal fun isHiddenByDeprecation(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null
 ): Boolean {
     return project.analyzeWithSymbolAsContext(symbol) {
-        symbol.deprecationStatus?.level == DeprecationLevelValue.HIDDEN
+        symbol.getDeprecationStatus(annotationUseSiteTarget)?.level == DeprecationLevelValue.HIDDEN
     }
 }
 
