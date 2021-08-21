@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -185,14 +187,15 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             this.origin = origin
             this.returnType = returnType
         }.apply {
-            var index = 0
-            valueParameters = listOfNotNull(
-                declaration.getter?.dispatchReceiverParameter?.takeIf { !isStatic }?.let {
+            if (!isStatic) {
+                dispatchReceiverParameter = declaration.getter?.dispatchReceiverParameter?.let {
                     // Synthetic methods don't get generic type signatures anyway, so not exactly useful to preserve type parameters.
-                    it.copyTo(this, type = it.type.eraseTypeParameters(), index = index++)
-                },
+                    it.copyTo(this, type = it.type.eraseTypeParameters())
+                }
+            }
+            valueParameters = listOfNotNull(
                 declaration.getter?.extensionReceiverParameter?.let {
-                    it.copyTo(this, type = it.type.eraseTypeParameters(), index = index)
+                    it.copyTo(this, type = it.type.eraseTypeParameters(), index = 0)
                 }
             )
             parent = declaration.parent

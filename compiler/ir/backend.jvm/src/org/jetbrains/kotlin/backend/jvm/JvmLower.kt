@@ -416,6 +416,7 @@ private val jvmFilePhases = listOf(
     typeOperatorLowering,
     replaceKFunctionInvokeWithFunctionInvokePhase,
     kotlinNothingValueExceptionPhase,
+    makePropertyDelegateMethodsStaticPhase,
 
     renameFieldsPhase,
     fakeInliningLocalVariablesLowering,
