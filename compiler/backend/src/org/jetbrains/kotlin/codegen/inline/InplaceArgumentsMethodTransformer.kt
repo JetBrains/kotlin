@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.common.updateMaxStack
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 
@@ -25,7 +24,6 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
             collectSuspensionPoints(methodContext)
 
             transformMethod(methodContext)
-            updateLvtEntriesForMovedInstructions(methodContext)
 
             methodNode.removeUnusedLocalVariables()
             methodNode.updateMaxStack()
@@ -48,7 +46,6 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         val callEndMarker: AbstractInsnNode,
         val args: List<ArgContext>,
         val calls: List<CallContext>,
-        val endLabel: LabelNode
     )
 
     private class ArgContext(
@@ -95,19 +92,8 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
             when {
                 insn.isInplaceCallStartMarker() ->
                     calls.add(parseCall(methodNode, insn, iter))
-                insn.isInplaceCallEndMarker() -> {
-                    val previous = insn.previous
-                    val endLabel =
-                        if (previous.type == AbstractInsnNode.LABEL)
-                            previous as LabelNode
-                        else
-                            LabelNode(Label()).also {
-                                // Make sure each call with inplace arguments has an endLabel
-                                // (we need it to update LVT after transformation).
-                                methodNode.instructions.insertBefore(insn, it)
-                            }
-                    return CallContext(start, insn, args, calls, endLabel)
-                }
+                insn.isInplaceCallEndMarker() ->
+                    return CallContext(start, insn, args, calls)
                 insn.isInplaceArgumentStartMarker() ->
                     args.add(parseArg(methodNode, insn, iter))
                 insn.isInplaceArgumentEndMarker() ->
@@ -352,19 +338,6 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         // Remove call start and call end markers
         insnList.remove(callContext.callStartMarker)
         insnList.remove(callContext.callEndMarker)
-    }
-
-    private fun updateLvtEntriesForMovedInstructions(methodContext: MethodContext) {
-        val insnList = methodContext.methodNode.instructions
-        for ((insn, callContext) in methodContext.varInstructionMoved.entries) {
-            // Extend local variable interval to call end label if needed
-            val lv = methodContext.lvtEntryForInstruction[insn] ?: continue
-            val lvEndIndex = insnList.indexOf(lv.end)
-            val endLabelIndex = insnList.indexOf(callContext.endLabel)
-            if (endLabelIndex > lvEndIndex) {
-                lv.end = callContext.endLabel
-            }
-        }
     }
 
     private fun stripMarkers(methodNode: MethodNode) {
