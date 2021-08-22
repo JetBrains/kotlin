@@ -34,10 +34,18 @@ class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, baseDi
         }
     }
 
-    override val dependencies
-        get() = super.dependencies + when (windowsSdkPartsProvider) {
+    private val windowsHostDependencies by lazy {
+        when (windowsSdkPartsProvider) {
             WindowsSdkPartsProvider.InternalServer -> listOf(windowsKitParts, msvcParts)
             WindowsSdkPartsProvider.Local -> emptyList()
+        }
+    }
+
+    override val dependencies
+        get() = super.dependencies + if (HostManager.hostIsMingw) {
+            windowsHostDependencies
+        } else {
+            emptyList()
         }
 }
 
