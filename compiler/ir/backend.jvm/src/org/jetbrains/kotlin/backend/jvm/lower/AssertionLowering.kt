@@ -140,5 +140,8 @@ fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topL
         }
     }
 
+fun IrField.isAssertionsDisabledField(context: JvmBackendContext) =
+    name.asString() == ASSERTIONS_DISABLED_FIELD_NAME && type == context.irBuiltIns.booleanType && isStatic
+
 fun IrClass.hasAssertionsDisabledField(context: JvmBackendContext) =
-    fields.any { it.name.asString() == ASSERTIONS_DISABLED_FIELD_NAME && it.type == context.irBuiltIns.booleanType && it.isStatic }
+    fields.any { it.isAssertionsDisabledField(context) }
