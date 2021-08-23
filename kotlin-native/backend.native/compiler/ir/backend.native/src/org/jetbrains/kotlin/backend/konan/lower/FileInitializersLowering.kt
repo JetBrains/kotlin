@@ -57,7 +57,7 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
         for (declaration in irFile.declarations) {
             val irField = (declaration as? IrField) ?: (declaration as? IrProperty)?.backingField
             if (irField == null || !irField.needsInitializationAtRuntime || irField.shouldBeInitializedEagerly) continue
-            if (irField.storageKind == FieldStorageKind.SHARED_FROZEN) {
+            if (irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
                 requireGlobalInitializer = true
             } else {
                 requireThreadLocalInitializer = true // Either marked with thread local or only main thread visible.

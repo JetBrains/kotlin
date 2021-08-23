@@ -371,7 +371,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
                             context.llvm.initializersGenerationState.topLevelFields
-                                    .filter { it.storageKind == FieldStorageKind.SHARED_FROZEN }
+                                    .filter { it.storageKind != FieldStorageKind.THREAD_LOCAL }
                                     .filterNot { it.shouldBeInitializedEagerly }
                                     .forEach { initGlobalField(it) }
                             ret(null)
@@ -387,16 +387,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val parameterScope = ParameterScope(fileInitFunction, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
-                            val bbInitGlobals = basicBlock("label_init_global", null, null)
-                            val bbInitThreadLocals = basicBlock("label_init_thread_local", null, null)
-                            condBr(param(0), bbInitGlobals, bbInitThreadLocals)
-                            positionAtEnd(bbInitGlobals)
-                            context.llvm.initializersGenerationState.topLevelFields
-                                    .filter { it.storageKind == FieldStorageKind.GLOBAL }
-                                    .filterNot { it.shouldBeInitializedEagerly }
-                                    .forEach { initGlobalField(it) }
-                            br(bbInitThreadLocals)
-                            positionAtEnd(bbInitThreadLocals)
+                            // TODO: remove unused parameter.
                             context.llvm.initializersGenerationState.topLevelFields
                                     .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
                                     .filterNot { it.shouldBeInitializedEagerly }
