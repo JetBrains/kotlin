@@ -509,41 +509,6 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         }
     }
 
-    @Test
-    fun testRequiresOptIn() = test {
-        // This test confirms the wrong behavior described in KT-48355
-
-        // This compilation is here to initialize the compiler without RequiresOptIn option.
-        // If you remove it, warning disappears.
-        run {
-            code = "1"
-            doCompile
-        }
-
-        run {
-            code = """
-                import kotlin.time.*
-                @OptIn(ExperimentalTime::class)
-                val mark = TimeSource.Monotonic.markNow()
-            """.trimIndent()
-
-            compilationConfiguration = ScriptCompilationConfiguration {
-                compilerOptions("-Xopt-in=kotlin.RequiresOptIn")
-            }
-
-            doErrorCheck
-
-            expect {
-                // This warning is a wrong behavior, it should pass away after fixing KT-48355
-                addError(
-                    2, 2, 2, 7,
-                    "This class can only be used with the compiler argument '-Xopt-in=kotlin.RequiresOptIn'",
-                    "WARNING"
-                )
-            }
-        }
-    }
-
     private val setupDefaultImportsCompletionRun: TestRunConfigurator = {
         compilationConfiguration = ScriptCompilationConfiguration {
             defaultImports(listOf("kotlin.math.atan"))
