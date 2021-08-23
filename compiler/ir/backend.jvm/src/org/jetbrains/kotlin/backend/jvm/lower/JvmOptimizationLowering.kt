@@ -393,6 +393,14 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 dontTouchTemporaryVals.add(safeCall.tmpVal)
             }
 
+            if (expression.origin == IrStatementOrigin.WHEN) {
+                // Don't optimize out 'when' subject - otherwise we might get somewhat weird debugging behavior.
+                val subject = expression.statements.firstOrNull()
+                if (subject is IrVariable) {
+                    dontTouchTemporaryVals.add(subject)
+                }
+            }
+
             expression.transformChildren(this, data)
             removeUnnecessaryTemporaryVariables(expression.statements)
             return expression
