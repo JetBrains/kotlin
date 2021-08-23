@@ -12,10 +12,10 @@ class Test {
 import kotlin.experimental.ExperimentalTypeInference
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R> build(@BuilderInference block: TestInterface<R>.() -> Unit): R = TODO()
+fun <R> build(@<!EXPERIMENTAL_API_USAGE_ERROR!>BuilderInference<!> block: TestInterface<R>.() -> Unit): R = TODO()
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R> build2(@BuilderInference block: TestInterface<R>.() -> Unit): R = TODO()
+fun <R> build2(@<!EXPERIMENTAL_API_USAGE_ERROR!>BuilderInference<!> block: TestInterface<R>.() -> Unit): R = TODO()
 
 class Inv<K>
 

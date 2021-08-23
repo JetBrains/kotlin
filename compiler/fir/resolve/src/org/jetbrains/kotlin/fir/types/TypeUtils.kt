@@ -156,7 +156,8 @@ fun <T : ConeKotlinType> T.withNullability(
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> this
         }
-        is ConeStubType -> ConeStubType(variable, nullability)
+        is ConeStubTypeForBuilderInference -> ConeStubTypeForBuilderInference(variable, nullability)
+        is ConeStubTypeForTypeVariableInSubtyping -> ConeStubTypeForTypeVariableInSubtyping(variable, nullability)
         is ConeDefinitelyNotNullType -> when (nullability) {
             ConeNullability.NOT_NULL -> this
             ConeNullability.NULLABLE -> original.withNullability(nullability, typeContext)

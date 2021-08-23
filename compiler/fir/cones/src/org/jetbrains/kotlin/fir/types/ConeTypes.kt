@@ -281,7 +281,7 @@ fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): Con
     return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
 }
 
-class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
+sealed class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
 
@@ -307,6 +307,9 @@ class ConeStubType(val variable: ConeTypeVariable, override val nullability: Con
         return result
     }
 }
+
+class ConeStubTypeForBuilderInference(variable: ConeTypeVariable, nullability: ConeNullability) : ConeStubType(variable, nullability)
+class ConeStubTypeForTypeVariableInSubtyping(variable: ConeTypeVariable, nullability: ConeNullability) : ConeStubType(variable, nullability)
 
 open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMarker? = null) : TypeVariableMarker {
     val typeConstructor = ConeTypeVariableTypeConstructor(name, originalTypeParameter)

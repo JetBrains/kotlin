@@ -13276,6 +13276,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("stubTypeForSubtyping.kt")
+            public void testStubTypeForSubtyping() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/stubTypeForSubtyping.kt");
+            }
+
+            @Test
             @TestMetadata("tooEagerSmartcast.kt")
             public void testTooEagerSmartcast() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/tooEagerSmartcast.kt");

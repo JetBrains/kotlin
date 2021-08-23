@@ -67,7 +67,7 @@ class FirBuilderInferenceSession(
 
     private fun ConeKotlinType.containsStubType(): Boolean {
         return this.contains {
-            it is ConeStubType
+            it is ConeStubTypeForBuilderInference
         }
     }
 

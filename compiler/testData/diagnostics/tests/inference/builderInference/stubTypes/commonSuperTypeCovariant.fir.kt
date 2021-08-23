@@ -1,7 +1,6 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -EXPERIMENTAL_IS_NOT_ENABLED -UNUSED_VARIABLE
 // WITH_RUNTIME
-// FIR_IDE_IGNORE
 
 // FILE: Test.java
 
@@ -13,10 +12,10 @@ class Test {
 import kotlin.experimental.ExperimentalTypeInference
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R1> build(@BuilderInference block: TestInterface<R1>.() -> Unit): R1 = TODO()
+fun <R1> build(@<!EXPERIMENTAL_API_USAGE_ERROR!>BuilderInference<!> block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 @UseExperimental(ExperimentalTypeInference::class)
-fun <R2> build2(@BuilderInference block: TestInterface<R2>.() -> Unit): R2 = TODO()
+fun <R2> build2(@<!EXPERIMENTAL_API_USAGE_ERROR!>BuilderInference<!> block: TestInterface<R2>.() -> Unit): R2 = TODO()
 
 class Out<out K>
 
