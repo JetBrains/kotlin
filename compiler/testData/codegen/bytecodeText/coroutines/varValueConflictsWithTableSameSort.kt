@@ -43,6 +43,8 @@ fun box(): String {
 
 // 1 LOCALVARIABLE i Ljava/lang/String; L.* 3
 // 1 PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1.L\$0 : Ljava/lang/Object;
+/* 1 load in the catch (e: Throwable) { throw e } block which is implicitly wrapped around try/finally */
+// 1 ALOAD 3\s+ATHROW
 /* 1 load in result = s */
 // 1 ALOAD 3\s+PUTFIELD kotlin/jvm/internal/Ref\$ObjectRef\.element
 /* 1 load in spill */
@@ -50,7 +52,7 @@ fun box(): String {
 /* 2 loads in println(s) */
 // 2 ALOAD 3\s+INVOKEVIRTUAL java/io/PrintStream.println \(Ljava/lang/Object;\)V
 /* But no further load when spilling 's' to the continuation */
-// 4 ALOAD 3
+// 5 ALOAD 3
 
 // We merge LVT records for two consequent branches, but we split the local over the restore code.
 // JVM_IR_TEMPLATES

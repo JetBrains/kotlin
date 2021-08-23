@@ -64,6 +64,14 @@ class TemporaryValsAnalyzer {
             }
         }
 
+        // Some coroutine transformations require exception handler to start from an ASTORE instruction.
+        for (tcb in methodNode.tryCatchBlocks) {
+            val handlerFirstInsn = tcb.handler.next ?: continue
+            if (handlerFirstInsn.opcode == Opcodes.ASTORE) {
+                potentiallyTemporaryStores.remove(handlerFirstInsn)
+            }
+        }
+
         // If the method is big, and we couldn't eliminate enough temporary variable store candidates,
         // bail out, treat all variables as non-temporary.
         // Here we estimate memory required to store all relevant information as O(N * M * K),
