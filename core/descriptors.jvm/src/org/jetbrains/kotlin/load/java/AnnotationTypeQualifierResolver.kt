@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationTargetMapper
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 
 class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
@@ -84,7 +82,6 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         if (annotationFqname != null && annotationFqname in JSPECIFY_DEFAULT_ANNOTATIONS) {
             return javaTypeEnhancementState.getReportLevelForAnnotation(annotationFqname)
         }
-
         return resolveJsr305AnnotationState(annotation)
     }
 
@@ -151,18 +148,21 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
 
     private fun String.toKotlinTargetNames() = JavaAnnotationTargetMapper.mapJavaTargetArgumentByName(this).map { it.name }
 
-    private fun ConstantValue<*>.mapConstantToQualifierApplicabilityTypes(
-        findPredicate: EnumValue.(AnnotationQualifierApplicabilityType) -> Boolean
-    ): List<AnnotationQualifierApplicabilityType> =
+    private fun ConstantValue<*>.toEnumNames(): List<String> =
         when (this) {
-            is ArrayValue -> value.flatMap { it.mapConstantToQualifierApplicabilityTypes(findPredicate) }
-            is EnumValue -> listOfNotNull(AnnotationQualifierApplicabilityType.values().find { findPredicate(it) })
+            is ArrayValue -> value.flatMap { it.toEnumNames() }
+            is EnumValue -> listOf(enumEntryName.identifier)
             else -> emptyList()
         }
 
+    private fun ConstantValue<*>.mapConstantToQualifierApplicabilityTypes(
+        findPredicate: String.(AnnotationQualifierApplicabilityType) -> Boolean
+    ): List<AnnotationQualifierApplicabilityType> =
+        toEnumNames().mapNotNull { name -> AnnotationQualifierApplicabilityType.values().find { name.findPredicate(it) } }
+
     private fun ConstantValue<*>.mapJavaConstantToQualifierApplicabilityTypes(): List<AnnotationQualifierApplicabilityType> =
-        mapConstantToQualifierApplicabilityTypes { enumEntryName.identifier == it.javaTarget }
+        mapConstantToQualifierApplicabilityTypes { this == it.javaTarget }
 
     private fun ConstantValue<*>.mapKotlinConstantToQualifierApplicabilityTypes(): List<AnnotationQualifierApplicabilityType> =
-        mapConstantToQualifierApplicabilityTypes { enumEntryName.identifier in it.javaTarget.toKotlinTargetNames() }
+        mapConstantToQualifierApplicabilityTypes { this in it.javaTarget.toKotlinTargetNames() }
 }
