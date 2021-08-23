@@ -5,7 +5,7 @@ object A {
 // JVM_TEMPLATES
 // Field initialized in constant pool
 // A super constructor call and INSTANCE put
-// 1 ALOAD 0
+// 2 ALOAD 0
 
 // JVM_IR_TEMPLATES
 // JVM_IR generates 'dup' instead of 'astore 0; aload 0' in <clinit> method of object class

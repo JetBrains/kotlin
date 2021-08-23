@@ -53,7 +53,7 @@ class OptimizationMethodVisitor(
         RedundantCheckCastEliminationMethodTransformer(),
         ConstantConditionEliminationMethodTransformer(),
         RedundantBoxingMethodTransformer(generationState),
-        TemporaryVariablesEliminationTransformer(),
+        TemporaryVariablesEliminationTransformer(generationState),
         StackPeepholeOptimizationsTransformer(),
         PopBackwardPropagationTransformer(),
         DeadCodeEliminationMethodTransformer(),

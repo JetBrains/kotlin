@@ -17,7 +17,7 @@ fun infiniteLoop() {
 }
 
 // JVM_TEMPLATES
-// 2 GOTO L6
+// 2 GOTO L7
 // 1 GOTO L1
 
 // JVM_IR_TEMPLATES
