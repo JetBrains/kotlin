@@ -1,7 +1,7 @@
 val p1: Int = 1 - 1
-val p2: Long = 1 - 1
-val p3: Byte = 1 - 1
-val p4: Short = 1 - 1
+val p2: Long = <!TYPE_MISMATCH!>1 - 1<!>
+val p3: Byte = <!TYPE_MISMATCH!>1 - 1<!>
+val p4: Short = <!TYPE_MISMATCH!>1 - 1<!>
 
 val l1: Long = 1 - 1.toLong()
 val l2: Byte = <!TYPE_MISMATCH!>1 - 1.toLong()<!>

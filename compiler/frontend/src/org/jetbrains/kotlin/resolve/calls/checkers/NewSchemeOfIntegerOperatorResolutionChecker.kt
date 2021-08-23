@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -52,7 +53,14 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     }
 
     @JvmStatic
-    fun checkArgument(expectedType: KotlinType, argument: KtExpression, trace: BindingTrace, moduleDescriptor: ModuleDescriptor) {
+    fun checkArgument(
+        expectedType: KotlinType,
+        argument: KtExpression,
+        languageVersionSettings: LanguageVersionSettings,
+        trace: BindingTrace,
+        moduleDescriptor: ModuleDescriptor
+    ) {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)) return
         val type = expectedType.lowerIfFlexible()
         if (type.isPrimitiveNumberOrNullableType()) {
             checkArgumentImpl(type, KtPsiUtil.deparenthesize(argument)!!, trace, moduleDescriptor)

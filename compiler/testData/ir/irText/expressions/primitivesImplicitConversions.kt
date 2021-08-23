@@ -1,3 +1,4 @@
+// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // IGNORE_BACKEND_FIR: ANY
 // For reasons this test is ignored, go to KT-46419
 

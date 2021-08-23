@@ -20258,6 +20258,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt48361_disabled.kt")
+            public void testKt48361_disabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/kt48361_disabled.kt");
+            }
+
+            @Test
+            @TestMetadata("kt48361_enabled.kt")
+            public void testKt48361_enabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/kt48361_enabled.kt");
+            }
+
+            @Test
             @TestMetadata("literalReceiverWithIntegerValueType.kt")
             public void testLiteralReceiverWithIntegerValueType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/literalReceiverWithIntegerValueType.kt");
