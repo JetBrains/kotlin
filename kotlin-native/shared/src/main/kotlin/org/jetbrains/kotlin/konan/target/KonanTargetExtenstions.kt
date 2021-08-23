@@ -14,8 +14,8 @@ fun KonanTarget.supportsCodeCoverage(): Boolean =
 fun KonanTarget.supportsMimallocAllocator(): Boolean =
      when(this) {
         is KonanTarget.LINUX_X64 -> true
-        is KonanTarget.MINGW_X86 -> true
-        is KonanTarget.MINGW_X64 -> true
+        is KonanTarget.MINGW_X86 -> HostManager.hostIsMingw
+        is KonanTarget.MINGW_X64 -> HostManager.hostIsMingw
         is KonanTarget.MACOS_X64 -> true
         is KonanTarget.LINUX_ARM64 -> true
         is KonanTarget.LINUX_ARM32_HFP -> true
