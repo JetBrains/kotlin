@@ -26,23 +26,9 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.storage.StorageManager
 
+typealias TypeQualifierWithApplicability = Pair<AnnotationDescriptor, Set<AnnotationQualifierApplicabilityType>>
+
 class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
-    class TypeQualifierWithApplicability(
-        private val typeQualifier: AnnotationDescriptor,
-        private val applicability: Set<AnnotationQualifierApplicabilityType>
-    ) {
-        operator fun component1() = typeQualifier
-
-        // We explicitly state that while JSR-305 TYPE_USE annotations effectively should be applied to every type
-        // they are not applicable for type parameter bounds because it would be a breaking change otherwise.
-        // Only defaulting annotations from jspecify are applicable
-        operator fun component2() =
-            if (AnnotationQualifierApplicabilityType.TYPE_USE in applicability)
-                applicability + ALL_APPLICABILITY_EXCEPT_TYPE_PARAMETER_BOUNDS
-            else
-                applicability
-    }
-
     private val resolvedNicknames =
         storageManager.createMemoizedFunctionWithNullableValues { klass: ClassDescriptor ->
             if (klass.annotations.hasAnnotation(TYPE_QUALIFIER_NICKNAME_FQNAME))
@@ -86,8 +72,15 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         val annotationClass = annotation.annotationClass ?: return null
         val typeQualifierDefault = annotationClass.annotations.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) ?: return null
         val typeQualifier = annotationClass.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null } ?: return null
-        val applicability = typeQualifierDefault.enumArguments(onlyValue = true)
+        val explicitApplicability = typeQualifierDefault.enumArguments(onlyValue = true)
             .mapNotNullTo(mutableSetOf()) { JAVA_APPLICABILITY_TYPES[it] }
+        // We explicitly state that while JSR-305 TYPE_USE annotations effectively should be applied to every type
+        // they are not applicable for type parameter bounds because it would be a breaking change otherwise.
+        // Only defaulting annotations from jspecify are applicable
+        val applicability = if (AnnotationQualifierApplicabilityType.TYPE_USE in explicitApplicability)
+            explicitApplicability + ALL_APPLICABILITY_EXCEPT_TYPE_PARAMETER_BOUNDS
+        else
+            explicitApplicability
         return TypeQualifierWithApplicability(typeQualifier, applicability)
     }
 
