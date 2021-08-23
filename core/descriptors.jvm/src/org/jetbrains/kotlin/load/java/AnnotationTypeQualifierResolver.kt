@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.load.java.components.JavaAnnotationTargetMapper
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -90,13 +91,11 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         return TypeQualifierWithApplicability(typeQualifier, applicability)
     }
 
-    fun resolveAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
-        val annotatedClass = annotation.annotationClass ?: return null
-        val target = annotatedClass.annotations.findAnnotation(JvmAnnotationNames.TARGET_ANNOTATION) ?: return null
-        val elementTypes = target.enumArguments(onlyValue = false)
-            .mapNotNullTo(mutableSetOf()) { KOTLIN_APPLICABILITY_TYPES[it] }
-
-        return TypeQualifierWithApplicability(annotation, elementTypes)
+    fun isTypeUseAnnotation(annotation: AnnotationDescriptor): Boolean {
+        val annotatedClass = annotation.annotationClass ?: return false
+        // Expect that `@Target` has been mapped to its Kotlin equivalent.
+        val target = annotatedClass.annotations.findAnnotation(StandardNames.FqNames.target) ?: return false
+        return target.enumArguments(onlyValue = false).any { it == KotlinTarget.TYPE.name }
     }
 
     fun resolveJsr305AnnotationState(annotation: AnnotationDescriptor): ReportLevel {
@@ -112,10 +111,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     private fun ClassDescriptor.migrationAnnotationStatus(): ReportLevel? {
         val enumValue = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.enumArguments(onlyValue = false)?.firstOrNull()
             ?: return null
-
-        javaTypeEnhancementState.jsr305.migrationLevel?.let { return it }
-
-        return when (enumValue) {
+        return javaTypeEnhancementState.jsr305.migrationLevel ?: when (enumValue) {
             "STRICT" -> ReportLevel.STRICT
             "WARN" -> ReportLevel.WARN
             "IGNORE" -> ReportLevel.IGNORE
@@ -143,14 +139,6 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         val JAVA_APPLICABILITY_TYPES = buildMap<String, AnnotationQualifierApplicabilityType> {
             for (type in AnnotationQualifierApplicabilityType.values()) {
                 getOrPut(type.javaTarget) { type }
-            }
-        }
-
-        val KOTLIN_APPLICABILITY_TYPES = buildMap<String, AnnotationQualifierApplicabilityType> {
-            for (type in AnnotationQualifierApplicabilityType.values()) {
-                for (target in JavaAnnotationTargetMapper.mapJavaTargetArgumentByName(type.javaTarget)) {
-                    getOrPut(target.name) { type }
-                }
             }
         }
 
