@@ -41765,6 +41765,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt48331.kt")
+        public void testKt48331() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/kt48331.kt");
+        }
+
+        @Test
         @TestMetadata("kt9717.kt")
         public void testKt9717() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/kt9717.kt");
@@ -41789,9 +41795,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("packagePrivate.kt")
+        public void testPackagePrivate() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/packagePrivate.kt");
+        }
+
+        @Test
         @TestMetadata("protectedFromLambda.kt")
         public void testProtectedFromLambda() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/protectedFromLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("protectedSuper.kt")
+        public void testProtectedSuper() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/protectedSuper.kt");
         }
 
         @Test

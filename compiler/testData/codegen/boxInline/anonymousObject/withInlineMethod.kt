@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_MULTI_MODULE: JVM, JVM_IR, JVM_MULTI_MODULE_OLD_AGAINST_IR, JVM_MULTI_MODULE_IR_AGAINST_OLD
 // FILE: 1.kt
 package test
 
@@ -6,10 +9,9 @@ interface I {
 }
 
 inline fun test(crossinline h: () -> String) = object : I {
-    // TODO: actually call g() in f() -- currently, the inliner fails to detect
-    //       an inlined read of h's field because it uses a copy of `this`
-    //       as a receiver
-    override fun f(): String = h()
+    // TODO: this does not work because the inliner is not correctly remapping the capture.
+    override fun f(): String = g()
+    // TODO: and this does not work in JVM_IR because there is a redundant accessor.
     inline fun g(): String = h()
 }
 

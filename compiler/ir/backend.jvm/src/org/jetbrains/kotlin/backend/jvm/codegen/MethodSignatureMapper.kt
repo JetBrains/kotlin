@@ -381,7 +381,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     internal fun mapToCallableMethod(expression: IrCall, caller: IrFunction?): IrCallableMethod {
         val callee = expression.symbol.owner
         val calleeParent = expression.superQualifierSymbol?.owner
-            ?: expression.dispatchReceiver?.type?.classOrNull?.owner
+            ?: expression.dispatchReceiver?.type?.classOrNull?.owner?.let {
+                // Calling Object class methods on interfaces is permitted, but they're not interface methods.
+                if (it.isJvmInterface && callee.isMethodOfAny()) context.irBuiltIns.anyClass.owner else it
+            }
             ?: callee.parentAsClass // Static call or type parameter
         val owner = typeMapper.mapOwner(calleeParent)
 

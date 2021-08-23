@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
-import org.jetbrains.kotlin.backend.jvm.lower.isPrivate
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -91,7 +91,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         if (implFun.isInline)
             return null
 
-        if (implFun is IrConstructor && implFun.visibility.isPrivate) {
+        if (implFun is IrConstructor && DescriptorVisibilities.isPrivate(implFun.visibility)) {
             // Kotlin generates constructor accessors differently from Java.
             // TODO more precise accessibility check (see SyntheticAccessorLowering::isAccessible)
             return null

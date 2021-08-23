@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.org.objectweb.asm.Opcodes
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     data class LambdaCallSite(val scope: IrDeclaration, val crossinline: Boolean)
@@ -232,8 +234,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // We have a protected member.
         // It is accessible from a synthetic proxy class (created by LambdaMetafactory)
         // if it belongs to the current class.
-        val outerClassInfo = getOuterClassInfo() ?: return false
-        return outerClassInfo.outerClass == owner.parentAsClass
+        return getScopeClassOrPackage() == owner.parentAsClass
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
@@ -707,9 +708,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
         /// We assume that IR code that reaches us has been checked for correctness at the frontend.
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
-
-        val symbolOwner = owner
-        val declarationRaw = symbolOwner as IrDeclarationWithVisibility
+        val declarationRaw = owner as IrDeclarationWithVisibility
 
         // There is never a problem with visibility of inline functions, as those don't end up as Java entities
         if (declarationRaw is IrFunction && declarationRaw.isInline) return true
@@ -717,85 +716,93 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // Enum entry constructors are generated as package-private and are accessed only from corresponding enum class
         if (declarationRaw is IrConstructor && declarationRaw.constructedClass.isEnumEntry) return true
 
-        // `internal` maps to public and requires no accessor.
-        if (!withSuper && !declarationRaw.visibility.isPrivate && !declarationRaw.visibility.isProtected) return true
+        // Public declarations are already accessible. However, `super` calls are subclass-only.
+        val jvmVisibility = AsmUtil.getVisibilityAccessFlag(declarationRaw.visibility.delegate)
+        if (jvmVisibility == Opcodes.ACC_PUBLIC && !withSuper) return true
 
         // `toArray` is always accessible cause mapped to public functions
-        if (symbolOwner is IrSimpleFunction && (symbolOwner.isNonGenericToArray() || symbolOwner.isGenericToArray(context))) {
-            if (symbolOwner.parentAsClass.isCollectionSubClass) {
-                return true
-            }
-        }
+        if (declarationRaw is IrSimpleFunction && (declarationRaw.isNonGenericToArray() || declarationRaw.isGenericToArray(context)) &&
+            declarationRaw.parentAsClass.isCollectionSubClass
+        ) return true
 
-        // EnumEntry constructors are always accessible (they are only called from the enclosing Enum class)
-        if (symbolOwner is IrConstructor && symbolOwner.parentClassOrNull?.isEnumEntry == true)
-            return true
+        // `$assertionsDisabled` is accessed only from the same class, even in an inline function
+        // (the inliner will generate it at the call site if necessary).
+        if (declarationRaw is IrField && declarationRaw.isAssertionsDisabledField(context)) return true
 
         val declaration = when (declarationRaw) {
-            is IrSimpleFunction ->
-                declarationRaw.resolveFakeOverride(allowAbstract = true)
-                    ?: declarationRaw
-            is IrField -> {
-                val correspondingProperty = declarationRaw.correspondingPropertySymbol?.owner
-                if (correspondingProperty != null && correspondingProperty.isFakeOverride) {
-                    val realProperty = correspondingProperty.resolveFakeOverride()
-                        ?: throw AssertionError("No real override for ${correspondingProperty.render()}")
-                    realProperty.backingField
-                        ?: throw AssertionError(
-                            "Fake override property ${correspondingProperty.render()} with backing field " +
-                                    "overrides a real property with no backing field: ${realProperty.render()}"
-                        )
-                } else {
-                    declarationRaw
-                }
-            }
-            else ->
-                declarationRaw
+            is IrSimpleFunction -> declarationRaw.resolveFakeOverride(allowAbstract = true)!!
+            is IrField -> declarationRaw.resolveFakeOverride()
+            else -> declarationRaw
         }
 
-        // If local variables are accessible by Kotlin rules, they also are by Java rules.
-        val ownerClass = declaration.parent as? IrClass ?: return true
-
-        val outerClassInfo = getOuterClassInfo() ?: return false
-        val outerClass = outerClassInfo.outerClass
-        val throughCrossinlineLambda = outerClassInfo.throughCrossinlineLambda
-
-        val samePackage = ownerClass.getPackageFragment()?.fqName == outerClass.getPackageFragment()?.fqName
-        val fromSubclassOfReceiversClass = !throughCrossinlineLambda &&
-                outerClass.isSubclassOf(ownerClass) &&
-                (thisObjReference == null || outerClass.symbol.isSubtypeOfClass(thisObjReference))
+        val ownerClass = declaration.parent as? IrClass ?: return true // locals are always accessible
+        val scopeClassOrPackage = getScopeClassOrPackage() ?: return false
+        val samePackage = ownerClass.getPackageFragment()?.fqName == scopeClassOrPackage.getPackageFragment()?.fqName
         return when {
-            declaration.visibility.isPrivate && (throughCrossinlineLambda || ownerClass != outerClass) -> false
-            declaration.visibility.isProtected && !samePackage && !fromSubclassOfReceiversClass -> false
-            withSuper && !fromSubclassOfReceiversClass -> false
-            else -> true
+            jvmVisibility == 0 /* package only */ -> samePackage
+            jvmVisibility == Opcodes.ACC_PRIVATE -> ownerClass == scopeClassOrPackage
+            // JVM `protected`, unlike Kotlin `protected`, permits accesses from the same package.
+            !withSuper && samePackage -> true
+            // Super calls and cross-package protected accesses are both only possible from a subclass of the declaration
+            // owner. Also, the target of a non-static call must be assignable to the current class. This is a verification
+            // constraint: https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.10.1.8
+            else -> (scopeClassOrPackage is IrClass && scopeClassOrPackage.isSubclassOf(ownerClass)) &&
+                    (thisObjReference == null || thisObjReference.owner.isSubclassOf(scopeClassOrPackage))
         }
     }
 
-    private class OuterClassInfo(val outerClass: IrClass, val throughCrossinlineLambda: Boolean)
-
-    private fun getOuterClassInfo(): OuterClassInfo? {
-        var context = currentScope!!.irElement as IrDeclaration
+    // Get the class from which all accesses in the current scope will be done after bytecode generation.
+    // If the current scope is a crossinline lambda, this is not possible, as the lambda maybe inlined
+    // into some other class; in that case, get at least the package.
+    private fun getScopeClassOrPackage(): IrDeclarationContainer? {
+        var context = currentScope?.irElement
         var throughCrossinlineLambda = false
-        while (context !is IrClass) {
+        while (context is IrDeclaration) {
             val callSite = inlineLambdaToCallSite[context]
-            if (callSite != null) {
-                // For inline lambdas, we can navigate to the only call site directly. Crossinline lambdas might be inlined
-                // into other classes in the same package, so private/super require accessors anyway.
-                throughCrossinlineLambda = throughCrossinlineLambda || callSite.crossinline
-                context = callSite.scope
-            } else if (context is IrFunction && context.isInline) {
-                // Accesses from inline functions can actually be anywhere; even private inline functions can be
-                // inlined into a different class, e.g. a callable reference. For protected inline functions
-                // calling methods on `super` we also need an accessor to satisfy INVOKESPECIAL constraints.
-                // TODO scan nested classes for calls to private inline functions?
-                return null
-            } else {
-                context = context.parent as? IrDeclaration
-                    ?: return null
+            when {
+                // Crossinline lambdas can be inlined into some other class in the same package. However,
+                // classes within crossinline lambdas should not be regenerated, so if we've already found
+                // a class *before* reaching this lambda, it's valid:
+                //     class C {
+                //         fun f() {}
+                //         fun g() = inlineFunctionWithCrossinlineArgument {
+                //             f() // this call is done in some unknown class within C's package
+                //             object { val x = f() } // this call is done in C$g$1$1
+                //         }
+                //     }
+                callSite != null -> throughCrossinlineLambda = throughCrossinlineLambda || callSite.crossinline
+                // Inline functions can be inlined into anywhere. Not even private inline functions are safe:
+                //     class C {
+                //         fun f() {}
+                //         private inline fun g1() = f() // `f` is called from C?
+                //         fun g2() = { g1() } // ...or from C$g2$1 in the same package?
+                //         inline fun g3() = g1() // ...or from some other package that calls g3?
+                //     }
+                // TODO: this has some weird effects for inline functions in local classes, e.g. they
+                //   access the capture fields (package-private) through accessors; this may or may not
+                //   be necessary - local types should in theory not be usable outside the current file.
+                context is IrFunction && context.isInline -> return null
+                // TODO: if this class is an object local to an inline function, it could be regenerated,
+                //  so the scope depends on the declaration accessed (see KT-48508):
+                //     class C {
+                //         fun f1()
+                //         inline fun inlineFun() = object {
+                //             fun f2() {}
+                //             fun g1() {
+                //                 f1() // this access can be anywhere
+                //                 f2() // can pretend this access is from C$foo$1
+                //             }
+                //         }
+                //     }
+                //  Further complicating things, the accessor for `f1` cannot be in `C$foo$1`, as otherwise
+                //  the accessor itself will be regenerated (and thus not work) at `inlineFun` call sites.
+                context is IrClass && !throughCrossinlineLambda -> return context
             }
+            // Inline lambdas have already been moved out to the containing class, but we still need to check
+            // the containing function (again, see above), so navigate there instead.
+            context = callSite?.scope ?: context.parent
         }
-        return OuterClassInfo(context, throughCrossinlineLambda)
+        return context as? IrPackageFragment
     }
 
     // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).
@@ -813,10 +820,18 @@ private fun IrClass.syntheticAccessorToSuperSuffix(): String =
     // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
     name.asString().hashCode().toString()
 
-val DescriptorVisibility.isPrivate
-    get() = DescriptorVisibilities.isPrivate(this)
+private fun IrField.resolveFakeOverride(): IrField {
+    val correspondingProperty = correspondingPropertySymbol?.owner
+    if (correspondingProperty == null || !correspondingProperty.isFakeOverride)
+        return this
+    val realProperty = correspondingProperty.resolveFakeOverride()
+        ?: throw AssertionError("No real override for ${correspondingProperty.render()}")
+    return realProperty.backingField
+        ?: throw AssertionError(
+            "Fake override property ${correspondingProperty.render()} with backing field " +
+                    "overrides a real property with no backing field: ${realProperty.render()}"
+        )
+}
 
-val DescriptorVisibility.isProtected
-    get() = this == DescriptorVisibilities.PROTECTED ||
-            this == JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE ||
-            this == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+private val DescriptorVisibility.isProtected
+    get() = AsmUtil.getVisibilityAccessFlag(delegate) == Opcodes.ACC_PROTECTED
