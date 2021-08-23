@@ -68,6 +68,7 @@ class JavaClassUseSiteMemberScope(
         getterSymbol: FirNamedFunctionSymbol,
         setterSymbol: FirNamedFunctionSymbol?,
         property: FirProperty,
+        takeModalityFromGetter: Boolean,
     ): FirAccessorSymbol {
         return accessorByNameMap.getOrPut(property.name) {
             buildSyntheticProperty {
@@ -79,7 +80,13 @@ class JavaClassUseSiteMemberScope(
                 )
                 delegateGetter = getterSymbol.fir
                 delegateSetter = setterSymbol?.fir
-                status = getterSymbol.fir.status.copy(newModality = chooseModalityForAccessor(property, delegateGetter))
+                status = getterSymbol.fir.status.copy(
+                    newModality = if (takeModalityFromGetter) {
+                        delegateGetter.modality ?: property.modality
+                    } else {
+                        chooseModalityForAccessor(property, delegateGetter)
+                    }
+                )
                 deprecation = getDeprecationsFromAccessors(delegateGetter, delegateSetter, session.languageVersionSettings.apiVersion)
             }.symbol
         }
@@ -118,8 +125,8 @@ class JavaClassUseSiteMemberScope(
             }
             if (propertyFromSupertype !is FirPropertySymbol) continue
             val overrideInClass =
-                propertyFromSupertype.createOverridePropertyIfExists(declaredMemberScope)
-                    ?: propertyFromSupertype.createOverridePropertyIfExists(superTypesScope)
+                propertyFromSupertype.createOverridePropertyIfExists(declaredMemberScope, takeModalityFromGetter = true)
+                    ?: propertyFromSupertype.createOverridePropertyIfExists(superTypesScope, takeModalityFromGetter = false)
             when {
                 overrideInClass != null -> {
                     directOverriddenProperties.getOrPut(overrideInClass) { mutableListOf() }.add(propertyFromSupertype)
@@ -131,7 +138,10 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
-    private fun FirVariableSymbol<*>.createOverridePropertyIfExists(scope: FirScope): FirPropertySymbol? {
+    private fun FirVariableSymbol<*>.createOverridePropertyIfExists(
+        scope: FirScope,
+        takeModalityFromGetter: Boolean
+    ): FirPropertySymbol? {
         if (this !is FirPropertySymbol) return null
         val getterSymbol = this.findGetterOverride(scope) ?: return null
         val setterSymbol =
@@ -141,7 +151,7 @@ class JavaClassUseSiteMemberScope(
                 null
         if (setterSymbol != null && setterSymbol.fir.modality != getterSymbol.fir.modality) return null
 
-        return generateAccessorSymbol(getterSymbol, setterSymbol, fir)
+        return generateAccessorSymbol(getterSymbol, setterSymbol, fir, takeModalityFromGetter)
     }
 
     private fun FirPropertySymbol.findGetterOverride(
