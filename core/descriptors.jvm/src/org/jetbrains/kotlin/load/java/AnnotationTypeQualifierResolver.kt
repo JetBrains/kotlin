@@ -65,50 +65,50 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         return resolvedNicknames(classDescriptor)
     }
 
-    fun resolveTypeQualifierAnnotation(annotationDescriptor: AnnotationDescriptor): AnnotationDescriptor? {
+    fun resolveTypeQualifierAnnotation(annotation: AnnotationDescriptor): AnnotationDescriptor? {
         if (javaTypeEnhancementState.jsr305.isDisabled) {
             return null
         }
 
-        val annotationClass = annotationDescriptor.annotationClass ?: return null
-        if (annotationClass.isAnnotatedWithTypeQualifier) return annotationDescriptor
+        val annotationClass = annotation.annotationClass ?: return null
+        if (annotationClass.isAnnotatedWithTypeQualifier) return annotation
 
         return resolveTypeQualifierNickname(annotationClass)
     }
 
-    fun resolveQualifierBuiltInDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): JavaDefaultQualifiers? {
+    fun resolveQualifierBuiltInDefaultAnnotation(annotation: AnnotationDescriptor): JavaDefaultQualifiers? {
         if (javaTypeEnhancementState.disabledDefaultAnnotations) {
             return null
         }
 
-        return BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS[annotationDescriptor.fqName]?.let { qualifierForDefaultingAnnotation ->
-            val state = resolveDefaultAnnotationState(annotationDescriptor).takeIf { it != ReportLevel.IGNORE } ?: return null
+        return BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS[annotation.fqName]?.let { qualifierForDefaultingAnnotation ->
+            val state = resolveDefaultAnnotationState(annotation).takeIf { it != ReportLevel.IGNORE } ?: return null
             qualifierForDefaultingAnnotation.copy(
                 nullabilityQualifier = qualifierForDefaultingAnnotation.nullabilityQualifier.copy(isForWarningOnly = state.isWarning)
             )
         }
     }
 
-    private fun resolveDefaultAnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
-        val annotationFqname = annotationDescriptor.fqName
+    private fun resolveDefaultAnnotationState(annotation: AnnotationDescriptor): ReportLevel {
+        val annotationFqname = annotation.fqName
         if (annotationFqname != null && annotationFqname in JSPECIFY_DEFAULT_ANNOTATIONS) {
             return javaTypeEnhancementState.getReportLevelForAnnotation(annotationFqname)
         }
 
-        return resolveJsr305AnnotationState(annotationDescriptor)
+        return resolveJsr305AnnotationState(annotation)
     }
 
-    fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
+    fun resolveTypeQualifierDefaultAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
         if (javaTypeEnhancementState.jsr305.isDisabled) {
             return null
         }
 
         val typeQualifierDefaultAnnotatedClass =
-            annotationDescriptor.annotationClass?.takeIf { it.annotations.hasAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) }
+            annotation.annotationClass?.takeIf { it.annotations.hasAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) }
                 ?: return null
 
         val elementTypesMask =
-            annotationDescriptor.annotationClass!!
+            annotation.annotationClass!!
                 .annotations.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME)!!
                 .allValueArguments
                 .flatMap { (parameter, argument) ->
@@ -125,24 +125,24 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         return TypeQualifierWithApplicability(typeQualifier, elementTypesMask)
     }
 
-    fun resolveAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
-        val annotatedClass = annotationDescriptor.annotationClass ?: return null
+    fun resolveAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
+        val annotatedClass = annotation.annotationClass ?: return null
         val target = annotatedClass.annotations.findAnnotation(JvmAnnotationNames.TARGET_ANNOTATION) ?: return null
         val elementTypesMask = target.allValueArguments
             .flatMap { (_, argument) -> argument.mapKotlinConstantToQualifierApplicabilityTypes() }
             .fold(0) { acc: Int, applicabilityType -> acc or (1 shl applicabilityType.ordinal) }
 
-        return TypeQualifierWithApplicability(annotationDescriptor, elementTypesMask)
+        return TypeQualifierWithApplicability(annotation, elementTypesMask)
     }
 
-    fun resolveJsr305AnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
-        resolveJsr305CustomState(annotationDescriptor)?.let { return it }
+    fun resolveJsr305AnnotationState(annotation: AnnotationDescriptor): ReportLevel {
+        resolveJsr305CustomState(annotation)?.let { return it }
         return javaTypeEnhancementState.jsr305.globalLevel
     }
 
-    fun resolveJsr305CustomState(annotationDescriptor: AnnotationDescriptor): ReportLevel? {
-        javaTypeEnhancementState.jsr305.userDefinedLevelForSpecificAnnotation[annotationDescriptor.fqName]?.let { return it }
-        return annotationDescriptor.annotationClass?.migrationAnnotationStatus()
+    fun resolveJsr305CustomState(annotation: AnnotationDescriptor): ReportLevel? {
+        javaTypeEnhancementState.jsr305.userDefinedLevelForSpecificAnnotation[annotation.fqName]?.let { return it }
+        return annotation.annotationClass?.migrationAnnotationStatus()
     }
 
     private fun ClassDescriptor.migrationAnnotationStatus(): ReportLevel? {
