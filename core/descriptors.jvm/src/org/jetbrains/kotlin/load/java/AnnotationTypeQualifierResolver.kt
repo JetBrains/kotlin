@@ -80,24 +80,14 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     fun resolveTypeQualifierDefaultAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
-        if (javaTypeEnhancementState.jsr305.isDisabled) {
-            return null
-        }
+        if (javaTypeEnhancementState.jsr305.isDisabled) return null
 
-        val typeQualifierDefaultAnnotatedClass =
-            annotation.annotationClass?.takeIf { it.annotations.hasAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) }
-                ?: return null
-
-        val elementTypes =
-            annotation.annotationClass!!
-                .annotations.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME)!!
-                .enumArguments(onlyValue = true)
-                .mapNotNullTo(mutableSetOf()) { JAVA_APPLICABILITY_TYPES[it] }
-
-        val typeQualifier = typeQualifierDefaultAnnotatedClass.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null }
-            ?: return null
-
-        return TypeQualifierWithApplicability(typeQualifier, elementTypes)
+        val annotationClass = annotation.annotationClass ?: return null
+        val typeQualifierDefault = annotationClass.annotations.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) ?: return null
+        val typeQualifier = annotationClass.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null } ?: return null
+        val applicability = typeQualifierDefault.enumArguments(onlyValue = true)
+            .mapNotNullTo(mutableSetOf()) { JAVA_APPLICABILITY_TYPES[it] }
+        return TypeQualifierWithApplicability(typeQualifier, applicability)
     }
 
     fun resolveAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
