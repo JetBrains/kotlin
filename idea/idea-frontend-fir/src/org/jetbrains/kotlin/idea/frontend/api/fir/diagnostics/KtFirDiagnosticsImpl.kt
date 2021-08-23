@@ -2818,6 +2818,13 @@ internal class ExplicitBackingFieldInAbstractPropertyImpl(
     override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
 }
 
+internal class ExplicitBackingFieldInExtensionImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ExplicitBackingFieldInExtension(), KtAbstractFirDiagnostic<KtBackingField> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class AbstractPropertyInPrimaryConstructorParametersImpl(
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,

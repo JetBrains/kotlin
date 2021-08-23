@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 
-object FirExplicitBackingFieldInInterfaceChecker : FirBackingFieldChecker() {
+object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker() {
     override fun check(declaration: FirBackingField, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirDefaultPropertyBackingField) {
             return
@@ -34,10 +35,12 @@ object FirExplicitBackingFieldInInterfaceChecker : FirBackingFieldChecker() {
             return
         }
 
-        val diagnostic = getProperDiagnostic(context)
-
         if (declaration.propertySymbol.isAbstract) {
-            reporter.reportOn(declaration.source, diagnostic, context)
+            reporter.reportOn(declaration.source, getProperDiagnostic(context), context)
+        }
+
+        if (declaration.propertySymbol.isExtension) {
+            reporter.reportOn(declaration.source, FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION, context)
         }
     }
 

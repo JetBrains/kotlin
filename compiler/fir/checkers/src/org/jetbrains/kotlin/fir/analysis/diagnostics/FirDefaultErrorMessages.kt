@@ -173,6 +173,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_CAN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_OVERRIDE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_FUNCTION_RETURN_TYPE
@@ -1296,6 +1297,10 @@ class FirDefaultErrorMessages {
             map.put(
                 EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY,
                 "Abstract property cannot have a backing field"
+            )
+            map.put(
+                EXPLICIT_BACKING_FIELD_IN_EXTENSION,
+                "Extension properties cannot have a backing field"
             )
             map.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "This property cannot be declared abstract")
             map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING, "Type parameters for local variables are deprecated")

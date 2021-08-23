@@ -486,6 +486,7 @@ object FirErrors {
     val PROPERTY_MUST_HAVE_SETTER by error0<KtProperty>()
     val EXPLICIT_BACKING_FIELD_IN_INTERFACE by error0<KtBackingField>()
     val EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY by error0<KtBackingField>()
+    val EXPLICIT_BACKING_FIELD_IN_EXTENSION by error0<KtBackingField>()
     val ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS by error0<KtModifierListOwner>(SourceElementPositioningStrategies.ABSTRACT_MODIFIER)
     val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING by warning0<KtProperty>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS by error0<KtProperty>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
