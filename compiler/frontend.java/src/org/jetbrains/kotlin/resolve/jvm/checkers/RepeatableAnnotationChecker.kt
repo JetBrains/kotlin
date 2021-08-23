@@ -205,8 +205,8 @@ class RepeatableAnnotationChecker(
         annotationClass: ClassDescriptor,
         reportOn: KtAnnotationEntry,
     ): Diagnostic? {
-        val annotationTargets = AnnotationChecker.applicableTargetSet(annotationClass) ?: KotlinTarget.DEFAULT_TARGET_SET
-        val containerTargets = AnnotationChecker.applicableTargetSet(containerClass) ?: KotlinTarget.DEFAULT_TARGET_SET
+        val annotationTargets = AnnotationChecker.applicableTargetSet(annotationClass)
+        val containerTargets = AnnotationChecker.applicableTargetSet(containerClass)
 
         // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.6.3.
         // (TBH, the rules about TYPE/TYPE_USE and TYPE_PARAMETER/TYPE_USE don't seem to make a lot of sense, but it's JLS

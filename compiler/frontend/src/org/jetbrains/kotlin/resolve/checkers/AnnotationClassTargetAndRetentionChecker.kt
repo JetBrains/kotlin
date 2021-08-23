@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -27,7 +26,7 @@ class AnnotationClassTargetAndRetentionChecker : DeclarationChecker {
         if (declaration !is KtClassOrObject) return
         if (!DescriptorUtils.isAnnotationClass(descriptor)) return
 
-        val targets = AnnotationChecker.applicableTargetSet(descriptor) ?: return
+        val targets = AnnotationChecker.applicableTargetSetFromTargetAnnotationOrNull(descriptor) ?: return
         val retention = descriptor.getAnnotationRetention() ?: KotlinRetention.RUNTIME
 
         if (targets.contains(KotlinTarget.EXPRESSION) && retention != KotlinRetention.SOURCE) {

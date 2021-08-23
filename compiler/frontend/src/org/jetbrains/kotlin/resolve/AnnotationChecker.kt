@@ -297,16 +297,21 @@ class AnnotationChecker(
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return KotlinTarget.DEFAULT_TARGET_SET
             // For descriptor with error type, all targets are considered as possible
             if (descriptor.type.isError) return KotlinTarget.ALL_TARGET_SET
-            return descriptor.annotationClass?.let(this::applicableTargetSet) ?: KotlinTarget.DEFAULT_TARGET_SET
+            return descriptor.annotationClass?.let(this::applicableTargetSetFromTargetAnnotationOrNull) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
         @JvmStatic
         fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
             val classDescriptor = descriptor.annotationClass ?: return emptySet()
-            return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
+            return applicableTargetSet(classDescriptor)
         }
 
-        fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
+        fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget> {
+            val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(StandardNames.FqNames.target)
+            return targetEntryDescriptor?.let { loadAnnotationTargets(it) } ?: KotlinTarget.DEFAULT_TARGET_SET
+        }
+
+        fun applicableTargetSetFromTargetAnnotationOrNull(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
             val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(StandardNames.FqNames.target) ?: return null
             return loadAnnotationTargets(targetEntryDescriptor)
         }

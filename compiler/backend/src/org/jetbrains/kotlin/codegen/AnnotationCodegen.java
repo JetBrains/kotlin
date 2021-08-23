@@ -297,7 +297,7 @@ public abstract class AnnotationCodegen {
         Map<KotlinTarget, ElementType> annotationTargetMap = annotationTargetMaps.get(typeMapper.getJvmTarget());
         if (annotationTargetMap == null) throw new AssertionError("No annotation target map for JVM target " + typeMapper.getJvmTarget());
 
-        Set<KotlinTarget> targets = AnnotationChecker.Companion.applicableTargetSet(classDescriptor);
+        Set<KotlinTarget> targets = AnnotationChecker.Companion.applicableTargetSetFromTargetAnnotationOrNull(classDescriptor);
         Set<ElementType> javaTargets;
         if (targets == null) {
             javaTargets = getJavaTargetList(classDescriptor);
