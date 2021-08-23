@@ -33317,6 +33317,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SyntheticAccessors extends AbstractLightAnalysisModeTest {
+        @TestMetadata("packagePrivate.kt")
+        public void ignorePackagePrivate() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/packagePrivate.kt");
+        }
+
         @TestMetadata("protectedSuperclassCompanionObjectMember.kt")
         public void ignoreProtectedSuperclassCompanionObjectMember() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/protectedSuperclassCompanionObjectMember.kt");
@@ -33400,6 +33405,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/syntheticAccessors/kt21258_simple.kt");
         }
 
+        @TestMetadata("kt48331.kt")
+        public void testKt48331() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/kt48331.kt");
+        }
+
         @TestMetadata("kt9717.kt")
         public void testKt9717() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/kt9717.kt");
@@ -33423,6 +33433,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("protectedFromLambda.kt")
         public void testProtectedFromLambda() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/protectedFromLambda.kt");
+        }
+
+        @TestMetadata("protectedSuper.kt")
+        public void testProtectedSuper() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/protectedSuper.kt");
         }
 
         @TestMetadata("superCallFromMultipleSubclasses.kt")

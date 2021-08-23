@@ -30,10 +30,6 @@ inline fun inlineMe(crossinline c: suspend () -> Unit) = object : SuspendRunnabl
         StateMachineChecker.suspendHere()
         StateMachineChecker.suspendHere()
     }
-    // TODO: call it from run1
-    inline suspend fun inlineMeCapturing() {
-        c(); c()
-    }
 }
 
 inline fun inlineMe2(crossinline c: suspend () -> Unit) = inlineMe { c(); c() }
