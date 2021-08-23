@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.typeContext
@@ -45,12 +47,15 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
         }
     }
 
+    private val FirPropertyAccessor?.isNotExplicit
+        get() = this == null || this is FirDefaultPropertyAccessor
+
     private fun checkAsPropertyNotSubtype(
         property: FirProperty,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (property.isVar && property.setter == null) {
+        if (property.isVar && property.setter.isNotExplicit) {
             reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_SETTER, context)
         }
     }
@@ -60,7 +65,7 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (property.getter == null) {
+        if (property.getter.isNotExplicit) {
             reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_GETTER, context)
         }
     }

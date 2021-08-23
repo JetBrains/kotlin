@@ -368,7 +368,6 @@ open class RawFirBuilder(
             propertyTypeRef: FirTypeRef,
             propertySymbol: FirPropertySymbol,
             isGetter: Boolean,
-            hasExplicitBackingField: Boolean,
         ): FirPropertyAccessor? {
             val accessorVisibility =
                 if (this?.visibility != null && this.visibility != Visibilities.Unknown) this.visibility else property.visibility
@@ -425,11 +424,7 @@ open class RawFirBuilder(
                         this@RawFirBuilder.context.firFunctionTargets.removeLast()
                     }
                 }
-                // If an explicit backing field is present,
-                // the default accessors might not be compatible
-                // with it. We should check the types first, and
-                // only then see if we can create the default accessors.
-                !hasExplicitBackingField && (isGetter || property.isVar) -> {
+                isGetter || property.isVar -> {
                     // Default getter for val/var properties, and default setter for var properties.
                     val propertySource =
                         this?.toFirSourceElement() ?: property.toFirPsiSourceElement(FirFakeSourceElementKind.DefaultAccessor)
@@ -1531,20 +1526,17 @@ open class RawFirBuilder(
                             propertyType,
                         )
 
-                        val hasExplicitBackingField = backingField !is FirDefaultPropertyBackingField
                         getter = this@toFirProperty.getter.toFirPropertyAccessor(
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
-                            isGetter = true,
-                            hasExplicitBackingField,
+                            isGetter = true
                         )
                         setter = this@toFirProperty.setter.toFirPropertyAccessor(
                             this@toFirProperty,
                             propertyType,
                             propertySymbol = symbol,
-                            isGetter = false,
-                            hasExplicitBackingField,
+                            isGetter = false
                         )
 
                         status = FirDeclarationStatusImpl(visibility, modality).apply {

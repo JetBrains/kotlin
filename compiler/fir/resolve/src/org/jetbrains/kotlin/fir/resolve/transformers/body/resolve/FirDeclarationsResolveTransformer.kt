@@ -151,10 +151,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     }
                     property.transformBackingField(transformer, withExpectedType(property.returnTypeRef))
                 }
-                // In case an explicit backing field declaration
-                // is present, and the default accessors haven't
-                // been generated earlier.
-                property.generateMissingDefaultAccessors()
                 val delegate = property.delegate
                 if (delegate != null) {
                     transformPropertyAccessorsWithDelegate(property, delegate)
@@ -182,50 +178,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 }
             }
             property
-        }
-    }
-
-    private fun FirProperty.generateMissingDefaultAccessors() {
-        val fieldDeclaration = backingField ?: return
-
-        if (
-            !this.hasExplicitBackingField ||
-            fieldDeclaration.returnTypeRef !is FirResolvedTypeRef
-        ) {
-            return
-        }
-
-        val typeCheckerContext = session.typeContext.newBaseTypeCheckerContext(
-            errorTypesEqualToAnything = false,
-            stubTypesEqualToAnything = false
-        )
-
-        if (getter == null && fieldDeclaration.isSubtypeOf(this, typeCheckerContext)) {
-            this.replaceGetter(
-                FirDefaultPropertyGetter(
-                    null,
-                    this.moduleData,
-                    FirDeclarationOrigin.Source,
-                    this.returnTypeRef,
-                    this.visibility,
-                    this.symbol,
-                ).also {
-                    it.status = this.getDefaultAccessorStatus()
-                }
-            )
-        } else if (this.isVar && this.isSubtypeOf(fieldDeclaration, typeCheckerContext)) {
-            this.replaceSetter(
-                FirDefaultPropertySetter(
-                    null,
-                    this.moduleData,
-                    FirDeclarationOrigin.Source,
-                    this.returnTypeRef,
-                    this.visibility,
-                    this.symbol,
-                ).also {
-                    it.status = this.getDefaultAccessorStatus()
-                }
-            )
         }
     }
 

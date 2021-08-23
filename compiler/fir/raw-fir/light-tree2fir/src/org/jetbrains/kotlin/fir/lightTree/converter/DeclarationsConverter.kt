@@ -1132,24 +1132,19 @@ class DeclarationsConverter(
                             isExternal = modifiers.hasExternal()
                         }
 
-                    val hasExplicitBackingField = backingField !is FirDefaultPropertyBackingField
                     val convertedAccessors = accessors.map {
-                        convertGetterOrSetter(it, returnType, propertyVisibility, symbol, modifiers, hasExplicitBackingField)
+                        convertGetterOrSetter(it, returnType, propertyVisibility, symbol, modifiers)
                     }
                     this.getter = convertedAccessors.find { it.isGetter }
-                        ?: if (!hasExplicitBackingField) {
-                            FirDefaultPropertyGetter(
-                                property.toFirSourceElement(FirFakeSourceElementKind.DefaultAccessor), moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility, symbol,
-                            ).also {
-                                it.status = defaultAccessorStatus()
-                                it.initContainingClassAttr()
-                            }
-                        } else {
-                            null
+                        ?: FirDefaultPropertyGetter(
+                            property.toFirSourceElement(FirFakeSourceElementKind.DefaultAccessor), moduleData, FirDeclarationOrigin.Source, returnType, propertyVisibility, symbol,
+                        ).also {
+                            it.status = defaultAccessorStatus()
+                            it.initContainingClassAttr()
                         }
                     // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
                     this.setter = convertedAccessors.find { it.isSetter }
-                        ?: if (isVar && !hasExplicitBackingField) {
+                        ?: if (isVar) {
                             FirDefaultPropertySetter(
                                 property.toFirSourceElement(FirFakeSourceElementKind.DefaultAccessor),
                                 moduleData,
@@ -1259,7 +1254,6 @@ class DeclarationsConverter(
         propertyVisibility: Visibility,
         propertySymbol: FirPropertySymbol,
         propertyModifiers: Modifier,
-        hasBackingField: Boolean,
     ): FirPropertyAccessor {
         var modifiers = Modifier()
         var isGetter = true
@@ -1298,11 +1292,7 @@ class DeclarationsConverter(
                 isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
             }
         val sourceElement = getterOrSetter.toFirSourceElement()
-        // If an explicit backing field is present,
-        // the default accessors might not be compatible
-        // with it. We should check the types first, and
-        // only then see if we can create the default accessors.
-        if (block == null && expression == null && !hasBackingField) {
+        if (block == null && expression == null) {
             return FirDefaultPropertyAccessor
                 .createGetterOrSetter(
                     sourceElement,
