@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // MODULE: lib
 // FILE: AbstractSpecializedMap.java
 public abstract class AbstractSpecializedMap implements java.util.Map<Integer, Double> {

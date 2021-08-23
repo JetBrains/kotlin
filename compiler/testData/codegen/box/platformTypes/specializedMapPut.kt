@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // MODULE: lib
 // FILE: A.java
 import java.util.HashMap;
