@@ -3244,40 +3244,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
     }
 
     @Nested
-    @TestMetadata("compiler/testData/codegen/bytecodeText/ifNullChain")
-    @TestDataPath("$PROJECT_ROOT")
-    public class IfNullChain {
-        @Test
-        public void testAllFilesPresentInIfNullChain() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ifNullChain"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @Test
-        @TestMetadata("safeCallChain1.kt")
-        public void testSafeCallChain1() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ifNullChain/safeCallChain1.kt");
-        }
-
-        @Test
-        @TestMetadata("safeCallChain2.kt")
-        public void testSafeCallChain2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ifNullChain/safeCallChain2.kt");
-        }
-
-        @Test
-        @TestMetadata("safeCallChainMemberExt1.kt")
-        public void testSafeCallChainMemberExt1() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ifNullChain/safeCallChainMemberExt1.kt");
-        }
-
-        @Test
-        @TestMetadata("safeCallChainMemberExt2.kt")
-        public void testSafeCallChainMemberExt2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ifNullChain/safeCallChainMemberExt2.kt");
-        }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/codegen/bytecodeText/inline")
     @TestDataPath("$PROJECT_ROOT")
     public class Inline {
@@ -5410,6 +5376,46 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("useAppendCharForOneCharStringUsingPlus.kt")
         public void testUseAppendCharForOneCharStringUsingPlus() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/useAppendCharForOneCharStringUsingPlus.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeText/temporaryVals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TemporaryVals {
+        @Test
+        public void testAllFilesPresentInTemporaryVals() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/temporaryVals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("arrayCompoundAssignment.kt")
+        public void testArrayCompoundAssignment() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/arrayCompoundAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallChain1.kt")
+        public void testSafeCallChain1() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChain1.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallChain2.kt")
+        public void testSafeCallChain2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChain2.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallChainMemberExt1.kt")
+        public void testSafeCallChainMemberExt1() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChainMemberExt1.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallChainMemberExt2.kt")
+        public void testSafeCallChainMemberExt2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/safeCallChainMemberExt2.kt");
         }
     }
 

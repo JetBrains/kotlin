@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -314,7 +311,7 @@ class FunctionInlining(
                                 function.valueParameters.size
                             )
                         else ->
-                            kotlin.error("Unknown function kind : ${function.render()}")
+                            error("Unknown function kind : ${function.render()}")
                     }
                 }.apply {
                     for (parameter in functionParameters) {
@@ -601,6 +598,9 @@ class FunctionInlining(
 
         fun withLocation(startOffset: Int, endOffset: Int) =
             IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
+
+        override fun copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
+            withLocation(newStartOffset, newEndOffset)
     }
 }
 
