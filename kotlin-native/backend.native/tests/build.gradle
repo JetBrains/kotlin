@@ -4862,6 +4862,19 @@ if (PlatformInfo.isAppleTarget(project)) {
             }
         }
     }
+
+    standaloneTest("objc_arc_contract") {
+        doBeforeBuild {
+            mkdir(buildDir)
+            ExecLlvmKt.execLlvmUtility(project, "llvm-as") {
+                args "$projectDir/interop/objc_arc_contract/main.ll"
+                args "-o", "$buildDir/objc_arc_contract.bc"
+            }
+        }
+        source = "interop/objc_arc_contract/main.kt"
+        goldValue = "ok\n"
+        flags = ["-native-library", "$buildDir/objc_arc_contract.bc"]
+    }
 }
 
 standaloneTest("jsinterop_math") {
