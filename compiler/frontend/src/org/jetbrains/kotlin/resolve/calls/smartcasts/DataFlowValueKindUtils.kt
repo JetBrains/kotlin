@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.expressions.AssignedVariablesSearcher
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
-internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): DataFlowValue.Kind {
+internal fun PropertyDescriptor.propertyKind(
+    usageModule: ModuleDescriptor?,
+    languageVersionSettings: LanguageVersionSettings
+): DataFlowValue.Kind {
     if (isVar) return DataFlowValue.Kind.MUTABLE_PROPERTY
     if (isOverridable) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
     if (!hasDefaultGetter()) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
@@ -28,11 +31,30 @@ internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): Da
         if (!areCompiledTogether(usageModule, declarationModule)) {
             return DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
         }
+        if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            if (overriddenDescriptors.any { isDeclaredInAnotherModule(usageModule) }) {
+                return if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnPropertyFromAlienBaseClass)) {
+                    DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY
+                } else {
+                    DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
+                }
+            }
+        }
     }
     return DataFlowValue.Kind.STABLE_VALUE
 }
 
-internal fun areCompiledTogether(
+private fun PropertyDescriptor.isDeclaredInAnotherModule(usageModule: ModuleDescriptor?): Boolean {
+    if (!areCompiledTogether(usageModule, DescriptorUtils.getContainingModule(this))) {
+        return true
+    }
+    if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        return overriddenDescriptors.any { it.isDeclaredInAnotherModule(usageModule) }
+    }
+    return false
+}
+
+private fun areCompiledTogether(
     usageModule: ModuleDescriptor?,
     declarationModule: ModuleDescriptor,
 ): Boolean {
@@ -49,7 +71,7 @@ internal fun VariableDescriptor.variableKind(
     languageVersionSettings: LanguageVersionSettings
 ): DataFlowValue.Kind {
     if (this is PropertyDescriptor) {
-        return propertyKind(usageModule)
+        return propertyKind(usageModule, languageVersionSettings)
     }
 
     if (this is LocalVariableDescriptor && this.isDelegated) {
