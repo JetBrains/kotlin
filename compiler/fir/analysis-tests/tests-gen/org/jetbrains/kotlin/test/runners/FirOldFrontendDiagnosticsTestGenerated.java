@@ -2055,6 +2055,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("notImplementedMembersAroundJava.kt")
+                public void testNotImplementedMembersAroundJava() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/notImplementedMembersAroundJava.kt");
+                }
+
+                @Test
                 @TestMetadata("tooManyArguments.kt")
                 public void testTooManyArguments() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/rendering/tooManyArguments.kt");

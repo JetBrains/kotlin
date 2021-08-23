@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// Ignored cause of KT-47542
-// IGNORE_BACKEND: JVM, JVM_IR
 // FULL_JDK
 // ISSUE: KT-45584
 

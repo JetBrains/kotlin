@@ -705,6 +705,7 @@ class OverrideResolver(
             var overridesClassMember = false
             var overridesNonAbstractInterfaceMember = false
             var overridesAbstractInBaseClass: CallableMemberDescriptor? = null
+            var overridesNonAbstractInBaseClass: CallableMemberDescriptor? = null
             var fakeOverrideInBaseClass: CallableMemberDescriptor? = null
             for (overridden in relevantDirectlyOverridden) {
                 val containingDeclaration = overridden.containingDeclaration as? ClassDescriptor ?: continue
@@ -719,6 +720,8 @@ class OverrideResolver(
                     overridesClassMember = true
                     if (overridden.modality === Modality.ABSTRACT) {
                         overridesAbstractInBaseClass = overridden
+                    } else {
+                        overridesNonAbstractInBaseClass = overridden
                     }
                 } else if (containingDeclaration.kind == ClassKind.INTERFACE) {
                     overriddenInterfaceMembers.add(overridden)
@@ -728,7 +731,7 @@ class OverrideResolver(
                 }
             }
 
-            if (overridesAbstractInBaseClass != null) {
+            if (overridesAbstractInBaseClass != null && overridesNonAbstractInBaseClass == null) {
                 reportingStrategy.abstractBaseClassMemberNotImplemented(overridesAbstractInBaseClass)
             } else if (!onlyBaseClassMembers && !overridesClassMember &&
                 overridesNonAbstractInterfaceMember && overriddenInterfaceMembers.size > 1
