@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.isStoreOperation
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
 
 // A temporary val is a local variables that is:
@@ -61,11 +65,20 @@ class TemporaryValsAnalyzer {
             }
         }
 
-        // Some coroutine transformations require exception handler to start from an ASTORE instruction.
         for (tcb in methodNode.tryCatchBlocks) {
-            val handlerFirstInsn = tcb.handler.next ?: continue
-            if (handlerFirstInsn.opcode == Opcodes.ASTORE) {
+            // Some coroutine transformations require exception handler to start from an ASTORE instruction.
+            var handlerFirstInsn: AbstractInsnNode? = tcb.handler
+            while (handlerFirstInsn != null && !handlerFirstInsn.isMeaningful) {
+                handlerFirstInsn = handlerFirstInsn.next
+            }
+            if (handlerFirstInsn != null && handlerFirstInsn.opcode == Opcodes.ASTORE) {
                 potentiallyTemporaryStores.remove(handlerFirstInsn)
+            }
+            // Don't touch stack spilling at TCB start
+            var insn = tcb.start.previous
+            while (insn != null && insn.isStoreOperation()) {
+                potentiallyTemporaryStores.remove(insn)
+                insn = insn.previous
             }
         }
 

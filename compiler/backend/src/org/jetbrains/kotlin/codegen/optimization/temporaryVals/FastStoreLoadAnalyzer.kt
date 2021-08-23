@@ -101,22 +101,6 @@ class StoreLoadFrame<V : StoreLoadValue>(val maxLocals: Int) {
     }
 }
 
-
-internal val isOpcodeRelevantForStoreLoadAnalysis = BooleanArray(256).also { a ->
-    for (i in Opcodes.ILOAD..Opcodes.ALOAD) a[i] = true
-    for (i in Opcodes.ISTORE..Opcodes.ASTORE) a[i] = true
-
-    // Relevant JumpInsnNode opcodes
-    a[Opcodes.GOTO] = true
-    a[Opcodes.IFNONNULL] = true
-    a[Opcodes.IFNULL] = true
-    for (i in Opcodes.IFEQ..Opcodes.IF_ACMPNE) a[i] = true
-
-    a[Opcodes.LOOKUPSWITCH] = true
-    a[Opcodes.TABLESWITCH] = true
-}
-
-
 @Suppress("DuplicatedCode")
 class FastStoreLoadAnalyzer<V : StoreLoadValue>(
     private val owner: String,
@@ -175,15 +159,11 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
                     }
                 }
 
-                // No need to analyze exception handler code for instructions that just propagate data flow information forward.
-                if (isRelevantNode(insn, insnOpcode)) {
-                    handlers[insn]?.forEach { tcb ->
-                        val jump = tcb.handler.indexOf()
-                        handler.init(f)
-                        mergeControlFlowEdge(jump, handler)
-                    }
+                handlers[insn]?.forEach { tcb ->
+                    val jump = tcb.handler.indexOf()
+                    handler.init(f)
+                    mergeControlFlowEdge(jump, handler)
                 }
-
             } catch (e: AnalyzerException) {
                 throw AnalyzerException(e.node, "Error at instruction #$insn ${insnNode.insnText(method.instructions)}: ${e.message}", e)
             } catch (e: Exception) {
@@ -194,10 +174,6 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
 
         return frames
     }
-
-    private fun isRelevantNode(insn: Int, insnOpcode: Int) =
-        isMergeNode[insn] ||
-                insnOpcode >= 0 && isOpcodeRelevantForStoreLoadAnalysis[insnOpcode]
 
     private fun newFrame(maxLocals: Int) =
         StoreLoadFrame<V>(maxLocals)

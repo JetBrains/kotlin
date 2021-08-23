@@ -151,7 +151,17 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
         val insnList = cfg.methodNode.instructions
 
         for (tmp in temporaryVals) {
-            if (tmp.loadInsns.size == 1) {
+            if (tmp.loadInsns.isEmpty()) {
+                // Drop unused temporary store
+                val popOpcode = when (tmp.storeInsn.opcode) {
+                    Opcodes.ISTORE, Opcodes.FSTORE, Opcodes.ASTORE ->
+                        Opcodes.POP
+                    else ->
+                        Opcodes.POP2
+                }
+                insnList.insertBefore(tmp.storeInsn, InsnNode(popOpcode))
+                insnList.remove(tmp.storeInsn)
+            } else if (tmp.loadInsns.size == 1) {
                 val storeInsn = tmp.storeInsn
                 val loadInsn = tmp.loadInsns[0]
 
