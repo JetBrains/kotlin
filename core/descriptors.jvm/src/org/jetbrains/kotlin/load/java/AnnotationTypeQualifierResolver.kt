@@ -51,29 +51,19 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     private val resolvedNicknames =
-        storageManager.createMemoizedFunctionWithNullableValues(this::computeTypeQualifierNickname)
-
-    private fun computeTypeQualifierNickname(classDescriptor: ClassDescriptor): AnnotationDescriptor? {
-        if (!classDescriptor.annotations.hasAnnotation(TYPE_QUALIFIER_NICKNAME_FQNAME)) return null
-
-        return classDescriptor.annotations.firstNotNullOfOrNull(this::resolveTypeQualifierAnnotation)
-    }
-
-    private fun resolveTypeQualifierNickname(classDescriptor: ClassDescriptor): AnnotationDescriptor? {
-        if (classDescriptor.kind != ClassKind.ANNOTATION_CLASS) return null
-
-        return resolvedNicknames(classDescriptor)
-    }
-
-    fun resolveTypeQualifierAnnotation(annotation: AnnotationDescriptor): AnnotationDescriptor? {
-        if (javaTypeEnhancementState.jsr305.isDisabled) {
-            return null
+        storageManager.createMemoizedFunctionWithNullableValues { klass: ClassDescriptor ->
+            if (klass.annotations.hasAnnotation(TYPE_QUALIFIER_NICKNAME_FQNAME))
+                klass.annotations.firstNotNullOfOrNull(this::resolveTypeQualifierAnnotation)
+            else
+                null
         }
 
+    fun resolveTypeQualifierAnnotation(annotation: AnnotationDescriptor): AnnotationDescriptor? {
+        if (javaTypeEnhancementState.jsr305.isDisabled) return null
         val annotationClass = annotation.annotationClass ?: return null
-        if (annotationClass.isAnnotatedWithTypeQualifier) return annotation
-
-        return resolveTypeQualifierNickname(annotationClass)
+        if (annotation.fqName in BUILT_IN_TYPE_QUALIFIER_FQ_NAMES || annotationClass.annotations.hasAnnotation(TYPE_QUALIFIER_FQNAME))
+            return annotation
+        return resolvedNicknames(annotationClass)
     }
 
     fun resolveQualifierBuiltInDefaultAnnotation(annotation: AnnotationDescriptor): JavaDefaultQualifiers? {
@@ -176,6 +166,3 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     private fun ConstantValue<*>.mapKotlinConstantToQualifierApplicabilityTypes(): List<AnnotationQualifierApplicabilityType> =
         mapConstantToQualifierApplicabilityTypes { enumEntryName.identifier in it.javaTarget.toKotlinTargetNames() }
 }
-
-private val ClassDescriptor.isAnnotatedWithTypeQualifier: Boolean
-    get() = fqNameSafe in BUILT_IN_TYPE_QUALIFIER_FQ_NAMES || annotations.hasAnnotation(TYPE_QUALIFIER_FQNAME)
