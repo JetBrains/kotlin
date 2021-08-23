@@ -66,6 +66,16 @@ class JvmTarget8OnJvm15 : CustomJvmTargetOnJvmBaseTest()
 @RunWith(JUnitPlatform::class)
 class JvmTarget15OnJvm15 : CustomJvmTargetOnJvmBaseTest()
 
+@RunWith(JUnitPlatform::class)
+class JvmTarget6OnJvm17 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(JUnitPlatform::class)
+class JvmTarget8OnJvm17 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(JUnitPlatform::class)
+class JvmTarget17OnJvm17 : CustomJvmTargetOnJvmBaseTest()
+
+
 // LAST JDK from JdkMajorVersion available on machine
 @RunWith(JUnitPlatform::class)
 class JvmTarget6OnJvmLast : CustomJvmTargetOnJvmBaseTest()

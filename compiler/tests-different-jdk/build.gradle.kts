@@ -85,12 +85,21 @@ codegenTest(target = 8, jdk = JdkMajorVersion.JDK_11)
 
 codegenTest(target = 11, jdk = JdkMajorVersion.JDK_11)
 
-//JDK 15
+//JDK 15 (TODO: remove)
 codegenTest(target = 6, jdk = JdkMajorVersion.JDK_15)
 
 codegenTest(target = 8, jdk = JdkMajorVersion.JDK_15)
 
 codegenTest(target = 15, jdk = JdkMajorVersion.JDK_15) {
+    systemProperty("kotlin.test.box.d8.disable", true)
+}
+
+//JDK 17
+codegenTest(target = 6, jdk = JdkMajorVersion.JDK_17)
+
+codegenTest(target = 8, jdk = JdkMajorVersion.JDK_17)
+
+codegenTest(target = 17, jdk = JdkMajorVersion.JDK_17) {
     systemProperty("kotlin.test.box.d8.disable", true)
 }
 
