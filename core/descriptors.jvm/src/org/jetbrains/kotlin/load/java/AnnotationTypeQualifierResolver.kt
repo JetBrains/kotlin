@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.storage.StorageManager
 
 class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
@@ -97,13 +96,8 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         val elementTypesMask =
             annotation.annotationClass!!
                 .annotations.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME)!!
-                .allValueArguments
-                .flatMap { (parameter, argument) ->
-                    if (parameter == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME)
-                        argument.mapJavaConstantToQualifierApplicabilityTypes()
-                    else
-                        emptyList()
-                }
+                .enumArguments(onlyValue = true)
+                .mapNotNull { JAVA_APPLICABILITY_TYPES[it] }
                 .fold(0) { acc: Int, applicabilityType -> acc or (1 shl applicabilityType.ordinal) }
 
         val typeQualifier = typeQualifierDefaultAnnotatedClass.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null }
@@ -115,8 +109,8 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     fun resolveAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
         val annotatedClass = annotation.annotationClass ?: return null
         val target = annotatedClass.annotations.findAnnotation(JvmAnnotationNames.TARGET_ANNOTATION) ?: return null
-        val elementTypesMask = target.allValueArguments
-            .flatMap { (_, argument) -> argument.mapKotlinConstantToQualifierApplicabilityTypes() }
+        val elementTypesMask = target.enumArguments(onlyValue = false)
+            .mapNotNull { KOTLIN_APPLICABILITY_TYPES[it] }
             .fold(0) { acc: Int, applicabilityType -> acc or (1 shl applicabilityType.ordinal) }
 
         return TypeQualifierWithApplicability(annotation, elementTypesMask)
@@ -133,12 +127,12 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     private fun ClassDescriptor.migrationAnnotationStatus(): ReportLevel? {
-        val enumValue = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.firstArgument() as? EnumValue
+        val enumValue = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.enumArguments(onlyValue = false)?.firstOrNull()
             ?: return null
 
         javaTypeEnhancementState.jsr305.migrationLevel?.let { return it }
 
-        return when (enumValue.enumEntryName.asString()) {
+        return when (enumValue) {
             "STRICT" -> ReportLevel.STRICT
             "WARN" -> ReportLevel.WARN
             "IGNORE" -> ReportLevel.IGNORE
@@ -146,7 +140,13 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         }
     }
 
-    private fun String.toKotlinTargetNames() = JavaAnnotationTargetMapper.mapJavaTargetArgumentByName(this).map { it.name }
+    private fun AnnotationDescriptor.enumArguments(onlyValue: Boolean): Iterable<String> =
+        allValueArguments.flatMap { (parameter, argument) ->
+            if (!onlyValue || parameter == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME)
+                argument.toEnumNames()
+            else
+                emptyList()
+        }
 
     private fun ConstantValue<*>.toEnumNames(): List<String> =
         when (this) {
@@ -155,14 +155,20 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
             else -> emptyList()
         }
 
-    private fun ConstantValue<*>.mapConstantToQualifierApplicabilityTypes(
-        findPredicate: String.(AnnotationQualifierApplicabilityType) -> Boolean
-    ): List<AnnotationQualifierApplicabilityType> =
-        toEnumNames().mapNotNull { name -> AnnotationQualifierApplicabilityType.values().find { name.findPredicate(it) } }
+    @OptIn(ExperimentalStdlibApi::class)
+    private companion object {
+        val JAVA_APPLICABILITY_TYPES = buildMap<String, AnnotationQualifierApplicabilityType> {
+            for (type in AnnotationQualifierApplicabilityType.values()) {
+                getOrPut(type.javaTarget) { type }
+            }
+        }
 
-    private fun ConstantValue<*>.mapJavaConstantToQualifierApplicabilityTypes(): List<AnnotationQualifierApplicabilityType> =
-        mapConstantToQualifierApplicabilityTypes { this == it.javaTarget }
-
-    private fun ConstantValue<*>.mapKotlinConstantToQualifierApplicabilityTypes(): List<AnnotationQualifierApplicabilityType> =
-        mapConstantToQualifierApplicabilityTypes { this in it.javaTarget.toKotlinTargetNames() }
+        val KOTLIN_APPLICABILITY_TYPES = buildMap<String, AnnotationQualifierApplicabilityType> {
+            for (type in AnnotationQualifierApplicabilityType.values()) {
+                for (target in JavaAnnotationTargetMapper.mapJavaTargetArgumentByName(type.javaTarget)) {
+                    getOrPut(target.name) { type }
+                }
+            }
+        }
+    }
 }
