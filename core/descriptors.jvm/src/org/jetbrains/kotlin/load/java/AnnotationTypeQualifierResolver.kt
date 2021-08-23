@@ -28,23 +28,18 @@ import org.jetbrains.kotlin.storage.StorageManager
 class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
     class TypeQualifierWithApplicability(
         private val typeQualifier: AnnotationDescriptor,
-        private val applicability: Int
+        private val applicability: Set<AnnotationQualifierApplicabilityType>
     ) {
         operator fun component1() = typeQualifier
-        operator fun component2() = AnnotationQualifierApplicabilityType.values().filter(this::isApplicableTo)
 
-        private fun isApplicableTo(elementType: AnnotationQualifierApplicabilityType): Boolean {
-            if (isApplicableConsideringMask(elementType)) return true
-
-            // We explicitly state that while JSR-305 TYPE_USE annotations effectively should be applied to every type
-            // they are not applicable for type parameter bounds because it would be a breaking change otherwise.
-            // Only defaulting annotations from jspecify are applicable
-            return isApplicableConsideringMask(AnnotationQualifierApplicabilityType.TYPE_USE) &&
-                    elementType != AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
-        }
-
-        private fun isApplicableConsideringMask(elementType: AnnotationQualifierApplicabilityType) =
-            (applicability and (1 shl elementType.ordinal)) != 0
+        // We explicitly state that while JSR-305 TYPE_USE annotations effectively should be applied to every type
+        // they are not applicable for type parameter bounds because it would be a breaking change otherwise.
+        // Only defaulting annotations from jspecify are applicable
+        operator fun component2() =
+            if (AnnotationQualifierApplicabilityType.TYPE_USE in applicability)
+                applicability + ALL_APPLICABILITY_EXCEPT_TYPE_PARAMETER_BOUNDS
+            else
+                applicability
     }
 
     private val resolvedNicknames =
@@ -93,27 +88,25 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
             annotation.annotationClass?.takeIf { it.annotations.hasAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) }
                 ?: return null
 
-        val elementTypesMask =
+        val elementTypes =
             annotation.annotationClass!!
                 .annotations.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME)!!
                 .enumArguments(onlyValue = true)
-                .mapNotNull { JAVA_APPLICABILITY_TYPES[it] }
-                .fold(0) { acc: Int, applicabilityType -> acc or (1 shl applicabilityType.ordinal) }
+                .mapNotNullTo(mutableSetOf()) { JAVA_APPLICABILITY_TYPES[it] }
 
         val typeQualifier = typeQualifierDefaultAnnotatedClass.annotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null }
             ?: return null
 
-        return TypeQualifierWithApplicability(typeQualifier, elementTypesMask)
+        return TypeQualifierWithApplicability(typeQualifier, elementTypes)
     }
 
     fun resolveAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
         val annotatedClass = annotation.annotationClass ?: return null
         val target = annotatedClass.annotations.findAnnotation(JvmAnnotationNames.TARGET_ANNOTATION) ?: return null
-        val elementTypesMask = target.enumArguments(onlyValue = false)
-            .mapNotNull { KOTLIN_APPLICABILITY_TYPES[it] }
-            .fold(0) { acc: Int, applicabilityType -> acc or (1 shl applicabilityType.ordinal) }
+        val elementTypes = target.enumArguments(onlyValue = false)
+            .mapNotNullTo(mutableSetOf()) { KOTLIN_APPLICABILITY_TYPES[it] }
 
-        return TypeQualifierWithApplicability(annotation, elementTypesMask)
+        return TypeQualifierWithApplicability(annotation, elementTypes)
     }
 
     fun resolveJsr305AnnotationState(annotation: AnnotationDescriptor): ReportLevel {
@@ -170,5 +163,8 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
                 }
             }
         }
+
+        val ALL_APPLICABILITY_EXCEPT_TYPE_PARAMETER_BOUNDS =
+            AnnotationQualifierApplicabilityType.values().toSet() - AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
     }
 }
