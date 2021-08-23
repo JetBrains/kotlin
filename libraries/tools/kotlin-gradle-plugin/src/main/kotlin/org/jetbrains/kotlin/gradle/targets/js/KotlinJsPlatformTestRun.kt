@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSourceSupport
@@ -82,4 +83,6 @@ open class KotlinJsReportAggregatingTestRun(
         target.whenBrowserConfigured { doConfigureInChildren(this) }
         target.whenNodejsConfigured { doConfigureInChildren(this) }
     }
+
+    override fun filter(configureFilter: Closure<*>) = filter { target.project.configure(this, configureFilter) }
 }

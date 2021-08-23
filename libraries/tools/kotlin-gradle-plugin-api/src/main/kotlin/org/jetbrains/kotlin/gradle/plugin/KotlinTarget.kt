@@ -15,7 +15,6 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 
 interface KotlinTargetComponent : SoftwareComponent {
@@ -52,7 +51,7 @@ interface KotlinTarget : Named, HasAttributes {
     fun mavenPublication(action: Action<MavenPublication>)
 
     fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
-    fun attributes(configure: Closure<*>) = attributes { ConfigureUtil.configure(configure, this) }
+    fun attributes(configure: Closure<*>) = attributes { project.configure(this, configure) }
 
     val preset: KotlinTargetPreset<out KotlinTarget>?
 

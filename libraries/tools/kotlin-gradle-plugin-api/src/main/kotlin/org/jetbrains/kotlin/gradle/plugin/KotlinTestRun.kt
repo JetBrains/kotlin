@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin
 import groovy.lang.Closure
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.testing.TestFilter
-import org.gradle.util.ConfigureUtil
 
 interface KotlinTestRun<out SourceType : KotlinExecution.ExecutionSource> : KotlinExecution<SourceType> {
     fun filter(configureFilter: TestFilter.() -> Unit)
 
-    fun filter(configureFilter: Closure<*>) = filter { ConfigureUtil.configureSelf(configureFilter, this) }
+    fun filter(configureFilter: Closure<*>)
 }
 
 interface KotlinTargetTestRun<ExecutionSource : KotlinExecution.ExecutionSource> :

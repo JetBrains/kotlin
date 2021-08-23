@@ -6,45 +6,46 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.util.ConfigureUtil
 import java.io.File
 
 interface KotlinDependencyHandler {
+    val project: Project
     fun api(dependencyNotation: Any): Dependency?
     fun api(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> api(dependency: T, configure: T.() -> Unit): T
-    fun api(dependencyNotation: String, configure: Closure<*>) = api(dependencyNotation) { ConfigureUtil.configure(configure, this) }
-    fun <T : Dependency> api(dependency: T, configure: Closure<*>) = api(dependency) { ConfigureUtil.configure(configure, this) }
+    fun api(dependencyNotation: String, configure: Closure<*>) = api(dependencyNotation) { project.configure(this, configure) }
+    fun <T : Dependency> api(dependency: T, configure: Closure<*>) = api(dependency) { project.configure(this, configure) }
 
     fun implementation(dependencyNotation: Any): Dependency?
     fun implementation(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> implementation(dependency: T, configure: T.() -> Unit): T
     fun implementation(dependencyNotation: String, configure: Closure<*>) =
-        implementation(dependencyNotation) { ConfigureUtil.configure(configure, this) }
+        implementation(dependencyNotation) { project.configure(this, configure) }
 
     fun <T : Dependency> implementation(dependency: T, configure: Closure<*>) =
-        implementation(dependency) { ConfigureUtil.configure(configure, this) }
+        implementation(dependency) { project.configure(this, configure) }
 
     fun compileOnly(dependencyNotation: Any): Dependency?
     fun compileOnly(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> compileOnly(dependency: T, configure: T.() -> Unit): T
     fun compileOnly(dependencyNotation: String, configure: Closure<*>) =
-        compileOnly(dependencyNotation) { ConfigureUtil.configure(configure, this) }
+        compileOnly(dependencyNotation) { project.configure(this, configure) }
 
     fun <T : Dependency> compileOnly(dependency: T, configure: Closure<*>) =
-        compileOnly(dependency) { ConfigureUtil.configure(configure, this) }
+        compileOnly(dependency) { project.configure(this, configure) }
 
     fun runtimeOnly(dependencyNotation: Any): Dependency?
     fun runtimeOnly(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> runtimeOnly(dependency: T, configure: T.() -> Unit): T
     fun runtimeOnly(dependencyNotation: String, configure: Closure<*>) =
-        runtimeOnly(dependencyNotation) { ConfigureUtil.configure(configure, this) }
+        runtimeOnly(dependencyNotation) { project.configure(this, configure) }
 
     fun <T : Dependency> runtimeOnly(dependency: T, configure: Closure<*>) =
-        runtimeOnly(dependency) { ConfigureUtil.configure(configure, this) }
+        runtimeOnly(dependency) { project.configure(this, configure) }
 
     fun kotlin(simpleModuleName: String): ExternalModuleDependency = kotlin(simpleModuleName, null)
     fun kotlin(simpleModuleName: String, version: String?): ExternalModuleDependency

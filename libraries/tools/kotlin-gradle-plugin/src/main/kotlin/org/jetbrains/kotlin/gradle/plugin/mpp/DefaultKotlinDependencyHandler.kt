@@ -23,7 +23,7 @@ import java.io.File
 
 class DefaultKotlinDependencyHandler(
     val parent: HasKotlinDependencies,
-    val project: Project
+    override val project: Project
 ) : KotlinDependencyHandler {
     override fun api(dependencyNotation: Any): Dependency? =
         addDependencyByAnyNotation(parent.apiConfigurationName, dependencyNotation)

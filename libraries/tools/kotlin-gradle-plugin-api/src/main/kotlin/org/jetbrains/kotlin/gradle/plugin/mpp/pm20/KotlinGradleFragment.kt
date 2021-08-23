@@ -10,7 +10,6 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
@@ -33,7 +32,7 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Na
     fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>)
 
     override fun dependencies(configureClosure: Closure<Any?>) =
-        dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
+        dependencies f@{ project.configure(this@f, configureClosure) }
 
     companion object {
         const val COMMON_FRAGMENT_NAME = "common"

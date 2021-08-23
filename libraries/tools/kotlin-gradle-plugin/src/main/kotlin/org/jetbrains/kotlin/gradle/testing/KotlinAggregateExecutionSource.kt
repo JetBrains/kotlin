@@ -40,6 +40,8 @@ abstract class KotlinTaskTestRun<S : ExecutionSource, T : AbstractTestTask>(
     override fun filter(configureFilter: TestFilter.() -> Unit) {
         executionTask.configure { task -> configureFilter(task.filter) }
     }
+
+    override fun filter(configureFilter: Closure<*>) = filter { target.project.configure(this, configureFilter) }
 }
 
 internal val KotlinTargetTestRun<*>.testTaskName: String
