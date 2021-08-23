@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -19,21 +18,18 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImportOptimizerResult
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.resolve.ImportPath
 
@@ -133,10 +129,9 @@ internal class KtFirImportOptimizer(
             }
 
             private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-                if (!resolvedTypeRef.canBeReferencedByImport()) return
+                val wholeQualifier = TypeQualifier.createFor(resolvedTypeRef) ?: return
 
-                val classSymbol = resolvedTypeRef.toClassLikeSymbol(firSession) ?: return
-                saveType(classSymbol)
+                processTypeQualifier(wholeQualifier)
             }
 
             private fun processResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
@@ -146,13 +141,20 @@ internal class KtFirImportOptimizer(
             }
 
             private fun processResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
-                val qualifierSymbol = resolvedQualifier.symbol ?: return
+                val wholeQualifier = TypeQualifier.createFor(resolvedQualifier) ?: return
 
-                saveType(qualifierSymbol)
+                processTypeQualifier(wholeQualifier)
             }
 
-            private fun saveType(symbol: FirClassLikeSymbol<*>) {
-                usedImports += symbol.classId.asSingleFqName()
+            private fun processTypeQualifier(qualifier: TypeQualifier) {
+                val mostOuterTypeQualifier = generateSequence(qualifier) { it.outerTypeQualifier }.last()
+                if (mostOuterTypeQualifier.isQualified) return
+
+                saveType(mostOuterTypeQualifier.classId)
+            }
+
+            private fun saveType(classId: ClassId) {
+                usedImports += classId.asSingleFqName()
             }
 
             private fun saveCallable(symbol: FirCallableSymbol<*>) {
@@ -186,12 +188,90 @@ internal class KtFirImportOptimizer(
     }
 }
 
-private fun FirResolvedTypeRef.canBeReferencedByImport(): Boolean {
-    val wholeTypeReference = psi as? KtTypeReference ?: return false
-
-    val wholeTypeElement = wholeTypeReference.typeElement?.unwrapNullability() as? KtUserType ?: return false
-    return wholeTypeElement.qualifier == null
-}
-
 private val FirQualifiedAccessExpression.isFullyQualified: Boolean
     get() = explicitReceiver is FirResolvedQualifier
+
+/**
+ * Helper abstraction to navigate through qualified FIR elements - we have to match [ClassId] and PSI qualifier pair
+ * to correctly reason about long qualifiers.
+ */
+private sealed interface TypeQualifier {
+    val classId: ClassId
+
+    /**
+     * Must be `true` if the PSI qualifier is itself qualified with the package or some other type, and `false` otherwise.
+     *
+     * ```
+     * foo.bar.Baz -> true
+     * Baz.Type -> true
+     * Baz -> false
+     * ```
+     */
+    val isQualified: Boolean
+
+    val outerTypeQualifier: TypeQualifier?
+
+    private class KtDotExpressionTypeQualifier(
+        override val classId: ClassId,
+        private val qualifier: KtElement,
+    ) : TypeQualifier {
+
+        init {
+            require(qualifier is KtDotQualifiedExpression || qualifier is KtNameReferenceExpression) {
+                "Unexpected type of qualifier: ${qualifier::class}"
+            }
+        }
+
+        override val isQualified: Boolean
+            get() = qualifier is KtDotQualifiedExpression
+
+        override val outerTypeQualifier: TypeQualifier?
+            get() {
+                val outerClassId = classId.outerClassId ?: return null
+                val outerQualifier = (qualifier as? KtDotQualifiedExpression)?.receiverExpression ?: return null
+
+                return KtDotExpressionTypeQualifier(outerClassId, outerQualifier)
+            }
+    }
+
+    private class KtUserTypeQualifier(
+        override val classId: ClassId,
+        private val qualifier: KtUserType,
+    ) : TypeQualifier {
+
+        override val isQualified: Boolean
+            get() = qualifier.qualifier != null
+
+        override val outerTypeQualifier: TypeQualifier?
+            get() {
+                val outerClassId = classId.outerClassId ?: return null
+                val outerQualifier = qualifier.qualifier ?: return null
+
+                return KtUserTypeQualifier(outerClassId, outerQualifier)
+            }
+    }
+
+    companion object {
+        fun createFor(qualifier: FirResolvedQualifier): TypeQualifier? {
+            val wholeClassId = qualifier.classId ?: return null
+            val psi = qualifier.psi as? KtExpression ?: return null
+
+            val wholeQualifier = when (psi) {
+                is KtDotQualifiedExpression -> psi
+                is KtNameReferenceExpression -> psi.getDotQualifiedExpressionForSelector() ?: psi
+                else -> psi
+            }
+
+            return KtDotExpressionTypeQualifier(wholeClassId, wholeQualifier)
+        }
+
+        fun createFor(typeRef: FirResolvedTypeRef): TypeQualifier? {
+            val wholeClassId = typeRef.type.classId ?: return null
+            val psi = typeRef.psi as? KtTypeReference ?: return null
+
+            val wholeUserType = psi.typeElement?.unwrapNullability() as? KtUserType ?: return null
+
+            return KtUserTypeQualifier(wholeClassId, wholeUserType)
+        }
+    }
+}

@@ -635,7 +635,7 @@ private fun KtUserType.hasFakeRootPrefix(): Boolean =
 private fun KtDotQualifiedExpression.hasFakeRootPrefix(): Boolean =
     (receiverExpression as? KtNameReferenceExpression)?.getReferencedName() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 
-private fun KtElement.getDotQualifiedExpressionForSelector(): KtDotQualifiedExpression? =
+internal fun KtElement.getDotQualifiedExpressionForSelector(): KtDotQualifiedExpression? =
     getQualifiedExpressionForSelector() as? KtDotQualifiedExpression
 
 private fun KtDotQualifiedExpression.deleteQualifier(): KtExpression? {
