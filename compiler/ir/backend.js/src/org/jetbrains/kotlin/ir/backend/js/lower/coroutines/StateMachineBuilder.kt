@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -486,6 +486,44 @@ class StateMachineBuilder(
         if (expression !in suspendableNodes) return addStatement(expression)
         expression.acceptChildrenVoid(this)
         transformLastExpression { expression.apply { argument = it } }
+    }
+
+    override fun visitVararg(expression: IrVararg) {
+        if (expression !in suspendableNodes) return addStatement(expression)
+        val spreadIndices = mutableSetOf<Int>()
+        val arguments: Array<IrExpression?> = expression.elements
+            .mapIndexed { index, item ->
+                if (item is IrSpreadElement) {
+                    spreadIndices.add(index)
+                    item.expression
+                } else {
+                    item as IrExpression
+                }
+            }
+            .toTypedArray()
+        val newArgs = transformArguments(arguments)
+            .mapIndexed { index, item ->
+                requireNotNull(item)
+                if (index in spreadIndices) {
+                    IrSpreadElementImpl(
+                        item.startOffset,
+                        item.endOffset,
+                        item
+                    )
+                } else {
+                    item
+                }
+            }
+            .toList()
+        addStatement(
+            IrVarargImpl(
+                expression.startOffset,
+                expression.endOffset,
+                expression.type,
+                expression.varargElementType,
+                newArgs
+            )
+        )
     }
 
     private fun transformArguments(arguments: Array<IrExpression?>): Array<IrExpression?> {
