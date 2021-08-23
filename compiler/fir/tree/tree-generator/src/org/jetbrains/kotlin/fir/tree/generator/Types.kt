@@ -61,6 +61,7 @@ val implicitNothingTypeRefType = generatedType("types.impl", "FirImplicitNothing
 val implicitStringTypeRefType = generatedType("types.impl", "FirImplicitStringTypeRef")
 val implicitUnitTypeRefType = generatedType("types.impl", "FirImplicitUnitTypeRef")
 val resolvePhaseType = type("fir.declarations", "FirResolvePhase")
+val propertyBodyResolveStateType = type("fir.declarations", "FirPropertyBodyResolveState")
 val stubReferenceType = generatedType("references.impl", "FirStubReference")
 
 val firBasedSymbolType = type("fir.symbols", "FirBasedSymbol")

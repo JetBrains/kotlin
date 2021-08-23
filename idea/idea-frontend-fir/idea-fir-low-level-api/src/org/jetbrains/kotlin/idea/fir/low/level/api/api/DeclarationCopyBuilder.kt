@@ -60,7 +60,7 @@ internal object DeclarationCopyBuilder {
             setter = copySetter
 
             if (propertyResolvePhase < FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
-                initializerAndAccessorsAreResolved = false
+                bodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED
             }
 
             initDeclaration(this@withBodyFrom, propertyWithBody)

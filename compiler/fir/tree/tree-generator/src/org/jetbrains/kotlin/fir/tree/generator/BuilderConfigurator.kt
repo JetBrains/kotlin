@@ -202,7 +202,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += typeParametersOwnerBuilder
             defaultNull("getter", "setter", "containerSource", "delegateFieldSymbol")
             default("resolvePhase", "FirResolvePhase.RAW_FIR")
-            defaultFalse("initializerAndAccessorsAreResolved")
+            default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
             withCopy()
         }
 

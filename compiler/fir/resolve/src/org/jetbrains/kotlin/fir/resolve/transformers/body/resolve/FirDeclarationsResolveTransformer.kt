@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
@@ -126,17 +125,23 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
 
         val returnTypeRef = property.returnTypeRef
-        if (property.initializerAndAccessorsAreResolved) return property
+        val bodyResolveState = property.bodyResolveState
+        if (bodyResolveState == FirPropertyBodyResolveState.EVERYTHING_RESOLVED) return property
         if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property
 
         property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterProperty(property)
         doTransformTypeParameters(property)
+        val shouldResolveEverything = !implicitTypeOnly
         return withFullBodyResolve {
+            val initializerIsAlreadyResolved = bodyResolveState >= FirPropertyBodyResolveState.INITIALIZER_RESOLVED
             context.withProperty(property) {
                 context.forPropertyInitializer {
                     property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
-                    property.transformChildrenWithoutAccessors(returnTypeRef)
+                    if (!initializerIsAlreadyResolved) {
+                        property.transformChildrenWithoutAccessors(returnTypeRef)
+                        property.replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
+                    }
                     if (property.initializer != null) {
                         storeVariableReturnType(property)
                     }
@@ -147,14 +152,26 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     if (property.delegateFieldSymbol != null) {
                         replacePropertyReferenceTypeInDelegateAccessors(property)
                     }
+                    property.replaceBodyResolveState(FirPropertyBodyResolveState.EVERYTHING_RESOLVED)
                 } else {
-                    property.transformAccessors()
+                    val hasNonDefaultAccessors = property.getter != null && property.getter !is FirDefaultPropertyAccessor ||
+                            property.setter != null && property.setter !is FirDefaultPropertyAccessor
+                    val mayResolveSetter = shouldResolveEverything || !hasNonDefaultAccessors
+                    val mayResolveGetter = mayResolveSetter || property.initializer == null
+                    if (mayResolveGetter) {
+                        property.transformAccessors(mayResolveSetter)
+                        property.replaceBodyResolveState(
+                            if (mayResolveSetter) FirPropertyBodyResolveState.EVERYTHING_RESOLVED
+                            else FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED
+                        )
+                    }
                 }
             }
-            dataFlowAnalyzer.exitProperty(property)?.let {
-                property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
+            if (!initializerIsAlreadyResolved) {
+                dataFlowAnalyzer.exitProperty(property)?.let {
+                    property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
+                }
             }
-            property.replaceInitializerAndAccessorsAreResolved(true)
             property
         }
     }
@@ -293,10 +310,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             .transformOtherChildren(transformer, data)
     }
 
-    private fun FirProperty.transformAccessors() {
+    private fun FirProperty.transformAccessors(mayResolveSetter: Boolean = true) {
         var enhancedTypeRef = returnTypeRef
-        getter?.let {
-            transformAccessor(it, enhancedTypeRef, this)
+        if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED) {
+            getter?.let {
+                transformAccessor(it, enhancedTypeRef, this)
+            }
         }
         if (returnTypeRef is FirImplicitTypeRef) {
             storeVariableReturnType(this)
@@ -304,11 +323,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             // We need update type of getter for case when its type was approximated
             getter?.replaceReturnTypeRef(enhancedTypeRef)
         }
-        setter?.let {
-            if (it.valueParameters[0].returnTypeRef is FirImplicitTypeRef) {
-                it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)
+        if (mayResolveSetter) {
+            setter?.let {
+                if (it.valueParameters[0].returnTypeRef is FirImplicitTypeRef) {
+                    it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)
+                }
+                transformAccessor(it, enhancedTypeRef, this)
             }
-            transformAccessor(it, enhancedTypeRef, this)
         }
     }
 

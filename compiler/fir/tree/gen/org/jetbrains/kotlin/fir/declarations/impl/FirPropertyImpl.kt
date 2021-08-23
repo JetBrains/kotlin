@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirPropertyBodyResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -55,7 +56,7 @@ internal class FirPropertyImpl(
     override val symbol: FirPropertySymbol,
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
     override val isLocal: Boolean,
-    override var initializerAndAccessorsAreResolved: Boolean,
+    override var bodyResolveState: FirPropertyBodyResolveState,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirProperty() {
     override val isVal: Boolean get() = !isVar
@@ -169,7 +170,7 @@ internal class FirPropertyImpl(
         controlFlowGraphReference = newControlFlowGraphReference
     }
 
-    override fun replaceInitializerAndAccessorsAreResolved(newInitializerAndAccessorsAreResolved: Boolean) {
-        initializerAndAccessorsAreResolved = newInitializerAndAccessorsAreResolved
+    override fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState) {
+        bodyResolveState = newBodyResolveState
     }
 }

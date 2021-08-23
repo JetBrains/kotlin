@@ -200,7 +200,7 @@ internal class ReanalyzablePropertyStructureElement(
                 getter?.replaceResolvePhase(upgradedPhase)
                 setter?.replaceResolvePhase(upgradedPhase)
                 replaceResolvePhase(upgradedPhase)
-                replaceInitializerAndAccessorsAreResolved(false)
+                replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
             }
 
             val resolvedDeclaration = firLazyDeclarationResolver.lazyResolveDeclaration(

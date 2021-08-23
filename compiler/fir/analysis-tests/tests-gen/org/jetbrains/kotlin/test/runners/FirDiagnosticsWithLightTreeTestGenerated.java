@@ -5035,6 +5035,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestDataPath("$PROJECT_ROOT")
         public class Intellij {
             @Test
+            @TestMetadata("accessInSetter.kt")
+            public void testAccessInSetter() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/accessInSetter.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInIntellij() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }

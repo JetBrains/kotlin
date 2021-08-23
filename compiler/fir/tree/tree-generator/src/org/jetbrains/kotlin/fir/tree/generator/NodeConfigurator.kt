@@ -318,7 +318,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("backingFieldSymbol", backingFieldSymbolType)
             +field("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
             +booleanField("isLocal")
-            +booleanField("initializerAndAccessorsAreResolved", withReplace = true)
+            +field("bodyResolveState", propertyBodyResolveStateType, withReplace = true)
             +typeParameters
         }
 

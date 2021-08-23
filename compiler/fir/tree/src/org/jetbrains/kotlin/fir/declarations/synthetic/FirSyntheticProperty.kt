@@ -82,8 +82,8 @@ class FirSyntheticProperty(
     // ???
     override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
 
-    override val initializerAndAccessorsAreResolved: Boolean
-        get() = true
+    override val bodyResolveState: FirPropertyBodyResolveState
+        get() = FirPropertyBodyResolveState.EVERYTHING_RESOLVED
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
@@ -158,7 +158,7 @@ class FirSyntheticProperty(
         throw AssertionError("Mutation of synthetic property isn't supported")
     }
 
-    override fun replaceInitializerAndAccessorsAreResolved(newInitializerAndAccessorsAreResolved: Boolean) {
+    override fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState) {
         throw AssertionError("Mutation of synthetic property isn't supported")
     }
 }
