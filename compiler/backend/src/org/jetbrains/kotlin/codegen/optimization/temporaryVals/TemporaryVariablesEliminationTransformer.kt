@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
-import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -17,11 +16,8 @@ import kotlin.math.max
 
 class TemporaryVariablesEliminationTransformer : MethodTransformer() {
     private val temporaryValsAnalyzer = TemporaryValsAnalyzer()
-    private val deadCodeElimination = DeadCodeEliminationMethodTransformer()
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        simplifyControlFlow(methodNode)
-
         val cfg = ControlFlowGraph(methodNode)
         processLabels(cfg)
 
@@ -209,36 +205,6 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
         }
     }
 
-    private fun simplifyControlFlow(methodNode: MethodNode) {
-        val insnList = methodNode.instructions
-        var needsDCE = false
-
-        for (insn in insnList.toArray()) {
-            if (insn.opcode == Opcodes.NOP) {
-                // Remove NOPs not preceded by LABEL or LINENUMBER instructions.
-                val prev = insn.previous ?: continue
-                if (prev.type == AbstractInsnNode.LABEL || prev.type == AbstractInsnNode.LINE) continue
-
-                insnList.remove(insn)
-                continue
-            }
-
-            if (insn.opcode == Opcodes.GOTO) {
-                // If we have a GOTO instruction that leads to another GOTO, replace corresponding label.
-                val jumpInsn = insn as JumpInsnNode
-                val newLabel = jumpInsn.getFinalLabel()
-                if (newLabel != jumpInsn.label) {
-                    needsDCE = true
-                }
-                jumpInsn.label = newLabel
-            }
-        }
-
-        if (needsDCE) {
-            deadCodeElimination.transform("<fake>", methodNode)
-        }
-    }
-
     @Suppress("DuplicatedCode")
     private fun simplifyKnownSafeCallPatterns(cfg: ControlFlowGraph) {
         val insnList = cfg.methodNode.instructions
@@ -359,29 +325,6 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
         }
 
         cfg.methodNode.maxStack += maxStackIncrement
-    }
-
-    private fun JumpInsnNode.getFinalLabel(): LabelNode {
-        var label = this.label
-        var insn = label.next
-        while (true) {
-            when {
-                insn.type == AbstractInsnNode.LABEL || insn.type == AbstractInsnNode.LINE -> {
-                    insn = insn.next ?: break
-                }
-                insn.opcode == Opcodes.GOTO -> {
-                    val newLabel = (insn as JumpInsnNode).label
-                    if (newLabel == label) return newLabel
-                    label = newLabel
-                    insn = label.next ?: break
-                }
-                insn.opcode == Opcodes.NOP -> {
-                    insn = insn.next ?: break
-                }
-                else -> break
-            }
-        }
-        return label
     }
 
     private fun AbstractInsnNode.matchOpcodes(vararg opcodes: Int): Boolean {
