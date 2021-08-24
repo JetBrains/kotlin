@@ -55,3 +55,6 @@ class Outer {
     @JvmRecord
     <!INNER_JVM_RECORD!>inner<!> class Inner(val name: String)
 }
+
+@JvmRecord
+data class A11(<!DATA_CLASS_VARARG_PARAMETER, JVM_RECORD_NOT_LAST_VARARG_PARAMETER!>vararg val x: String<!>, val y: Int)
