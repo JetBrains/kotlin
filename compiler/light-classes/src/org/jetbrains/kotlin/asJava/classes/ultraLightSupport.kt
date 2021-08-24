@@ -18,7 +18,6 @@ interface KtUltraLightSupport {
     val deprecationResolver: DeprecationResolver
     val typeMapper: KotlinTypeMapper
     val moduleDescriptor: ModuleDescriptor
-    val isReleasedCoroutine: Boolean
     val languageVersionSettings: LanguageVersionSettings
 
     fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean

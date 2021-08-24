@@ -70,9 +70,6 @@ class CliLightClassGenerationSupport(
         private val traceHolder: CliTraceHolder
             get() = (getInstance(project) as CliLightClassGenerationSupport).traceHolder
 
-        override val isReleasedCoroutine
-            get() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-
         override fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean = true
 
         override val moduleDescriptor get() = traceHolder.module

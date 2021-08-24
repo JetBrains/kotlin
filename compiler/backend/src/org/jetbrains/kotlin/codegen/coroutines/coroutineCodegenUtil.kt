@@ -98,12 +98,11 @@ const val CONTINUATION_VARIABLE_NAME = "\$continuation"
 // and fake `this` expression that used as argument for second parameter
 fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
     project: Project,
-    bindingContext: BindingContext,
-    isReleaseCoroutines: Boolean
+    bindingContext: BindingContext
 ): ResolvedCallWithRealDescriptor? {
     if (this is VariableAsFunctionResolvedCall) {
         val replacedFunctionCall =
-            functionCall.replaceSuspensionFunctionWithRealDescriptor(project, bindingContext, isReleaseCoroutines)
+            functionCall.replaceSuspensionFunctionWithRealDescriptor(project, bindingContext)
                 ?: return null
 
         @Suppress("UNCHECKED_CAST")
@@ -161,8 +160,7 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
 fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(state: GenerationState): ResolvedCallWithRealDescriptor? =
     replaceSuspensionFunctionWithRealDescriptor(
         state.project,
-        state.bindingContext,
-        state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+        state.bindingContext
     )
 
 private fun ResolvedCall<VariableDescriptor>.asMutableResolvedCall(bindingContext: BindingContext): MutableResolvedCall<VariableDescriptor> {

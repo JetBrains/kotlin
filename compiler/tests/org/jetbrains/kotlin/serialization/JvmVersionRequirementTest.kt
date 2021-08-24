@@ -159,23 +159,6 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         )
     }
 
-    fun testSuspendFun_1_2() {
-        doTest(
-            VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
-            customLanguageVersion = LanguageVersion.KOTLIN_1_2,
-            fqNamesWithRequirements = listOf(
-                "test.topLevel",
-                "test.Foo.member",
-                "test.Foo.<init>",
-                "test.async1",
-                "test.async2",
-                "test.async3",
-                "test.async4",
-                "test.asyncVal"
-            )
-        )
-    }
-
     fun testInlineClassesAndRelevantDeclarations1430() {
         doTest(
             VersionRequirement.Version(1, 4, 30), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,

@@ -26,8 +26,6 @@ interface TypeMappingConfiguration<out T : Any> {
 
     // returns null when type doesn't need to be preprocessed
     fun preprocessType(kotlinType: KotlinType): KotlinType? = null
-
-    fun releaseCoroutines(): Boolean = true
 }
 
 fun <T : Any> mapType(

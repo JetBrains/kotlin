@@ -170,11 +170,6 @@ class MemberDeserializer(private val c: DeserializationContext) {
         )
     }
 
-    private fun DeserializedMemberDescriptor.versionAndReleaseCoroutinesMismatch(): Boolean =
-        versionRequirements.none {
-            it.version == VersionRequirement.Version(1, 3) && it.kind == ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION
-        }
-
     private fun loadOldFlags(oldFlags: Int): Int {
         val lowSixBits = oldFlags and 0x3f
         val rest = (oldFlags shr 8) shl 6
