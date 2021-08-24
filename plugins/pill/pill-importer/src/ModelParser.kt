@@ -3,19 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION") // Suppress deprecation warning of HasConvention
+
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.*
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.copy.CopySpecInternal
 import org.gradle.api.internal.file.copy.SingleParentCopySpec
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.pill.model.POrderRoot.*
 import org.jetbrains.kotlin.pill.model.PSourceRoot.*
@@ -330,6 +333,6 @@ val Project.pillModuleName: String
 
 val Project.sourceSets: SourceSetContainer?
     get() {
-        val convention = project.convention.findPlugin(JavaPluginConvention::class.java) ?: return null
-        return convention.sourceSets
+        val javaExtension = project.extensions.findByType<JavaPluginExtension>() ?: return null
+        return javaExtension.sourceSets
     }

@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.BasePluginExtension
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.pill.artifact.ArtifactDependencyMapper
 import org.jetbrains.kotlin.pill.artifact.ArtifactGenerator
 import org.jetbrains.kotlin.pill.model.PDependency
@@ -304,10 +305,10 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
             for (path in DIST_LIBRARIES) {
                 val project = rootProject.findProject(path) ?: error("Project '$path' not found")
-                val archiveName = project.convention.findPlugin(BasePluginConvention::class.java)!!.archivesBaseName
+                val archiveName = project.extensions.getByType<BasePluginExtension>().archivesName.get()
                 val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
                 val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
-                val sourceSets = project.convention.findPlugin(JavaPluginConvention::class.java)!!.sourceSets
+                val sourceSets = project.extensions.getByType<JavaPluginExtension>().sourceSets
 
                 val applicableSourceSets = listOfNotNull(
                     sourceSets.findByName(SourceSet.MAIN_SOURCE_SET_NAME),
