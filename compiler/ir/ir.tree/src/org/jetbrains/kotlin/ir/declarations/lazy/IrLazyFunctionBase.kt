@@ -21,7 +21,8 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
     val initialSignatureFunction: IrFunction?
 
     fun createInitialSignatureFunction(): Lazy<IrFunction?> =
-        lazy(LazyThreadSafetyMode.PUBLICATION) {
+        // Need SYNCHRONIZED; otherwise two stubs generated in parallel may fight for the same symbol.
+        lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             descriptor.initialSignatureDescriptor?.takeIf { it != descriptor }?.original?.let(stubGenerator::generateFunctionStub)
         }
 
