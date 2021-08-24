@@ -1,0 +1,19 @@
+FILE: User.kt
+    public final class User : R|BaseClass| {
+        public constructor(): R|test/User| {
+            super<R|BaseClass|>()
+        }
+
+        public final fun foo(tree: R|BaseClass|): R|kotlin/Unit| {
+            lval ui: R|ft<kotlin/String, kotlin/String?>| = R|<local>/tree|.<HIDDEN: /BaseClass.ui is invisible>#
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            lval ui: R|ft<kotlin/String, kotlin/String?>| = this@R|test/User|.R|/BaseClass.ui|
+        }
+
+        public final fun baz(): R|kotlin/Unit| {
+            lval ui: R|ft<kotlin/String, kotlin/String?>| = this@R|test/User|.R|/BaseClass.ui|
+        }
+
+    }

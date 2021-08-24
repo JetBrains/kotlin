@@ -21,7 +21,7 @@ class B : A() {
         b.foo
         b.bar = b.bar + ""
 
-        a.foo
+        a.<!INVISIBLE_REFERENCE!>foo<!>
         // TODO: should be INVISIBLE_SETTER
         a.bar = a.bar + ""
 
@@ -32,7 +32,7 @@ class B : A() {
 
         if (d.x is B) {
             d.x.abc // Ok
-            d.x.foo
+            d.x.<!INVISIBLE_REFERENCE!>foo<!>
             // TODO: should be INVISIBLE_SETTER
             d.x.bar = d.x.bar + ""
         }

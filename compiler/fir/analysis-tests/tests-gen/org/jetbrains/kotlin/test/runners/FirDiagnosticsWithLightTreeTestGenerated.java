@@ -5052,6 +5052,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("FieldVsSyntheticAccessor.kt")
+            public void testFieldVsSyntheticAccessor() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/FieldVsSyntheticAccessor.kt");
+            }
+
+            @Test
             @TestMetadata("IntersectionWithJavaString.kt")
             public void testIntersectionWithJavaString() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/IntersectionWithJavaString.kt");

@@ -9,18 +9,16 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
-import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -116,7 +114,10 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
             Visibilities.Protected -> {
                 val ownerId = symbol.getOwnerId()
-                ownerId != null && canSeeProtectedMemberOf(containingDeclarations, dispatchReceiver, ownerId, session)
+                ownerId != null && canSeeProtectedMemberOf(
+                    containingDeclarations, dispatchReceiver, ownerId, session,
+                    isVariableOrNamedFunction = symbol is FirVariableSymbol || symbol is FirNamedFunctionSymbol
+                )
             }
 
             else -> platformVisibilityCheck(
@@ -173,14 +174,57 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     private fun canSeeProtectedMemberOf(
         containingUseSiteClass: FirClass,
         dispatchReceiver: ReceiverValue?,
-        ownerId: ClassId, session: FirSession
+        ownerId: ClassId,
+        session: FirSession,
+        isVariableOrNamedFunction: Boolean
     ): Boolean {
         dispatchReceiver?.ownerIfCompanion(session)?.let { companionOwnerClassId ->
             if (containingUseSiteClass.isSubClass(companionOwnerClassId, session)) return true
         }
 
-        // TODO: Add check for receiver, see org.jetbrains.kotlin.descriptors.Visibility#doesReceiverFitForProtectedVisibility
-        return containingUseSiteClass.isSubClass(ownerId, session)
+        return when {
+            !containingUseSiteClass.isSubClass(ownerId, session) -> false
+            isVariableOrNamedFunction -> doesReceiverFitForProtectedVisibility(dispatchReceiver, containingUseSiteClass, session)
+            else -> true
+        }
+    }
+
+    private fun doesReceiverFitForProtectedVisibility(
+        dispatchReceiver: ReceiverValue?,
+        containingUseSiteClass: FirClass,
+        session: FirSession
+    ): Boolean {
+        if (dispatchReceiver == null) return true
+        var dispatchReceiverType = dispatchReceiver.type
+        if (dispatchReceiver is ExpressionReceiverValue) {
+            val explicitReceiver = dispatchReceiver.explicitReceiver
+            if (explicitReceiver is FirPropertyAccessExpression && explicitReceiver.calleeReference is FirSuperReference) {
+                // Special 'super' case: type of this, not of super, should be taken for the check below
+                dispatchReceiverType = explicitReceiver.dispatchReceiver.typeRef.coneType
+            }
+        }
+        return dispatchReceiverType.fullyExpandedType(session).isSubtypeOfClass(containingUseSiteClass.classId, session)
+    }
+
+    private fun ConeKotlinType.isSubtypeOfClass(ownerId: ClassId, session: FirSession): Boolean {
+        return when (this) {
+            is ConeClassLikeType -> {
+                val dispatchReceiverClass = lookupTag.toSymbol(session)?.fir as? FirClass
+                dispatchReceiverClass?.isSubClass(ownerId, session) == true
+            }
+            is ConeTypeParameterType -> {
+                this.lookupTag.typeParameterSymbol.fir.bounds.any {
+                    it.coneType.isSubtypeOfClass(ownerId, session)
+                }
+            }
+            is ConeFlexibleType -> {
+                lowerBound.isSubtypeOfClass(ownerId, session)
+            }
+            is ConeDefinitelyNotNullType -> {
+                original.isSubtypeOfClass(ownerId, session)
+            }
+            else -> false
+        }
     }
 
     private fun FirClass.isSubClass(ownerId: ClassId, session: FirSession): Boolean {
@@ -207,14 +251,16 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     protected fun canSeeProtectedMemberOf(
         containingDeclarationOfUseSite: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,
-        ownerId: ClassId, session: FirSession
+        ownerId: ClassId,
+        session: FirSession,
+        isVariableOrNamedFunction: Boolean
     ): Boolean {
         if (canSeePrivateMemberOf(containingDeclarationOfUseSite, ownerId, session)) return true
 
         for (containingDeclaration in containingDeclarationOfUseSite) {
             if (containingDeclaration !is FirClass) continue
             val boundSymbol = containingDeclaration.symbol
-            if (canSeeProtectedMemberOf(boundSymbol.fir, dispatchReceiver, ownerId, session)) return true
+            if (canSeeProtectedMemberOf(boundSymbol.fir, dispatchReceiver, ownerId, session, isVariableOrNamedFunction)) return true
         }
 
         return false
