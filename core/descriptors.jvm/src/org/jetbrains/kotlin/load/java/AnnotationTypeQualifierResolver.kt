@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -149,7 +150,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         return if (!wasUpdate) oldQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)
     }
 
-    fun extractNullability(
+    private fun extractNullability(
         annotation: AnnotationDescriptor, forceWarning: AnnotationDescriptor.() -> Boolean
     ): NullabilityQualifierWithMigrationStatus? {
         knownNullability(annotation, annotation.forceWarning())?.let { return it }
@@ -160,6 +161,22 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         // TODO: the result of `forceWarning` will be overwritten - expected? Probably not.
         return knownNullability(typeQualifierAnnotation, typeQualifierAnnotation.forceWarning())
             ?.copy(isForWarningOnly = jsr305State.isWarning)
+    }
+
+    fun extractNullability(
+        annotations: Iterable<AnnotationDescriptor>, forceWarning: AnnotationDescriptor.() -> Boolean
+    ): NullabilityQualifierWithMigrationStatus? =
+        // TODO: handle inconsistent qualifiers (return null? prefer errors over warnings?)
+        annotations.firstNotNullOfOrNull { extractNullability(it, forceWarning) }
+
+    fun extractMutability(annotations: Iterable<AnnotationDescriptor>): MutabilityQualifier? {
+        return annotations.fold(null as MutabilityQualifier?) { found, annotation ->
+            when (annotation.fqName) {
+                in READ_ONLY_ANNOTATIONS -> MutabilityQualifier.READ_ONLY
+                in MUTABLE_ANNOTATIONS -> MutabilityQualifier.MUTABLE
+                else -> found
+            }.also { if (found != null && found != it) return null /* inconsistent */ }
+        }
     }
 
     private fun knownNullability(annotation: AnnotationDescriptor, forceWarning: Boolean): NullabilityQualifierWithMigrationStatus? {
