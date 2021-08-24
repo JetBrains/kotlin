@@ -32,12 +32,16 @@ dependencies {
 }
 
 if (includeJava9) {
+    configurations.register('java9PatchModule') {
+        extendsFrom(configurations.compileOnly)
+        exclude(group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib')
+        canBeResolved = true
+    }
+
     LibrariesCommon.configureJava9Compilation(
             project,
             'kotlin.reflect',
-            [sourceSets.main.output, configurations.compileOnly.filter {
-                !it.name.contains("kotlin-stdlib")
-            }]
+            [sourceSets.main.output, configurations.java9PatchModule]
     )
 }
 
