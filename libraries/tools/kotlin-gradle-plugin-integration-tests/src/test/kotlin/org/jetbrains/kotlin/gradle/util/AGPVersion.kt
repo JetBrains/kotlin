@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import org.gradle.util.VersionNumber
+import org.gradle.util.internal.VersionNumber
 
 class AGPVersion private constructor(private val versionNumber: VersionNumber) {
     operator fun compareTo(other: AGPVersion): Int =
