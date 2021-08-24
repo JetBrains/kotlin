@@ -31,8 +31,9 @@ class KotlinJsIrCompilation(
 
     override val defaultSourceSetName: String
         get() {
+            val target = target as KotlinJsIrTarget
             return lowerCamelCaseName(
-                if ((target as KotlinJsIrTarget).mixedMode)
+                if (target.mixedMode)
                     target.disambiguationClassifierInPlatform
                 else
                     target.disambiguationClassifier,
