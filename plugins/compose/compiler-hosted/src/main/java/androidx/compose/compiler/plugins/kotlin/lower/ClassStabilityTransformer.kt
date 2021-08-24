@@ -120,6 +120,9 @@ class ClassStabilityTransformer(
                             externalParameters = true
                         }
                     }
+                    else -> {
+                        println("stability type $stability can not be applied to class")
+                    }
                 }
             }
             stableExpr = if (externalParameters)
