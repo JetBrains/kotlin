@@ -343,8 +343,6 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class SealedInheritorInDifferentPackage : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = SealedInheritorInDifferentPackage::class
-        abstract val subclassPackage: FqName
-        abstract val basePackage: FqName
     }
 
     abstract class SealedInheritorInDifferentModule : KtFirDiagnostic<KtTypeReference>() {
