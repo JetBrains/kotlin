@@ -350,8 +350,6 @@ internal fun List<FirAnnotationCall>.computeTypeAttributesForJavaType(): ConeAtt
             in NOT_NULL_ANNOTATION_IDS -> add(CompilerConeAttributes.EnhancedNullability)
             JAVAX_NONNULL_ANNOTATION_ID,
             JAVAX_CHECKFORNULL_ANNOTATION_ID,
-            COMPATQUAL_NONNULL_ANNOTATION_ID,
-            ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID
             -> add(CompilerConeAttributes.EnhancedNullability)
         }
     }

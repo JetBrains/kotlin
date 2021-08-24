@@ -52,6 +52,6 @@ val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
                 NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
                 listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
             )
-) + JSPECIFY_DEFAULT_ANNOTATIONS
+) + JSPECIFY_DEFAULT_ANNOTATIONS // TODO: separate handling of jspecify and JSR-305
 
 val BUILT_IN_TYPE_QUALIFIER_FQ_NAMES = setOf(JAVAX_NONNULL_ANNOTATION, JAVAX_CHECKFORNULL_ANNOTATION)
