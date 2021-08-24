@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 inline fun inlineOnlyFun(): Int {

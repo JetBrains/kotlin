@@ -646,11 +646,6 @@ class ExpressionCodegen(
         return MaterialValue(this, type, expression.symbol.owner.realType)
     }
 
-    private fun IrValueDeclaration.isTemporaryVal() =
-        this is IrVariable &&
-                !this.isVar &&
-                this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-
     internal fun genOrGetLocal(expression: IrExpression, type: Type, parameterType: IrType, data: BlockInfo): StackValue =
         if (expression is IrGetValue)
             StackValue.local(
@@ -1229,7 +1224,7 @@ class ExpressionCodegen(
             val afterStore = markNewLabel()
 
             val catchBody = clause.result
-            var catchBlockInfo = BlockInfo(data)
+            val catchBlockInfo = BlockInfo(data)
             catchBlockInfo.variables.add(VariableInfo(parameter, index, descriptorType, afterStore))
 
             val catchResult = catchBody.accept(this, catchBlockInfo)

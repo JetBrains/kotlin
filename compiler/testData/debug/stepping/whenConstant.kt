@@ -12,9 +12,12 @@ fun box() {
 }
 
 // JVM_IR and JVM backends have different heuristics for when to use a switch.
-// JVM_IR inlines constant value subject and folds unreachable branches.
 
 // LINENUMBERS
 // test.kt:4 box
+// LINENUMBERS JVM_IR
+// test.kt:5 box
+// test.kt:7 box
+// LINENUMBERS
 // test.kt:10 box
 // test.kt:12 box

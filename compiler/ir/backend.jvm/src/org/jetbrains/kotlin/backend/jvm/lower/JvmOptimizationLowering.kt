@@ -322,7 +322,10 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                                     initializer
                             }
                         is IrValueParameter ->
-                            return initializer
+                            return if (initializerValue.isAssignable)
+                                null
+                            else
+                                initializer
                     }
             }
 
@@ -394,9 +397,10 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             }
 
             if (expression.origin == IrStatementOrigin.WHEN) {
-                // Don't optimize out 'when' subject - otherwise we might get somewhat weird debugging behavior.
+                // Don't optimize out 'when' subject initialized with a variable,
+                // otherwise we might get somewhat weird debugging behavior.
                 val subject = expression.statements.firstOrNull()
-                if (subject is IrVariable) {
+                if (subject is IrVariable && subject.initializer is IrGetValue) {
                     dontTouchTemporaryVals.add(subject)
                 }
             }
