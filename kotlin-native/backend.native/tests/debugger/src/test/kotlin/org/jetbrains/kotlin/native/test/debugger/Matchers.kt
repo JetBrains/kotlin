@@ -64,6 +64,11 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
         return
     }
 
+    println("ENVIRONMENT")
+    System.getenv().forEach {
+        println("${it.key} = ${it.value}")
+    }
+
     if (!targetIsHost() && !simulatorTestEnabled()) {
         println("simulator tests disabled, check 'kotlin.native.test.debugger.simulator.enabled' property")
         return
