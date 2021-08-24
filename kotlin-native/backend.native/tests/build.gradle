@@ -1505,6 +1505,10 @@ standaloneTest("initializers_eagerInitializationThreadLocal2") {
     source = "codegen/initializers/eagerInitializationThreadLocal2.kt"
 }
 
+standaloneTest("initializers_singletonInitDoesntTriggerFileInit") {
+    source = "codegen/initializers/singletonInitDoesntTriggerFileInit.kt"
+}
+
 standaloneTest("initializers_workers1") {
     expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
     source = "codegen/initializers/workers1.kt"

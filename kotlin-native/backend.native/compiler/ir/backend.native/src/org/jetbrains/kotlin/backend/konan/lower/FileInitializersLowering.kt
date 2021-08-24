@@ -82,7 +82,8 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
                 else null
 
         irFile.transformChildrenVoid(object: IrElementTransformerVoid() {
-            override fun visitFunction(declaration: IrFunction): IrStatement {
+            // Only functions and property accessors.
+            override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
                 declaration.transformChildrenVoid(this)
                 val body = declaration.body ?: return declaration
                 val statements = (body as IrBlockBody).statements
