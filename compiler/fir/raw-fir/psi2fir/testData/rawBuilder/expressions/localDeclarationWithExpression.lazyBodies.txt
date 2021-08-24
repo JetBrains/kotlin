@@ -1,0 +1,5 @@
+FILE: localDeclarationWithExpression.kt
+    private final? val nonLocalProperty: List<XXX>by LAZY_EXPRESSION
+        public? get(): <implicit> {
+            ^ D|/nonLocalProperty|.getValue#(Null(null), ::R|/nonLocalProperty|)
+        }

@@ -353,6 +353,11 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/lambdaAndAnonymousFunction.kt");
         }
 
+        @TestMetadata("localDeclarationWithExpression.kt")
+        public void testLocalDeclarationWithExpression() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/localDeclarationWithExpression.kt");
+        }
+
         @TestMetadata("locals.kt")
         public void testLocals() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/locals.kt");

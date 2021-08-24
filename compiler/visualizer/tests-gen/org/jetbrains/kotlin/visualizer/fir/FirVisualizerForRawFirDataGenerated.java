@@ -386,6 +386,12 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizerTe
         }
 
         @Test
+        @TestMetadata("localDeclarationWithExpression.kt")
+        public void testLocalDeclarationWithExpression() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/localDeclarationWithExpression.kt");
+        }
+
+        @Test
         @TestMetadata("locals.kt")
         public void testLocals() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/locals.kt");
