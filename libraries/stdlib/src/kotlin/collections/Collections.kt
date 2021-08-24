@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -162,6 +162,8 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
  * The list passed as a receiver to the [builderAction] is valid only inside that function.
  * Using it outside of the function produces an unspecified behavior.
  *
+ * The returned list is serializable (JVM).
+ *
  * @sample samples.collections.Builders.Lists.buildListSample
  */
 @SinceKotlin("1.3")
@@ -184,6 +186,8 @@ internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.(
  *
  * The list passed as a receiver to the [builderAction] is valid only inside that function.
  * Using it outside of the function produces an unspecified behavior.
+ *
+ * The returned list is serializable (JVM).
  *
  * [capacity] is used to hint the expected number of elements added in the [builderAction].
  *
