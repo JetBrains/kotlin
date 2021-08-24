@@ -54,7 +54,11 @@ class ConeUnresolvedNameError(val name: Name) : ConeUnresolvedError {
     override val reason: String get() = "Unresolved name: $name"
 }
 
-class ConeFunctionCallExpectedError(val name: Name, val hasValueParameters: Boolean) : ConeDiagnostic {
+class ConeFunctionCallExpectedError(
+    val name: Name,
+    val hasValueParameters: Boolean,
+    override val candidateSymbols: Collection<FirBasedSymbol<*>>
+) : ConeDiagnosticWithCandidates {
     override val reason: String get() = "Function call expected: $name(${if (hasValueParameters) "..." else ""})"
 }
 

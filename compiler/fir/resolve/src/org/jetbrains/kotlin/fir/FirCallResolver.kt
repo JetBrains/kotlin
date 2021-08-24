@@ -642,9 +642,7 @@ class FirCallResolver(
                 val candidate = candidates.singleOrNull()
 
                 val diagnostic = if (expectedCallKind == CallKind.Function) {
-                    ConeFunctionCallExpectedError(
-                        name,
-                        candidate?.let { isValueParametersNotEmpty(it) } ?: candidates.any { isValueParametersNotEmpty(it) })
+                    ConeFunctionCallExpectedError(name, candidates.any { isValueParametersNotEmpty(it) }, candidates.map { it.symbol })
                 } else {
                     val singleExpectedCandidate = expectedCandidates?.singleOrNull()
 
