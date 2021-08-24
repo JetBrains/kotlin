@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.gradle.kpm.TestDependencyKind
 import org.jetbrains.kotlin.gradle.kpm.TestDependencyKind.*
 import org.jetbrains.kotlin.gradle.kpm.TestKpmModule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
 @ExperimentalStdlibApi
 internal class KpmDependencyResolutionIT : BaseGradleIT() {
     companion object {
@@ -30,6 +27,42 @@ internal class KpmDependencyResolutionIT : BaseGradleIT() {
 
             add(publicationOfMultipleAuxiliaryModulesTestCase(PROJECT))
             add(publicationOfMultipleAuxiliaryModulesTestCase(PUBLISHED))
+        }
+
+        private fun diamondAuxiliaryModulesTestCase() = KpmDependencyResolutionTestCase("diamond-union-auxiliary-modules").apply {
+            val bottom = project("bottom")
+            val bottomForLeft = bottom.module("forLeft") {
+                depends(bottom.main, DIRECT)
+                makePublic(STANDALONE)
+            }
+            val bottomForRight = bottom.module("forRight") {
+                depends(bottom.main, DIRECT)
+                makePublic(STANDALONE)
+            }
+
+            val left = project("left") {
+                main.apply {
+                    depends(bottomForLeft, PUBLISHED)
+                    expectVisibilityOfSimilarStructure(bottomForLeft)
+                }
+            }
+            val right = project("right") {
+                main.apply {
+                    depends(bottom.moduleNamed("forRight"), PUBLISHED)
+                    expectVisibilityOfSimilarStructure(bottomForRight)
+                }
+            }
+            project("top") {
+                main.apply {
+                    depends(left.main, PUBLISHED)
+                    depends(right.main, PUBLISHED)
+                    expectVisibilityOfSimilarStructure(left.main)
+                    expectVisibilityOfSimilarStructure(right.main)
+                    expectVisibilityOfSimilarStructure(bottomForLeft)
+                    expectVisibilityOfSimilarStructure(bottomForRight)
+                    expectVisibilityOfSimilarStructure(bottom.main)
+                }
+            }
         }
 
         private fun oneLevelTransitiveDependenciesTestCase(
@@ -92,42 +125,6 @@ internal class KpmDependencyResolutionIT : BaseGradleIT() {
                 }
             }
 
-        private fun diamondAuxiliaryModulesTestCase() = KpmDependencyResolutionTestCase("diamond-union-auxiliary-modules").apply {
-            val bottom = project("bottom")
-            val bottomForLeft = bottom.module("forLeft") {
-                depends(bottom.main, DIRECT)
-                makePublic(STANDALONE)
-            }
-            val bottomForRight = bottom.module("forRight") {
-                depends(bottom.main, DIRECT)
-                makePublic(STANDALONE)
-            }
-
-            val left = project("left") {
-                main.apply {
-                    depends(bottomForLeft, PUBLISHED)
-                    expectVisibilityOfSimilarStructure(bottomForLeft)
-                }
-            }
-            val right = project("right") {
-                main.apply {
-                    depends(bottom.moduleNamed("forRight"), PUBLISHED)
-                    expectVisibilityOfSimilarStructure(bottomForRight)
-                }
-            }
-            project("top") {
-                main.apply {
-                    depends(left.main, PUBLISHED)
-                    depends(right.main, PUBLISHED)
-                    expectVisibilityOfSimilarStructure(left.main)
-                    expectVisibilityOfSimilarStructure(right.main)
-                    expectVisibilityOfSimilarStructure(bottomForLeft)
-                    expectVisibilityOfSimilarStructure(bottomForRight)
-                    expectVisibilityOfSimilarStructure(bottom.main)
-                }
-            }
-        }
-
         private fun configureSimpleFragments(module: TestKpmModule) = with(module) {
             val jvmAndLinux = fragment("jvmAndLinux", COMMON_FRAGMENT)
             val native = fragment("native", COMMON_FRAGMENT)
@@ -138,23 +135,88 @@ internal class KpmDependencyResolutionIT : BaseGradleIT() {
             fragment("iosX64", IOSX64_VARIANT) { refines(ios) }
             // TODO: add host-specific fragments for hosts other than macOS
         }
-
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun parameters(): Iterable<Array<Any?>> =
-            testCases.map { arrayOf(it.name, it) }
     }
 
-    @Parameterized.Parameter(0)
-    lateinit var testCaseName: String
+    @Test
+    fun testDiamondAuxiliaryModules() {
+        with(PublishAllTestCaseExecutor()) {
+            execute(KpmDependencyResolutionTestCase("diamond-union-auxiliary-modules").apply {
+                val bottom = project("bottom")
+                val bottomForLeft = bottom.module("forLeft") {
+                    depends(bottom.main, DIRECT)
+                    makePublic(STANDALONE)
+                }
+                val bottomForRight = bottom.module("forRight") {
+                    depends(bottom.main, DIRECT)
+                    makePublic(STANDALONE)
+                }
 
-    @Parameterized.Parameter(1)
-    lateinit var testCase: KpmDependencyResolutionTestCase
+                val left = project("left") {
+                    main.apply {
+                        depends(bottomForLeft, PUBLISHED)
+                        expectVisibilityOfSimilarStructure(bottomForLeft)
+                    }
+                }
+                val right = project("right") {
+                    main.apply {
+                        depends(bottom.moduleNamed("forRight"), PUBLISHED)
+                        expectVisibilityOfSimilarStructure(bottomForRight)
+                    }
+                }
+                project("top") {
+                    main.apply {
+                        depends(left.main, PUBLISHED)
+                        depends(right.main, PUBLISHED)
+                        expectVisibilityOfSimilarStructure(left.main)
+                        expectVisibilityOfSimilarStructure(right.main)
+                        expectVisibilityOfSimilarStructure(bottomForLeft)
+                        expectVisibilityOfSimilarStructure(bottomForRight)
+                        expectVisibilityOfSimilarStructure(bottom.main)
+                    }
+                }
+            })
+        }
+    }
 
     @Test
-    fun test() {
+    fun testProjectToProjectDependency() {
         with(PublishAllTestCaseExecutor()) {
-            execute(testCase)
+            execute(oneLevelTransitiveDependenciesTestCase(firstDependencyKind = PROJECT, secondDependencyKind = PROJECT))
+        }
+    }
+
+    @Test
+    fun testProjectToPublishedDependency() {
+        with(PublishAllTestCaseExecutor()) {
+            execute(oneLevelTransitiveDependenciesTestCase(firstDependencyKind = PROJECT, secondDependencyKind = PUBLISHED))
+        }
+    }
+
+    @Test
+    fun testPublishedToProjectDependency() {
+        with(PublishAllTestCaseExecutor()) {
+            execute(oneLevelTransitiveDependenciesTestCase(firstDependencyKind = PUBLISHED, secondDependencyKind = PROJECT))
+        }
+    }
+
+    @Test
+    fun testPublishedToPublishedDependency() {
+        with(PublishAllTestCaseExecutor()) {
+            execute(oneLevelTransitiveDependenciesTestCase(firstDependencyKind = PUBLISHED, secondDependencyKind = PUBLISHED))
+        }
+    }
+
+    @Test
+    fun testAuxillaryModuleWithProjectDependency() {
+        with(PublishAllTestCaseExecutor()) {
+            execute(publicationOfMultipleAuxiliaryModulesTestCase(PROJECT))
+        }
+    }
+
+    @Test
+    fun testAuxillaryModuleWithPublishedDependency() {
+        with(PublishAllTestCaseExecutor()) {
+            execute(publicationOfMultipleAuxiliaryModulesTestCase(PUBLISHED))
         }
     }
 }
