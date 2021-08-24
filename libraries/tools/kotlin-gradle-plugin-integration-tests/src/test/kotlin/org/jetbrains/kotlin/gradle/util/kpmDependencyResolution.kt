@@ -39,6 +39,20 @@ internal class KpmDependencyResolutionTestCase(val name: String?) {
         return project
     }
 
+    fun allModules(configure: TestKpmModule.() -> Unit) {
+        projects.withAll {
+            modules.withAll(configure)
+        }
+    }
+
+    fun allFragments(configure: TestKpmFragment.() -> Unit) {
+        projects.withAll {
+            modules.withAll {
+                fragments.withAll(configure)
+            }
+        }
+    }
+
     override fun toString(): String = name ?: "<no name>"
 }
 
