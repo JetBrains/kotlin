@@ -452,8 +452,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE) { firDiagnostic ->
         SealedInheritorInDifferentPackageImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

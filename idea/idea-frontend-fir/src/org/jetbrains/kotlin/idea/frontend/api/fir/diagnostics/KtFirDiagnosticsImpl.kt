@@ -523,8 +523,6 @@ internal class SealedSupertypeInLocalClassImpl(
 }
 
 internal class SealedInheritorInDifferentPackageImpl(
-    override val subclassPackage: FqName,
-    override val basePackage: FqName,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.SealedInheritorInDifferentPackage(), KtAbstractFirDiagnostic<KtTypeReference> {

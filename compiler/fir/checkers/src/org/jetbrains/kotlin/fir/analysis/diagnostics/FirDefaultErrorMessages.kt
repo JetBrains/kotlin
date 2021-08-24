@@ -573,14 +573,9 @@ class FirDefaultErrorMessages {
             map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
             map.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects")
             map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "Local class cannot extend a sealed class")
-            map.put(
-                SEALED_INHERITOR_IN_DIFFERENT_PACKAGE,
-                "Inheritor of sealed class or interface declared in package {0} but it must be in package {1} where base class is declared",
-                TO_STRING,
-                TO_STRING
-            )
+            map.put(SEALED_INHERITOR_IN_DIFFERENT_PACKAGE, "A class can only inherit from a sealed class or interface declared in the same package")
             map.put(SEALED_INHERITOR_IN_DIFFERENT_MODULE, "Inheritance of sealed classes or interfaces from different module is prohibited")
-            map.put(CLASS_INHERITS_JAVA_SEALED_CLASS, "Inheritance of java sealed classes is prohibited")
+            map.put(CLASS_INHERITS_JAVA_SEALED_CLASS, "Inheritance of Java sealed classes is prohibited")
 
             map.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Supertype is not a class or interface", TO_STRING)
             map.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type")

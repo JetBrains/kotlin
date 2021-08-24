@@ -48,13 +48,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
             }
             val superClassPackage = superClass.classId.packageFqName
             if (superClassPackage != subclassPackage) {
-                reporter.reportOn(
-                    superTypeRef.source,
-                    FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE,
-                    subclassPackage,
-                    superClassPackage,
-                    context
-                )
+                reporter.reportOn(superTypeRef.source, FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE, context)
             }
             if (superClass.moduleData != declaration.moduleData) {
                 // TODO: implement logic like in org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSameModuleChecker for MPP support.
