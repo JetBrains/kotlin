@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.kpm.ConfigurableSet
 import org.jetbrains.kotlin.gradle.kpm.KpmModulePublicationMode
@@ -17,12 +18,13 @@ import org.jetbrains.kotlin.gradle.kpm.TestKpmModuleDependency
 import java.io.File
 
 internal class PublishAllTestCaseExecutor {
-    fun BaseGradleIT.execute(testCase: KpmDependencyResolutionTestCase) {
+    fun BaseGradleIT.execute(testCase: KpmDependencyResolutionTestCase, projectActions: Project.() -> Unit = { }) {
         val buildable = prepare(testCase)
         val buildOptions = defaultBuildOptions().copy(withBuildCache = true)
         buildable.topologicallySortedProjects.forEach { kpmProject ->
             // Running multiple builds and not just one is required because otherwise Gradle will fail to resolve dependencies on modules
             // that haven't been published yet.
+            buildable.project.projectActions()
             buildable.project.build(":${kpmProject.name}:publish", options = buildOptions) {
                 assertSuccessful()
             }
@@ -68,7 +70,7 @@ internal fun TestKpmFragment.expectVisibilityOfSimilarStructure(testKpmModule: T
 
 internal data class BuildableTestCase(
     val testCase: KpmDependencyResolutionTestCase,
-    val project: BaseGradleIT.Project,
+    val project: Project,
     val projectsWithPublishedDependencies: Set<TestKpmGradleProject>,
     val topologicallySortedProjects: List<TestKpmGradleProject>
 )
@@ -112,7 +114,7 @@ internal fun BaseGradleIT.prepare(
 }
 
 private fun generateBuildScript(
-    project: BaseGradleIT.Project,
+    project: Project,
     subproject: TestKpmGradleProject,
     group: String,
     version: String
@@ -191,7 +193,7 @@ private fun moduleDependencyNotation(
 }
 
 private fun generateFragmentSources(
-    project: BaseGradleIT.Project,
+    project: Project,
     subproject: TestKpmGradleProject,
     fragment: TestKpmFragment,
     module: TestKpmModule
