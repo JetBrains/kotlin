@@ -56,7 +56,7 @@ internal object FirReferenceResolveHelper {
 
         val symbol = resolvedSymbol ?: run {
             val diagnostic = (this as? FirErrorTypeRef)?.diagnostic
-            (diagnostic as? ConeUnmatchedTypeArgumentsError)?.symbol
+            (diagnostic as? ConeUnmatchedTypeArgumentsError)?.candidateSymbol
         }
 
         return symbol?.fir?.buildSymbol(symbolBuilder)

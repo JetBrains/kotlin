@@ -47,16 +47,6 @@ internal fun FirNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<
 
 internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
     when (this) {
-        is ConeInapplicableCandidateError -> listOf(candidate.symbol)
-        is ConeHiddenCandidateError -> listOf(candidateSymbol)
-        is ConeAmbiguityError -> candidates.map { it.symbol }
-        is ConeOperatorAmbiguityError -> candidates
-        is ConeUnsupportedCallableReferenceTarget -> listOf(fir.symbol)
-        is ConeUnmatchedTypeArgumentsError -> listOf(symbol)
-        is ConeConstraintSystemHasContradiction -> listOf(candidate.symbol)
-        is ConeDeprecated -> listOf(symbol)
-        is ConeNoTypeArgumentsOnRhsError -> listOf(symbol)
-        is ConeResolutionToClassifierError -> listOf(classSymbol)
-        is ConeWrongNumberOfTypeArgumentsError -> listOf(symbol)
+        is ConeDiagnosticWithCandidates -> candidateSymbols
         else -> emptyList()
     }

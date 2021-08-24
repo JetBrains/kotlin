@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 
-class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic()
+class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic
 
-class ConeNotAnnotationContainer(val text: String) : ConeDiagnostic() {
+class ConeNotAnnotationContainer(val text: String) : ConeDiagnostic {
     override val reason: String get() = "Strange annotated expression: $text"
 }
 
-abstract class ConeDiagnosticWithSource(val source: FirSourceElement) : ConeDiagnostic()
+abstract class ConeDiagnosticWithSource(val source: FirSourceElement) : ConeDiagnostic
 
 class ConeUnderscoreIsReserved(source: FirSourceElement) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Names _, __, ___, ..., are reserved in Kotlin"

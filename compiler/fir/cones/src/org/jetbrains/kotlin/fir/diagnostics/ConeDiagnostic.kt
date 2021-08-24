@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.diagnostics
 
-abstract class ConeDiagnostic {
-    abstract val reason: String
+interface ConeDiagnostic {
+    val reason: String
 }
 
-class ConeStubDiagnostic(val original: ConeDiagnostic) : ConeDiagnostic() {
+class ConeStubDiagnostic(val original: ConeDiagnostic) : ConeDiagnostic {
     override val reason: String get() = original.reason
 }
