@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -110,6 +112,39 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
             "IGNORE" -> ReportLevel.IGNORE
             else -> null
         }
+    }
+
+    fun extractNullability(
+        annotation: AnnotationDescriptor, forceWarning: AnnotationDescriptor.() -> Boolean
+    ): NullabilityQualifierWithMigrationStatus? {
+        knownNullability(annotation, annotation.forceWarning())?.let { return it }
+
+        val typeQualifierAnnotation = resolveTypeQualifierAnnotation(annotation) ?: return null
+        val jsr305State = resolveJsr305AnnotationState(annotation)
+        if (jsr305State.isIgnore) return null
+        // TODO: the result of `forceWarning` will be overwritten - expected? Probably not.
+        return knownNullability(typeQualifierAnnotation, typeQualifierAnnotation.forceWarning())
+            ?.copy(isForWarningOnly = jsr305State.isWarning)
+    }
+
+    private fun knownNullability(annotation: AnnotationDescriptor, forceWarning: Boolean): NullabilityQualifierWithMigrationStatus? {
+        val fqName = annotation.fqName ?: return null
+        val reportLevel = javaTypeEnhancementState.getReportLevelForAnnotation(fqName)
+        if (reportLevel.isIgnore) return null
+        val nullability = when (fqName) {
+            JAVAX_NONNULL_ANNOTATION ->
+                when (annotation.enumArguments(onlyValue = false).firstOrNull()) {
+                    "ALWAYS", null -> NullabilityQualifier.NOT_NULL
+                    "MAYBE", "NEVER" -> NullabilityQualifier.NULLABLE
+                    "UNKNOWN" -> NullabilityQualifier.FORCE_FLEXIBILITY
+                    else -> return null
+                }
+            in NULLABLE_ANNOTATIONS -> NullabilityQualifier.NULLABLE
+            in NOT_NULL_ANNOTATIONS -> NullabilityQualifier.NOT_NULL
+            JSPECIFY_NULLNESS_UNKNOWN -> NullabilityQualifier.FORCE_FLEXIBILITY
+            else -> return null
+        }
+        return NullabilityQualifierWithMigrationStatus(nullability, reportLevel.isWarning || forceWarning)
     }
 
     private fun AnnotationDescriptor.enumArguments(onlyValue: Boolean): Iterable<String> =
