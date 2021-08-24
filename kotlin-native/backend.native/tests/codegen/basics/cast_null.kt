@@ -6,6 +6,7 @@
 package codegen.basics.cast_null
 
 import kotlin.test.*
+import kotlin.native.internal.*
 
 @Test
 fun runTest() {
@@ -28,9 +29,11 @@ fun ensure(b: Boolean) {
 }
 
 fun testCast(x: Any?, expectSuccess: Boolean) {
+    val frame = runtimeGetCurrentFrame()
     try {
         x as TestKlass
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         ensure(!expectSuccess)
         return
     }
@@ -38,9 +41,11 @@ fun testCast(x: Any?, expectSuccess: Boolean) {
 }
 
 fun testCastToNullable(x: Any?, expectSuccess: Boolean) {
+    val frame = runtimeGetCurrentFrame()
     try {
         x as TestKlass?
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         ensure(!expectSuccess)
         return
     }
@@ -48,9 +53,11 @@ fun testCastToNullable(x: Any?, expectSuccess: Boolean) {
 }
 
 fun testCastNotNullableToNullable(x: Any, expectSuccess: Boolean) {
+    val frame = runtimeGetCurrentFrame()
     try {
         x as TestKlass?
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         ensure(!expectSuccess)
         return
     }

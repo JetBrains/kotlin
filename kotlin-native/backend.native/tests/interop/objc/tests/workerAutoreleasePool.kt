@@ -1,4 +1,5 @@
 import kotlin.native.concurrent.*
+import kotlin.native.internal.*
 import kotlinx.cinterop.*
 import kotlin.test.*
 import objcTests.*
@@ -114,10 +115,12 @@ abstract class ExecuteAfter : ExecuteMethod<AtomicReference<Any?>> {
         val result = AtomicReference<Any?>(null)
 
         worker.executeAfter(timeout, {
+            val frame = runtimeGetCurrentFrame()
             try {
                 block()
                 result.value = true
             } catch (e: Throwable) {
+                assertTrue(runtimeCurrentFrameIsEqual(frame))
                 result.value = e.freeze()
             }
         }.freeze())

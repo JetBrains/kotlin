@@ -5,15 +5,17 @@
 
 package codegen.`try`.finally2
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
-
+    val frame = runtimeGetCurrentFrame()
     try {
         println("Try")
         throw Error("Error happens")
         println("After throw")
     } catch (e: Error) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Error")
     } finally {
         println("Finally")

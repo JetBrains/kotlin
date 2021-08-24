@@ -5,6 +5,7 @@
 
 package codegen.lateinit.notInitialized
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 class A {
@@ -14,11 +15,13 @@ class A {
 }
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     val a = A()
     try {
         println(a.foo())
     }
     catch (e: RuntimeException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("OK")
         return
     }

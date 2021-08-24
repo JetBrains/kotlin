@@ -5,9 +5,11 @@
 
 package codegen.lateinit.localCapturedNotInitialized
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     lateinit var s: String
 
     fun foo() = s
@@ -16,6 +18,7 @@ import kotlin.test.*
         println(foo())
     }
     catch (e: RuntimeException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("OK")
         return
     }

@@ -6,6 +6,7 @@
 package codegen.basics.unchecked_cast3
 
 import kotlin.test.*
+import kotlin.native.internal.*
 
 @Test
 fun runTest() {
@@ -25,9 +26,11 @@ fun ensure(b: Boolean) {
 }
 
 fun <T : Any> testCast(x: Any?, expectSuccess: Boolean) {
+    val frame = runtimeGetCurrentFrame()
     try {
         x as T
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         ensure(!expectSuccess)
         return
     }
@@ -35,9 +38,11 @@ fun <T : Any> testCast(x: Any?, expectSuccess: Boolean) {
 }
 
 fun <T : Any> testCastToNullable(x: Any?, expectSuccess: Boolean) {
+    val frame = runtimeGetCurrentFrame()
     try {
         x as T?
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         ensure(!expectSuccess)
         return
     }

@@ -5,14 +5,17 @@
 
 package codegen.localClass.tryCatch
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 private fun foo() {
     val local =
             object {
                 fun bar() {
+                    val frame = runtimeGetCurrentFrame()
                     try {
                     } catch (t: Throwable) {
+                        assertTrue(runtimeCurrentFrameIsEqual(frame))
                         println(t)
                     }
                 }

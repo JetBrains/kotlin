@@ -17,7 +17,7 @@ fun runTest() {
 }
 
 fun anyMethods(iterable: Iterable<*>): String {
-    assert(iterable.equals(iterable))
-    assert(iterable.hashCode() != 0)
+    assertTrue(iterable.equals(iterable))
+    assertTrue(iterable.hashCode() != 0)
     return iterable.toString()
 }

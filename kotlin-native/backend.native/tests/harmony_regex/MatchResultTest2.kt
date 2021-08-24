@@ -16,12 +16,14 @@
 
 package test.text.harmony_regex
 
+import kotlin.native.internal.*
 import kotlin.text.*
 import kotlin.test.*
 
 class MatchResultTest2 {
 
     @Test fun testErrorConditions2() {
+        val frame = runtimeGetCurrentFrame()
         // Test match cursors in absence of a match
         val regex = Regex("(foo[0-9])(bar[a-z])")
         var result = regex.find("foo1barzfoo2baryfoozbar5")
@@ -40,24 +42,28 @@ class MatchResultTest2 {
             result.groups[3]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             result.groupValues[3]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             result.groups[-1]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             result.groupValues[-1]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         result = result.next()
@@ -75,24 +81,28 @@ class MatchResultTest2 {
             result.groups[3]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             result.groupValues[3]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             result.groups[-1]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             result.groupValues[-1]
             fail("IndexOutOfBoundsException expected")
         } catch (e: IndexOutOfBoundsException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         result = result.next()
@@ -103,6 +113,7 @@ class MatchResultTest2 {
  * Regression test for HARMONY-997
  */
     @Test fun testReplacementBackSlash() {
+        val frame = runtimeGetCurrentFrame()
         val str = "replace me"
         val replacedString = "me"
         val substitutionString = "\\"
@@ -111,6 +122,7 @@ class MatchResultTest2 {
             regex.replace(str, substitutionString)
             fail("IllegalArgumentException should be thrown")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
     }
 

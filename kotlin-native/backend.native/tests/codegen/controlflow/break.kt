@@ -5,6 +5,7 @@
 
 package codegen.controlflow.`break`
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 fun foo() {
@@ -23,12 +24,14 @@ fun foo() {
 }
 
 fun bar() {
+  val frame = runtimeGetCurrentFrame()
   var i = 0
   l1@do {
     try {
       println("bar@l1")
       throw Exception()
     } catch (e: Exception) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
       l2@do {
         if ((i++ % 2) == 0) continue@l2
         println("bar@l2")

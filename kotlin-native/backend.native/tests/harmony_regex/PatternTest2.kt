@@ -16,6 +16,7 @@
 
 package test.text.harmony_regex
 
+import kotlin.native.internal.*
 import kotlin.text.*
 import kotlin.test.*
 
@@ -47,6 +48,7 @@ class PatternTest2 {
     }
 
     @Test fun testCursors() {
+        val frame = runtimeGetCurrentFrame()
         val regex: Regex
         var result: MatchResult?
 
@@ -96,6 +98,7 @@ class PatternTest2 {
             assertEquals(6, result!!.range.start)
             assertEquals(9, result.range.endInclusive + 1)
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             println(e.message)
             fail()
         }
@@ -194,6 +197,7 @@ class PatternTest2 {
     }
 
     @Test fun testEscapes() {
+        val frame = runtimeGetCurrentFrame()
         var regex: Regex
         var result: MatchResult?
 
@@ -251,24 +255,28 @@ class PatternTest2 {
             regex = Regex("\\u")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\u;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\u002")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\u002;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         // Test invalid hex sequences
@@ -276,24 +284,28 @@ class PatternTest2 {
             regex = Regex("\\x")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\x;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\xa")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\xa;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         // Test \0 (octal) sequences (1, 2 and 3 digit)
@@ -314,18 +326,21 @@ class PatternTest2 {
             regex = Regex("\\08")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\0")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\0;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         // Test \c (control character) sequence
@@ -366,10 +381,12 @@ class PatternTest2 {
             regex = Regex("\\c")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
     }
 
     @Test fun testCharacterClasses() {
+        val frame = runtimeGetCurrentFrame()
         var regex: Regex
 
         // Test one character range
@@ -458,6 +475,7 @@ class PatternTest2 {
             regex = Regex("[[abc]&&")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         regex = Regex("[[abc]\\&&[xyz]]")
@@ -543,6 +561,7 @@ class PatternTest2 {
     }
 
     @Test fun testPOSIXGroups() {
+        val frame = runtimeGetCurrentFrame()
         var regex: Regex
 
         // Test POSIX groups using \p and \P (in the group and not in the group)
@@ -563,36 +582,42 @@ class PatternTest2 {
             regex = Regex("\\p")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\p;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\p{")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\p{;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\p{Lower")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\p{Lower;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         // Test \p{Upper}
@@ -610,12 +635,14 @@ class PatternTest2 {
             regex = Regex("\\p{Upper")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\p{Upper;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         // Test \p{ASCII}
@@ -638,12 +665,14 @@ class PatternTest2 {
             regex = Regex("\\p{ASCII")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         try {
             regex = Regex("\\p{ASCII;")
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         // Test \p{Alpha}

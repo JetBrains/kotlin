@@ -24,6 +24,6 @@ data class Data(val x: Int, val s: String, val next: Data? = null)
     assertFailsWith<FreezingException> {
         data2.freeze()
     }
-    assert(!data2.isFrozen)
+    assertTrue(!data2.isFrozen)
     println("OK")
 }

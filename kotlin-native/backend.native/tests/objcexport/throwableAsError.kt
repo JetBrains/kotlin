@@ -1,6 +1,8 @@
 package throwableAsError
 
 import kotlin.coroutines.*
+import kotlin.native.internal.*
+import kotlin.test.*
 
 class ThrowableAsError : Throwable()
 
@@ -10,9 +12,11 @@ interface ThrowsThrowableAsError {
 }
 
 fun callAndCatchThrowableAsError(throwsThrowableAsError: ThrowsThrowableAsError): ThrowableAsError? {
+    val frame = runtimeGetCurrentFrame()
     try {
         throwsThrowableAsError.throwError()
     } catch (e: ThrowableAsError) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         return e
     }
 

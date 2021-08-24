@@ -44,15 +44,15 @@ class App(testQualified: Boolean) {
     }
 
     init {
-        assert(type.simpleName == "TestClass")
+        assertTrue(type.simpleName == "TestClass")
         if (testQualified)
-            assert(type.qualifiedName == "codegen.kclass.kclass1.TestClass") // This is not really necessary, but always better :).
+            assertTrue(type.qualifiedName == "codegen.kclass.kclass1.TestClass") // This is not really necessary, but always better :).
 
-        assert(String::class == String::class)
-        assert(String::class != Int::class)
+        assertTrue(String::class == String::class)
+        assertTrue(String::class != Int::class)
 
-        assert(TestClass()::class == TestClass()::class)
-        assert(TestClass()::class == TestClass::class)
+        assertTrue(TestClass()::class == TestClass()::class)
+        assertTrue(TestClass()::class == TestClass::class)
 
         println("OK :D")
     }

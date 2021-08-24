@@ -6,13 +6,16 @@
 package codegen.basics.unchecked_cast2
 
 import kotlin.test.*
+import kotlin.native.internal.*
 
 @Test
 fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         val x = cast<String>(Any())
         println(x.length)
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Ok")
     }
 }

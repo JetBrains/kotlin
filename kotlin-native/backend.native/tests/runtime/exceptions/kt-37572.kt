@@ -1,10 +1,13 @@
+import kotlin.native.internal.*
 import kotlin.text.Regex
 import kotlin.test.*
 
 fun main() {
+    val frame = runtimeGetCurrentFrame()
     try {
         foo()
     } catch (tw:Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         val stackTrace = tw.getStackTrace()
         stackTrace.take(6).forEach(::checkFrame)
     }
@@ -28,10 +31,10 @@ internal val regex = Regex("^(\\d+)\\ +.*/(.*):(\\d+):.*$")
 internal val goldValues = arrayOf<Pair<String, Int>?>(
         null,
         null,
-        "kt-37572.kt" to 25,
-        "kt-37572.kt" to 16,
-        "kt-37572.kt" to 6,
-        "kt-37572.kt" to 4)
+        "kt-37572.kt" to 28,
+        "kt-37572.kt" to 19,
+        "kt-37572.kt" to 8,
+        "kt-37572.kt" to 5)
 
 internal fun checkFrame(value:String) {
     val (pos, file, line) = regex.find(value)!!.destructured

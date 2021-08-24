@@ -5,6 +5,7 @@
 
 package runtime.collections.BitSet
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 fun assertContainsOnly(bitSet: BitSet, trueBits: Set<Int>, size: Int) {
@@ -44,6 +45,7 @@ fun testConstructor() {
 }
 
 fun testSet() {
+    val frame = runtimeGetCurrentFrame()
     var b = BitSet(0)
     assertEquals(b.lastTrueIndex, -1)
     b = BitSet(2)
@@ -161,23 +163,33 @@ fun testSet() {
     try {
         b.set(-1)
         fail()
-    } catch(e: IndexOutOfBoundsException) {}
+    } catch(e: IndexOutOfBoundsException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
     try {
         b.clear(-1)
         fail()
-    } catch(e: IndexOutOfBoundsException) {}
+    } catch(e: IndexOutOfBoundsException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
     try {
         b.clear(-1..0)
         fail()
-    } catch(e: IndexOutOfBoundsException) {}
+    } catch(e: IndexOutOfBoundsException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
     try {
         b.set(-1..0)
         fail()
-    } catch(e: IndexOutOfBoundsException) {}
+    } catch(e: IndexOutOfBoundsException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
     try {
         b[-1]
         fail()
-    } catch(e: IndexOutOfBoundsException) {}
+    } catch(e: IndexOutOfBoundsException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
 }
 
 fun testFlip() {

@@ -5,16 +5,18 @@
 
 package codegen.`try`.finally4
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
-
+    val frame = runtimeGetCurrentFrame()
     try {
         try {
             println("Try")
             throw Error("Error happens")
             println("After throw")
         } catch (e: Error) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             println("Catch")
             throw Exception()
             println("After throw")
@@ -25,8 +27,10 @@ import kotlin.test.*
         println("After nested try")
 
     } catch (e: Error) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Error")
     } catch (e: Exception) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Exception")
     }
 

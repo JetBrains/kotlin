@@ -5,14 +5,17 @@
 
 package runtime.exceptions.catch1
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         println("Before")
         foo()
         println("After")
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Throwable")
     }
 

@@ -5,13 +5,16 @@
 
 package codegen.`try`.try4
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     val x = try {
         println("Try")
         5
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         throw e
     }
 

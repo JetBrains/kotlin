@@ -85,6 +85,6 @@ fun makeCyclic(): Node {
             kotlin.native.internal.GC.collect()
         }
     }
-    assert(future.result != null)
+    assertTrue(future.result != null)
     worker.requestTermination().result
 }

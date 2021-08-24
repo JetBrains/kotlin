@@ -5,6 +5,7 @@
 
 package kotlin.test.tests
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 class BasicAssertionsTest {
@@ -27,19 +28,23 @@ class BasicAssertionsTest {
    @Test
    fun testAssertFailsWithFails() {
        withDefaultAsserter run@ {
+           val frame = runtimeGetCurrentFrame()
            try {
                assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
            }
            catch (e: AssertionError) {
+               assertTrue(runtimeCurrentFrameIsEqual(frame))
                return@run
            }
            throw AssertionError("Expected to fail")
        }
        withDefaultAsserter run@ {
+           val frame = runtimeGetCurrentFrame()
            try {
                assertFailsWith<IllegalStateException> {  }
            }
            catch (e: AssertionError) {
+               assertTrue(runtimeCurrentFrameIsEqual(frame))
                return@run
            }
            throw AssertionError("Expected to fail")

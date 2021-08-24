@@ -5,6 +5,7 @@
 
 package runtime.text.string_builder0
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 // Utils ====================================================================================================
@@ -32,11 +33,15 @@ fun assertEquals(builder: StringBuilder, content: String) = assertEquals(builder
 
 // IndexOutOfBoundsException.
 fun assertException(body: () -> Unit) {
+    val frame = runtimeGetCurrentFrame()
     try {
         body()
         throw AssertionError ("Test failed: no IndexOutOfBoundsException on wrong indices")
     } catch (e: IndexOutOfBoundsException) {
-    } catch (e: IllegalArgumentException) {}
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    } catch (e: IllegalArgumentException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
 }
 
 // Insert ===================================================================================================

@@ -5,6 +5,7 @@
 
 package runtime.text.chars0
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 fun assertTrue(v: Boolean) = if (!v) throw AssertionError() else Unit
@@ -32,6 +33,7 @@ fun testIsSurrogatePair() {
 }
 
 fun testToChars() {
+    val frame = runtimeGetCurrentFrame()
     assertTrue(charArrayOf('\uD800', '\uDC00').contentEquals(Char.toChars(0x010000)))
     assertTrue(charArrayOf('\uD800', '\uDC01').contentEquals(Char.toChars(0x010001)))
     assertTrue(charArrayOf('\uD801', '\uDC01').contentEquals(Char.toChars(0x010401)))
@@ -40,7 +42,9 @@ fun testToChars() {
     try {
         Char.toChars(Int.MAX_VALUE)
         throw AssertionError()
-    } catch (e: IllegalArgumentException) {}
+    } catch (e: IllegalArgumentException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
 }
 
 fun testToCodePoint() {
@@ -74,6 +78,7 @@ fun testCase() {
 }
 
 fun testCategory() {
+    val frame = runtimeGetCurrentFrame()
     assertEquals('\n'.category.value,     CharCategory.CONTROL.value)
     assertEquals('1'.category.value,      CharCategory.DECIMAL_DIGIT_NUMBER.value)
     assertEquals(' '.category.value,      CharCategory.SPACE_SEPARATOR.value)
@@ -99,17 +104,23 @@ fun testCategory() {
     try {
         CharCategory.valueOf(-1)
         throw AssertionError()
-    } catch (e: IllegalArgumentException) {}
+    } catch (e: IllegalArgumentException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
 
     try {
         CharCategory.valueOf(31)
         throw AssertionError()
-    } catch (e: IllegalArgumentException) {}
+    } catch (e: IllegalArgumentException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
 
     try {
         CharCategory.valueOf(17)
         throw AssertionError()
-    } catch (e: IllegalArgumentException) {}
+    } catch (e: IllegalArgumentException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
 }
 
 @Test fun runTest() {

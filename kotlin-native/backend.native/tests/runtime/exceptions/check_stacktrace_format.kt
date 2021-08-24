@@ -2,6 +2,7 @@
 // "\tat 1   main.kexe\t\t 0x000000010d7cdb4c kfun:package.function(kotlin.Int) + 108 (/path/to/file/name.kt:10:27)\n"
 // If test is broken, org.jetbrains.kotlin.idea.filters.KotlinExceptionFilter (in main Kotlin repo) should be updated.
 
+import kotlin.native.internal.*
 import kotlin.test.*
 import kotlin.text.Regex
 
@@ -32,11 +33,13 @@ fun functionB() {
 const val depth = 5
 
 fun main(args : Array<String>) {
+    val frame = runtimeGetCurrentFrame()
     try {
         functionB()
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         val stacktrace = e.getStackTrace()
-	assert(stacktrace.size >= depth)
-	stacktrace.take(depth).forEach(::checkStringFormat)
+	    assertTrue(stacktrace.size >= depth)
+	    stacktrace.take(depth).forEach(::checkStringFormat)
     }
 }

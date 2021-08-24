@@ -17,6 +17,7 @@
 
 package test.text.harmony_regex
 
+import kotlin.native.internal.*
 import kotlin.text.*
 import kotlin.test.*
 
@@ -49,6 +50,7 @@ class MatchResultTest {
      * Class under test for String group(int)
      */
     @Test fun testGroupint() {
+        val frame = runtimeGetCurrentFrame()
         val positiveTestString = "ababababbaaabb"
 
         // test IndexOutOfBoundsException
@@ -69,6 +71,7 @@ class MatchResultTest {
                 result.groups[-100]
                 fail("IndexOutBoundsException expected")
             } catch (e: IndexOutOfBoundsException) {
+                assertTrue(runtimeCurrentFrameIsEqual(frame))
             }
         }
 

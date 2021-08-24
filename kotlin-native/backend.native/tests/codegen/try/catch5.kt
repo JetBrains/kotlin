@@ -5,23 +5,28 @@
 
 package codegen.`try`.catch5
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         try {
             println("Before")
             foo()
             println("After")
         } catch (e: Exception) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             println("Caught Exception")
         }
 
         println("After nested try")
 
     } catch (e: Error) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Error")
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Throwable")
     }
 

@@ -16,28 +16,33 @@
 
 package test.text.harmony_regex
 
+import kotlin.native.internal.*
 import kotlin.text.*
 import kotlin.test.*
 
 class PatternSyntaxExceptionTest {
 
     @Test fun testCase() {
+        val frame = runtimeGetCurrentFrame()
         val regex = "("
         try {
             Regex(regex)
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
             // TODO: Check the exception's properties.
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
     }
 
     @Test fun testCase2() {
+        val frame = runtimeGetCurrentFrame()
         val regex = "[4-"
         try {
             Regex(regex)
             fail("IllegalArgumentException expected")
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
     }

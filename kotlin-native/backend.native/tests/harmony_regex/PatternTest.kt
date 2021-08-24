@@ -17,6 +17,7 @@
 
 package test.text.harmony_regex
 
+import kotlin.native.internal.*
 import kotlin.text.*
 import kotlin.test.*
 
@@ -232,6 +233,7 @@ class PatternTest {
     }
 
     @Test fun testCompileStringint() {
+        val frame = runtimeGetCurrentFrame()
         /*
          * this tests are needed to verify that appropriate exceptions are hrown
          */
@@ -241,6 +243,7 @@ class PatternTest {
             fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
         } catch (e: IllegalArgumentException) {
             // pass
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         pattern = "bcde)a"
@@ -249,6 +252,7 @@ class PatternTest {
             fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
         } catch (e: IllegalArgumentException) {
             // pass
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         pattern = "bbg())a"
@@ -257,6 +261,7 @@ class PatternTest {
             fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
         } catch (e: IllegalArgumentException) {
             // pass
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         pattern = "cdb(?i))a"
@@ -265,6 +270,7 @@ class PatternTest {
             fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
         } catch (e: IllegalArgumentException) {
             // pass
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
         /*
@@ -282,12 +288,14 @@ class PatternTest {
 
 
     @Test fun testQuantCompileNeg() {
+        val frame = runtimeGetCurrentFrame()
         val patterns = arrayOf("5{,2}", "{5asd", "{hgdhg", "{5,hjkh", "{,5hdsh", "{5,3shdfkjh}")
         for (element in patterns) {
             try {
                 Regex(element)
                 fail("IllegalArgumentException was expected, but compilation succeeds")
             } catch (pse: IllegalArgumentException) {
+                assertTrue(runtimeCurrentFrameIsEqual(frame))
                 continue
             }
 
@@ -345,6 +353,7 @@ class PatternTest {
     }
 
     @Test fun testRangesSpecialCases() {
+        val frame = runtimeGetCurrentFrame()
         val neg_patterns = arrayOf("[a-&&[b-c]]", "[a-\\w]", "[b-a]", "[]")
 
         for (element in neg_patterns) {
@@ -352,6 +361,7 @@ class PatternTest {
                 Regex(element)
                 fail("IllegalArgumentException was expected: " + element)
             } catch (pse: IllegalArgumentException) {
+                assertTrue(runtimeCurrentFrameIsEqual(frame))
             }
 
         }
@@ -391,19 +401,23 @@ class PatternTest {
     }
 
     @Test fun testOrphanQuantifiers() {
+        val frame = runtimeGetCurrentFrame()
         try {
             Regex("+++++")
             fail("IllegalArgumentException expected")
         } catch (pse: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
     }
 
     @Test fun testOrphanQuantifiers2() {
+        val frame = runtimeGetCurrentFrame()
         try {
             Regex("\\d+*")
             fail("IllegalArgumentException expected")
         } catch (pse: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
 
     }
@@ -559,10 +573,12 @@ class PatternTest {
     }
 
     @Test fun testIllegalEscape() {
+        val frame = runtimeGetCurrentFrame()
         try {
             Regex("\\y")
             fail("IllegalArgumentException expected")
         } catch (pse: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
         }
     }
 
@@ -734,6 +750,7 @@ class PatternTest {
     }
 
     @Test fun testCompileNonCaptGroup() {
+        val frame = runtimeGetCurrentFrame()
         var isCompiled = false
 
         try {
@@ -743,6 +760,7 @@ class PatternTest {
             Regex("(?:)", setOf(RegexOption.CANON_EQ, RegexOption.COMMENTS, RegexOption.UNIX_LINES))
             isCompiled = true
         } catch (e: IllegalArgumentException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             println(e)
         }
         assertTrue(isCompiled)

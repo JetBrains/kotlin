@@ -5,6 +5,7 @@
 
 package runtime.text.utf8
 
+import kotlin.native.internal.*
 import kotlin.test.*
 import kotlin.reflect.KClass
 import kotlinx.cinterop.toKString
@@ -118,10 +119,12 @@ fun checkValidZeroTerminatedUtf8to16(expected: String, array: IntArray, start: I
 
 // Utils for checking malformed UTF-16 to UTF-8 conversion.
 fun <T: Any> checkThrows(e: KClass<T>, string: String, action: () -> Unit) {
+    val frame = runtimeGetCurrentFrame()
     var exception: Throwable? = null
     try {
         action()
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         exception = e
     }
     assertNotNull(exception, "No exception was thrown for string: $string")

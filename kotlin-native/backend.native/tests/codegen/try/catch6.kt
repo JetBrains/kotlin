@@ -5,16 +5,20 @@
 
 package codegen.`try`.catch6
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         println("Before")
         foo()
         println("After")
     } catch (e: Exception) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Exception")
     } catch (e: Error) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Error")
     }
 
@@ -22,9 +26,11 @@ import kotlin.test.*
 }
 
 fun foo() {
+    val frame = runtimeGetCurrentFrame()
     try {
         throw Error("Error happens")
     } catch (e: Exception) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Caught Exception")
     }
 }

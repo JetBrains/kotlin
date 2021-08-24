@@ -5,14 +5,17 @@
 
 package runtime.exceptions.throw_from_catch
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test
 fun runTest() {
     assertFailsWith<IllegalStateException>("My another error") {
+        val frame = runtimeGetCurrentFrame()
         try {
             error("My error")
         } catch (e: Throwable) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             error("My another error")
         }
     }

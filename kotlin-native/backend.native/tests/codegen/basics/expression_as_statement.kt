@@ -6,6 +6,7 @@
 package codegen.basics.expression_as_statement
 
 import kotlin.test.*
+import kotlin.native.internal.*
 
 fun foo() {
     Any() as String
@@ -13,9 +14,11 @@ fun foo() {
 
 @Test
 fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         foo()
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("Ok")
         return
     }

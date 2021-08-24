@@ -1,3 +1,5 @@
+import kotlin.native.internal.*
+import kotlin.test.*
 import kotlin.native.concurrent.*
 import kotlinx.cinterop.autoreleasepool
 import objclib.*
@@ -13,6 +15,7 @@ private class NSObjectImpl : NSObject() {
 }
 
 fun run() = withWorker {
+    val frame = runtimeGetCurrentFrame()
     val obj = NSObjectImpl()
     setObject(obj)
 
@@ -22,6 +25,7 @@ fun run() = withWorker {
             isObjectAliveShouldCrash()
         }.result
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         false
     }
     println("After $isAlive")

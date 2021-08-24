@@ -5,6 +5,7 @@
 
 package runtime.workers.worker3
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
@@ -20,12 +21,14 @@ data class WorkerResult(val intResult: Int, val stringResult: String)
 fun main(args: Array<String>) {
     val worker = Worker.start()
     val dataParam = DataParam(17)
+    val frame = runtimeGetCurrentFrame()
     val future = try {
         worker.execute(TransferMode.SAFE,
                 { WorkerArgument(42, dataParam) }) {
             input -> WorkerResult(input.intParam, input.dataParam.toString() + " result")
         }
     } catch (e: IllegalStateException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         null
     }
     if (future != null && Platform.memoryModel == MemoryModel.STRICT)

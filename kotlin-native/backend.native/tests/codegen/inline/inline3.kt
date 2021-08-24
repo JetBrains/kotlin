@@ -5,13 +5,16 @@
 
 package codegen.inline.inline3
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(i4: Int, i5: Int): Int {
+    val frame = runtimeGetCurrentFrame()
     try {
         return i4 / i5
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         return i4
     }
 }

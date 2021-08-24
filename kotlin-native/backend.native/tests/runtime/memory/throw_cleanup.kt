@@ -5,9 +5,11 @@
 
 package runtime.memory.throw_cleanup
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     foo(false)
     try {
         foo(true)

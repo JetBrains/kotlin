@@ -5,9 +5,11 @@
 
 package runtime.memory.var4
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     var x = Error()
 
     for (i in 0..1) {
@@ -24,6 +26,7 @@ import kotlin.test.*
             x = Error()
         }
     } catch (e: Error) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         e.use()
     }
 }

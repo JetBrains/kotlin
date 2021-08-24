@@ -5,6 +5,7 @@
 
 package runtime.basic.standard
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 class Foo(val bar: Int)
@@ -14,10 +15,13 @@ fun <T> assertEquals(actual: T, expected: T) {
 }
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         TODO()
         throw AssertionError("TODO() doesn't throw an exception")
-    } catch(e: NotImplementedError) {}
+    } catch(e: NotImplementedError) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
 
     val foo = Foo(42)
     assertEquals(run { 42 }, 42)

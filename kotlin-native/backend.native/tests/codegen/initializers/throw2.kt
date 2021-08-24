@@ -13,13 +13,18 @@ fun baz1() { }
 fun baz2() { }
 
 // FILE: main.kt
+import kotlin.native.internal.*
+import kotlin.test.*
+
 fun bar(x: Int) = if (x == 0) error("") else x
 
 fun foo(x: Int) {
+    val frame = runtimeGetCurrentFrame()
     try {
         bar(x)
         baz1()
     } catch (t: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println(y)
     }
 }

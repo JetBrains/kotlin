@@ -1,7 +1,7 @@
 package runtime.workers.worker10
 
 import kotlin.test.*
-
+import kotlin.native.internal.*
 import kotlin.native.concurrent.*
 import kotlin.native.ref.WeakReference
 import kotlinx.cinterop.StableRef
@@ -38,40 +38,48 @@ val topSharedData = Data(43)
         result -> assertEquals(true, result)
     }
 
-    worker.execute(TransferMode.SAFE, { -> }, {
-        it -> try {
-        topStringVar == "string"
-    } catch (e: IncorrectDereferenceException) {
-        false
-    }
-    }).consume {
-        result -> assertEquals(Platform.memoryModel != MemoryModel.STRICT, result)
-    }
-
-    worker.execute(TransferMode.SAFE, { -> }, {
-        it -> try {
-        topSharedStringWithGetter == "top"
-    } catch (e: IncorrectDereferenceException) {
-        false
-    }
-    }).consume {
-        result -> assertEquals(true, result)
-    }
-
-    worker.execute(TransferMode.SAFE, { -> }, {
-        it -> try {
-            topData.x == 42
+    worker.execute(TransferMode.SAFE, { -> }, { it ->
+        val frame = runtimeGetCurrentFrame()
+        try {
+            topStringVar == "string"
         } catch (e: IncorrectDereferenceException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             false
         }
     }).consume {
         result -> assertEquals(Platform.memoryModel != MemoryModel.STRICT, result)
     }
 
-    worker.execute(TransferMode.SAFE, { -> }, {
-        it -> try {
+    worker.execute(TransferMode.SAFE, { -> }, { it ->
+        val frame = runtimeGetCurrentFrame()
+        try {
+            topSharedStringWithGetter == "top"
+        } catch (e: IncorrectDereferenceException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            false
+        }
+    }).consume {
+        result -> assertEquals(true, result)
+    }
+
+    worker.execute(TransferMode.SAFE, { -> }, { it ->
+        val frame = runtimeGetCurrentFrame()
+        try {
+            topData.x == 42
+        } catch (e: IncorrectDereferenceException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
+            false
+        }
+    }).consume {
+        result -> assertEquals(Platform.memoryModel != MemoryModel.STRICT, result)
+    }
+
+    worker.execute(TransferMode.SAFE, { -> }, { it ->
+        val frame = runtimeGetCurrentFrame()
+        try {
             topSharedData.x == 43
         } catch (e: Throwable) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             false
         }
     }).consume {

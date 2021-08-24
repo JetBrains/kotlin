@@ -6,7 +6,7 @@
 package codegen.coroutines.controlFlow_finally4
 
 import kotlin.test.*
-
+import kotlin.native.internal.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -44,9 +44,11 @@ fun builder(c: suspend () -> Unit) {
     var result = 0
 
     builder {
+        val frame = runtimeGetCurrentFrame()
         try {
             result = s1()
         } catch (t: Throwable) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             result = f2()
         } finally {
             println("finally")

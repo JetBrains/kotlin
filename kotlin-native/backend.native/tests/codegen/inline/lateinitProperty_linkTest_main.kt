@@ -4,12 +4,16 @@
  */
 
 import a.*
+import kotlin.native.internal.*
+import kotlin.test.*
 
 fun main() {
+    val frame = runtimeGetCurrentFrame()
     try {
         val res = foo(intArrayOf(1, 2, 3)) { x, y, z -> x + y - z }
         println(res)
     } catch (t: UninitializedPropertyAccessException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("OK")
     }
 }

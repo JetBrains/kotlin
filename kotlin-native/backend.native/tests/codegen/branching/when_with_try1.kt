@@ -5,6 +5,7 @@
 
 package codegen.branching.when_with_try1
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
@@ -14,10 +15,12 @@ import kotlin.test.*
 }
 
 fun foo(value: Any): Int? {
+    val frame = runtimeGetCurrentFrame()
     if (value is CharSequence) {
         try {
             return value.toString().toInt()
         } catch (e: NumberFormatException) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             return null
         }
     }

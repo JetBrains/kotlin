@@ -28,12 +28,15 @@ fun throwException() {
 }
 
 fun callbackWithException() {
+    val frame = runtimeGetCurrentFrame()
     try {
         runCallback(staticCFunction(::throwException))
     } catch (e: CustomException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         assertRunnableThreadState()
         return
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         assertRunnableThreadState()
         fail("Wrong exception type: ${e.message}")
     }
@@ -41,9 +44,11 @@ fun callbackWithException() {
 }
 
 fun callbackWithFinally() {
+    val frame = runtimeGetCurrentFrame()
     try {
         runCallback(staticCFunction(::throwException))
     } catch (e: CustomException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         assertRunnableThreadState()
         return
     } finally {
@@ -53,6 +58,7 @@ fun callbackWithFinally() {
 }
 
 fun callbackWithFinallyNoCatch() {
+    val frame = runtimeGetCurrentFrame()
     try {
         try {
             runCallback(staticCFunction(::throwException))
@@ -60,19 +66,24 @@ fun callbackWithFinallyNoCatch() {
             assertRunnableThreadState()
         }
         assertRunnableThreadState()
-    } catch (_: CustomException) {}
+    } catch (_: CustomException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
+    }
 }
 
 fun nestedCallbackWithException() {
+    val frame = runtimeGetCurrentFrame()
     try {
         runCallback(staticCFunction { ->
             assertRunnableThreadState()
             runCallback(staticCFunction(::throwException))
         })
     } catch (e: CustomException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         assertRunnableThreadState()
         return
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         assertRunnableThreadState()
         fail("Wrong exception type: ${e.message}")
     }
@@ -80,12 +91,14 @@ fun nestedCallbackWithException() {
 }
 
 fun nestedCallbackWithFinally() {
+    val frame = runtimeGetCurrentFrame()
     try {
         runCallback(staticCFunction { ->
             assertRunnableThreadState()
             runCallback(staticCFunction(::throwException))
         })
     } catch (e: CustomException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         assertRunnableThreadState()
         return
     } finally {

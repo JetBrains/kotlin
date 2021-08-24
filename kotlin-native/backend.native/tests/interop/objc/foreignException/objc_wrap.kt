@@ -5,14 +5,17 @@
 import kotlin.test.*
 //import objcTests.*
 import objc_wrap.*
+import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
 fun testInner(name: String, reason: String) {
+    val frame = runtimeGetCurrentFrame()
     var finallyBlockTest = "FAILED"
     var catchBlockTest = "NOT EXPECTED"
     try {
         raiseExc(name, reason)
     } catch (e: RuntimeException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         catchBlockTest = "This shouldn't happen"
     } finally {
         finallyBlockTest = "PASSED"
@@ -24,6 +27,7 @@ fun testInner(name: String, reason: String) {
 typealias CallMe = (String, String) -> Unit
 
 @Test fun testExceptionWrap(raise: CallMe) {
+    val frame = runtimeGetCurrentFrame()
     val name = "Some native exception"
     val reason = "Illegal value"
     var finallyBlockTest = "FAILED"
@@ -31,6 +35,7 @@ typealias CallMe = (String, String) -> Unit
     try {
         raise(name, reason)
     } catch (e: ForeignException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         val ret = logExc(e.nativeException) // return NSException name
         assertEquals(name, ret)
         assertEquals("$name:: $reason", e.message)

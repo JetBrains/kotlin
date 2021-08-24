@@ -1539,28 +1539,28 @@ standaloneTest("initializers_failInInitializer1") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer1.kt"
     useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
+    flags = ['-Xir-property-lazy-initialization=enable', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("initializers_failInInitializer2") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer2.kt"
     useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
+    flags = ['-Xir-property-lazy-initialization=enable', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("initializers_failInInitializer3") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer3.kt"
     useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
+    flags = ['-Xir-property-lazy-initialization=enable', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("initializers_failInInitializer4") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer4.kt"
     useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
+    flags = ['-Xir-property-lazy-initialization=enable', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("initializers_when1") {
@@ -1577,12 +1577,14 @@ standaloneTest("initializers_throw1") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/throw1.kt"
     useGoldenData = true
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("initializers_throw2") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/throw2.kt"
     useGoldenData = true
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("initializers_while1") {
@@ -2662,14 +2664,14 @@ task extend_exception(type: KonanLocalTest) {
 
 standaloneTest("check_stacktrace_format") {
     disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
-    flags = ['-g']
+    flags = ['-g', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
 standaloneTest("stack_trace_inline") {
     // TODO: Enable after the test has been fixed.
     disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
-    flags = ['-g', '-Xg-generate-debug-trampoline=enable']
+    flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
     source = "runtime/exceptions/stack_trace_inline.kt"
 }
 
@@ -2682,7 +2684,7 @@ standaloneTest("stack_trace_out_of_bounds") {
 
 standaloneTest("kt-37572") {
     disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
-    flags = ['-g']
+    flags = ['-g', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
     source = "runtime/exceptions/kt-37572.kt"
 }
 
@@ -3686,6 +3688,7 @@ linkTest("serialized_catch") {
     source = "serialization/serialized_catch/main.kt"
     lib = "serialization/serialized_catch/library.kt"
     useGoldenData = true
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 linkTest("serialized_doWhile") {
@@ -3732,7 +3735,7 @@ standaloneTest("testing_annotations") {
 
 standaloneTest("testing_assertions") {
     source = "testing/assertions.kt"
-    flags = ['-tr']
+    flags = ['-tr', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     expectedExitStatus = 0
 }
@@ -3889,7 +3892,7 @@ standaloneTest("testing_filtered_suites") {
 // Check that stacktraces and ignored suite are correctly reported in the TC logger.
 standaloneTest("testing_stacktrace") {
     source = "testing/stacktrace.kt"
-    flags = ['-tr', '-ea']
+    flags = ['-tr', '-ea', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
     arguments = ["--ktest_logger=TEAMCITY", "--ktest_no_exit_code"]
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     // This test prints TeamCity service messages about failed test causing false negative failure at CI.
@@ -3944,6 +3947,7 @@ linkTest("inline_lateinitProperty_linkTest") {
     useGoldenData = true
     source = "codegen/inline/lateinitProperty_linkTest_main.kt"
     lib = "codegen/inline/lateinitProperty_linkTest_lib.kt"
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 linkTest("inline_inlineCtor_linkTest") {
@@ -4298,6 +4302,7 @@ standaloneTest("interop_objc_allocException") {
     disabled = !isAppleTarget(project)
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
+    flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
@@ -4707,7 +4712,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTestMultifile("interop_objc_tests") {
         source = "interop/objc/tests/"
         interop = 'objcTests'
-        flags = ['-tr', '-e', 'main']
+        flags = ['-tr', '-e', 'main', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 
         if (isNoopGC) {
             def exclude = [
@@ -4773,6 +4778,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_foreignException") {
         source = "interop/objc/foreignException/objc_wrap.kt"
         interop = 'foreignException'
+        flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
         UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
@@ -4791,6 +4797,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_foreignExceptionMode_wrap") {
         source = "interop/objc/foreignException/objcExceptionMode_wrap.kt"
         interop = 'foreignExceptionMode_wrap'
+        flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
         useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
 
@@ -4831,6 +4838,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/foreignException/objcExceptionMode_default.kt"
         interop = 'foreignExceptionMode_default'
         useGoldenData = true
+        flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
         UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
@@ -4855,6 +4863,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_illegal_sharing_with_weak") {
         source = "interop/objc/illegal_sharing_with_weak/main.kt"
         interop = 'objc_illegal_sharing_with_weak'
+        flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 
         if (isExperimentalMM) {
             // Experimental MM supports arbitrary object sharing.
@@ -5241,12 +5250,13 @@ if (isAppleTarget(project)) {
 
                 extraOpts "-Xshort-module-name=MyLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
+                extraOpts '-Xopt-in=kotlin.native.internal.InternalForKotlinNative'
             }
         }
         framework(frameworkName) {
             sources = ['objcexport']
             library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc"]
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
         }
         swiftSources = ['objcexport']
         if (isNoopGC) {
@@ -5294,13 +5304,14 @@ if (isAppleTarget(project)) {
 
                 extraOpts "-Xshort-module-name=MyLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
+                extraOpts '-Xopt-in=kotlin.native.internal.InternalForKotlinNative'
             }
         }
         framework(frameworkName) {
             sources = ['objcexport']
             artifact = frameworkArtifactName
             library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xno-objc-generics"]
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xno-objc-generics", '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
         }
         swiftSources = ['objcexport']
         swiftExtraOpts = [ '-D', 'NO_GENERICS' ]
@@ -5325,6 +5336,7 @@ if (isAppleTarget(project)) {
 
                 extraOpts "-Xshort-module-name=MyLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
+                extraOpts '-Xopt-in=kotlin.native.internal.InternalForKotlinNative'
             }
         }
 
@@ -5335,6 +5347,7 @@ if (isAppleTarget(project)) {
             artifact = frameworkArtifactName
             library = libraryName
             isStatic = true
+            opts = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
         }
         swiftSources = ['objcexport']
         if (isNoopGC) {
@@ -5436,6 +5449,7 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
             srcFiles sources
             baseDir "$testOutputStdlib/harmonyRegexTest"
             extraOpts '-tr'
+            extraOpts '-Xopt-in=kotlin.native.internal.InternalForKotlinNative'
             extraOpts project.globalTestArgs
         }
     }
@@ -5660,6 +5674,7 @@ task buildKonanTests { t ->
             extraOpts '-ea' // Without this option assertions would remain inactive.
             extraOpts '-tr'
             extraOpts '-Xverify-ir'
+            extraOpts '-Xopt-in=kotlin.native.internal.InternalForKotlinNative'
             extraOpts project.globalTestArgs
         }
     }

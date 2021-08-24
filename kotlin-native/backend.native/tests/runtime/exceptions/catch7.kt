@@ -5,12 +5,15 @@
 
 package runtime.exceptions.catch7
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         foo()
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         val message = e.message
         if (message != null) {
             println(message)

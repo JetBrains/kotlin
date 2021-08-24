@@ -5,6 +5,7 @@
 
 package runtime.workers.freeze1
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
@@ -32,6 +33,7 @@ fun makeDiamond(): Node2 {
 }
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     makeCycle(10).freeze()
 
     // Must be able to freeze diamond shaped graph.
@@ -41,6 +43,7 @@ fun makeDiamond(): Node2 {
     try {
         immutable.data = 42
     } catch (e: InvalidMutabilityException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("OK, cannot mutate frozen")
     }
 }

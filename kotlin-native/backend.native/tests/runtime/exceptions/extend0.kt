@@ -5,14 +5,17 @@
 
 package runtime.exceptions.extend0
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 class C : Exception("OK")
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         throw C()
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println(e.message!!)
     }
 }

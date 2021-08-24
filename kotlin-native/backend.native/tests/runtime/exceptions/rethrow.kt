@@ -5,14 +5,17 @@
 
 package runtime.exceptions.rethtow
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test
 fun runTest() {
     assertFailsWith<IllegalStateException>("My error") {
+        val frame = runtimeGetCurrentFrame()
         try {
             error("My error")
         } catch (e: Throwable) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             throw e
         }
     }

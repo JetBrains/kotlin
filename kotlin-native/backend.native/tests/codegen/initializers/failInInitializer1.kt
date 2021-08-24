@@ -9,10 +9,15 @@ val x: String = computeX()
 fun computeX(): String = error("zzz")
 
 // FILE: main.kt
+import kotlin.native.internal.*
+import kotlin.test.*
+
 fun main() {
+    val frame = runtimeGetCurrentFrame()
     try {
         println(x)
     } catch(t: IllegalStateException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("caught")
     }
 }

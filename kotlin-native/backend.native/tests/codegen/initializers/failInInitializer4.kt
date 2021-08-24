@@ -17,16 +17,22 @@ val y: String = computeY()
 fun computeY(): String = "qzz"
 
 // FILE: main.kt
+import kotlin.native.internal.*
+import kotlin.test.*
+
 @OptIn(ExperimentalStdlibApi::class)
 fun main() {
+    val frame = runtimeGetCurrentFrame()
     try {
         println(x)
     } catch(t: IllegalStateException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("caught")
     }
     try {
         println(y)
     } catch(t: kotlin.native.FileFailedToInitializeException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println("caught2")
     }
 }

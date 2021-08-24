@@ -5,12 +5,15 @@
 
 package codegen.`try`.catch8
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Test fun runTest() {
+    val frame = runtimeGetCurrentFrame()
     try {
         throw Error("Error happens")
     } catch (e: Throwable) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         val message = e.message
         if (message != null) {
             println(message)

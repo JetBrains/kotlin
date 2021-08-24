@@ -1,5 +1,6 @@
 package kotlin.test.tests
 
+import kotlin.native.internal.*
 import kotlin.test.*
 
 @Ignore
@@ -11,9 +12,11 @@ class Ignored {
 class Failed {
     @Test
     fun bar() {
+        val frame = runtimeGetCurrentFrame()
         try {
             baz()
         } catch(e: Exception) {
+            assertTrue(runtimeCurrentFrameIsEqual(frame))
             throw Exception("Bar", e)
         }
     }

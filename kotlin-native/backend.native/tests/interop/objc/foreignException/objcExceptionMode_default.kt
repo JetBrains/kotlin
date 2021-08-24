@@ -5,11 +5,13 @@
 import kotlin.test.*
 import objcExceptionMode.*
 import kotlinx.cinterop.*
+import kotlin.native.internal.*
 import platform.objc.*
 import kotlin.system.exitProcess
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 @Test fun testKT35056() {
+    val frame = runtimeGetCurrentFrame()
     val name = "Some native exception"
     val reason = "Illegal value"
     var finallyBlockTest = "FAILED"
@@ -18,6 +20,7 @@ import kotlin.system.exitProcess
         raiseExc(name, reason)
         assertNotEquals("FAILED", catchBlockTest)  // shall not get here anyway
     } catch (e: ForeignException) {
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         val ret = logExc(e.nativeException) // return NSException name
         assertEquals(name, ret)
         assertEquals("$name:: $reason", e.message)

@@ -5,6 +5,7 @@
 
 import platform.Foundation.*
 import platform.objc.*
+import kotlin.native.internal.*
 import kotlin.test.*
 
 import kotlinx.cinterop.*
@@ -18,6 +19,7 @@ fun exc_handler(x: Any?) : Unit {
 }
 
 fun main() {
+    val frame = runtimeGetCurrentFrame()
     // This does not work anymore, as NSException propagated as ForeignException
     // so we got `Uncaught Kotlin exception` instead. Use normal try/catch.
     objc_setUncaughtExceptionHandler(staticCFunction(::exc_handler))
@@ -25,6 +27,7 @@ fun main() {
     try {
         println(NSJSONSerialization())
     } catch (e: Exception) { // ForeignException expected
+        assertTrue(runtimeCurrentFrameIsEqual(frame))
         println(e)
     }
 }
