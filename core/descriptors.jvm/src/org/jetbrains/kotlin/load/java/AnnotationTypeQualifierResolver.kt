@@ -47,7 +47,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         return resolvedNicknames(annotationClass)
     }
 
-    fun resolveQualifierBuiltInDefaultAnnotation(annotation: AnnotationDescriptor): JavaDefaultQualifiers? {
+    private fun resolveQualifierBuiltInDefaultAnnotation(annotation: AnnotationDescriptor): JavaDefaultQualifiers? {
         if (javaTypeEnhancementState.disabledDefaultAnnotations) {
             return null
         }
@@ -68,7 +68,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         return resolveJsr305AnnotationState(annotation)
     }
 
-    fun resolveTypeQualifierDefaultAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
+    private fun resolveTypeQualifierDefaultAnnotation(annotation: AnnotationDescriptor): TypeQualifierWithApplicability? {
         if (javaTypeEnhancementState.jsr305.isDisabled) return null
 
         val annotationClass = annotation.annotationClass ?: return null
@@ -93,12 +93,12 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         return target.enumArguments(onlyValue = false).any { it == KotlinTarget.TYPE.name }
     }
 
-    fun resolveJsr305AnnotationState(annotation: AnnotationDescriptor): ReportLevel {
+    private fun resolveJsr305AnnotationState(annotation: AnnotationDescriptor): ReportLevel {
         resolveJsr305CustomState(annotation)?.let { return it }
         return javaTypeEnhancementState.jsr305.globalLevel
     }
 
-    fun resolveJsr305CustomState(annotation: AnnotationDescriptor): ReportLevel? {
+    private fun resolveJsr305CustomState(annotation: AnnotationDescriptor): ReportLevel? {
         javaTypeEnhancementState.jsr305.userDefinedLevelForSpecificAnnotation[annotation.fqName]?.let { return it }
         return annotation.annotationClass?.migrationAnnotationStatus()
     }
@@ -112,6 +112,41 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
             "IGNORE" -> ReportLevel.IGNORE
             else -> null
         }
+    }
+
+    private fun extractDefaultQualifiers(annotation: AnnotationDescriptor): JavaDefaultQualifiers? {
+        resolveQualifierBuiltInDefaultAnnotation(annotation)?.let { return it }
+
+        val (typeQualifier, applicability) = resolveTypeQualifierDefaultAnnotation(annotation)
+            ?: return null
+        val jsr305State = resolveJsr305CustomState(annotation) ?: resolveJsr305AnnotationState(typeQualifier)
+        if (jsr305State.isIgnore) return null
+        // TODO: since we override the warning status, whether we force it in `extractNullability` is irrelevant.
+        //   However, this is probably not what was intended.
+        val nullabilityQualifier = extractNullability(typeQualifier) { false } ?: return null
+        return JavaDefaultQualifiers(nullabilityQualifier.copy(isForWarningOnly = jsr305State.isWarning), applicability)
+    }
+
+    fun extractAndMergeDefaultQualifiers(
+        oldQualifiers: JavaTypeQualifiersByElementType?,
+        annotations: Iterable<AnnotationDescriptor>
+    ): JavaTypeQualifiersByElementType? {
+        val defaultQualifiers = annotations.mapNotNull { extractDefaultQualifiers(it) }
+        if (defaultQualifiers.isEmpty()) return oldQualifiers
+
+        val defaultQualifiersByType =
+            oldQualifiers?.defaultQualifiers?.let(::QualifierByApplicabilityType)
+                ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
+
+        var wasUpdate = false
+        for (qualifier in defaultQualifiers) {
+            for (applicabilityType in qualifier.qualifierApplicabilityTypes) {
+                defaultQualifiersByType[applicabilityType] = qualifier
+                wasUpdate = true
+            }
+        }
+
+        return if (!wasUpdate) oldQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)
     }
 
     fun extractNullability(

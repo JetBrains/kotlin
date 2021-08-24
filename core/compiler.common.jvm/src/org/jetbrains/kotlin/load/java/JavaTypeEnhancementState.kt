@@ -11,6 +11,7 @@ class JavaTypeEnhancementState(
     val jsr305: Jsr305Settings,
     val getReportLevelForAnnotation: (FqName) -> ReportLevel
 ) {
+    // TODO: shouldn't this be `&&`?
     val disabledDefaultAnnotations = jsr305.isDisabled || getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE) == ReportLevel.IGNORE
 
     companion object {
