@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
@@ -875,34 +874,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
     fun testKotlinProjectWithEmptyOutputDirInSomeModules() {
         doTest()
-    }
-
-    fun testEAPToReleaseIC() {
-        fun setPreRelease(value: Boolean) {
-            System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, value.toString())
-        }
-
-        try {
-            withIC {
-                initProject(JVM_MOCK_RUNTIME)
-
-                setPreRelease(true)
-                buildAllModules().assertSuccessful()
-                assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
-
-                touch("src/Foo.kt").apply()
-                buildAllModules()
-                assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Foo.kt")
-
-                setPreRelease(false)
-                touch("src/Foo.kt").apply()
-                buildAllModules().assertSuccessful()
-                assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
-            }
-        }
-        finally {
-            System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
-        }
     }
 
     fun testGetDependentTargets() {
