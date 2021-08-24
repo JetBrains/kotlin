@@ -34,7 +34,6 @@ class CommonizerIT : BaseGradleIT() {
 
             build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
                 assertContains(commonizerOutput)
                 assertSuccessful()
             }
@@ -429,14 +428,14 @@ class CommonizerIT : BaseGradleIT() {
                 getCommonizerDependencies("commonTest").assertEmpty()
 
                 getCommonizerDependencies("nativeMain").onlyCInterops().apply {
-                    assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper".takeIf { isUnix })
+                    assertDependencyFilesMatches(".*nativeHelper")
                     assertTargetOnAllDependencies(
                         CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64, MINGW_X86)
                     )
                 }
 
                 getCommonizerDependencies("nativeTest").onlyCInterops().apply {
-                    assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper".takeIf { isUnix }, ".*nativeTestHelper")
+                    assertDependencyFilesMatches(".*nativeHelper", ".*nativeTestHelper")
                     assertTargetOnAllDependencies(
                         CommonizerTarget(IOS_X64, IOS_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64, MINGW_X86)
                     )
