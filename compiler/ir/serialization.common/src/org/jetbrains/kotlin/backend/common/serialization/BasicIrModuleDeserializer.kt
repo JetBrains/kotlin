@@ -35,7 +35,7 @@ abstract class BasicIrModuleDeserializer(
 
     private val moduleDeserializationState = ModuleDeserializationState(linker, this)
 
-    internal val moduleReversedFileIndex = mutableMapOf<IdSignature, FileDeserializationState>()
+    val moduleReversedFileIndex = mutableMapOf<IdSignature, FileDeserializationState>()
 
     override val moduleDependencies by lazy {
         moduleDescriptor.allDependencyModules.filter { it != moduleDescriptor }.map { linker.resolveModuleDeserializer(it, null) }
@@ -110,6 +110,7 @@ abstract class BasicIrModuleDeserializer(
 
         val fileDeserializationState = FileDeserializationState(
             linker,
+            fileIndex,
             file,
             fileReader,
             fileProto,

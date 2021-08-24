@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -58,6 +58,5 @@ abstract class IrReturnableBlock : IrBlock(), IrSymbolOwner, IrReturnTarget {
     abstract val inlineFunctionSymbol: IrFunctionSymbol?
 }
 
-@Suppress("unused") // Used in kotlin-native
 val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
-    get() = inlineFunctionSymbol?.owner?.file?.symbol
+    get() = inlineFunctionSymbol?.owner?.fileOrNull?.symbol

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -24,6 +26,18 @@ class CachedLibraries(
         val bitcodeDependencies by lazy {
             val directory = File(path).absoluteFile.parent
             File(directory, BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
+        }
+
+        val serializedInlineFunctionBodies by lazy {
+            val directory = File(path).absoluteFile.parent
+            val data = File(directory, INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
+            InlineFunctionBodyReferenceSerializer.deserialize(data)
+        }
+
+        val serializedClassFields by lazy {
+            val directory = File(path).absoluteFile.parent
+            val data = File(directory, CLASS_FIELDS_FILE_NAME).readBytes()
+            ClassFieldsSerializer.deserialize(data)
         }
     }
 
@@ -90,6 +104,9 @@ class CachedLibraries(
     companion object {
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
+
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
+        const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
+        const val CLASS_FIELDS_FILE_NAME = "class_fields"
     }
 }

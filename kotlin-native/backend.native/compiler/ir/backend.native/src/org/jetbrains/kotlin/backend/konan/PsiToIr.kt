@@ -53,15 +53,17 @@ internal fun Context.psiToIr(
 
     // Note: using [llvmModuleSpecification] since this phase produces IR for generating single LLVM module.
 
-    val exportedDependencies = (getExportedDependencies() + modulesWithoutDCE).distinct()
-    val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
-    val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(
-            symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
-    irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val stubGenerator = DeclarationStubGeneratorImpl(
             moduleDescriptor, symbolTable,
             generatorContext.irBuiltIns
     )
+    val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
+    val functionIrClassFactory: KonanIrAbstractDescriptorBasedFunctionFactory =
+            if (config.lazyIrForCaches && !llvmModuleSpecification.containsModule(this.stdlibModule))
+                LazyIrFunctionFactory(symbolTable, stubGenerator, irBuiltInsOverDescriptors, reflectionTypes)
+            else
+                BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
+    irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val symbols = KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
 
     val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
@@ -77,6 +79,7 @@ internal fun Context.psiToIr(
             }
         }
     } else {
+        val exportedDependencies = (getExportedDependencies() + modulesWithoutDCE).distinct()
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
 
@@ -102,6 +105,7 @@ internal fun Context.psiToIr(
                 irProviderForCEnumsAndCStructs,
                 exportedDependencies,
                 config.cachedLibraries,
+                config.lazyIrForCaches,
                 config.userVisibleIrModulesSupport
         ).also { linker ->
 
@@ -120,15 +124,14 @@ internal fun Context.psiToIr(
                 }
 
                 for (dependency in sortDependencies(dependencies).filter { it != moduleDescriptor }) {
-                    val kotlinLibrary = dependency.getCapability(KlibModuleOrigin.CAPABILITY)?.let {
-                        (it as? DeserializedKlibModuleOrigin)?.library
-                    }
-                    when {
-                        isProducingLibrary -> linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
-                        kotlinLibrary != null && config.cachedLibraries.isLibraryCached(kotlinLibrary) ->
-                            linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
-                        else -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
-                    }
+                    val kotlinLibrary = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
+                    val isCachedLibrary = kotlinLibrary != null && config.cachedLibraries.isLibraryCached(kotlinLibrary)
+                    if (isProducingLibrary || (config.lazyIrForCaches && isCachedLibrary))
+                        linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
+                    else if (isCachedLibrary)
+                        linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary!!)
+                    else
+                        linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
                 }
                 if (dependencies.size == dependenciesCount) break
                 dependenciesCount = dependencies.size
@@ -139,7 +142,6 @@ internal fun Context.psiToIr(
             modulesWithoutDCE
                     .filter(ModuleDescriptor::isFromInteropLibrary)
                     .forEach(irProviderForCEnumsAndCStructs::referenceAllEnumsAndStructsFrom)
-
 
             translator.addPostprocessingStep {
                 irProviderForCEnumsAndCStructs.generateBodies()
@@ -197,14 +199,19 @@ internal fun Context.psiToIr(
     // Note: coupled with [shouldLower] below.
     irModules = modules.filterValues { llvmModuleSpecification.containsModule(it) }
 
+    if (!isProducingLibrary)
+        irLinker = irDeserializer as KonanIrLinker
+
     ir.symbols = symbols
 
     if (!isProducingLibrary) {
         // TODO: find out what should be done in the new builtins/symbols about it
-        if (this.stdlibModule in modulesWithoutDCE)
-            functionIrClassFactory.buildAllClasses()
+        if (this.stdlibModule in modulesWithoutDCE) {
+            (functionIrClassFactory as BuiltInFictitiousFunctionIrClassFactory).buildAllClasses()
+        }
         internalAbi.init(irModules.values + irModule!!)
-        functionIrClassFactory.module = (modules.values + irModule!!).single { it.descriptor.isNativeStdlib() }
+        (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.module =
+                (modules.values + irModule!!).single { it.descriptor.isNativeStdlib() }
     }
 
     mainModule.files.forEach { it.metadata = KonanFileMetadataSource(mainModule) }

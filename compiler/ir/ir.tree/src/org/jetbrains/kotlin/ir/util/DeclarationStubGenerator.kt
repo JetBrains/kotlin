@@ -235,10 +235,9 @@ abstract class DeclarationStubGenerator(
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
-        symbolTable.irFactory.createValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), name, index, type.toIrType(),
-            varargElementType?.toIrType(), isCrossinline, isNoinline, isHidden = false, isAssignable = false
-        ).also { irValueParameter ->
+        IrLazyValueParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
+                             type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline, isHidden = false, isAssignable = false, this@DeclarationStubGenerator, typeTranslator)
+        .also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue = irValueParameter.createStubDefaultValue()
             }
@@ -304,7 +303,7 @@ abstract class DeclarationStubGenerator(
     }
 
     internal fun generateOrGetScopedTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter {
-        val referenced = symbolTable.referenceTypeParameter(descriptor)
+        val referenced = symbolTable.referenceScopedTypeParameter(descriptor)
         if (referenced.isBound) {
             return referenced.owner
         }

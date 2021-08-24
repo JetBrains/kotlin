@@ -361,6 +361,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xruntime-logs", valueDescription = "<tag1=level1,tag2=level2,...>", description = "Enable logging for runtime with tags.")
     var runtimeLogs: String? = null
 
+    @Argument(value = "-Xlazy-ir-for-caches", valueDescription = "{disable|enable}", description = "Use lazy IR for cached libraries")
+    var lazyIrForCaches: String? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector, languageVersion).also {
                 val optInList = it[AnalysisFlags.optIn] as List<*>

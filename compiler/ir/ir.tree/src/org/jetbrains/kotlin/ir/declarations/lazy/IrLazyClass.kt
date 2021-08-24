@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -79,7 +80,8 @@ class IrLazyClass(
 
     private fun shouldBuildStub(descriptor: DeclarationDescriptor): Boolean =
         descriptor !is DeclarationDescriptorWithVisibility ||
-                !DescriptorVisibilities.isPrivate(descriptor.visibility)
+                !DescriptorVisibilities.isPrivate(descriptor.visibility) ||
+                isObject && descriptor is ClassConstructorDescriptor
 
     override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -27,6 +24,16 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
             return originalTable.referenceClass(descriptor).also {
                 if (!it.isBound) {
                     stubGenerator?.generateClassStub(descriptor)
+                }
+            }
+        }
+    }
+
+    override fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
+        synchronized(lock) {
+            return originalTable.referenceTypeAlias(descriptor).also {
+                if (!it.isBound) {
+                    stubGenerator?.generateTypeAliasStub(descriptor)
                 }
             }
         }
@@ -57,6 +64,16 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
             return originalTable.referenceSimpleFunction(descriptor).also {
                 if (!it.isBound) {
                     stubGenerator?.generateFunctionStub(descriptor)
+                }
+            }
+        }
+    }
+
+    override fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
+        synchronized(lock) {
+            return originalTable.referenceProperty(descriptor).also {
+                if (!it.isBound) {
+                    stubGenerator?.generatePropertyStub(descriptor)
                 }
             }
         }

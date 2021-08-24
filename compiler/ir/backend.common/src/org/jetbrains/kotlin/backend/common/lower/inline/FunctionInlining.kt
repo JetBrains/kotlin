@@ -182,7 +182,7 @@ class FunctionInlining(
             val statements = (copiedCallee.body as IrBlockBody).statements
 
             val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl()
-            val endOffset = callee.endOffset
+            val endOffset = statements.lastOrNull()?.endOffset ?: callee.endOffset
             /* creates irBuilder appending to the end of the given returnable block: thus why we initialize
              * irBuilder with (..., endOffset, endOffset).
              */

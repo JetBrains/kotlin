@@ -57,8 +57,9 @@ class IrFileDeserializer(
 
 class FileDeserializationState(
     val linker: KotlinIrLinker,
+    val fileIndex: Int,
     file: IrFile,
-    fileReader: IrLibraryFileFromBytes,
+    val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
     deserializeBodies: Boolean,
     allowErrorNodes: Boolean,

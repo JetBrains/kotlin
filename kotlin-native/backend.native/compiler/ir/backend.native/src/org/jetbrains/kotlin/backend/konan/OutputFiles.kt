@@ -63,6 +63,16 @@ class OutputFiles(outputPath: String?, target: KonanTarget, val produce: Compile
                 tempCacheDirectory!!.child(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME).absolutePath
             else null
 
+    val inlineFunctionBodiesFile =
+            if (produce.isCache)
+                tempCacheDirectory!!.child(CachedLibraries.INLINE_FUNCTION_BODIES_FILE_NAME).absolutePath
+            else null
+
+    val classFieldsFile =
+            if (produce.isCache)
+                tempCacheDirectory!!.child(CachedLibraries.CLASS_FIELDS_FILE_NAME).absolutePath
+            else null
+
     private fun String.fullOutputName() = prefixBaseNameIfNeeded(prefix).suffixIfNeeded(suffix)
 
     private fun String.prefixBaseNameIfNeeded(prefix: String) =

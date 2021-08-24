@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -50,6 +53,8 @@ import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.util.disposeNativeMemoryAllocator
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+
+internal class InlineFunctionOriginInfo(val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -65,7 +70,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
 
     private val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
 
-    val loweredInlineFunctions = mutableSetOf<IrFunction>()
+    val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
 
     object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
             IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
@@ -494,6 +499,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
      * Manages internal ABI references and declarations.
      */
     val internalAbi = InternalAbi(this)
+
+    lateinit var irLinker: KonanIrLinker
+
+    val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
+
+    val classFields = mutableListOf<SerializedClassFields>()
 }
 
 private fun MemberScope.getContributedClassifier(name: String) =

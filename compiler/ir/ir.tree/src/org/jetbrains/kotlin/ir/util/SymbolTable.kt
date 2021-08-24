@@ -40,6 +40,7 @@ interface ReferenceSymbolTable {
     fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol
 
     fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol
+    fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol
     fun referenceVariable(descriptor: VariableDescriptor): IrVariableSymbol
 
     fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol
@@ -1027,6 +1028,11 @@ open class SymbolTable(
 
     override fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol =
         scopedTypeParameterSymbolTable.get(classifier) ?: globalTypeParameterSymbolTable.referenced(classifier) {
+            createTypeParameterSymbol(classifier)
+        }
+
+    override fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol =
+        scopedTypeParameterSymbolTable.referenced(classifier) {
             createTypeParameterSymbol(classifier)
         }
 

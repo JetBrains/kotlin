@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
@@ -58,6 +60,8 @@ internal class Linker(val context: Context) {
 
     private fun saveAdditionalInfoForCache() {
         saveCacheBitcodeDependencies()
+        saveInlineFunctionBodies()
+        saveClassFields()
     }
 
     private fun saveCacheBitcodeDependencies() {
@@ -71,6 +75,18 @@ internal class Linker(val context: Context) {
                             && it !in context.config.cacheSupport.librariesToCache // Skip loops.
                 }.cast<List<KonanLibrary>>()
         bitcodeDependenciesFile.writeLines(bitcodeDependencies.map { it.uniqueName })
+    }
+
+    private fun saveInlineFunctionBodies() {
+        val outputFiles = context.config.outputFiles
+        val inlineFunctionBodiesFile = File(outputFiles.inlineFunctionBodiesFile!!)
+        inlineFunctionBodiesFile.writeBytes(InlineFunctionBodyReferenceSerializer.serialize(context.inlineFunctionBodies))
+    }
+
+    private fun saveClassFields() {
+        val outputFiles = context.config.outputFiles
+        val classFieldsFile = File(outputFiles.classFieldsFile!!)
+        classFieldsFile.writeBytes(ClassFieldsSerializer.serialize(context.classFields))
     }
 
     private fun renameOutput() {

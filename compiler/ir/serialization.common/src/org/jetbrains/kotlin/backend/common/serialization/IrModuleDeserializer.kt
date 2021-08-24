@@ -22,6 +22,7 @@ internal fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
         is IrPropertySymbol -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
         is IrEnumEntrySymbol -> BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL
         is IrTypeAliasSymbol -> BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
+        is IrTypeParameterSymbol -> BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
         else -> error("Unexpected symbol kind $this")
     }
 }

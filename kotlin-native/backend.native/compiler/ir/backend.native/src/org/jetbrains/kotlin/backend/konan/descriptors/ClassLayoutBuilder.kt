@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.isInterop
 
 internal class OverriddenFunctionInfo(
         val function: IrSimpleFunction,
@@ -466,6 +467,19 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
      * Fields declared in the class.
      */
     fun getDeclaredFields(): List<FieldInfo> {
+        if (context.config.lazyIrForCaches && !context.llvmModuleSpecification.containsDeclaration(irClass)) {
+            val packageFragment = irClass.findPackage()
+            val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
+            if (moduleDescriptor.isFromInteropLibrary())
+                return emptyList()
+            val moduleDeserializer = context.irLinker.cachedLibraryModuleDeserializers[moduleDescriptor]
+                    ?: error("No module deserializer for ${irClass.render()}")
+            val fields = moduleDeserializer.deserializeClassFields(irClass).toMutableList()
+            if (irClass.isInner)
+                fields.add(InnerClassLowering.addOuterThisField(mutableListOf(), irClass, context).toFieldInfo())
+            return fields
+        }
+
         val declarations: List<IrDeclaration> = if (irClass.isInner && !isLowered) {
             // Note: copying to avoid mutation of the original class.
             irClass.declarations.toMutableList()

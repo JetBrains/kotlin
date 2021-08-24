@@ -364,6 +364,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         WorkerExceptionHandling.LEGACY
                     }
                 })
+                put(LAZY_IR_FOR_CACHES, when (arguments.lazyIrForCaches) {
+                    null -> true
+                    "enable" -> true
+                    "disable" -> false
+                    else -> {
+                        configuration.report(ERROR, "Expected 'enable' or 'disable' for lazy IR usage for cached libraries")
+                        false
+                    }
+                })
 
                 arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
                 putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {

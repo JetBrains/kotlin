@@ -273,6 +273,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 
     internal val propertyLazyInitialization: Boolean get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION)!!
+
+    internal val lazyIrForCaches: Boolean get() = configuration.get(KonanConfigKeys.LAZY_IR_FOR_CACHES)!!
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)
