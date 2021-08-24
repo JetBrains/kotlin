@@ -397,6 +397,9 @@ open class LiveLiteralTransformer(
     override fun <T> visitConst(expression: IrConst<T>): IrExpression {
         when (expression.kind) {
             IrConstKind.Null -> return expression
+            else -> {
+                /* Continue visiting expression */
+            }
         }
         val (key, success) = keyVisitor.buildPath(
             prefix = expression.kind.asString,

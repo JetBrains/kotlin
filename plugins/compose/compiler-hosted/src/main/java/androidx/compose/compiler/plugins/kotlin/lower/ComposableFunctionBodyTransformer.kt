@@ -2200,6 +2200,9 @@ class ComposableFunctionBodyTransformer(
                 is Scope.ClassScope -> {
                     break@loop
                 }
+                else -> {
+                    /* Do nothing, continue traversing */
+                }
             }
             scope = scope.parent
         }
@@ -2218,6 +2221,9 @@ class ComposableFunctionBodyTransformer(
                 }
                 is Scope.ClassScope ->
                     break@loop
+                else -> {
+                    /* Do nothing, continue traversing */
+                }
             }
             scope = scope.parent
         }
@@ -2230,6 +2236,9 @@ class ComposableFunctionBodyTransformer(
                 is Scope.CaptureScope -> {
                     scope.markCapturedComposableCall()
                     break@loop
+                }
+                else -> {
+                    /* Do nothing, continue traversing */
                 }
             }
             scope = scope.parent
@@ -2276,6 +2285,9 @@ class ComposableFunctionBodyTransformer(
                 is Scope.BlockScope -> {
                     scope.markReturn(extraEndLocation)
                 }
+                else -> {
+                    /* Do nothing, continue traversing */
+                }
             }
             scope = scope.parent
         }
@@ -2297,6 +2309,9 @@ class ComposableFunctionBodyTransformer(
                 }
                 is Scope.BlockScope -> {
                     scope.markJump(extraEndLocation)
+                }
+                else -> {
+                    /* Do nothing, continue traversing */
                 }
             }
             scope = scope.parent
@@ -2877,6 +2892,9 @@ class ComposableFunctionBodyTransformer(
                         return true
                     }
                 }
+                else -> {
+                    /* Do nothing, continue traversing */
+                }
             }
             scope = scope.parent
         }
@@ -3030,6 +3048,9 @@ class ComposableFunctionBodyTransformer(
                 is Scope.FileScope,
                 is Scope.ClassScope -> {
                     break@loop
+                }
+                else -> {
+                    /* Do nothing, continue traversing */
                 }
             }
             scope = scope.parent
