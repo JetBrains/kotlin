@@ -115,7 +115,7 @@ private fun configureMetadataCompilationsAndCreateRegistry(
     metadataCompilationRegistry: MetadataCompilationRegistry
 ) {
     val project = module.project
-    val resolver = FragmentGranularMetadataResolver(module)
+    val resolver = FragmentGranularMetadataResolver.getForModule(module)
     module.fragments.all { fragment ->
         createExtractMetadataTask(project, fragment, resolver)
     }

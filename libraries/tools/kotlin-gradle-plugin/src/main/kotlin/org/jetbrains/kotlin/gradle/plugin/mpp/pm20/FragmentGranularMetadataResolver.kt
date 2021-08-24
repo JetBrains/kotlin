@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.ChooseVisibleSourceSetsImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.getMetadataExtractor
+import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.ArrayDeque
@@ -41,6 +44,20 @@ internal class FragmentGranularMetadataResolver(private val ownerModule: KotlinG
     fun getMetadataDependenciesForFragment(requestingFragment: KotlinModuleFragment): Iterable<MetadataDependencyResolution> {
         return resolutionsCache.getOrPut(requestingFragment) {
             doResolveMetadataDependenciesForFragment(requestingFragment)
+        }
+    }
+
+    @TestOnly /* called in tests via injecting scripts */
+    fun renderDependenciesTransformations(): String {
+        val fragmentsToResolutions = ownerModule.fragments.associateWith { getMetadataDependenciesForFragment(it) }
+
+        return buildString {
+            for ((fragment, resolutions) in fragmentsToResolutions) {
+                appendLine("Fragment $fragment of module $ownerModule")
+                resolutions.forEach {
+                    appendLine("    $it")
+                }
+            }
         }
     }
 
@@ -159,5 +176,17 @@ internal class FragmentGranularMetadataResolver(private val ownerModule: KotlinG
             }
         }
         metadataExtractor.metadataArtifactBySourceSet.putAll(hostSpecificFragmentToArtifact)
+    }
+
+    companion object {
+        fun getForModule(module: KotlinGradleModule): FragmentGranularMetadataResolver {
+            val project = module.project
+            val extraPropertyName = "org.jetbrains.kotlin.dependencyResolution.fragmentGranularMetadataResolvers.${project.getKotlinPluginVersion()}"
+            val resolversCache = project.getOrPutRootProjectProperty(extraPropertyName) {
+                mutableMapOf<KotlinGradleModule, FragmentGranularMetadataResolver>()
+            }
+
+            return resolversCache.getOrPut(module) { FragmentGranularMetadataResolver(module) }
+        }
     }
 }
