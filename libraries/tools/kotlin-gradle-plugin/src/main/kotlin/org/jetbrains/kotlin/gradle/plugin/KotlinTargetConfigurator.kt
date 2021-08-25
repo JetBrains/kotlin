@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
+import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
@@ -181,6 +182,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             isCanBeResolved = false
             isCanBeConsumed = true
             attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             extendsFrom(configurations.maybeCreate(mainCompilation.apiConfigurationName))
             if (mainCompilation is KotlinCompilationToRunnableFiles) {
                 val runtimeConfiguration = configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
@@ -197,6 +199,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 isCanBeConsumed = true
                 isCanBeResolved = false
                 attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 val runtimeConfiguration = configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
                 extendsFrom(implementationConfiguration)
                 if (runtimeOnlyConfiguration != null)
@@ -275,6 +278,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         fun defineConfigurationsForCompilation(
             compilation: KotlinCompilation<*>
         ) {
+            val project = compilation.target.project
             val target = compilation.target
             val configurations = target.project.configurations
 
@@ -319,6 +323,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val compileOnlyConfiguration = configurations.maybeCreate(compilation.compileOnlyConfigurationName).apply {
                 isCanBeConsumed = false
                 setupAsLocalTargetSpecificConfigurationIfSupported(target)
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 isVisible = false
                 isCanBeResolved = true // Needed for IDE import
                 description = "Compile only dependencies for $compilation."
@@ -330,6 +335,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 isVisible = false
                 isCanBeConsumed = false
                 attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(compilation.target))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 description = "Compile classpath for $compilation."
             }
 
@@ -359,6 +365,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                     isCanBeConsumed = false
                     isCanBeResolved = true
                     attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(compilation.target))
+                    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                     description = "Runtime classpath of $compilation."
                 }
             }
@@ -492,7 +499,10 @@ internal interface KotlinTargetWithTestsConfigurator<R : KotlinTargetTestRun<*>,
 }
 
 internal fun Project.usageByName(usageName: String): Usage =
-    project.objects.named(Usage::class.java, usageName)
+    objects.named(Usage::class.java, usageName)
+
+internal fun Project.categoryByName(categoryName: String): Category =
+    objects.named(Category::class.java, categoryName)
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)

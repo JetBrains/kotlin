@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
@@ -16,8 +18,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
@@ -97,6 +97,7 @@ class KotlinMetadataTargetConfigurator :
 
             target.project.configurations.getByName(target.apiElementsConfigurationName).run {
                 attributes.attribute(USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                attributes.attribute(CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
                 /** Note: to add this artifact here is enough to avoid duplicate artifacts in this configuration: the default artifact
                  * won't be added (later) if there's already an artifact in the configuration, see
                  * [KotlinOnlyTargetConfigurator.configureArchivesAndComponent] */
@@ -271,6 +272,7 @@ class KotlinMetadataTargetConfigurator :
 
                 usesPlatformOf(target)
                 attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
         }
     }
@@ -451,10 +453,8 @@ class KotlinMetadataTargetConfigurator :
             setupAsPublicConfigurationIfSupported(target)
             usesPlatformOf(target)
 
-            attributes.attribute(
-                USAGE_ATTRIBUTE,
-                KotlinUsages.producerApiUsage(target)
-            ) // 'kotlin-api' usage
+            attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 
             val commonMainApiConfiguration = project.sourceSetDependencyConfigurationByScope(
                 project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME),

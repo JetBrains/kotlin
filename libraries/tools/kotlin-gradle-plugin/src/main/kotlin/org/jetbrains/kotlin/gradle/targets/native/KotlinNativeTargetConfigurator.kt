@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.internal.artifacts.ArtifactAttributes
@@ -339,6 +340,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 isCanBeResolved = true
                 usesPlatformOf(target)
                 attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             }
         }
 
@@ -350,6 +352,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 isCanBeResolved = true
                 usesPlatformOf(target)
                 attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 description = "Dependenceis to be exported in framework ${framework.name} for target ${target.targetName}"
             }
         }
