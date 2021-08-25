@@ -457,7 +457,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         this.at(expression)
         val loweredConstructor = this@InlineClassTransformer.context.getLoweredInlineClassConstructor(callee)
         return if (callee.isPrimary) this.irBlock {
-            val argument = irTemporary(expression.getValueArgument(0)!!)
+            val argument = irTemporary(expression.getValueArgument(0)!!, irType = loweredConstructor.valueParameters.single().type)
             +irCall(loweredConstructor).apply {
                 putValueArgument(0, irGet(argument))
             }
