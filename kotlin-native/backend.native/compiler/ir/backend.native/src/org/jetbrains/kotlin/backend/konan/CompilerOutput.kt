@@ -185,6 +185,9 @@ internal fun produceOutput(context: Context) {
 
 private fun parseAndLinkBitcodeFile(context: Context, llvmModule: LLVMModuleRef, path: String) {
     val parsedModule = parseBitcodeFile(path)
+    if (!context.shouldUseDebugInfoFromNativeLibs()) {
+        LLVMStripModuleDebugInfo(parsedModule)
+    }
     val failed = llvmLinkModules2(context, llvmModule, parsedModule)
     if (failed != 0) {
         throw Error("failed to link $path") // TODO: retrieve error message from LLVM.

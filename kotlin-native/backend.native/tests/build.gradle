@@ -2618,6 +2618,13 @@ standaloneTest("stack_trace_inline") {
     source = "runtime/exceptions/stack_trace_inline.kt"
 }
 
+standaloneTest("stack_trace_out_of_bounds") {
+    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
+    flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=stripDebugInfoFromNativeLibs=false']
+    source = "runtime/exceptions/stack_trace_out_of_bounds.kt"
+}
+
+
 standaloneTest("kt-37572") {
     disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
     flags = ['-g']

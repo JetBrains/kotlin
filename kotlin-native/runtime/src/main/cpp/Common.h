@@ -23,6 +23,7 @@
 #define RUNTIME_PURE __attribute__((pure))
 #define RUNTIME_USED __attribute__((used))
 #define RUNTIME_WEAK __attribute__((weak))
+#define RUNTIME_NODEBUG __attribute__((nodebug))
 
 #define ALWAYS_INLINE __attribute__((always_inline))
 #define NO_INLINE __attribute__((noinline))

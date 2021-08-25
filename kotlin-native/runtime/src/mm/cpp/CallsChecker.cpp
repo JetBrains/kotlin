@@ -320,7 +320,7 @@ constexpr int CALLED_LLVM_BUILTIN = -2;
  * should not be accessed. So before guard checking we need to check is thread destructor is running,
  * which requires special handling of recursive calls from this check.
  */
-extern "C" RUNTIME_NOTHROW void Kotlin_mm_checkStateAtExternalFunctionCall(const char* caller, const char *callee, const void *calleePtr) noexcept {
+extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFunctionCall(const char* caller, const char *callee, const void *calleePtr) noexcept {
     if (reinterpret_cast<int64_t>(calleePtr) == MSG_SEND_TO_NULL) return; // objc_sendMsg called on nil, it does nothing, so it's ok
     if (konan::isOnThreadExitNotSetOrAlreadyStarted()) return;
     static thread_local bool recursiveCallGuard = false;

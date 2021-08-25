@@ -443,6 +443,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun shouldContainDebugInfo() = config.debug
     fun shouldContainLocationDebugInfo() = shouldContainDebugInfo() || config.lightDebug
     fun shouldContainAnyDebugInfo() = shouldContainDebugInfo() || shouldContainLocationDebugInfo()
+    fun shouldUseDebugInfoFromNativeLibs() = shouldContainAnyDebugInfo() &&
+            config.configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
     fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized

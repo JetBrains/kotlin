@@ -56,6 +56,7 @@ class CacheSupport(
             configuration.getBoolean(KonanConfigKeys.OPTIMIZATION) -> "for optimized compilation"
             configuration.get(BinaryOptions.memoryModel) == MemoryModel.EXPERIMENTAL -> "with experimental memory model"
             configuration.getBoolean(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION) -> "with experimental lazy top levels initialization"
+            configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false -> "with native libs debug info"
             else -> null
         }
 

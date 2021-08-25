@@ -25,6 +25,10 @@ internal fun linkObjC(context: Context) {
 
     patchBuilder.buildAndApply(parsedModule)
 
+    if (!context.shouldUseDebugInfoFromNativeLibs()) {
+        LLVMStripModuleDebugInfo(parsedModule)
+    }
+
     val failed = llvmLinkModules2(context, context.llvmModule!!, parsedModule)
     if (failed != 0) {
         throw Error("failed to link $bitcodeFile")
