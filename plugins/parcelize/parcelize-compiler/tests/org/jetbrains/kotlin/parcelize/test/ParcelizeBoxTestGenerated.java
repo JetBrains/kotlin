@@ -120,6 +120,11 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/functions.kt");
     }
 
+    @TestMetadata("genericParcelable.kt")
+    public void testGenericParcelable() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/genericParcelable.kt");
+    }
+
     @TestMetadata("generics.kt")
     public void testGenerics() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/generics.kt");
@@ -260,6 +265,11 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/nestedSparseArrays.kt");
     }
 
+    @TestMetadata("nestedSparseArrays2.kt")
+    public void testNestedSparseArrays2() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/nestedSparseArrays2.kt");
+    }
+
     @TestMetadata("newArray.kt")
     public void testNewArray() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/newArray.kt");
@@ -280,6 +290,11 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/nullableTypesSimple.kt");
     }
 
+    @TestMetadata("objectWriteParcelable.kt")
+    public void testObjectWriteParcelable() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/objectWriteParcelable.kt");
+    }
+
     @TestMetadata("objects.kt")
     public void testObjects() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/objects.kt");
@@ -298,6 +313,16 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
     @TestMetadata("primitiveTypes.kt")
     public void testPrimitiveTypes() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/primitiveTypes.kt");
+    }
+
+    @TestMetadata("privateConstructor.kt")
+    public void testPrivateConstructor() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/privateConstructor.kt");
+    }
+
+    @TestMetadata("recursiveGenerics.kt")
+    public void testRecursiveGenerics() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/recursiveGenerics.kt");
     }
 
     @TestMetadata("sealedClass.kt")
@@ -323,5 +348,10 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
     @TestMetadata("sparseBooleanArray.kt")
     public void testSparseBooleanArray() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/sparseBooleanArray.kt");
+    }
+
+    @TestMetadata("typeParameters.kt")
+    public void testTypeParameters() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/typeParameters.kt");
     }
 }
