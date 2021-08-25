@@ -185,7 +185,7 @@ TEST(ThreadStateDeathTest, IncorrectStateSwitchWithDifferentFunctions) {
 }
 
 TEST(ThreadStateDeathTest, StateSwitchCorrectness) {
-    mm::ThreadData threadData(pthread_self());
+    mm::ThreadData threadData(0);
 
     // Allowed state switches: runnable <-> native
     threadData.setState(ThreadState::kRunnable);

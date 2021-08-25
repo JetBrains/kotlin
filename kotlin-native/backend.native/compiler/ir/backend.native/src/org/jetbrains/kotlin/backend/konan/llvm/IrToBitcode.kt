@@ -2590,6 +2590,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         setRuntimeConstGlobal("KonanNeedDebugInfo", Int32(if (context.shouldContainDebugInfo()) 1 else 0))
         setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", Int32(context.config.runtimeAssertsMode.value))
+        val runtimeLogs = context.config.runtimeLogs?.let {
+            context.llvm.staticData.cStringLiteral(it)
+        } ?: NullPointer(int8Type)
+        setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs)
     }
 
     // Globals set this way cannot be const, but are overridable when producing final executable.

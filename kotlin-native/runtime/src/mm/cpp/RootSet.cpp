@@ -18,12 +18,12 @@ mm::ThreadRootSet::Iterator::Iterator(begin_t, ThreadRootSet& owner) noexcept :
 
 mm::ThreadRootSet::Iterator::Iterator(end_t, ThreadRootSet& owner) noexcept : owner_(owner), phase_(Phase::kDone) {}
 
-ObjHeader*& mm::ThreadRootSet::Iterator::operator*() noexcept {
+mm::ThreadRootSet::Value mm::ThreadRootSet::Iterator::operator*() noexcept {
     switch (phase_) {
         case Phase::kStack:
-            return *stackIterator_;
+            return {*stackIterator_, Source::kStack};
         case Phase::kTLS:
-            return **tlsIterator_;
+            return {**tlsIterator_, Source::kTLS};
         case Phase::kDone:
             RuntimeFail("Cannot dereference");
     }
@@ -84,12 +84,12 @@ mm::GlobalRootSet::Iterator::Iterator(begin_t, GlobalRootSet& owner) noexcept :
 
 mm::GlobalRootSet::Iterator::Iterator(end_t, GlobalRootSet& owner) noexcept : owner_(owner), phase_(Phase::kDone) {}
 
-ObjHeader*& mm::GlobalRootSet::Iterator::operator*() noexcept {
+mm::GlobalRootSet::Value mm::GlobalRootSet::Iterator::operator*() noexcept {
     switch (phase_) {
         case Phase::kGlobals:
-            return **globalsIterator_;
+            return {**globalsIterator_, Source::kGlobal};
         case Phase::kStableRefs:
-            return *stableRefsIterator_;
+            return {*stableRefsIterator_, Source::kStableRef};
         case Phase::kDone:
             RuntimeFail("Cannot dereference");
     }

@@ -59,12 +59,18 @@ TEST(ThreadRootSetTest, Basic) {
 
     mm::ThreadRootSet iter(stack, tls);
 
-    KStdVector<ObjHeader*> actual;
-    for (auto& object : iter) {
+    KStdVector<mm::ThreadRootSet::Value> actual;
+    for (auto object : iter) {
         actual.push_back(object);
     }
 
-    EXPECT_THAT(actual, testing::ElementsAre(entry[0], entry[1], *tls.Lookup(&key, 0), *tls.Lookup(&key, 1), *tls.Lookup(&key, 2)));
+    auto asStack = [](ObjHeader*& object) -> mm::ThreadRootSet::Value { return {object, mm::ThreadRootSet::Source::kStack}; };
+    auto asTLS = [](ObjHeader*& object) -> mm::ThreadRootSet::Value { return {object, mm::ThreadRootSet::Source::kTLS}; };
+    EXPECT_THAT(
+            actual,
+            testing::ElementsAre(
+                    asStack(entry[0]), asStack(entry[1]), asTLS(*tls.Lookup(&key, 0)), asTLS(*tls.Lookup(&key, 1)),
+                    asTLS(*tls.Lookup(&key, 2))));
 }
 
 TEST(ThreadRootSetTest, Empty) {
@@ -73,8 +79,8 @@ TEST(ThreadRootSetTest, Empty) {
 
     mm::ThreadRootSet iter(stack, tls);
 
-    KStdVector<ObjHeader*> actual;
-    for (auto& object : iter) {
+    KStdVector<mm::ThreadRootSet::Value> actual;
+    for (auto object : iter) {
         actual.push_back(object);
     }
 
@@ -103,12 +109,17 @@ TEST(GlobalRootSetTest, Basic) {
 
     mm::GlobalRootSet iter(globals, stableRefs);
 
-    KStdVector<ObjHeader*> actual;
-    for (auto& object : iter) {
+    KStdVector<mm::GlobalRootSet::Value> actual;
+    for (auto object : iter) {
         actual.push_back(object);
     }
 
-    EXPECT_THAT(actual, testing::ElementsAre(global1, global2, stableRef1, stableRef2, stableRef3));
+    auto asGlobal = [](ObjHeader*& object) -> mm::GlobalRootSet::Value { return {object, mm::GlobalRootSet::Source::kGlobal}; };
+    auto asStableRef = [](ObjHeader*& object) -> mm::GlobalRootSet::Value { return {object, mm::GlobalRootSet::Source::kStableRef}; };
+    EXPECT_THAT(
+            actual,
+            testing::ElementsAre(
+                    asGlobal(global1), asGlobal(global2), asStableRef(stableRef1), asStableRef(stableRef2), asStableRef(stableRef3)));
 }
 
 TEST(GlobalRootSetTest, Empty) {
@@ -117,8 +128,8 @@ TEST(GlobalRootSetTest, Empty) {
 
     mm::GlobalRootSet iter(globals, stableRefs);
 
-    KStdVector<ObjHeader*> actual;
-    for (auto& object : iter) {
+    KStdVector<mm::GlobalRootSet::Value> actual;
+    for (auto object : iter) {
         actual.push_back(object);
     }
 

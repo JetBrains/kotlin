@@ -20,6 +20,18 @@ class ThreadData;
 
 class ThreadRootSet {
 public:
+    enum class Source {
+        kStack,
+        kTLS,
+    };
+
+    struct Value {
+        ObjHeader*& object;
+        Source source;
+
+        bool operator==(const Value& rhs) const noexcept { return object == rhs.object && source == rhs.source; }
+    };
+
     class Iterator {
     public:
         struct begin_t {};
@@ -31,7 +43,7 @@ public:
         Iterator(begin_t, ThreadRootSet& owner) noexcept;
         Iterator(end_t, ThreadRootSet& owner) noexcept;
 
-        ObjHeader*& operator*() noexcept;
+        Value operator*() noexcept;
 
         Iterator& operator++() noexcept;
 
@@ -68,6 +80,18 @@ private:
 
 class GlobalRootSet {
 public:
+    enum class Source {
+        kGlobal,
+        kStableRef,
+    };
+
+    struct Value {
+        ObjHeader*& object;
+        Source source;
+
+        bool operator==(const Value& rhs) const noexcept { return object == rhs.object && source == rhs.source; }
+    };
+
     class Iterator {
     public:
         struct begin_t {};
@@ -79,7 +103,7 @@ public:
         Iterator(begin_t, GlobalRootSet& owner) noexcept;
         Iterator(end_t, GlobalRootSet& owner) noexcept;
 
-        ObjHeader*& operator*() noexcept;
+        Value operator*() noexcept;
 
         Iterator& operator++() noexcept;
 

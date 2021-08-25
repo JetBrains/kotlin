@@ -165,6 +165,7 @@ class KonanConfigKeys {
         val EXTERNAL_DEPENDENCIES: CompilerConfigurationKey<String?> =
                 CompilerConfigurationKey.create("use external dependencies to enhance IR linker error messages")
         val LLVM_VARIANT: CompilerConfigurationKey<LlvmVariant?> = CompilerConfigurationKey.create("llvm variant")
+        val RUNTIME_LOGS: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("enable runtime logging")
     }
 }
 

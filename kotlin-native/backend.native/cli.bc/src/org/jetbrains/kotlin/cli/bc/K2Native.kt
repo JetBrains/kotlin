@@ -359,6 +359,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         }
                     }
                 })
+                putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
 
                 parseBinaryOptions(arguments, configuration).forEach { optionWithValue ->
                     configuration.put(optionWithValue)

@@ -512,7 +512,7 @@ extern "C" {
     int _ZNSt3__112__next_primeEj(unsigned long n) {
         return _ZNSt3__212__next_primeEj(n);
     }
-    void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function) {
+    void __assert_fail(const char* assertion, const char* file, int line, const char* function) {
         char buf[1024];
         konan::snprintf(buf, sizeof(buf), "%s:%d in %s: runtime assert: %s\n", file, line, function, assertion);
         Konan_abort(buf);
