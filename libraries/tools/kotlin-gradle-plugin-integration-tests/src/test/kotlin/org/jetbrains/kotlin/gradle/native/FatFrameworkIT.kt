@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.*
+import org.jetbrains.kotlin.gradle.embedProject
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
-import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
-import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
 import org.junit.BeforeClass
@@ -193,6 +190,19 @@ class FatFrameworkIT : BaseGradleIT() {
                 assertSuccessful()
             }
         }
+    }
+
+    /**
+     * Test that the configurations exposing the frameworks don't interfere with variant-aware dependency resolution
+     */
+    @Test
+    fun testDependencyResolution() = with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+        setupWorkingDir()
+        val nestedProjectName = "nested"
+        embedProject(this, nestedProjectName)
+        gradleBuildScript(nestedProjectName).modify { it.replace(".version(\"$KOTLIN_VERSION\")", "") }
+        gradleBuildScript().appendText("dependencies { \"commonMainImplementation\"(project(\":$nestedProjectName\")) }")
+        testResolveAllConfigurations()
     }
 
     companion object {
