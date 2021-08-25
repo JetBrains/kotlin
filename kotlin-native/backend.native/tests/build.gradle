@@ -3586,6 +3586,10 @@ task inline_coercionToUnit(type: KonanLocalTest) {
     source = "codegen/inline/coercionToUnit.kt"
 }
 
+task inline_redundantCoercionsCleaner(type: KonanLocalTest) {
+    source = "codegen/inline/redundantCoercionsCleaner.kt"
+}
+
 task classDeclarationInsideInline(type: KonanLocalTest) {
     source = "codegen/inline/classDeclarationInsideInline.kt"
     goldValue = "test1: 1.0\n1\ntest2\n"
