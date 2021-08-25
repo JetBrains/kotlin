@@ -1,7 +1,11 @@
+Ljava/lang/Object;Landroid/os/Parcelable$Creator<LBox<*>;>;
 public final class Box$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final Box createFromParcel(android.os.Parcel parcel) {
+    (Landroid/os/Parcel;)LBox<*>;
+    public final Box createFromParcel(android.os.Parcel parcel)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0 {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
@@ -26,37 +30,58 @@ public final class Box$Creator : java/lang/Object, android/os/Parcelable$Creator
         LABEL (L1)
     }
 
+    (I)[LBox<*>;
     public final Box[] newArray(int size)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
     public java.lang.Object[] newArray(int size)
 }
 
+<T::Landroid/os/Parcelable;>Ljava/lang/Object;Landroid/os/Parcelable;
 public final class Box : java/lang/Object, android/os/Parcelable {
-    public final static android.os.Parcelable$Creator CREATOR
+  @Lkotlinx/parcelize/Parcelize;([]) // invisible
 
+    Landroid/os/Parcelable$Creator<LBox<*>;>;
+    public final static android.os.Parcelable$Creator CREATOR
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+
+    TT;
     private final android.os.Parcelable box
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
     static void <clinit>()
 
+    (TT;)V
     public void <init>(android.os.Parcelable box)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
+    ()TT;
     public final android.os.Parcelable component1()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
+    (TT;)LBox<TT;>;
     public final Box copy(android.os.Parcelable box)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public static Box copy$default(Box p0, android.os.Parcelable p1, int p2, java.lang.Object p3)
 
     public int describeContents()
 
     public boolean equals(java.lang.Object other)
+        @Lorg/jetbrains/annotations/Nullable;([]) // invisible, parameter 0
 
+    ()TT;
     public final android.os.Parcelable getBox()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
     public int hashCode()
 
     public java.lang.String toString()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public void writeToParcel(android.os.Parcel out, int flags)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0 {
         LABEL (L0)
           ALOAD (1)
           LDC (out)

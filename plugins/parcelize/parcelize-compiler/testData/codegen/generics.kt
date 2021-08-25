@@ -1,4 +1,5 @@
 // CURIOUS_ABOUT writeToParcel, createFromParcel
+// RENDER_ANNOTATIONS
 // WITH_RUNTIME
 
 import kotlinx.parcelize.*
