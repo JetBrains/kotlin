@@ -375,6 +375,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
         logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(projectDir)}" }
 
+        val args = prepareCompilerArguments()
+        validateCompilerArguments(args)
+
         if (!inputChanges.isIncremental && skipCondition()) {
             // Skip running only if non-incremental run. Otherwise, we may need to do some cleanup.
             logger.kotlinDebug { "No Kotlin files found, skipping Kotlin compiler task" }
@@ -382,7 +385,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
         }
 
         sourceRoots.log(this.name, logger)
-        val args = prepareCompilerArguments()
         taskBuildDirectory.get().asFile.mkdirs()
         callCompilerAsync(args, sourceRoots, inputChanges)
     }
@@ -411,6 +413,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @Internal
     internal abstract fun getSourceRoots(): SourceRoots
+
+    protected open fun validateCompilerArguments(args: T) = Unit
 
     /**
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
@@ -663,10 +667,12 @@ abstract class KotlinCompile @Inject constructor(
 
     override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
 
+    override fun validateCompilerArguments(args: K2JVMCompilerArguments) {
+        validateKotlinAndJavaHasSameTargetCompatibility(args)
+    }
+
     override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, inputChanges: InputChanges) {
         sourceRoots as SourceRoots.ForJvm
-
-        validateKotlinAndJavaHasSameTargetCompatibility(args)
 
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
