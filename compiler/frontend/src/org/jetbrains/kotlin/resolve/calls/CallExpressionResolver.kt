@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.isError
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import javax.inject.Inject
 
 class CallExpressionResolver(

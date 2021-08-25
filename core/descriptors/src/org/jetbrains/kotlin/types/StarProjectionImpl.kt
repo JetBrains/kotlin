@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 class StarProjectionImpl(
     private val typeParameter: TypeParameterDescriptor

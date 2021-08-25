@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker.areTypesMayBeLowerAndUpperBoundsOfSameFlexibleTypeByMutability
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 

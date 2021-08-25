@@ -19,28 +19,15 @@ package org.jetbrains.kotlin.types.checker
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 open class ClassicTypeCheckerState(
     val errorTypeEqualsToAnything: Boolean,
     val stubTypeEqualsToAnything: Boolean = true,
     val allowedTypeVariable: Boolean = true,
-    val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default,
-    val kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
+    override val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default,
+    override val kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
     override val typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext
 ) : TypeCheckerState() {
-
-    @OptIn(TypeRefinement::class)
-    override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
-        require(type is KotlinType, type::errorMessage)
-        return kotlinTypeRefiner.refineType(type)
-    }
-
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        require(type is KotlinType, type::errorMessage)
-        return kotlinTypePreparator.prepareType(type.unwrap())
-    }
-
     override val isErrorTypeEqualsToAnything: Boolean
         get() = errorTypeEqualsToAnything
 

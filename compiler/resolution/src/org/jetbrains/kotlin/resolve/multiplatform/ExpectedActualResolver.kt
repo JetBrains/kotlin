@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap

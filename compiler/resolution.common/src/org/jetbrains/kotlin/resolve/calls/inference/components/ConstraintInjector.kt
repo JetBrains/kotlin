@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeCheckerState
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.math.max
@@ -219,6 +216,12 @@ class ConstraintInjector(
 
     private inner class TypeCheckerStateForConstraintInjector(val c: Context, val position: IncorporationConstraintPosition) :
         TypeCheckerStateForConstraintSystem(c), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
+        override val kotlinTypePreparator: AbstractTypePreparator
+            get() = baseState.kotlinTypePreparator
+
+        override val kotlinTypeRefiner: AbstractTypeRefiner
+            get() = baseState.kotlinTypeRefiner
+
         // We use `var` intentionally to avoid extra allocations as this property is quite "hot"
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
 
@@ -250,14 +253,6 @@ class ConstraintInjector(
         override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
             return baseState.substitutionSupertypePolicy(type)
         }
-
-        override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
-            return with(constraintIncorporator.utilContext) {
-                type.refineType()
-            }
-        }
-
-        override fun prepareType(type: KotlinTypeMarker) = baseState.prepareType(type)
 
         fun runIsSubtypeOf(
             lowerType: KotlinTypeMarker,

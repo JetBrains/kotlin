@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker;
-import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 
 public interface TypeProjection extends TypeArgumentMarker {
     @NotNull

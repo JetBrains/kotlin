@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.checker.NullabilityChecker
 import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 abstract class DelegatingSimpleType : SimpleType() {
     protected abstract val delegate: SimpleType

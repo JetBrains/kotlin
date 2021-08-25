@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTransform
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexible
@@ -571,8 +572,10 @@ class ConeTypeCheckerState(
     override val isErrorTypeEqualsToAnything: Boolean,
     override val isStubTypeEqualsToAnything: Boolean,
     override val typeSystemContext: ConeInferenceContext,
-    val kotlinTypePreparator: ConeTypePreparator = ConeTypePreparator.getDefault(typeSystemContext.session),
+    override val kotlinTypePreparator: ConeTypePreparator = ConeTypePreparator(typeSystemContext.session),
 ) : TypeCheckerState() {
+    override val kotlinTypeRefiner: AbstractTypeRefiner
+        get() = AbstractTypeRefiner.Default
 
     val session: FirSession = typeSystemContext.session
 
@@ -602,14 +605,6 @@ class ConeTypeCheckerState(
             }
 
         }
-    }
-
-    override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return kotlinTypePreparator.prepareType(type)
-    }
-
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return kotlinTypePreparator.prepareType(type)
     }
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor;
-import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;

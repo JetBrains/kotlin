@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
 import org.jetbrains.kotlin.types.checker.TypeRefinementSupport
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable

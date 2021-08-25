@@ -22,17 +22,20 @@ import java.util.*
  * new instance of particular [TypeCheckerState] should be created, with properly specified type system context
  */
 abstract class TypeCheckerState {
+    abstract val kotlinTypePreparator: AbstractTypePreparator
+    abstract val kotlinTypeRefiner: AbstractTypeRefiner
 
     abstract val typeSystemContext: TypeSystemContext
 
     abstract fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy
 
-    open fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return type
+    @OptIn(TypeRefinement::class)
+    fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
+        return kotlinTypeRefiner.refineType(type)
     }
 
-    open fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        return type
+    fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
+        return kotlinTypePreparator.prepareType(type)
     }
 
     open fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean = true

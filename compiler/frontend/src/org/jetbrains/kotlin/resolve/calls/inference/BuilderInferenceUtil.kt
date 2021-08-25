@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.*
 import javax.inject.Inject
 

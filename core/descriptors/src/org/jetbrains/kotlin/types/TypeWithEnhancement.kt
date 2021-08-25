@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 interface TypeWithEnhancement {
     val origin: UnwrappedType
