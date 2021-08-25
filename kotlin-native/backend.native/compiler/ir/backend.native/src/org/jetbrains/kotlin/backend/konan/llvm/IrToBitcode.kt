@@ -474,7 +474,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         )
         LLVMSetLinkage(initFunction, LLVMLinkage.LLVMPrivateLinkage)
         generateFunction(codegen, initFunction) {
-            using(FunctionScope(initFunction, "init_body", it)) {
+            using(FunctionScope(initFunction, it)) {
                 val bbInit = basicBlock("init", null)
                 val bbLocalInit = basicBlock("local_init", null)
                 val bbLocalAlloc = basicBlock("local_alloc", null)
@@ -497,8 +497,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             .filterNot { it.storageKind == FieldStorageKind.THREAD_LOCAL }
                             .forEach { initGlobalField(it) }
                     context.llvm.initializersGenerationState.moduleGlobalInitializers.forEach {
-                        if (context.shouldContainLocationDebugInfo())
-                            debugLocation(it.startLocation!!, it.endLocation)
                         evaluateSimpleFunctionCall(it, emptyList(), Lifetime.IRRELEVANT)
                     }
                     ret(null)
@@ -515,8 +513,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
                             .forEach { initThreadLocalField(it) }
                     context.llvm.initializersGenerationState.moduleThreadLocalInitializers.forEach {
-                        if (context.shouldContainLocationDebugInfo())
-                            debugLocation(it.startLocation!!, it.endLocation)
                         evaluateSimpleFunctionCall(it, emptyList(), Lifetime.IRRELEVANT)
                     }
                     ret(null)
@@ -710,22 +706,19 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     /**
      * The [CodeContext] enclosing the entire function body.
      */
-    private inner class FunctionScope(val declaration: IrFunction?, val functionGenerationContext: FunctionGenerationContext) : InnerScopeImpl() {
+    private inner class FunctionScope private constructor(
+            val functionGenerationContext: FunctionGenerationContext,
+            val declaration: IrFunction?,
+            val llvmFunction: LLVMValueRef) : InnerScopeImpl() {
 
-        constructor(llvmFunction:LLVMValueRef, name:String, functionGenerationContext: FunctionGenerationContext):
-                this(null, functionGenerationContext) {
-            this.llvmFunction = llvmFunction
-            this.name = name
-        }
+        constructor(declaration: IrFunction, functionGenerationContext: FunctionGenerationContext) :
+                this(functionGenerationContext, declaration, codegen.llvmFunction(declaration))
 
-        var llvmFunction: LLVMValueRef? = declaration?.let{
-            codegen.llvmFunction(it)
-        }
+        constructor(llvmFunction: LLVMValueRef, functionGenerationContext: FunctionGenerationContext) :
+                this(functionGenerationContext, null, llvmFunction)
 
         val coverageInstrumentation: LLVMCoverageInstrumentation? =
                 context.coverage.tryGetInstrumentation(declaration) { function, args -> functionGenerationContext.call(function, args) }
-
-        private var name:String? = declaration?.name?.asString()
 
         override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) {
             if (declaration == null || target == declaration) {
@@ -748,9 +741,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
 
         private val scope by lazy {
-            if (!context.shouldContainLocationDebugInfo())
+            if (!context.shouldContainLocationDebugInfo() || declaration == null)
                 return@lazy null
-            declaration?.scope() ?: llvmFunction!!.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
+            declaration.scope() ?: llvmFunction.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
         }
 
         private val fileScope = (fileScope() as? FileScope)
