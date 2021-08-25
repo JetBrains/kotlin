@@ -29,7 +29,7 @@ private const val MaxMediumSize = ChunkBucketSize * MediumChunksSizeAlignment
 private const val MaxBigSize = ChunkBucketSize * BigChunksSizeAlignment
 private const val ChunkHeaderSize = 2 * Int.SIZE_BYTES // chunk size + alignment hop size.
 
-private const val RawChunkSize: Long = 4 * 1024 * 1024
+private const val RawChunkSize: Long = 4L * 1024 * 1024
 
 class NativeMemoryAllocator {
     private fun alignUp(x: Long, align: Int) = (x + align - 1) and (align - 1).toLong().inv()
