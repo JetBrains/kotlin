@@ -25,6 +25,8 @@ class FirControlFlowGraphRenderVisitor(
         private const val RED = "red"
         private const val BLUE = "blue"
 
+        private val DIGIT_REGEX = """\d""".toRegex()
+
         private val EDGE_STYLE = EnumMap(
             mapOf(
                 EdgeKind.Forward to "",
@@ -47,8 +49,12 @@ class FirControlFlowGraphRenderVisitor(
     private val allGraphs = mutableSetOf<ControlFlowGraph>()
 
     override fun visitFile(file: FirFile) {
+        var name = file.name.replace(".", "_")
+        if (DIGIT_REGEX.matches(name.first().toString())) {
+            name = "_$name"
+        }
         printer
-            .println("digraph ${file.name.replace(".", "_")} {")
+            .println("digraph $name {")
             .pushIndent()
             .println("graph [nodesep=3]")
             .println("node [shape=box penwidth=2]")
