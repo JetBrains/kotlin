@@ -326,7 +326,7 @@ private class ExportedElement(val kind: ElementKind,
                     owner.translateTypeBridge(it.type)
                 })
         if (owner.isMappedToReference(returnedType) || owner.isMappedToString(returnedType)) {
-            params += "KObjHeader**"
+            params += "ObjHeader**"
         }
         return listOf(owner.translateTypeBridge(returnedType)) + params
     }
@@ -364,12 +364,12 @@ private class ExportedElement(val kind: ElementKind,
             val objectClassC = owner.translateType((declaration as ClassDescriptor).defaultType)
             """
             |
-            |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
+            |extern "C" ObjHeader* ${cname}_instance(ObjHeader**);
             |static $objectClassC ${cname}_instance_impl(void) {
             |  Kotlin_initRuntimeIfNeeded();
             |  ScopedRunnableState stateGuard;
             |  KObjHolder result_holder;
-            |  KObjHeader* result = ${cname}_instance(result_holder.slot());
+            |  ObjHeader* result = ${cname}_instance(result_holder.slot());
             |  return $objectClassC { .pinned = CreateStablePointer(result)};
             |}
             """.trimMargin()
@@ -383,12 +383,12 @@ private class ExportedElement(val kind: ElementKind,
         val enumClassC = owner.translateType(enumClass.defaultType)
 
         return """
-              |extern "C" KObjHeader* $cname(KObjHeader**);
+              |extern "C" ObjHeader* $cname(ObjHeader**);
               |static $enumClassC ${cname}_impl(void) {
               |  Kotlin_initRuntimeIfNeeded();
               |  ScopedRunnableState stateGuard;
               |  KObjHolder result_holder;
-              |  KObjHeader* result = $cname(result_holder.slot());
+              |  ObjHeader* result = $cname(result_holder.slot());
               |  return $enumClassC { .pinned = CreateStablePointer(result)};
               |}
               """.trimMargin()
@@ -450,7 +450,7 @@ private class ExportedElement(val kind: ElementKind,
             builder.append("  KObjHolder result_holder;\n")
             val clazz = scope.elements[0]
             assert(clazz.kind == ElementKind.TYPE)
-            builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
+            builder.append("  ObjHeader* result = AllocInstance((const TypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
             args.add(0, "result")
         }
         if (!isVoidReturned && !isConstructor) {
@@ -905,31 +905,33 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         output("#include <exception>")
 
         output("""
-        |struct KObjHeader;
-        |typedef struct KObjHeader KObjHeader;
-        |struct KTypeInfo;
-        |typedef struct KTypeInfo KTypeInfo;
-        |
         |#define RUNTIME_NOTHROW __attribute__((nothrow))
         |#define RUNTIME_USED __attribute__((used))
         |#define RUNTIME_NORETURN __attribute__((noreturn))
         |
-        |extern "C" {
-        |void UpdateStackRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
-        |KObjHeader* AllocInstance(const KTypeInfo*, KObjHeader**) RUNTIME_NOTHROW;
-        |KObjHeader* DerefStablePointer(void*, KObjHeader**) RUNTIME_NOTHROW;
-        |void* CreateStablePointer(KObjHeader*) RUNTIME_NOTHROW;
-        |void DisposeStablePointer(void*) RUNTIME_NOTHROW;
-        |${prefix}_KBoolean IsInstance(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
-        |void EnterFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
-        |void LeaveFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
-        |void SetCurrentFrame(KObjHeader** start) RUNTIME_NOTHROW;
-        |void Kotlin_initRuntimeIfNeeded();
-        |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
-        |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
+        |struct TypeInfo;
+        |typedef struct TypeInfo TypeInfo;
         |
-        |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
-        |char* CreateCStringFromString(const KObjHeader*);
+        |struct ObjHeader;
+        |typedef struct ObjHeader ObjHeader;
+        |
+        |extern "C" {
+        |${prefix}_KBoolean IsInstance(const ObjHeader*, const TypeInfo*) RUNTIME_NOTHROW;
+        |ObjHeader* AllocInstance(const TypeInfo*, ObjHeader**) RUNTIME_NOTHROW;
+        |void UpdateStackRef(ObjHeader**, const ObjHeader*) RUNTIME_NOTHROW;
+        |void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+        |void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
+        |void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
+        |void* CreateStablePointer(ObjHeader*) RUNTIME_NOTHROW;
+        |void DisposeStablePointer(void*) RUNTIME_NOTHROW;
+        |ObjHeader* DerefStablePointer(void*, ObjHeader**) RUNTIME_NOTHROW;
+        |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
+        |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
+        |
+        |void Kotlin_initRuntimeIfNeeded();
+        |
+        |ObjHeader* CreateStringFromCString(const char*, ObjHeader**);
+        |char* CreateCStringFromString(const ObjHeader*);
         |void DisposeCString(char* cstring);
         |}  // extern "C"
         |
@@ -945,27 +947,27 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |  KObjHolder() : obj_(nullptr) {
         |    EnterFrame(frame(), 0, sizeof(*this)/sizeof(void*));
         |  }
-        |  explicit KObjHolder(const KObjHeader* obj) : obj_(nullptr) {
+        |  explicit KObjHolder(const ObjHeader* obj) : obj_(nullptr) {
         |    EnterFrame(frame(), 0, sizeof(*this)/sizeof(void*));
         |    UpdateStackRef(&obj_, obj);
         |  }
         |  ~KObjHolder() {
         |    LeaveFrame(frame(), 0, sizeof(*this)/sizeof(void*));
         |  }
-        |  KObjHeader* obj() { return obj_; }
-        |  KObjHeader** slot() { return &obj_; }
+        |  ObjHeader* obj() { return obj_; }
+        |  ObjHeader** slot() { return &obj_; }
         | private:
         |  ${prefix}_FrameOverlay frame_;
-        |  KObjHeader* obj_;
+        |  ObjHeader* obj_;
         |
-        |  KObjHeader** frame() { return reinterpret_cast<KObjHeader**>(&frame_); }
+        |  ObjHeader** frame() { return reinterpret_cast<ObjHeader**>(&frame_); }
         |};
         |
         |class ExceptionObjHolder {
         |public:
+        |    static void Throw(ObjHeader* exception) RUNTIME_NORETURN;
+        |    ObjHeader* GetExceptionObject() noexcept;
         |    virtual ~ExceptionObjHolder() = default;
-        |
-        |    KObjHeader* GetExceptionObject() noexcept;
         |};
         |
         |class ScopedRunnableState {
@@ -987,7 +989,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |static ${prefix}_KBoolean IsInstanceImpl(${prefix}_KNativePtr ref, const ${prefix}_KType* type) {
         |  ScopedRunnableState stateGuard;
         |  KObjHolder holder;
-        |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);
+        |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const TypeInfo*)type);
         |}
         """.trimMargin())
         predefinedTypes.forEach {
@@ -997,12 +999,12 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             val (parameter, maybeComma) = if (needArgument)
                 ("${translateType(it)} value" to ",") else ("" to "")
             val argument = if (needArgument) "value, " else ""
-            output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma KObjHeader**);")
+            output("extern \"C\" ObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma ObjHeader**);")
             output("static ${translateType(nullableIt)} ${it.createNullableNameForPredefinedType}Impl($parameter) {")
             output("Kotlin_initRuntimeIfNeeded();", 1)
             output("ScopedRunnableState stateGuard;", 1)
             output("KObjHolder result_holder;", 1)
-            output("KObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
+            output("ObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
             output("return ${translateType(nullableIt)} { .pinned = CreateStablePointer(result) };", 1)
             output("}")
         }
@@ -1105,9 +1107,9 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             ifReference = {
                 val clazz = (it.computeBinaryType() as BinaryType.Reference).types.first()
                 if (clazz == context.builtIns.string) {
-                    "const char*" to "KObjHeader*"
+                    "const char*" to "ObjHeader*"
                 } else {
-                    "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
+                    "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "ObjHeader*"
                 }
             }
     )
