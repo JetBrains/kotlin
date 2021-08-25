@@ -1,9 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.types.refinement
+package org.jetbrains.kotlin.types
+
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 /**
  * This annotation marks part of internal compiler API related to type refinement.
@@ -21,3 +23,16 @@ package org.jetbrains.kotlin.types.refinement
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 annotation class TypeRefinement
+
+
+abstract class AbstractTypeRefiner {
+    @TypeRefinement
+    abstract fun refineType(type: KotlinTypeMarker): KotlinTypeMarker
+
+    object Default : AbstractTypeRefiner() {
+        @TypeRefinement
+        override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
+            return type
+        }
+    }
+}

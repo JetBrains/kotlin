@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.StubTypeMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 class StubTypeForBuilderInference(
     originalTypeVariable: TypeConstructor,

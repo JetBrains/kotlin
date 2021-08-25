@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 @DefaultImplementation(impl = KotlinTypePreparator.Default::class)
-abstract class KotlinTypePreparator : AbstractTypePreparator {
+abstract class KotlinTypePreparator : AbstractTypePreparator() {
     private fun transformToNewType(type: SimpleType): SimpleType {
         when (val constructor = type.constructor) {
             // Type itself can be just SimpleTypeImpl, not CapturedType. see KT-16147

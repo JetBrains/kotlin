@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].

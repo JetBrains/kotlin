@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
 import org.jetbrains.kotlin.types.checker.TypeRefinementSupport
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -74,7 +74,8 @@ class KotlinTypeRefinerImpl(
      *     field `x` in it's member scope
      */
     @TypeRefinement
-    override fun refineType(type: KotlinType): KotlinType {
+    override fun refineType(type: KotlinTypeMarker): KotlinType {
+        require(type is KotlinType)
         return when {
             !type.needsRefinement() -> type
             type.canBeCached() -> {
