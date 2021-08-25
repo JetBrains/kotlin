@@ -958,6 +958,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/tryCatch.kt");
         }
 
+        @TestMetadata("variableInitializedInTryBlock.kt")
+        public void testVariableInitializedInTryBlock() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/variableInitializedInTryBlock.kt");
+        }
+
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/when.kt");

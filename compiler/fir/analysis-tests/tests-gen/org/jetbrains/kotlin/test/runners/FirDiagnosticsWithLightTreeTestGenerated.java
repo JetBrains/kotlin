@@ -1114,6 +1114,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("variableInitializedInTryBlock.kt")
+            public void testVariableInitializedInTryBlock() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/variableInitializedInTryBlock.kt");
+            }
+
+            @Test
             @TestMetadata("when.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/when.kt");

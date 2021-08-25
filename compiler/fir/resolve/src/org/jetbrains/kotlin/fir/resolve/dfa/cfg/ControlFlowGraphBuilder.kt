@@ -613,7 +613,21 @@ class ControlFlowGraphBuilder {
             is FirBreakExpression -> loopExitNodes[jump.target.labeledElement]
             else -> throw IllegalArgumentException("Unknown jump type: ${jump.render()}")
         }
-        addNodeWithJump(node, nextNode, isBack = jump is FirContinueExpression, trackJump = jump is FirReturnExpression)
+
+        val labelForFinallyBLock = if (jump is FirReturnExpression) {
+            ReturnPath(jump.target.labeledElement.symbol)
+        } else {
+            NormalPath
+        }
+
+        addNodeWithJump(
+            node,
+            nextNode,
+            isBack = jump is FirContinueExpression,
+            trackJump = jump is FirReturnExpression,
+            label = NormalPath,
+            labelForFinallyBLock = labelForFinallyBLock
+        )
         return node
     }
 
@@ -1411,6 +1425,7 @@ class ControlFlowGraphBuilder {
         preferredKind: EdgeKind = EdgeKind.Forward,
         isBack: Boolean = false,
         label: EdgeLabel = NormalPath,
+        labelForFinallyBLock: EdgeLabel = label,
         trackJump: Boolean = false
     ) {
         popAndAddEdge(node, preferredKind)
@@ -1423,13 +1438,18 @@ class ControlFlowGraphBuilder {
                     addBackEdge(node, targetNode, label = label)
                 }
             } else {
-                //go through all final nodes between node and target
+                // go through all final nodes between node and target
                 val finallyNodes = finallyBefore(targetNode)
                 val finalFrom = finallyNodes.fold(node) { from, (finallyEnter, tryExit) ->
-                    addEdgeIfNotExist(from, finallyEnter, propagateDeadness = false, label = label)
+                    addEdgeIfNotExist(from, finallyEnter, propagateDeadness = false, label = labelForFinallyBLock)
                     tryExit
                 }
-                addEdgeIfNotExist(finalFrom, targetNode, propagateDeadness = false, label = label)
+                addEdgeIfNotExist(
+                    finalFrom,
+                    targetNode,
+                    propagateDeadness = false,
+                    label = if (finallyNodes.isEmpty()) label else labelForFinallyBLock
+                )
                 if (trackJump && finallyNodes.isNotEmpty()) {
                     //actually we can store all returns like this, but not sure if it makes anything better
                     nonDirectJumps.put(targetNode, node)

@@ -1,0 +1,127 @@
+digraph variableInitializedInTryBlock_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_1 {
+            color=blue
+            1 [label="Enter block"];
+            2 [label="Variable declaration: lval b: R|kotlin/Boolean|"];
+            subgraph cluster_2 {
+                color=blue
+                3 [label="Try expression enter"];
+                subgraph cluster_3 {
+                    color=blue
+                    4 [label="Try main block enter"];
+                    subgraph cluster_4 {
+                        color=blue
+                        5 [label="Enter block"];
+                        6 [label="Function call: R|/getStringOrNull|()"];
+                        7 [label="Exit lhs of ?:"];
+                        8 [label="Enter rhs of ?:"];
+                        9 [label="Jump: ^test Unit"];
+                        10 [label="Stub" style="filled" fillcolor=gray];
+                        11 [label="Lhs of ?: is not null"];
+                        12 [label="Exit ?:"];
+                        13 [label="Variable declaration: lval s: R|kotlin/String|"];
+                        14 [label="Access variable R|<local>/s|"];
+                        15 [label="Access variable R|kotlin/String.length|"];
+                        16 [label="Const: Int(0)"];
+                        17 [label="Equality operator !="];
+                        18 [label="Assignment: R|<local>/b|"];
+                        19 [label="Exit block"];
+                    }
+                    20 [label="Try main block exit"];
+                }
+                subgraph cluster_5 {
+                    color=blue
+                    21 [label="Enter finally"];
+                    subgraph cluster_6 {
+                        color=blue
+                        22 [label="Enter block"];
+                        23 [label="Function call: R|/test|()"];
+                        24 [label="Exit block"];
+                    }
+                    25 [label="Exit finally"];
+                }
+                26 [label="Try expression exit"];
+            }
+            27 [label="Access variable R|<local>/b|"];
+            28 [label="Function call: R|/takeBoolean|(...)"];
+            29 [label="Exit block"];
+        }
+        30 [label="Exit function test" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+    1 -> {2};
+    2 -> {3};
+    3 -> {4};
+    3 -> {21}    [label=onUncaughtException];
+    4 -> {5};
+    5 -> {6};
+    6 -> {7};
+    7 -> {11 8};
+    8 -> {9};
+    9 -> {21}    [label="return@/test"];
+    9 -> {10} [style=dotted];
+    10 -> {12} [style=dotted];
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {23};
+    23 -> {24};
+    24 -> {25};
+    25 -> {26};
+    25 -> {30}    [label="return@/test"];
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+
+    subgraph cluster_7 {
+        color=red
+        31 [label="Enter function takeBoolean" style="filled" fillcolor=red];
+        subgraph cluster_8 {
+            color=blue
+            32 [label="Enter block"];
+            33 [label="Exit block"];
+        }
+        34 [label="Exit function takeBoolean" style="filled" fillcolor=red];
+    }
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+
+    subgraph cluster_9 {
+        color=red
+        35 [label="Enter function getStringOrNull" style="filled" fillcolor=red];
+        subgraph cluster_10 {
+            color=blue
+            36 [label="Enter block"];
+            37 [label="Const: String(hello)"];
+            38 [label="Jump: ^getStringOrNull String(hello)"];
+            39 [label="Stub" style="filled" fillcolor=gray];
+            40 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        41 [label="Exit function getStringOrNull" style="filled" fillcolor=red];
+    }
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {41};
+    38 -> {39} [style=dotted];
+    39 -> {40} [style=dotted];
+    40 -> {41} [style=dotted];
+
+}
