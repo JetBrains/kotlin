@@ -44,7 +44,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
         if (type.typeArguments.isEmpty()) return resultTypes
 
         val capturedType = captureType(type, typeCheckerState.typeSystemContext)
-        val substitutionSupertypePolicy = typeCheckerState.substitutionSupertypePolicy(capturedType)
+        val substitutionSupertypePolicy = typeCheckerState.typeSystemContext.substitutionSupertypePolicy(capturedType)
         return resultTypes.map {
             substitutionSupertypePolicy.transformType(typeCheckerState, it) as ConeClassLikeType
         }
@@ -97,7 +97,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
                 TypeCheckerState.SupertypesPolicy.LowerIfFlexible
             }
             else -> {
-                state.substitutionSupertypePolicy(captured)
+                state.typeSystemContext.substitutionSupertypePolicy(captured)
             }
         }
     }

@@ -566,20 +566,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     private fun TypeConstructorMarker.unknownConstructorError(): Nothing {
         error("Unknown type constructor: ${this::class}")
     }
-}
 
-class ConeTypeCheckerState(
-    override val isErrorTypeEqualsToAnything: Boolean,
-    override val isStubTypeEqualsToAnything: Boolean,
-    override val typeSystemContext: ConeInferenceContext,
-    override val kotlinTypePreparator: ConeTypePreparator = ConeTypePreparator(typeSystemContext.session),
-) : TypeCheckerState() {
-    override val kotlinTypeRefiner: AbstractTypeRefiner
-        get() = AbstractTypeRefiner.Default
-
-    val session: FirSession = typeSystemContext.session
-
-    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy = with(typeSystemContext) {
+    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
         if (type.argumentsCount() == 0) return LowerIfFlexible
         require(type is ConeKotlinType)
         val declaration = when (type) {
@@ -607,6 +595,23 @@ class ConeTypeCheckerState(
         }
     }
 
-    override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
-        get() = this is ConeKotlinType && this is ConeTypeVariableType
+    override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
+        return this is ConeTypeVariableType
+    }
+}
+
+class ConeTypeCheckerState(
+    override val isErrorTypeEqualsToAnything: Boolean,
+    override val isStubTypeEqualsToAnything: Boolean,
+    override val typeSystemContext: ConeInferenceContext,
+    override val kotlinTypePreparator: ConeTypePreparator = ConeTypePreparator(typeSystemContext.session),
+) : TypeCheckerState() {
+    override val kotlinTypeRefiner: AbstractTypeRefiner
+        get() = AbstractTypeRefiner.Default
+
+    val session: FirSession = typeSystemContext.session
+
+
+    override val allowedTypeVariable: Boolean
+        get() = true
 }

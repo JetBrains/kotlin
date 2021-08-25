@@ -461,6 +461,10 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
 
     fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker>
+
+    fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy
+
+    fun KotlinTypeMarker.isTypeVariableType(): Boolean
 }
 
 enum class CaptureStatus {

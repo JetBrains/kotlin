@@ -32,7 +32,6 @@ class OverridingUtilTypeSystemContext(
         return ClassicTypeCheckerState(
             errorTypesEqualToAnything,
             stubTypesEqualToAnything,
-            allowedTypeVariable = true,
             kotlinTypeRefiner,
             typeSystemContext = this
         )

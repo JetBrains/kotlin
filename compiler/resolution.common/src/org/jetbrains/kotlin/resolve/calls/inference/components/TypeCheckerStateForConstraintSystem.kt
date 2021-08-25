@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.types.model.*
 abstract class TypeCheckerStateForConstraintSystem(override val typeSystemContext: TypeSystemInferenceExtensionContext) :
     TypeCheckerState() {
 
-    override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
+    override val allowedTypeVariable: Boolean
         get() = false
 
     override val isErrorTypeEqualsToAnything: Boolean

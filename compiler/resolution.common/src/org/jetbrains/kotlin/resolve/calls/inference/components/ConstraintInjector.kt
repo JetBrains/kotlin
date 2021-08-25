@@ -250,10 +250,6 @@ class ConstraintInjector(
 
         val baseState: TypeCheckerState = newTypeCheckerState(isErrorTypeEqualsToAnything, isStubTypeEqualsToAnything)
 
-        override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
-            return baseState.substitutionSupertypePolicy(type)
-        }
-
         fun runIsSubtypeOf(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
