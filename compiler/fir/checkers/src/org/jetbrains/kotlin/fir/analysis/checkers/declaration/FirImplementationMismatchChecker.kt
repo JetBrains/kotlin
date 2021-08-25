@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
+import org.jetbrains.kotlin.fir.types.ConeTypeCheckerState
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -43,7 +43,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         val classKind = declaration.classKind
         if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) return
 
-        val typeCheckerContext = context.session.typeContext.newBaseTypeCheckerContext(
+        val typeCheckerState = context.session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
@@ -52,10 +52,10 @@ object FirImplementationMismatchChecker : FirClassChecker() {
 
         for (name in classScope.getCallableNames()) {
             classScope.processFunctionsByName(name) {
-                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it, classScope)
+                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerState, it, classScope)
             }
             classScope.processPropertiesByName(name) {
-                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerContext, it, classScope)
+                checkInheritanceClash(declaration, context, dedupReporter, typeCheckerState, it, classScope)
                 checkValOverridesVar(declaration, context, dedupReporter, it, classScope)
             }
             checkConflictingMembers(declaration, context, dedupReporter, classScope, name)
@@ -66,7 +66,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         containingClass: FirClass,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        typeCheckerContext: ConeTypeCheckerContext,
+        typeCheckerState: ConeTypeCheckerState,
         symbol: FirCallableSymbol<*>,
         classScope: FirTypeScope
     ) {
@@ -96,9 +96,9 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         ): Boolean {
             val inheritedTypeSubstituted = inheritedType.substituteTypeParameters(inheritedMember, baseMember, context)
             return if (baseMember is FirPropertySymbol && baseMember.isVar)
-                AbstractTypeChecker.equalTypes(typeCheckerContext, inheritedTypeSubstituted, baseType)
+                AbstractTypeChecker.equalTypes(typeCheckerState, inheritedTypeSubstituted, baseType)
             else
-                AbstractTypeChecker.isSubtypeOf(typeCheckerContext, inheritedTypeSubstituted, baseType)
+                AbstractTypeChecker.isSubtypeOf(typeCheckerState, inheritedTypeSubstituted, baseType)
         }
 
         val intersectionSymbols = when {

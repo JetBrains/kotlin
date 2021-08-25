@@ -305,7 +305,7 @@ object ExpectedActualResolver {
         kotlinTypeRefiner: KotlinTypeRefiner,
     ): Boolean {
         with(NewKotlinTypeCheckerImpl(kotlinTypeRefiner)) {
-            return ClassicTypeCheckerContext(
+            return ClassicTypeCheckerState(
                 errorTypeEqualsToAnything = false,
                 typeSystemContext = typeSystemContext,
                 kotlinTypeRefiner = kotlinTypeRefiner,

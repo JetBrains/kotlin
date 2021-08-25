@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.ConstantValueKind
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -151,7 +151,7 @@ fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
         else -> error("!")
     }
 
-fun AbstractTypeCheckerContext.makesSenseToBeDefinitelyNotNull(
+fun TypeCheckerState.makesSenseToBeDefinitelyNotNull(
     type: ConeKotlinType,
     useCorrectedNullabilityForFlexibleTypeParameters: Boolean
 ): Boolean {

@@ -55,7 +55,7 @@ fun ConeDefinitelyNotNullType.Companion.create(
     return when {
         original is ConeDefinitelyNotNullType -> original
         typeContext
-            .newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
+            .newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
             .makesSenseToBeDefinitelyNotNull(original, useCorrectedNullabilityForFlexibleTypeParameters) ->
 
             ConeDefinitelyNotNullType(

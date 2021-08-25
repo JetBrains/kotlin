@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.util.concurrent.ConcurrentHashMap
 
@@ -215,7 +215,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         if (superFun.typeParameters.size != overridingFun.typeParameters.size) return false
         if (superFun.valueParameters.size != overridingFun.valueParameters.size) return false
 
-        val typeChecker = createTypeChecker(superFun, overridingFun)
+        val typeChecker = createTypeCheckerState(superFun, overridingFun)
 
         // Note that type parameters equivalence check doesn't really happen on collection stubs
         // (because members of Kotlin built-in collection classes don't have type parameters of their own),
@@ -228,8 +228,8 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         return true
     }
 
-    private fun createTypeChecker(overrideFun: IrSimpleFunction, parentFun: IrSimpleFunction): AbstractTypeCheckerContext =
-        IrTypeCheckerContext(
+    private fun createTypeCheckerState(overrideFun: IrSimpleFunction, parentFun: IrSimpleFunction): TypeCheckerState =
+        IrTypeCheckerState(
             IrTypeSystemContextWithAdditionalAxioms(
                 context.typeSystem,
                 overrideFun.typeParameters,
@@ -240,7 +240,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private fun areTypeParametersEquivalent(
         overrideFun: IrSimpleFunction,
         parentFun: IrSimpleFunction,
-        typeChecker: AbstractTypeCheckerContext
+        typeChecker: TypeCheckerState
     ): Boolean =
         overrideFun.typeParameters.zip(parentFun.typeParameters)
             .all { (typeParameter1, typeParameter2) ->
@@ -253,7 +253,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private fun areValueParametersEquivalent(
         overrideFun: IrSimpleFunction,
         parentFun: IrSimpleFunction,
-        typeChecker: AbstractTypeCheckerContext
+        typeChecker: TypeCheckerState
     ): Boolean =
         overrideFun.valueParameters.zip(parentFun.valueParameters)
             .all { (valueParameter1, valueParameter2) ->
@@ -263,7 +263,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     internal fun isReturnTypeOverrideCompliant(
         overrideFun: IrSimpleFunction,
         parentFun: IrSimpleFunction,
-        typeChecker: AbstractTypeCheckerContext
+        typeChecker: TypeCheckerState
     ): Boolean =
         AbstractTypeChecker.isSubtypeOf(typeChecker, overrideFun.returnType, parentFun.returnType)
 

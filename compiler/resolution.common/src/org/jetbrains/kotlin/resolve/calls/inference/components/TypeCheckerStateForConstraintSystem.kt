@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 
-abstract class AbstractTypeCheckerContextForConstraintSystem(override val typeSystemContext: TypeSystemInferenceExtensionContext) :
-    AbstractTypeCheckerContext() {
+abstract class TypeCheckerStateForConstraintSystem(override val typeSystemContext: TypeSystemInferenceExtensionContext) :
+    TypeCheckerState() {
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = false
@@ -99,10 +99,10 @@ abstract class AbstractTypeCheckerContextForConstraintSystem(override val typeSy
     }
 
     private fun KotlinTypeMarker.isTypeVariableWithExact() =
-        with(typeSystemContext) { hasExactAnnotation() } && anyBound(this@AbstractTypeCheckerContextForConstraintSystem::isMyTypeVariable)
+        with(typeSystemContext) { hasExactAnnotation() } && anyBound(this@TypeCheckerStateForConstraintSystem::isMyTypeVariable)
 
     private fun KotlinTypeMarker.isTypeVariableWithNoInfer() =
-        with(typeSystemContext) { hasNoInferAnnotation() } && anyBound(this@AbstractTypeCheckerContextForConstraintSystem::isMyTypeVariable)
+        with(typeSystemContext) { hasNoInferAnnotation() } && anyBound(this@TypeCheckerStateForConstraintSystem::isMyTypeVariable)
 
     private fun internalAddSubtypeConstraint(
         subType: KotlinTypeMarker,
@@ -333,7 +333,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem(override val typeSy
         }
 
     private fun isSubtypeOfByTypeChecker(subType: KotlinTypeMarker, superType: KotlinTypeMarker) =
-        AbstractTypeChecker.isSubtypeOf(this as AbstractTypeCheckerContext, subType, superType)
+        AbstractTypeChecker.isSubtypeOf(this as TypeCheckerState, subType, superType)
 
     private fun assertInputTypes(subType: KotlinTypeMarker, superType: KotlinTypeMarker) = with(typeSystemContext) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return

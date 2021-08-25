@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 
 internal class KtFirSubtypingComponent(
     override val analysisSession: KtFirAnalysisSession,
@@ -24,7 +23,7 @@ internal class KtFirSubtypingComponent(
         check(first is KtFirType)
         check(second is KtFirType)
         return AbstractTypeChecker.equalTypes(
-            createTypeCheckerContext() as AbstractTypeCheckerContext,
+            createTypeCheckerContext(),
             first.coneType,
             second.coneType
         )
@@ -35,7 +34,7 @@ internal class KtFirSubtypingComponent(
         check(subType is KtFirType)
         check(superType is KtFirType)
         return AbstractTypeChecker.isSubtypeOf(
-            createTypeCheckerContext() as AbstractTypeCheckerContext,
+            createTypeCheckerContext(),
             subType.coneType,
             superType.coneType
         )

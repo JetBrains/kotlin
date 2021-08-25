@@ -649,7 +649,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         if (originalType !is ConeClassLikeType) return type
         val baseFirClass = originalType.lookupTag.toSymbol(session)?.fir ?: return type
         val isSubtype = AbstractTypeChecker.isSubtypeOfClass(
-            session.typeContext.newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true),
+            session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true),
             originalType.lookupTag,
             type.lookupTag
         )
