@@ -34,7 +34,6 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
             return IrCustomParcelSerializer(parceler)
         }
 
-        // TODO inline classes
         val classifier = irType.erasedUpperBound
         val classifierFqName = classifier.fqNameWhenAvailable?.asString()
         when (classifierFqName) {
