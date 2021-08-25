@@ -655,6 +655,33 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Should fail the build if verification mode is 'error' and kotlin and java targets are different with no kotlin sources")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldFailBuildIfJavaAndKotlinJvmTargetsAreDifferentWithNoKotlinSources(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion
+        ) {
+            setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
+            useToolchainToCompile(11)
+            //language=properties
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+            projectPath.resolve("src/main/kotlin").toFile().deleteRecursively()
+
+            buildAndFail("assemble") {
+                assertOutputContains(
+                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
+                            "should be set to the same Java version."
+                )
+            }
+        }
+    }
+
     @DisplayName("Build should not produce warninings when '-no-jdk' option is present")
     @GradleTestVersions(minVersion = "6.7.1")
     @GradleTest
