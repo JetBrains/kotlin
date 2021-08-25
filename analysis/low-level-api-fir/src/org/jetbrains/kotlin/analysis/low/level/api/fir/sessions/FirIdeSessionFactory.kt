@@ -175,6 +175,7 @@ internal object FirIdeSessionFactory {
         checkCanceled()
         val searchScope = project.stateConfigurator.createScopeForModuleLibraries(mainModuleInfo)
         FirIdeLibrariesSession(project, searchScope, builtinTypes).apply session@{
+            registerModuleData(FirModuleInfoBasedModuleData(mainModuleInfo).apply { bindSession(this@session) })
             registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
@@ -219,6 +220,7 @@ internal object FirIdeSessionFactory {
             registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
+            registerModuleData(moduleData)
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             val symbolProvider = FirCompositeSymbolProvider(
