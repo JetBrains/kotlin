@@ -434,6 +434,7 @@ private class ExportedElement(val kind: ElementKind,
         // TODO: do we really need that in every function?
         builder.append("  Kotlin_initRuntimeIfNeeded();\n")
         builder.append("  ScopedRunnableState stateGuard;\n");
+        builder.append("  FrameOverlay* frame = getCurrentFrame();")
         val args = ArrayList(cfunction.drop(1).mapIndexed { index, pair ->
             translateArgument("arg$index", pair, Direction.C_TO_KOTLIN, builder)
         })
@@ -465,7 +466,10 @@ private class ExportedElement(val kind: ElementKind,
                     "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
             builder.append("  return $result;\n")
         }
-        builder.append("   } catch (ExceptionObjHolder& e) { std::terminate(); } \n")
+        builder.append("   } catch (...) { \n")
+        builder.append("       SetCurrentFrame(reinterpret_cast<ObjHeader**>(frame));")
+        builder.append("       HandleCurrentExceptionForCInterop(); \n")
+        builder.append("   } \n")
 
         builder.append("}\n")
 
@@ -915,6 +919,9 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |struct ObjHeader;
         |typedef struct ObjHeader ObjHeader;
         |
+        |struct FrameOverlay;
+        |typedef struct FrameOverlay FrameOverlay;
+        |
         |extern "C" {
         |${prefix}_KBoolean IsInstance(const ObjHeader*, const TypeInfo*) RUNTIME_NOTHROW;
         |ObjHeader* AllocInstance(const TypeInfo*, ObjHeader**) RUNTIME_NOTHROW;
@@ -922,11 +929,13 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
         |void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
         |void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
+        |FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
         |void* CreateStablePointer(ObjHeader*) RUNTIME_NOTHROW;
         |void DisposeStablePointer(void*) RUNTIME_NOTHROW;
         |ObjHeader* DerefStablePointer(void*, ObjHeader**) RUNTIME_NOTHROW;
         |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
         |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
+        |void HandleCurrentExceptionForCInterop();
         |
         |void Kotlin_initRuntimeIfNeeded();
         |
@@ -961,13 +970,6 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |  ObjHeader* obj_;
         |
         |  ObjHeader** frame() { return reinterpret_cast<ObjHeader**>(&frame_); }
-        |};
-        |
-        |class ExceptionObjHolder {
-        |public:
-        |    static void Throw(ObjHeader* exception) RUNTIME_NORETURN;
-        |    ObjHeader* GetExceptionObject() noexcept;
-        |    virtual ~ExceptionObjHolder() = default;
         |};
         |
         |class ScopedRunnableState {

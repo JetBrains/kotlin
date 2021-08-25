@@ -26,6 +26,8 @@ extern "C" {
 // Throws arbitrary exception.
 void ThrowException(KRef exception);
 
+void HandleCurrentExceptionForCInterop();
+
 void SetKonanTerminateHandler();
 
 RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder);
