@@ -116,7 +116,7 @@ data class ActualTypealias(val underlyingType: SourceSetDependent<Bound>) : Extr
     override val key: ExtraProperty.Key<DClasslike, ActualTypealias> = ActualTypealias
 }
 
-data class ConstructorValues(val values: SourceSetDependent<List<String>>) : ExtraProperty<DEnumEntry> {
+data class ConstructorValues(val values: SourceSetDependent<List<Expression>>) : ExtraProperty<DEnumEntry> {
     companion object : ExtraProperty.Key<DEnumEntry, ConstructorValues> {
         override fun mergeStrategyFor(left: ConstructorValues, right: ConstructorValues) =
             MergeStrategy.Replace(ConstructorValues(left.values + right.values))
