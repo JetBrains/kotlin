@@ -5,184 +5,94 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.incremental.*
-import java.io.File
-import org.jetbrains.kotlin.gradle.incremental.ChangesCollectorResult.Success
-import org.jetbrains.kotlin.gradle.incremental.ChangesCollectorResult.Failure
 import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 /** Computes [ClasspathChanges] between two [ClasspathSnapshot]s .*/
 object ClasspathChangesComputer {
 
-    fun getChanges(current: ClasspathSnapshot, previous: ClasspathSnapshot): ClasspathChanges {
-        val changesCollector = ChangesCollector()
-        return when (collectClasspathChanges(current, previous, changesCollector)) {
-            Success -> {
-                val (lookupSymbols, fqNames, _) = changesCollector.getDirtyData(emptyList(), NoOpBuildReporter)
-                ClasspathChanges.Available(lookupSymbols.toList(), fqNames.toList())
-            }
-            is Failure -> ClasspathChanges.NotAvailable.UnableToCompute
-        }
-    }
+    fun compute(currentClasspathSnapshot: ClasspathSnapshot, previousClasspathSnapshot: ClasspathSnapshot): ClasspathChanges {
+        val currentClassSnapshots = currentClasspathSnapshot.getClassSnapshots()
+        val previousClassSnapshots = previousClasspathSnapshot.getClassSnapshots()
 
-    private fun collectClasspathChanges(
-        current: ClasspathSnapshot,
-        previous: ClasspathSnapshot,
-        changesCollector: ChangesCollector
-    ): ChangesCollectorResult {
-        if (current.classpathEntrySnapshots.size != previous.classpathEntrySnapshots.size) {
-            return Failure.AddedRemovedClasspathEntries
-        }
-
-        for (index in current.classpathEntrySnapshots.indices) {
-            val result = collectClasspathEntryChanges(
-                current.classpathEntrySnapshots[index],
-                previous.classpathEntrySnapshots[index],
-                changesCollector
-            )
-            if (result is Failure) {
-                return result
-            }
-        }
-        return Success
-    }
-
-    private fun collectClasspathEntryChanges(
-        current: ClasspathEntrySnapshot,
-        previous: ClasspathEntrySnapshot,
-        changesCollector: ChangesCollector
-    ): ChangesCollectorResult {
-        if (current.classSnapshots.size != previous.classSnapshots.size) {
-            return Failure.AddedRemovedClasses
-        }
-
-        for (key in current.classSnapshots.keys) {
-            val currentSnapshot = current.classSnapshots[key]!!
-            val previousSnapshot = previous.classSnapshots[key] ?: return Failure.AddedRemovedClasses
-            val result = collectClassChanges(currentSnapshot, previousSnapshot, changesCollector)
-            if (result !is Success) {
-                return result
-            }
-        }
-        return Success
-    }
-
-    private fun collectClassChanges(
-        current: ClassSnapshot,
-        previous: ClassSnapshot,
-        @Suppress("UNUSED_PARAMETER") changesCollector: ChangesCollector
-    ): ChangesCollectorResult {
-        if (current is JavaClassSnapshot && previous is JavaClassSnapshot &&
-            (current !is RegularJavaClassSnapshot || previous !is RegularJavaClassSnapshot)
-        ) {
-            return Failure.NotYetImplemented
-        }
-        // TODO: Store results in changesCollector and return SUCCESS here
-        computeClassChanges(current, previous)
-        return Failure.NotYetImplemented
-    }
-
-    @VisibleForTesting
-    internal fun computeClassChanges(current: ClassSnapshot, previous: ClassSnapshot): DirtyData {
-        // TODO Create IncrementalJvmCache early once and reuse it here
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
         val incrementalJvmCache = IncrementalJvmCache(workingDir, /* targetOutputDir */ null, FileToCanonicalPathConverter)
-        val changesCollector = ChangesCollector()
 
-        when {
-            current is KotlinClassSnapshot && previous is KotlinClassSnapshot ->
-                collectKotlinClassChanges(current, previous, incrementalJvmCache, changesCollector)
-            current is JavaClassSnapshot && previous is JavaClassSnapshot ->
-                collectJavaClassChanges(current, previous, incrementalJvmCache, changesCollector)
-            else -> {
-                // TODO: Handle current is KotlinClassSnapshot && previous is JavaClassSnapshot, and vice versa
-                error("Incompatible types: ${current.javaClass.name} vs. ${previous.javaClass.name}")
+        // Store previous class snapshots in incrementalJvmCache, the returned ChangesCollector result is not used.
+        val unusedChangesCollector = ChangesCollector()
+        for (previousSnapshot in previousClassSnapshots) {
+            when (previousSnapshot) {
+                is KotlinClassSnapshot -> incrementalJvmCache.saveClassToCache(
+                    kotlinClassInfo = previousSnapshot.classInfo,
+                    sourceFiles = null,
+                    changesCollector = unusedChangesCollector
+                )
+                is RegularJavaClassSnapshot -> incrementalJvmCache.saveJavaClassProto(
+                    source = null,
+                    serializedJavaClass = previousSnapshot.serializedJavaClass,
+                    collector = unusedChangesCollector
+                )
+                is EmptyJavaClassSnapshot -> {
+                    // Nothing to process
+                }
             }
         }
+        // Call the following method even though there are no removed classes, just in case the method updates the state of
+        // incrementalJvmCache.
+        incrementalJvmCache.clearCacheForRemovedClasses(unusedChangesCollector)
 
+        // Compute changes between the current class snapshots and the previously stored snapshots, and save the result in changesCollector.
+        val changesCollector = ChangesCollector()
+        for (currentSnapshot in currentClassSnapshots) {
+            when (currentSnapshot) {
+                is KotlinClassSnapshot -> incrementalJvmCache.saveClassToCache(
+                    kotlinClassInfo = currentSnapshot.classInfo,
+                    sourceFiles = null,
+                    changesCollector = changesCollector
+                )
+                is RegularJavaClassSnapshot -> incrementalJvmCache.saveJavaClassProto(
+                    source = null,
+                    serializedJavaClass = currentSnapshot.serializedJavaClass,
+                    collector = changesCollector
+                )
+                is EmptyJavaClassSnapshot -> {
+                    // Nothing to process
+                }
+            }
+        }
+        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
+
+        val dirtyData = changesCollector.getDirtyData(listOf(incrementalJvmCache), EmptyICReporter)
         workingDir.deleteRecursively()
-        return changesCollector.getDirtyData(listOf(incrementalJvmCache), NoOpBuildReporter.NoOpICReporter)
-    }
 
-    private fun collectKotlinClassChanges(
-        current: KotlinClassSnapshot,
-        previous: KotlinClassSnapshot,
-        incrementalJvmCache: IncrementalJvmCache,
-        changesCollector: ChangesCollector
-    ) {
-        // Store previous snapshot in incrementalJvmCache, the returned ChangesCollector result is not used.
-        incrementalJvmCache.saveClassToCache(
-            kotlinClassInfo = previous.classInfo,
-            sourceFiles = null,
-            changesCollector = ChangesCollector()
+        return ClasspathChanges.Available(
+            lookupSymbols = LinkedHashSet(dirtyData.dirtyLookupSymbols),
+            fqNames = LinkedHashSet(dirtyData.dirtyClassesFqNames)
         )
-        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
-
-        // Compute changes between the current snapshot and the previously stored snapshot, and store the result in changesCollector.
-        incrementalJvmCache.saveClassToCache(
-            kotlinClassInfo = current.classInfo,
-            sourceFiles = null,
-            changesCollector = changesCollector
-        )
-        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
     }
 
-    private fun collectJavaClassChanges(
-        current: JavaClassSnapshot,
-        previous: JavaClassSnapshot,
-        incrementalJvmCache: IncrementalJvmCache,
-        changesCollector: ChangesCollector
-    ) {
-        // Store previous snapshot in incrementalJvmCache, the returned ChangesCollector result is not used.
-        val previousSnapshot = (previous as RegularJavaClassSnapshot).serializedJavaClass // TODO Handle unsafe cast
-        incrementalJvmCache.saveJavaClassProto(/* source */ null, previousSnapshot, ChangesCollector())
-        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
-
-        // Compute changes between the current snapshot and the previously stored snapshot, and store the result in changesCollector.
-        val currentSnapshot = (current as RegularJavaClassSnapshot).serializedJavaClass
-        incrementalJvmCache.saveJavaClassProto(/* source */ null, currentSnapshot, changesCollector)
-        incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
-    }
-}
-
-private sealed class ChangesCollectorResult {
-
-    object Success : ChangesCollectorResult()
-
-    sealed class Failure : ChangesCollectorResult() {
-        // TODO: Handle these cases
-        object AddedRemovedClasspathEntries : Failure()
-        object AddedRemovedClasses : Failure()
-        object NotYetImplemented : Failure()
-    }
-}
-
-private object NoOpBuildReporter : BuildReporter(NoOpICReporter, NoOpBuildMetricsReporter) {
-
-    object NoOpICReporter : ICReporter {
-        override fun report(message: () -> String) {}
-        override fun reportVerbose(message: () -> String) {}
-        override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
-        override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {}
-        override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}
-        override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {}
-    }
-
-    object NoOpBuildMetricsReporter : BuildMetricsReporter {
-        override fun startMeasure(time: BuildTime, startNs: Long) {}
-        override fun endMeasure(time: BuildTime, endNs: Long) {}
-        override fun addTimeMetric(metric: BuildTime, durationMs: Long) {}
-        override fun addMetric(metric: BuildPerformanceMetric, value: Long) {}
-        override fun addAttribute(attribute: BuildAttribute) {}
-        override fun getMetrics(): BuildMetrics = BuildMetrics()
-        override fun addMetrics(metrics: BuildMetrics?) {}
+    private fun ClasspathSnapshot.getClassSnapshots(): List<ClassSnapshot> {
+        // If there are duplicate classes on the classpath, retain only the first one to match the compiler's behavior.
+        // We still need to consider whether to remove duplicate classes based on the class file name or the `ClassId`, as two different
+        // `ClassId`s can have the same class file name (e.g., nested class `B$C` of top-level class `A` in `first.jar` and nested class `C`
+        // of top-level class `A$B` in `second.jar` both have the same class file name `A$B$C`).
+        //   - If we use class file name, only `A$B$C` in `first.jar` will be retained. This matches the compiler's behavior because when
+        //     resolving either of those classes, the compiler will only look for `A$B$C` in the first jar, even when the actual class is
+        //     located in the second jar.
+        //   - If we use `ClassId`, both `A$B$C` in `first.jar` and `A$B$C` in `second.jar` will be retained. That means that the snapshot
+        //     of the class in `second.jar` will be considered when computing classpath changes, which is not expected as it doesn't match
+        //     the compiler's behavior.
+        // Therefore, we will remove duplicate classes based on the class file name, not the `ClassId`.
+        val classSnapshots = LinkedHashMap<String, ClassSnapshot>(classpathEntrySnapshots.sumOf { it.classSnapshots.size })
+        for (classpathEntrySnapshot in classpathEntrySnapshots) {
+            for ((unixStyleRelativePath, classSnapshot) in classpathEntrySnapshot.classSnapshots) {
+                classSnapshots.putIfAbsent(unixStyleRelativePath, classSnapshot)
+            }
+        }
+        return classSnapshots.values.toList()
     }
 }

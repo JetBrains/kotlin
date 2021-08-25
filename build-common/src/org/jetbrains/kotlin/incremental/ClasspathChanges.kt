@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.incremental.storage.FqNameExternalizer
+import org.jetbrains.kotlin.incremental.storage.LinkedHashSetExternalizer
+import org.jetbrains.kotlin.incremental.storage.LookupSymbolExternalizer
 import org.jetbrains.kotlin.name.FqName
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serializable
+import java.io.*
 
 /**
  * Changes to the classpath of the `KotlinCompile` task, used to compute the source files that need to be recompiled during an incremental
@@ -18,59 +20,54 @@ sealed class ClasspathChanges : Serializable {
 
     class Available() : ClasspathChanges() {
 
-        lateinit var lookupSymbols: List<LookupSymbol>
-            private set
-
-        lateinit var fqNames: List<FqName>
-            private set
-
-        constructor(lookupSymbols: List<LookupSymbol>, fqNames: List<FqName>) : this() {
-            this.lookupSymbols = lookupSymbols
-            this.fqNames = fqNames
-        }
-
-        private fun writeObject(out: ObjectOutputStream) {
-            out.writeInt(lookupSymbols.size)
-            lookupSymbols.forEach {
-                out.writeUTF(it.name)
-                out.writeUTF(it.scope)
-            }
-
-            out.writeInt(fqNames.size)
-            fqNames.forEach {
-                out.writeUTF(it.asString())
-            }
-        }
-
-        private fun readObject(ois: ObjectInputStream) {
-            val lookupSymbolsSize = ois.readInt()
-            val lookupSymbols = ArrayList<LookupSymbol>(lookupSymbolsSize)
-            repeat(lookupSymbolsSize) {
-                val name = ois.readUTF()
-                val scope = ois.readUTF()
-                lookupSymbols.add(LookupSymbol(name, scope))
-            }
-            this.lookupSymbols = lookupSymbols
-
-            val fqNamesSize = ois.readInt()
-            val fqNames = ArrayList<FqName>(fqNamesSize)
-            repeat(fqNamesSize) {
-                val fqNameString = ois.readUTF()
-                fqNames.add(FqName(fqNameString))
-            }
-            this.fqNames = fqNames
-        }
-
         companion object {
             private const val serialVersionUID = 0L
+        }
+
+        lateinit var lookupSymbols: LinkedHashSet<LookupSymbol>
+            private set
+
+        lateinit var fqNames: LinkedHashSet<FqName>
+            private set
+
+        constructor(lookupSymbols: LinkedHashSet<LookupSymbol>, fqNames: LinkedHashSet<FqName>) : this() {
+            this.lookupSymbols = lookupSymbols
+            this.fqNames = fqNames
+        }
+
+        private fun writeObject(output: ObjectOutputStream) {
+            // Can't close DataOutputStream below as it will also close the underlying ObjectOutputStream, which is still in use.
+            ClasspathChangesAvailableExternalizer.save(DataOutputStream(output), this)
+        }
+
+        private fun readObject(input: ObjectInputStream) {
+            // Can't close DataInputStream below as it will also close the underlying ObjectInputStream, which is still in use.
+            ClasspathChangesAvailableExternalizer.read(DataInputStream(input)).also {
+                lookupSymbols = it.lookupSymbols
+                fqNames = it.fqNames
+            }
         }
     }
 
     sealed class NotAvailable : ClasspathChanges() {
-        object UnableToCompute : NotAvailable()
         object ForNonIncrementalRun : NotAvailable()
         object ClasspathSnapshotIsDisabled : NotAvailable()
         object ReservedForTestsOnly : NotAvailable()
         object ForJSCompiler : NotAvailable()
+    }
+}
+
+private object ClasspathChangesAvailableExternalizer : DataExternalizer<ClasspathChanges.Available> {
+
+    override fun save(output: DataOutput, classpathChanges: ClasspathChanges.Available) {
+        LinkedHashSetExternalizer(LookupSymbolExternalizer).save(output, classpathChanges.lookupSymbols)
+        LinkedHashSetExternalizer(FqNameExternalizer).save(output, classpathChanges.fqNames)
+    }
+
+    override fun read(input: DataInput): ClasspathChanges.Available {
+        return ClasspathChanges.Available(
+            lookupSymbols = LinkedHashSetExternalizer(LookupSymbolExternalizer).read(input),
+            fqNames = LinkedHashSetExternalizer(FqNameExternalizer).read(input)
+        )
     }
 }

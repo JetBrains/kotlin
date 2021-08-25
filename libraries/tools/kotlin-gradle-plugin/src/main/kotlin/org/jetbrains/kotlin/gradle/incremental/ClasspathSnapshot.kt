@@ -43,9 +43,7 @@ class KotlinClassSnapshot(val classInfo: KotlinClassInfo) : ClassSnapshot()
 sealed class JavaClassSnapshot : ClassSnapshot()
 
 /** [JavaClassSnapshot] of a typical Java class. */
-class RegularJavaClassSnapshot(
-    val serializedJavaClass: SerializedJavaClass
-) : JavaClassSnapshot()
+class RegularJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) : JavaClassSnapshot()
 
 /**
  * [JavaClassSnapshot] of a Java class where there is nothing to capture.

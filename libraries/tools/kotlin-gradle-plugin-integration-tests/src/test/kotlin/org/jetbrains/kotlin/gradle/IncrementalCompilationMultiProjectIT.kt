@@ -148,7 +148,24 @@ class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMult
 }
 
 class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(useClasspathSnapshot = true)
+
+    override fun testAddDependencyInLib_expectedFiles(project: Project): Iterable<File> {
+        // With classpath snapshot, no files are recompiled
+        return emptyList()
+    }
+
+    override fun testAbiChangeInLib_afterLibClean_expectedFiles(project: Project): Iterable<File> {
+        // With classpath snapshot, app compilation is incremental
+        return File(project.projectDir, "app").getFilesByNames("AA.kt", "AAA.kt", "BB.kt", "fooUseA.kt") +
+                File(project.projectDir, "lib").allKotlinFiles()
+    }
+
+    override fun testCompileLibWithGroovy_expectedFiles(project: Project): Iterable<File> {
+        // With classpath snapshot, no files in app are recompiled
+        return listOf(File(project.projectDir, "lib").getFileByName("A.kt"))
+    }
 }
 
 abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilationBaseIT() {

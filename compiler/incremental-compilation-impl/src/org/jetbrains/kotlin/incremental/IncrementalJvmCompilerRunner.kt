@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.Either
-import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailable.UnableToCompute
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailable.ForJSCompiler
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailable.ReservedForTestsOnly
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailable.ForNonIncrementalRun
@@ -96,14 +95,12 @@ fun makeIncrementally(
 }
 
 object EmptyICReporter : ICReporterBase() {
-    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
-    }
-
-    override fun report(message: () -> String) {
-    }
-
-    override fun reportVerbose(message: () -> String) {
-    }
+    override fun report(message: () -> String) {}
+    override fun reportVerbose(message: () -> String) {}
+    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
+    override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {}
+    override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}
+    override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {}
 }
 
 inline fun <R> withIC(enabled: Boolean = true, fn: () -> R): R {
@@ -218,10 +215,10 @@ class IncrementalJvmCompilerRunner(
         reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
 
         val classpathChanges = when (classpathChanges) {
-            // Note: classpathChanges is deserialized so they are no longer singleton objects and need to be compared using `is` (not `==`).
+            // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
             is ClasspathChanges.Available -> ChangesEither.Known(classpathChanges.lookupSymbols, classpathChanges.fqNames)
             is ClasspathChanges.NotAvailable -> when (classpathChanges) {
-                is UnableToCompute, is ClasspathSnapshotIsDisabled, is ReservedForTestsOnly -> {
+                is ClasspathSnapshotIsDisabled, is ReservedForTestsOnly -> {
                     reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
                         val scopes = caches.lookupCache.lookupMap.keys.map { if (it.scope.isBlank()) it.name else it.scope }.distinct()
                         getClasspathChanges(
