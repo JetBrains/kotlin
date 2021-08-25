@@ -49,10 +49,14 @@ object StrictEqualityTypeChecker {
 
 object ErrorTypesAreEqualToAnything : KotlinTypeChecker {
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-        NewKotlinTypeChecker.Default.run { ClassicTypeCheckerState(true).isSubtypeOf(subtype.unwrap(), supertype.unwrap()) }
+        NewKotlinTypeChecker.Default.run {
+            createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true).isSubtypeOf(subtype.unwrap(), supertype.unwrap())
+        }
 
     override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-        NewKotlinTypeChecker.Default.run { ClassicTypeCheckerState(true).equalTypes(a.unwrap(), b.unwrap()) }
+        NewKotlinTypeChecker.Default.run {
+            createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true).equalTypes(a.unwrap(), b.unwrap())
+        }
 }
 
 interface NewKotlinTypeChecker : KotlinTypeChecker {
@@ -73,26 +77,25 @@ class NewKotlinTypeCheckerImpl(
     override val overridingUtil: OverridingUtil = OverridingUtil.createWithTypeRefiner(kotlinTypeRefiner)
 
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-        ClassicTypeCheckerState(
+        createClassicTypeCheckerState(
             true, kotlinTypeRefiner = kotlinTypeRefiner, kotlinTypePreparator = kotlinTypePreparator
         ).isSubtypeOf(subtype.unwrap(), supertype.unwrap()) // todo fix flag errorTypeEqualsToAnything
 
     override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-        ClassicTypeCheckerState(
+        createClassicTypeCheckerState(
             false, kotlinTypeRefiner = kotlinTypeRefiner, kotlinTypePreparator = kotlinTypePreparator
         ).equalTypes(a.unwrap(), b.unwrap())
 
-    fun ClassicTypeCheckerState.equalTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
-        return AbstractTypeChecker.equalTypes(this as TypeCheckerState, a, b)
+    fun TypeCheckerState.equalTypes(a: UnwrappedType, b: UnwrappedType): Boolean {
+        return AbstractTypeChecker.equalTypes(this, a, b)
     }
 
-    fun ClassicTypeCheckerState.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
-        return AbstractTypeChecker.isSubtypeOf(this as TypeCheckerState, subType, superType)
+    fun TypeCheckerState.isSubtypeOf(subType: UnwrappedType, superType: UnwrappedType): Boolean {
+        return AbstractTypeChecker.isSubtypeOf(this, subType, superType)
     }
 }
 
 object NullabilityChecker {
-
     fun isSubtypeOfAny(type: UnwrappedType): Boolean =
         SimpleClassicTypeSystemContext
             .newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
@@ -100,13 +103,13 @@ object NullabilityChecker {
 }
 
 fun UnwrappedType.hasSupertypeWithGivenTypeConstructor(typeConstructor: TypeConstructor) =
-    ClassicTypeCheckerState(false).anySupertype(lowerIfFlexible(), {
+    createClassicTypeCheckerState(isErrorTypeEqualsToAnything = false).anySupertype(lowerIfFlexible(), {
         require(it is SimpleType)
         it.constructor == typeConstructor
     }, { SupertypesPolicy.LowerIfFlexible })
 
 fun UnwrappedType.anySuperTypeConstructor(predicate: (TypeConstructor) -> Boolean) =
-    ClassicTypeCheckerState(false).anySupertype(lowerIfFlexible(), {
+    createClassicTypeCheckerState(isErrorTypeEqualsToAnything = false).anySupertype(lowerIfFlexible(), {
         require(it is SimpleType)
         predicate(it.constructor)
     }, { SupertypesPolicy.LowerIfFlexible })

@@ -12,16 +12,19 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeInferenceContext
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.idea.frontend.api.KtStarProjectionTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
-import org.jetbrains.kotlin.fir.types.ConeTypeCheckerState
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.convertVariance
 
 internal interface KtFirAnalysisSessionComponent {
@@ -62,9 +65,8 @@ internal interface KtFirAnalysisSessionComponent {
             }
         }
 
-    fun createTypeCheckerContext() = ConeTypeCheckerState(
-        isErrorTypeEqualsToAnything = true,
-        isStubTypeEqualsToAnything = true,
-        analysisSession.firResolveState.rootModuleSession.typeContext //TODO use correct session here
-    )
+    fun createTypeCheckerContext(): TypeCheckerState {
+        // TODO use correct session here,
+        return analysisSession.firResolveState.rootModuleSession.typeContext.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true)
+    }
 }

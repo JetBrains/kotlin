@@ -29,13 +29,14 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
     ): List<ConeClassLikeType>? {
         if (type !is ConeClassLikeType || supertypeConstructor !is ConeClassLikeLookupTag) return null
 
-        val typeCheckerState = session.typeContext.newTypeCheckerState(
+        val typeContext = session.typeContext
+        val typeCheckerState = typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = true
         )
 
         val lookupTag = type.lookupTag
-        if (lookupTag == supertypeConstructor) return listOf(captureType(type, typeCheckerState.typeSystemContext))
+        if (lookupTag == supertypeConstructor) return listOf(captureType(type, typeContext))
         if (lookupTag !in cache) {
             cache[lookupTag] = computeSupertypesMap(lookupTag, typeCheckerState)
         }
@@ -43,8 +44,8 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
         val resultTypes = cache[lookupTag]?.getOrDefault(supertypeConstructor, emptyList()) ?: return null
         if (type.typeArguments.isEmpty()) return resultTypes
 
-        val capturedType = captureType(type, typeCheckerState.typeSystemContext)
-        val substitutionSupertypePolicy = typeCheckerState.typeSystemContext.substitutionSupertypePolicy(capturedType)
+        val capturedType = captureType(type, typeContext)
+        val substitutionSupertypePolicy = typeContext.substitutionSupertypePolicy(capturedType)
         return resultTypes.map {
             substitutionSupertypePolicy.transformType(typeCheckerState, it) as ConeClassLikeType
         }
@@ -55,7 +56,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
 
     private fun computeSupertypesMap(
         subtypeLookupTag: ConeClassLikeLookupTag,
-        state: ConeTypeCheckerState
+        state: TypeCheckerState
     ): Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>? {
         val resultingMap = HashMap<ConeClassLikeLookupTag, List<ConeClassLikeType>>()
 
@@ -84,7 +85,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
     private fun computeSupertypePolicyAndPutInMap(
         supertype: SimpleTypeMarker,
         resultingMap: MutableMap<ConeClassLikeLookupTag, List<ConeClassLikeType>>,
-        state: ConeTypeCheckerState
+        state: TypeCheckerState
     ): TypeCheckerState.SupertypesPolicy {
         val supertypeLookupTag = (supertype as ConeClassLikeType).lookupTag
         val captured =

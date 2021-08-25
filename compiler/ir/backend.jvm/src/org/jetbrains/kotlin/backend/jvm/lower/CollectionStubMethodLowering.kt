@@ -229,7 +229,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     private fun createTypeCheckerState(overrideFun: IrSimpleFunction, parentFun: IrSimpleFunction): TypeCheckerState =
-        IrTypeCheckerState(
+        createIrTypeCheckerState(
             IrTypeSystemContextWithAdditionalAxioms(
                 context.typeSystem,
                 overrideFun.typeParameters,

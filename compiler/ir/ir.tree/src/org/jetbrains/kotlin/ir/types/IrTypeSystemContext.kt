@@ -504,7 +504,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
-    ): TypeCheckerState = IrTypeCheckerState(this)
+    ): TypeCheckerState = createIrTypeCheckerState(this)
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {

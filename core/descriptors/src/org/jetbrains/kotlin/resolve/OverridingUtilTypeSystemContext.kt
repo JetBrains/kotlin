@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerState
 import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.createClassicTypeCheckerState
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class OverridingUtilTypeSystemContext(
@@ -29,11 +29,11 @@ class OverridingUtilTypeSystemContext(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
     ): TypeCheckerState {
-        return ClassicTypeCheckerState(
+        return createClassicTypeCheckerState(
             errorTypesEqualToAnything,
             stubTypesEqualToAnything,
-            kotlinTypeRefiner,
-            typeSystemContext = this
+            typeSystemContext = this,
+            kotlinTypeRefiner = kotlinTypeRefiner
         )
     }
 

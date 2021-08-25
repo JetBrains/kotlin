@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.containerRelation
 import org.jetbrains.kotlin.types.TypeCheckerState.LowerCapturedTypePolicy.*
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 import org.jetbrains.kotlin.types.model.*
@@ -22,14 +21,14 @@ import java.util.*
  * Once some type-checker operation is performed using a [TypeCheckerProviderContext], for example a [AbstractTypeChecker.isSubtypeOf],
  * new instance of particular [TypeCheckerState] should be created, with properly specified type system context
  */
-abstract class TypeCheckerState {
-    abstract val kotlinTypePreparator: AbstractTypePreparator
-    abstract val kotlinTypeRefiner: AbstractTypeRefiner
-
-    abstract val typeSystemContext: TypeSystemContext
-
-    abstract val allowedTypeVariable: Boolean
-
+open class TypeCheckerState(
+    val isErrorTypeEqualsToAnything: Boolean,
+    val isStubTypeEqualsToAnything: Boolean,
+    val allowedTypeVariable: Boolean,
+    val typeSystemContext: TypeSystemContext,
+    val kotlinTypePreparator: AbstractTypePreparator,
+    val kotlinTypeRefiner: AbstractTypeRefiner
+) {
     @OptIn(TypeRefinement::class)
     fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
         return kotlinTypeRefiner.refineType(type)
@@ -40,10 +39,6 @@ abstract class TypeCheckerState {
     }
 
     open fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean = true
-
-    abstract val isErrorTypeEqualsToAnything: Boolean
-
-    abstract val isStubTypeEqualsToAnything: Boolean
 
     protected var argumentsDepth = 0
 

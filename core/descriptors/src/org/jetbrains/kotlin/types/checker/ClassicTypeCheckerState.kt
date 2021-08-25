@@ -16,23 +16,48 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.TypeCheckerState
 
+@RequiresOptIn
+annotation class ClassicTypeCheckerStateInternals
+
+/**
+ * Class [ClassicTypeCheckerState] exists only to provide default arguments for
+ *   cases when someone need to implement custom [TypeCheckerState] using default
+ *   arguments. If you need to create only an instance of [TypeCheckerState] please
+ *   use [createClassicTypeCheckerState] method.
+ *
+ *  Also please don't use [ClassicTypeCheckerState] explicitly (except for inheritance)
+ */
+@ClassicTypeCheckerStateInternals
 open class ClassicTypeCheckerState(
-    val errorTypeEqualsToAnything: Boolean,
-    val stubTypeEqualsToAnything: Boolean = true,
-    override val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default,
-    override val kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
-    override val typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext
-) : TypeCheckerState() {
-    override val isErrorTypeEqualsToAnything: Boolean
-        get() = errorTypeEqualsToAnything
+    isErrorTypeEqualsToAnything: Boolean,
+    isStubTypeEqualsToAnything: Boolean = true,
+    typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext,
+    kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
+    kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default
+) : TypeCheckerState(
+    isErrorTypeEqualsToAnything,
+    isStubTypeEqualsToAnything,
+    allowedTypeVariable = true,
+    typeSystemContext,
+    kotlinTypePreparator,
+    kotlinTypeRefiner
+)
 
-    override val isStubTypeEqualsToAnything: Boolean
-        get() = stubTypeEqualsToAnything
-
-    override val allowedTypeVariable: Boolean
-        get() = true
+fun createClassicTypeCheckerState(
+    isErrorTypeEqualsToAnything: Boolean,
+    isStubTypeEqualsToAnything: Boolean = true,
+    typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext,
+    kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
+    kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default
+): TypeCheckerState {
+    return TypeCheckerState(
+        isErrorTypeEqualsToAnything,
+        isStubTypeEqualsToAnything,
+        allowedTypeVariable = true,
+        typeSystemContext,
+        kotlinTypePreparator,
+        kotlinTypeRefiner
+    )
 }
