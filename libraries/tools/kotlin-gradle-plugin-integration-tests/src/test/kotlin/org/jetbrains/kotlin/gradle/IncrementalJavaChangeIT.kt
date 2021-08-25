@@ -10,12 +10,12 @@ import org.junit.Test
 open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
     @Test
     override fun testAbiChangeInLib_changeMethodSignature_tracked() {
-        doTest(trackedJavaClass, changeSignature, expectedAffectedFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
+        doTest(trackedJavaClass, changeSignature, expectedCompiledFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
     }
 
     @Test
     override fun testNonAbiChangeInLib_changeMethodBody_tracked() {
-        doTest(trackedJavaClass, changeBody, expectedAffectedFileNames = listOf())
+        doTest(trackedJavaClass, changeBody, expectedCompiledFileNames = listOf())
     }
 }
 
@@ -26,12 +26,12 @@ class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT(
 class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = true) {
     @Test
     override fun testAbiChangeInLib_changeMethodSignature_tracked() {
-        doTest(trackedJavaClass, changeSignature, expectedAffectedFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
+        doTest(trackedJavaClass, changeSignature, expectedCompiledFileNames = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
     }
 
     @Test
     override fun testNonAbiChangeInLib_changeMethodBody_tracked() {
-        doTest(trackedJavaClass, changeBody, expectedAffectedFileNames = listOf())
+        doTest(trackedJavaClass, changeBody, expectedCompiledFileNames = listOf())
     }
 }
 
@@ -40,7 +40,7 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
     override fun testAbiChangeInLib_changeMethodSignature_tracked() {
         doTest(
             trackedJavaClass, changeSignature,
-            expectedAffectedFileNames = listOf(
+            expectedCompiledFileNames = listOf(
                 "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
                 "useTrackedJavaClassSameModule.kt"
             )
@@ -51,7 +51,7 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
     override fun testNonAbiChangeInLib_changeMethodBody_tracked() {
         doTest(
             trackedJavaClass, changeBody,
-            expectedAffectedFileNames = listOf(
+            expectedCompiledFileNames = listOf(
                 "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
                 "useTrackedJavaClassSameModule.kt"
             )
@@ -77,8 +77,8 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     @Test
     fun testAbiChangeInLib_changeMethodSignature() {
         doTest(
-            javaClass, changeBody,
-            expectedAffectedFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+            javaClass, changeSignature,
+            expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
         )
     }
 
@@ -86,7 +86,7 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     fun testNonAbiChangeInLib_changeMethodBody() {
         doTest(
             javaClass, changeBody,
-            expectedAffectedFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+            expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
         )
     }
 

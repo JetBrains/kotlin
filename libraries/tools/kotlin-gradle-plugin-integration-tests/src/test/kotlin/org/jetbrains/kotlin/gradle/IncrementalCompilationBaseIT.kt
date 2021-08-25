@@ -17,39 +17,46 @@ abstract class IncrementalCompilationBaseIT : BaseGradleIT() {
 
     protected fun doTest(
         fileToModify: String,
-        modifyFileContents: (String) -> String,
-        expectedAffectedFileNames: Collection<String>,
+        modifyFileContents: (originalContents: String) -> String,
+        expectedCompiledFileNames: Collection<String>,
     ) {
         doTest(
-            { it.projectDir.getFileByName(fileToModify).modify(modifyFileContents) },
-            expectedAffectedFileNames
+            modifyProject = { projectDir.getFileByName(fileToModify).modify(modifyFileContents) },
+            expectedCompiledFileNames = expectedCompiledFileNames
         )
     }
 
     protected fun doTest(
-        modifyProject: (Project) -> Unit,
-        expectedAffectedFileNames: Collection<String>,
+        project: Project = defaultProject(),
+        task: String = "build",
+        options: BuildOptions = defaultBuildOptions(),
+        modifyProject: Project.() -> Unit,
+        expectedCompiledFileNames: Collection<String>,
     ) {
-        doTest(defaultBuildOptions(), modifyProject, expectedAffectedFileNames)
+        doTest(
+            project, task, options, modifyProject,
+            assertResults = {
+                assertCompiledKotlinFiles(project.projectDir.getFilesByNames(*expectedCompiledFileNames.toTypedArray()))
+            }
+        )
     }
 
     protected fun doTest(
-        options: BuildOptions,
-        modifyProject: (Project) -> Unit,
-        expectedAffectedFileNames: Collection<String>,
+        project: Project = defaultProject(),
+        task: String = "build",
+        options: BuildOptions = defaultBuildOptions(),
+        modifyProject: Project.() -> Unit,
+        assertResults: CompiledProject.() -> Unit
     ) {
-        val project = defaultProject()
-        project.build("build") {
+        project.build(task, options = options) {
             assertSuccessful()
         }
 
         modifyProject(project)
 
-        project.build("build", options = options) {
+        project.build(task, options = options) {
             assertSuccessful()
-            val expectedAffectedFiles = project.projectDir.getFilesByNames(*expectedAffectedFileNames.toTypedArray())
-            val expectedAffectedFileRelativePaths = project.relativize(expectedAffectedFiles)
-            assertCompiledKotlinSources(expectedAffectedFileRelativePaths)
+            assertResults()
         }
     }
 }
