@@ -62,28 +62,19 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
     FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]
       EXPRESSION_BODY
         GET_VAR 'd: <root>.IFoo declared in <root>.DFoo.<init>' type=<root>.IFoo origin=null
-    FUN DELEGATED_MEMBER name:testExtFun visibility:public modality:OPEN <> ($this:<root>.DFoo, $receiver:kotlin.String) returnType:kotlin.Unit
-      annotations:
-        Ann
+    PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
       overridden:
-        public abstract fun testExtFun (): kotlin.Unit declared in <root>.IFoo
-      $this: VALUE_PARAMETER name:<this> type:<root>.DFoo
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
-      BLOCK_BODY
-        CALL 'public abstract fun testExtFun (): kotlin.Unit declared in <root>.IFoo' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
-            receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.testExtFun' type=<root>.DFoo origin=null
-          $receiver: GET_VAR '<this>: kotlin.String declared in <root>.DFoo.testExtFun' type=kotlin.String origin=null
-    FUN DELEGATED_MEMBER name:testFun visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.Unit
-      annotations:
-        Ann
-      overridden:
-        public abstract fun testFun (): kotlin.Unit declared in <root>.IFoo
-      $this: VALUE_PARAMETER name:<this> type:<root>.DFoo
-      BLOCK_BODY
-        CALL 'public abstract fun testFun (): kotlin.Unit declared in <root>.IFoo' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
-            receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.testFun' type=<root>.DFoo origin=null
+        public abstract testVal: kotlin.String [val]
+      FUN DELEGATED_MEMBER name:<get-testVal> visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.String
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-testVal> (): kotlin.String declared in <root>.IFoo
+        $this: VALUE_PARAMETER name:<this> type:<root>.DFoo
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-testVal> (): kotlin.String declared in <root>.DFoo'
+            CALL 'public abstract fun <get-testVal> (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
+                receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.<get-testVal>' type=<root>.DFoo origin=null
     PROPERTY DELEGATED_MEMBER name:testExtVal visibility:public modality:OPEN [val]
       overridden:
         public abstract testExtVal: kotlin.String [val]
@@ -99,19 +90,28 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
                 receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.<get-testExtVal>' type=<root>.DFoo origin=null
               $receiver: GET_VAR '<this>: kotlin.String declared in <root>.DFoo.<get-testExtVal>' type=kotlin.String origin=null
-    PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
+    FUN DELEGATED_MEMBER name:testFun visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.Unit
+      annotations:
+        Ann
       overridden:
-        public abstract testVal: kotlin.String [val]
-      FUN DELEGATED_MEMBER name:<get-testVal> visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.String
-        correspondingProperty: PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
-        overridden:
-          public abstract fun <get-testVal> (): kotlin.String declared in <root>.IFoo
-        $this: VALUE_PARAMETER name:<this> type:<root>.DFoo
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun <get-testVal> (): kotlin.String declared in <root>.DFoo'
-            CALL 'public abstract fun <get-testVal> (): kotlin.String declared in <root>.IFoo' type=kotlin.String origin=null
-              $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
-                receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.<get-testVal>' type=<root>.DFoo origin=null
+        public abstract fun testFun (): kotlin.Unit declared in <root>.IFoo
+      $this: VALUE_PARAMETER name:<this> type:<root>.DFoo
+      BLOCK_BODY
+        CALL 'public abstract fun testFun (): kotlin.Unit declared in <root>.IFoo' type=kotlin.Unit origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
+            receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.testFun' type=<root>.DFoo origin=null
+    FUN DELEGATED_MEMBER name:testExtFun visibility:public modality:OPEN <> ($this:<root>.DFoo, $receiver:kotlin.String) returnType:kotlin.Unit
+      annotations:
+        Ann
+      overridden:
+        public abstract fun testExtFun (): kotlin.Unit declared in <root>.IFoo
+      $this: VALUE_PARAMETER name:<this> type:<root>.DFoo
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+      BLOCK_BODY
+        CALL 'public abstract fun testExtFun (): kotlin.Unit declared in <root>.IFoo' type=kotlin.Unit origin=null
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IFoo visibility:private [final]' type=<root>.IFoo origin=null
+            receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.testExtFun' type=<root>.DFoo origin=null
+          $receiver: GET_VAR '<this>: kotlin.String declared in <root>.DFoo.testExtFun' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IFoo
