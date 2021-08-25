@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 open class ClassicTypeCheckerState(
     val errorTypeEqualsToAnything: Boolean,
     val stubTypeEqualsToAnything: Boolean = true,
-    val allowedTypeVariable: Boolean = true,
     override val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default,
     override val kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
     override val typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext
@@ -34,29 +33,6 @@ open class ClassicTypeCheckerState(
     override val isStubTypeEqualsToAnything: Boolean
         get() = stubTypeEqualsToAnything
 
-    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
-        return typeSystemContext.classicSubstitutionSupertypePolicy(type)
-    }
-
-    override val KotlinTypeMarker.isAllowedTypeVariable: Boolean get() = this is UnwrappedType && allowedTypeVariable && constructor is NewTypeVariableConstructor
-
-    companion object {
-        fun ClassicTypeSystemContext.classicSubstitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
-            require(type is SimpleType, type::errorMessage)
-            val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()
-
-            return object : SupertypesPolicy.DoCustomTransform() {
-                override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
-                    return substitutor.safeSubstitute(
-                        type.lowerBoundIfFlexible() as KotlinType,
-                        Variance.INVARIANT
-                    ).asSimpleType()!!
-                }
-            }
-        }
-    }
-}
-
-private fun Any.errorMessage(): String {
-    return "ClassicTypeCheckerContext couldn't handle ${this::class} $this"
+    override val allowedTypeVariable: Boolean
+        get() = true
 }

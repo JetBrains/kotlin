@@ -788,6 +788,24 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         } else {
             createFlexibleType(this, this.withNullability(true))
         }
+
+    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
+        require(type is SimpleType, type::errorMessage)
+        val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()
+
+        return object : TypeCheckerState.SupertypesPolicy.DoCustomTransform() {
+            override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
+                return substitutor.safeSubstitute(
+                    type.lowerBoundIfFlexible() as KotlinType,
+                    Variance.INVARIANT
+                ).asSimpleType()!!
+            }
+        }
+    }
+
+    override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
+        return this is UnwrappedType && constructor is NewTypeVariableConstructor
+    }
 }
 
 fun TypeVariance.convertVariance(): Variance {

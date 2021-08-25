@@ -22,22 +22,9 @@ open class IrTypeCheckerState(override val typeSystemContext: IrTypeSystemContex
 
     val irBuiltIns: IrBuiltIns get() = typeSystemContext.irBuiltIns
 
-    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
-        require(type is IrSimpleType)
-        val parameters = extractTypeParameters((type.classifier as IrClassSymbol).owner).map { it.symbol }
-        val typeSubstitutor = IrTypeSubstitutor(parameters, type.arguments, irBuiltIns)
-
-        return object : SupertypesPolicy.DoCustomTransform() {
-            override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
-                require(type is IrType)
-                return typeSubstitutor.substitute(type) as IrSimpleType
-            }
-        }
-    }
-
     override val isErrorTypeEqualsToAnything get() = false
     override val isStubTypeEqualsToAnything get() = false
 
-    override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
+    override val allowedTypeVariable: Boolean
         get() = false
 }

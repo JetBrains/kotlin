@@ -528,6 +528,23 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
         error("makeSimpleTypeDefinitelyNotNullOrNotNull is not yet supported in IR")
     }
+
+    override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
+        require(type is IrSimpleType)
+        val parameters = extractTypeParameters((type.classifier as IrClassSymbol).owner).map { it.symbol }
+        val typeSubstitutor = IrTypeSubstitutor(parameters, type.arguments, irBuiltIns)
+
+        return object : TypeCheckerState.SupertypesPolicy.DoCustomTransform() {
+            override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
+                require(type is IrType)
+                return typeSubstitutor.substitute(type) as IrSimpleType
+            }
+        }
+    }
+
+    override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
+        return false
+    }
 }
 
 fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {

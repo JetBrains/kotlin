@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.containerRelation
 import org.jetbrains.kotlin.types.TypeCheckerState.LowerCapturedTypePolicy.*
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 import org.jetbrains.kotlin.types.model.*
@@ -27,7 +28,7 @@ abstract class TypeCheckerState {
 
     abstract val typeSystemContext: TypeSystemContext
 
-    abstract fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy
+    abstract val allowedTypeVariable: Boolean
 
     @OptIn(TypeRefinement::class)
     fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
@@ -157,10 +158,9 @@ abstract class TypeCheckerState {
         abstract class DoCustomTransform : SupertypesPolicy()
     }
 
-    abstract val KotlinTypeMarker.isAllowedTypeVariable: Boolean
-
-    @JvmName("isAllowedTypeVariableBridge")
-    fun isAllowedTypeVariable(type: KotlinTypeMarker): Boolean = type.isAllowedTypeVariable
+    fun isAllowedTypeVariable(type: KotlinTypeMarker): Boolean {
+        return allowedTypeVariable && with(typeSystemContext) { type.isTypeVariableType() }
+    }
 }
 
 object AbstractTypeChecker {
@@ -596,7 +596,7 @@ object AbstractTypeChecker {
                     SupertypesPolicy.LowerIfFlexible
                 }
                 else -> {
-                    state.substitutionSupertypePolicy(current)
+                    state.typeSystemContext.substitutionSupertypePolicy(current)
                 }
             }
         }
