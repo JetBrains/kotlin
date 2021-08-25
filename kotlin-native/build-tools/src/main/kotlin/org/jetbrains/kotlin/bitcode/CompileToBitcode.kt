@@ -78,7 +78,7 @@ open class CompileToBitcode @Inject constructor(
     @get:Input
     val compilerFlags: List<String>
         get() {
-            val commonFlags = listOf("-c", "-emit-llvm") + headersDirs.map { "-I$it" }
+            val commonFlags = listOf("-gdwarf-2", "-c", "-emit-llvm") + headersDirs.map { "-I$it" }
             val sanitizerFlags = when (sanitizer) {
                 null -> listOf()
                 SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
