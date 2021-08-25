@@ -101,7 +101,12 @@ class AnnotationChecker(
     }
 
     fun checkExpression(expression: KtExpression, trace: BindingTrace) {
-        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace.bindingContext), trace)
+        checkEntries(
+            expression.getAnnotationEntries(),
+            getActualTargetList(expression, null, trace.bindingContext),
+            trace,
+            expression.parent as? KtAnnotated
+        )
         if (expression is KtCallElement && languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions)) {
             val typeArguments = expression.typeArguments.mapNotNull { it.typeReference }
             for (typeArgument in typeArguments) {
