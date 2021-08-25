@@ -1,0 +1,22 @@
+{
+  "moduleId": "test-app",
+  "fragments": [
+    {
+      "id": "common",
+      "moduleDependencies": ["stdlib", "test-lib"]
+    },
+    {
+      "id": "jvm",
+      "refines": ["common"],
+      "settings": {
+        "jvm.string-concat": "inline"
+      },
+      "freeArgs": [],
+      "attributes": {
+        "platforms": ["jvm"],
+        "jvm.target": "1.8"
+      }
+    }
+  ],
+  "libs": ["./lib", "../test-lib/out/artifacts"]
+}

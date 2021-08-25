@@ -1,0 +1,30 @@
+{
+  "moduleId": "test-lib",
+  "fragments": [
+    {
+      "id": "common",
+      "moduleDependencies": ["stdlib"]
+    },
+    {
+      "id": "jvm8",
+      "refines": ["common"],
+      "settings": {
+        "jvm.string-concat": "inline"
+      },
+      "freeArgs": [],
+      "attributes": {
+        "platforms": ["jvm"],
+        "jvm.target": "1.8"
+      }
+    },
+    {
+      "id": "browser",
+      "refines": ["common"],
+      "settings": { },
+      "attributes": {
+        "platforms": ["js"]
+      }
+    }
+  ],
+  "libs": ["./lib"]
+}

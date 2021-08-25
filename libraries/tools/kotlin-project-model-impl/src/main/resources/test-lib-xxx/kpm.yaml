@@ -1,0 +1,64 @@
+version: prototype
+
+moduleId: test-lib
+
+fragments:
+  common:
+    moduleDependencies:
+      - stdlib
+  cli:
+    refines:
+      - common
+    moduleDependencies:
+      - cli-tools
+
+  gui:
+    refines:
+      - common
+    moduleDependencies:
+      - gui-tools
+  js:
+    refines:
+      - common
+  nodejs:
+    refines:
+      - js
+      - cli
+    variant: js
+    features:
+      target: browser
+
+  browser:
+    refines:
+      - js
+      - gui
+    variant: js
+    features:
+      target: nodejs
+
+  jvm:
+    refines:
+      - common
+      - cli
+    features:
+      jdk: '1.8'
+
+dependencyResolution:
+  fileModules:
+    cli-tools:
+      metaArtifact: ../cli-tools/out/cli-tools-meta.jar
+      variants:
+        js:
+          - ../cli-tools/out/cli-tools-js.jar
+          - ../coroutines/couroutines-js.jar
+        jvm:
+          - ../cli-tools/out/cli-tools-jvm.jar
+          - ../coroutines/couroutines-jvm.jar
+
+    gui-tools:
+      metaArtifact: ../gui-tools/out/gui-tools-meta.jar
+      variants:
+        js:
+          - ../gui-tools/out/gui-tools-js.jar
+        jvm:
+          - ../gui-tools/out/gui-tools-jvm.jar

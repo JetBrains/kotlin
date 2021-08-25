@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="kotlin.js"></script>
+  <script src="test.js"></script>
+  <script>
+      document.addEventListener("DOMContentLoaded", function(event) {
+          let handler = test.testProject.handler("display")
+          let a = document.getElementById("a")
+          let b = document.getElementById("b")
+
+          function handle() {
+              handler(a.value, b.value)
+          }
+
+          a.addEventListener('input', handle)
+          b.addEventListener('input', handle)
+      });
+  </script>
+</head>
+  <body >
+    <div style="width:90%;margin:20% auto;display: flex;flex-direction: column;justify-content: center;align-items: center;">
+      <label>
+        A:
+        <input id="a" type="text"/>
+      </label>
+      <label>
+        B:
+        <input id="b" type="text"/>
+      </label>
+      <div id="display" style="font-family: sans-serif; font-size: 10em;" ></div>
+    </div>
+  </body>
+</html>

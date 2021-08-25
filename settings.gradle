@@ -199,6 +199,7 @@ include ":benchmarks",
         ":generators:test-generator",
         ":tools:kotlinp",
         ":kotlin-project-model",
+        ":kotlin-project-model-impl",
         ":kotlin-gradle-plugin-api",
         ":kotlin-gradle-plugin-dsl-codegen",
         ":kotlin-gradle-plugin-npm-versions-codegen",
@@ -619,6 +620,7 @@ project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/no
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File
+project(':kotlin-project-model-impl').projectDir = "$rootDir/libraries/tools/kotlin-project-model-impl" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File
 project(':kotlin-gradle-plugin-npm-versions-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen" as File
