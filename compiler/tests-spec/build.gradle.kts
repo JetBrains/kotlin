@@ -16,7 +16,7 @@ dependencies {
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijPluginDep("java"))
-    compile("org.jsoup:jsoup:1.10.3")
+    compile("org.jsoup:jsoup:1.14.2")
     if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
     testRuntime(project(":kotlin-reflect"))
 
