@@ -331,8 +331,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             StackValue stackValue = selector.accept(visitor, receiver);
 
-            stackValue = suspendFunctionTypeWrapperIfNeeded(selector, stackValue);
-
             stackValue = coerceAndBoxInlineClassIfNeeded(selector, stackValue);
 
             RuntimeAssertionInfo runtimeAssertionInfo = null;
@@ -355,32 +353,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         catch (Throwable e) {
             throw new CompilationException("Failed to generate expression: " + selector.getClass().getSimpleName(), e, selector);
         }
-    }
-
-    private StackValue suspendFunctionTypeWrapperIfNeeded(KtElement selector, StackValue stackValue) {
-        Type functionTypeForWrapper =
-                selector instanceof KtExpression
-                ? bindingContext.get(CodegenBinding.FUNCTION_TYPE_FOR_SUSPEND_WRAPPER, (KtExpression) selector)
-                : null;
-
-        if (functionTypeForWrapper == null) return stackValue;
-
-        StackValue stackValueToWrap = stackValue;
-        stackValue = new StackValue(stackValue.type, stackValue.kotlinType) {
-            @Override
-            public void putSelector(
-                    @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v
-            ) {
-                stackValueToWrap.put(functionTypeForWrapper, null, v);
-                invokeCoroutineMigrationMethod(
-                        v,
-                        "toExperimentalSuspendFunction",
-                        Type.getMethodDescriptor(functionTypeForWrapper, functionTypeForWrapper)
-                );
-                coerce(functionTypeForWrapper, type, v);
-            }
-        };
-        return stackValue;
     }
 
     private StackValue coerceAndBoxInlineClassIfNeeded(KtElement selector, StackValue stackValue) {
@@ -2617,19 +2589,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 : getContinuationParameterFromEnclosingSuspendFunction(resolvedCall);
 
         tempVariables.put(continuationExpression, coroutineInstanceValue);
-    }
-
-    private static void invokeCoroutineMigrationMethod(
-            @NotNull InstructionAdapter v,
-            String methodName,
-            String descriptor
-    ) {
-        v.invokestatic(
-                "kotlin/coroutines/experimental/migration/CoroutinesMigrationKt",
-                methodName,
-                descriptor,
-                false
-        );
     }
 
     private StackValue getContinuationParameterFromEnclosingSuspendFunction(@NotNull ResolvedCall<?> resolvedCall) {
