@@ -129,7 +129,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     private fun isUnsafeToRemoveBoxingForConnectedValues(usedValues: List<BasicValue>, unboxedType: Type): Boolean =
         usedValues.any { input ->
             if (input === StrictBasicValue.UNINITIALIZED_VALUE) return@any false
-            if (input !is BoxedBasicValue) return@any true
+            if (input !is CleanBoxedValue) return@any true
 
             val descriptor = input.descriptor
             !descriptor.isSafeToRemove || descriptor.unboxedType != unboxedType

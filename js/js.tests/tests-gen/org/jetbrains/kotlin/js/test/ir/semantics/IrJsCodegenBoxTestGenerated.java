@@ -990,6 +990,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/boxingOptimization/kt46859.kt");
         }
 
+        @TestMetadata("kt48394.kt")
+        public void testKt48394() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/kt48394.kt");
+        }
+
         @TestMetadata("kt5493.kt")
         public void testKt5493() throws Exception {
             runTest("compiler/testData/codegen/box/boxingOptimization/kt5493.kt");
