@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.SupertypesPolicy.DoCustomTransform
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.SupertypesPolicy.LowerIfFlexible
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTransform
+import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexible
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.*
 
@@ -567,12 +567,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 }
 
-class ConeTypeCheckerContext(
+class ConeTypeCheckerState(
     override val isErrorTypeEqualsToAnything: Boolean,
     override val isStubTypeEqualsToAnything: Boolean,
     override val typeSystemContext: ConeInferenceContext,
     val kotlinTypePreparator: ConeTypePreparator = ConeTypePreparator.getDefault(typeSystemContext.session),
-) : AbstractTypeCheckerContext() {
+) : TypeCheckerState() {
 
     val session: FirSession = typeSystemContext.session
 
@@ -595,7 +595,7 @@ class ConeTypeCheckerContext(
             ConeSubstitutor.Empty
         }
         return object : DoCustomTransform() {
-            override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
+            override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
                 val lowerBound = type.lowerBoundIfFlexible()
                 require(lowerBound is ConeKotlinType)
                 return substitutor.substituteOrSelf(lowerBound) as SimpleTypeMarker

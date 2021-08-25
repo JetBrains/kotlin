@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
-open class IrTypeCheckerContext(override val typeSystemContext: IrTypeSystemContext): AbstractTypeCheckerContext() {
+open class IrTypeCheckerState(override val typeSystemContext: IrTypeSystemContext): TypeCheckerState() {
 
     val irBuiltIns: IrBuiltIns get() = typeSystemContext.irBuiltIns
 
@@ -21,7 +21,7 @@ open class IrTypeCheckerContext(override val typeSystemContext: IrTypeSystemCont
         val typeSubstitutor = IrTypeSubstitutor(parameters, type.arguments, irBuiltIns)
 
         return object : SupertypesPolicy.DoCustomTransform() {
-            override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
+            override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
                 require(type is IrType)
                 return typeSubstitutor.substitute(type) as IrSimpleType
             }

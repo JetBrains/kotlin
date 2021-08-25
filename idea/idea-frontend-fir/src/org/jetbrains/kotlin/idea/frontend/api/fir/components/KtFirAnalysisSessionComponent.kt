@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.frontend.api.KtStarProjectionTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
-import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
+import org.jetbrains.kotlin.fir.types.ConeTypeCheckerState
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
@@ -62,7 +62,7 @@ internal interface KtFirAnalysisSessionComponent {
             }
         }
 
-    fun createTypeCheckerContext() = ConeTypeCheckerContext(
+    fun createTypeCheckerContext() = ConeTypeCheckerState(
         isErrorTypeEqualsToAnything = true,
         isStubTypeEqualsToAnything = true,
         analysisSession.firResolveState.rootModuleSession.typeContext //TODO use correct session here

@@ -164,7 +164,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
 
         var metWrongNullabilityInsideArguments = false
 
-        val typeContext: AbstractTypeCheckerContext = object : ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) {
+        val typeState: TypeCheckerState = object : ClassicTypeCheckerState(errorTypeEqualsToAnything = true) {
             private var expectsTypeArgument = false
             override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
 
@@ -183,7 +183,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
             }
         }
 
-        AbstractTypeChecker.isSubtypeOf(typeContext, expressionType, c.expectedType)
+        AbstractTypeChecker.isSubtypeOf(typeState, expressionType, c.expectedType)
 
         return metWrongNullabilityInsideArguments
     }
@@ -194,7 +194,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
     ): Boolean {
         if (superType !is NotNullTypeVariable) return false
         return !AbstractNullabilityChecker.isSubtypeOfAny(
-            ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) as AbstractTypeCheckerContext,
+            ClassicTypeCheckerState(errorTypeEqualsToAnything = true) as TypeCheckerState,
             subType
         )
     }

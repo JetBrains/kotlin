@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 
 object FirOverrideChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val typeCheckerContext = context.session.typeContext.newBaseTypeCheckerContext(
+        val typeCheckerState = context.session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
@@ -47,7 +47,7 @@ object FirOverrideChecker : FirClassChecker() {
 
         for (it in declaration.declarations) {
             if (it is FirSimpleFunction || it is FirProperty) {
-                checkMember((it as FirCallableDeclaration).symbol, declaration, reporter, typeCheckerContext, firTypeScope, context)
+                checkMember((it as FirCallableDeclaration).symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
             }
         }
     }
@@ -172,7 +172,7 @@ object FirOverrideChecker : FirClassChecker() {
     // See [OverrideResolver#isReturnTypeOkForOverride]
     private fun FirCallableSymbol<*>.checkReturnType(
         overriddenSymbols: List<FirCallableSymbol<*>>,
-        typeCheckerContext: AbstractTypeCheckerContext,
+        typeCheckerState: TypeCheckerState,
         context: CheckerContext,
     ): FirCallableSymbol<*>? {
         val overridingReturnType = resolvedReturnTypeRef.coneType
@@ -191,9 +191,9 @@ object FirOverrideChecker : FirClassChecker() {
 
             val isReturnTypeOkForOverride =
                 if (overriddenDeclaration is FirPropertySymbol && overriddenDeclaration.isVar)
-                    AbstractTypeChecker.equalTypes(typeCheckerContext, overridingReturnType, overriddenReturnType)
+                    AbstractTypeChecker.equalTypes(typeCheckerState, overridingReturnType, overriddenReturnType)
                 else
-                    AbstractTypeChecker.isSubtypeOf(typeCheckerContext, overridingReturnType, overriddenReturnType)
+                    AbstractTypeChecker.isSubtypeOf(typeCheckerState, overridingReturnType, overriddenReturnType)
 
             if (!isReturnTypeOkForOverride) {
                 return overriddenDeclaration
@@ -207,7 +207,7 @@ object FirOverrideChecker : FirClassChecker() {
         member: FirCallableSymbol<*>,
         containingClass: FirClass,
         reporter: DiagnosticReporter,
-        typeCheckerContext: AbstractTypeCheckerContext,
+        typeCheckerState: TypeCheckerState,
         firTypeScope: FirTypeScope,
         context: CheckerContext
     ) {
@@ -268,7 +268,7 @@ object FirOverrideChecker : FirClassChecker() {
 
         val restriction = member.checkReturnType(
             overriddenSymbols = overriddenMemberSymbols,
-            typeCheckerContext = typeCheckerContext,
+            typeCheckerState = typeCheckerState,
             context = context,
         ) ?: return
         when (member) {

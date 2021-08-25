@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
-import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerState
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -232,7 +232,7 @@ class BuilderInferenceSupport(
 
             with(NewKotlinTypeChecker.Default) {
                 val parameterType = getEffectiveExpectedType(argumentMatch.valueParameter, valueArgument, context)
-                BuilderInferenceTypeCheckerContext(allowOnlyTrivialConstraints = false).isSubtypeOf(kotlinType.unwrap(), parameterType.unwrap())
+                BuilderInferenceTypeCheckerState(allowOnlyTrivialConstraints = false).isSubtypeOf(kotlinType.unwrap(), parameterType.unwrap())
             }
         }
 
@@ -245,16 +245,16 @@ class BuilderInferenceSupport(
 
         resultingCall.extensionReceiver?.let { actualReceiver ->
             with(NewKotlinTypeChecker.Default) {
-                BuilderInferenceTypeCheckerContext(allowOnlyTrivialConstraints = allowOnlyTrivialConstraintsForReceiver).isSubtypeOf(
+                BuilderInferenceTypeCheckerState(allowOnlyTrivialConstraints = allowOnlyTrivialConstraintsForReceiver).isSubtypeOf(
                     actualReceiver.type.unwrap(), extensionReceiver.value.type.unwrap()
                 )
             }
         }
     }
 
-    private class BuilderInferenceTypeCheckerContext(
+    private class BuilderInferenceTypeCheckerState(
         private val allowOnlyTrivialConstraints: Boolean
-    ) : ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) {
+    ) : ClassicTypeCheckerState(errorTypeEqualsToAnything = true) {
 
         override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker, isFromNullabilityConstraint: Boolean): Boolean? {
             require(subType is UnwrappedType)

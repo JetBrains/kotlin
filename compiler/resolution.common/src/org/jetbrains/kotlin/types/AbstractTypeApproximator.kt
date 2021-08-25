@@ -174,7 +174,7 @@ abstract class AbstractTypeApproximator(
         val needApproximate = conf.localTypes && constructor.isLocalType()
         if (!needApproximate) return null
         val superConstructor = constructor.supertypes().first().typeConstructor()
-        val typeCheckerContext = newBaseTypeCheckerContext(
+        val typeCheckerContext = newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )

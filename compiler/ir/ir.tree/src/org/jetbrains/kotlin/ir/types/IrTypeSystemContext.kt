@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
@@ -501,10 +501,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
 
-    override fun newBaseTypeCheckerContext(
+    override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
-    ): AbstractTypeCheckerContext = IrTypeCheckerContext(this)
+    ): TypeCheckerState = IrTypeCheckerState(this)
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {

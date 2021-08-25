@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.incompatible
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 
 abstract class FakeOverrideBuilderStrategy {
@@ -439,14 +438,14 @@ class IrOverridingUtil(
         return if (a == null || b == null) true else isVisibilityMoreSpecific(a, b)
     }
 
-    private fun IrTypeCheckerContext.isSubtypeOf(a: IrType, b: IrType) =
-        AbstractTypeChecker.isSubtypeOf(this as AbstractTypeCheckerContext, a, b)
+    private fun IrTypeCheckerState.isSubtypeOf(a: IrType, b: IrType) =
+        AbstractTypeChecker.isSubtypeOf(this as TypeCheckerState, a, b)
 
-    private fun IrTypeCheckerContext.equalTypes(a: IrType, b: IrType) =
-        AbstractTypeChecker.equalTypes(this as AbstractTypeCheckerContext, a, b)
+    private fun IrTypeCheckerState.equalTypes(a: IrType, b: IrType) =
+        AbstractTypeChecker.equalTypes(this as TypeCheckerState, a, b)
 
-    private fun createTypeChecker(a: List<IrTypeParameter>, b: List<IrTypeParameter>) =
-        IrTypeCheckerContext(IrTypeSystemContextWithAdditionalAxioms(typeSystem, a, b))
+    private fun createTypeCheckerState(a: List<IrTypeParameter>, b: List<IrTypeParameter>) =
+        IrTypeCheckerState(IrTypeSystemContextWithAdditionalAxioms(typeSystem, a, b))
 
     private fun isReturnTypeMoreSpecific(
         a: IrOverridableMember,
@@ -454,7 +453,7 @@ class IrOverridingUtil(
         b: IrOverridableMember,
         bReturnType: IrType
     ): Boolean {
-        val typeCheckerContext = createTypeChecker(a.typeParameters, b.typeParameters)
+        val typeCheckerContext = createTypeCheckerState(a.typeParameters, b.typeParameters)
         return typeCheckerContext.isSubtypeOf(aReturnType, bReturnType)
     }
 
@@ -479,7 +478,7 @@ class IrOverridingUtil(
                 )
             ) return false
             return if (pa.isVar && pb.isVar) {
-                createTypeChecker(
+                createTypeCheckerState(
                     a.getter!!.typeParameters,
                     b.getter!!.typeParameters
                 ).equalTypes(aReturnType, bReturnType)
@@ -674,8 +673,8 @@ class IrOverridingUtil(
             return incompatible("Type parameter number mismatch")
         }
 
-        val typeCheckerContext =
-            IrTypeCheckerContext(
+        val typeCheckerState =
+            IrTypeCheckerState(
                 IrTypeSystemContextWithAdditionalAxioms(
                     typeSystem,
                     superTypeParameters,
@@ -698,7 +697,7 @@ class IrOverridingUtil(
 
         superValueParameters.forEachIndexed { index, parameter ->
             if (!AbstractTypeChecker.equalTypes(
-                    typeCheckerContext as AbstractTypeCheckerContext,
+                    typeCheckerState as TypeCheckerState,
                     subValueParameters[index].type,
                     parameter.type
                 )
@@ -711,7 +710,7 @@ class IrOverridingUtil(
 
         if (checkReturnType) {
             if (!AbstractTypeChecker.isSubtypeOf(
-                    typeCheckerContext as AbstractTypeCheckerContext,
+                    typeCheckerState as TypeCheckerState,
                     subMember.returnType,
                     superMember.returnType
                 )

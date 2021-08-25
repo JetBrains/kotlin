@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.types.model
 
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -91,14 +91,14 @@ interface TypeSystemTypeFactoryContext: TypeSystemBuiltInsContext {
 }
 
 /**
- * Factory, that constructs [AbstractTypeCheckerContext], which defines type-checker behaviour
+ * Factory, that constructs [TypeCheckerState], which defines type-checker behaviour
  * Implementation is recommended to be [TypeSystemContext]
  */
 interface TypeCheckerProviderContext {
-    fun newBaseTypeCheckerContext(
+    fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
-    ): AbstractTypeCheckerContext
+    ): TypeCheckerState
 }
 
 /**
@@ -107,11 +107,11 @@ interface TypeCheckerProviderContext {
 interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeFactoryContext, TypeCheckerProviderContext {
 
     fun KotlinTypeMarker.anySuperTypeConstructor(predicate: (TypeConstructorMarker) -> Boolean) =
-        newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
+        newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
             .anySupertype(
                 lowerBoundIfFlexible(),
                 { predicate(it.typeConstructor()) },
-                { AbstractTypeCheckerContext.SupertypesPolicy.LowerIfFlexible }
+                { TypeCheckerState.SupertypesPolicy.LowerIfFlexible }
             )
 
     fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean

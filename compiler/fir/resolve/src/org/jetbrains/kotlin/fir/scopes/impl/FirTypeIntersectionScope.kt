@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 
 class FirTypeIntersectionScope private constructor(
     session: FirSession,
@@ -35,7 +34,7 @@ class FirTypeIntersectionScope private constructor(
     private val absentProperties: MutableSet<Name> = mutableSetOf()
     private val absentClassifiers: MutableSet<Name> = mutableSetOf()
 
-    private val typeCheckerContext = session.typeContext.newBaseTypeCheckerContext(false, false)
+    private val typeCheckerState = session.typeContext.newTypeCheckerState(false, false)
 
     private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<out FirCallableSymbol<*>>>> =
         mutableMapOf()
@@ -420,7 +419,7 @@ class FirTypeIntersectionScope private constructor(
             require(bFir is FirProperty) { "b is " + b.javaClass }
             // TODO: if (!OverridingUtil.isAccessorMoreSpecific(pa.getSetter(), pb.getSetter())) return false
             return if (aFir.isVar && bFir.isVar) {
-                AbstractTypeChecker.equalTypes(typeCheckerContext as AbstractTypeCheckerContext, aReturnType, bReturnType)
+                AbstractTypeChecker.equalTypes(typeCheckerState, aReturnType, bReturnType)
             } else { // both vals or var vs val: val can't be more specific then var
                 !(!aFir.isVar && bFir.isVar) && isTypeMoreSpecific(aReturnType, bReturnType)
             }
@@ -429,7 +428,7 @@ class FirTypeIntersectionScope private constructor(
     }
 
     private fun isTypeMoreSpecific(a: ConeKotlinType, b: ConeKotlinType): Boolean =
-        AbstractTypeChecker.isSubtypeOf(typeCheckerContext as AbstractTypeCheckerContext, a, b)
+        AbstractTypeChecker.isSubtypeOf(typeCheckerState, a, b)
 
     private fun <D : FirCallableSymbol<*>> findMemberWithMaxVisibility(members: Collection<MemberWithBaseScope<D>>): MemberWithBaseScope<D> {
         assert(members.isNotEmpty())

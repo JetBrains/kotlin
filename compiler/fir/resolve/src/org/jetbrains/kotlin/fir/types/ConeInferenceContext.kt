@@ -106,11 +106,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return ConeStarProjection
     }
 
-    override fun newBaseTypeCheckerContext(
+    override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
-    ): ConeTypeCheckerContext =
-        ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, this)
+    ): ConeTypeCheckerState =
+        ConeTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, this)
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean {
         require(this is ConeKotlinType)
@@ -198,7 +198,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun Collection<KotlinTypeMarker>.singleBestRepresentative(): KotlinTypeMarker? {
         if (this.size == 1) return this.first()
 
-        val context = newBaseTypeCheckerContext(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true)
+        val context = newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true)
         return this.firstOrNull { candidate ->
             this.all { other ->
                 // We consider error types equal to anything here, so that intersections like

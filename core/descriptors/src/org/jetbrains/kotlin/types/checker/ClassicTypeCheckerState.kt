@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
-open class ClassicTypeCheckerContext(
+open class ClassicTypeCheckerState(
     val errorTypeEqualsToAnything: Boolean,
     val stubTypeEqualsToAnything: Boolean = true,
     val allowedTypeVariable: Boolean = true,
     val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default,
     val kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
     override val typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext
-) : AbstractTypeCheckerContext() {
+) : TypeCheckerState() {
 
     @OptIn(TypeRefinement::class)
     override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
@@ -59,7 +59,7 @@ open class ClassicTypeCheckerContext(
             val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()
 
             return object : SupertypesPolicy.DoCustomTransform() {
-                override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
+                override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): SimpleTypeMarker {
                     return substitutor.safeSubstitute(
                         type.lowerBoundIfFlexible() as KotlinType,
                         Variance.INVARIANT

@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeCheckerState
 
 object ConeNullabilityChecker {
     fun isSubtypeOfAny(context: ConeTypeContext, type: ConeKotlinType): Boolean {
         val actualType = with(context) { type.lowerBoundIfFlexible() }
         return with(AbstractNullabilityChecker) {
-            context.newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
-                .hasNotNullSupertype(actualType, AbstractTypeCheckerContext.SupertypesPolicy.LowerIfFlexible)
+            context.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
+                .hasNotNullSupertype(actualType, TypeCheckerState.SupertypesPolicy.LowerIfFlexible)
         }
     }
 }
