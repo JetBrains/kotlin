@@ -44,10 +44,6 @@ import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
-import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -63,24 +59,6 @@ import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 class ClassGenerator(
     declarationGenerator: DeclarationGenerator
 ) : DeclarationGeneratorExtension(declarationGenerator) {
-
-    companion object {
-        private val DESCRIPTOR_RENDERER = DescriptorRenderer.withOptions {
-            withDefinedIn = false
-            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
-            includePropertyConstant = true
-            classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
-            verbose = true
-            modifiers = DescriptorRendererModifier.ALL
-        }
-
-        fun <T : DeclarationDescriptor> List<T>.sortedByRenderer(): List<T> {
-            val rendered = map(DESCRIPTOR_RENDERER::render)
-            val sortedIndices = (0 until size).sortedWith { i, j -> rendered[i].compareTo(rendered[j]) }
-            return sortedIndices.map { this[it] }
-        }
-    }
-
     fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: DescriptorVisibility? = null): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
@@ -162,29 +140,23 @@ class ClassGenerator(
     private fun generateFakeOverrideMemberDeclarations(irClass: IrClass, ktClassOrObject: KtPureClassOrObject) {
         val classDescriptor = irClass.descriptor
 
-        classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()
-            .filterIsInstance<CallableMemberDescriptor>()
-            .filter {
-                it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+        for (descriptor in classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
+            if (descriptor is CallableMemberDescriptor && descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                declarationGenerator.generateFakeOverrideDeclaration(descriptor, ktClassOrObject)?.let { irClass.declarations.add(it) }
             }
-            .sortedByRenderer()
-            .forEach { fakeOverride ->
-                declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject)?.let { irClass.declarations.add(it) }
-            }
+        }
 
         context.extensions.getParentClassStaticScope(classDescriptor)?.run {
-            getContributedDescriptors()
-                .filterIsInstance<FunctionDescriptor>()
-                .filter {
-                    DescriptorVisibilities.isVisibleIgnoringReceiver(it, classDescriptor)
-                }
-                .sortedByRenderer()
-                .forEach { parentStaticMember ->
+            for (parentStaticMember in getContributedDescriptors()) {
+                if (parentStaticMember is FunctionDescriptor &&
+                    DescriptorVisibilities.isVisibleIgnoringReceiver(parentStaticMember, classDescriptor)
+                ) {
                     val fakeOverride = createFakeOverrideDescriptorForParentStaticMember(classDescriptor, parentStaticMember)
                     declarationGenerator.generateFakeOverrideDeclaration(fakeOverride, ktClassOrObject)?.let {
                         irClass.declarations.add(it)
                     }
                 }
+            }
         }
     }
 
@@ -238,9 +210,7 @@ class ClassGenerator(
         }
 
         val delegatesMap = DelegationResolver.getDelegates(irClass.descriptor, superClass, delegateType)
-        val delegatedMembers = delegatesMap.keys.toList().sortedByRenderer()
-
-        for (delegatedMember in delegatedMembers) {
+        for (delegatedMember in delegatesMap.keys) {
             val overriddenMember = delegatedMember.overriddenDescriptors.find { it.containingDeclaration.original == superClass.original }
             if (overriddenMember != null) {
                 val delegateToMember = delegatesMap[delegatedMember]

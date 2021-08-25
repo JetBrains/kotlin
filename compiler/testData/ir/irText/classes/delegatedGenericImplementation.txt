@@ -49,20 +49,6 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
     FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<E of <root>.Test1> visibility:private [final]
       EXPRESSION_BODY
         GET_VAR 'i: <root>.IBase<E of <root>.Test1> declared in <root>.Test1.<init>' type=<root>.IBase<E of <root>.Test1> origin=null
-    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test1<E of <root>.Test1>, a:E of <root>.Test1, b:B of <root>.Test1.foo) returnType:kotlin.Unit
-      overridden:
-        public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
-      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
-      VALUE_PARAMETER name:a index:0 type:E of <root>.Test1
-      VALUE_PARAMETER name:b index:1 type:B of <root>.Test1.foo
-      BLOCK_BODY
-        CALL 'public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
-          <B>: B of <root>.Test1.foo
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<E of <root>.Test1> visibility:private [final]' type=<root>.IBase<E of <root>.Test1> origin=null
-            receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.foo' type=<root>.Test1<E of <root>.Test1> origin=null
-          a: GET_VAR 'a: E of <root>.Test1 declared in <root>.Test1.foo' type=E of <root>.Test1 origin=null
-          b: GET_VAR 'b: B of <root>.Test1.foo declared in <root>.Test1.foo' type=B of <root>.Test1.foo origin=null
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
       overridden:
         public abstract id: kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? [val]
@@ -112,6 +98,20 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
               receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<set-x>' type=<root>.Test1<E of <root>.Test1> origin=null
             $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test1.<set-x>> declared in <root>.Test1.<set-x>' type=kotlin.collections.List<D of <root>.Test1.<set-x>> origin=null
             <set-?>: GET_VAR '<set-?>: D of <root>.Test1.<set-x>? declared in <root>.Test1.<set-x>' type=D of <root>.Test1.<set-x>? origin=null
+    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test1<E of <root>.Test1>, a:E of <root>.Test1, b:B of <root>.Test1.foo) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
+      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
+      VALUE_PARAMETER name:a index:0 type:E of <root>.Test1
+      VALUE_PARAMETER name:b index:1 type:B of <root>.Test1.foo
+      BLOCK_BODY
+        CALL 'public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
+          <B>: B of <root>.Test1.foo
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<E of <root>.Test1> visibility:private [final]' type=<root>.IBase<E of <root>.Test1> origin=null
+            receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.foo' type=<root>.Test1<E of <root>.Test1> origin=null
+          a: GET_VAR 'a: E of <root>.Test1 declared in <root>.Test1.foo' type=E of <root>.Test1 origin=null
+          b: GET_VAR 'b: B of <root>.Test1.foo declared in <root>.Test1.foo' type=B of <root>.Test1.foo origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IBase
@@ -154,20 +154,6 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
     FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<kotlin.String> visibility:private [final]
       EXPRESSION_BODY
         GET_VAR 'j: <root>.IBase<kotlin.String> declared in <root>.Test2.<init>' type=<root>.IBase<kotlin.String> origin=null
-    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test2, a:kotlin.String, b:B of <root>.Test2.foo) returnType:kotlin.Unit
-      overridden:
-        public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
-      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
-      VALUE_PARAMETER name:a index:0 type:kotlin.String
-      VALUE_PARAMETER name:b index:1 type:B of <root>.Test2.foo
-      BLOCK_BODY
-        CALL 'public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
-          <B>: B of <root>.Test2.foo
-          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<kotlin.String> visibility:private [final]' type=<root>.IBase<kotlin.String> origin=null
-            receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.foo' type=<root>.Test2 origin=null
-          a: GET_VAR 'a: kotlin.String declared in <root>.Test2.foo' type=kotlin.String origin=null
-          b: GET_VAR 'b: B of <root>.Test2.foo declared in <root>.Test2.foo' type=B of <root>.Test2.foo origin=null
     PROPERTY DELEGATED_MEMBER name:id visibility:public modality:OPEN [val]
       overridden:
         public abstract id: kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? [val]
@@ -217,6 +203,20 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-x>' type=<root>.Test2 origin=null
             $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test2.<set-x>> declared in <root>.Test2.<set-x>' type=kotlin.collections.List<D of <root>.Test2.<set-x>> origin=null
             <set-?>: GET_VAR '<set-?>: D of <root>.Test2.<set-x>? declared in <root>.Test2.<set-x>' type=D of <root>.Test2.<set-x>? origin=null
+    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test2, a:kotlin.String, b:B of <root>.Test2.foo) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
+      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?]
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      VALUE_PARAMETER name:a index:0 type:kotlin.String
+      VALUE_PARAMETER name:b index:1 type:B of <root>.Test2.foo
+      BLOCK_BODY
+        CALL 'public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
+          <B>: B of <root>.Test2.foo
+          $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<kotlin.String> visibility:private [final]' type=<root>.IBase<kotlin.String> origin=null
+            receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.foo' type=<root>.Test2 origin=null
+          a: GET_VAR 'a: kotlin.String declared in <root>.Test2.foo' type=kotlin.String origin=null
+          b: GET_VAR 'b: B of <root>.Test2.foo declared in <root>.Test2.foo' type=B of <root>.Test2.foo origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IBase

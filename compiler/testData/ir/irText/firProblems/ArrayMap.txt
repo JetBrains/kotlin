@@ -19,10 +19,6 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       VALUE_PARAMETER name:index index:0 type:kotlin.Int
     FUN name:copy visibility:public modality:ABSTRACT <> ($this:<root>.ArrayMap<T of <root>.ArrayMap>) returnType:<root>.ArrayMap<T of <root>.ArrayMap>
       $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMap<T of <root>.ArrayMap>
-    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T of <root>.ArrayMap>) returnType:kotlin.collections.Iterator<T of <root>.ArrayMap> [fake_override,operator]
-      overridden:
-        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> [operator] declared in kotlin.collections.Iterable
-      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<T of <root>.ArrayMap>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.Iterable
@@ -32,6 +28,10 @@ FILE fqName:<root> fileName:/ArrayMap.kt
       overridden:
         public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T of <root>.ArrayMap>) returnType:kotlin.collections.Iterator<T of <root>.ArrayMap> [fake_override,operator]
+      overridden:
+        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> [operator] declared in kotlin.collections.Iterable
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<T of <root>.ArrayMap>
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
         public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.Iterable
@@ -603,11 +603,6 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 overridden:
                   protected final fun done (): kotlin.Unit declared in kotlin.collections.AbstractIterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>
-              FUN FAKE_OVERRIDE name:setNext visibility:protected modality:FINAL <> ($this:kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>, value:T of <root>.ArrayMapImpl) returnType:kotlin.Unit [fake_override]
-                overridden:
-                  protected final fun setNext (value: T of kotlin.collections.AbstractIterator): kotlin.Unit declared in kotlin.collections.AbstractIterator
-                $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>
-                VALUE_PARAMETER name:value index:0 type:T of <root>.ArrayMapImpl
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
                   public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.AbstractIterator
@@ -625,6 +620,11 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 overridden:
                   public open fun next (): T of kotlin.collections.AbstractIterator [operator] declared in kotlin.collections.AbstractIterator
                 $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>
+              FUN FAKE_OVERRIDE name:setNext visibility:protected modality:FINAL <> ($this:kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>, value:T of <root>.ArrayMapImpl) returnType:kotlin.Unit [fake_override]
+                overridden:
+                  protected final fun setNext (value: T of kotlin.collections.AbstractIterator): kotlin.Unit declared in kotlin.collections.AbstractIterator
+                $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractIterator<T of <root>.ArrayMapImpl>
+                VALUE_PARAMETER name:value index:0 type:T of <root>.ArrayMapImpl
               FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                 overridden:
                   public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.AbstractIterator

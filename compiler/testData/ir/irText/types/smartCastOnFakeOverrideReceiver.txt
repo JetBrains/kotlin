@@ -104,6 +104,14 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
       overridden:
         public final fun f (): kotlin.Int declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A
+    PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final aVal: kotlin.Int [val]
+      FUN FAKE_OVERRIDE name:<get-aVal> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-aVal> (): kotlin.Int declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
     FUN FAKE_OVERRIDE name:testA1 visibility:public modality:FINAL <> ($this:<root>.A, x:kotlin.Any) returnType:kotlin.Int? [fake_override]
       overridden:
         public final fun testA1 (x: kotlin.Any): kotlin.Int? declared in <root>.A
@@ -114,14 +122,6 @@ FILE fqName:<root> fileName:/smartCastOnFakeOverrideReceiver.kt
         public final fun testA2 (x: kotlin.Any): kotlin.Int? declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       VALUE_PARAMETER name:x index:0 type:kotlin.Any
-    PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
-      overridden:
-        public final aVal: kotlin.Int [val]
-      FUN FAKE_OVERRIDE name:<get-aVal> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:aVal visibility:public modality:FINAL [fake_override,val]
-        overridden:
-          public final fun <get-aVal> (): kotlin.Int declared in <root>.A
-        $this: VALUE_PARAMETER name:<this> type:<root>.A
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A

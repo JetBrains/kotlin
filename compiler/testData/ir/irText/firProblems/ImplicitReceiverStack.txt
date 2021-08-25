@@ -107,10 +107,6 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
     FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.ImplicitReceiverStack, name:kotlin.String?) returnType:<root>.ImplicitReceiverValue<*>? [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.ImplicitReceiverStack
       VALUE_PARAMETER name:name index:0 type:kotlin.String?
-    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>) returnType:kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> [fake_override,operator]
-      overridden:
-        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> [operator] declared in kotlin.collections.Iterable
-      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.Iterable
@@ -125,6 +121,10 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
       overridden:
         public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>) returnType:kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> [fake_override,operator]
+      overridden:
+        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> [operator] declared in kotlin.collections.Iterable
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>
     FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<<root>.ImplicitReceiverValue<*>>) returnType:@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] <root>.ImplicitReceiverValue<*>> [fake_override]
       overridden:
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable
