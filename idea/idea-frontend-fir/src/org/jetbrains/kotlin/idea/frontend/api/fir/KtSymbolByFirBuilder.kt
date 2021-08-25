@@ -200,6 +200,7 @@ internal class KtSymbolByFirBuilder private constructor(
                 }
                 is FirConstructor -> buildConstructorSymbol(fir)
                 is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
+                is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
                 else -> throwUnexpectedElementError(fir)
             }
         }
@@ -223,6 +224,16 @@ internal class KtSymbolByFirBuilder private constructor(
         fun buildSamConstructorSymbol(fir: FirSimpleFunction): KtFirSamConstructorSymbol {
             check(fir.origin == FirDeclarationOrigin.SamConstructor)
             return symbolsCache.cache(fir) { KtFirSamConstructorSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildPropertyAccessorSymbol(fir: FirPropertyAccessor): KtFunctionLikeSymbol {
+            return symbolsCache.cache(fir) {
+                if (fir.isGetter) {
+                    KtFirPropertyGetterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
+                } else {
+                    KtFirPropertySetterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
+                }
+            }
         }
     }
 

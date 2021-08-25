@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtDelegatedConstructorCallKind
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtErrorCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.model.TestModule
@@ -46,6 +44,7 @@ abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
         is KtBinaryExpression -> element.resolveCall()
         is KtUnaryExpression -> element.resolveCall()
         is KtArrayAccessExpression -> element.resolveCall()
+        is KtSimpleNameExpression -> element.resolveAccessorCall()
         is KtValueArgument -> resolveCall(element.getArgumentExpression()!!)
         else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
     }
@@ -56,7 +55,15 @@ private fun KtCall.stringRepresentation(): String {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
     fun Any.stringValue(): String = when (this) {
         is KtFunctionLikeSymbol -> buildString {
-            append(if (this@stringValue is KtFunctionSymbol) callableIdIfNonLocal ?: name else "<constructor>")
+            append(
+                when (this@stringValue) {
+                    is KtFunctionSymbol -> callableIdIfNonLocal ?: name
+                    is KtConstructorSymbol -> "<constructor>"
+                    is KtPropertyGetterSymbol -> callableIdIfNonLocal ?: "<getter>"
+                    is KtPropertySetterSymbol -> callableIdIfNonLocal ?: "<setter>"
+                    else -> error("unexpected symbol kind in KtCall: ${this@stringValue::class.java}")
+                }
+            )
             append("(")
             (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
                 append("<receiver>: ${receiver.type.render()}")

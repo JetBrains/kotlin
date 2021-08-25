@@ -7,18 +7,15 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.name.CallableId
 
-public sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
+public sealed class KtPropertyAccessorSymbol : KtFunctionLikeSymbol(),
     KtPossibleMemberSymbol,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol,
     KtSymbolWithKind {
 
-    final override val callableIdIfNonLocal: CallableId? get() = null
     final override val isExtension: Boolean get() = false
-    final override val receiverType: KtTypeAndAnnotations? get() = null
 
     public abstract val isDefault: Boolean
     public abstract val isInline: Boolean

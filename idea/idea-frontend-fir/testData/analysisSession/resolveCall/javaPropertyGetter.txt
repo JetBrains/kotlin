@@ -1,0 +1,3 @@
+KtFunctionCall:
+argumentMapping = {  }
+targetFunction = /JavaClass.getFoo(): kotlin.Int

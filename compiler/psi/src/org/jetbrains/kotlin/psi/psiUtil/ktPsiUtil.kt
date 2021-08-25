@@ -381,6 +381,14 @@ fun KtExpression.getAssignmentByLHS(): KtBinaryExpression? {
     return if (KtPsiUtil.isAssignment(parent) && parent.left == this) parent else null
 }
 
+tailrec fun findAssignment(element: PsiElement?): KtBinaryExpression? =
+    when (val parent = element?.parent) {
+        is KtBinaryExpression -> if (parent.left == element && parent.operationToken == KtTokens.EQ) parent else null
+        is KtQualifiedExpression -> findAssignment(element.parent)
+        is KtSimpleNameExpression -> findAssignment(element.parent)
+        else -> null
+    }
+
 fun KtStringTemplateExpression.getContentRange(): TextRange {
     val start = node.firstChildNode.textLength
     val lastChild = node.lastChildNode

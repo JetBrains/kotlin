@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolP
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirPropertySetterSymbol(
@@ -58,9 +61,21 @@ internal class KtFirPropertySetterSymbol(
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 
+    /**
+     * Returns [CallableId] of the delegated Java method if the corresponding property of this setter is a synthetic Java property.
+     * Otherwise, returns `null`
+     */
+    override val callableIdIfNonLocal: CallableId? by firRef.withFirAndCache { fir ->
+        if (fir is FirSyntheticPropertyAccessor) {
+            fir.delegate.symbol.callableId
+        } else null
+    }
+
     override val parameter: KtValueParameterSymbol by firRef.withFirAndCache { fir ->
         builder.variableLikeBuilder.buildValueParameterSymbol(fir.valueParameters.single())
     }
+
+    override val valueParameters: List<KtValueParameterSymbol> by cached { listOf(parameter) }
 
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
@@ -69,6 +84,12 @@ internal class KtFirPropertySetterSymbol(
     override val dispatchType: KtType? by cached {
         firRef.dispatchReceiverTypeAndAnnotations(builder)
     }
+
+    override val receiverType: KtTypeAndAnnotations? by cached {
+        firRef.receiverTypeAndAnnotations(builder)
+    }
+
+    override val hasStableParameterNames: Boolean = firRef.withFir { it.getHasStableParameterNames(it.moduleData.session) }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

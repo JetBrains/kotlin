@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtUnaryExpression
+import org.jetbrains.kotlin.psi.*
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
+    public abstract fun resolveAccessorCall(call: KtSimpleNameExpression): KtCall?
     public abstract fun resolveCall(call: KtCallElement): KtCall?
     public abstract fun resolveCall(call: KtBinaryExpression): KtCall?
     public abstract fun resolveCall(call: KtUnaryExpression): KtCall?
@@ -19,6 +17,14 @@ public abstract class KtCallResolver : KtAnalysisSessionComponent() {
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
+    /**
+     * Resolves the given simple name expression to an accessor call if that name refers to a property.
+     *
+     * This spans both Kotlin property and synthetic Java property.
+     */
+    public fun KtSimpleNameExpression.resolveAccessorCall(): KtCall? =
+        analysisSession.callResolver.resolveAccessorCall(this)
+
     public fun KtCallElement.resolveCall(): KtCall? =
         analysisSession.callResolver.resolveCall(this)
 

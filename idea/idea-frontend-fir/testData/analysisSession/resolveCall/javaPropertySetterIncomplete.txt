@@ -1,0 +1,3 @@
+KtFunctionCall:
+argumentMapping = {  }
+targetFunction = ERR<Setter value is missing, [/JavaClass.setFoo(v: kotlin.Int): kotlin.Unit]>
