@@ -341,7 +341,7 @@ class LldbTests {
         val binary = arrayOf(kt47198).binary("kt47198", "-g")
         """
             > b 1
-            Breakpoint 1: where = kt47198.kexe`kfun:#foo(kotlin.Int){} [..] at kt47198.kt:1:29, [..]
+            Breakpoint 1: where = kt47198.kexe`kfun:#foo(kotlin.Int){} [..] at kt47198.kt:1:1, [..]
             > ${lldbCommandRunOrContinue()}
             > fr v
             (int) a = 33
@@ -364,7 +364,7 @@ class LldbTests {
         val binary = arrayOf(kt47198).binary("kt47198", "-g")
         """
             > b 1
-            Breakpoint 1: where = kt47198.kexe`kfun:#foo(kotlin.Int){} [..] at kt47198.kt:2:[..]
+            Breakpoint 1: where = kt47198.kexe`kfun:#foo(kotlin.Int){} [..] at kt47198.kt:1:[..]
             > ${lldbCommandRunOrContinue()}
             > fr v
             (int) a = 33

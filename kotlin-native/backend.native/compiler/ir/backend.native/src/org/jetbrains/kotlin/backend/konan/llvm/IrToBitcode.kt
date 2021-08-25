@@ -1870,10 +1870,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override fun location(offset: Int): LocationInfo? {
             return if (returnableBlock.inlineFunctionSymbol != null) {
                 val diScope = functionScope ?: return null
-                val inlinedAt = outerContext.location(returnableBlock.startOffset)
-                        ?: error("no location for inlinedAt:\n" +
-                                "${returnableBlock.startOffset} ${returnableBlock.endOffset}\n" +
-                                returnableBlock.render())
+                val inlinedAt = outerContext.location(returnableBlock.startOffset) ?: return null
                 LocationInfo(diScope, file.fileEntry.line(offset), file.fileEntry.column(offset), inlinedAt)
             } else {
                 outerContext.location(offset)

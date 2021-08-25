@@ -389,7 +389,7 @@ internal class StackLocalsManagerImpl(
 
 internal class FunctionGenerationContext(val function: LLVMValueRef,
                                          val codegen: CodeGenerator,
-                                         startLocation: LocationInfo?,
+                                         private val startLocation: LocationInfo?,
                                          private val endLocation: LocationInfo?,
                                          private val switchToRunnable: Boolean,
                                          internal val irFunction: IrFunction? = null): ContextUtils {
@@ -1333,14 +1333,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             returnSlot = LLVMGetParam(function, numParameters(function.type) - 1)
         }
 
-        if (context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable) {
-            check(!forbidRuntime) { "Attempt to switch the thread state when runtime is forbidden" }
-            positionAtEnd(prologueBb)
-            // TODO: Do we need to do it for every c->kotlin bridge?
-            call(context.llvm.initRuntimeIfNeeded, emptyList())
-            switchThreadState(Runnable)
-        }
-
         positionAtEnd(localsInitBb)
         slotsPhi = phi(kObjHeaderPtrPtr)
         // Is removed by DCE trivially, if not needed.
@@ -1351,10 +1343,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     internal fun epilogue() {
         appendingTo(prologueBb) {
-            if (needsRuntimeInit && context.config.memoryModel != MemoryModel.EXPERIMENTAL) {
-                check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
-                call(context.llvm.initRuntimeIfNeeded, emptyList())
-            }
             val slots = if (needSlotsPhi)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else
@@ -1364,7 +1352,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
                 memset(slotsMem, 0, slotCount * codegen.runtime.pointerSize)
-                call(context.llvm.enterFrameFunction, listOf(slots, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
             }
             addPhiIncoming(slotsPhi!!, prologueBb to slots)
             memScoped {
@@ -1388,7 +1375,26 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             br(stackLocalsInitBb)
         }
 
+
         appendingTo(stackLocalsInitBb) {
+            /**
+             * Function calls need to have !dbg, otherwise llvm rejects full module debug information
+             * On the other hand, we don't want prologue to have debug info, because it can lead to debugger stops in
+             * places with inconsistent stack layout. So we setup debug info only for this part of bb.
+             */
+            startLocation?.let { debugLocation(it, it) }
+            val needStateSwitch = context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
+            if (needsRuntimeInit || needStateSwitch) {
+                check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
+                call(context.llvm.initRuntimeIfNeeded, emptyList())
+            }
+            if (needStateSwitch) {
+                switchThreadState(Runnable)
+            }
+            if (needSlots) {
+                call(context.llvm.enterFrameFunction, listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
+            }
+            resetDebugLocation()
             br(entryBb)
         }
 
