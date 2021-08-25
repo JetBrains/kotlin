@@ -392,7 +392,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
     ): TypeCheckerState {
-        return ClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext = this)
+        return createClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext = this)
     }
 
     override fun nullableNothingType(): SimpleTypeMarker {
@@ -411,7 +411,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return builtIns.anyType
     }
 
-    open val builtIns: KotlinBuiltIns
+    val builtIns: KotlinBuiltIns
         get() = throw UnsupportedOperationException("Not supported")
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {

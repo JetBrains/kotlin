@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerState
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerStateInternals
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.*
 import javax.inject.Inject
 
@@ -252,10 +252,10 @@ class BuilderInferenceSupport(
         }
     }
 
+    @OptIn(ClassicTypeCheckerStateInternals::class)
     private class BuilderInferenceTypeCheckerState(
         private val allowOnlyTrivialConstraints: Boolean
-    ) : ClassicTypeCheckerState(errorTypeEqualsToAnything = true) {
-
+    ) : ClassicTypeCheckerState(isErrorTypeEqualsToAnything = true) {
         override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker, isFromNullabilityConstraint: Boolean): Boolean? {
             require(subType is UnwrappedType)
             require(superType is UnwrappedType)

@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.math.max
@@ -214,13 +217,20 @@ class ConstraintInjector(
     private fun Context.isAllowedType(type: KotlinTypeMarker) =
         type.typeDepth() <= maxTypeDepthFromInitialConstraints + ALLOWED_DEPTH_DELTA_FOR_INCORPORATION
 
-    private inner class TypeCheckerStateForConstraintInjector(val c: Context, val position: IncorporationConstraintPosition) :
-        TypeCheckerStateForConstraintSystem(c), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
-        override val kotlinTypePreparator: AbstractTypePreparator
-            get() = baseState.kotlinTypePreparator
-
-        override val kotlinTypeRefiner: AbstractTypeRefiner
-            get() = baseState.kotlinTypeRefiner
+    private inner class TypeCheckerStateForConstraintInjector(
+        baseState: TypeCheckerState,
+        val c: Context,
+        val position: IncorporationConstraintPosition
+    ) : TypeCheckerStateForConstraintSystem(
+        c,
+        baseState.kotlinTypePreparator,
+        baseState.kotlinTypeRefiner
+    ), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
+        constructor(c: Context, position: IncorporationConstraintPosition) : this(
+            c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
+            c,
+            position
+        )
 
         // We use `var` intentionally to avoid extra allocations as this property is quite "hot"
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
@@ -247,8 +257,6 @@ class ConstraintInjector(
             baseLowerType = lowerType
             baseUpperType = upperType
         }
-
-        val baseState: TypeCheckerState = newTypeCheckerState(isErrorTypeEqualsToAnything, isStubTypeEqualsToAnything)
 
         fun runIsSubtypeOf(
             lowerType: KotlinTypeMarker,

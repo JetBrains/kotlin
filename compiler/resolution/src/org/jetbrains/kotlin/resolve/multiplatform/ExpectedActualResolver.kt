@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
-import org.jetbrains.kotlin.types.KotlinTypeRefinerImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
@@ -305,8 +303,8 @@ object ExpectedActualResolver {
         kotlinTypeRefiner: KotlinTypeRefiner,
     ): Boolean {
         with(NewKotlinTypeCheckerImpl(kotlinTypeRefiner)) {
-            return ClassicTypeCheckerState(
-                errorTypeEqualsToAnything = false,
+            return createClassicTypeCheckerState(
+                isErrorTypeEqualsToAnything = false,
                 typeSystemContext = typeSystemContext,
                 kotlinTypeRefiner = kotlinTypeRefiner,
             ).equalTypes(a.unwrap(), b.unwrap())

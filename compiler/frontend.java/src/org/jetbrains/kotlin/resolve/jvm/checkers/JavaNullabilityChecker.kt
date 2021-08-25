@@ -164,7 +164,8 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
 
         var metWrongNullabilityInsideArguments = false
 
-        val typeState: TypeCheckerState = object : ClassicTypeCheckerState(errorTypeEqualsToAnything = true) {
+        @OptIn(ClassicTypeCheckerStateInternals::class)
+        val typeState: TypeCheckerState = object : ClassicTypeCheckerState(isErrorTypeEqualsToAnything = true) {
             private var expectsTypeArgument = false
             override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
 
@@ -194,7 +195,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
     ): Boolean {
         if (superType !is NotNullTypeVariable) return false
         return !AbstractNullabilityChecker.isSubtypeOfAny(
-            ClassicTypeCheckerState(errorTypeEqualsToAnything = true) as TypeCheckerState,
+            createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true),
             subType
         )
     }

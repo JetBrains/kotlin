@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTransform
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexible
@@ -598,20 +597,4 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
         return this is ConeTypeVariableType
     }
-}
-
-class ConeTypeCheckerState(
-    override val isErrorTypeEqualsToAnything: Boolean,
-    override val isStubTypeEqualsToAnything: Boolean,
-    override val typeSystemContext: ConeInferenceContext,
-    override val kotlinTypePreparator: ConeTypePreparator = ConeTypePreparator(typeSystemContext.session),
-) : TypeCheckerState() {
-    override val kotlinTypeRefiner: AbstractTypeRefiner
-        get() = AbstractTypeRefiner.Default
-
-    val session: FirSession = typeSystemContext.session
-
-
-    override val allowedTypeVariable: Boolean
-        get() = true
 }

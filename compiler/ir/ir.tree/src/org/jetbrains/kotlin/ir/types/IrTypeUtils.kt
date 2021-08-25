@@ -30,7 +30,7 @@ fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
     this is IrSimpleType && classifier.isSubtypeOfClass(superClass)
 
 fun IrType.isSubtypeOf(superType: IrType, typeSystem: IrTypeSystemContext): Boolean =
-    AbstractTypeChecker.isSubtypeOf(IrTypeCheckerState(typeSystem), this, superType)
+    AbstractTypeChecker.isSubtypeOf(createIrTypeCheckerState(typeSystem), this, superType)
 
 fun IrType.isNullable(): Boolean =
     when (this) {

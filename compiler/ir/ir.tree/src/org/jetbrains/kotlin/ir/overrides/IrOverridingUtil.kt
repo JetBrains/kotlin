@@ -438,14 +438,14 @@ class IrOverridingUtil(
         return if (a == null || b == null) true else isVisibilityMoreSpecific(a, b)
     }
 
-    private fun IrTypeCheckerState.isSubtypeOf(a: IrType, b: IrType) =
-        AbstractTypeChecker.isSubtypeOf(this as TypeCheckerState, a, b)
+    private fun TypeCheckerState.isSubtypeOf(a: IrType, b: IrType) =
+        AbstractTypeChecker.isSubtypeOf(this, a, b)
 
-    private fun IrTypeCheckerState.equalTypes(a: IrType, b: IrType) =
-        AbstractTypeChecker.equalTypes(this as TypeCheckerState, a, b)
+    private fun TypeCheckerState.equalTypes(a: IrType, b: IrType) =
+        AbstractTypeChecker.equalTypes(this, a, b)
 
-    private fun createTypeCheckerState(a: List<IrTypeParameter>, b: List<IrTypeParameter>) =
-        IrTypeCheckerState(IrTypeSystemContextWithAdditionalAxioms(typeSystem, a, b))
+    private fun createTypeCheckerState(a: List<IrTypeParameter>, b: List<IrTypeParameter>): TypeCheckerState =
+        createIrTypeCheckerState(IrTypeSystemContextWithAdditionalAxioms(typeSystem, a, b))
 
     private fun isReturnTypeMoreSpecific(
         a: IrOverridableMember,
@@ -453,8 +453,8 @@ class IrOverridingUtil(
         b: IrOverridableMember,
         bReturnType: IrType
     ): Boolean {
-        val typeCheckerContext = createTypeCheckerState(a.typeParameters, b.typeParameters)
-        return typeCheckerContext.isSubtypeOf(aReturnType, bReturnType)
+        val typeCheckerState = createTypeCheckerState(a.typeParameters, b.typeParameters)
+        return typeCheckerState.isSubtypeOf(aReturnType, bReturnType)
     }
 
     private fun isMoreSpecific(
@@ -674,7 +674,7 @@ class IrOverridingUtil(
         }
 
         val typeCheckerState =
-            IrTypeCheckerState(
+            createIrTypeCheckerState(
                 IrTypeSystemContextWithAdditionalAxioms(
                     typeSystem,
                     superTypeParameters,
@@ -697,7 +697,7 @@ class IrOverridingUtil(
 
         superValueParameters.forEachIndexed { index, parameter ->
             if (!AbstractTypeChecker.equalTypes(
-                    typeCheckerState as TypeCheckerState,
+                    typeCheckerState,
                     subValueParameters[index].type,
                     parameter.type
                 )
@@ -710,7 +710,7 @@ class IrOverridingUtil(
 
         if (checkReturnType) {
             if (!AbstractTypeChecker.isSubtypeOf(
-                    typeCheckerState as TypeCheckerState,
+                    typeCheckerState,
                     subMember.returnType,
                     superMember.returnType
                 )

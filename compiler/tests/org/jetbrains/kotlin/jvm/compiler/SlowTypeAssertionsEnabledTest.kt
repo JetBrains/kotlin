@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeIntersector
-import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerState
+import org.jetbrains.kotlin.types.checker.createClassicTypeCheckerState
 
 class SlowTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
 
@@ -45,7 +45,7 @@ class SlowTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
         try {
             val superType = TypeIntersector.intersectTypes(listOf(builtIns.charSequence.defaultType, builtIns.comparable.defaultType))
             AbstractNullabilityChecker.isPossibleSubtype(
-                ClassicTypeCheckerState(errorTypeEqualsToAnything = true), builtIns.annotationType,
+                createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true), builtIns.annotationType,
                 superType as SimpleType
             )
         } catch (e: AssertionError) {

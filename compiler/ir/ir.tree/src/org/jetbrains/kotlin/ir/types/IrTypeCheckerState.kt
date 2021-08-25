@@ -5,26 +5,17 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.types.AbstractTypePreparator
 import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.TypeCheckerState
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
-open class IrTypeCheckerState(override val typeSystemContext: IrTypeSystemContext): TypeCheckerState() {
-
-    override val kotlinTypePreparator: AbstractTypePreparator
-        get() = AbstractTypePreparator.Default
-    override val kotlinTypeRefiner: AbstractTypeRefiner
-        get() = AbstractTypeRefiner.Default
-
-    val irBuiltIns: IrBuiltIns get() = typeSystemContext.irBuiltIns
-
-    override val isErrorTypeEqualsToAnything get() = false
-    override val isStubTypeEqualsToAnything get() = false
-
-    override val allowedTypeVariable: Boolean
-        get() = false
+fun createIrTypeCheckerState(typeSystemContext: IrTypeSystemContext): TypeCheckerState {
+    return TypeCheckerState(
+        isErrorTypeEqualsToAnything = false,
+        isStubTypeEqualsToAnything = false,
+        allowedTypeVariable = false,
+        typeSystemContext = typeSystemContext,
+        kotlinTypePreparator = AbstractTypePreparator.Default,
+        kotlinTypeRefiner = AbstractTypeRefiner.Default
+    )
 }
