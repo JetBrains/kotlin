@@ -123,8 +123,8 @@ val LLVMValueRef.isConst:Boolean
 
 internal inline fun<R> generateFunction(codegen: CodeGenerator,
                                         function: IrFunction,
-                                        startLocation: LocationInfo? = null,
-                                        endLocation: LocationInfo? = null,
+                                        startLocation: LocationInfo?,
+                                        endLocation: LocationInfo?,
                                         code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
     val llvmFunction = codegen.llvmFunction(function)
 

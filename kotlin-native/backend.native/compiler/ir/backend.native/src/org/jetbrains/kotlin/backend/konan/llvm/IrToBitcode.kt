@@ -370,7 +370,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         f()
 
         context.llvm.initializersGenerationState.globalInitFunction?.let { fileInitFunction ->
-            generateFunction(codegen, fileInitFunction, null, null) {
+            generateFunction(codegen, fileInitFunction, fileInitFunction.location(start = true), fileInitFunction.location(start = false)) {
                 using(FunctionScope(fileInitFunction, it)) {
                     val parameterScope = ParameterScope(fileInitFunction, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
@@ -387,7 +387,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
         context.llvm.initializersGenerationState.threadLocalInitFunction?.let { fileInitFunction ->
-            generateFunction(codegen, fileInitFunction, null, null) {
+            generateFunction(codegen, fileInitFunction, fileInitFunction.location(start = true), fileInitFunction.location(start = false)) {
                 using(FunctionScope(fileInitFunction, it)) {
                     val parameterScope = ParameterScope(fileInitFunction, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
