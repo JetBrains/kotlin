@@ -82,6 +82,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         linkTask: TaskProvider<KotlinNativeLink>
     ) {
         fun <T : Task> Configuration.configureConfiguration(taskProvider: TaskProvider<T>) {
+            setupAsPublicConfigurationIfSupported(binary.target)
             project.afterEvaluate {
                 val task = taskProvider.get()
                 val artifactFile = when (task) {
