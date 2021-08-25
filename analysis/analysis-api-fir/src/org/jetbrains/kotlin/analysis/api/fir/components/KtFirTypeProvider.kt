@@ -5,18 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KtTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -29,8 +17,22 @@ import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.getTowerContextProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 
 internal class KtFirTypeProvider(
@@ -102,6 +104,11 @@ internal class KtFirTypeProvider(
             a.coneType,
             b.coneType
         ) == ConeTypeCompatibilityChecker.Compatibility.COMPATIBLE
+    }
+
+    override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> {
+        return analysisSession.firResolveState.getTowerContextProvider()
+            .getClosestAvailableParentContext(position)?.implicitReceiverStack?.map { it.type.asKtType() } ?: emptyList()
     }
 }
 
