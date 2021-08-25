@@ -305,6 +305,16 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/openParcelize.kt");
     }
 
+    @TestMetadata("parcelableValueClass.kt")
+    public void testParcelableValueClass() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/parcelableValueClass.kt");
+    }
+
+    @TestMetadata("parcelizeCustomValueClass.kt")
+    public void testParcelizeCustomValueClass() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/parcelizeCustomValueClass.kt");
+    }
+
     @TestMetadata("persistableBundle.kt")
     public void testPersistableBundle() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/persistableBundle.kt");
@@ -353,5 +363,10 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     @TestMetadata("typeParameters.kt")
     public void testTypeParameters() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/typeParameters.kt");
+    }
+
+    @TestMetadata("valueClasses.kt")
+    public void testValueClasses() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/valueClasses.kt");
     }
 }
