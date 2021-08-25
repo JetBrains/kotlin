@@ -121,7 +121,7 @@ class ClassStabilityTransformer(
                         }
                     }
                     else -> {
-                        println("stability type $stability can not be applied to class")
+                        /* No action necessary */
                     }
                 }
             }
