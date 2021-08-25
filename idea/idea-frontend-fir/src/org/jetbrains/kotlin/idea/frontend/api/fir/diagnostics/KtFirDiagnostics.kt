@@ -1686,6 +1686,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AbstractPropertyInPrimaryConstructorParameters::class
     }
 
+    abstract class LocalVariableWithTypeParametersWarning : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = LocalVariableWithTypeParametersWarning::class
+    }
+
+    abstract class LocalVariableWithTypeParameters : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = LocalVariableWithTypeParameters::class
+    }
+
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }
