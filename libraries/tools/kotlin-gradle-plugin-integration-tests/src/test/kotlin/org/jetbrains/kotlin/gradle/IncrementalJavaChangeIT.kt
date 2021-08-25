@@ -20,7 +20,26 @@ open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBas
 }
 
 class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT() {
+
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(useClasspathSnapshot = true)
+
+    @Test
+    override fun testAbiChangeInLib_changeMethodSignature() {
+        // With classpath snapshot, fewer Kotlin files are recompiled
+        doTest(
+            javaClass, changeSignature,
+            expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt")
+        )
+    }
+
+    @Test
+    override fun testNonAbiChangeInLib_changeMethodBody() {
+        // With classpath snapshot, no Kotlin files are recompiled
+        doTest(
+            javaClass, changeBody,
+            expectedCompiledFileNames = emptyList()
+        )
+    }
 }
 
 class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = true) {
@@ -70,12 +89,12 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(usePreciseJavaTracking = usePreciseJavaTracking)
 
     protected val trackedJavaClass = "TrackedJavaClass.java"
-    private val javaClass = "JavaClass.java"
+    protected val javaClass = "JavaClass.java"
     protected val changeBody: (String) -> String = { it.replace("Hello, World!", "Hello, World!!!!") }
     protected val changeSignature: (String) -> String = { it.replace("String getString", "Object getString") }
 
     @Test
-    fun testAbiChangeInLib_changeMethodSignature() {
+    open fun testAbiChangeInLib_changeMethodSignature() {
         doTest(
             javaClass, changeSignature,
             expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
@@ -83,7 +102,7 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     }
 
     @Test
-    fun testNonAbiChangeInLib_changeMethodBody() {
+    open fun testNonAbiChangeInLib_changeMethodBody() {
         doTest(
             javaClass, changeBody,
             expectedCompiledFileNames = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")

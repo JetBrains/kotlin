@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import org.jetbrains.kotlin.incremental.DirtyData
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.Assert.assertEquals
@@ -24,6 +25,45 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
         originalSnapshot = testSourceFile.compileAndSnapshot()
     }
 
+    /** Adapted version of [ClasspathChanges.Available] for readability in this test. */
+    private data class Changes(private val lookupSymbols: Set<LookupSymbol>, private val fqNames: Set<FqName>)
+
+    private fun computeClassChanges(current: ClassSnapshot, previous: ClassSnapshot): Changes {
+        val classChanges =
+            ClasspathChangesComputer.compute(current.toClasspathSnapshot(), previous.toClasspathSnapshot()) as ClasspathChanges.Available
+        return Changes(HashSet(classChanges.lookupSymbols), HashSet(classChanges.fqNames))
+    }
+
+    private fun ClassSnapshot.toClasspathSnapshot(): ClasspathSnapshot {
+        return ClasspathSnapshot(
+            classpathEntrySnapshots = listOf(
+                ClasspathEntrySnapshot(
+                    LinkedHashMap<String, ClassSnapshot>(1).also {
+                        it[getClassId()!!.getUnixStyleRelativePath()] = this
+                    })
+            )
+        )
+    }
+
+    private fun ClassSnapshot.getClassId(): ClassId? {
+        return when (this) {
+            is KotlinClassSnapshot -> classInfo.classId
+            is RegularJavaClassSnapshot -> serializedJavaClass.classId
+            is EmptyJavaClassSnapshot -> null
+        }
+    }
+
+    private fun ClassId.getUnixStyleRelativePath() = asString().replace('.', '$') + ".class"
+
+    /**
+     * Returns the [FqName] of the class in this source file (e.g., "com/example/Foo$Bar.kt" or
+     * "com/example/Foo$Bar.java" has [FqName] "com.example.Foo.Bar").
+     *
+     * This source file must contain only 1 class.
+     */
+    private fun SourceFile.getClassFqName() =
+        FqName(unixStyleRelativePath.substringBeforeLast('.').replace('/', '.').replace('$', '.'))
+
     // TODO Add more test cases:
     //   - private/non-private fields
     //   - inline functions
@@ -31,31 +71,30 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
     //   - adding an annotation
 
     @Test
-    fun testCollectClassChanges_changedPublicMethodSignature() {
+    fun testComputeClassChanges_changedPublicMethodSignature() {
         val updatedSnapshot = testSourceFile.changePublicMethodSignature().compileAndSnapshot()
-        val dirtyData = ClasspathChangesComputer.computeClassChanges(updatedSnapshot, originalSnapshot)
+        val classChanges = computeClassChanges(updatedSnapshot, originalSnapshot)
 
-        val testClass = testSourceFile.sourceFile.unixStyleRelativePath.substringBeforeLast('.').replace('/', '.')
+        val testClassFqName = testSourceFile.sourceFile.getClassFqName()
         assertEquals(
-            DirtyData(
-                dirtyLookupSymbols = setOf(
-                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = testClass),
-                    LookupSymbol(name = "publicMethod", scope = testClass),
-                    LookupSymbol(name = "changedPublicMethod", scope = testClass)
+            Changes(
+                lookupSymbols = setOf(
+                    LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = testClassFqName.asString()),
+                    LookupSymbol(name = "changedPublicMethod", scope = testClassFqName.asString()),
+                    LookupSymbol(name = "publicMethod", scope = testClassFqName.asString())
                 ),
-                dirtyClassesFqNames = setOf(FqName(testClass)),
-                dirtyClassesFqNamesForceRecompile = emptySet()
+                fqNames = setOf(testClassFqName),
             ),
-            dirtyData
+            classChanges
         )
     }
 
     @Test
-    fun testCollectClassChanges_changedMethodImplementation() {
+    fun testComputeClassChanges_changedMethodImplementation() {
         val updatedSnapshot = testSourceFile.changeMethodImplementation().compileAndSnapshot()
-        val dirtyData = ClasspathChangesComputer.computeClassChanges(updatedSnapshot, originalSnapshot)
+        val classChanges = computeClassChanges(updatedSnapshot, originalSnapshot)
 
-        assertEquals(DirtyData(emptySet(), emptySet(), emptySet()), dirtyData)
+        assertEquals(Changes(emptySet(), emptySet()), classChanges)
     }
 }
 

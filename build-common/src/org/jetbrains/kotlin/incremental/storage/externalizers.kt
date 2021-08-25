@@ -24,6 +24,9 @@ import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
@@ -69,6 +72,46 @@ object LookupSymbolKeyDescriptor : KeyDescriptor<LookupSymbolKey> {
     override fun getHashCode(value: LookupSymbolKey): Int = value.hashCode()
 
     override fun isEqual(val1: LookupSymbolKey, val2: LookupSymbolKey): Boolean = val1 == val2
+}
+
+object LookupSymbolExternalizer : DataExternalizer<LookupSymbol> {
+
+    override fun save(output: DataOutput, lookupSymbol: LookupSymbol) {
+        output.writeString(lookupSymbol.name)
+        output.writeString(lookupSymbol.scope)
+    }
+
+    override fun read(input: DataInput): LookupSymbol {
+        return LookupSymbol(name = input.readString(), scope = input.readString())
+    }
+}
+
+object FqNameExternalizer : DataExternalizer<FqName> {
+
+    override fun save(output: DataOutput, fqName: FqName) {
+        output.writeString(fqName.asString())
+    }
+
+    override fun read(input: DataInput): FqName {
+        return FqName(input.readString())
+    }
+}
+
+object ClassIdExternalizer : DataExternalizer<ClassId> {
+
+    override fun save(output: DataOutput, classId: ClassId) {
+        FqNameExternalizer.save(output, classId.packageFqName)
+        FqNameExternalizer.save(output, classId.relativeClassName)
+        output.writeBoolean(classId.isLocal)
+    }
+
+    override fun read(input: DataInput): ClassId {
+        return ClassId(
+            /* packageFqName */ FqNameExternalizer.read(input),
+            /* relativeClassName */ FqNameExternalizer.read(input),
+            /* isLocal */ input.readBoolean()
+        )
+    }
 }
 
 object ProtoMapValueExternalizer : DataExternalizer<ProtoMapValue> {
@@ -210,6 +253,17 @@ object PathStringDescriptor : EnumeratorStringDescriptor() {
     }
 }
 
+/**
+ * [DataExternalizer] for a [Collection].
+ *
+ * If you need a [DataExternalizer] for a more specific instance of [Collection] (e.g., [List]), use [ListExternalizer] or create another
+ * instance of [GenericCollectionExternalizer].
+ *
+ * Note: The implementations of this class and [GenericCollectionExternalizer] are similar but not exactly the same: the latter reads and
+ * writes the size of the collection to avoid resizing the collection when reading. Therefore, if we make this class extend
+ * [GenericCollectionExternalizer] to share code, we will need to update some expected files in tests as the serialized data will change
+ * slightly.
+ */
 open class CollectionExternalizer<T>(
     private val elementExternalizer: DataExternalizer<T>,
     private val newCollection: () -> MutableCollection<T>
@@ -269,26 +323,34 @@ object ByteArrayExternalizer : DataExternalizer<ByteArray> {
     }
 }
 
-class ListExternalizer<T>(
-    private val elementExternalizer: DataExternalizer<T>
-) : DataExternalizer<List<T>> {
+open class GenericCollectionExternalizer<T, C : Collection<T>>(
+    private val elementExternalizer: DataExternalizer<T>,
+    private val newCollection: (size: Int) -> MutableCollection<T>
+) : DataExternalizer<C> {
 
-    override fun save(output: DataOutput, value: List<T>) {
-        output.writeInt(value.size)
-        value.forEach {
+    override fun save(output: DataOutput, collection: C) {
+        output.writeInt(collection.size)
+        collection.forEach {
             elementExternalizer.save(output, it)
         }
     }
 
-    override fun read(input: DataInput): List<T> {
+    override fun read(input: DataInput): C {
         val size = input.readInt()
-        val list = ArrayList<T>(size)
+        val collection = newCollection(size)
         repeat(size) {
-            list.add(elementExternalizer.read(input))
+            collection.add(elementExternalizer.read(input))
         }
-        return list
+        @Suppress("UNCHECKED_CAST")
+        return collection as C
     }
 }
+
+class ListExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
+    GenericCollectionExternalizer<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
+
+class LinkedHashSetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
+    GenericCollectionExternalizer<T, LinkedHashSet<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
 
 class LinkedHashMapExternalizer<K, V>(
     private val keyExternalizer: DataExternalizer<K>,

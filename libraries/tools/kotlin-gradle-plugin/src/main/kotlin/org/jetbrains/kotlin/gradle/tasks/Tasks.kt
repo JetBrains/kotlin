@@ -556,7 +556,9 @@ abstract class KotlinCompile @Inject constructor(
                         it.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
                     }.files
                 )
-                task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
+                val classpathSnapshotDir = getClasspathSnapshotDir(task)
+                task.classpathSnapshotProperties.classpathSnapshotDir.value(classpathSnapshotDir).disallowChanges()
+                task.classpathSnapshotProperties.classpathSnapshotDirFileCollection.from(classpathSnapshotDir)
             }
         }
     }
@@ -604,6 +606,14 @@ abstract class KotlinCompile @Inject constructor(
         @get:OutputDirectory
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshotDir: DirectoryProperty
+
+        /**
+         * [FileCollection] containing a single file which is [classpathSnapshotDir], used when a [FileCollection] is required instead of a
+         * [DirectoryProperty].
+         */
+        // Set if useClasspathSnapshot == true
+        @get:Internal
+        abstract val classpathSnapshotDirFileCollection: ConfigurableFileCollection
     }
 
     @get:Internal
@@ -682,7 +692,7 @@ abstract class KotlinCompile @Inject constructor(
             val classpathChanges = when {
                 !classpathSnapshotProperties.useClasspathSnapshot.get() -> ClasspathChanges.NotAvailable.ClasspathSnapshotIsDisabled
                 else -> when (changedFiles) {
-                    is ChangedFiles.Known -> getClasspathChanges()
+                    is ChangedFiles.Known -> getClasspathChanges(changedFiles)
                     is ChangedFiles.Unknown -> ClasspathChanges.NotAvailable.ForNonIncrementalRun
                     is ChangedFiles.Dependencies -> error("Unexpected type: ${changedFiles.javaClass.name}")
                 }
@@ -698,9 +708,16 @@ abstract class KotlinCompile @Inject constructor(
             )
         } else null
 
+        with(classpathSnapshotProperties) {
+            if (isIncrementalCompilationEnabled() && useClasspathSnapshot.get()) {
+                copyClasspathSnapshotFilesToDir(classpathSnapshot.files.toList(), classpathSnapshotDir.get().asFile)
+            }
+        }
+
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, messageCollector, outputItemCollector,
-            outputFiles = allOutputFiles(),
+            // The compiler runner should not manage (read, modify, or delete) classpathSnapshotDir
+            outputFiles = allOutputFiles().minus(classpathSnapshotProperties.classpathSnapshotDirFileCollection),
             reportingSettings = reportingSettings,
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = sourceFilesExtensions.get().toTypedArray()
@@ -714,12 +731,6 @@ abstract class KotlinCompile @Inject constructor(
             environment,
             defaultKotlinJavaToolchain.get().providedJvm.get().javaHome
         )
-
-        with(classpathSnapshotProperties) {
-            if (isIncrementalCompilationEnabled() && useClasspathSnapshot.get()) {
-                copyClasspathSnapshotFilesToDir(classpathSnapshot.files.toList(), classpathSnapshotDir.get().asFile)
-            }
-        }
     }
 
     private fun validateKotlinAndJavaHasSameTargetCompatibility(args: K2JVMCompilerArguments) {
@@ -786,14 +797,29 @@ abstract class KotlinCompile @Inject constructor(
         return super.source(*sources)
     }
 
-    private fun getClasspathChanges(): ClasspathChanges {
-        val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files.toList()
+    private fun getClasspathChanges(knownChangedFiles: ChangedFiles.Known): ClasspathChanges {
+        // Find current snapshot files that have been changed (added or modified)
+        val currentSnapshotFiles = classpathSnapshotProperties.classpathSnapshot.files
+        val addedOrModifiedFiles = knownChangedFiles.modified.toSet()
+        val (changedCurrentSnapshotFiles, unchangedCurrentSnapshotFiles) = currentSnapshotFiles.partition { it in addedOrModifiedFiles }
+
+        // Find previous snapshot files that have been changed (modified or removed)
         val previousSnapshotFiles = getClasspathSnapshotFilesInDir(classpathSnapshotProperties.classpathSnapshotDir.get().asFile)
+        var unchangedSnapshotIndex = 0
+        var unchangedSnapshot: ByteArray? = unchangedCurrentSnapshotFiles.getOrNull(unchangedSnapshotIndex)?.readBytes()
+        val changedPreviousSnapshotFiles = previousSnapshotFiles.filter {
+            if (unchangedSnapshot != null && it.readBytes().contentEquals(unchangedSnapshot)) {
+                unchangedSnapshotIndex++
+                unchangedSnapshot = unchangedCurrentSnapshotFiles.getOrNull(unchangedSnapshotIndex)?.readBytes()
+                false
+            } else true
+        }
 
-        val currentSnapshot = ClasspathSnapshotSerializer.load(currentSnapshotFiles)
-        val previousSnapshot = ClasspathSnapshotSerializer.load(previousSnapshotFiles)
+        // Compute changes for the changed snapshot files only, ignoring unchanged ones
+        val changedCurrentSnapshot = ClasspathSnapshotSerializer.load(changedCurrentSnapshotFiles)
+        val changedPreviousSnapshot = ClasspathSnapshotSerializer.load(changedPreviousSnapshotFiles)
 
-        return ClasspathChangesComputer.getChanges(currentSnapshot, previousSnapshot)
+        return ClasspathChangesComputer.compute(changedCurrentSnapshot, changedPreviousSnapshot)
     }
 
     /**

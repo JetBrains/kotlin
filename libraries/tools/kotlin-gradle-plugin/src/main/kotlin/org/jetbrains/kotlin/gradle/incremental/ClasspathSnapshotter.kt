@@ -30,8 +30,7 @@ object ClasspathEntrySnapshotter {
 
         val snapshots = ClassSnapshotter.snapshot(classes)
 
-        val relativePathsToSnapshotsMap =
-            classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
+        val relativePathsToSnapshotsMap = classes.map { it.classFile.unixStyleRelativePath }.zipToMap(snapshots)
         return ClasspathEntrySnapshot(relativePathsToSnapshotsMap)
     }
 }
@@ -48,17 +47,16 @@ object ClassSnapshotter {
      */
     fun snapshot(classes: List<ClassFileWithContents>): List<ClassSnapshot> {
         // Snapshot Kotlin classes first
-        val kotlinClassSnapshots: Map<ClassFile, KotlinClassSnapshot?> = classes.associate {
-            it.classFile to trySnapshotKotlinClass(it)
+        val kotlinClassSnapshots: Map<ClassFileWithContents, KotlinClassSnapshot?> = classes.associateWith {
+            trySnapshotKotlinClass(it)
         }
 
-        // Snapshot Java classes in one invocation
-        val javaClasses: List<ClassFileWithContents> = classes.filter { kotlinClassSnapshots[it.classFile] == null }
+        // Snapshot the remaining Java classes in one invocation
+        val javaClasses: List<ClassFileWithContents> = classes.filter { kotlinClassSnapshots[it] == null }
         val snapshots: List<JavaClassSnapshot> = snapshotJavaClasses(javaClasses)
-        val javaClassSnapshots: Map<ClassFile, JavaClassSnapshot> = javaClasses.map { it.classFile }.zip(snapshots).toMap()
+        val javaClassSnapshots: Map<ClassFileWithContents, JavaClassSnapshot> = javaClasses.zipToMap(snapshots)
 
-        // Return a snapshot for each class
-        return classes.map { kotlinClassSnapshots[it.classFile] ?: javaClassSnapshots[it.classFile]!! }
+        return classes.map { kotlinClassSnapshots[it] ?: javaClassSnapshots[it]!! }
     }
 
     /** Creates [KotlinClassSnapshot] of the given class, or returns `null` if the class is not a Kotlin class. */
@@ -75,44 +73,56 @@ object ClassSnapshotter {
      * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
      */
     private fun snapshotJavaClasses(classes: List<ClassFileWithContents>): List<JavaClassSnapshot> {
-        val classFiles = classes.map { it.classFile }
-        val classesContents = classes.map { it.contents }
-        val classNames = classesContents.map { JavaClassName.compute(it) }
-        val classIds = computeJavaClassIds(classNames)
+        val classNames: List<JavaClassName> = classes.map { JavaClassName.compute(it.contents) }
+        val classNameToClassFile: LinkedHashMap<JavaClassName, ClassFileWithContents> = classNames.zipToMap(classes)
 
-        // Snapshot special cases first
-        // Map a class index to its snapshot, or `null` if it will be created later
-        val specialCaseSnapshots: Map<Int, JavaClassSnapshot?> = classFiles.indices.associateWith { index ->
-            val className = classNames[index]
-            val classId = classIds[index]
-            if (classId.isLocal) {
-                // A local class can't be referenced from other source files, so any changes in a local class will not cause recompilation
-                // of other source files. Therefore, the snapshot of a local class is empty.
-                // In that regard, a nested class of a local class is also considered local (which matches the definition of
-                // ClassId.isLocal, see ClassId's kdoc). Therefore, we checked `classId.isLocal`, which is a super set of `className is
-                // LocalClass`.
+        // We divide classes into 2 categories:
+        //   - Special classes, which includes local, anonymous, or synthetic classes, and their nested classes. These classes can't be
+        //     referenced from other source files, so any changes in these classes will not cause recompilation of other source files.
+        //     Therefore, the snapshots of these classes are empty.
+        //   - Regular classes: Any classes that do not belong to the above category.
+        val specialClasses = getSpecialClasses(classNames).toSet()
+
+        // Snapshot special classes first
+        val specialClassSnapshots: Map<JavaClassName, JavaClassSnapshot?> = classNames.associateWith {
+            if (it in specialClasses) {
                 EmptyJavaClassSnapshot
-            } else if (className is NestedNonLocalClass && (className.isAnonymous || className.isSynthetic)) {
-                // An anonymous or synthetic class also can't be referenced from other source files, so its snapshot is also empty.
-                EmptyJavaClassSnapshot
-            } else {
-                null
+            } else null
+        }
+
+        // Snapshot the remaining regular classes in one invocation
+        val regularClasses: List<JavaClassName> = classNames.filter { specialClassSnapshots[it] == null }
+        val regularClassIds: List<ClassId> = computeJavaClassIds(regularClasses)
+        val regularClassesContents: List<ByteArray> = regularClasses.map { classNameToClassFile[it]!!.contents }
+
+        val snapshots: List<RegularJavaClassSnapshot> = JavaClassDescriptorCreator.create(regularClassIds, regularClassesContents).map {
+            RegularJavaClassSnapshot(it.toSerializedJavaClass())
+        }
+        val regularClassSnapshots: LinkedHashMap<JavaClassName, JavaClassSnapshot> = regularClasses.zipToMap(snapshots)
+
+        return classNames.map { specialClassSnapshots[it] ?: regularClassSnapshots[it]!! }
+    }
+
+    /** Returns local, anonymous, or synthetic classes, and their nested classes. */
+    private fun getSpecialClasses(classNames: List<JavaClassName>): List<JavaClassName> {
+        val specialClasses: MutableMap<JavaClassName, Boolean> = HashMap(classNames.size)
+        val nameToClassName: Map<String, JavaClassName> = classNames.associateBy { it.name }
+
+        fun JavaClassName.isSpecial(): Boolean {
+            specialClasses[this]?.let { return it }
+
+            return if (isAnonymous || isSynthetic) {
+                true
+            } else when (this) {
+                is TopLevelClass -> false
+                is NestedNonLocalClass -> nameToClassName[outerName]?.isSpecial() ?: error("Class name not found: $outerName")
+                is LocalClass -> true
+            }.also {
+                specialClasses[this] = it
             }
         }
 
-        // Snapshot the remaining classes in one invocation
-        val remainingClassesIndices: List<Int> = classFiles.indices.filter { specialCaseSnapshots[it] == null }
-        val remainingClassIds: List<ClassId> = remainingClassesIndices.map { classIds[it] }
-        val remainingClassesContents: List<ByteArray> = remainingClassesIndices.map { classes[it].contents }
-
-        val snapshots: List<JavaClassSnapshot> = JavaClassDescriptorCreator.create(remainingClassIds, remainingClassesContents).map {
-            RegularJavaClassSnapshot(it.toSerializedJavaClass())
-        }
-        val remainingSnapshots: Map<Int, JavaClassSnapshot> /* maps a class index to its snapshot */ =
-            remainingClassesIndices.zip(snapshots).toMap()
-
-        // Return a snapshot for each class
-        return classFiles.indices.map { specialCaseSnapshots[it] ?: remainingSnapshots[it]!! }
+        return classNames.filter { it.isSpecial() }
     }
 }
 
@@ -120,14 +130,15 @@ object ClassSnapshotter {
 private object DirectoryOrJarContentsReader {
 
     /**
-     * Returns a map from Unix-style relative paths of entries to their contents. The paths are relative to the container (directory or
-     * jar).
+     * Returns a map from Unix-style relative paths of entries to their contents. The paths are relative to the given container (directory
+     * or jar).
      *
      * The map entries need to satisfy the given filter.
      *
      * The map entries are sorted based on their Unix-style relative paths (to ensure deterministic results across filesystems).
      *
-     * Note: If a jar has duplicate entries, only one of them will be used (there is no guarantee which one will be used).
+     * Note: If a jar has duplicate entries, only one of them will be used (there is no guarantee which one will be used, but the selection
+     * will be deterministic).
      */
     fun read(
         directoryOrJar: File,
@@ -171,4 +182,19 @@ private object DirectoryOrJarContentsReader {
         }
         return relativePathsToContents.sortedBy { it.first }.toMap(LinkedHashMap())
     }
+}
+
+/**
+ * Combines two lists of the same size into a map.
+ *
+ * This method is more efficient than calling `[Iterable.zip].toMap()` as it doesn't create short-lived intermediate [Pair]s as done by
+ * [Iterable.zip].
+ */
+private fun <K, V> List<K>.zipToMap(other: List<V>): LinkedHashMap<K, V> {
+    check(this.size == other.size)
+    val map = LinkedHashMap<K, V>(size)
+    indices.forEach { index ->
+        map[this[index]] = other[index]
+    }
+    return map
 }

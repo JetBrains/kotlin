@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.incremental.JavaClassProtoMapValueExternalizer
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import java.io.*
 
 /** Utility to serialize a [ClasspathSnapshot]. */
@@ -93,34 +91,6 @@ object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> {
     }
 }
 
-object ClassIdExternalizer : DataExternalizer<ClassId> {
-
-    override fun save(output: DataOutput, classId: ClassId) {
-        FqNameExternalizer.save(output, classId.packageFqName)
-        FqNameExternalizer.save(output, classId.relativeClassName)
-        output.writeBoolean(classId.isLocal)
-    }
-
-    override fun read(input: DataInput): ClassId {
-        return ClassId(
-            /* packageFqName */ FqNameExternalizer.read(input),
-            /* relativeClassName */ FqNameExternalizer.read(input),
-            /* isLocal */ input.readBoolean()
-        )
-    }
-}
-
-object FqNameExternalizer : DataExternalizer<FqName> {
-
-    override fun save(output: DataOutput, fqName: FqName) {
-        output.writeString(fqName.asString())
-    }
-
-    override fun read(input: DataInput): FqName {
-        return FqName(input.readString())
-    }
-}
-
 object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: JavaClassSnapshot) {
@@ -166,39 +136,27 @@ object EmptyJavaClassSnapshotExternalizer : DataExternalizer<EmptyJavaClassSnaps
 interface DataSerializer<T> : DataExternalizer<T> {
 
     fun save(file: File, value: T) {
-        return FileOutputStream(file).buffered().use {
-            it.writeValue(value)
+        return DataOutputStream(FileOutputStream(file).buffered()).use {
+            save(it, value)
         }
     }
 
     fun load(file: File): T {
-        return FileInputStream(file).buffered().use {
-            it.readValue()
+        return DataInputStream(FileInputStream(file).buffered()).use {
+            read(it)
         }
     }
 
     fun toByteArray(value: T): ByteArray {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        byteArrayOutputStream.buffered().use {
-            it.writeValue(value)
+        DataOutputStream(byteArrayOutputStream.buffered()).use {
+            save(it, value)
         }
         return byteArrayOutputStream.toByteArray()
     }
 
     fun fromByteArray(byteArray: ByteArray): T {
-        return ByteArrayInputStream(byteArray).buffered().use {
-            it.readValue()
-        }
-    }
-
-    private fun OutputStream.writeValue(value: T) {
-        DataOutputStream(this).use {
-            save(it, value)
-        }
-    }
-
-    private fun InputStream.readValue(): T {
-        return DataInputStream(this).use {
+        return DataInputStream(ByteArrayInputStream(byteArray).buffered()).use {
             read(it)
         }
     }

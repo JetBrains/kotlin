@@ -23,24 +23,39 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  *   - [NestedNonLocalClass]
  *   - [LocalClass] (https://docs.oracle.com/javase/tutorial/java/javaOO/localclasses.html)
  */
-sealed class JavaClassName(
+sealed class JavaClassName {
 
     /** The full name of this class (e.g., "com/example/Foo$Bar"). */
-    val name: String
-) {
+    abstract val name: String
+
+    /**
+     * Whether this class is an anonymous class.
+     *
+     * Note: Even though an anonymous class has no name in the source code, it always has a (not-null, not-empty) name in the compiled
+     * class (e.g., "com/example/Foo$1").
+     */
+    abstract val isAnonymous: Boolean
+
+    /** Whether this class is a synthetic class. */
+    abstract val isSynthetic: Boolean
 
     /** The package name of this class (e.g., "com/example"). */
     val packageName: String
-        get() = name.substringBeforeLast('/', "")
+        get() = name.substringBeforeLast('/', missingDelimiterValue = "")
+
+    /** The part of the full name of this class after [packageName] (e.g., "Foo$Bar"). */
+    val relativeClassName: String
+        get() = name.substringAfterLast('/', missingDelimiterValue = name)
 
     companion object {
 
+        /** Computes the [JavaClassName] of a compiled Java class given its contents. */
         fun compute(classContents: ByteArray): JavaClassName {
             val nameRef = Ref.create<String>()
+            val isSyntheticRef = Ref.create<Boolean>()
             val isTopLevelRef = Ref.create<Boolean>()
             val outerNameRef = Ref.create<String>()
-            val isAnonymousInnerClassRef = Ref.create<Boolean>()
-            val isSyntheticInnerClassRef = Ref.create<Boolean>()
+            val isAnonymousRef = Ref.create<Boolean>()
 
             ClassReader(classContents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
                 override fun visit(
@@ -48,120 +63,110 @@ sealed class JavaClassName(
                     signature: String?, superName: String?, interfaces: Array<String?>?
                 ) {
                     nameRef.set(name)
+                    isSyntheticRef.set((access and Opcodes.ACC_SYNTHETIC) != 0)
                 }
 
                 override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
                     if (name == nameRef.get()!!) {
                         isTopLevelRef.set(false)
                         outerNameRef.set(outerName)
-                        isAnonymousInnerClassRef.set(innerName == null)
-                        isSyntheticInnerClassRef.set((access and Opcodes.ACC_SYNTHETIC) != 0)
+                        isAnonymousRef.set(innerName == null)
                     }
                 }
             }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
 
             val name = nameRef.get()!!
+            val isSynthetic = isSyntheticRef.get()!!
             val isTopLevel = isTopLevelRef.get() ?: true
             val outerName = outerNameRef.get()
+            val isAnonymous = isAnonymousRef.get()
 
             return when {
-                isTopLevel -> TopLevelClass(name)
-                outerName != null -> NestedNonLocalClass(
-                    name,
-                    outerName,
-                    isAnonymousInnerClassRef.get()!!,
-                    isSyntheticInnerClassRef.get()!!
-                )
-                else -> LocalClass(name)
+                isTopLevel -> TopLevelClass(name, isSynthetic)
+                outerName != null -> NestedNonLocalClass(name, outerName, isAnonymous!!, isSynthetic)
+                else -> LocalClass(name, isAnonymous!!, isSynthetic)
             }
         }
     }
 }
 
 /** See [JavaClassName]. */
-class TopLevelClass(name: String) : JavaClassName(name) {
-
-    /**
-     * The simple name of this class (e.g., the simple name of class "com/example/Foo" is "Foo", the simple name of class
-     * "com/example/ClassWith$Sign" is "ClassWith$Sign").
-     */
-    val simpleName: String
-        get() = name.substringAfterLast('/')
+class TopLevelClass(
+    override val name: String,
+    override val isSynthetic: Boolean
+) : JavaClassName() {
+    override val isAnonymous: Boolean = false // A top-level class is never anonymous
 }
 
 /** See [JavaClassName]. */
-sealed class NestedClass(name: String) : JavaClassName(name)
+sealed class NestedClass : JavaClassName()
 
 /** See [JavaClassName]. */
 class NestedNonLocalClass(
-    name: String,
+    override val name: String,
 
     /**
      * The full name of the outer class of this class (e.g., the outer name of "com/example/OuterClass$NestedClass" is
-     * "com/example/OuterClass", the outer name of class "com/example/OuterClassWith$Sign$NestedClassWith$Sign" is
+     * "com/example/OuterClass", the outer name of "com/example/OuterClassWith$Sign$NestedClassWith$Sign" is
      * "com/example/OuterClassWith$Sign").
      *
      * The outer class can be of any type ([TopLevelClass], [NestedNonLocalClass], or [LocalClass]).
      */
     val outerName: String,
 
-    /**
-     * Whether this class is an anonymous class.
-     *
-     * Note: Even though an anonymous class has no name in the source code, it always has a (not-null, not-empty) name in the compiled
-     * class. Therefore, [simpleName] is not `null` and not empty even for anonymous classes.
-     * */
-    val isAnonymous: Boolean,
-
-    /** Whether this class is a synthetic class. */
-    val isSynthetic: Boolean
-) : NestedClass(name) {
-
-    init {
-        check(name.startsWith("$outerName\$"))
-    }
+    override val isAnonymous: Boolean,
+    override val isSynthetic: Boolean
+) : NestedClass() {
 
     /**
      * The simple name of this class (e.g., the simple name of "com/example/OuterClass$NestedClass" is "NestedClass", the simple name of
      * class "com/example/OuterClassWith$Sign$NestedClassWith$Sign" is "NestedClassWith$Sign").
      *
-     * Note: [simpleName] is not `null` and not empty even for anonymous classes (see [isAnonymous]).
+     * Note: [simpleName] is not `null` and not empty even for anonymous classes (see [JavaClassName.isAnonymous]).
      */
     val simpleName: String
-        get() = name.substring("$outerName\$".length)
+        get() = run {
+            check(name.startsWith("$outerName\$"))
+            name.substring("$outerName\$".length).also { check(it.isNotEmpty()) }
+        }
 }
 
 /** See [JavaClassName]. */
-class LocalClass(name: String) : NestedClass(name)
+class LocalClass(
+    override val name: String,
+    override val isAnonymous: Boolean,
+    override val isSynthetic: Boolean
+) : NestedClass()
 
 /**
  * Computes [ClassId]s of the given Java classes.
  *
  * Note that creating a [ClassId] for a nested class will require accessing the outer class for 2 reasons:
- *   - To disambiguate any '$' characters in the class name (e.g., "com/example/OuterClassWith$Sign$NestedClassWith$Sign").
+ *   - To disambiguate any '$' characters in the (outer) class name (e.g., "com/example/OuterClassWith$Sign$NestedClassWith$Sign").
  *   - To determine whether a class is a local class (a nested class of a local class is also considered local, see [ClassId]'s kdoc).
  *
  * Therefore, outer classes and nested classes must be passed together in one invocation of this method.
  */
-fun computeJavaClassIds(javaClassNames: List<JavaClassName>): List<ClassId> {
-    val nameToJavaClassName: Map<String, JavaClassName> = javaClassNames.associateBy { it.name }
-    val nameToClassId: MutableMap<String, ClassId?> = nameToJavaClassName.mapValues { null }.toMutableMap()
+fun computeJavaClassIds(classNames: List<JavaClassName>): List<ClassId> {
+    val classNameToClassId: MutableMap<JavaClassName, ClassId> = HashMap(classNames.size)
+    val nameToClassName: Map<String, JavaClassName> = classNames.associateBy { it.name }
 
-    fun getOrCreateClassId(className: String): ClassId {
-        val classInfo = nameToJavaClassName[className] ?: error("Class name not found: $className")
-        val computedClassId = nameToClassId[className]
-        if (computedClassId != null) {
-            return computedClassId
-        }
+    fun JavaClassName.getClassId(): ClassId {
+        classNameToClassId[this]?.let { return it }
 
-        val packageName = FqName(classInfo.packageName.replace('/', '.'))
-        val classId = when (classInfo) {
+        val packageName = FqName(packageName.replace('/', '.'))
+        val classId = when (this) {
             is TopLevelClass -> {
-                ClassId(packageName, FqName(classInfo.simpleName), /* local */ false)
+                ClassId(packageName, FqName(relativeClassName), /* local */ false)
             }
             is NestedNonLocalClass -> {
-                val outerClassId = getOrCreateClassId(classInfo.outerName)
-                val relativeClassName = FqName(outerClassId.relativeClassName.asString() + "." + classInfo.simpleName)
+                // JavaClassName.relativeClassName can contain '$' but not '.', whereas ClassId.relativeClassName can contain both '$' and
+                // '.' (e.g., "com/example/OuterClassWith$Sign$NestedClassWith$Sign" has JavaClassName.relativeClassName
+                // "OuterClassWith$Sign$NestedClassWith$Sign", but its ClassId.relativeClassName will be
+                // "OuterClassWith$Sign.NestedClassWith$Sign". To disambiguate '$' in the (outer) class name, we need to get the ClassId of
+                // the outer class first.
+                val outerClassId = nameToClassName[outerName]?.getClassId() ?: error("Class name not found: $outerName")
+                val relativeClassName = FqName(outerClassId.relativeClassName.asString() + "." + simpleName)
                 // For ClassId, a nested non-local class of a local class is also considered local (see ClassId's kdoc).
                 val isLocal = outerClassId.isLocal
 
@@ -180,7 +185,7 @@ fun computeJavaClassIds(javaClassNames: List<JavaClassName>): List<ClassId> {
                 //             }
                 //         }
                 //     }
-                // The above class will compile into class "com/example/Foo" and "com/example/Foo$1Bar" (or
+                // The above source will compile into class "com/example/Foo" and "com/example/Foo$1Bar" (or
                 // "com/example/Foo$SomeOtherArbitraryUniqueName which need not contain the string "Bar").
                 //
                 // Given that class, the difference between the computed ClassId and the expected ClassId is as follows:
@@ -196,15 +201,14 @@ fun computeJavaClassIds(javaClassNames: List<JavaClassName>): List<ClassId> {
                 //
                 // Alternatively, check if we can safely adjust the definition of ClassId for a local class and update any related code
                 // accordingly.
-                val relativeClassName = FqName(classInfo.name.substringAfterLast('/'))
-                ClassId(packageName, relativeClassName, /* local */ true)
+                ClassId(packageName, FqName(relativeClassName), /* local */ true)
             }
         }
 
         return classId.also {
-            nameToClassId[className] = it
+            classNameToClassId[this] = it
         }
     }
 
-    return javaClassNames.map { getOrCreateClassId(it.name) }
+    return classNames.map { it.getClassId() }
 }
