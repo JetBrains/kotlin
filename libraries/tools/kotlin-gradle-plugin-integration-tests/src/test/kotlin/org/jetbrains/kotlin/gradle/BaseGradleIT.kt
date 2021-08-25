@@ -122,7 +122,7 @@ abstract class BaseGradleIT {
 
         // gradle wrapper version to wrapper directory
         private val gradleWrappers = hashMapOf<String, File>()
-        private const val MAX_DAEMON_RUNS = 30
+        private const val MAX_DAEMON_RUNS = 100
         private const val MAX_ACTIVE_GRADLE_PROCESSES = 1
 
         private fun getEnvJDK_18() = System.getenv()["JDK_18"]
@@ -162,6 +162,8 @@ abstract class BaseGradleIT {
                 }
 
                 if (DaemonRegistry.runCountForDaemon(version) >= MAX_DAEMON_RUNS) {
+                    // Warning: Stopping the Gradle daemon while the test suite has not finished running can break tests in weird ways.
+                    // TODO: Find a safe way to do this or consider deleting this code.
                     stopDaemon(version, environmentVariables)
                 }
 
@@ -756,7 +758,7 @@ Finished executing task ':$taskName'|
     }
 
     fun CompiledProject.assertCompiledKotlinSources(
-        expectedSources: Iterable<String>,
+        expectedSourcesRelativePaths: Iterable<String>,
         weakTesting: Boolean = false,
         output: String = this.output,
         suffix: String = ""
@@ -764,11 +766,14 @@ Finished executing task ':$taskName'|
         val messagePrefix = "Compiled Kotlin files differ${suffix}:\n  "
         val actualSources = getCompiledKotlinSources(output).projectRelativePaths(this.project)
         return if (weakTesting) {
-            assertContainFiles(expectedSources, actualSources, messagePrefix)
+            assertContainFiles(expectedSourcesRelativePaths, actualSources, messagePrefix)
         } else {
-            assertSameFiles(expectedSources, actualSources, messagePrefix)
+            assertSameFiles(expectedSourcesRelativePaths, actualSources, messagePrefix)
         }
     }
+
+    fun CompiledProject.assertCompiledKotlinFiles(expectedFiles: Iterable<File>): CompiledProject =
+        assertCompiledKotlinSources(project.relativize(expectedFiles))
 
     val Project.allKotlinFiles: Iterable<File>
         get() = projectDir.allKotlinFiles()
