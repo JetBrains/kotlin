@@ -747,6 +747,32 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("JVM target shouldn't be changed when toolchain is not configured")
+    @GradleTestVersions(minVersion = "6.7.1")
+    @GradleTest
+    internal fun shouldNotChangeJvmTargetWithNoToolchain(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildJdk = getJdk11().javaHome
+        ) {
+            //language=Groovy
+            rootBuildGradle.append(
+                """
+                tasks.named("compileKotlin") {
+                    doLast {
+                        def actualJvmTarget = filteredArgumentsMap['jvmTarget']
+                        if (actualJvmTarget != "1.8") {
+                            throw new GradleException("Expected `jvmTarget` value is '1.8' but the actual value was ${'$'}actualJvmTarget")
+                        }
+                    }
+                }
+                """.trimIndent()
+            )
+            build("assemble")
+        }
+    }
+
     @DisplayName("Kotlin toolchain should support configuration cache")
     @GradleTestVersions(minVersion = "6.7.1")
     @GradleTest
