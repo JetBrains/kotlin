@@ -195,6 +195,10 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_IN_INTERFACE.on(annotationEntry))
             } else if (descriptor.modality == Modality.ABSTRACT) {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT.on(annotationEntry))
+            } else if (descriptor.isInline) {
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_INLINE.on(annotationEntry))
+            } else if (descriptor.isSuspend) {
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_SUSPEND.on(annotationEntry))
             }
         }
     }
