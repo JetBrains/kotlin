@@ -69,8 +69,17 @@ class ClassCodegen private constructor(
     val context: JvmBackendContext,
     private val parentFunction: IrFunction?,
 ) : InnerClassConsumer {
-    private val parentClassCodegen = (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
-    private val withinInline: Boolean = parentClassCodegen?.withinInline == true || parentFunction?.isInline == true
+    // We need to avoid recursive calls to getOrCreate() from within the constructor to prevent lockups
+    // in ConcurrentHashMap context.classCodegens.
+    private val parentClassCodegen by lazy {
+        (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
+    }
+    private val withinInline: Boolean by lazy { parentClassCodegen?.withinInline == true || parentFunction?.isInline == true }
+    private val metadataSerializer: MetadataSerializer by lazy {
+        context.backendExtension.createSerializer(
+            context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
+        )
+    }
 
     private val state get() = context.state
     private val typeMapper get() = context.typeMapper
@@ -224,11 +233,6 @@ class ClassCodegen private constructor(
         (classInitializer.body as IrBlockBody).statements.add(0, init)
         return null
     }
-
-    private val metadataSerializer: MetadataSerializer =
-        context.backendExtension.createSerializer(
-            context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
-        )
 
     private fun generateKotlinMetadataAnnotation() {
         val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
@@ -437,14 +441,14 @@ class ClassCodegen private constructor(
         if (parentClassCodegen != null) {
             // In case there's no primary constructor, it's unclear which constructor should be the enclosing one, so we select the first.
             val enclosingFunction = if (irClass.attributeOwnerId in context.isEnclosedInConstructor) {
-                val containerClass = parentClassCodegen.irClass
+                val containerClass = parentClassCodegen!!.irClass
                 containerClass.primaryConstructor
                     ?: containerClass.declarations.firstIsInstanceOrNull<IrConstructor>()
                     ?: error("Class in a non-static initializer found, but container has no constructors: ${containerClass.render()}")
             } else parentFunction
             if (enclosingFunction != null || irClass.isAnonymousInnerClass) {
                 val method = enclosingFunction?.let(context.methodSignatureMapper::mapAsmMethod)
-                visitor.visitOuterClass(parentClassCodegen.type.internalName, method?.name, method?.descriptor)
+                visitor.visitOuterClass(parentClassCodegen!!.type.internalName, method?.name, method?.descriptor)
             }
         }
 
@@ -511,7 +515,7 @@ class ClassCodegen private constructor(
                 it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
             },
         ): ClassCodegen =
-            context.classCodegens.getOrPut(irClass) { ClassCodegen(irClass, context, parentFunction) }.also {
+            context.classCodegens.computeIfAbsent(irClass) { ClassCodegen(irClass, context, parentFunction) }.also {
                 assert(parentFunction == null || it.parentFunction == parentFunction) {
                     "inconsistent parent function for ${irClass.render()}:\n" +
                             "New: ${parentFunction!!.render()}\n" +
