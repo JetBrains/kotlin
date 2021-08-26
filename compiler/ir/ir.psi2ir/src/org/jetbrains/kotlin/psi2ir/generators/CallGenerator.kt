@@ -202,17 +202,18 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         val irType = descriptor.type.toIrType()
 
         return if (getMethodDescriptor == null) {
-            call.callReceiver.call { dispatchReceiverValue, _ ->
-                val superQualifierSymbol = (call.superQualifier ?: descriptor.containingDeclaration as? ClassDescriptor)?.let {
-                    if (it is ScriptDescriptor) null // otherwise it creates a reference to script as class; TODO: check if correct
-                    else context.symbolTable.referenceClass(it)
-                }
-                val fieldSymbol = context.symbolTable.referenceField(descriptor.resolveFakeOverride().original)
+            val superQualifierSymbol = (call.superQualifier ?: descriptor.containingDeclaration as? ClassDescriptor)?.let {
+                if (it is ScriptDescriptor) null // otherwise it creates a reference to script as class; TODO: check if correct
+                else context.symbolTable.referenceClass(it)
+            }
+            val fieldSymbol =
+                context.symbolTable.referenceField(context.extensions.remapDebuggerFieldPropertyDescriptor(descriptor.resolveFakeOverride().original))
+            call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 IrGetFieldImpl(
                     startOffset, endOffset,
                     fieldSymbol,
                     irType,
-                    dispatchReceiverValue?.load(),
+                    dispatchReceiverValue?.load() ?: extensionReceiverValue?.load(),
                     IrStatementOrigin.GET_PROPERTY,
                     superQualifierSymbol
                 ).also { context.callToSubstitutedDescriptorMap[it] = descriptor }
