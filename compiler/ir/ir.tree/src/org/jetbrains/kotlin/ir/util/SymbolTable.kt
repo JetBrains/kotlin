@@ -219,8 +219,8 @@ open class SymbolTable(
 
     private open inner class FlatSymbolTable<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> :
         SymbolTableBase<D, B, S>(lock) {
-        val descriptorToSymbol = linkedMapOf<D, S>()
-        val idSigToSymbol = linkedMapOf<IdSignature, S>()
+        val descriptorToSymbol = hashMapOf<D, S>()
+        val idSigToSymbol = hashMapOf<IdSignature, S>()
 
         protected open fun signature(descriptor: D): IdSignature? = signaturer.composeSignature(descriptor)
 
@@ -261,8 +261,8 @@ open class SymbolTable(
     private inner class ScopedSymbolTable<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>>
         : SymbolTableBase<D, B, S>(lock) {
         inner class Scope(val owner: IrSymbol, val parent: Scope?) {
-            private val descriptorToSymbol = linkedMapOf<D, S>()
-            private val idSigToSymbol = linkedMapOf<IdSignature, S>()
+            private val descriptorToSymbol = hashMapOf<D, S>()
+            private val idSigToSymbol = hashMapOf<IdSignature, S>()
 
             private fun getByDescriptor(d: D): S? {
                 return descriptorToSymbol[d] ?: parent?.getByDescriptor(d)
