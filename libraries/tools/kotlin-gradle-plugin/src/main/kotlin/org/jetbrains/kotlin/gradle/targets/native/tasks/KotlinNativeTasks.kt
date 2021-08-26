@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
@@ -593,14 +594,7 @@ constructor(
         @Input get() = binary.binaryOptions
 
     val projectWideBinaryOptions: Map<String, String>
-        @Input get() = project.properties.mapNotNull { (name, value) ->
-            val prefix = KOTLIN_NATIVE_BINARY_OPTION_PREFIX
-            if (name.startsWith(prefix) && value is String) {
-                name.removePrefix(prefix) to value
-            } else {
-                null
-            }
-        }.toMap()
+        @Input get() = PropertiesProvider(project).nativeBinaryOptions
 
     val processTests: Boolean
         @Input get() = binary is TestExecutable
@@ -708,10 +702,6 @@ constructor(
     override fun compile() {
         validatedExportedLibraries()
         super.compile()
-    }
-
-    private companion object {
-        const val KOTLIN_NATIVE_BINARY_OPTION_PREFIX = "kotlin.native.binary."
     }
 }
 
