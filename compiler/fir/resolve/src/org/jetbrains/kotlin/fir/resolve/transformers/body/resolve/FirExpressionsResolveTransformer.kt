@@ -340,17 +340,17 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             return functionCall
         }
         if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
-        val collectionLiterals = functionCall.argumentList.arguments.mapIndexedNotNull { index: Int, firExpression: FirExpression ->
-            if (firExpression is FirCollectionLiteral) {
-                index to firExpression
-            } else {
-                null
-            }
-        }
-        if (collectionLiterals.isNotEmpty()) {
-            collectionLiterals.forEach { it.second.transformSingle(transformer, data) }
-            return fixAndResolve(functionCall)
-        }
+//        val collectionLiterals = functionCall.argumentList.arguments.mapIndexedNotNull { index: Int, firExpression: FirExpression ->
+//            if (firExpression is FirCollectionLiteral) {
+//                index to firExpression
+//            } else {
+//                null
+//            }
+//        }
+//        if (collectionLiterals.isNotEmpty()) {
+//            collectionLiterals.forEach { it.second.transformSingle(transformer, data) }
+//            return fixAndResolve(functionCall)
+//        }
         dataFlowAnalyzer.enterCall()
         functionCall.transformAnnotations(transformer, data)
         functionCall.transformSingle(InvocationKindTransformer, null)
@@ -398,7 +398,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         val possibleTypes = builders
             .map { components.initialTypeOfCandidate(it) }
-            .toSet()
+//            .toSet()
 
 //        val possibleTypes = builders.asSequence()
 //            .map { it.symbol.fir }
@@ -406,9 +406,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 //            .map { it.returnTypeRef.coneType }
 //            .filterIsInstance<ConeClassLikeType>()
 //            .toSet()
-        val type = ConeCollectionLiteralTypeImpl(ConeNullability.NOT_NULL, possibleTypes)
-
-        type.argumentType = getTypeOfCLArguments(type, c) ?: error("cant infer type of CL arguments")
+//        val type = ConeCollectionLiteralTypeImpl(ConeNullability.NOT_NULL, possibleTypes.toSet())
+        val type = ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, possibleTypes)
+        collectionLiteral.replaceArgumentType(getTypeOfCLArguments(type, c) ?: error("cant infer type of CL arguments"))
 
         collectionLiteral.resultType = collectionLiteral.resultType.resolvedTypeFromPrototype(type)
 
@@ -431,7 +431,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     collectionLiteral.kind,
                     receiverName,
                     collectionLiteral.expressions,
-                    type.argumentType!!.toFirResolvedTypeRef()
+                    collectionLiteral.argumentType!!.toFirResolvedTypeRef()
                 )
                 transformer.transformFunctionCall(buildCall, data)
             }
@@ -510,8 +510,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
     // TODO вынести построение констр системы из чекера сюда
     private fun getTypeOfCLArguments(
-//        collectionLiteral: FirCollectionLiteral,
-        clt: ConeCollectionLiteralType,
+//        clt: ConeCollectionLiteralType,
+        clt: ConeKotlinType,
         c: NewConstraintSystemImpl
     ): ConeKotlinType? {
         require(c.notFixedTypeVariables.size == 1) // TODO replace require

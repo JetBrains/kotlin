@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralEntry
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirCollectionLiteralImpl
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -29,6 +30,7 @@ class FirCollectionLiteralBuilder : FirAnnotationContainerBuilder, FirExpression
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var kind: CollectionLiteralKind
+    var argumentType: ConeKotlinType? = null
     val expressions: MutableList<FirCollectionLiteralEntry> = mutableListOf()
 
     override fun build(): FirCollectionLiteral {
@@ -36,6 +38,7 @@ class FirCollectionLiteralBuilder : FirAnnotationContainerBuilder, FirExpression
             source,
             annotations,
             kind,
+            argumentType,
             expressions,
         )
     }

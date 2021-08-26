@@ -188,6 +188,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         collectionLiteral.configure {
             +field("kind", collectionLiteralKindType)
+            +field("argumentType", coneKotlinTypeType, nullable = true, withReplace = true)
             +fieldList("expressions", collectionLiteralEntry).withTransform()
         }
 
