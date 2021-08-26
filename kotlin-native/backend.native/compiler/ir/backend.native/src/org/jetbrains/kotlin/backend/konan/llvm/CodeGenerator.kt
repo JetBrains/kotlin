@@ -1448,10 +1448,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 unreachable()
             }
         }
-        if (hasLandingpadFromCleanup)
+        /*if (hasLandingpadFromCleanup)
             positionAtEnd(catchKotlinExceptionAndTerminateBb)
         else
-            positionAtEnd(cleanupLandingpad)
+            positionAtEnd(cleanupLandingpad)*/
 
     }
 
