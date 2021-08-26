@@ -53,6 +53,7 @@ class VersionChecker(val context: IrPluginContext) {
             4000 to "1.1.0-alpha01",
             4100 to "1.1.0-alpha02",
             4200 to "1.1.0-alpha03",
+            4300 to "1.1.0-alpha04",
         )
 
         /**
@@ -65,7 +66,7 @@ class VersionChecker(val context: IrPluginContext) {
          * The maven version string of this compiler. This string should be updated before/after every
          * release.
          */
-        const val compilerVersion: String = "1.1.0-alpha03"
+        const val compilerVersion: String = "1.1.0-alpha04"
         private val minimumRuntimeVersion: String
             get() = versionTable[minimumRuntimeVersionInt] ?: "unknown"
     }
