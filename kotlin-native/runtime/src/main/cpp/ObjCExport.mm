@@ -83,11 +83,11 @@ struct ObjCTypeAdapter {
   int reverseAdapterNum;
 };
 
-typedef id (*convertReferenceToObjC)(ObjHeader* obj);
+typedef id (*convertReferenceToRetainedObjC)(ObjHeader* obj);
 typedef OBJ_GETTER((*convertReferenceFromObjC), id obj);
 
 struct TypeInfoObjCExportAddition {
-  /*convertReferenceToObjC*/ void* convert;
+  /*convertReferenceToRetainedObjC*/ void* convertToRetained;
   Class objCClass;
   const ObjCTypeAdapter* typeAdapter;
 };
@@ -138,8 +138,6 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssocia
 
 static Class getOrCreateClass(const TypeInfo* typeInfo);
 
-extern "C" id objc_retainAutoreleaseReturnValue(id self);
-
 namespace {
 
 ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject, ReleaseMode mode) {
@@ -171,25 +169,25 @@ extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_detachAssociatedObject(void* ass
   }
 }
 
-extern "C" id Kotlin_ObjCExport_convertUnit(ObjHeader* unitInstance) {
+extern "C" id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance) {
   static dispatch_once_t onceToken;
   static id instance = nullptr;
   dispatch_once(&onceToken, ^{
     Class unitClass = getOrCreateClass(unitInstance->type_info());
-    instance = [[unitClass createWrapper:unitInstance] retain];
+    instance = [unitClass createRetainedWrapper:unitInstance];
   });
-  return instance;
+  return objc_retain(instance);
 }
 
-extern "C" id Kotlin_ObjCExport_CreateNSStringFromKString(ObjHeader* str) {
+extern "C" id Kotlin_ObjCExport_CreateRetainedNSStringFromKString(ObjHeader* str) {
   KChar* utf16Chars = CharArrayAddressOfElementAt(str->array(), 0);
   auto numBytes = str->array()->count_ * sizeof(KChar);
 
   if (str->permanent()) {
-    return [[[NSString alloc] initWithBytesNoCopy:utf16Chars
+    return [[NSString alloc] initWithBytesNoCopy:utf16Chars
         length:numBytes
         encoding:NSUTF16LittleEndianStringEncoding
-        freeWhenDone:NO] autorelease];
+        freeWhenDone:NO];
   } else {
     // TODO: consider making NSString subclass to avoid copying here.
     NSString* candidate = [[NSString alloc] initWithBytes:utf16Chars
@@ -202,11 +200,11 @@ extern "C" id Kotlin_ObjCExport_CreateNSStringFromKString(ObjHeader* str) {
       id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate);
       if (old != nullptr) {
         objc_release(candidate);
-        return objc_retainAutoreleaseReturnValue(old);
+        return objc_retain(old);
       }
     }
 
-    return objc_retainAutoreleaseReturnValue(candidate);
+    return objc_retain(candidate);
   }
 }
 static const ObjCTypeAdapter* findAdapterByName(
@@ -519,9 +517,16 @@ static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
   }
 }
 
-static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj);
+static id Kotlin_ObjCExport_refToRetainedObjC_slowpath(ObjHeader* obj);
 
-template <bool retainAutorelease>
+extern "C" id objc_autorelease(id self);
+
+// retain = true means that it returns retained result, which must be eventually released by the caller.
+//
+// retain = false means that it returns unretained result, which is not guaranteed to outlive [obj],
+// but doesn't require any balancing release operation.
+// It might use autorelease though, which will be suboptimal.
+template <bool retain>
 static ALWAYS_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
   kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
@@ -529,22 +534,34 @@ static ALWAYS_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
 
   id associatedObject = GetAssociatedObject(obj);
   if (associatedObject != nullptr) {
-    return retainAutorelease ? objc_retainAutoreleaseReturnValue(associatedObject) : associatedObject;
+    return retain ? objc_retain(associatedObject) : associatedObject;
   }
 
   // TODO: propagate [retainAutorelease] to the code below.
 
-  convertReferenceToObjC converter = (convertReferenceToObjC)obj->type_info()->writableInfo_->objCExport.convert;
-  if (converter != nullptr) {
-    return converter(obj);
+  convertReferenceToRetainedObjC convertToRetained = (convertReferenceToRetainedObjC)obj->type_info()->writableInfo_->objCExport.convertToRetained;
+
+  id retainedResult;
+  if (convertToRetained != nullptr) {
+    retainedResult = convertToRetained(obj);
+  } else {
+    retainedResult = Kotlin_ObjCExport_refToRetainedObjC_slowpath(obj);
   }
 
-  return Kotlin_ObjCExport_refToObjC_slowpath(obj);
+  // Balance retain with objc_autorelease if required:
+  return retain ? retainedResult : objc_autorelease(retainedResult);
+}
+
+extern "C" id Kotlin_ObjCExport_refToRetainedObjC(ObjHeader* obj) {
+  return Kotlin_ObjCExport_refToObjCImpl<true>(obj);
 }
 
 extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj) {
-  // TODO: in some cases (e.g. when converting a bridge argument) performing retain-autorelease is not necessary.
-  return Kotlin_ObjCExport_refToObjCImpl<true>(obj);
+  return objc_autorelease(Kotlin_ObjCExport_refToObjCImpl<true>(obj));
+}
+
+extern "C" id Kotlin_ObjCExport_refToLocalObjC(ObjHeader* obj) {
+  return Kotlin_ObjCExport_refToObjCImpl<false>(obj);
 }
 
 extern "C" ALWAYS_INLINE id Kotlin_Interop_refToObjC(ObjHeader* obj) {
@@ -570,13 +587,13 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj) {
   RETURN_RESULT_OF(msgSend, obj, Kotlin_ObjCExport_toKotlinSelector);
 }
 
-static id convertKotlinObject(ObjHeader* obj) {
+static id convertKotlinObjectToRetained(ObjHeader* obj) {
   Class clazz = obj->type_info()->writableInfo_->objCExport.objCClass;
   RuntimeAssert(clazz != nullptr, "");
-  return [clazz createWrapper:obj];
+  return [clazz createRetainedWrapper:obj];
 }
 
-static convertReferenceToObjC findConverterFromInterfaces(const TypeInfo* typeInfo) {
+static convertReferenceToRetainedObjC findConvertToRetainedFromInterfaces(const TypeInfo* typeInfo) {
   const TypeInfo* foundTypeInfo = nullptr;
 
   for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
@@ -601,7 +618,7 @@ static convertReferenceToObjC findConverterFromInterfaces(const TypeInfo* typeIn
       return nullptr;
     }
 
-    if (interfaceTypeInfo->writableInfo_->objCExport.convert != nullptr) {
+    if (interfaceTypeInfo->writableInfo_->objCExport.convertToRetained != nullptr) {
       if (foundTypeInfo == nullptr || IsSubInterface(interfaceTypeInfo, foundTypeInfo)) {
         foundTypeInfo = interfaceTypeInfo;
       } else if (!IsSubInterface(foundTypeInfo, interfaceTypeInfo)) {
@@ -615,23 +632,21 @@ static convertReferenceToObjC findConverterFromInterfaces(const TypeInfo* typeIn
 
   return foundTypeInfo == nullptr ?
     nullptr :
-    (convertReferenceToObjC)foundTypeInfo->writableInfo_->objCExport.convert;
+    (convertReferenceToRetainedObjC)foundTypeInfo->writableInfo_->objCExport.convertToRetained;
 }
 
-static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj) {
+static id Kotlin_ObjCExport_refToRetainedObjC_slowpath(ObjHeader* obj) {
   const TypeInfo* typeInfo = obj->type_info();
-  convertReferenceToObjC converter = nullptr;
+  convertReferenceToRetainedObjC convertToRetained = findConvertToRetainedFromInterfaces(typeInfo);
 
-  converter = findConverterFromInterfaces(typeInfo);
-
-  if (converter == nullptr) {
+  if (convertToRetained == nullptr) {
     getOrCreateClass(typeInfo);
-    converter = (typeInfo == theUnitTypeInfo) ? &Kotlin_ObjCExport_convertUnit : &convertKotlinObject;
+    convertToRetained = (typeInfo == theUnitTypeInfo) ? &Kotlin_ObjCExport_convertUnitToRetained : &convertKotlinObjectToRetained;
   }
 
-  typeInfo->writableInfo_->objCExport.convert = (void*)converter;
+  typeInfo->writableInfo_->objCExport.convertToRetained = (void*)convertToRetained;
 
-  return converter(obj);
+  return convertToRetained(obj);
 }
 
 static void buildITable(TypeInfo* result, const KStdOrderedMap<ClassId, KStdVector<VTableElement>>& interfaceVTables) {

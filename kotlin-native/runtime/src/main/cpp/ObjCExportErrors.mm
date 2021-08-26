@@ -82,7 +82,7 @@ extern "C" id Kotlin_ObjCExport_WrapExceptionToNSError(KRef exception) {
   KRef message = Kotlin_Throwable_getMessage(exception, messageHolder.slot());
   NSString* description = Kotlin_Interop_CreateNSStringFromKString(message);
 
-  id exceptionObjCRef = Kotlin_ObjCExport_refToObjC(exception);
+  id exceptionObjCRef = Kotlin_ObjCExport_refToLocalObjC(exception);
 
   kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
 

@@ -24,7 +24,7 @@
 
 //! TODO: Use not_null signature.
 OBJ_GETTER(Kotlin_ObjCExport_ExceptionDetails, KRef /*thiz*/, KRef exceptionHolder) {
-  if (NSException* exception = (NSException*)Kotlin_ObjCExport_refToObjC(exceptionHolder)) {
+  if (NSException* exception = (NSException*)Kotlin_ObjCExport_refToLocalObjC(exceptionHolder)) {
     RuntimeAssert([exception isKindOfClass:[NSException class]], "Illegal type: NSException expected");
     NSString* ret = [NSString stringWithFormat: @"%@:: %@", exception.name, exception.reason];
     RETURN_RESULT_OF(Kotlin_Interop_CreateKStringFromNSString, ret);

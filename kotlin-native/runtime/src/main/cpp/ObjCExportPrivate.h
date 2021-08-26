@@ -15,7 +15,7 @@
 #import "ObjCExport.h"
 
 @interface KotlinBase : NSObject <NSCopying>
-+(instancetype)createWrapper:(ObjHeader*)obj;
++(instancetype)createRetainedWrapper:(ObjHeader*)obj;
 @end;
 
 enum class ReleaseMode {

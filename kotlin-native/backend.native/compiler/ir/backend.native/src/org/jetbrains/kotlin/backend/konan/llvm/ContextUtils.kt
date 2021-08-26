@@ -518,10 +518,11 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_Interop_DoesObjectConformToProtocol by lazyRtFunction
     val Kotlin_Interop_IsObjectKindOfClass by lazyRtFunction
 
-    val Kotlin_ObjCExport_refToObjC by lazyRtFunction
+    val Kotlin_ObjCExport_refToLocalObjC by lazyRtFunction
+    val Kotlin_ObjCExport_refToRetainedObjC by lazyRtFunction
     val Kotlin_ObjCExport_refFromObjC by lazyRtFunction
-    val Kotlin_ObjCExport_CreateNSStringFromKString by lazyRtFunction
-    val Kotlin_ObjCExport_convertUnit by lazyRtFunction
+    val Kotlin_ObjCExport_CreateRetainedNSStringFromKString by lazyRtFunction
+    val Kotlin_ObjCExport_convertUnitToRetained by lazyRtFunction
     val Kotlin_ObjCExport_GetAssociatedObject by lazyRtFunction
     val Kotlin_ObjCExport_AbstractMethodCalled by lazyRtFunction
     val Kotlin_ObjCExport_RethrowExceptionAsNSError by lazyRtFunction

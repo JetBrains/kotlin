@@ -47,7 +47,9 @@ namespace {
 
 extern "C" {
 
-id Kotlin_ObjCExport_CreateNSStringFromKString(ObjHeader* str);
+id Kotlin_ObjCExport_CreateRetainedNSStringFromKString(ObjHeader* str);
+
+extern "C" id objc_autorelease(id self);
 
 id Kotlin_Interop_CreateNSStringFromKString(ObjHeader* str) {
   // Note: this function is just a bit specialized [Kotlin_Interop_refToObjC].
@@ -59,7 +61,7 @@ id Kotlin_Interop_CreateNSStringFromKString(ObjHeader* str) {
     return (id)associatedObject;
   }
 
-  return Kotlin_ObjCExport_CreateNSStringFromKString(str);
+  return objc_autorelease(Kotlin_ObjCExport_CreateRetainedNSStringFromKString(str));
 }
 
 OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {

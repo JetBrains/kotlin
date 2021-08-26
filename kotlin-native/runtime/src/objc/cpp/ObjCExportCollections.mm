@@ -190,8 +190,8 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   [super dealloc];
 }
 
-+(id)createWithKList:(KRef)list {
-  KListAsNSArray* result = [[[KListAsNSArray alloc] init] autorelease];
++(id)createRetainedWithKList:(KRef)list {
+  KListAsNSArray* result = [[KListAsNSArray alloc] init];
   result->listHolder.init(list);
   return result;
 }
@@ -226,8 +226,8 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   [super dealloc];
 }
 
-+(id)createWithKList:(KRef)list {
-  KMutableListAsNSMutableArray* result = [[[KMutableListAsNSMutableArray alloc] init] autorelease];
++(id)createRetainedWithKList:(KRef)list {
+  KMutableListAsNSMutableArray* result = [[KMutableListAsNSMutableArray alloc] init];
   result->listHolder.init(list);
   return result;
 }
@@ -306,8 +306,8 @@ static inline id KSet_getElement(KRef set, id object) {
   [super dealloc];
 }
 
-+(id)createWithKSet:(KRef)set {
-  KSetAsNSSet* result = [[[KSetAsNSSet alloc] init] autorelease];
++(id)createRetainedWithKSet:(KRef)set {
+  KSetAsNSSet* result = [[KSetAsNSSet alloc] init];
   result->setHolder.init(set);
   return result;
 }
@@ -468,8 +468,8 @@ static inline id KMap_get(KRef map, id aKey) {
   [super dealloc];
 }
 
-+(id)createWithKMap:(KRef)map {
-  KMapAsNSDictionary* result = [[[KMapAsNSDictionary alloc] init] autorelease];
++(id)createRetainedWithKMap:(KRef)map {
+  KMapAsNSDictionary* result = [[KMapAsNSDictionary alloc] init];
   result->mapHolder.init(map);
   return result;
 }
@@ -608,28 +608,28 @@ static inline id KMap_get(KRef map, id aKey) {
 
 // Referenced from the generated code:
 
-extern "C" id Kotlin_Interop_CreateNSArrayFromKList(KRef obj) {
-  return [KListAsNSArray createWithKList:obj];
+extern "C" id Kotlin_Interop_CreateRetainedNSArrayFromKList(KRef obj) {
+  return [KListAsNSArray createRetainedWithKList:obj];
 }
 
-extern "C" id Kotlin_Interop_CreateNSMutableArrayFromKList(KRef obj) {
-  return [KMutableListAsNSMutableArray createWithKList:obj];
+extern "C" id Kotlin_Interop_CreateRetainedNSMutableArrayFromKList(KRef obj) {
+  return [KMutableListAsNSMutableArray createRetainedWithKList:obj];
 }
 
-extern "C" id Kotlin_Interop_CreateNSSetFromKSet(KRef obj) {
-  return [KSetAsNSSet createWithKSet:obj];
+extern "C" id Kotlin_Interop_CreateRetainedNSSetFromKSet(KRef obj) {
+  return [KSetAsNSSet createRetainedWithKSet:obj];
 }
 
-extern "C" id Kotlin_Interop_CreateKotlinMutableSetFromKSet(KRef obj) {
-  return [[[KotlinMutableSet alloc] initWithKSet:obj] autorelease];
+extern "C" id Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet(KRef obj) {
+  return [[KotlinMutableSet alloc] initWithKSet:obj];
 }
 
-extern "C" id Kotlin_Interop_CreateNSDictionaryFromKMap(KRef obj) {
-  return [KMapAsNSDictionary createWithKMap:obj];
+extern "C" id Kotlin_Interop_CreateRetainedNSDictionaryFromKMap(KRef obj) {
+  return [KMapAsNSDictionary createRetainedWithKMap:obj];
 }
 
-extern "C" id Kotlin_Interop_CreateKotlinMutableDictonaryFromKMap(KRef obj) {
-  return [[[KotlinMutableDictionary alloc] initWithKMap:obj] autorelease];
+extern "C" id Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap(KRef obj) {
+  return [[KotlinMutableDictionary alloc] initWithKMap:obj];
 }
 
 #endif // KONAN_OBJC_INTEROP

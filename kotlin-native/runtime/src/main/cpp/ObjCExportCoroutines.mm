@@ -17,7 +17,7 @@ typedef void (^Completion)(id _Nullable, NSError* _Nullable);
 
 extern "C" void Kotlin_ObjCExport_runCompletionSuccess(KRef completionHolder, KRef result) {
   Completion completion = (Completion)GetAssociatedObject(completionHolder);
-  id objCResult = Kotlin_ObjCExport_refToObjC(result);
+  id objCResult = Kotlin_ObjCExport_refToLocalObjC(result);
   kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
   completion(objCResult, nullptr);
 }

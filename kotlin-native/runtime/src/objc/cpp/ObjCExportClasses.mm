@@ -25,9 +25,6 @@
 #import "Mutex.hpp"
 #import "Exceptions.h"
 
-extern "C" id objc_retainAutoreleaseReturnValue(id self);
-extern "C" id objc_autoreleaseReturnValue(id self);
-
 @interface NSObject (NSObjectPrivateMethods)
 // Implemented for NSObject in libobjc/NSObject.mm
 -(BOOL)_tryRetain;
@@ -85,7 +82,7 @@ static void injectToRuntime();
   return result;
 }
 
-+(instancetype)createWrapper:(ObjHeader*)obj {
++(instancetype)createRetainedWrapper:(ObjHeader*)obj {
   kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
   KotlinBase* candidate = [super allocWithZone:nil];
@@ -104,12 +101,12 @@ static void injectToRuntime();
           candidate->refHolder.releaseRef();
           [candidate releaseAsAssociatedObject:ReleaseMode::kDetachAndRelease];
         }
-        return objc_retainAutoreleaseReturnValue(old);
+        return objc_retain(old);
       }
     }
   }
 
-  return objc_autoreleaseReturnValue(candidate);
+  return candidate;
 }
 
 -(instancetype)retain {

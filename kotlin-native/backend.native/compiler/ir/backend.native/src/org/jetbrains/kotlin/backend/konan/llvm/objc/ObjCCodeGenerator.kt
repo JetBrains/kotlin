@@ -35,6 +35,20 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
             context.stdlibModule.llvmSymbolOrigin
     )
 
+    val objcAlloc = context.llvm.externalFunction(
+            "objc_alloc",
+            functionType(int8TypePtr, false, int8TypePtr),
+            context.stdlibModule.llvmSymbolOrigin
+    )
+
+    val objcAutorelease = context.llvm.externalFunction(
+            "llvm.objc.autorelease",
+            functionType(int8TypePtr, false, int8TypePtr),
+            context.stdlibModule.llvmSymbolOrigin
+    ).also {
+        setFunctionNoUnwind(it)
+    }
+
     val objcAutoreleaseReturnValue = context.llvm.externalFunction(
             "llvm.objc.autoreleaseReturnValue",
             functionType(int8TypePtr, false, int8TypePtr),
