@@ -82,17 +82,11 @@ class FirCallResolver(
 
         @Suppress("NAME_SHADOWING")
         val functionCall = if (needTransformArguments) {
-//            if (functionCall.argumentList.arguments.any { it is FirCollectionLiteral }) {
-//                @Suppress("UNUSED_VALUE")
-//                hasCollectionLiteral = true
-//                functionCall
-//            }
             functionCall.transformExplicitReceiver()
                 .also {
                     components.dataFlowAnalyzer.enterQualifiedAccessExpression()
                     functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
                 }
-//            }
         } else {
             functionCall
         }

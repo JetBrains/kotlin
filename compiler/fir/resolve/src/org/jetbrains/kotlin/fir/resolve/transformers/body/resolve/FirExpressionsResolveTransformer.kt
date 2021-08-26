@@ -385,7 +385,16 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         collectionLiteral.transformChildren(transformer, data)
 
         val builders = callResolver.collectAvailableBuildersForCollectionLiteral(collectionLiteral)
-        val c = builders.firstOrNull()?.system?.asConstraintSystemCompleterContext() ?: error("")
+        if (builders.isEmpty()) {
+            return buildErrorExpression(
+                collectionLiteral.source,
+                ConeSimpleDiagnostic(
+                    "Collection literal has no builders in the current scope",
+                    DiagnosticKind.NoBuildersForCollectionLiteralFound
+                )
+            )
+        }
+        val c = builders.first().system.asConstraintSystemCompleterContext()
 
         val possibleTypes = builders
             .map { components.initialTypeOfCandidate(it) }

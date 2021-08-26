@@ -36,6 +36,10 @@ import kotlin.properties.ReadOnlyProperty
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
+    val CollectionLiteralsErrors by object : DiagnosticGroup("Collection literals") {
+        val NO_BUILDERS_FOR_COLLECTION_LITERAL by error<PsiElement>()
+    }
+
     val MetaErrors by object : DiagnosticGroup("Meta-errors") {
         val UNSUPPORTED by error<PsiElement> {
             parameter<String>("unsupported")

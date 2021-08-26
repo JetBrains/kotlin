@@ -78,6 +78,10 @@ import org.jetbrains.kotlin.types.Variance
  */
 
 sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
+    abstract class NoBuildersForCollectionLiteral : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = NoBuildersForCollectionLiteral::class
+    }
+
     abstract class Unsupported : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Unsupported::class
         abstract val unsupported: String

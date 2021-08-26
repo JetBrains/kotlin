@@ -79,6 +79,13 @@ import org.jetbrains.kotlin.types.Variance
  * DO NOT MODIFY IT MANUALLY
  */
 
+internal class NoBuildersForCollectionLiteralImpl(
+    firDiagnostic: FirPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoBuildersForCollectionLiteral(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic by weakRef(firDiagnostic)
+}
+
 internal class UnsupportedImpl(
     override val unsupported: String,
     firDiagnostic: FirPsiDiagnostic,

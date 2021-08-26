@@ -64,5 +64,7 @@ enum class DiagnosticKind {
     IsEnumEntry,
     EnumEntryAsType,
 
+    NoBuildersForCollectionLiteralFound,
+
     Other,
 }

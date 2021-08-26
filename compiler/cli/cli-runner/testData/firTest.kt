@@ -55,34 +55,38 @@ package org.jetbrains.kotlin.runner
 
 
 
-class A {
-    companion object {
-        fun <T> build(size: Int, ianit: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
-            return TODO()
-        }
-    }
-}
-
-fun <T> Set.Companion.build(size: Int, init: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
-    return TODO()
-}
-//
-fun <T> List.Companion.build(size: Int, init: CollectionLiteralBuilder<List<T>, T>.() -> Unit = {}): List<T> {
-    return TODO()
-//    return object : CollectionLiteralBuilder<List<T>, T> {
-//        private val buf = mutableSetOf<T>()
-//
-//        override fun add(element: T) {
-//            buf.add(element)
+//class A {
+//    companion object {
+//        fun <T> build(size: Int, ianit: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
+//            return TODO()
 //        }
+//    }
+//}
 //
-//        override fun build(): List<T> {
-//            return buf
-//        }
-//    }.apply(init).build()
-}
+//fun <T> Set.Companion.buildSeq(size: Int, init: CollectionLiteralBuilder<Set<T>, T>.() -> Unit = {}): Set<T> {
+//    return TODO()
+//}
+////
+//fun <T> List.Companion.buildSeq(size: Int, init: CollectionLiteralBuilder<List<T>, T>.() -> Unit = {}): List<T> {
+//    return TODO()
+////    return object : CollectionLiteralBuilder<List<T>, T> {
+////        private val buf = mutableSetOf<T>()
+////
+////        override fun add(element: T) {
+////            buf.add(element)
+////        }
+////
+////        override fun build(): List<T> {
+////            return buf
+////        }
+////    }.apply(init).build()
+//}
 
-fun foo(s: Set<Int>, i: String, l: List<Int>) {
+//fun foo(s: Set<Int>, i: String, l: List<Int>) {
+//}
+
+fun foo(a: Set<Int>) {
+
 }
 
 fun main() {
@@ -92,7 +96,8 @@ fun main() {
 //        add(3)
 //    }
 //    val a: Set<Int> = [1, 2, 3]
-//    foo(a)
-    foo([1, 2, 3], "str", [4.2, 5, 6])
+//    listOf(1, 2, 3.0)
+    foo([1, 2, 3])
+//    foo([1, 2, 3], "str", [4.2, 5, 6])
 //    println(a.toString())
 }
