@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.cir.CirClassOrTypeAliasType
+import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 class TypeAliasCommonizer(
@@ -18,7 +19,7 @@ class TypeAliasCommonizer(
         val typeParameters = TypeParameterListCommonizer(classifiers)
             .commonize(listOf(first.typeParameters, second.typeParameters)) ?: return null
 
-        val underlyingType = TypeCommonizer(classifiers)
+        val underlyingType = TypeCommonizer(classifiers, TypeCommonizer.Options.default.withAllowOptimisticNumberTypeCommonization())
             .commonize(first.underlyingType, second.underlyingType) as? CirClassOrTypeAliasType ?: return null
 
         val visibility = VisibilityCommonizer.lowering().commonize(listOf(first, second)) ?: return null

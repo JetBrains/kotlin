@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 internal class ClassOrTypeAliasTypeCommonizer(
-    private val classifiers: CirKnownClassifiers
+    private val classifiers: CirKnownClassifiers,
+    private val options: TypeCommonizer.Options
 ) : AssociativeCommonizer<CirClassOrTypeAliasType> {
 
     override fun commonize(first: CirClassOrTypeAliasType, second: CirClassOrTypeAliasType): CirClassOrTypeAliasType? {
         if (first is CirClassType && second is CirClassType) {
             return ClassTypeCommonizer(classifiers).commonize(listOf(first, second))
+                ?: if (options.allowOptimisticNumberTypeCommonization) OptimisticNumbersTypeCommonizer.commonize(first, second) else null
         }
 
         if (first is CirTypeAliasType && second is CirTypeAliasType) {
@@ -25,7 +27,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
             try our luck with commonizing those class types
              */
             return TypeAliasTypeCommonizer(classifiers).commonize(listOf(first, second))
-                ?: ClassTypeCommonizer(classifiers).commonize(listOf(first.expandedType(), second.expandedType()))
+                ?: ClassOrTypeAliasTypeCommonizer(classifiers, options.withAllowOptimisticNumberTypeCommonization())
+                    .commonize(first.expandedType(), second.expandedType())
         }
 
         val classType = when {
@@ -47,7 +50,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val typeAliasClassType = TypeAliasTypeCommonizer(classifiers).commonize(listOf(typeAliasType))?.expandedType()
             ?: typeAliasType.expandedType()
 
-        return ClassTypeCommonizer(classifiers).commonize(listOf(classType, typeAliasClassType))
+        return commonize(classType, typeAliasClassType)
     }
 }
 
