@@ -38,8 +38,8 @@ void Kotlin_shutdownRuntime();
 // Appends given node to an initializer list.
 void AppendToInitializersTail(struct InitNode*);
 
-void CallInitGlobalPossiblyLock(int volatile* state, void (*init)(bool));
-void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)(bool));
+void CallInitGlobalPossiblyLock(int volatile* state, void (*init)());
+void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)());
 
 bool Kotlin_memoryLeakCheckerEnabled();
 

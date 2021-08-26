@@ -387,7 +387,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val parameterScope = ParameterScope(fileInitFunction, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
-                            // TODO: remove unused parameter.
                             context.llvm.initializersGenerationState.topLevelFields
                                     .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
                                     .filterNot { it.shouldBeInitializedEagerly }
@@ -789,7 +788,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (declaration.origin == DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER) {
             require(context.llvm.initializersGenerationState.globalInitFunction == null) { "There can only be at most one global file initializer" }
             require(body == null) { "The body of file initializer should be null" }
-            require(declaration.valueParameters.singleOrNull()?.type == context.irBuiltIns.booleanType) { "File initializer must take a single boolean parameter" }
+            require(declaration.valueParameters.isEmpty()) { "File initializer must be parameterless" }
             require(declaration.returnsUnit()) { "File initializer must return Unit" }
             context.llvm.initializersGenerationState.globalInitFunction = declaration
             context.llvm.initializersGenerationState.globalInitState = getGlobalInitStateFor(declaration.parent as IrFile)
@@ -798,7 +797,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 || declaration.origin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER) {
             require(context.llvm.initializersGenerationState.threadLocalInitFunction == null) { "There can only be at most one thread local file initializer" }
             require(body == null) { "The body of file initializer should be null" }
-            require(declaration.valueParameters.singleOrNull()?.type == context.irBuiltIns.booleanType) { "File initializer must take a single boolean parameter" }
+            require(declaration.valueParameters.isEmpty()) { "File initializer must be parameterless" }
             require(declaration.returnsUnit()) { "File initializer must return Unit" }
             context.llvm.initializersGenerationState.threadLocalInitFunction = declaration
             context.llvm.initializersGenerationState.threadLocalInitState = getThreadLocalInitStateFor(declaration.parent as IrFile)

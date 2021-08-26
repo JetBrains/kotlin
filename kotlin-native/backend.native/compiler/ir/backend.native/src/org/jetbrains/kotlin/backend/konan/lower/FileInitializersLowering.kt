@@ -41,7 +41,7 @@ internal val IrFunction.isFileInitializer: Boolean
             || origin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
 
 internal fun IrBuilderWithScope.irCallFileInitializer(initializer: IrFunctionSymbol) =
-        irCall(initializer).apply { putValueArgument(0, irFalse()) }
+        irCall(initializer)
 
 internal val IrField.shouldBeInitializedEagerly: Boolean
     get() {
@@ -106,7 +106,6 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
         returnType = context.irBuiltIns.unitType
     }.apply {
         parent = irFile
-        addValueParameter("isMainThread", context.irBuiltIns.booleanType)
         irFile.declarations.add(0, this)
     }
 
