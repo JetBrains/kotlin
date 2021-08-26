@@ -1571,6 +1571,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("innerClassConstructor.kt")
+        public void testInnerClassConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constructors/innerClassConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("innerPrimaryDefaults.kt")
         public void testInnerPrimaryDefaults() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constructors/innerPrimaryDefaults.kt");
