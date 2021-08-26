@@ -156,7 +156,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "+[NSObject new]",
         "+[NSString stringWithFormat:]",
         "+[NSString stringWithUTF8String:]",
-        "+[NSValue valueWithPointer:]",
+        "-[NSPlaceholderValue initWithBytes:objCType:]",
         "-[NSException name]",
         "-[NSException reason]",
         "-[NSMethodSignature getArgumentTypeAtIndex:]",

@@ -104,7 +104,24 @@ extern "C" const TypeInfo* Kotlin_ObjCExport_getAssociatedTypeInfo(Class clazz) 
 }
 
 static void setAssociatedTypeInfo(Class clazz, const TypeInfo* typeInfo) {
-  objc_setAssociatedObject(clazz, &associatedTypeInfoKey, [NSValue valueWithPointer:typeInfo], OBJC_ASSOCIATION_RETAIN);
+  // Note: [NSValue valueWithPointer:] uses autorelease (without possibility to eliminate this at the call site),
+  // so using alloc-init sequence to avoid this.
+  NSValue* value = [[NSValue alloc] initWithBytes:&typeInfo objCType:@encode(void*)];
+
+  // Note: OBJC_ASSOCIATION_ASSIGN below means that this NSValue will leak. On the other hand,
+  // TypeInfo will "leak" anyway, and Class will likely "leak" too. So not a big deal.
+  // Also, alternative modes have problems:
+  //   OBJC_ASSOCIATION_COPY and OBJC_ASSOCIATION_RETAIN make corresponding objc_getAssociatedObject
+  //     use autorelease (without possibility to eliminate this at the call site).
+  //   OBJC_ASSOCIATION_RETAIN_NONATOMIC and OBJC_ASSOCIATION_COPY_NONATOMIC are not thread safe and
+  //     might require explicit synchronization on objc_getAssociatedObject.
+  //
+  // So OBJC_ASSOCIATION_ASSIGN seems the best option here.
+
+  // Note: implementation for OBJC_ASSOCIATION_ASSIGN allows value not to be an Obj-C reference at all,
+  // because it simply stores a pointer without any memory management operations.
+  // But this is undocumented, and thus unsafe.
+  objc_setAssociatedObject(clazz, &associatedTypeInfoKey, value, OBJC_ASSOCIATION_ASSIGN);
 }
 
 extern "C" id Kotlin_ObjCExport_GetAssociatedObject(ObjHeader* obj) {
