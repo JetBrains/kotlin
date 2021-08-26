@@ -20,12 +20,14 @@ public fun JarFile.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean =
 
 @ExternalApi
 public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> {
-    val classNodes = map {
-        it.use { stream ->
+    val classNodes = mapNotNull {
+        val node = it.use { stream ->
             val classNode = ClassNode()
             ClassReader(stream).accept(classNode, ClassReader.SKIP_CODE)
             classNode
         }
+        // Skip module-info.java from processing
+        if (node.name == "module-info") null else node
     }
 
     // Note: map is sorted, so the dump will produce stable result
