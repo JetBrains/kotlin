@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.checkNativeCommandLineArguments
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
@@ -155,7 +155,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertFileExists("build/bin/linux64/mainDebugExecutable/$nativeExeName")
 
                 // Check that linker options were correctly passed to the K/N compiler.
-                checkNativeCommandLineArguments(":linkMainDebugExecutableLinux64") { arguments ->
+                withNativeCommandLineArguments(":linkMainDebugExecutableLinux64") { arguments ->
                     assertTrue(arguments.containsSequentially("-linker-option", "-L."))
                 }
             }

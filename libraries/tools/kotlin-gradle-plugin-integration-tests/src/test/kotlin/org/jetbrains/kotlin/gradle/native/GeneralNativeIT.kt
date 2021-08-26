@@ -362,17 +362,17 @@ class GeneralNativeIT : BaseGradleIT() {
             fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported")
 
             // Check that by default release frameworks have bitcode embedded.
-            checkNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
+            withNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
                 assertTrue("-Xembed-bitcode" in arguments)
                 assertTrue("-opt" in arguments)
             }
             // Check that by default debug frameworks have bitcode marker embedded.
-            checkNativeCommandLineArguments(":linkMainDebugFrameworkIos") { arguments ->
+            withNativeCommandLineArguments(":linkMainDebugFrameworkIos") { arguments ->
                 assertTrue("-Xembed-bitcode-marker" in arguments)
                 assertTrue("-g" in arguments)
             }
             // Check that bitcode can be disabled by setting custom compiler options
-            checkNativeCommandLineArguments(":linkCustomDebugFrameworkIos") { arguments ->
+            withNativeCommandLineArguments(":linkCustomDebugFrameworkIos") { arguments ->
                 assertTrue(arguments.containsSequentially("-linker-option", "-L."))
                 assertTrue("-Xtime" in arguments)
                 assertTrue("-Xstatic-framework" in arguments)
@@ -380,7 +380,7 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertFalse("-Xembed-bitcode" in arguments)
             }
             // Check that bitcode is disabled for iOS simulator.
-            checkNativeCommandLineArguments(":linkMainReleaseFrameworkIosSim", ":linkMainDebugFrameworkIosSim") { arguments ->
+            withNativeCommandLineArguments(":linkMainReleaseFrameworkIosSim", ":linkMainDebugFrameworkIosSim") { arguments ->
                 assertFalse("-Xembed-bitcode" in arguments)
                 assertFalse("-Xembed-bitcode-marker" in arguments)
             }
@@ -519,7 +519,7 @@ class GeneralNativeIT : BaseGradleIT() {
     ) {
         build(":compileKotlinHost") {
             assertSuccessful()
-            checkNativeCommandLineArguments(":compileKotlinHost") { arguments ->
+            withNativeCommandLineArguments(":compileKotlinHost") { arguments ->
                 assertFalse("-verbose" in arguments)
             }
         }
@@ -533,7 +533,7 @@ class GeneralNativeIT : BaseGradleIT() {
         )
         build(":compileKotlinHost") {
             assertSuccessful()
-            checkNativeCommandLineArguments(":compileKotlinHost") { arguments ->
+            withNativeCommandLineArguments(":compileKotlinHost") { arguments ->
                 assertTrue("-verbose" in arguments)
             }
         }
@@ -828,7 +828,7 @@ class GeneralNativeIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksExecuted(":projectLibrary:cinteropAnotherNumberHost")
             libraryFiles("projectLibrary", "anotherNumber").forEach { assertFileExists(it) }
-            checkNativeCustomEnvironment(":projectLibrary:cinteropAnotherNumberHost", toolName = "cinterop") { env ->
+            withNativeCustomEnvironment(":projectLibrary:cinteropAnotherNumberHost", toolName = "cinterop") { env ->
                 assertEquals("1", env["LIBCLANG_DISABLE_CRASH_RECOVERY"])
             }
         }
@@ -959,21 +959,21 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testNativeArgsWithSpaces() = with(transformNativeTestProject("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
-        val compilcatedDirectoryName = if (HostManager.hostIsMingw) {
+        val complicatedDirectoryName = if (HostManager.hostIsMingw) {
             // Windows doesn't allow creating a file with " in its name.
             "path with spaces"
         } else {
             "path with spaces and \""
         }
 
-        val fileWithSpacesInPath = projectDir.resolve("src/commonMain/kotlin/$compilcatedDirectoryName")
+        val fileWithSpacesInPath = projectDir.resolve("src/commonMain/kotlin/$complicatedDirectoryName")
             .apply { mkdirs() }
             .resolve("B.kt")
         fileWithSpacesInPath.writeText("fun foo() = 42")
 
         build("compileKotlin${nativeHostTargetName.capitalize()}") {
             assertSuccessful()
-            checkNativeCommandLineArguments(":compileKotlin${nativeHostTargetName.capitalize()}") { arguments ->
+            withNativeCommandLineArguments(":compileKotlin${nativeHostTargetName.capitalize()}") { arguments ->
                 val escapedQuotedPath =
                     "\"${fileWithSpacesInPath.absolutePath.replace("\\", "\\\\").replace("\"", "\\\"")}\""
                 assertTrue(
@@ -985,6 +985,51 @@ class GeneralNativeIT : BaseGradleIT() {
                         Arguments: ${arguments.joinToString(separator = " ")}
                     """.trimIndent()
                 )
+            }
+        }
+    }
+
+    @Test
+    fun testBinaryOptionsDSL() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+        gradleBuildScript().appendText(
+            """
+                kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+                    binaries.all { binaryOptions["memoryModel"] = "experimental" }
+                }
+            """.trimIndent()
+        )
+        build(":linkDebugExecutableHost") {
+            assertSuccessful()
+            withNativeCommandLineArguments(":linkDebugExecutableHost") {
+                assertTrue(it.contains("-Xbinary=memoryModel=experimental"))
+            }
+        }
+    }
+
+    @Test
+    fun testBinaryOptionsProperty() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+        build(":linkDebugExecutableHost", "-Pkotlin.native.binary.memoryModel=experimental") {
+            assertSuccessful()
+            withNativeCommandLineArguments(":linkDebugExecutableHost") {
+                assertTrue(it.contains("-Xbinary=memoryModel=experimental"))
+            }
+        }
+    }
+
+    @Test
+    fun testBinaryOptionsPriority() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+        gradleBuildScript().appendText(
+            """
+                kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+                    binaries.all { binaryOptions["memoryModel"] = "experimental" }
+                }
+            """.trimIndent()
+        )
+        build(":linkDebugExecutableHost", "-Pkotlin.native.binary.memoryModel=strict") {
+            assertSuccessful()
+            withNativeCommandLineArguments(":linkDebugExecutableHost") {
+                // Options set in the DSL have higher priority than options set in project properties.
+                assertTrue(it.contains("-Xbinary=memoryModel=experimental"))
             }
         }
     }
@@ -1044,19 +1089,19 @@ class GeneralNativeIT : BaseGradleIT() {
                 key.trim() to value.trim()
             }.toMap()
 
-        fun CompiledProject.checkNativeCommandLineArguments(
+        fun CompiledProject.withNativeCommandLineArguments(
             vararg taskPaths: String,
             toolName: String = "konanc",
             check: (List<String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCommandLineArguments(taskPath, toolName)) }
 
-        fun CompiledProject.checkNativeCompilerClasspath(
+        fun CompiledProject.withNativeCompilerClasspath(
             vararg taskPaths: String,
             toolName: String = "konanc",
             check: (List<String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCompilerClasspath(taskPath, toolName)) }
 
-        fun CompiledProject.checkNativeCustomEnvironment(
+        fun CompiledProject.withNativeCustomEnvironment(
             vararg taskPaths: String,
             toolName: String = "konanc",
             check: (Map<String, String>) -> Unit
