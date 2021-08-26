@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class JvmIdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMangler) : IdSignatureDescriptor(mangler) {
 
-    private inner class JvmDescriptorBasedSignatureBuilder(mangler: KotlinMangler.DescriptorMangler, type: SpecialDeclarationType) : DescriptorBasedSignatureBuilder(mangler, type) {
+    private inner class JvmDescriptorBasedSignatureBuilder(mangler: KotlinMangler.DescriptorMangler, type: SpecialDeclarationType) :
+        DescriptorBasedSignatureBuilder(mangler, type) {
         override fun platformSpecificFunction(descriptor: FunctionDescriptor) {
             keepTrackOfOverridesForPossiblyClashingFakeOverride(descriptor)
         }
@@ -78,31 +78,14 @@ class JvmIdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMang
             }
         }
 
-        private fun isCapturingTypeParameter(member: CallableMemberDescriptor): Boolean {
-            val containingClasses = collectContainingClasses(member)
-            return member.extensionReceiverParameter?.isCapturingTypeParameter(containingClasses) == true ||
-                    member.valueParameters.any { it.isCapturingTypeParameter(containingClasses) }
-        }
+        private fun isCapturingTypeParameter(member: CallableMemberDescriptor): Boolean =
+            member.extensionReceiverParameter?.isCapturingTypeParameter() == true ||
+                    member.valueParameters.any { it.isCapturingTypeParameter() }
 
-        private fun collectContainingClasses(member: CallableMemberDescriptor): Set<ClassDescriptor> {
-            val result = HashSet<ClassDescriptor>()
-            var pointer: DeclarationDescriptor = member
-            while (true) {
-                val containingClass = pointer.containingDeclaration as? ClassDescriptor ?: break
-                result.add(containingClass)
-                if (!containingClass.isInner) break
-                pointer = containingClass
-            }
-            return result
-        }
-
-        private fun ParameterDescriptor.isCapturingTypeParameter(containingClasses: Set<ClassDescriptor>): Boolean =
-            type.containsTypeParametersOf(containingClasses)
-
-        private fun KotlinType.containsTypeParametersOf(containingClasses: Set<ClassDescriptor>): Boolean =
-            contains {
+        private fun ParameterDescriptor.isCapturingTypeParameter(): Boolean =
+            type.contains {
                 val descriptor = it.constructor.declarationDescriptor
-                descriptor is TypeParameterDescriptor && descriptor.containingDeclaration in containingClasses
+                descriptor is TypeParameterDescriptor && descriptor.containingDeclaration is ClassDescriptor
             }
     }
 
