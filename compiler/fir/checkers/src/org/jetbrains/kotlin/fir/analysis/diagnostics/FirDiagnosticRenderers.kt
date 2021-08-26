@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -14,11 +13,9 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -97,6 +94,18 @@ object FirDiagnosticRenderers {
             else -> AssertionError("Unexpected class: $firClassLike")
         }
         "$prefix '$name'"
+    }
+
+    val RENDER_STAR_PROJECTED_TYPE = Renderer { firClassLike: FirClassLikeSymbol<*> ->
+        val name = firClassLike.classId.relativeClassName.shortName().asString()
+        val typeParameterCount = firClassLike.typeParameterSymbols?.size ?: 0
+        if (typeParameterCount == 0) return@Renderer name
+        StringBuilder().apply {
+            append(name)
+            append('<')
+            repeat(typeParameterCount - 1) { append("*, ") }
+            append("*>")
+        }.toString()
     }
 
     val RENDER_TYPE = Renderer { t: ConeKotlinType ->

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_COLLECTION_OF_TYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_STAR_PROJECTED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
@@ -305,6 +306,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_RECEIVER_ALLOW
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_SET_METHOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_THIS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TYPE_ARGUMENTS_ON_RHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_VALUE_FOR_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_INLINE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_SUPERTYPE
@@ -812,12 +814,15 @@ class FirDefaultErrorMessages {
                 RENDER_TYPE
             )
 
+            val wrongNumberOfTypeArguments =
+                "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected"
             map.put(TYPE_ARGUMENTS_NOT_ALLOWED, "Type arguments are not allowed for type parameters") // *
+            map.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "$wrongNumberOfTypeArguments for {1}", null, RENDER_CLASS_OR_OBJECT_NAME)
             map.put(
-                WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-                "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected for {1}",
+                NO_TYPE_ARGUMENTS_ON_RHS,
+                "$wrongNumberOfTypeArguments. Use ''{1}'' if you don''t want to pass type arguments",
                 null,
-                RENDER_CLASS_OR_OBJECT_NAME
+                RENDER_STAR_PROJECTED_TYPE
             )
             map.put(
                 OUTER_CLASS_ARGUMENTS_REQUIRED,
