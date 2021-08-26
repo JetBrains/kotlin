@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -59,8 +60,9 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 class KlibAssignableParamTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace
-) : AbstractComposeLowering(context, symbolRemapper, bindingTrace), ModuleLoweringPass {
+    bindingTrace: BindingTrace,
+    metrics: ModuleMetrics,
+) : AbstractComposeLowering(context, symbolRemapper, bindingTrace, metrics), ModuleLoweringPass {
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid(this)
     }
