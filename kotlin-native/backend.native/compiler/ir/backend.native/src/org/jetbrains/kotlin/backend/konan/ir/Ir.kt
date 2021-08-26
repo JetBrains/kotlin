@@ -487,6 +487,10 @@ internal class KonanSymbols(
             context.builtIns.builtInsModule.findClassAcrossModuleDependencies(
                     ClassId.topLevel(KonanFqNames.sharedImmutable))!!)
 
+    val eagerInitialization = symbolTable.referenceClass(
+            context.builtIns.builtInsModule.findClassAcrossModuleDependencies(
+                    ClassId.topLevel(KonanFqNames.eagerInitialization))!!)
+
     private fun topLevelClass(fqName: FqName): IrClassSymbol = irBuiltIns.findClass(fqName.shortName(), fqName.parent())!!
 
     private fun internalFunction(name: String): IrSimpleFunctionSymbol =
