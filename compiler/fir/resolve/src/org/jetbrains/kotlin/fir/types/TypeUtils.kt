@@ -524,3 +524,8 @@ private class CapturedArguments(val capturedArguments: Array<ConeTypeProjection>
     }
 }
 
+fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, session: FirSession): Boolean =
+    AbstractTypeChecker.isSubtypeOf(
+        session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
+        this, superType,
+    )

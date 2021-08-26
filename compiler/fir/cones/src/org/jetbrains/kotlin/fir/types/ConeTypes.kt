@@ -32,6 +32,20 @@ object ConeStarProjection : ConeTypeProjection() {
 
 sealed class ConeKotlinTypeProjection : ConeTypeProjection() {
     abstract val type: ConeKotlinType
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConeKotlinTypeProjection) return false
+
+        if (kind != other.kind) return false
+        if (type != other.type) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return type.hashCode() * 31 + kind.hashCode()
+    }
 }
 
 data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection() {

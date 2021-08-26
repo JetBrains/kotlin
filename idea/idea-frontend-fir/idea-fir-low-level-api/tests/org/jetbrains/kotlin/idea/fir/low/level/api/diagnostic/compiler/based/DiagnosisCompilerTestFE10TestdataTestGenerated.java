@@ -4351,6 +4351,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("SupertypeChain.kt")
+                public void testSupertypeChain() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cast/bare/SupertypeChain.kt");
+                }
+
+                @Test
                 @TestMetadata("ToErrorType.kt")
                 public void testToErrorType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/cast/bare/ToErrorType.kt");

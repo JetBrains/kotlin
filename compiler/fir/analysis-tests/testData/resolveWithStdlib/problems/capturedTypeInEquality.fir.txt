@@ -17,7 +17,7 @@ FILE: capturedTypeInEquality.kt
     }
     public final fun foo(target: R|FirTarget<FirFunction<*>>|, property: R|FirProperty|): R|kotlin/Unit| {
         lval functionTarget: R|FirFunction<*>| = R|<local>/target|.R|SubstitutionOverride</FirTarget.labeledElement: R|FirFunction<*>|>|
-        lval x: R|kotlin/Int?| = (R|<local>/functionTarget| as? R|FirFunction<CapturedType(*)>|)?.{ $subj$.R|kotlin/let|<R|FirFunction<*>|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|FirFunction<*>|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval x: R|kotlin/Int?| = (R|<local>/functionTarget| as? R|FirFunction<*>|)?.{ $subj$.R|kotlin/let|<R|FirFunction<*>|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|FirFunction<*>|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             when () {
                 ===(R|<local>/property|.R|/FirProperty.getter|, R|<local>/functionTarget|) ->  {
                     ^@let Int(1)
