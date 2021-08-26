@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.allowsComposableCalls
@@ -155,7 +156,8 @@ import org.jetbrains.kotlin.utils.DFS
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
     val symbolRemapper: DeepCopySymbolRemapper,
-    val bindingTrace: BindingTrace
+    val bindingTrace: BindingTrace,
+    val metrics: ModuleMetrics
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
 
     var inlinedFunctions: Set<InlineLambdaInfo> = setOf()
