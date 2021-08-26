@@ -782,7 +782,7 @@ private fun JavaType.toFirResolvedTypeRef(
         isForSupertypes = false,
         forTypeParameterBounds = false
     )
-    return buildResolvedTypeRef {
-        type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this", DiagnosticKind.Java))
+    return buildErrorTypeRef {
+        diagnostic = ConeSimpleDiagnostic("Unexpected JavaType: ${this@toFirResolvedTypeRef::class.java}", DiagnosticKind.Java)
     }
 }
