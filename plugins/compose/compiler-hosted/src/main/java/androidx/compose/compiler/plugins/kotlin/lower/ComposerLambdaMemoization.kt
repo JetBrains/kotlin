@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
@@ -250,9 +251,10 @@ const val COMPOSABLE_LAMBDA_N_INSTANCE = "composableLambdaNInstance"
 class ComposerLambdaMemoization(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace
+    bindingTrace: BindingTrace,
+    metrics: ModuleMetrics,
 ) :
-    AbstractComposeLowering(context, symbolRemapper, bindingTrace),
+    AbstractComposeLowering(context, symbolRemapper, bindingTrace, metrics),
     ModuleLoweringPass {
 
     private val declarationContextStack = mutableListOf<DeclarationContext>()
@@ -539,10 +541,21 @@ class ComposerLambdaMemoization(
 
         // Do not wrap composable lambdas with return results
         if (!functionExpression.function.descriptor.returnType.let { it == null || it.isUnit() }) {
+            metrics.recordLambda(
+                composable = true,
+                memoized = !collector.hasCaptures,
+                singleton = !collector.hasCaptures
+            )
             return functionExpression
         }
 
         val wrapped = wrapFunctionExpression(declarationContext, functionExpression, collector)
+
+        metrics.recordLambda(
+            composable = true,
+            memoized = true,
+            singleton = !collector.hasCaptures
+        )
 
         if (!collector.hasCaptures) {
             return irGetComposableSingleton(
@@ -746,13 +759,27 @@ class ComposerLambdaMemoization(
         captures: List<IrValueDeclaration>
     ): IrExpression {
         // If the function doesn't capture, Kotlin's default optimization is sufficient
-        if (captures.isEmpty()) return expression
+        if (captures.isEmpty()) {
+            metrics.recordLambda(
+                composable = false,
+                memoized = true,
+                singleton = true
+            )
+            return expression
+        }
 
         // If the function captures any unstable values or var declarations, do not memoize
         if (captures.any {
             !((it as? IrVariable)?.isVar != true && stabilityOf(it.type).knownStable())
         }
-        ) return expression
+        ) {
+            metrics.recordLambda(
+                composable = false,
+                memoized = false,
+                singleton = false
+            )
+            return expression
+        }
 
         // Otherwise memoize the expression based on the stable captured values
         val rememberParameterCount = captures.size + 1 // One additional parameter for the lambda
@@ -780,6 +807,12 @@ class ComposerLambdaMemoization(
             symbol = functionContext.symbol,
             startOffset = expression.startOffset,
             endOffset = expression.endOffset
+        )
+
+        metrics.recordLambda(
+            composable = false,
+            memoized = true,
+            singleton = false
         )
 
         return irBuilder.irCall(
