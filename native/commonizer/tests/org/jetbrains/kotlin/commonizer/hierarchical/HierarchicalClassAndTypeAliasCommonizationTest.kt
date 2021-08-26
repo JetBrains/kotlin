@@ -33,13 +33,22 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
     fun `test commonization of typeAlias and class hierarchically`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
-            simpleSingleSourceTarget("a", "typealias X = Int")
-            simpleSingleSourceTarget("b", "typealias X = Long")
+            registerDependency("a", "b", "c", "d", "(a, b)", "(c, d)", "(a, b, c, d)") {
+                source(
+                    """
+                    interface A
+                    interface B: A
+                    interface C: A
+                    """.trimIndent()
+                )
+            }
+            simpleSingleSourceTarget("a", "typealias X = B")
+            simpleSingleSourceTarget("b", "typealias X = C")
             simpleSingleSourceTarget("c", "class X")
             simpleSingleSourceTarget("d", "typealias X = Short")
         }
 
-        result.assertCommonized("(a, b)", "expect class X: Number")
+        result.assertCommonized("(a, b)", "expect class X: A")
         result.assertCommonized("(c, d)", "expect class X")
         result.assertCommonized("((a, b), (c, d))", "expect class X")
     }
@@ -558,7 +567,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(c, d)", """
-                expect class Proxy: Number
+                typealias Proxy = Int
                 typealias X = Proxy
                 expect val x: X
             """.trimIndent()
@@ -566,7 +575,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
 
         result.assertCommonized(
             "(a, b, c, d)", """
-                expect class Proxy: Number
+                typealias Proxy = Long
                 typealias X = Proxy
                 expect val x: X
             """.trimIndent()

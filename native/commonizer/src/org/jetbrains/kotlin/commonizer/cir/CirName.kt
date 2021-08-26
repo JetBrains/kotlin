@@ -95,7 +95,10 @@ class CirEntityId private constructor(val packageName: CirPackageName, val relat
         else -> false
     }
 
-    override fun hashCode(): Int = hashCode(packageName).appendHashCode(relativeNameSegments)
+    private var _hashCode: Int = 0
+
+    override fun hashCode(): Int = if (_hashCode != 0) _hashCode else
+        hashCode(packageName).appendHashCode(relativeNameSegments).also { hashCode -> _hashCode = hashCode }
 
     override fun toString(): String = buildString {
         packageName.segments.joinTo(this, "/")
