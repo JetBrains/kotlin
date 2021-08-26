@@ -589,39 +589,67 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         override fun <T> shouldRunCompletion(call: T): Boolean where T : FirStatement, T : FirResolvable = false
     }
 
-    private fun ConeClassLikeType.inheritTypeArguments(
-        base: FirClassLikeDeclaration,
-        arguments: Array<out ConeTypeProjection>
-    ): Array<out ConeTypeProjection>? {
-        val firClass = lookupTag.toSymbol(session)?.fir ?: return null
-        if (firClass !is FirTypeParameterRefsOwner || firClass.typeParameters.isEmpty()) return arrayOf()
-        return when (firClass) {
-            base -> arguments
-            is FirTypeAlias -> firClass.inheritTypeArguments(firClass.expandedTypeRef, base, arguments)
-            // TODO: if many supertypes, check consistency
-            is FirClass -> firClass.superTypeRefs.mapNotNull { firClass.inheritTypeArguments(it, base, arguments) }.firstOrNull()
-            else -> null
-        }
-    }
+    // Given a type A<T0, ..., Tn> and a potential subclass B of A, produce an argument list for B<V0, ..., Vm>
+    // such that it is a subtype of A<T0, ..., Tn>, or null if not possible/ambiguous. Example:
+    //
+    //   interface A<T, V, U>
+    //   interface B<U, T, W> : A<T, Int, U>
+    //   typealias C<X> = B<X, X, Any?>
+    //
+    //   remapTypeArguments(A, [String, Int, String], C) = [String]
+    //   remapTypeArguments(A, [String, Int, Any?], C) = null // T and U are different - can't be a C
+    //   remapTypeArguments(A, [String, Any?, String], C) = null // V is not Int - can't be a B, and thus a C
+    //
+    // Nulls in the list stand for uninferrable type arguments where some value *might* result in a subtype:
+    //   remapTypeArguments(A, [String, Int, Any?], B) = [Any?, String, null]
+    // Such cases are not OK in user code (so an `as B` on an instance of `A<String, Int, Any?>` will fail),
+    // but are OK as intermediate steps (e.g. for inferring type arguments for C).
+    private fun remapTypeArguments(
+        baseClass: FirClassLikeDeclaration,
+        arguments: Array<out ConeTypeProjection>,
+        castClass: FirClassLikeDeclaration
+    ): List<ConeTypeProjection?>? {
+        if (castClass == baseClass) return arguments.toList()
+        if (castClass !is FirTypeParameterRefsOwner || castClass.typeParameters.isEmpty()) return emptyList()
 
-    private fun FirTypeParameterRefsOwner.inheritTypeArguments(
-        typeRef: FirTypeRef,
-        base: FirClassLikeDeclaration,
-        arguments: Array<out ConeTypeProjection>
-    ): Array<out ConeTypeProjection>? {
-        val type = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
-        val indexMapping = typeParameters.map { parameter ->
-            // TODO: if many, check consistency of the result
-            type.typeArguments.indexOfFirst {
-                val argument = (it as? ConeKotlinType)?.lowerBoundIfFlexible()
-                argument is ConeTypeParameterType && argument.lookupTag.typeParameterSymbol == parameter.symbol
+        val superTypeRefs = when (castClass) {
+            is FirTypeAlias -> listOf(castClass.expandedTypeRef)
+            is FirClass -> castClass.superTypeRefs
+            else -> return null
+        }
+        val typeParameterIndices = castClass.typeParameters.withIndex().associate { (index, parameter) -> parameter.symbol to index }
+        val result = MutableList<ConeTypeProjection?>(typeParameterIndices.size) { null }
+        for (superTypeRef in superTypeRefs) {
+            val superType = superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
+            val superClass = superType.lookupTag.toSymbol(session)?.fir ?: continue
+            val inferredSuperTypeArguments = remapTypeArguments(baseClass, arguments, superClass) ?: continue
+            for ((superTypeArgumentIndex, inferred) in inferredSuperTypeArguments.withIndex()) {
+                if (inferred == null)
+                    continue
+                val superTypeArgument = superType.typeArguments[superTypeArgumentIndex]
+                val typeParameterSymbol = ((superTypeArgument as? ConeKotlinType)?.lowerBoundIfFlexible() as? ConeTypeParameterType)
+                    ?.lookupTag?.typeParameterSymbol
+                val index = typeParameterIndices[typeParameterSymbol]
+                if (index != null) {
+                    if (result[index] == null) {
+                        result[index] = inferred
+                    } else if (!equalProjections(inferred, result[index]!!)) {
+                        return null // typealias B<X> = A<X, X> -> remapTypeArguments(A, [Int, String], B) should fail
+                    }
+                }
+                // TODO: typealias B<X> = A<X, Int> -> remapTypeArguments(A, [Int, String], B) should fail;
+                //   but typealias B<X> = A<X, Nothing> -> remapTypeArguments(A, [Int, out Int], B) = [Int].
             }
         }
-        if (indexMapping.any { it == -1 }) return null
-
-        val typeArguments = type.inheritTypeArguments(base, arguments) ?: return null
-        return Array(typeParameters.size) { typeArguments[indexMapping[it]] }
+        return result
     }
+
+    private fun equalProjections(a: ConeTypeProjection, b: ConeTypeProjection): Boolean =
+        when (a) {
+            is ConeStarProjection -> b is ConeStarProjection
+            is ConeKotlinTypeProjection -> b is ConeKotlinTypeProjection && b.kind == a.kind &&
+                    AbstractTypeChecker.equalTypes(session.typeContext, a.type, b.type)
+        }
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression): FirTypeRef {
         val type = coneTypeSafe<ConeClassLikeType>() ?: return this
@@ -655,14 +683,16 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         )
         val newArguments = if (isSubtype) {
             // If actual type of declaration is more specific than bare type then we should just find
-            // corresponding supertype with proper arguments
-            with(session.typeContext) {
-                val superType = originalType.fastCorrespondingSupertypes(type.lookupTag)?.firstOrNull() as? ConeKotlinType?
-                superType?.typeArguments
-            }
+            // corresponding supertype with proper arguments. TODO: check consistency if many options.
+            val superType = with(session.typeContext) {
+                originalType.fastCorrespondingSupertypes(type.lookupTag)?.firstOrNull() as ConeKotlinType?
+            } ?: return null
+            superType.typeArguments
         } else {
-            type.inheritTypeArguments(baseFirClass, originalType.typeArguments)
-        } ?: return null
+            val castFirClass = type.lookupTag.toSymbol(session)?.fir ?: return null
+            val maybeMapped = remapTypeArguments(baseFirClass, originalType.typeArguments, castFirClass) ?: return null
+            Array(maybeMapped.size) { maybeMapped[it] ?: return null }
+        }
         if (newArguments.isEmpty()) return type
         return type.withArguments(newArguments)
     }

@@ -4327,6 +4327,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("IntermediateSubstitution.kt")
+                public void testIntermediateSubstitution() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cast/bare/IntermediateSubstitution.kt");
+                }
+
+                @Test
                 @TestMetadata("NullableAs.kt")
                 public void testNullableAs() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/cast/bare/NullableAs.kt");
@@ -4378,6 +4384,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("UnrelatedIs.kt")
                 public void testUnrelatedIs() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/cast/bare/UnrelatedIs.kt");
+                }
+
+                @Test
+                @TestMetadata("UnusedIntermediate.kt")
+                public void testUnusedIntermediate() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cast/bare/UnusedIntermediate.kt");
                 }
             }
 

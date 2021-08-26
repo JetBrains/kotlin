@@ -1,0 +1,19 @@
+package
+
+public fun a(/*0*/ x: A<kotlin.String, kotlin.Int, kotlin.String>): [ERROR : C]
+public fun b(/*0*/ x: A<kotlin.String, kotlin.Int, kotlin.Any?>): [ERROR : C]
+public fun c(/*0*/ x: A<kotlin.String, kotlin.Any?, kotlin.String>): [ERROR : C]
+public fun d(/*0*/ x: A<kotlin.String, kotlin.Int, kotlin.Any?>): B<kotlin.Any?, kotlin.String, *>
+
+public interface A</*0*/ T, /*1*/ V, /*2*/ U> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B</*0*/ U, /*1*/ T, /*2*/ W> : A<T, kotlin.Int, U> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias C</*0*/ X> = B<X, X, kotlin.Any?>
