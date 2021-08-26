@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirClassInitializerSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
@@ -68,6 +69,7 @@ internal class KtSymbolByFirBuilder private constructor(
     val functionLikeBuilder = FunctionLikeSymbolBuilder()
     val variableLikeBuilder = VariableLikeSymbolBuilder()
     val callableBuilder = CallableSymbolBuilder()
+    val anonymousInitializerBuilder = AnonymousInitializerBuilder()
     val typeBuilder = TypeBuilder()
 
     constructor(
@@ -334,6 +336,12 @@ internal class KtSymbolByFirBuilder private constructor(
         fun buildSetterSymbol(fir: FirPropertyAccessor): KtFirPropertySetterSymbol {
             checkRequirementForBuildingSymbol<KtFirPropertySetterSymbol>(fir, fir.isSetter)
             return symbolsCache.cache(fir) { KtFirPropertySetterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+    }
+
+    inner class AnonymousInitializerBuilder {
+        fun buildClassInitializer(fir: FirAnonymousInitializer): KtClassInitializerSymbol {
+            return symbolsCache.cache(fir) { KtFirClassInitializerSymbol(fir, resolveState, token) }
         }
     }
 

@@ -49,6 +49,12 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
     }
 
     @Test
+    @TestMetadata("classInitializer.kt")
+    public void testClassInitializer() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classInitializer.kt");
+    }
+
+    @Test
     @TestMetadata("classMembes.kt")
     public void testClassMembes() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classMembes.kt");
