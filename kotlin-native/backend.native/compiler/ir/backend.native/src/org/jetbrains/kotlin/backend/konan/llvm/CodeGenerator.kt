@@ -440,7 +440,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
      * TODO: consider merging this with [ExceptionHandler].
      */
     var forwardingForeignExceptionsTerminatedWith: LLVMValueRef? = null
-    var forwardingException: Boolean = false
+    private var forwardingException: Boolean = false
     private val foreignExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
     private val kotlinExceptions: MutableList<Pair<LLVMBasicBlockRef, LLVMValueRef>> = mutableListOf()
 
@@ -845,7 +845,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBuildExtractElement(builder, vector, index, name)!!
     }
 
-    fun forwardExceptionHandler(): ExceptionHandler {
+    internal fun forwardExceptionHandler(): ExceptionHandler {
         forwardingException = true
 
         return object : ExceptionHandler.Local() {
@@ -1364,9 +1364,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     private fun catchKotlinExceptionBlock(landingpad: LLVMValueRef? = null) {
-        val hasLandingpadFromCleanup = forwardingForeignExceptionsTerminatedWith != null
+        val isCallFromBridge = forwardingForeignExceptionsTerminatedWith != null
         val severalExceptions = kotlinExceptions.isNotEmpty() || foreignExceptions.isNotEmpty()
-        if (!hasLandingpadFromCleanup && !severalExceptions) return
+        if (!isCallFromBridge && !severalExceptions) return
 
         val foreignExceptionLandingpad = if (severalExceptions)
             basicBlock("nativeExceptionLandingpad", position()?.start)
@@ -1388,7 +1388,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             override val unwind: LLVMBasicBlockRef
                 get() = foreignExceptionLandingpad
         }
-        if (hasLandingpadFromCleanup && landingpad != null) {
+        if (isCallFromBridge && landingpad != null) {
             val extractCleanupLandingpadValue = if (severalExceptions) {
                 basicBlock("extractCleanupLandingpadKotlinException", position()?.start)
             } else catchKotlinExceptionAndTerminateBb
