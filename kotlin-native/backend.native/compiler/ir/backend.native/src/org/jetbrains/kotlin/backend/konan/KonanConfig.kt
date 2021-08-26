@@ -56,7 +56,25 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
 
-    val memoryModel: MemoryModel get() = configuration.get(BinaryOptions.memoryModel)!!
+    val memoryModel: MemoryModel by lazy {
+        when (configuration.get(BinaryOptions.memoryModel)!!) {
+            MemoryModel.STRICT -> MemoryModel.STRICT
+            MemoryModel.RELAXED -> MemoryModel.RELAXED
+            MemoryModel.EXPERIMENTAL -> {
+                if (!target.supportsThreads()) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                            "Experimental memory model requires threads, which are not supported on target ${target.name}. Used strict memory model.")
+                    MemoryModel.STRICT
+                } else if (destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                            "Experimental memory model is incompatible with 'legacy' destroy runtime mode. Used strict memory model.")
+                    MemoryModel.STRICT
+                } else {
+                    MemoryModel.EXPERIMENTAL
+                }
+            }
+        }
+    }
     val destroyRuntimeMode: DestroyRuntimeMode get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)!!
     val gc: GC get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR)!!
     val gcAggressive: Boolean get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR_AGRESSIVE)!!
@@ -154,23 +172,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         add(if (debug) "debug.bc" else "release.bc")
-        val effectiveMemoryModel = when (memoryModel) {
-            MemoryModel.STRICT -> MemoryModel.STRICT
-            MemoryModel.RELAXED -> MemoryModel.RELAXED
-            MemoryModel.EXPERIMENTAL -> {
-                if (!target.supportsThreads()) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Experimental memory model requires threads, which are not supported on target ${target.name}. Used strict memory model.")
-                    MemoryModel.STRICT
-                } else if (destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Experimental memory model is incompatible with 'legacy' destroy runtime mode. Used strict memory model.")
-                    MemoryModel.STRICT
-                } else {
-                    MemoryModel.EXPERIMENTAL
-                }
-            }
-        }
         val useMimalloc = if (configuration.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc") {
             if (target.supportsMimallocAllocator()) {
                 true
@@ -182,7 +183,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } else {
             false
         }
-        when (effectiveMemoryModel) {
+        when (memoryModel) {
             MemoryModel.STRICT -> {
                 add("strict.bc")
                 add("legacy_memory_manager.bc")
