@@ -210,6 +210,12 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             ) {
                 model("ir/irText")
             }
+
+            testClass<AbstractFirBytecodeListingTest>(
+                suiteTestClassName = "Fir2IrSpecificBytecodeListingTestGenerated"
+            ) {
+                model("codegen/bytecodeListing")
+            }
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
