@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
@@ -18,9 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
 import java.io.File
 import java.net.URLEncoder
 
@@ -32,40 +33,12 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
     internal val commonizerTargets: Set<SharedCommonizerTarget>
         get() = project.getAllCommonizerTargets()
 
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
-    @get:IgnoreEmptyDirectories
-    @get:InputDirectory
-    @Suppress("unused") // Only for up-to-date checker. The directory with the original common libs.
-    val originalCommonLibrariesDirectory = konanHome
-        .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-        .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
-
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
-    @get:IgnoreEmptyDirectories
-    @get:InputDirectory
-    @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
-    val originalPlatformLibrariesDirectory = konanHome
-        .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-        .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
-
-    @get:OutputDirectories
-    @Suppress("unused") // Only for up-to-date checker.
+    @get:Internal
     val outputDirectories: Set<File>
         get() {
             val rootOutputDirectory = getRootOutputDirectory()
             return commonizerTargets.map { target -> resolveCommonizedDirectory(rootOutputDirectory, target) }.toSet()
         }
-
-    /*
-    Ensures that only one CommonizerTask can run at a time.
-    This is necessary because of the success-marker mechanism of this task.
-    This is a phantom file: No one has the intention to actually create this output file.
-    However, telling Gradle that all those tasks rely on the same output file will enforce
-    non-parallel execution.
-    */
-    @get:OutputFile
-    @Suppress("unused")
-    val taskMutex: File = project.rootProject.file(".commonizer-phantom-output")
 
     @get:Internal
     internal val commonizerRunner = KotlinNativeCommonizerToolRunner(project)
