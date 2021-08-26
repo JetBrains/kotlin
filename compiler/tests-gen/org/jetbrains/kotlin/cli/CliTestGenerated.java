@@ -281,6 +281,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
         }
 
+        @TestMetadata("extraBooleanArgumentEqualsFalse.args")
+        public void testExtraBooleanArgumentEqualsFalse() throws Exception {
+            runTest("compiler/testData/cli/jvm/extraBooleanArgumentEqualsFalse.args");
+        }
+
+        @TestMetadata("extraBooleanArgumentEqualsNonsense.args")
+        public void testExtraBooleanArgumentEqualsNonsense() throws Exception {
+            runTest("compiler/testData/cli/jvm/extraBooleanArgumentEqualsNonsense.args");
+        }
+
+        @TestMetadata("extraBooleanArgumentEqualsTrue.args")
+        public void testExtraBooleanArgumentEqualsTrue() throws Exception {
+            runTest("compiler/testData/cli/jvm/extraBooleanArgumentEqualsTrue.args");
+        }
+
         @TestMetadata("extraHelp.args")
         public void testExtraHelp() throws Exception {
             runTest("compiler/testData/cli/jvm/extraHelp.args");

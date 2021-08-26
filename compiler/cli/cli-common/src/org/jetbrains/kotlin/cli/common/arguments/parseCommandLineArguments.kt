@@ -54,6 +54,8 @@ data class ArgumentParseErrors(
 
     var argumentWithoutValue: String? = null,
 
+    var booleanArgumentWithValue: String? = null,
+
     val argfileErrors: MutableList<String> = SmartList(),
 
     // Reports from internal arguments parsers
@@ -159,7 +161,16 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
 
         val (property, argument) = argumentField
         val value: Any = when {
-            argumentField.property.returnType.classifier == Boolean::class -> true
+            argumentField.property.returnType.classifier == Boolean::class -> {
+                if (arg.startsWith(argument.value + "=")) {
+                    // Can't use toBooleanStrict yet because this part of the compiler is used in Gradle and needs API version 1.4.
+                    when (arg.substring(argument.value.length + 1)) {
+                        "true" -> true
+                        "false" -> false
+                        else -> true.also { errors.booleanArgumentWithValue = arg }
+                    }
+                } else true
+            }
             arg.startsWith(argument.value + "=") -> {
                 arg.substring(argument.value.length + 1)
             }
@@ -212,6 +223,9 @@ fun validateArguments(errors: ArgumentParseErrors?): String? {
     if (errors == null) return null
     if (errors.argumentWithoutValue != null) {
         return "No value passed for argument ${errors.argumentWithoutValue}"
+    }
+    errors.booleanArgumentWithValue?.let { arg ->
+        return "No value expected for boolean argument ${arg.substringBefore('=')}. Please remove the value: $arg"
     }
     if (errors.unknownArgs.isNotEmpty()) {
         return "Invalid argument: ${errors.unknownArgs.first()}"

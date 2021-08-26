@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/extraBooleanArgumentEqualsFalse.kt
+-d
+$TEMP_DIR$
+-Xallow-kotlin-package=false
