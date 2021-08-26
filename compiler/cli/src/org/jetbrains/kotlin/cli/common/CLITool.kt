@@ -18,17 +18,13 @@ package org.jetbrains.kotlin.cli.common
 
 import org.fusesource.jansi.AnsiConsole
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageFeature.Kind.BUG_FIX
-import org.jetbrains.kotlin.config.LanguageFeature.State.ENABLED
 import org.jetbrains.kotlin.config.Services
 import java.io.PrintStream
 import java.net.URL
@@ -37,12 +33,11 @@ import java.util.function.Predicate
 import kotlin.system.exitProcess
 
 abstract class CLITool<A : CommonToolArguments> {
-    fun exec(errStream: PrintStream, vararg args: String): ExitCode {
-        return exec(errStream, Services.EMPTY, defaultMessageRenderer(), args)
-    }
+    fun exec(errStream: PrintStream, vararg args: String): ExitCode =
+        exec(errStream, Services.EMPTY, defaultMessageRenderer(), args)
 
-    fun exec(errStream: PrintStream,  messageRenderer: MessageRenderer, vararg args: String): ExitCode
-        = exec(errStream, Services.EMPTY, messageRenderer, args)
+    fun exec(errStream: PrintStream, messageRenderer: MessageRenderer, vararg args: String): ExitCode =
+        exec(errStream, Services.EMPTY, messageRenderer, args)
 
     protected fun exec(
         errStream: PrintStream,
@@ -64,7 +59,7 @@ abstract class CLITool<A : CommonToolArguments> {
             val errorMessage = validateArguments(arguments.errors)
             if (errorMessage != null) {
                 collector.report(CompilerMessageSeverity.ERROR, errorMessage, null)
-                collector.report(CompilerMessageSeverity.INFO, "Use -help for more information", null)
+                collector.report(INFO, "Use -help for more information", null)
                 return ExitCode.COMPILATION_ERROR
             }
 
@@ -122,59 +117,6 @@ abstract class CLITool<A : CommonToolArguments> {
         }
     }
 
-    private fun reportArgumentParseProblems(collector: MessageCollector, arguments: A) {
-        reportUnsafeInternalArgumentsIfAny(arguments, collector)
-
-        val errors = arguments.errors ?: return
-
-        for (flag in errors.unknownExtraFlags) {
-            collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
-        }
-        for (argument in errors.extraArgumentsPassedInObsoleteForm) {
-            collector.report(
-                STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
-                        "to specify the value: $argument=..."
-            )
-        }
-        for ((key, value) in errors.duplicateArguments) {
-            collector.report(STRONG_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
-        }
-        for ((deprecatedName, newName) in errors.deprecatedArguments) {
-            collector.report(STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
-        }
-
-        for (argfileError in errors.argfileErrors) {
-            collector.report(STRONG_WARNING, argfileError)
-        }
-
-        for (internalArgumentsError in errors.internalArgumentsParsingProblems) {
-            collector.report(STRONG_WARNING, internalArgumentsError)
-        }
-    }
-
-    private fun reportUnsafeInternalArgumentsIfAny(arguments: A, collector: MessageCollector) {
-        val unsafeArguments = arguments.internalArguments.filterNot {
-            // -XXLanguage which turns on BUG_FIX considered safe
-            it is ManualLanguageFeatureSetting && it.languageFeature.kind == BUG_FIX && it.state == ENABLED
-        }
-
-        if (unsafeArguments.isNotEmpty()) {
-            val unsafeArgumentsString = unsafeArguments.joinToString(prefix = "\n", postfix = "\n\n", separator = "\n") {
-                it.stringRepresentation
-            }
-
-            collector.report(
-                STRONG_WARNING,
-                "ATTENTION!\n" +
-                        "This build uses unsafe internal compiler arguments:\n" +
-                        unsafeArgumentsString +
-                        "This mode is not recommended for production use,\n" +
-                        "as no stability/compatibility guarantees are given on\n" +
-                        "compiler or generated code. Use it at your own risk!\n"
-            )
-        }
-    }
-
     private fun <A : CommonToolArguments> printVersionIfNeeded(messageCollector: MessageCollector, arguments: A) {
         if (arguments.version) {
             val jreVersion = System.getProperty("java.runtime.version")
@@ -185,15 +127,14 @@ abstract class CLITool<A : CommonToolArguments> {
     abstract fun executableScriptFileName(): String
 
     companion object {
-
         private fun defaultMessageRenderer(): MessageRenderer =
-                when (System.getProperty(MessageRenderer.PROPERTY_KEY)) {
-                    MessageRenderer.XML.name -> MessageRenderer.XML
-                    MessageRenderer.GRADLE_STYLE.name -> MessageRenderer.GRADLE_STYLE
-                    MessageRenderer.WITHOUT_PATHS.name -> MessageRenderer.WITHOUT_PATHS
-                    MessageRenderer.PLAIN_FULL_PATHS.name -> MessageRenderer.PLAIN_FULL_PATHS
-                    else -> MessageRenderer.PLAIN_RELATIVE_PATHS
-                }
+            when (System.getProperty(MessageRenderer.PROPERTY_KEY)) {
+                MessageRenderer.XML.name -> MessageRenderer.XML
+                MessageRenderer.GRADLE_STYLE.name -> MessageRenderer.GRADLE_STYLE
+                MessageRenderer.WITHOUT_PATHS.name -> MessageRenderer.WITHOUT_PATHS
+                MessageRenderer.PLAIN_FULL_PATHS.name -> MessageRenderer.PLAIN_FULL_PATHS
+                else -> MessageRenderer.PLAIN_RELATIVE_PATHS
+            }
 
         /**
          * Useful main for derived command line tools
@@ -220,9 +161,9 @@ abstract class CLITool<A : CommonToolArguments> {
         @JvmStatic
         @JvmOverloads
         fun doMainNoExit(
-                compiler: CLITool<*>,
-                args: Array<String>,
-                messageRenderer: MessageRenderer = defaultMessageRenderer()
+            compiler: CLITool<*>,
+            args: Array<String>,
+            messageRenderer: MessageRenderer = defaultMessageRenderer()
         ): ExitCode = try {
             compiler.exec(System.err, messageRenderer, *args)
         } catch (e: CompileEnvironmentException) {
