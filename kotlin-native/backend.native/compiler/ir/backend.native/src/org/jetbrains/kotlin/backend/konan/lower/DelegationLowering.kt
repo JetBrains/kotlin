@@ -97,6 +97,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
             ).apply {
                 parent = irFile
                 annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.sharedImmutable.owner)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
             }
 
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {

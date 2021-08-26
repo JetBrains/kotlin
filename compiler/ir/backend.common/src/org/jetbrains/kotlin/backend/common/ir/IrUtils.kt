@@ -404,7 +404,7 @@ fun IrFunction.isMethodOfAny(): Boolean =
                 else -> false
             }
 
-fun IrClass.simpleFunctions() = declarations.flatMap {
+fun IrDeclarationContainer.simpleFunctions() = declarations.flatMap {
     when (it) {
         is IrSimpleFunction -> listOf(it)
         is IrProperty -> listOfNotNull(it.getter, it.setter)

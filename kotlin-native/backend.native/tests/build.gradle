@@ -1481,6 +1481,11 @@ standaloneTest("initializers_globalInitedAfterAccessingFile") {
     source = "codegen/initializers/globalInitedAfterAccessingFile.kt"
 }
 
+standaloneTest("initializers_globalNotInitedAfterAccessingClassInternals") {
+    enabled = project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM
+    source = "codegen/initializers/globalNotInitedAfterAccessingClassInternals.kt"
+}
+
 standaloneTest("initializers_globalInitedBeforeThreadLocal") {
     source = "codegen/initializers/globalInitedBeforeThreadLocal.kt"
 }
