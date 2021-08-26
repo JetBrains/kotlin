@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverridePropertySymb
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -97,13 +98,15 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         val containingDeclaration = with(analysisSession) {
             (callableSymbol as? KtCallableSymbol)?.originalContainingClassForOverride
         } ?: return
-        check(containingDeclaration is KtFirNamedClassOrObjectSymbol)
-
-        processOverrides(containingDeclaration, callableSymbol, process)
+        when (containingDeclaration) {
+            is KtFirNamedClassOrObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
+            is KtFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
+            else -> throw IllegalStateException("Expected $containingDeclaration to be a KtFirNamedClassOrObjectSymbol or KtFirAnonymousObjectSymbol")
+        }
     }
 
     private inline fun processOverrides(
-        containingDeclaration: KtFirNamedClassOrObjectSymbol,
+        containingDeclaration: KtFirSymbol<FirClass>,
         callableSymbol: KtFirSymbol<*>,
         crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {

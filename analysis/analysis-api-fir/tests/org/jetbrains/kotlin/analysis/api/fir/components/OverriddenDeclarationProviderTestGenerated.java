@@ -25,6 +25,12 @@ public class OverriddenDeclarationProviderTestGenerated extends AbstractOverridd
     }
 
     @Test
+    @TestMetadata("inAnonymousClass.kt")
+    public void testInAnonymousClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/overridenDeclarations/inAnonymousClass.kt");
+    }
+
+    @Test
     @TestMetadata("inLocalClass.kt")
     public void testInLocalClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/overridenDeclarations/inLocalClass.kt");
