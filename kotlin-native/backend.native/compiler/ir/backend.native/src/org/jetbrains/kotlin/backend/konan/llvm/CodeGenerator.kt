@@ -1408,7 +1408,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 // Catch all but Kotlin exceptions.
                 val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
                 LLVMAddClause(landingpad, clause.llvm)
-
+                cleanStackLocals()
+                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
                 val bbUnexpected = basicBlock("unexpectedException", position()?.end)
 
                 val selector = extractValue(landingpad, 1)
@@ -1551,10 +1552,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
 
         if (shouldHaveCleanupLandingpad) {
-            appendingTo(cleanupLandingpad) {
-                cleanStackLocals()
-                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
-                LLVMBuildResume(builder, landingpad!!)
+            if (forwardingForeignExceptionsTerminatedWith == null) {
+                appendingTo(cleanupLandingpad) {
+                    cleanStackLocals()
+                    handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
+                    LLVMBuildResume(builder, landingpad!!)
+                }
             }
         } else {
             // Replace invokes with calls and branches.
