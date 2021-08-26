@@ -10,6 +10,7 @@ import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import java.util.*
 
 fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
@@ -207,16 +209,26 @@ internal fun FirLightClassBase.createMethods(
                     return true
                 }
 
+                val originalElement = declaration.psi as? KtDeclaration
+
                 val getter = declaration.getter?.takeIf {
                     it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_GETTER)
                 }
 
                 if (getter != null) {
+                    val lightMemberOrigin = originalElement?.let {
+                        LightMemberOriginForDeclaration(
+                            originalElement = it,
+                            originKind = JvmDeclarationOriginKind.OTHER,
+                            auxiliaryOriginalElement = getter.psi as? KtDeclaration
+                        )
+                    }
+
                     result.add(
                         FirLightAccessorMethodForSymbol(
                             propertyAccessorSymbol = getter,
                             containingPropertySymbol = declaration,
-                            lightMemberOrigin = null,
+                            lightMemberOrigin = lightMemberOrigin,
                             containingClass = this@createMethods,
                             isTopLevel = isTopLevel
                         )
@@ -228,11 +240,18 @@ internal fun FirLightClassBase.createMethods(
                 }
 
                 if (setter != null) {
+                    val lightMemberOrigin = originalElement?.let {
+                        LightMemberOriginForDeclaration(
+                            originalElement = it,
+                            originKind = JvmDeclarationOriginKind.OTHER,
+                            auxiliaryOriginalElement = setter.psi as? KtDeclaration
+                        )
+                    }
                     result.add(
                         FirLightAccessorMethodForSymbol(
                             propertyAccessorSymbol = setter,
                             containingPropertySymbol = declaration,
-                            lightMemberOrigin = null,
+                            lightMemberOrigin = lightMemberOrigin,
                             containingClass = this@createMethods,
                             isTopLevel = isTopLevel
                         )

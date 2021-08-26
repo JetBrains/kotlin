@@ -58,8 +58,8 @@ internal class FirLightAccessorMethodForSymbol(
 
     override fun isVarArgs(): Boolean = false
 
-    override val kotlinOrigin: KtDeclaration? =
-        (propertyAccessorSymbol.psi ?: containingPropertySymbol.psi) as? KtDeclaration
+    override val kotlinOrigin: KtDeclaration?
+        get() = lightMemberOrigin?.originalElement
 
     private val accessorSite
         get() =
