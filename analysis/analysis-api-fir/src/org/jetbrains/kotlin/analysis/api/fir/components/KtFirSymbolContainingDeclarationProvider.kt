@@ -72,6 +72,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             FirFakeSourceElementKind.ImplicitConstructor ->
                 return source.psi as KtDeclaration
             FirFakeSourceElementKind.PropertyFromParameter -> return source.psi?.parentOfType<KtPrimaryConstructor>()!!
+            FirFakeSourceElementKind.DefaultAccessor -> return source.psi as KtProperty
             FirRealSourceElementKind -> source.psi!!
             else -> error("Unexpected FirSourceElement: kind=${source.kind} element=${source.psi!!::class.simpleName}")
         }
