@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
@@ -22,16 +23,19 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.idea.fir.isInvokeFunction
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirFile
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImportOptimizerResult
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class KtFirImportOptimizer(
     private val firResolveState: FirModuleResolveState
@@ -53,7 +57,7 @@ internal class KtFirImportOptimizer(
 
         val referencesEntities = collectReferencedEntities(firFile)
 
-        val requiredStarImports = referencesEntities
+        val requiredStarImports = referencesEntities.keys
             .asSequence()
             .filterNot { it in explicitlyImportedFqNames }
             .mapNotNull { it.parentOrNull() }
@@ -69,7 +73,7 @@ internal class KtFirImportOptimizer(
             val isUsed = when {
                 !alreadySeenImports.add(importPath) -> false
                 importPath.isAllUnder -> importPath.fqName in requiredStarImports
-                importPath.fqName in referencesEntities -> true
+                importPath.fqName in referencesEntities -> importPath.importedName in referencesEntities.getValue(importPath.fqName)
                 else -> false
             }
 
@@ -81,8 +85,8 @@ internal class KtFirImportOptimizer(
         return KtImportOptimizerResult(unusedImports)
     }
 
-    private fun collectReferencedEntities(firFile: FirFile): Set<FqName> {
-        val usedImports: MutableSet<FqName> = mutableSetOf()
+    private fun collectReferencedEntities(firFile: FirFile): Map<FqName, Set<Name>> {
+        val usedImports = mutableMapOf<FqName, MutableSet<Name>>()
 
         firFile.accept(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
@@ -117,15 +121,25 @@ internal class KtFirImportOptimizer(
             private fun processFunctionCall(functionCall: FirFunctionCall) {
                 if (functionCall.isFullyQualified) return
 
-                val functionSymbol = functionCall.toResolvedCallableSymbol() ?: return
-                saveCallable(functionSymbol)
+                val functionReference = functionCall.toResolvedCallableReference() ?: return
+                val functionSymbol = functionReference.toResolvedCallableSymbol() ?: return
+
+                val referencedByName = if (functionCall.isInvokeOperatorImplicitCall) {
+                    OperatorNameConventions.INVOKE
+                } else {
+                    functionReference.name
+                }
+
+                saveCallable(functionSymbol, referencedByName)
             }
 
             private fun processPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
                 if (propertyAccessExpression.isFullyQualified) return
 
-                val propertySymbol = propertyAccessExpression.toResolvedCallableSymbol() ?: return
-                saveCallable(propertySymbol)
+                val propertyReference = propertyAccessExpression.toResolvedCallableReference() ?: return
+                val propertySymbol = propertyReference.toResolvedCallableSymbol() ?: return
+
+                saveCallable(propertySymbol, propertyReference.name)
             }
 
             private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
@@ -137,7 +151,7 @@ internal class KtFirImportOptimizer(
             private fun processResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
                 val referencedCallableSymbol = resolvedCallableReference.resolvedSymbol as? FirCallableSymbol<*> ?: return
 
-                saveCallable(referencedCallableSymbol)
+                saveCallable(referencedCallableSymbol, resolvedCallableReference.name)
             }
 
             private fun processResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
@@ -154,12 +168,12 @@ internal class KtFirImportOptimizer(
             }
 
             private fun saveType(classId: ClassId) {
-                usedImports += classId.asSingleFqName()
+                usedImports.getOrPut(classId.asSingleFqName()) { hashSetOf() } += classId.shortClassName
             }
 
-            private fun saveCallable(symbol: FirCallableSymbol<*>) {
-                val importableName = symbol.computeImportableName() ?: return
-                usedImports += importableName
+            private fun saveCallable(resolvedSymbol: FirCallableSymbol<*>, referencedByName: Name) {
+                val importableName = resolvedSymbol.computeImportableName() ?: return
+                usedImports.getOrPut(importableName) { hashSetOf() } += referencedByName
             }
         })
 
@@ -190,6 +204,32 @@ internal class KtFirImportOptimizer(
 
 private val FirQualifiedAccessExpression.isFullyQualified: Boolean
     get() = explicitReceiver is FirResolvedQualifier
+
+/**
+ * A hacky way to distinguish `foo()` call from `foo.invoke()` call.
+ *
+ * Need to be removed when the compiler is fixed to use `FirImplicitInvokeCall` in all appropriate situations.
+ */
+private val FirFunctionCall.isInvokeOperatorImplicitCall: Boolean
+    get() {
+        val functionSymbol = toResolvedCallableSymbol() ?: return false
+
+        if (!functionSymbol.isInvokeFunction()) return false
+        if (!functionSymbol.isOperator) return false
+
+        val receiver = explicitReceiver ?: return false
+
+        val callPsi = when (val psi = psi) {
+            is KtQualifiedExpression -> psi.selectorExpression as? KtCallExpression
+            is KtCallExpression -> psi
+            else -> null
+        } ?: return false
+
+        // with invoke operator, explicit receiver does not have a source for some reason
+        val receiverPsi = receiver.psi ?: return true
+
+        return callPsi.calleeExpression == receiverPsi
+    }
 
 /**
  * Helper abstraction to navigate through qualified FIR elements - we have to match [ClassId] and PSI qualifier pair
