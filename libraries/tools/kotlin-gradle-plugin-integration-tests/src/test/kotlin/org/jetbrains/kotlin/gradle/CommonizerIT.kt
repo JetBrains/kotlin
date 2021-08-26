@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel.INFO
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -38,9 +37,9 @@ class CommonizerIT : BaseGradleIT() {
                 assertSuccessful()
             }
 
-            build("commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
+            build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertContains("Native Distribution Commonization: Cache hit")
+                assertNativeDistributionCommonizationCacheHit()
                 assertContains("Native Distribution Commonization: All available targets are commonized already")
                 assertContains("Native Distribution Commonization: Lock acquired")
                 assertContains("Native Distribution Commonization: Lock released")
@@ -48,7 +47,7 @@ class CommonizerIT : BaseGradleIT() {
                 assertSuccessful()
             }
 
-            build("commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
+            build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertContains("Native Distribution Commonization: Cache disabled")
                 assertContains(commonizerOutput)
@@ -69,7 +68,7 @@ class CommonizerIT : BaseGradleIT() {
             }
 
             build(":commonize") {
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertNativeDistributionCommonizationCacheHit()
                 assertTasksUpToDate(":cinteropCurlTargetA")
                 assertTasksUpToDate(":cinteropCurlTargetB")
                 assertTasksUpToDate(":commonizeCInterop")
@@ -81,7 +80,7 @@ class CommonizerIT : BaseGradleIT() {
 
             buildGradleKts.writeText(originalBuildGradleKtsContent.replace("curl", "curl2"))
             build(":commonize") {
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertNativeDistributionCommonizationCacheHit()
                 assertTasksExecuted(":cinteropCurl2TargetA")
                 assertTasksExecuted(":cinteropCurl2TargetB")
                 assertTasksExecuted(":commonizeCInterop")
@@ -90,7 +89,7 @@ class CommonizerIT : BaseGradleIT() {
 
             buildGradleKts.writeText(originalBuildGradleKtsContent.lineSequence().filter { "curl" !in it }.joinToString("\n"))
             build(":commonize") {
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertNativeDistributionCommonizationCacheHit()
                 assertTasksNotExecuted(":cinteropCurlTargetA")
                 assertTasksNotExecuted(":cinteropCurlTargetB")
                 assertSuccessful()
@@ -116,7 +115,7 @@ class CommonizerIT : BaseGradleIT() {
             }
 
             build(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=true") {
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertNativeDistributionCommonizationCacheHit()
                 assertTasksExecuted(":cinteropCurlTargetA")
                 assertTasksExecuted(":cinteropCurlTargetB")
                 assertTasksExecuted(":commonizeCInterop")
@@ -124,7 +123,7 @@ class CommonizerIT : BaseGradleIT() {
             }
 
             build(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=false") {
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertNativeDistributionCommonizationCacheHit()
                 assertTasksNotExecuted(":cinteropCurlTargetA")
                 assertTasksNotExecuted(":cinteropCurlTargetB")
                 assertTasksNotExecuted(":commonizeCInterop")
@@ -251,7 +250,7 @@ class CommonizerIT : BaseGradleIT() {
                 assertSuccessful()
                 assertTasksUpToDate(":cinteropWithPosixTargetA")
                 assertTasksUpToDate(":cinteropWithPosixTargetB")
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertNativeDistributionCommonizationCacheHit()
                 assertTasksUpToDate(":commonizeCInterop")
             }
         }
@@ -520,7 +519,7 @@ class CommonizerIT : BaseGradleIT() {
             build(":assemble", testSourceSetsDependingOnMainParameter) {
                 assertTestSourceSetsDependingOnMainParameter()
                 assertSuccessful()
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertContains("Native Distribution Commonization: Cache hit")
                 assertTasksUpToDate(":commonizeCInterop")
             }
 
@@ -636,6 +635,10 @@ class CommonizerIT : BaseGradleIT() {
                 buildFile.writeText(preparedText)
             }
         }
+    }
+
+    private fun CompiledProject.assertNativeDistributionCommonizationCacheHit() {
+        assertContains("Native Distribution Commonization: Cache hit")
     }
 }
 
