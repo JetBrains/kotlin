@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
     ::JvmOptimizationLowering,
@@ -405,9 +406,45 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 }
             }
 
+            if (expression.origin == IrStatementOrigin.POSTFIX_DECR || expression.origin == IrStatementOrigin.POSTFIX_INCR) {
+                expression.rewritePostfixIncrDecr()?.let { return it }
+            }
+
             expression.transformChildren(this, data)
             removeUnnecessaryTemporaryVariables(expression.statements)
             return expression
+        }
+
+        private fun IrContainerExpression.rewritePostfixIncrDecr(): IrCall? {
+            return when (origin) {
+                IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR -> {
+                    val tmpVar = this.statements[0] as? IrVariable ?: return null
+                    val getIncrVar = tmpVar.initializer as? IrGetValue ?: return null
+                    if (!getIncrVar.type.isInt()) return null
+
+                    val setVar = this.statements[1] as? IrSetValue ?: return null
+                    if (setVar.symbol != getIncrVar.symbol) return null
+                    val setVarValue = setVar.value as? IrCall ?: return null
+                    val calleeName = setVarValue.symbol.owner.name
+                    if (calleeName != OperatorNameConventions.INC && calleeName != OperatorNameConventions.DEC) return null
+                    val calleeArg = setVarValue.dispatchReceiver as? IrGetValue ?: return null
+                    if (calleeArg.symbol != tmpVar.symbol) return null
+
+                    val getTmpVar = this.statements[2] as? IrGetValue ?: return null
+                    if (getTmpVar.symbol != tmpVar.symbol) return null
+
+                    val intrinsicSymbol =
+                        if (calleeName == OperatorNameConventions.INC)
+                            context.ir.symbols.intPostfixIncr
+                        else
+                            context.ir.symbols.intPostfixDecr
+
+                    return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, intrinsicSymbol)
+                        .apply { putValueArgument(0, getIncrVar) }
+                }
+                else ->
+                    null
+            }
         }
 
         override fun visitGetValue(expression: IrGetValue, data: IrClass?): IrExpression {

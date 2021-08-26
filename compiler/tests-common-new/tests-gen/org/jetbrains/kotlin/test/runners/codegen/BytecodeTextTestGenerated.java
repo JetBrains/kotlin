@@ -3797,6 +3797,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testJavaPrimitiveType() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/intrinsics/javaPrimitiveType.kt");
         }
+
+        @Test
+        @TestMetadata("postfixIncrDecr.kt")
+        public void testPostfixIncrDecr() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/intrinsics/postfixIncrDecr.kt");
+        }
     }
 
     @Nested
