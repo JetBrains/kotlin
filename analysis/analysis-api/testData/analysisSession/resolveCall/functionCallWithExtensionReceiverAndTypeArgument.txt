@@ -1,4 +1,4 @@
 KtFunctionCall:
 argumentMapping = { 1 -> (a: kotlin.Int) }
 targetFunction = /function(<extension receiver>: kotlin.String, a: kotlin.Int): kotlin.Unit
-substitutor = <empty substitutor>
+substitutor = <map substitutor: {FirTypeParameterSymbol A=kotlin/String, FirTypeParameterSymbol B=kotlin/Int}>

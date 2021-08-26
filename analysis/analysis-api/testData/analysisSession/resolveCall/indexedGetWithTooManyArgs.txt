@@ -1,3 +1,4 @@
 KtFunctionCall:
 argumentMapping = { 1 -> (a: kotlin.Int), "foo" -> (b: kotlin.String) }
-targetFunction = ERR<Too many arguments for public final operator fun /C.get(a: R|kotlin/Int|, b: R|kotlin/String|): R|kotlin/Boolean|, [/C.get(a: kotlin.Int, b: kotlin.String): kotlin.Boolean]>
+targetFunction = ERR<Too many arguments for public final operator fun /C.get(a: R|kotlin/Int|, b: R|kotlin/String|): R|kotlin/Boolean|, [/C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean]>
+substitutor = <empty substitutor>

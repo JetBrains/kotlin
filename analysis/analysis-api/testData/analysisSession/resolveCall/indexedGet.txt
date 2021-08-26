@@ -1,3 +1,4 @@
 KtFunctionCall:
 argumentMapping = { 1 -> (a: kotlin.Int), "foo" -> (b: kotlin.String) }
-targetFunction = /C.get(a: kotlin.Int, b: kotlin.String): kotlin.Boolean
+targetFunction = /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
+substitutor = <empty substitutor>

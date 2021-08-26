@@ -1,3 +1,4 @@
 KtFunctionCall:
 argumentMapping = { 1 -> (vararg a: kotlin.Int), 2 -> (vararg a: kotlin.Int), 3 -> (vararg a: kotlin.Int) }
 targetFunction = /function(vararg a: kotlin.Int): kotlin.Unit
+substitutor = <empty substitutor>

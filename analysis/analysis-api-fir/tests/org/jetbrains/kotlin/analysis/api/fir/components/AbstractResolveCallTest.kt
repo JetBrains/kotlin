@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.fir.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleModuleTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyse
 import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtDelegatedConstructorCallKind
 import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallTarget
 import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallTarget
+import org.jetbrains.kotlin.analysis.api.fir.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.analysis.api.fir.test.framework.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.api.fir.types.KtFirSubstitutor
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.expressionMarkerProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -52,7 +56,7 @@ abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
 }
 
 private fun KtCall.stringRepresentation(): String {
-    fun KtType.render() = asStringForDebugging().replace('/', '.')
+    fun KtType.render() = substitutor.substituteOrSelf(this).asStringForDebugging().replace('/', '.')
     fun Any.stringValue(): String = when (this) {
         is KtFunctionLikeSymbol -> buildString {
             append(
@@ -66,7 +70,11 @@ private fun KtCall.stringRepresentation(): String {
             )
             append("(")
             (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
-                append("<receiver>: ${receiver.type.render()}")
+                append("<extension receiver>: ${receiver.type.render()}")
+                if (valueParameters.isNotEmpty()) append(", ")
+            }
+            (this@stringValue as? KtPossibleMemberSymbol)?.dispatchType?.let { dispatchReceiverType ->
+                append("<dispatch receiver>: ${dispatchReceiverType.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
             valueParameters.joinTo(this) { it.stringValue() }
@@ -80,6 +88,13 @@ private fun KtCall.stringRepresentation(): String {
         is Map<*, *> -> entries.joinToString(prefix = "{ ", postfix = " }") { (k, v) -> "${k?.stringValue()} -> (${v?.stringValue()})" }
         is KtExpression -> this.text
         is KtDelegatedConstructorCallKind -> toString()
+        is KtSubstitutor.Empty -> "<empty substitutor>"
+        is KtFirSubstitutor -> {
+            when (val substitutor = substitutor) {
+                is ConeSubstitutorByMap -> "<map substitutor: ${substitutor.substitution}>"
+                else -> "<complex substitutor>"
+            }
+        }
         else -> error("unexpected parameter type ${this::class}")
     }
 

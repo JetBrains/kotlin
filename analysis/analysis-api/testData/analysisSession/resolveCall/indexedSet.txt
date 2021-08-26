@@ -1,3 +1,4 @@
 KtFunctionCall:
 argumentMapping = { 1 -> (a: kotlin.Int), "foo" -> (b: kotlin.String), false -> (value: kotlin.Boolean) }
-targetFunction = /C.set(a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
+targetFunction = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
+substitutor = <empty substitutor>

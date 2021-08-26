@@ -1,3 +1,4 @@
 KtFunctionCall:
-argumentMapping = { 2 -> (other: B) }
-targetFunction = /to(<receiver>: A, other: B): A
+argumentMapping = { 2 -> (other: kotlin.Int) }
+targetFunction = /to(<extension receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+substitutor = <map substitutor: {FirTypeParameterSymbol A=kotlin/Int, FirTypeParameterSymbol B=kotlin/Int}>

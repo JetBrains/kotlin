@@ -61,6 +61,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("functionCallWithExtensionReceiverAndTypeArgument.kt")
+    public void testFunctionCallWithExtensionReceiverAndTypeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/functionCallWithExtensionReceiverAndTypeArgument.kt");
+    }
+
+    @Test
     @TestMetadata("functionCallWithLambdaArgument.kt")
     public void testFunctionCallWithLambdaArgument() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/functionCallWithLambdaArgument.kt");
@@ -82,6 +88,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     @TestMetadata("functionCallWithSpreadArgument.kt")
     public void testFunctionCallWithSpreadArgument() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/functionCallWithSpreadArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithTypeArgument.kt")
+    public void testFunctionCallWithTypeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/functionCallWithTypeArgument.kt");
     }
 
     @Test
@@ -211,6 +223,12 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("memberFunctionCallWithTypeArgument.kt")
+    public void testMemberFunctionCallWithTypeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/memberFunctionCallWithTypeArgument.kt");
+    }
+
+    @Test
     @TestMetadata("resolveCallInSuperConstructorParam.kt")
     public void testResolveCallInSuperConstructorParam() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/resolveCallInSuperConstructorParam.kt");
@@ -238,5 +256,11 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     @TestMetadata("variableAsFunctionLikeCall.kt")
     public void testVariableAsFunctionLikeCall() throws Exception {
         runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableAsFunctionLikeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("variableWithInvoke.kt")
+    public void testVariableWithInvoke() throws Exception {
+        runTest("analysis/analysis-api/testData/analysisSession/resolveCall/variableWithInvoke.kt");
     }
 }

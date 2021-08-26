@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -21,6 +22,7 @@ public sealed class KtCall : ValidityTokenOwner {
     public abstract val isErrorCall: Boolean
     public abstract val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>
     public abstract val targetFunction: KtCallTarget
+    public abstract val substitutor: KtSubstitutor
 }
 
 /**
@@ -34,6 +36,7 @@ public class KtFunctionalTypeVariableCall(
     private val _target: KtVariableLikeSymbol,
     private val _argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     private val _targetFunction: KtCallTarget,
+    private val _substitutor: KtSubstitutor,
     override val token: ValidityToken
 ) : KtCall() {
     public val target: KtVariableLikeSymbol get() = withValidityAssertion { _target }
@@ -42,6 +45,8 @@ public class KtFunctionalTypeVariableCall(
         get() = withValidityAssertion { _argumentMapping }
     override val targetFunction: KtCallTarget
         get() = withValidityAssertion { _targetFunction }
+    override val substitutor: KtSubstitutor
+        get() = withValidityAssertion { _substitutor }
 }
 
 /**
@@ -65,12 +70,15 @@ public class KtVariableWithInvokeFunctionCall(
     public val target: KtVariableLikeSymbol,
     private val _argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     private val _targetFunction: KtCallTarget,
+    private val _substitutor: KtSubstitutor,
     override val token: ValidityToken
 ) : KtDeclaredFunctionCall() {
     override val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>
         get() = withValidityAssertion { _argumentMapping }
     override val targetFunction: KtCallTarget
         get() = withValidityAssertion { _targetFunction }
+    override val substitutor: KtSubstitutor
+        get() = withValidityAssertion { _substitutor }
 }
 
 /**
@@ -81,12 +89,15 @@ public class KtVariableWithInvokeFunctionCall(
 public class KtFunctionCall(
     private val _argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>,
     private val _targetFunction: KtCallTarget,
+    private val _substitutor: KtSubstitutor,
     override val token: ValidityToken
 ) : KtDeclaredFunctionCall() {
     override val argumentMapping: LinkedHashMap<KtExpression, KtValueParameterSymbol>
         get() = withValidityAssertion { _argumentMapping }
     override val targetFunction: KtCallTarget
         get() = withValidityAssertion { _targetFunction }
+    override val substitutor: KtSubstitutor
+        get() = withValidityAssertion { _substitutor }
 }
 
 /**
@@ -104,6 +115,9 @@ public class KtAnnotationCall(
         get() = withValidityAssertion { _argumentMapping }
     override val targetFunction: KtCallTarget
         get() = withValidityAssertion { _targetFunction }
+
+    // Type parameter is allowed for an annotation class but not allowed as members. So substitutor is probably never useful.
+    override val substitutor: KtSubstitutor = KtSubstitutor.Empty(token)
 }
 // TODO: Add other properties, e.g., useSiteTarget
 
@@ -125,6 +139,9 @@ public class KtDelegatedConstructorCall(
         get() = withValidityAssertion { _argumentMapping }
     override val targetFunction: KtCallTarget
         get() = withValidityAssertion { _targetFunction }
+
+    // A delegate constructor call never has any type argument.
+    override val substitutor: KtSubstitutor = KtSubstitutor.Empty(token)
 }
 
 public enum class KtDelegatedConstructorCallKind { SUPER_CALL, THIS_CALL }

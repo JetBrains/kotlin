@@ -1,3 +1,4 @@
 KtFunctionCall:
-argumentMapping = { 1 -> (vararg elements: T), 2 -> (vararg elements: T), 3 -> (vararg elements: T) }
-targetFunction = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+argumentMapping = { 1 -> (vararg elements: kotlin.Int), 2 -> (vararg elements: kotlin.Int), 3 -> (vararg elements: kotlin.Int) }
+targetFunction = kotlin/arrayOf(vararg elements: kotlin.Int): kotlin.Array<kotlin.Int>
+substitutor = <map substitutor: {FirTypeParameterSymbol T=kotlin/Int}>

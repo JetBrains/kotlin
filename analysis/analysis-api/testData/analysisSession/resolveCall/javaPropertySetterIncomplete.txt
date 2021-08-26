@@ -1,3 +1,4 @@
 KtFunctionCall:
 argumentMapping = {  }
-targetFunction = ERR<Setter value is missing, [/JavaClass.setFoo(v: kotlin.Int): kotlin.Unit]>
+targetFunction = ERR<Setter value is missing, [/JavaClass.setFoo(<dispatch receiver>: JavaClass, v: kotlin.Int): kotlin.Unit]>
+substitutor = <empty substitutor>
