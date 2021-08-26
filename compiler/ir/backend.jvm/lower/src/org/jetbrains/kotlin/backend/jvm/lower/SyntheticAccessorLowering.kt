@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -51,6 +52,59 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
             (accessor.parent as IrDeclarationContainer).declarations.add(accessor)
         }
     }
+
+    companion object {
+        fun IrSymbol.isAccessible(
+            context: JvmBackendContext,
+            currentScope: ScopeWithIr?,
+            inlineScopeResolver: IrInlineScopeResolver,
+            withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
+            /// We assume that IR code that reaches us has been checked for correctness at the frontend.
+            /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
+            val declarationRaw = owner as IrDeclarationWithVisibility
+
+            // If this expression won't actually result in a JVM instruction call, access modifiers don't matter.
+            if (declarationRaw is IrFunction && (declarationRaw.isInline || context.irIntrinsics.getIntrinsic(declarationRaw.symbol) != null))
+                return true
+
+            // Enum entry constructors are generated as package-private and are accessed only from corresponding enum class
+            if (declarationRaw is IrConstructor && declarationRaw.constructedClass.isEnumEntry) return true
+
+            // Public declarations are already accessible. However, `super` calls are subclass-only.
+            val jvmVisibility = AsmUtil.getVisibilityAccessFlag(declarationRaw.visibility.delegate)
+            if (jvmVisibility == Opcodes.ACC_PUBLIC && !withSuper) return true
+
+            // `toArray` is always accessible cause mapped to public functions
+            if (declarationRaw is IrSimpleFunction && (declarationRaw.isNonGenericToArray() || declarationRaw.isGenericToArray(context)) &&
+                declarationRaw.parentAsClass.isCollectionSubClass
+            ) return true
+
+            // `$assertionsDisabled` is accessed only from the same class, even in an inline function
+            // (the inliner will generate it at the call site if necessary).
+            if (declarationRaw is IrField && declarationRaw.isAssertionsDisabledField(context)) return true
+
+            val declaration = when (declarationRaw) {
+                is IrSimpleFunction -> declarationRaw.resolveFakeOverride(allowAbstract = true)!!
+                is IrField -> declarationRaw.resolveFakeOverride()
+                else -> declarationRaw
+            }
+
+            val ownerClass = declaration.parent as? IrClass ?: return true // locals are always accessible
+            val scopeClassOrPackage = inlineScopeResolver.findContainer(currentScope!!.irElement) ?: return false
+            val samePackage = ownerClass.getPackageFragment()?.fqName == scopeClassOrPackage.getPackageFragment()?.fqName
+            return when {
+                jvmVisibility == 0 /* package only */ -> samePackage
+                jvmVisibility == Opcodes.ACC_PRIVATE -> ownerClass == scopeClassOrPackage
+                // JVM `protected`, unlike Kotlin `protected`, permits accesses from the same package.
+                !withSuper && samePackage -> true
+                // Super calls and cross-package protected accesses are both only possible from a subclass of the declaration
+                // owner. Also, the target of a non-static call must be assignable to the current class. This is a verification
+                // constraint: https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.10.1.8
+                else -> (scopeClassOrPackage is IrClass && scopeClassOrPackage.isSubclassOf(ownerClass)) &&
+                        (thisObjReference == null || thisObjReference.owner.isSubclassOf(scopeClassOrPackage))
+            }
+        }
+    }
 }
 
 private class SyntheticAccessorTransformer(
@@ -70,6 +124,11 @@ private class SyntheticAccessorTransformer(
     private val functionMap = mutableMapOf<FunctionKey, IrFunctionSymbol>()
     private val getterMap = mutableMapOf<FieldKey, IrSimpleFunctionSymbol>()
     private val setterMap = mutableMapOf<FieldKey, IrSimpleFunctionSymbol>()
+
+    private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean =
+        with(SyntheticAccessorLowering) {
+            isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference)
+        }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         if (expression.usesDefaultArguments()) {
@@ -701,53 +760,6 @@ private class SyntheticAccessorTransformer(
         // _s_upertype. If the field is static, the super class the access is on can be different and therefore
         // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
         return "p" + if (isStatic && visibility.isProtected) "\$s" + parentAsClass.syntheticAccessorToSuperSuffix() else ""
-    }
-
-    private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
-        /// We assume that IR code that reaches us has been checked for correctness at the frontend.
-        /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
-        val declarationRaw = owner as IrDeclarationWithVisibility
-
-        // If this expression won't actually result in a JVM instruction call, access modifiers don't matter.
-        if (declarationRaw is IrFunction && (declarationRaw.isInline || context.irIntrinsics.getIntrinsic(declarationRaw.symbol) != null))
-            return true
-
-        // Enum entry constructors are generated as package-private and are accessed only from corresponding enum class
-        if (declarationRaw is IrConstructor && declarationRaw.constructedClass.isEnumEntry) return true
-
-        // Public declarations are already accessible. However, `super` calls are subclass-only.
-        val jvmVisibility = AsmUtil.getVisibilityAccessFlag(declarationRaw.visibility.delegate)
-        if (jvmVisibility == Opcodes.ACC_PUBLIC && !withSuper) return true
-
-        // `toArray` is always accessible cause mapped to public functions
-        if (declarationRaw is IrSimpleFunction && (declarationRaw.isNonGenericToArray() || declarationRaw.isGenericToArray(context)) &&
-            declarationRaw.parentAsClass.isCollectionSubClass
-        ) return true
-
-        // `$assertionsDisabled` is accessed only from the same class, even in an inline function
-        // (the inliner will generate it at the call site if necessary).
-        if (declarationRaw is IrField && declarationRaw.isAssertionsDisabledField(context)) return true
-
-        val declaration = when (declarationRaw) {
-            is IrSimpleFunction -> declarationRaw.resolveFakeOverride(allowAbstract = true)!!
-            is IrField -> declarationRaw.resolveFakeOverride()
-            else -> declarationRaw
-        }
-
-        val ownerClass = declaration.parent as? IrClass ?: return true // locals are always accessible
-        val scopeClassOrPackage = inlineScopeResolver.findContainer(currentScope!!.irElement) ?: return false
-        val samePackage = ownerClass.getPackageFragment()?.fqName == scopeClassOrPackage.getPackageFragment()?.fqName
-        return when {
-            jvmVisibility == 0 /* package only */ -> samePackage
-            jvmVisibility == Opcodes.ACC_PRIVATE -> ownerClass == scopeClassOrPackage
-            // JVM `protected`, unlike Kotlin `protected`, permits accesses from the same package.
-            !withSuper && samePackage -> true
-            // Super calls and cross-package protected accesses are both only possible from a subclass of the declaration
-            // owner. Also, the target of a non-static call must be assignable to the current class. This is a verification
-            // constraint: https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.10.1.8
-            else -> (scopeClassOrPackage is IrClass && scopeClassOrPackage.isSubclassOf(ownerClass)) &&
-                    (thisObjReference == null || thisObjReference.owner.isSubclassOf(scopeClassOrPackage))
-        }
     }
 }
 

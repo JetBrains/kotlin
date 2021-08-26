@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.codegen.CodegenFactory
@@ -48,7 +50,8 @@ open class JvmIrCodegenFactory(
     private val externalMangler: JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
-    private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null
+    private val prefixPhases: NamedCompilerPhase<JvmBackendContext, IrModuleFragment>? = null,
+    private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
 ) : CodegenFactory {
     data class JvmIrBackendInput(
         val irModuleFragment: IrModuleFragment,
@@ -160,7 +163,8 @@ open class JvmIrCodegenFactory(
                 irProviders,
                 pluginExtensions,
                 expectDescriptorToSymbol = null,
-                fragmentInfo = evaluatorFragmentInfoForPsi2Ir)
+                fragmentInfo = evaluatorFragmentInfoForPsi2Ir
+            )
 
         irLinker.postProcess()
 
@@ -217,7 +221,8 @@ open class JvmIrCodegenFactory(
         )
             JvmIrSerializerImpl(state.configuration)
         else null
-        val phaseConfig = customPhaseConfig ?: PhaseConfig(jvmPhases)
+        val phases = prefixPhases?.then(jvmPhases) ?: jvmPhases
+        val phaseConfig = customPhaseConfig ?: PhaseConfig(phases)
         val context = JvmBackendContext(
             state, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions, backendExtension, irSerializer,
             notifyCodegenStart,
@@ -227,7 +232,11 @@ open class JvmIrCodegenFactory(
 
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getKtFile))
 
-        jvmPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
+        phases.invokeToplevel(
+            phaseConfig,
+            context,
+            irModuleFragment
+        )
 
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`

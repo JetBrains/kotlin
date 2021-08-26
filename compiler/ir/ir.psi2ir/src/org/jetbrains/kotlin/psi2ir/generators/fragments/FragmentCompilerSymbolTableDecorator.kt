@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.NameProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 
 // Used from CodeFragmentCompiler for IDE Debugger Plug-In
