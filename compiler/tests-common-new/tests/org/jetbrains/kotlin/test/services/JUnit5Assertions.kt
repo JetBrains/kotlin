@@ -43,19 +43,19 @@ object JUnit5Assertions : AssertionsService() {
     }
 
     override fun assertEquals(expected: Any?, actual: Any?, message: (() -> String)?) {
-        JUnit5PlatformAssertions.assertEquals(expected, actual, message?.invoke())
+        JUnit5PlatformAssertions.assertEquals(expected, actual, message)
     }
 
     override fun assertNotEquals(expected: Any?, actual: Any?, message: (() -> String)?) {
-        JUnit5PlatformAssertions.assertNotEquals(expected, actual, message?.invoke())
+        JUnit5PlatformAssertions.assertNotEquals(expected, actual, message)
     }
 
     override fun assertTrue(value: Boolean, message: (() -> String)?) {
-        JUnit5PlatformAssertions.assertTrue(value, message?.invoke())
+        JUnit5PlatformAssertions.assertTrue(value, message)
     }
 
     override fun assertFalse(value: Boolean, message: (() -> String)?) {
-        JUnit5PlatformAssertions.assertFalse(value, message?.invoke())
+        JUnit5PlatformAssertions.assertFalse(value, message)
     }
 
     override fun assertAll(exceptions: List<Throwable>) {
