@@ -81,6 +81,7 @@ internal class NativeDistributionCommonizationCache(
     }
 
     private inline fun <T> withLock(outputDirectory: File, action: () -> T): T {
+        outputDirectory.mkdirs()
         val lockfile = outputDirectory.resolve(".lock")
         logInfo("Acquire lock: ${lockfile.path} ...")
         FileOutputStream(outputDirectory.resolve(".lock")).use { stream ->
