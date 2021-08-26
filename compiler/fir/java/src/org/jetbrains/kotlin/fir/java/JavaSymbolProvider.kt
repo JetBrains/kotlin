@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -63,14 +62,22 @@ class JavaSymbolProvider(
     }
 
     private val classCache =
-        session.firCachesFactory.createCacheWithPostCompute(
-            createValue = ::findAndConvertJavaClass,
+        session.firCachesFactory.createCacheWithPostCompute<ClassId, FirRegularClassSymbol?, Nothing?, JavaClass?>(
+            createValue = { classId, _ ->
+                val foundClass = findClass(classId)
+                if (foundClass == null) {
+                    null to null
+                } else {
+                    FirRegularClassSymbol(classId) to foundClass
+                }
+            },
             postCompute = { _, classSymbol, javaClass ->
                 if (classSymbol != null && javaClass != null) {
                     convertJavaClassToFir(classSymbol, javaClass)
                 }
             }
         )
+
     private val packageCache = session.firCachesFactory.createCache(::findPackage)
     private val knownClassNamesInPackage = session.firCachesFactory.createCache<FqName, Set<String>?>(::getKnownClassNames)
 
@@ -80,10 +87,9 @@ class JavaSymbolProvider(
     private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, JavaTypeParameterStack>()
     private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
 
-    private fun findClass(
-        classId: ClassId,
-        content: KotlinClassFinder.Result.ClassFileContent?,
-    ): JavaClass? = facade.findClass(JavaClassFinder.Request(classId, previouslyFoundClassFileContent = content?.content), searchScope)
+    private fun findClass(classId: ClassId): JavaClass? =
+        facade.findClass(JavaClassFinder.Request(classId), searchScope)
+            ?.takeIf { !it.hasDifferentClassId(classId) && !it.hasMetadataAnnotation() }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -133,27 +139,10 @@ class JavaSymbolProvider(
         }
     }
 
-    fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirRegularClassSymbol? {
+    private fun getFirJavaClass(classId: ClassId): FirRegularClassSymbol? {
         // Enforce loading of outer class first
         classId.outerClassId?.let { getFirJavaClass(it) }
-
-        return classCache.getValue(classId, content)
-    }
-
-    private fun findAndConvertJavaClass(
-        classId: ClassId,
-        content: KotlinClassFinder.Result.ClassFileContent?
-    ): Pair<FirRegularClassSymbol?, JavaClass?> {
-        val foundClass = findClass(classId, content)
-        return if (foundClass == null ||
-            foundClass.hasDifferentClassId(classId) ||
-            foundClass.hasMetadataAnnotation()
-        ) {
-            null to null
-        } else {
-            val symbol = FirRegularClassSymbol(classId)
-            symbol to foundClass
-        }
+        return classCache.getValue(classId, null)
     }
 
     private fun JavaClass.hasDifferentClassId(lookupClassId: ClassId): Boolean =

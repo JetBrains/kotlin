@@ -42,7 +42,6 @@ open class KotlinDeserializedJvmSymbolsProvider(
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
-    private val javaSymbolProvider: JavaSymbolProvider,
     javaClassFinder: JavaClassFinder,
 ) : AbstractFirDeserializedSymbolsProvider(session, moduleDataProvider, kotlinScopeProvider) {
     private val knownNameInPackageCache = KnownNameInPackageCache(session, javaClassFinder)
@@ -102,9 +101,7 @@ open class KotlinDeserializedJvmSymbolsProvider(
         }
         val kotlinClass = when (result) {
             is KotlinClassFinder.Result.KotlinClass -> result
-            is KotlinClassFinder.Result.ClassFileContent -> {
-                return ClassMetadataFindResult.ClassWithoutMetadata(readClassFromClassFile(classId, result))
-            }
+            is KotlinClassFinder.Result.ClassFileContent -> return null
             null -> return ClassMetadataFindResult.ShouldDeserializeViaParent
         }
         if (kotlinClass.kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
@@ -142,10 +139,6 @@ open class KotlinDeserializedJvmSymbolsProvider(
         )
         (symbol.fir.annotations as MutableList<FirAnnotationCall>) += annotations
         symbol.fir.replaceDeprecation(symbol.fir.getDeprecationInfos(session.languageVersionSettings.apiVersion))
-    }
-
-    private fun readClassFromClassFile(classId: ClassId, classFile: KotlinClassFinder.Result.ClassFileContent): FirRegularClassSymbol? {
-        return javaSymbolProvider.getFirJavaClass(classId, classFile)
     }
 
     private fun KotlinClassFinder.Result.KotlinClass.extractMetadata(): Pair<NameResolver, ProtoBuf.Class>? {
