@@ -86,9 +86,15 @@ class ExportModelToJsStatements(
                     )
                 ).makeStmt()
 
+                // These are only used when exporting secondary constructors annotated with @JsName
                 val staticFunctions = declaration.members.filter { it is ExportedFunction && it.isStatic }
 
-                val staticsExport = (staticFunctions + declaration.nestedClasses)
+                // Nested objects are exported as static properties
+                val staticProperties = declaration.members.mapNotNull {
+                    (it as? ExportedProperty)?.takeIf { it.isStatic }
+                }
+
+                val staticsExport = (staticFunctions + staticProperties + declaration.nestedClasses)
                     .flatMap { generateDeclarationExport(it, newNameSpace) }
 
                 listOf(klassExport) + staticsExport

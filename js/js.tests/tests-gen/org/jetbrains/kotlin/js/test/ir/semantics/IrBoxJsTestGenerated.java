@@ -1627,6 +1627,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/export/exportNestedClass.kt");
         }
 
+        @TestMetadata("exportNestedObject.kt")
+        public void testExportNestedObject() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportNestedObject.kt");
+        }
+
         @TestMetadata("nonIndetifierModuleName.kt")
         public void testNonIndetifierModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");

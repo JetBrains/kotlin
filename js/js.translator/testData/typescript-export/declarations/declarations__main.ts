@@ -22,6 +22,7 @@ import _valCustomWithField = JS_TESTS.foo._valCustomWithField;
 import A4 = JS_TESTS.foo.A4;
 import O = JS_TESTS.foo.O;
 import takesO = JS_TESTS.foo.takesO;
+import KT_37829 = JS_TESTS.foo.KT_37829;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -91,6 +92,8 @@ function box(): string {
     assert(O.x === 10);
     assert(O.foo() === 20);
     assert(takesO(O) === 30);
+
+    assert(KT_37829.Companion.x == 10);
 
     return "OK";
 }
