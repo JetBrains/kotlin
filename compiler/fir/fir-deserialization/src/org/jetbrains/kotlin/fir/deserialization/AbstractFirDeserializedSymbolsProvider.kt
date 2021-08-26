@@ -100,8 +100,6 @@ abstract class AbstractFirDeserializedSymbolsProvider(
             val classPostProcessor: DeserializedClassPostProcessor
         ) : ClassMetadataFindResult()
 
-        class ClassWithoutMetadata(val symbol: FirRegularClassSymbol?) : ClassMetadataFindResult()
-
         object ShouldDeserializeViaParent : ClassMetadataFindResult()
     }
 
@@ -146,7 +144,6 @@ abstract class AbstractFirDeserializedSymbolsProvider(
                 )
                 symbol to postProcessor
             }
-            is ClassMetadataFindResult.ClassWithoutMetadata -> result.symbol to null
             ClassMetadataFindResult.ShouldDeserializeViaParent -> findAndDeserializeClassViaParent(classId) to null
             null -> null to null
         }
