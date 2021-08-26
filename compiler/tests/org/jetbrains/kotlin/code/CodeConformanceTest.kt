@@ -25,6 +25,7 @@ class CodeConformanceTest : TestCase() {
                 ".git",
                 ".idea",
                 "build/js",
+                "build/tmp",
                 "buildSrc",
                 "compiler/build",
                 "compiler/fir/lightTree/testData",
@@ -52,6 +53,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/build",
                 "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
                 "libraries/tools/kotlin-maven-plugin/target",
                 "libraries/tools/kotlin-source-map-loader/.gradle",
@@ -100,12 +102,14 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/wasm/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/.testKitDir",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
                 "libraries/tools/kotlin-maven-plugin-test/target",
                 "libraries/tools/kotlin-test-js-runner/.gradle",
                 "libraries/tools/kotlin-test-js-runner/lib",
                 "libraries/tools/kotlin-test-js-runner/node_modules",
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
+                "libraries/tools/kotlin-source-map-loader/.gradle",
                 "kotlin-native", // Have a separate licences manager
                 "out",
                 "kotlin-native/runtime"
@@ -137,7 +141,7 @@ class CodeConformanceTest : TestCase() {
         }
         val extension = fileExtensions.last()
 
-        return !(extension !in possibleAdditionalExtensions && extension.toIntOrNull() ?: MAX_STEPS_COUNT >= MAX_STEPS_COUNT)
+        return !((extension !in possibleAdditionalExtensions && (extension.toIntOrNull() ?: MAX_STEPS_COUNT) >= MAX_STEPS_COUNT))
     }
 
     fun testForgottenBunchDirectivesAndFiles() {
