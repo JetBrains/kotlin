@@ -67,6 +67,12 @@ public class OverriddenDeclarationProviderTestGenerated extends AbstractOverridd
     }
 
     @Test
+    @TestMetadata("onEnumEntry.kt")
+    public void testOnEnumEntry() throws Exception {
+        runTest("analysis/analysis-api/testData/components/overridenDeclarations/onEnumEntry.kt");
+    }
+
+    @Test
     @TestMetadata("sequenceOfOverrides.kt")
     public void testSequenceOfOverrides() throws Exception {
         runTest("analysis/analysis-api/testData/components/overridenDeclarations/sequenceOfOverrides.kt");

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -57,7 +58,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
     private fun FirTypeScope.processCallableByName(declaration: FirDeclaration) = when (declaration) {
         is FirSimpleFunction -> processFunctionsByName(declaration.name) { }
         is FirProperty -> processPropertiesByName(declaration.name) { }
-        else -> error { "Invalid FIR symbol to process: ${declaration::class}" }
+        else -> Unit
     }
 
     private fun FirTypeScope.processAllOverriddenDeclarations(
@@ -72,7 +73,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
             processor.invoke(symbol.fir)
             ProcessorAction.NEXT
         }
-        else -> error { "Invalid FIR symbol to process: ${declaration::class}" }
+        else -> ProcessorAction.STOP
     }
 
     private fun FirTypeScope.processDirectOverriddenDeclarations(
@@ -87,7 +88,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
             processor.invoke(symbol.fir)
             ProcessorAction.NEXT
         }
-        else -> error { "Invalid FIR symbol to process: ${declaration::class}" }
+        else -> ProcessorAction.STOP
     }
 
     private inline fun <T : KtSymbol> processOverrides(
