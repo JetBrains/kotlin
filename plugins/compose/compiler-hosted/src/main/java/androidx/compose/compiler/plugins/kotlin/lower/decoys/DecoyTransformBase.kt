@@ -68,6 +68,10 @@ internal interface DecoyTransformBase {
             is IdSignature.FileLocalSignature -> id
             is IdSignature.ScopeLocalDeclaration -> id.toLong()
             is IdSignature.SpecialFakeOverrideSignature -> memberSignature.getSignatureId()
+            is IdSignature.GlobalFileLocalSignature -> TODO()
+            is IdSignature.LoweredDeclarationSignature -> TODO()
+            is IdSignature.FileSignature -> TODO()
+            is IdSignature.GlobalScopeLocalDeclaration -> TODO()
         }
     }
 
