@@ -276,14 +276,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedQualifier) {
             isMutable("packageFqName", "relativeClassFqName", "isNullableLHSForCallableReference")
-            default("classId") {
-                value = """
-                    |relativeClassFqName?.let {
-                    |    ClassId(packageFqName, it, false)
-                    |}
-                """.trimMargin()
-                withGetter = true
-            }
+            defaultClassIdFromRelativeClassName()
         }
 
         impl(resolvedReifiedParameterReference)
@@ -495,6 +488,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorResolvedQualifier) {
             defaultFalse("resolvedToCompanionObject", withGetter = true)
+            defaultClassIdFromRelativeClassName()
         }
 
         noImpl(userTypeRef)
@@ -574,4 +568,17 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(implicitTypeRefType)
         }
     }
+
+    private fun ImplementationContext.defaultClassIdFromRelativeClassName() {
+        default("classId") {
+            value = """
+                |relativeClassFqName?.let {
+                |    ClassId(packageFqName, it, false)
+                |}
+                """.trimMargin()
+            withGetter = true
+        }
+    }
 }
+
+

@@ -34,7 +34,6 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
-    override var classId: ClassId? = null
     override var symbol: FirClassLikeSymbol<*>? = null
     override var isNullableLHSForCallableReference: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
@@ -47,7 +46,6 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             annotations,
             packageFqName,
             relativeClassFqName,
-            classId,
             symbol,
             isNullableLHSForCallableReference,
             nonFatalDiagnostics,
@@ -59,6 +57,13 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
 
     @Deprecated("Modification of 'typeRef' has no impact for FirErrorResolvedQualifierBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'classId' has no impact for FirErrorResolvedQualifierBuilder", level = DeprecationLevel.HIDDEN)
+    override var classId: ClassId?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

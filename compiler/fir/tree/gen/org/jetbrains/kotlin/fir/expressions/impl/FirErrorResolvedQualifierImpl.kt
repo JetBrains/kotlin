@@ -27,7 +27,6 @@ internal class FirErrorResolvedQualifierImpl(
     override val annotations: MutableList<FirAnnotationCall>,
     override val packageFqName: FqName,
     override val relativeClassFqName: FqName?,
-    override val classId: ClassId?,
     override val symbol: FirClassLikeSymbol<*>?,
     override var isNullableLHSForCallableReference: Boolean,
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
@@ -35,6 +34,9 @@ internal class FirErrorResolvedQualifierImpl(
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorResolvedQualifier() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override val classId: ClassId? get() = relativeClassFqName?.let {
+    ClassId(packageFqName, it, false)
+}
     override val resolvedToCompanionObject: Boolean get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
