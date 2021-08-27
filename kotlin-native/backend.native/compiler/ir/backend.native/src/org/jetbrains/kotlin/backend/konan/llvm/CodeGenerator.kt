@@ -1409,7 +1409,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
                 LLVMAddClause(landingpad, clause.llvm)
                 cleanStackLocals()
-                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
+                handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
                 val bbUnexpected = basicBlock("unexpectedException", position()?.end)
 
                 val selector = extractValue(landingpad, 1)
