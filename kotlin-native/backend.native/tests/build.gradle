@@ -399,20 +399,12 @@ task fields(type: KonanLocalTest) {
     source = "codegen/object/fields.kt"
 }
 
-
 task fields1(type: KonanLocalTest) {
     source = "codegen/object/fields1.kt"
 }
 
 task fields2(type: KonanLocalTest) {
-    goldValue =
-            "Set global = 1\n" +
-            "Set member = 42\n" +
-            "Get member = 42\n" +
-            "Set global = 42\n" +
-            "Get global = 42\n" +
-            "Set member = 42\n"
-
+    useGoldenData = true
     source = "codegen/object/fields2.kt"
 }
 
@@ -427,7 +419,7 @@ task objectInitialization(type: KonanLocalTest) {
 }
 
 task objectInitialization1(type: KonanLocalTest) {
-    goldValue = "init\nfield\nconstructor1\ninit\nfield\nconstructor1\nconstructor2\n"
+    useGoldenData = true
     source = "codegen/object/initialization1.kt"
 }
 
@@ -436,18 +428,17 @@ standaloneTest("object_globalInitializer") {
 }
 
 task check_type(type: KonanLocalTest) {
-    goldValue = "true\nfalse\ntrue\ntrue\ntrue\ntrue\n"
+    useGoldenData = true
     source = "codegen/basics/check_type.kt"
 }
 
 task safe_cast(type: KonanLocalTest) {
-    goldValue = "safe_cast_positive: true\n" +
-            "safe_cast_negative: true\n"
+    useGoldenData = true
     source = "codegen/basics/safe_cast.kt"
 }
 
 task typealias1(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/basics/typealias1.kt"
 }
 
@@ -492,52 +483,52 @@ task function_defaults3(type: KonanLocalTest) {
 }
 
 task function_defaults4(type: KonanLocalTest) {
-    goldValue = "43\n"
+    useGoldenData = true
     source = "codegen/function/defaults4.kt"
 }
 
 task function_defaults5(type: KonanLocalTest) {
-    goldValue = "5\n6\n"
+    useGoldenData = true
     source = "codegen/function/defaults5.kt"
 }
 
 task function_defaults6(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/function/defaults6.kt"
 }
 
 task function_defaults7(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/function/defaults7.kt"
 }
 
 task function_defaults8(type: KonanLocalTest) {
-    goldValue = "2\n"
+    useGoldenData = true
     source = "codegen/function/defaults8.kt"
 }
 
 task function_defaults9(type: KonanLocalTest) {
-    goldValue = "1\n"
+    useGoldenData = true
     source = "codegen/function/defaults9.kt"
 }
 
 task function_defaults10(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/function/defaults10.kt"
 }
 
 task function_defaults_from_fake_override(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/function/defaultsFromFakeOverride.kt"
 }
 
 task function_defaults_with_vararg1(type: KonanLocalTest) {
-    goldValue = "Hello , Correct!\nHello World, Correct!\n , Correct!\n"
+    useGoldenData = true
     source = "codegen/function/defaultsWithVarArg1.kt"
 }
 
 task function_defaults_with_vararg2(type: KonanLocalTest) {
-    goldValue = "1\n2\n42\n"
+    useGoldenData = true
     source = "codegen/function/defaultsWithVarArg2.kt"
 }
 
@@ -557,105 +548,88 @@ standaloneTest("function_nothingN_returning_safe_call") {
 standaloneTest("unreachable_statement_after_return") {
     flags = ["-g", "-entry", "codegen.function.unreachable_statement_after_return.main"]
     source = "codegen/function/unreachableStatementAfterReturn.kt"
-    goldValue = "1\n2\n3\n4\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops.kt"
-    goldValue = "01234\n0123\n43210\n\n024\n02\n420\n\n036\n03\n630\n\n024\n02\n420\n\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_types(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_types.kt"
-    goldValue = "01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n01234\n" +
-            "01234\n01234\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n0123\n" +
-            "0123\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n43210\n" +
-            "43210\n43210\nabcd\nabc\ndcba\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n024\n" +
-            "024\n024\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n02\n420\n420\n420\n420\n420\n420\n" +
-            "420\n420\n420\n420\n420\n420\n420\n420\n420\n420\nac\nac\ndb\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_overflow(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_overflow.kt"
-    goldValue = "2147483646 2147483647 \n2147483646 \n-2147483647 -2147483648 \n1073741827 \n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_errors(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
     source = "codegen/controlflow/for_loops_errors.kt"
-    goldValue = "OK\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_empty_range(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_empty_range.kt"
-    goldValue = "OK\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_nested(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_nested.kt"
-    goldValue = "00 01 02 10 11 12 20 21 22 \n" +
-            "00 01 10 11 20 21 \n" +
-            "00 01 10 11 20 21 \n" +
-            "00 01 \n" +
-            "00 02 10 12 20 22 \n" +
-            "00 02 10 12 20 22 \n" +
-            "00 10 20 \n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_coroutines(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_coroutines.kt"
-    goldValue = "before: 0 after: 0\n" +
-            "before: 2 after: 2\n" +
-            "before: 4 after: 4\n" +
-            "before: 6 after: 6\n" +
-            "Got: 0 2 4 6\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_let_with_nullable(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_let_with_nullable.kt"
-    goldValue = "012345\n012345\n024\n01234\n01234\n024\n543210\n543210\n531\n" +
-                "012345\n012345\n024\n01234\n01234\n024\n543210\n543210\n531\n" +
-                "abcdef\nabcdef\nace\nabcde\nabcde\nace\nfedcba\nfedcba\nfdb\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_call_order(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_call_order.kt"
-    goldValue = "1234\n1234\n2134\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_array_indices(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_array_indices.kt"
-    goldValue = "0123\n\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_array(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_array.kt"
-    goldValue = "4035\n\n0\n0\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_array_nested(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_array_nested.kt"
-    goldValue = "123\nHello\n\n12345678910\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_array_side_effects(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_array_side_effects.kt"
-    goldValue = "side-effect\n4035\nside-effect\n\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_array_break_continue(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_array_break_continue.kt"
-    goldValue = "403\n\n"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_array_mutation(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_array_mutation.kt"
-    goldValue = "4000"
+    useGoldenData = true
 }
 
 task codegen_controlflow_for_loops_array_nullable(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops_array_nullable.kt"
-    goldValue = "123"
+    useGoldenData = true
 }
 
 task local_variable(type: KonanLocalTest) {
@@ -663,7 +637,7 @@ task local_variable(type: KonanLocalTest) {
 }
 
 task canonical_name(type: KonanLocalTest) {
-    goldValue = "A:foo\nA:qux\n"
+    useGoldenData = true
     source = "codegen/basics/canonical_name.kt"
 }
 
@@ -673,30 +647,30 @@ task cast_simple(type: KonanLocalTest) {
 
 task cast_null(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/basics/cast_null.kt"
 }
 
 task unchecked_cast1(type: KonanLocalTest) {
-    goldValue = "17\n17\n42\n42\n"
+    useGoldenData = true
     source = "codegen/basics/unchecked_cast1.kt"
 }
 
 task unchecked_cast2(type: KonanLocalTest) {
     enabled = false
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/basics/unchecked_cast2.kt"
 }
 
 task unchecked_cast3(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/basics/unchecked_cast3.kt"
 }
 
 task unchecked_cast4(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/basics/unchecked_cast4.kt"
 }
 
@@ -733,7 +707,7 @@ task runtime_worker_random(type: KonanLocalTest) {
 }
 
 task hello0(type: KonanLocalTest) {
-    goldValue = "Hello, world!\n"
+    useGoldenData = true
     source = "runtime/basic/hello0.kt"
 }
 
@@ -742,97 +716,92 @@ task stringTrim(type: KonanLocalTest) {
 }
 
 standaloneTest("hello1") {
-   goldValue = "Hello World"
+   useGoldenData = true
    testData = "Hello World\n"
    source = "runtime/basic/hello1.kt"
 }
 
 standaloneTest("hello2") {
-   goldValue = "you entered 'Hello World'"
+   useGoldenData = true
    testData = "Hello World\n"
    source = "runtime/basic/hello2.kt"
 }
 
 task hello3(type: KonanLocalTest) {
-    goldValue = "239\ntrue\n3.14159\nA\n"
+    useGoldenData = true
     source = "runtime/basic/hello3.kt"
 }
 
 task hello4(type: KonanLocalTest) {
-    goldValue = "Hello\nПока\n"
+    useGoldenData = true
     source = "runtime/basic/hello4.kt"
 }
 
 standaloneTest('enumEquals') {
-    goldValue = "true\nfalse\nfalse\n"
+    useGoldenData = true
     source = "runtime/basic/enum_equals.kt"
     flags = ['-XXLanguage:-ProhibitComparisonOfIncompatibleEnums', '-e', 'runtime.basic.enum_equals.main']
 }
 
 standaloneTest("entry0") {
-    goldValue = "Hello.\n"
+    useGoldenData = true
     source = "runtime/basic/entry0.kt"
     flags = ["-entry", "runtime.basic.entry0.main"]
 }
 
 standaloneTest("entry1") {
-    goldValue = "Hello.\n"
+    useGoldenData = true
     source = "runtime/basic/entry1.kt"
     flags = ["-entry", "foo"]
 }
 
 linkTest("entry2") {
-    goldValue = "Hello.\n"
+    useGoldenData = true
     source = "runtime/basic/entry2.kt"
     lib = "runtime/basic/libentry2.kt"
     flags = ["-entry", "foo"]
 }
 
 standaloneTest("entry3") {
-    goldValue = "Hello, without args.\n"
-    source = "runtime/basic/entry1.kt"
+    useGoldenData = true
+    source = "runtime/basic/entry3.kt"
     flags = ["-entry", "bar"]
 }
 
 standaloneTest("entry4") {
-    goldValue = "This is main without args\n"
+    useGoldenData = true
     source = "runtime/basic/entry4.kt"
 }
 
 standaloneTest("readline0") {
-    goldValue = "41"
+    useGoldenData = true
     testData = "41\r\n"
     source = "runtime/basic/readline0.kt"
 }
 
 standaloneTest("readline1") {
-    goldValue = ""
+    useGoldenData = true
     testData = "\n"
     source = "runtime/basic/readline1.kt"
 }
 
 task tostring0(type: KonanLocalTest) {
-    goldValue = "127\n-1\n239\nA\nЁ\nト\n1122334455\n112233445566778899\n3.14159265358\n1.0E27\n1.0E7\n1.0E-300\ntrue\nfalse\n"
+    useGoldenData = true
     source = "runtime/basic/tostring0.kt"
 }
 
 task tostring1(type: KonanLocalTest) {
-    goldValue = "ello\n"
+    useGoldenData = true
     source = "runtime/basic/tostring1.kt"
 }
 
 task tostring2(type: KonanLocalTest) {
-    goldValue = "H e l l o \nHello\n"
+    useGoldenData = true
     source = "runtime/basic/tostring2.kt"
 }
 
 task tostring3(type: KonanLocalTest) {
-    goldValue = "-128\n127\n-32768\n32767\n" +
-            "-2147483648\n2147483647\n-9223372036854775808\n9223372036854775807\n" +
-            "1.4E-45\n3.4028235E38\n-Infinity\nInfinity\n" +
-            "NaN\n" +
-            "4.9E-324\n1.7976931348623157E308\n-Infinity\nInfinity\n" +
-            "NaN\n"
+    useGoldenData = true
     source = "runtime/basic/tostring3.kt"
 }
 
@@ -841,7 +810,7 @@ task tostring4(type: KonanLocalTest) {
 }
 
 task empty_substring(type: KonanLocalTest) {
-    goldValue = "\n"
+    useGoldenData = true
     source = "runtime/basic/empty_substring.kt"
 }
 
@@ -863,19 +832,19 @@ standaloneTest("cleaner_in_main_with_checker") {
     enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
         !isNoopGC
     source = "runtime/basic/cleaner_in_main_with_checker.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("cleaner_in_main_without_checker") {
     enabled = (project.testTarget != 'wasm32') // Cleaners need workers
     source = "runtime/basic/cleaner_in_main_without_checker.kt"
-    goldValue = ""
+    useGoldenData = true
 }
 
 standaloneTest("cleaner_leak_without_checker") {
     enabled = (project.testTarget != 'wasm32') // Cleaners need workers
     source = "runtime/basic/cleaner_leak_without_checker.kt"
-    goldValue = ""
+    useGoldenData = true
 }
 
 standaloneTest("cleaner_leak_with_checker") {
@@ -926,79 +895,83 @@ standaloneTest("worker_bound_reference0") {
 
 task worker0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "Got Input processed\nOK\n"
+    useGoldenData = true
     source = "runtime/workers/worker0.kt"
 }
 
 task worker1(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/worker1.kt"
 }
 
 task worker2(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/worker2.kt"
 }
 
 task worker3(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/worker3.kt"
 }
 
 task worker4(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "Got 42\nOK\n"
+    useGoldenData = true
     source = "runtime/workers/worker4.kt"
 }
 
 // This tests changes main thread worker queue state, so better be executed alone.
 standaloneTest("worker5") {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "Got 3\nOK\n"
+    useGoldenData = true
     source = "runtime/workers/worker5.kt"
 }
 
 task worker6(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "Got 42\nOK\n"
+    useGoldenData = true
     source = "runtime/workers/worker6.kt"
 }
 
 task worker7(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "Input\nGot kotlin.Unit\nOK\n"
+    useGoldenData = true
     source = "runtime/workers/worker7.kt"
 }
 
 task worker8(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))\nGot kotlin.Unit\nOK\n"
+    useGoldenData = true
     source = "runtime/workers/worker8.kt"
 }
 
 task worker9(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    if (isExperimentalMM) {
-        goldValue = "zzz\n42\nOK\nfirst 2\nsecond 3\nunfrozen OK\nfrozen OK\n"
-    } else {
-        goldValue = "zzz\n42\nOK\nfirst 2\nsecond 3\nfrozen OK\n"
-    }
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM
+    useGoldenData = true
     source = "runtime/workers/worker9.kt"
+}
+
+task worker9_experimentalMM(type: KonanLocalTest) {
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        isExperimentalMM
+    useGoldenData = true
+    source = "runtime/workers/worker9_experimentalMM.kt"
 }
 
 task worker10(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
         !isNoopGC
-    goldValue = "OK\ntrue\ntrue\n"
+    useGoldenData = true
     source = "runtime/workers/worker10.kt"
 }
 
 task worker11(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/worker11.kt"
 }
 
@@ -1106,60 +1079,55 @@ standaloneTest("worker_threadlocal_no_leak") {
 
 task freeze0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // No workers on WASM.
-    goldValue = "frozen bit is true\n" +
-            "Worker: SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))\n" +
-            "Main: SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))\n" +
-            "OK\n"
+    useGoldenData = true
     source = "runtime/workers/freeze0.kt"
 }
 
 task freeze1(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
-    goldValue = "OK, cannot mutate frozen\n"
+    useGoldenData = true
     source = "runtime/workers/freeze1.kt"
 }
 
 task freeze_stress(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/freeze_stress.kt"
 }
 
 task freeze2(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
-    goldValue =
-            "Worker 1: Hello world\n" + "Worker2: 42\n" +
-            "Worker3: 239.0\n" + "Worker4: a\n" + "OK\n"
+    useGoldenData = true
     source = "runtime/workers/freeze2.kt"
 }
 
 task freeze3(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/freeze3.kt"
 }
 
 task freeze4(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/freeze4.kt"
 }
 
 task freeze5(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/freeze5.kt"
 }
 
 task freeze6(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
         !isNoopGC
-    goldValue = "OK\nOK\n"
+    useGoldenData = true
     source = "runtime/workers/freeze6.kt"
 }
 
 task atomic0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "35\n" + "20\n" + "OK\n"
+    useGoldenData = true
     source = "runtime/workers/atomic0.kt"
 }
 
@@ -1171,18 +1139,18 @@ standaloneTest("atomic1") {
 
 task lazy0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/lazy0.kt"
 }
 
 task lazy1(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Need exceptions.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/workers/lazy1.kt"
 }
 
 standaloneTest("lazy2") {
-    goldValue = "123\nOK\n"
+    useGoldenData = true
     source = "runtime/workers/lazy2.kt"
 }
 
@@ -1203,7 +1171,7 @@ task mutableData1(type: KonanLocalTest) {
 
 task enumIdentity(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
-    goldValue = "true\n"
+    useGoldenData = true
     source = "runtime/workers/enum_identity.kt"
 }
 
@@ -1225,78 +1193,78 @@ standaloneTest("leakMemoryWithWorkerTermination") {
 }
 
 task superFunCall(type: KonanLocalTest) {
-    goldValue = "<fun:C><fun:C1>\n<fun:C><fun:C3>\n"
+    useGoldenData = true
     source = "codegen/basics/superFunCall.kt"
 }
 
 task superGetterCall(type: KonanLocalTest) {
-    goldValue = "<prop:C><prop:C1>\n<prop:C><prop:C3>\n"
+    useGoldenData = true
     source = "codegen/basics/superGetterCall.kt"
 }
 
 task superSetterCall(type: KonanLocalTest) {
-    goldValue = "<prop:C1><prop:C>zzz\n<prop:C3><prop:C>zzz\n"
+    useGoldenData = true
     source = "codegen/basics/superSetterCall.kt"
 }
 
 task enum0(type: KonanLocalTest) {
-    goldValue = "VALUE\n"
+    useGoldenData = true
     source = "codegen/enum/test0.kt"
 }
 
 task enum1(type: KonanLocalTest) {
-    goldValue = "z12\n"
+    useGoldenData = true
     source = "codegen/enum/test1.kt"
 }
 
 task enum_valueOf(type: KonanLocalTest) {
-    goldValue = "E1\nE2\nE3\nE1\nE2\nE3\n"
+    useGoldenData = true
     source = "codegen/enum/valueOf.kt"
 }
 
 task enum_values(type: KonanLocalTest) {
-    goldValue = "E3\nE1\nE2\nE3\nE1\nE2\n"
+    useGoldenData = true
     source = "codegen/enum/values.kt"
 }
 
 task enum_vCallNoEntryClass(type: KonanLocalTest) {
-    goldValue = "('z3', 3)\n"
+    useGoldenData = true
     source = "codegen/enum/vCallNoEntryClass.kt"
 }
 
 task enum_vCallWithEntryClass(type: KonanLocalTest) {
-    goldValue = "z1z2\n"
+    useGoldenData = true
     source = "codegen/enum/vCallWithEntryClass.kt"
 }
 
 task enum_companionObject(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/enum/companionObject.kt"
 }
 
 task enum_interfaceCallNoEntryClass(type: KonanLocalTest) {
-    goldValue = "('z3', 3)\n('z3', 3)\n"
+    useGoldenData = true
     source = "codegen/enum/interfaceCallNoEntryClass.kt"
 }
 
 task enum_interfaceCallWithEntryClass(type: KonanLocalTest) {
-    goldValue = "z1z2\nz1z2\n"
+    useGoldenData = true
     source = "codegen/enum/interfaceCallWithEntryClass.kt"
 }
 
 linkTest("enum_linkTest") {
-    goldValue = "42\n117\n-1\n"
+    useGoldenData = true
     source = "codegen/enum/linkTest_main.kt"
     lib = "codegen/enum/linkTest_lib.kt"
 }
 
 task enum_varargParam(type: KonanLocalTest) {
-    goldValue = "3\n"
+    useGoldenData = true
     source = "codegen/enum/varargParam.kt"
 }
 
 task enum_nested(type: KonanLocalTest) {
-    goldValue = "A\nC\n"
+    useGoldenData = true
     source = "codegen/enum/nested.kt"
 }
 
@@ -1306,7 +1274,7 @@ task enum_isFrozen(type: KonanLocalTest) {
 }
 
 task enum_loop(type: KonanLocalTest) {
-    goldValue = "Z\nZ\n"
+    useGoldenData = true
     source = "codegen/enum/loop.kt"
 }
 
@@ -1315,68 +1283,59 @@ task enum_reorderedArguments(type: KonanLocalTest) {
 }
 
 standaloneTest('switchLowering') {
-    goldValue = "EnumA.A\nok\nok\nok\nok\nok\n"
+    useGoldenData = true
     source = "codegen/enum/switchLowering.kt"
     flags = ['-XXLanguage:-ProhibitComparisonOfIncompatibleEnums', '-e', 'codegen.enum.switchLowering.main']
 }
 
 task enum_lambdaInDefault(type: KonanLocalTest) {
-    goldValue = "Q\n"
+    useGoldenData = true
     source = "codegen/enum/lambdaInDefault.kt"
 }
 
 linkTest("mangling") {
-    goldValue =
-        "Int direct [1, 2, 3, 4]\n" +
-        "out Number direct [9, 10, 11, 12]\n" +
-        "star direct [5, 6, 7, 8]\n" +
-        "Int param [1, 2, 3, 4]\n" +
-        "out Number param [9, 10, 11, 12]\n" +
-        "star param [5, 6, 7, 8]\n" +
-        "no constructors {}\n" +
-        "single constructor some string\n" +
-        "two constructors 17\n"
+    useGoldenData = true
     source = "mangling/mangling.kt"
     lib = "mangling/manglinglib.kt"
 }
 
 task innerClass_simple(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/innerClass/simple.kt"
 }
 
 task innerClass_getOuterVal(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/innerClass/getOuterVal.kt"
 }
 
 task innerClass_generic(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/innerClass/generic.kt"
 }
 
 task innerClass_doubleInner(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/innerClass/doubleInner.kt"
 }
 
 task innerClass_qualifiedThis(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/innerClass/qualifiedThis.kt"
 }
 
 task innerClass_superOuter(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/innerClass/superOuter.kt"
 }
 
 task innerClass_noPrimaryConstructor(type: KonanLocalTest) {
-    goldValue = "OK\nOK\n"
+    useGoldenData = true
     source = "codegen/innerClass/noPrimaryConstructor.kt"
 }
 
 task innerClass_secondaryConstructor(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/innerClass/secondaryConstructor.kt"
 }
 
@@ -1386,7 +1345,7 @@ linkTest("innerClass_linkTest") {
 }
 
 task localClass_localHierarchy(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/localClass/localHierarchy.kt"
 }
 
@@ -1402,78 +1361,78 @@ task object_isFrozen(type: KonanLocalTest) {
 }
 
 task localClass_objectExpressionInProperty(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/localClass/objectExpressionInProperty.kt"
 }
 
 task localClass_objectExpressionInInitializer(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/localClass/objectExpressionInInitializer.kt"
 }
 
 task localClass_innerWithCapture(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/localClass/innerWithCapture.kt"
 }
 
 task localClass_innerTakesCapturedFromOuter(type: KonanLocalTest) {
-    goldValue = "0\n1\n"
+    useGoldenData = true
     source = "codegen/localClass/innerTakesCapturedFromOuter.kt"
 }
 
 task localClass_virtualCallFromConstructor(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/localClass/virtualCallFromConstructor.kt"
 }
 
 task localClass_noPrimaryConstructor(type: KonanLocalTest) {
-    goldValue = "OKOK\n"
+    useGoldenData = true
     source = "codegen/localClass/noPrimaryConstructor.kt"
 }
 
 task localClass_localFunctionCallFromLocalClass(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/localClass/localFunctionCallFromLocalClass.kt"
 }
 
 task localClass_localFunctionInLocalClass(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/localClass/localFunctionInLocalClass.kt"
 }
 
 task localClass_tryCatch(type: KonanLocalTest) {
-    goldValue = ""
+    useGoldenData = true
     source = "codegen/localClass/tryCatch.kt"
 }
 
 task function_localFunction(type : KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/function/localFunction.kt"
 }
 
 task function_localFunction2(type : KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/function/localFunction2.kt"
 }
 
 task function_localFunction3(type : KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/function/localFunction3.kt"
 }
 
 task initializers_correctOrder1(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/initializers/correctOrder1.kt"
 }
 
 task initializers_correctOrder2(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/initializers/correctOrder2.kt"
 }
 
 standaloneTest("initializers_correctOrder3") {
     source = "codegen/initializers/correctOrder3.kt"
-    goldValue = "3\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_globalInitedAfterAccessingFile") {
@@ -1512,98 +1471,98 @@ standaloneTest("initializers_eagerInitializationThreadLocal2") {
 standaloneTest("initializers_workers1") {
     expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
     source = "codegen/initializers/workers1.kt"
-    goldValue = "42\n3\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_workers2") {
     expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
     source = "codegen/initializers/workers2.kt"
-    goldValue = "42\n42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_failInInitializer1") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer1.kt"
-    goldValue = "caught\n"
+    useGoldenData = true
     flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_failInInitializer2") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer2.kt"
-    goldValue = "caught\ncaught2\n"
+    useGoldenData = true
     flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_failInInitializer3") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer3.kt"
-    goldValue = "caught\ncaught2\n"
+    useGoldenData = true
     flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_failInInitializer4") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/failInInitializer4.kt"
-    goldValue = "caught\ncaught2\n"
+    useGoldenData = true
     flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_when1") {
     source = "codegen/initializers/when1.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_when2") {
     source = "codegen/initializers/when2.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_throw1") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/throw1.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_throw2") {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "codegen/initializers/throw2.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_while1") {
     source = "codegen/initializers/while1.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_while2") {
     source = "codegen/initializers/while2.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_while3") {
     source = "codegen/initializers/while3.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_return1") {
     source = "codegen/initializers/return1.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 standaloneTest("initializers_return2") {
     source = "codegen/initializers/return2.kt"
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 linkTest("initializers_linkTest1") {
-    goldValue = "1200\n"
+    useGoldenData = true
     source = "codegen/initializers/linkTest1_main.kt"
     lib = "codegen/initializers/linkTest1_lib.kt"
 }
 
 linkTest("initializers_linkTest2") {
-    goldValue = "2\n"
+    useGoldenData = true
     source = "codegen/initializers/linkTest2_main.kt"
     lib = "codegen/initializers/linkTest2_lib.kt"
 }
@@ -1627,114 +1586,114 @@ task arithmetic_github1856(type: KonanLocalTest) {
 }
 
 task bridges_test0(type: KonanLocalTest) {
-    goldValue = "42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/test0.kt"
 }
 
 task bridges_test1(type: KonanLocalTest) {
-    goldValue = "1042\n"
+    useGoldenData = true
     source = "codegen/bridges/test1.kt"
 }
 
 task bridges_test2(type: KonanLocalTest) {
-    goldValue = "42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/test2.kt"
 }
 
 task bridges_test3(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/bridges/test3.kt"
 }
 
 task bridges_test4(type: KonanLocalTest) {
-    goldValue = "42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/test4.kt"
 }
 
 task bridges_test5(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/bridges/test5.kt"
 }
 
 task bridges_test6(type: KonanLocalTest) {
-    goldValue = "42\n42\n42\n42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/test6.kt"
 }
 
 task bridges_test7(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/bridges/test7.kt"
 }
 
 task bridges_test8(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/bridges/test8.kt"
 }
 
 task bridges_test9(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/bridges/test9.kt"
 }
 
 task bridges_test10(type: KonanLocalTest) {
-    goldValue = "42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/test10.kt"
 }
 
 task bridges_test11(type: KonanLocalTest) {
-    goldValue = "42\n42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/test11.kt"
 }
 
 task bridges_test12(type: KonanLocalTest) {
-    goldValue = "B: 42\nC: 42\n"
+    useGoldenData = true
     source = "codegen/bridges/test12.kt"
 }
 
 task bridges_test13(type: KonanLocalTest) {
-    goldValue = "42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/test13.kt"
 }
 
 task bridges_test14(type: KonanLocalTest) {
-    goldValue = "42\n56\n42\n56\n56\n42\n156\n142\n"
+    useGoldenData = true
     source = "codegen/bridges/test14.kt"
 }
 
 task bridges_test15(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/bridges/test15.kt"
 }
 
 task bridges_test16(type: KonanLocalTest) {
-    goldValue = "OK\nOK\n"
+    useGoldenData = true
     source = "codegen/bridges/test16.kt"
 }
 
 task bridges_test17(type: KonanLocalTest) {
-    goldValue = "42\n42\n42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/test17.kt"
 }
 
 task bridges_test18(type: KonanLocalTest) {
-    goldValue = "kotlin.Unit\n"
+    useGoldenData = true
     source = "codegen/bridges/test18.kt"
 }
 
 linkTest("bridges_linkTest") {
-    goldValue = "42\n42\n42\n"
+    useGoldenData = true
     source = "codegen/bridges/linkTest_main.kt"
     lib = "codegen/bridges/linkTest_lib.kt"
 }
 
 linkTest("bridges_linkTest2") {
-    goldValue = "true\n"
+    useGoldenData = true
     source = "codegen/bridges/linkTest2_main.kt"
     lib = "codegen/bridges/linkTest2_lib.kt"
 }
 
 task bridges_special(type: KonanLocalTest) {
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/bridges/special.kt"
 }
 
@@ -1751,27 +1710,27 @@ task returnTypeSignature(type: KonanLocalTest) {
 }
 
 task classDelegation_method(type: KonanLocalTest) {
-    goldValue = "OKOK\n"
+    useGoldenData = true
     source = "codegen/classDelegation/method.kt"
 }
 
 task classDelegation_property(type: KonanLocalTest) {
-    goldValue = "4242\n"
+    useGoldenData = true
     source = "codegen/classDelegation/property.kt"
 }
 
 task classDelegation_generic(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/classDelegation/generic.kt"
 }
 
 task classDelegation_withBridge(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/classDelegation/withBridge.kt"
 }
 
 linkTest("classDelegation_linkTest") {
-    goldValue = "qxx\n123\n42\n117\nzzz\n"
+    useGoldenData = true
     source = "codegen/classDelegation/linkTest_main.kt"
     lib = "codegen/classDelegation/linkTest_lib.kt"
 }
@@ -1782,143 +1741,143 @@ standaloneTest("contracts") {
 }
 
 task delegatedProperty_simpleVal(type: KonanLocalTest) {
-    goldValue = "x\n42\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/simpleVal.kt"
 }
 
 task delegatedProperty_simpleVar(type: KonanLocalTest) {
-    goldValue = "get x\n42\nset x\nget x\n117\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/simpleVar.kt"
 }
 
 task delegatedProperty_packageLevel(type: KonanLocalTest) {
-    goldValue = "x\n42\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/packageLevel.kt"
 }
 
 task delegatedProperty_local(type: KonanLocalTest) {
-    goldValue = "x\n42\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/local.kt"
 }
 
 linkTest("delegatedProperty_delegatedOverride") {
-    goldValue = "156\nx\n117\n42\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/delegatedOverride_main.kt"
     lib = "codegen/delegatedProperty/delegatedOverride_lib.kt"
 }
 
 linkTest("delegatedProperty_correctFieldsOrder") {
-    goldValue = "qxx\n117\nzzz\nqzz\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/correctFieldsOrder_main.kt"
     lib = "codegen/delegatedProperty/correctFieldsOrder_lib.kt"
 }
 
 task delegatedProperty_lazy(type: KonanLocalTest) {
-    goldValue = "computed!\nHello\nHello\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/lazy.kt"
 }
 
 task delegatedProperty_observable(type: KonanLocalTest) {
-    goldValue = "<no name> -> first\nfirst -> second\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/observable.kt"
 }
 
 task delegatedProperty_map(type: KonanLocalTest) {
-    goldValue = "John Doe\n25\n"
+    useGoldenData = true
     source = "codegen/delegatedProperty/map.kt"
 }
 
 task propertyCallableReference_valClass(type: KonanLocalTest) {
-    goldValue = "42\n117\n"
+    useGoldenData = true
     source = "codegen/propertyCallableReference/valClass.kt"
 }
 
 task propertyCallableReference_valModule(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/propertyCallableReference/valModule.kt"
 }
 
 task propertyCallableReference_varClass(type: KonanLocalTest) {
-    goldValue = "117\n117\n42\n42\n"
+    useGoldenData = true
     source = "codegen/propertyCallableReference/varClass.kt"
 }
 
 task propertyCallableReference_varModule(type: KonanLocalTest) {
-    goldValue = "117\n117\n"
+    useGoldenData = true
     source = "codegen/propertyCallableReference/varModule.kt"
 }
 
 task propertyCallableReference_valExtension(type: KonanLocalTest) {
-    goldValue = "42\n117\n"
+    useGoldenData = true
     source = "codegen/propertyCallableReference/valExtension.kt"
 }
 
 task propertyCallableReference_varExtension(type: KonanLocalTest) {
-    goldValue = "117\n117\n42\n42\n"
+    useGoldenData = true
     source = "codegen/propertyCallableReference/varExtension.kt"
 }
 
 linkTest("propertyCallableReference_linkTest") {
-    goldValue = "42\n117\n"
+    useGoldenData = true
     source = "codegen/propertyCallableReference/linkTest_main.kt"
     lib = "codegen/propertyCallableReference/linkTest_lib.kt"
 }
 
 task propertyCallableReference_dynamicReceiver(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/propertyCallableReference/dynamicReceiver.kt"
 }
 
 task lateinit_initialized(type: KonanLocalTest) {
-    goldValue = "zzz\n"
+    useGoldenData = true
     source = "codegen/lateinit/initialized.kt"
 }
 
 task lateinit_notInitialized(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/lateinit/notInitialized.kt"
 }
 
 task lateinit_inBaseClass(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/lateinit/inBaseClass.kt"
 }
 
 task lateinit_localInitialized(type: KonanLocalTest) {
-    goldValue = "zzz\n"
+    useGoldenData = true
     source = "codegen/lateinit/localInitialized.kt"
 }
 
 task lateinit_localNotInitialized(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/lateinit/localNotInitialized.kt"
 }
 
 task lateinit_localCapturedInitialized(type: KonanLocalTest) {
-    goldValue = "zzz\n"
+    useGoldenData = true
     source = "codegen/lateinit/localCapturedInitialized.kt"
 }
 
 task lateinit_localCapturedNotInitialized(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/lateinit/localCapturedNotInitialized.kt"
 }
 
 task lateinit_isInitialized(type: KonanLocalTest) {
-    goldValue = "false\ntrue\n"
+    useGoldenData = true
     source = "codegen/lateinit/isInitialized.kt"
 }
 
 task lateinit_globalIsInitialized(type: KonanLocalTest) {
-    goldValue = "false\ntrue\n"
+    useGoldenData = true
     source = "codegen/lateinit/globalIsInitialized.kt"
 }
 
 task lateinit_innerIsInitialized(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/lateinit/innerIsInitialized.kt"
 }
 
@@ -1931,12 +1890,12 @@ task kclass0(type: KonanLocalTest) {
 }
 
 task kclass1(type: KonanLocalTest) {
-    goldValue = "OK :D\n"
+    useGoldenData = true
     source = "codegen/kclass/kclass1.kt"
 }
 
 task kclassEnumArgument(type: KonanLocalTest) {
-    goldValue = "String\n"
+    useGoldenData = true
     source = "codegen/kclass/kClassEnumArgument.kt"
 }
 
@@ -1953,27 +1912,27 @@ task associatedObjects1(type: KonanLocalTest) {
 }
 
 task coroutines_simple(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/coroutines/simple.kt"
 }
 
 task coroutines_degenerate1(type: KonanLocalTest) {
-    goldValue = "s1\n"
+    useGoldenData = true
     source = "codegen/coroutines/degenerate1.kt"
 }
 
 task coroutines_degenerate2(type: KonanLocalTest) {
-    goldValue = "s2\ns1\n"
+    useGoldenData = true
     source = "codegen/coroutines/degenerate2.kt"
 }
 
 task coroutines_withReceiver(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/coroutines/withReceiver.kt"
 }
 
 task coroutines_correctOrder1(type: KonanLocalTest) {
-    goldValue = "f1\ns1\nf2\n160\n"
+    useGoldenData = true
     source = "codegen/coroutines/correctOrder1.kt"
 }
 
@@ -1982,158 +1941,158 @@ task coroutines_controlFlow_chain(type: KonanLocalTest) {
 }
 
 task coroutines_controlFlow_if1(type: KonanLocalTest) {
-    goldValue = "f1\ns1\nf3\n84\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_if1.kt"
 }
 
 task coroutines_controlFlow_if2(type: KonanLocalTest) {
-    goldValue = "f1\ns1\nf2\n43\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_if2.kt"
 }
 
 task coroutines_controlFlow_finally1(type: KonanLocalTest) {
-    goldValue = "f1\ns1\n117\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_finally1.kt"
 }
 
 task coroutines_controlFlow_finally2(type: KonanLocalTest) {
-    goldValue = "f1\ns1\n117\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_finally2.kt"
 }
 
 task coroutines_controlFlow_finally3(type: KonanLocalTest) {
-    goldValue = "f1\ns1\n117\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_finally3.kt"
 }
 
 task coroutines_controlFlow_finally4(type: KonanLocalTest) {
-    goldValue = "s1\nfinally\n42\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_finally4.kt"
 }
 
 task coroutines_controlFlow_finally5(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "s1\nf2\nfinally\n1\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_finally5.kt"
 }
 
 task coroutines_controlFlow_finally6(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "s1\nfinally\nerror\n0\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_finally6.kt"
 }
 
 task coroutines_controlFlow_finally7(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "s1\nf2\nfinally1\ns2\nfinally2\n42\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_finally7.kt"
 }
 
 task coroutines_controlFlow_inline1(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_inline1.kt"
 }
 
 task coroutines_controlFlow_inline2(type: KonanLocalTest) {
-    goldValue = "s1\n42\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_inline2.kt"
 }
 
 task coroutines_controlFlow_inline3(type: KonanLocalTest) {
-    goldValue = "f1\ns1\n42\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_inline3.kt"
 }
 
 task coroutines_controlFlow_tryCatch1(type: KonanLocalTest) {
-    goldValue = "s1\n42\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_tryCatch1.kt"
 }
 
 task coroutines_controlFlow_tryCatch2(type: KonanLocalTest) {
-    goldValue = "s1\n42\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_tryCatch2.kt"
 }
 
 task coroutines_controlFlow_tryCatch3(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "s2\nf2\n1\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_tryCatch3.kt"
 }
 
 task coroutines_controlFlow_tryCatch4(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "s2\nf2\n1\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_tryCatch4.kt"
 }
 
 task coroutines_controlFlow_tryCatch5(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "s2\ns1\nError\n42\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_tryCatch5.kt"
 }
 
 task coroutines_controlFlow_while1(type: KonanLocalTest) {
-    goldValue = "s3\ns3\ns3\ns3\n3\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_while1.kt"
 }
 
 task coroutines_controlFlow_while2(type: KonanLocalTest) {
-    goldValue = "s3\ns3\ns3\n3\n"
+    useGoldenData = true
     source = "codegen/coroutines/controlFlow_while2.kt"
 }
 
 task coroutines_returnsNothing1(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/coroutines/returnsNothing1.kt"
 }
 
 task coroutines_returnsUnit1(type: KonanLocalTest) {
-    goldValue = "117\ns1\n0\n"
+    useGoldenData = true
     source = "codegen/coroutines/returnsUnit1.kt"
 }
 
 task coroutines_coroutineContext1(type: KonanLocalTest) {
-    goldValue = "EmptyCoroutineContext\n"
+    useGoldenData = true
     source = "codegen/coroutines/coroutineContext1.kt"
 }
 
 task coroutines_coroutineContext2(type: KonanLocalTest) {
-    goldValue = "EmptyCoroutineContext\n"
+    useGoldenData = true
     source = "codegen/coroutines/coroutineContext2.kt"
 }
 
 task coroutines_anonymousObject(type: KonanLocalTest) {
-    goldValue = "zzz\n"
+    useGoldenData = true
     source = "codegen/coroutines/anonymousObject.kt"
 }
 
 task coroutines_functionReference_simple(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/coroutines/functionReference_simple.kt"
 }
 
 task coroutines_functionReference_eqeq_name(type: KonanLocalTest) {
-    goldValue = ""
+    useGoldenData = true
     source = "codegen/coroutines/functionReference_eqeq_name.kt"
 }
 
 task coroutines_functionReference_invokeAsFunction(type: KonanLocalTest) {
-    goldValue = "159\n"
+    useGoldenData = true
     source = "codegen/coroutines/functionReference_invokeAsFunction.kt"
 }
 
 task coroutines_functionReference_lambdaAsSuspendLambda(type: KonanLocalTest) {
-    goldValue = ""
+    useGoldenData = true
     source = "codegen/coroutines/functionReference_lambdaAsSuspendLambda.kt"
 }
 
 task coroutines_kt41394(type: KonanLocalTest) {
-    goldValue = ""
+    useGoldenData = true
     source = "codegen/coroutines/kt41394.kt"
 }
 
 standaloneTest('coroutines_suspendConversion') {
-    goldValue = ""
+    useGoldenData = true
     source = "codegen/coroutines/suspendConversion.kt"
     flags = ['-XXLanguage:+SuspendConversion']
 }
@@ -2150,33 +2109,33 @@ task BitSet(type: KonanLocalTest) {
 }
 
 task stack_array(type: KonanLocalTest) {
-    goldValue = "true\n3\n"
+    useGoldenData = true
     source = "runtime/collections/stack_array.kt"
 }
 
 task array0(type: KonanLocalTest) {
-    goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
+    useGoldenData = true
     source = "runtime/collections/array0.kt"
 }
 
 task array1(type: KonanLocalTest) {
-    goldValue = "4 2\n1-1\n69\n38\n"
+    useGoldenData = true
     source = "runtime/collections/array1.kt"
 }
 
 task array2(type: KonanLocalTest) {
-    goldValue = "0\n2\n4\n6\n8\n40\n"
+    useGoldenData = true
     source = "runtime/collections/array2.kt"
 }
 
 task array3(type: KonanLocalTest) {
-    goldValue = "1 2 3 7 8 9 -128 -1 \n1 2 3 7 8 9 -128 -1 \n"
+    useGoldenData = true
     source = "runtime/collections/array3.kt"
 }
 
 task array4(type: KonanLocalTest) {
     disabled = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/collections/array4.kt"
 }
 
@@ -2186,24 +2145,24 @@ task array5(type: KonanLocalTest) {
 }
 
 task typed_array0(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/collections/typed_array0.kt"
 }
 
 task typed_array1(type: KonanLocalTest) {
     enabled  = (project.testTarget != 'wasm32') // No exceptions on WASM.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/collections/typed_array1.kt"
 }
 
 
 task sort0(type: KonanLocalTest) {
-    goldValue = "[a, b, x]\n[-1, 0, 42, 239, 100500]\n"
+    useGoldenData = true
     source = "runtime/collections/sort0.kt"
 }
 
 task sort1(type: KonanLocalTest) {
-    goldValue = "[a, b, x]\n[-1, 0, 42, 239, 100500]\n"
+    useGoldenData = true
     source = "runtime/collections/sort1.kt"
 }
 
@@ -2217,7 +2176,7 @@ task if_else(type: KonanLocalTest) {
 
 task immutable_binary_blob_in_lambda(type: KonanLocalTest) {
     source = "lower/immutable_blob_in_lambda.kt"
-    goldValue = "123\n"
+    useGoldenData = true
 }
 
 task when2(type: KonanLocalTest) {
@@ -2238,11 +2197,11 @@ task when7(type: KonanLocalTest) {
 
 task when8(type: KonanLocalTest) {
     source = "codegen/branching/when8.kt"
-    goldValue = "true\n"
+    useGoldenData = true
 }
 
 task when9(type: KonanLocalTest) {
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/branching/when9.kt"
 }
 
@@ -2259,7 +2218,7 @@ task advanced_when5(type: KonanLocalTest) {
 }
 
 task when_with_try1(type: KonanLocalTest) {
-    goldValue = "null\nnull\n42\n"
+    useGoldenData = true
     source = "codegen/branching/when_with_try1.kt"
 }
 
@@ -2290,8 +2249,8 @@ task eqeq(type: KonanLocalTest) {
 }
 
 task function_referenceBigArity(type: KonanLocalTest) {
-    goldValue = "528\n"
-    source = "codegen/function/referenceBigArity"
+    useGoldenData = true
+    source = "codegen/function/referenceBigArity.kt"
 }
 
 task cycle(type: KonanLocalTest) {
@@ -2316,11 +2275,11 @@ task vtable1(type: KonanLocalTest) {
 
 task vtable_any(type: KonanLocalTest) {
     source = "datagen/rtti/vtable_any.kt"
-    goldValue = "[1]\n[2]\n[3]\n[4]\n"
+    useGoldenData = true
 }
 
 task strdedup1(type: KonanLocalTest) {
-    goldValue = "true\ntrue\n"
+    useGoldenData = true
     source = "datagen/literals/strdedup1.kt"
 }
 
@@ -2329,12 +2288,12 @@ task strdedup2(type: KonanLocalTest) {
     // linking them as bitcode modules before translating to machine code.
     enabled = false
 
-    goldValue = "true\ntrue\n"
+    useGoldenData = true
     source = "datagen/literals/strdedup2.kt"
 }
 
 task empty_string(type: KonanLocalTest) {
-    goldValue = "\n"
+    useGoldenData = true
     source = "datagen/literals/empty_string.kt"
 }
 
@@ -2342,40 +2301,50 @@ task intrinsic(type: KonanLocalTest) {
     source = "codegen/function/intrinsic.kt"
 }
 
-/*
-    Disabled until we extract the classes that should be
-    always present from stdlib into a separate binary.
-
-linkTest("link") {
-    goldValue = "0\n"
-    source = "link/src/bar.kt"
-    lib = "link/lib"
-}(
-*/
+//    Disabled until we extract the classes that should be
+//    always present from stdlib into a separate binary.
+//
+//linkTest("link") {
+//    useGoldenData = true
+//    source = "link/src/bar.kt"
+//    lib = "link/lib"
+//}(
 
 linkTest("link_omit_unused") {
-    goldValue = "Hello\n"
-    source = "link/omit/hello.kt"
-    lib = "link/omit/lib.kt"
+    useGoldenData = true
+    source = "link/omit/main.kt"
+    lib = "link/omit/library.kt"
 }
 
 standaloneTest("link_default_libs") {
     enabled = (project.testTarget != 'wasm32') // there will be no posix.klib for wasm
-    goldValue = "sizet = 0\n"
+    useGoldenData = true
     source = "link/default/default.kt"
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
-standaloneTest("link_testLib_explicitly") {
-    // there are no testLibrary for cross targets yet.
-    enabled = project.target.name == project.hostName
-
+standaloneTest("link_testLib_explicitly1") {
+    // there is no testLibrary for cross targets yet.
+    enabled = project.target.name == project.hostName &&
+            (project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM)
     dependsOn installTestLib
-    if (project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM)
-        goldValue = "Hello\n"
-    else
-        goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
-    source = "link/omit/hello.kt"
+    useGoldenData = true
+    source = "link/testLib_explicitly1.kt"
+    // We force library inclusion, so need to see the warning banner.
+    flags = ['-l', 'testLibrary', '-r', testLibraryDir]
+    doLast {
+        def file = new File("$testLibraryDir/testLibrary")
+        file.deleteDir()
+    }
+}
+
+standaloneTest("link_testLib_explicitly2") {
+    // there is no testLibrary for cross targets yet.
+    enabled = project.target.name == project.hostName &&
+            !(project.globalTestArgs.contains('-Xir-property-lazy-initialization=enable') || isExperimentalMM)
+    dependsOn installTestLib
+    useGoldenData = true
+    source = "link/testLib_explicitly2.kt"
     // We force library inclusion, so need to see the warning banner.
     flags = ['-l', 'testLibrary', '-r', testLibraryDir]
     doLast {
@@ -2386,24 +2355,24 @@ standaloneTest("link_testLib_explicitly") {
 
 linkTest("no_purge_for_dependencies") {
     enabled = (project.testTarget != 'wasm32') // there will be no posix.klib for wasm
-    goldValue = "linked library\nand symbols from posix available: 17; 1.0\n"
+    useGoldenData = true
     source = "link/purge1/prog.kt"
     lib = "link/purge1/lib.kt"
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
 task for0(type: KonanLocalTest) {
-    goldValue = "2\n3\n4\n"
+    useGoldenData = true
     source = "runtime/basic/for0.kt"
 }
 
 task throw0(type: KonanLocalTest) {
-    goldValue = "Done\n"
+    useGoldenData = true
     source = "runtime/basic/throw0.kt"
 }
 
 task statements0(type: KonanLocalTest) {
-    goldValue = "239\n238\n30\n29\n"
+    useGoldenData = true
     source = "runtime/basic/statements0.kt"
 }
 
@@ -2413,118 +2382,103 @@ standaloneTest("annotations0") {
 }
 
 task boxing0(type: KonanLocalTest) {
-    goldValue = "17\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing0.kt"
 }
 
 task boxing1(type: KonanLocalTest) {
-    goldValue = "1\nfalse\nHello\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing1.kt"
 }
 
 task boxing2(type: KonanLocalTest) {
-    goldValue = "1\ntrue\nother\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing2.kt"
 }
 
 task boxing3(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing3.kt"
 }
 
 task boxing4(type: KonanLocalTest) {
-    goldValue = "16\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing4.kt"
 }
 
 task boxing5(type: KonanLocalTest) {
-    goldValue = "16\n42\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing5.kt"
 }
 
 task boxing6(type: KonanLocalTest) {
-    goldValue = "42\n16\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing6.kt"
 }
 
 task boxing7(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "1\n0\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing7.kt"
 }
 
 task boxing8(type: KonanLocalTest) {
-    goldValue = "1\nnull\ntrue\nHello\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing8.kt"
 }
 
 task boxing9(type: KonanLocalTest) {
-    goldValue = "1\nnull\ntrue\nHello\n2\nnull\ntrue\nHello\n3\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing9.kt"
 }
 
 task boxing10(type: KonanLocalTest) {
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing10.kt"
 }
 
 task boxing11(type: KonanLocalTest) {
-    goldValue = "17\n42\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing11.kt"
 }
 
 task boxing12(type: KonanLocalTest) {
-    goldValue = "18\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing12.kt"
 }
 
 task boxing13(type: KonanLocalTest) {
-    goldValue = "false\nfalse\ntrue\ntrue\nfalse\nfalse\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing13.kt"
 }
 
 task boxing14(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing14.kt"
 }
 
 task boxing15(type: KonanLocalTest) {
-    goldValue = "17\n"
+    useGoldenData = true
     source = "codegen/boxing/boxing15.kt"
 }
 
 task boxCache0(type: KonanLocalTest) {
-    goldValue = "2\n256\n256\n256\n256\n256\n"
+    useGoldenData = true
     source = "codegen/boxing/box_cache0.kt"
 }
 
 task interface0(type: KonanLocalTest) {
-    goldValue = "PASSED\n"
+    useGoldenData = true
     source = "runtime/basic/interface0.kt"
 }
 
 task hash0(type: KonanLocalTest) {
-    goldValue = "239\n0\n97\n1065353216\n1072693248\n1\n0\ntrue\ntrue\n"
+    useGoldenData = true
     source = "runtime/basic/hash0.kt"
 }
 
 task ieee754(type: KonanLocalTest) {
-    goldValue = "Infinity 2147483647 -1\n" +
-            "3.4028235E38\n" +
-            "NAN2SHORT:: 0\n" +
-            "2147483647 -1\n" +
-            "FLOAT:: Infinity   INT:: 2147483647\n" +
-            "FLOAT:: 1.7014117E38   INT:: 2147483647\n" +
-            "FLOAT:: 3.4028235E38   INT:: 2147483647\n" +
-            "FLOAT:: 3.14   INT:: 3\n" +
-            "FLOAT:: NaN   INT:: 0\n" +
-            "FLOAT:: -33333.125   INT:: -33333\n" +
-            "FLOAT:: 1.4E-45   INT:: 0\n" +
-            "FLOAT:: -Infinity   INT:: -2147483648\n" +
-            "FLOAT:: -1.2   INT:: -1\n" +
-            "FLOAT:: -12.6   INT:: -12\n" +
-            "FLOAT:: 2.3   INT:: 2\n" +
-            "OK\n"
+    useGoldenData = true
     source = "runtime/basic/ieee754.kt"
 }
 
@@ -2533,66 +2487,66 @@ standaloneTest("hypotenuse") {
 }
 
 task array_list1(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/collections/array_list1.kt"
 }
 
 task array_list2(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // uses exceptions
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/collections/array_list2.kt"
 }
 
 task hash_map0(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/collections/hash_map0.kt"
 }
 
 task hash_map1(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/collections/hash_map1.kt"
 }
 
 task hash_set0(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/collections/hash_set0.kt"
 }
 
 task listof0(type: KonanLocalTest) {
-    goldValue = "abc\n[a, b, c, d]\n[n, s, a]\n"
+    useGoldenData = true
     source = "runtime/collections/listof0.kt"
 }
 
 task listof1(type: KonanLocalTest) {
     enabled = false
-    goldValue = "true\n[a, b, c]\n"
+    useGoldenData = true
     source = "datagen/literals/listof1.kt"
 }
 
 
 task moderately_large_array(type: KonanLocalTest) {
-    goldValue = "0\n"
+    useGoldenData = true
     source = "runtime/collections/moderately_large_array.kt"
 }
 
 task moderately_large_array1(type: KonanLocalTest) {
-    goldValue = "-45392\n"
+    useGoldenData = true
     source = "runtime/collections/moderately_large_array1.kt"
 }
 
 task string_builder0(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/text/string_builder0.kt"
 }
 
 task string_builder1(type: KonanLocalTest) {
-    goldValue = "HelloKotlin\n42\n0.1\ntrue\n\n"
+    useGoldenData = true
     source = "runtime/text/string_builder1.kt"
 }
 
 task string0(type: KonanLocalTest) {
-    goldValue = "true\ntrue\nПРИВЕТ\nпривет\nПока\ntrue\n"
+    useGoldenData = true
     source = "runtime/text/string0.kt"
 }
 
@@ -2601,13 +2555,13 @@ task parse0(type: KonanLocalTest) {
 }
 
 task to_string0(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/text/to_string0.kt"
 }
 
 task trim(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/text/trim.kt"
 }
 
@@ -2624,30 +2578,30 @@ task indexof(type: KonanLocalTest) {
 task utf8(type: KonanLocalTest) {
     // Uses exceptions so cannot run on wasm.
     enabled = project.testTarget != 'wasm32'
-    goldValue = "Hello\nПривет\n\uD800\uDC00\n\n\uFFFD\uFFFD\n\uFFFD12\n\uFFFD12\n12\uFFFD\n\uD83D\uDE25\n\uD83D\uDE25\n"
+    useGoldenData = true
     source = "runtime/text/utf8.kt"
 }
 
 task catch1(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Before\nCaught Throwable\nDone\n"
+    useGoldenData = true
     source = "runtime/exceptions/catch1.kt"
 }
 
 task catch2(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Before\nCaught Error\nDone\n"
+    useGoldenData = true
     source = "runtime/exceptions/catch2.kt"
 }
 
 task catch7(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Error happens\n"
+    useGoldenData = true
     source = "runtime/exceptions/catch7.kt"
 }
 
 task extend_exception(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/exceptions/extend0.kt"
 }
 
@@ -2712,7 +2666,7 @@ standaloneTest("custom_hook_throws") {
 
 standaloneTest("custom_hook_unhandled_exception") {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
-    goldValue = ""
+    useGoldenData = true
     source = "runtime/exceptions/custom_hook_unhandled_exception.kt"
 }
 
@@ -2783,171 +2737,171 @@ standaloneTest("runtime_math_harmony") {
 }
 
 task catch3(type: KonanLocalTest) {
-    goldValue = "Before\nCaught Throwable\nDone\n"
+    useGoldenData = true
     source = "codegen/try/catch3.kt"
 }
 
 task catch4(type: KonanLocalTest) {
-    goldValue = "Before\nCaught Error\nDone\n"
+    useGoldenData = true
     source = "codegen/try/catch4.kt"
 }
 
 task catch5(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Before\nCaught Error\nDone\n"
+    useGoldenData = true
     source = "codegen/try/catch5.kt"
 }
 
 task catch6(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Before\nCaught Error\nDone\n"
+    useGoldenData = true
     source = "codegen/try/catch6.kt"
 }
 
 task catch8(type: KonanLocalTest) {
-    goldValue = "Error happens\n"
+    useGoldenData = true
     source = "codegen/try/catch8.kt"
 }
 
 task finally1(type: KonanLocalTest) {
-    goldValue = "Try\nFinally\nDone\n"
+    useGoldenData = true
     source = "codegen/try/finally1.kt"
 }
 
 task finally2(type: KonanLocalTest) {
-    goldValue = "Try\nCaught Error\nFinally\nDone\n"
+    useGoldenData = true
     source = "codegen/try/finally2.kt"
 }
 
 task finally3(type: KonanLocalTest) {
-    goldValue = "Try\nFinally\nCaught Error\nDone\n"
+    useGoldenData = true
     source = "codegen/try/finally3.kt"
 }
 
 task finally4(type: KonanLocalTest) {
-    goldValue = "Try\nCatch\nFinally\nCaught Exception\nDone\n"
+    useGoldenData = true
     source = "codegen/try/finally4.kt"
 }
 
 task finally5(type: KonanLocalTest) {
-    goldValue = "Done\nFinally\n0\n"
+    useGoldenData = true
     source = "codegen/try/finally5.kt"
 }
 
 task finally6(type: KonanLocalTest) {
-    goldValue = "Done\nFinally\n1\n"
+    useGoldenData = true
     source = "codegen/try/finally6.kt"
 }
 
 task finally7(type: KonanLocalTest) {
-    goldValue = "Done\nFinally\n1\n"
+    useGoldenData = true
     source = "codegen/try/finally7.kt"
 }
 
 task finally8(type: KonanLocalTest) {
-    goldValue = "Finally 1\nFinally 2\n42\n"
+    useGoldenData = true
     source = "codegen/try/finally8.kt"
 }
 
 task finally9(type: KonanLocalTest) {
-    goldValue = "Finally 1\nFinally 2\nAfter\n"
+    useGoldenData = true
     source = "codegen/try/finally9.kt"
 }
 
 task finally10(type: KonanLocalTest) {
-    goldValue = "Finally\nAfter\n"
+    useGoldenData = true
     source = "codegen/try/finally10.kt"
 }
 
 task finally11(type: KonanLocalTest) {
-    goldValue = "Finally\nCatch 2\nDone\n"
+    useGoldenData = true
     source = "codegen/try/finally11.kt"
 }
 
 task finally_returnsDifferentTypes(type: KonanLocalTest) {
-    goldValue = "zzz\n42\n"
+    useGoldenData = true
     source = "codegen/try/returnsDifferentTypes.kt"
 }
 
 task scope1(type: KonanLocalTest) {
-    goldValue = "1\n"
+    useGoldenData = true
     source = "codegen/dataflow/scope1.kt"
 }
 
 task uninitialized_val(type: KonanLocalTest) {
-    goldValue = "1\n2\n"
+    useGoldenData = true
     source = "codegen/dataflow/uninitialized_val.kt"
 }
 
 task try1(type: KonanLocalTest) {
-    goldValue = "5\n"
+    useGoldenData = true
     source = "codegen/try/try1.kt"
 }
 
 task try2(type: KonanLocalTest) {
-    goldValue = "6\n"
+    useGoldenData = true
     source = "codegen/try/try2.kt"
 }
 
 task try3(type: KonanLocalTest) {
-    goldValue = "6\n"
+    useGoldenData = true
     source = "codegen/try/try3.kt"
 }
 
 task try4(type: KonanLocalTest) {
-    goldValue = "Try\n5\n"
+    useGoldenData = true
     source = "codegen/try/try4.kt"
 }
 
 task unreachable1(type: KonanLocalTest) {
-    goldValue = "1\n"
+    useGoldenData = true
     source = "codegen/controlflow/unreachable1.kt"
 }
 
 task break_continue(type: KonanLocalTest) {
-    goldValue = "foo@l1\nfoo@l2\nfoo@l2\nfoo@l2\nbar@l1\nbar@l2\nbar@l2\nbar@l2\nqux@t1\nqux@l2\nqux@l2\nqux@l2\n"
+    useGoldenData = true
     source = "codegen/controlflow/break.kt"
 }
 
 task break1(type: KonanLocalTest) {
-    goldValue = "Body\nDone\n"
+    useGoldenData = true
     source = "codegen/controlflow/break1.kt"
 }
 
 task range0(type: KonanLocalTest) {
-    goldValue = "123\nabcd\n"
+    useGoldenData = true
     source = "runtime/collections/range0.kt"
 }
 
 standaloneTest("args0") {
     arguments = ["AAA", "BB", "C"]
-    goldValue = "AAA\nBB\nC\n"
+    useGoldenData = true
     source = "runtime/basic/args0.kt"
 }
 
 standaloneTest("devirtualization_lateinitInterface") {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-    goldValue = "42\n"
+    useGoldenData = true
     flags = ["-opt"]
     source = "codegen/devirtualization/lateinitInterface.kt"
 }
 
 standaloneTest("devirtualization_getter_looking_as_box_function") {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-    goldValue = "box\n"
+    useGoldenData = true
     flags = ["-opt"]
     source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
 standaloneTest("devirtualization_anonymousObject") {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-    goldValue = "zzz\n"
+    useGoldenData = true
     flags = ["-opt"]
     source = "codegen/devirtualization/anonymousObject.kt"
 }
 
 task interfaceCallsNCasts_conservativeItable(type: KonanLocalTest) {
-    goldValue = "539\n5050\n26551140\n"
+    useGoldenData = true
     source = "codegen/interfaceCallsNCasts/conservativeItable.kt"
 }
 
@@ -2959,18 +2913,8 @@ task interfaceCallsNCasts_diamond(type: KonanLocalTest) {
     source = "codegen/interfaceCallsNCasts/diamond.kt"
 }
 
-standaloneTest("multiargs") {
-    arguments = ["AAA", "BB", "C"]
-    multiRuns = true
-    multiArguments = [["1", "2", "3"], ["---"], ["Hello", "world"]]
-    goldValue = "AAA\nBB\nC\n1\n2\n3\n" +
-            "AAA\nBB\nC\n---\n" +
-            "AAA\nBB\nC\nHello\nworld\n"
-    source = "runtime/basic/args0.kt"
-}
-
 task spread_operator_0(type: KonanLocalTest) {
-    goldValue = "[K, o, t, l, i, n,  , i, s,  , c, o, o, l,  , l, a, n, g, u, a, g, e]\n"
+    useGoldenData = true
     source = "codegen/basics/spread_operator_0.kt"
 }
 
@@ -3001,30 +2945,20 @@ standaloneTest("runtime_basic_assert_disabled") {
 }
 
 task initializers0(type: KonanLocalTest) {
-    goldValue = "main\n" +
-            "B::constructor(1)\n" +
-            "A::companion\n" +
-            "A::companion::foo\n" +
-            "A::companion::foo\n" +
-            "B::constructor(0)\n" +
-            "B::constructor()\n" +
-            "A::Obj\n" +
-            "A::AObj::foo\n" +
-            "A::AObj::foo\n"
+    useGoldenData = true
     source = "runtime/basic/initializers0.kt"
 }
 
 
 task initializers1(type: KonanLocalTest) {
-    goldValue = "Init Test\n" +
-                "Done\n"
+    useGoldenData = true
     enabled = false
     source = "runtime/basic/initializers1.kt"
 }
 
 
 task concatenation(type: KonanLocalTest) {
-    goldValue = "Hello world 1 2\nHello, a\nHello, b\n"
+    useGoldenData = true
     source = "codegen/basics/concatenation.kt"
 }
 
@@ -3033,68 +2967,68 @@ task const_infinity(type: KonanLocalTest) {
 }
 
 task lambda1(type: KonanLocalTest) {
-    goldValue = "lambda\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda1.kt"
 }
 
 task lambda2(type: KonanLocalTest) {
     arguments = ["arg0"]
-    goldValue = "arg0\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda2.kt"
 }
 
 task lambda3(type: KonanLocalTest) {
-    goldValue = "lambda\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda3.kt"
 }
 
 task lambda4(type: KonanLocalTest) {
-    goldValue = "1\n2\n3\n3\n4\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda4.kt"
 }
 
 task lambda5(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda5.kt"
 }
 
 task lambda6(type: KonanLocalTest) {
-    goldValue = "42\ncaptured\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda6.kt"
 }
 
 task lambda7(type: KonanLocalTest) {
-    goldValue = "43\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda7.kt"
 }
 
 task lambda8(type: KonanLocalTest) {
-    goldValue = "first\n0\nsecond\n0\nfirst\n1\nsecond\n1\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda8.kt"
 }
 
 task lambda9(type: KonanLocalTest) {
-    goldValue = "0\n0\n1\n0\n0\n1\n1\n1\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda9.kt"
 }
 
 task lambda10(type: KonanLocalTest) {
-    goldValue = "original\nchanged\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda10.kt"
 }
 
 task lambda11(type: KonanLocalTest) {
-    goldValue = "first\nsecond\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda11.kt"
 }
 
 task lambda12(type: KonanLocalTest) {
-    goldValue = "one\ntwo\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda12.kt"
 }
 
 task lambda13(type: KonanLocalTest) {
-    goldValue = "foo\n"
+    useGoldenData = true
     source = "codegen/lambda/lambda13.kt"
 }
 
@@ -3116,42 +3050,38 @@ task funInterface_kt43887(type: KonanLocalTest) {
 }
 
 task objectExpression1(type: KonanLocalTest) {
-    goldValue = "aabb\n"
+    useGoldenData = true
     source = "codegen/objectExpression/expr1.kt"
 }
 
 task objectExpression2(type: KonanLocalTest) {
-    goldValue = "a\n"
+    useGoldenData = true
     source = "codegen/objectExpression/expr2.kt"
 }
 
 task objectExpression3(type: KonanLocalTest) {
-    goldValue = "\n1\n2\n"
+    useGoldenData = true
     source = "codegen/objectExpression/expr3.kt"
 }
 
 standaloneTest("initializers2") {
-    goldValue = "init globalValue2\n" +
-                "init globalValue3\n" +
-                "1\n" +
-                "globalValue2\n" +
-                "globalValue3\n"
+    useGoldenData = true
 
     source = "runtime/basic/initializers2.kt"
 }
 
 task initializers3(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "runtime/basic/initializers3.kt"
 }
 
 task initializers4(type: KonanLocalTest) {
-    goldValue = "1073741824\ntrue\n"
+    useGoldenData = true
     source = "runtime/basic/initializers4.kt"
 }
 
 task initializers5(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "runtime/basic/initializers5.kt"
 }
 
@@ -3170,7 +3100,7 @@ task initializers8(type: KonanLocalTest) {
 
 task expression_as_statement(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // uses exceptions.
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/basics/expression_as_statement.kt"
 }
 
@@ -3208,7 +3138,7 @@ task memory_var4(type: KonanLocalTest) {
 
 task memory_throw_cleanup(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "runtime/memory/throw_cleanup.kt"
 }
 
@@ -3217,12 +3147,12 @@ task memory_escape0(type: KonanLocalTest) {
 }
 
 task memory_escape1(type: KonanLocalTest) {
-    goldValue = "zzz\n"
+    useGoldenData = true
     source = "runtime/memory/escape1.kt"
 }
 
 task memory_cycles0(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "runtime/memory/cycles0.kt"
 }
 
@@ -3236,18 +3166,18 @@ task memory_basic0(type: KonanLocalTest) {
 }
 
 task memory_escape2(type: KonanLocalTest) {
-    goldValue = "zzz\n"
+    useGoldenData = true
     source = "runtime/memory/escape2.kt"
 }
 
 task memory_weak0(type: KonanLocalTest) {
     enabled = !isNoopGC
-    goldValue = "Data(s=Hello)\nnull\nOK\n"
+    useGoldenData = true
     source = "runtime/memory/weak0.kt"
 }
 
 task memory_weak1(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "runtime/memory/weak1.kt"
 }
 
@@ -3314,7 +3244,7 @@ standaloneTest("mpp1") {
 }
 
 linkTest("mpp2") {
-    goldValue = "C(arg=42)\ntrue\n1\nh\n"
+    useGoldenData = true
     source = "codegen/mpp/mpp2.kt"
     lib = "codegen/mpp/libmpp2.kt"
     flags = ['-Xmulti-platform']
@@ -3368,22 +3298,22 @@ standaloneTest("freezing_control_basic_explicitOnly") {
 }
 
 task unit1(type: KonanLocalTest) {
-    goldValue = "First\nkotlin.Unit\n"
+    useGoldenData = true
     source = "codegen/basics/unit1.kt"
 }
 
 task unit2(type: KonanLocalTest) {
-    goldValue = "kotlin.Unit\n"
+    useGoldenData = true
     source = "codegen/basics/unit2.kt"
 }
 
 task unit3(type: KonanLocalTest) {
-    goldValue = "kotlin.Unit\n"
+    useGoldenData = true
     source = "codegen/basics/unit3.kt"
 }
 
 task unit4(type: KonanLocalTest) {
-    goldValue = "Done\n"
+    useGoldenData = true
     source = "codegen/basics/unit4.kt"
 }
 
@@ -3396,7 +3326,7 @@ task kt42000_2(type: KonanLocalTest) {
 }
 
 task inline0(type: KonanLocalTest) {
-    goldValue = "84\n"
+    useGoldenData = true
     source = "codegen/inline/inline0.kt"
 }
 
@@ -3406,217 +3336,210 @@ task vararg0(type: KonanLocalTest) {
 
 task vararg_of_literals(type: KonanLocalTest) {
     enabled = false
-    goldValue = "a\na\n"
+    useGoldenData = true
     source = "lower/vararg_of_literals.kt"
 }
 
 standaloneTest('tailrec') {
-    goldValue = "12\n100000000\n" +
-            "8\n" +
-            "1\n" +
-            "3 ...\n2 ...\n1 ...\nready!\n" +
-            "2\n-1\n" +
-            "true\nfalse\n" +
-            "default\n" +
-            "42\n"
+    useGoldenData = true
     source = "lower/tailrec.kt"
     flags = ['-XXLanguage:-ProhibitTailrecOnVirtualMember', '-e', 'lower.tailrec.main']
 }
 
 task inline1(type: KonanLocalTest) {
-    goldValue = "Hello world\n"
+    useGoldenData = true
     source = "codegen/inline/inline1.kt"
 }
 
 task inline2(type: KonanLocalTest) {
-    goldValue = "hello 1 8\n"
+    useGoldenData = true
     source = "codegen/inline/inline2.kt"
 }
 
 task inline3(type: KonanLocalTest) {
-    goldValue = "5\n"
+    useGoldenData = true
     source = "codegen/inline/inline3.kt"
 }
 
 task inline4(type: KonanLocalTest) {
-    goldValue = "3\n"
+    useGoldenData = true
     source = "codegen/inline/inline4.kt"
 }
 
 task inline5(type: KonanLocalTest) {
-    goldValue = "33\n"
+    useGoldenData = true
     source = "codegen/inline/inline5.kt"
 }
 
 task inline6(type: KonanLocalTest) {
-    goldValue = "hello1\nhello2\nhello3\nhello4\n"
+    useGoldenData = true
     source = "codegen/inline/inline6.kt"
 }
 
 task inline7(type: KonanLocalTest) {
-    goldValue = "1\n2\n3\n"
+    useGoldenData = true
     source = "codegen/inline/inline7.kt"
 }
 
 task inline8(type: KonanLocalTest) {
-    goldValue = "8\n"
+    useGoldenData = true
     source = "codegen/inline/inline8.kt"
 }
 
 task inline9(type: KonanLocalTest) {
-    goldValue = "hello\n6\n"
+    useGoldenData = true
     source = "codegen/inline/inline9.kt"
 }
 
 task inline10(type: KonanLocalTest) {
-    goldValue = "2\n"
+    useGoldenData = true
     source = "codegen/inline/inline10.kt"
 }
 
 task inline13(type: KonanLocalTest) {
-    goldValue = "true\n"
+    useGoldenData = true
     source = "codegen/inline/inline13.kt"
 }
 
 task inline14(type: KonanLocalTest) {
-    goldValue = "9\n"
+    useGoldenData = true
     source = "codegen/inline/inline14.kt"
 }
 
 task inline15(type: KonanLocalTest) {
-    goldValue = "4\n"
+    useGoldenData = true
     source = "codegen/inline/inline15.kt"
 }
 
 task inline16(type: KonanLocalTest) {
-    goldValue = "false\n"
+    useGoldenData = true
     source = "codegen/inline/inline16.kt"
 }
 
 task inline17(type: KonanLocalTest) {
-    goldValue = "[1, 2]\n"
+    useGoldenData = true
     source = "codegen/inline/inline17.kt"
 }
 
 task inline18(type: KonanLocalTest) {
-    goldValue = "true\n"
+    useGoldenData = true
     source = "codegen/inline/inline18.kt"
 }
 
 task inline19(type: KonanLocalTest) {
-    goldValue = "6\n"
+    useGoldenData = true
     source = "codegen/inline/inline19.kt"
 }
 
 task inline20(type: KonanLocalTest) {
-    goldValue = "def\n"
+    useGoldenData = true
     source = "codegen/inline/inline20.kt"
 }
 
 task inline21(type: KonanLocalTest) {
-    goldValue = "bar\nfoo1\nfoo2\n33\n"
+    useGoldenData = true
     source = "codegen/inline/inline21.kt"
 }
 
 task inline22(type: KonanLocalTest) {
-    goldValue = "14\n"
+    useGoldenData = true
     source = "codegen/inline/inline22.kt"
 }
 
 task inline23(type: KonanLocalTest) {
-    goldValue = "33\n"
+    useGoldenData = true
     source = "codegen/inline/inline23.kt"
 }
 
 task inline24(type: KonanLocalTest) {
     enabled = false
-    goldValue = "bar\nfoo\n"
+    useGoldenData = true
     source = "codegen/inline/inline24.kt"
 }
 
 task inline25(type: KonanLocalTest) {
-    goldValue = "Ok\nOk\n"
+    useGoldenData = true
     source = "codegen/inline/inline25.kt"
 }
 
 task inline26(type: KonanLocalTest) {
-    goldValue = "5\n"
+    useGoldenData = true
     source = "codegen/inline/inline26.kt"
 }
 
 task inline_type_substitution_in_fake_override(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/inline/typeSubstitutionInFakeOverride.kt"
 }
 
 task inline_localFunctionInInitializerBlock(type: KonanLocalTest) {
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/inline/localFunctionInInitializerBlock.kt"
 }
 
 task inline_lambdaInDefaultValue(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/inline/lambdaInDefaultValue.kt"
 }
 
 task inline_lambdaAsAny(type: KonanLocalTest) {
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/inline/lambdaAsAny.kt"
 }
 
 task inline_getClass(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/inline/getClass.kt"
 }
 
 task inline_statementAsLastExprInBlock(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/inline/statementAsLastExprInBlock.kt"
 }
 
 task inline_returnLocalClassFromBlock(type: KonanLocalTest) {
     enabled = false
-    goldValue = "Zzz\n"
+    useGoldenData = true
     source = "codegen/inline/returnLocalClassFromBlock.kt"
 }
 
 task inline_changingCapturedLocal(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/inline/changingCapturedLocal.kt"
 }
 
 task inline_defaultArgs(type: KonanLocalTest) {
-    goldValue = "42\n"
+    useGoldenData = true
     source = "codegen/inline/defaultArgs.kt"
 }
 
 task inline_propertyAccessorInline(type: KonanLocalTest) {
-    goldValue = "123\n42\n"
+    useGoldenData = true
     source = "codegen/inline/propertyAccessorInline.kt"
 }
 
 task inline_twiceInlinedObject(type: KonanLocalTest) {
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/inline/twiceInlinedObject.kt"
 }
 
 task inline_localObjectReturnedFromWhen(type: KonanLocalTest) {
-    goldValue = "Ok\n"
+    useGoldenData = true
     source = "codegen/inline/localObjectReturnedFromWhen.kt"
 }
 
 task inline_genericFunctionReference(type: KonanLocalTest) {
-    goldValue = "0\n"
+    useGoldenData = true
     source = "codegen/inline/genericFunctionReference.kt"
 }
 
 task inline_correctOrderFunctionReference(type: KonanLocalTest) {
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/inline/correctOrderFunctionReference.kt"
 }
 
 task inline_coercionToUnit(type: KonanLocalTest) {
-    goldValue = "kotlin.Unit\n"
+    useGoldenData = true
     source = "codegen/inline/coercionToUnit.kt"
 }
 
@@ -3626,7 +3549,7 @@ task inline_redundantCoercionsCleaner(type: KonanLocalTest) {
 
 task classDeclarationInsideInline(type: KonanLocalTest) {
     source = "codegen/inline/classDeclarationInsideInline.kt"
-    goldValue = "test1: 1.0\n1\ntest2\n"
+    useGoldenData = true
 }
 
 task inlineClass0(type: KonanLocalTest) {
@@ -3692,85 +3615,57 @@ KotlinNativeTestKt.createTest(project, "kt39548", KonanStandaloneTest) { task ->
 }
 
 linkTest("deserialized_members") {
-    goldValue=
-        "first level\n"+
-        "second level\n"+
-        "third levelxz\n"+
-        "inner first level\n"+
-        "inner second level\n"+
-        "inner third level\n"+
-        "types first level: 13\n"+
-        "types second level cha-cha-cha\n"+
-        "types third level 1.0\n"
-    lib = "serialization/serialize_members.kt"
-    source = "serialization/deserialize_members.kt"
+    source = "serialization/deserialized_members/main.kt"
+    lib = "serialization/deserialized_members/library.kt"
+    useGoldenData = true
 }
 
 linkTest("serialized_catch") {
-    source = "serialization/use.kt"
-    lib = "serialization/catch.kt"
-    goldValue = "Gotcha1: XXX\nGotcha2: YYY\n"
+    source = "serialization/serialized_catch/main.kt"
+    lib = "serialization/serialized_catch/library.kt"
+    useGoldenData = true
 }
 
 linkTest("serialized_doWhile") {
-    source = "serialization/use.kt"
-    lib = "serialization/do_while.kt"
-    goldValue = "999\n"
+    source = "serialization/serialized_doWhile/main.kt"
+    lib = "serialization/serialized_doWhile/library.kt"
+    useGoldenData = true
 }
 
 linkTest("serialized_vararg") {
-    source = "serialization/use.kt"
-    lib = "serialization/vararg.kt"
-    goldValue = "17\n19\n23\n29\n31\nsize: 5\n"
+    source = "serialization/serialized_vararg/main.kt"
+    lib = "serialization/serialized_vararg/library.kt"
+    useGoldenData = true
 }
 
 linkTest("serialized_default_args") {
-    source = "serialization/prop.kt"
-    lib = "serialization/default_args.kt"
-    goldValue = "SomeDataClass(first=17, second=666, third=23)\n"
+    source = "serialization/serialized_default_args/main.kt"
+    lib = "serialization/serialized_default_args/library.kt"
+    useGoldenData = true
 }
 
 standaloneTest("serialized_no_typemap") {
     source = "serialization/regression/no_type_map.kt"
-    goldValue = "OK\n"
+    useGoldenData = true
 }
 
 linkTest("serialized_enum_ordinal") {
     source = "serialization/enum_ordinal/main.kt"
     lib = "serialization/enum_ordinal/library.kt"
-    goldValue = "0\n1\n2\nb\n"
+    useGoldenData = true
 }
 
 linkTest("serialized_char_constant") {
-    source = "serialization/use_char_const.kt"
-    lib = "serialization/char_const.kt"
-    goldValue = "Ы\n"
+    source = "serialization/serialized_char_constant/main.kt"
+    lib = "serialization/serialized_char_constant/library.kt"
+    useGoldenData = true
 }
 
 standaloneTest("testing_annotations") {
     source = "testing/annotations.kt"
     flags = ['-tr']
     arguments = ['--ktest_logger=SIMPLE']
-    goldValue = 'Starting testing\nStarting iteration: 1\n' +
-            'Test suite ignored: kotlin.test.tests.IgnoredClass.IgnoredObject\n' +
-            'Test suite ignored: kotlin.test.tests.IgnoredClass\nTest suite ignored: kotlin.test.tests.IgnoredObject\n' +
-            'Starting test suite: kotlin.test.tests.A\nbeforeClass (A.companion)\n' +
-            'Starting test case: test1 (kotlin.test.tests.A)\nbefore (A)\ntest1 (A)\nafter (A)\n' +
-            'Passed: test1 (kotlin.test.tests.A)\nIgnore: ignoredTest (kotlin.test.tests.A)\n' +
-            'afterClass (A.companion)\nTest suite finished: kotlin.test.tests.A\n' +
-            'Starting test suite: kotlin.test.tests.A.O\nbeforeClass (A.object)\n' +
-            'Starting test case: test1 (kotlin.test.tests.A.O)\nbefore (A.object)\n' +
-            'test1 (A.object)\nafter (A.object)\nPassed: test1 (kotlin.test.tests.A.O)\n' +
-            'Ignore: ignoredTest (kotlin.test.tests.A.O)\nafterClass (A.object)\n' +
-            'Test suite finished: kotlin.test.tests.A.O\nStarting test suite: kotlin.test.tests.O\n' +
-            'beforeClass (object)\nStarting test case: test1 (kotlin.test.tests.O)\nbefore (object)\n' +
-            'test1 (object)\nafter (object)\nPassed: test1 (kotlin.test.tests.O)\n' +
-            'Ignore: ignoredTest (kotlin.test.tests.O)\nafterClass (object)\nTest suite finished: kotlin.test.tests.O\n' +
-            'Starting test suite: kotlin.test.tests.AnnotationsKt\nbeforeClass (file)\n' +
-            'Starting test case: test1 (kotlin.test.tests.AnnotationsKt)\nbefore (file)\n' +
-            'test1 (file)\nafter (file)\nPassed: test1 (kotlin.test.tests.AnnotationsKt)\n' +
-            'Ignore: ignoredTest (kotlin.test.tests.AnnotationsKt)\nafterClass (file)\n' +
-            'Test suite finished: kotlin.test.tests.AnnotationsKt\nIteration finished: 1\nTesting finished\n'
+    useGoldenData = true
 }
 
 standaloneTest("testing_assertions") {
@@ -3784,23 +3679,7 @@ standaloneTest("testing_custom_main") {
     source = "testing/custom_main.kt"
     flags = ['-tr', '-e', 'kotlin.test.tests.main']
     arguments = ['--ktest_logger=SIMPLE', '--ktest_repeat=2']
-    goldValue = 'Custom main\n' +
-            'Starting testing\n' +
-            'Starting iteration: 1\n' +
-            'Starting test suite: kotlin.test.tests.Custom_mainKt\n' +
-            'Starting test case: test (kotlin.test.tests.Custom_mainKt)\n' +
-            'test\n' +
-            'Passed: test (kotlin.test.tests.Custom_mainKt)\n' +
-            'Test suite finished: kotlin.test.tests.Custom_mainKt\n' +
-            'Iteration finished: 1\n' +
-            'Starting iteration: 2\n' +
-            'Starting test suite: kotlin.test.tests.Custom_mainKt\n' +
-            'Starting test case: test (kotlin.test.tests.Custom_mainKt)\n' +
-            'test\n' +
-            'Passed: test (kotlin.test.tests.Custom_mainKt)\n' +
-            'Test suite finished: kotlin.test.tests.Custom_mainKt\n' +
-            'Iteration finished: 2\n' +
-            'Testing finished\n'
+    useGoldenData = true
 }
 
 standaloneTest("testing_library_usage") {
@@ -3974,33 +3853,33 @@ standaloneTest("testing_stacktrace") {
 
 // Just check that the driver is able to produce runnable binaries.
 tasks.register("driver0", KonanDriverTest) {
-    goldValue = "Hello, world!\n"
+    useGoldenData = true
     source = "runtime/basic/driver0.kt"
 }
 
 tasks.register("driver_opt", KonanDriverTest) {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-    goldValue = "Hello, world!\n"
-    source = "runtime/basic/driver0.kt"
+    useGoldenData = true
+    source = "runtime/basic/driver_opt.kt"
     flags = ["-opt"]
 }
 
 // Enable when deserialization for default arguments is fixed.
 linkTest("inline_defaultArgs_linkTest") {
-    goldValue = "122\n47\n"
+    useGoldenData = true
     source = "codegen/inline/defaultArgs_linkTest_main.kt"
     lib = "codegen/inline/defaultArgs_linkTest_lib.kt"
 }
 
 linkTest("inline_sharedVar_linkTest") {
-    goldValue = "6\n"
+    useGoldenData = true
     source = "codegen/inline/sharedVar_linkTest_main.kt"
     lib = "codegen/inline/sharedVar_linkTest_lib.kt"
 }
 
 linkTest("inline_lateinitProperty_linkTest") {
     disabled = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "OK\n"
+    useGoldenData = true
     source = "codegen/inline/lateinitProperty_linkTest_main.kt"
     lib = "codegen/inline/lateinitProperty_linkTest_lib.kt"
 }
@@ -4361,21 +4240,21 @@ interopTest("interop0") {
                (project.testTarget == 'linux_mipsel32') ||
                (project.testTarget == 'linux_arm32_hfp') ||
                (project.testTarget == 'linux_arm64')
-    goldValue = "0\n0\n"
+    useGoldenData = true
     source = "interop/basics/0.kt"
     interop = 'sysstat'
 }
 
 interopTest("interop1") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-    goldValue = "257\n-1\n-2\n"
+    useGoldenData = true
     source = "interop/basics/1.kt"
     interop = 'cstdlib'
 }
 
 interopTest("interop2") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-    goldValue = "Hello\n"
+    useGoldenData = true
     source = "interop/basics/2.kt"
     interop = 'cstdio'
 }
@@ -4390,21 +4269,21 @@ interopTest("interop3") {
                (project.testTarget == 'linux_mips32') ||
                (project.testTarget == 'linux_mipsel32') ||
                (project.testTarget == 'wasm32') // No interop for wasm yet.
-    goldValue = "8 9 12 13 14 \n"
+    useGoldenData = true
     source = "interop/basics/3.kt"
     interop = 'cstdlib'
 }
 
 interopTest("interop4") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-    goldValue = "a b -1 2 3 9223372036854775807 0.1 0.2 1 0\n1 42\n"
+    useGoldenData = true
     source = "interop/basics/4.kt"
     interop = 'cstdio'
 }
 
 standaloneTest("interop5") {
     enabled = (project.testTarget != 'wasm32') // No interop for wasm yet.
-    goldValue = "Hello!\n"
+    useGoldenData = true
     source = "interop/basics/5.kt"
     UtilsKt.dependsOnPlatformLibs(it)
 }
@@ -4418,7 +4297,7 @@ interopTest("interop_bitfields") {
 
 interopTest("interop_funptr") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-    goldValue = "42\n17\n1\n0\n42\n42\n"
+    useGoldenData = true
     source = "interop/basics/funptr.kt"
     interop = 'cfunptr'
 }
@@ -4508,8 +4387,7 @@ interopTest("interop_concurrentTerminate") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/concurrentTerminate/main.kt"
     interop = 'concurrentTerminate'
-    goldValue = "Reporting error!\n"
-    outputChecker = { str -> str.endsWith(goldValue) }
+    outputChecker = { str -> str.endsWith("Reporting error!\n") }
     expectedExitStatus = 99
 }
 
@@ -4622,7 +4500,7 @@ dynamicTest("interop_kt43502") {
     interop = "kt43502"
     source = "interop/kt43502/main.kt"
     cSource = "$projectDir/interop/kt43502/main.c"
-    goldValue = "null\n"
+    useGoldenData = true
 }
 
 interopTest("interop_leakMemoryWithRunningThreadUnchecked") {
@@ -4675,11 +4553,7 @@ interopTest("interop_cppSkia") {
                 isExperimentalMM)
     source = "interop/cpp/skia.kt"
     interop = 'cppSkia'
-    goldValue =
-            "SkFoo()\nSkData()\nSkData()\nSkValue()\nSkData()\n" +
-            "MANAGED: f: true, a: true, b: false, v: true, c: false\n" +
-            "DATA: 17 19 17 17\n" +
-            "unref\n~SkData()\n~SkFoo()\n"
+    useGoldenData = true
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
@@ -4687,9 +4561,7 @@ interopTest("interop_cppSkiaSignature") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/cpp/skiaSignature.kt"
     interop = "cppSkiaSignature"
-    goldValue =
-            "SkData()\nSkData(19)\nSkData(SkData*)\nSkData(SkData*, SkData*)\nSkData(200)\nSkData(436)\n"+
-            "true true true true true\n"
+    useGoldenData = true
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
@@ -4715,24 +4587,9 @@ standaloneTest("interop_opengl_teapot") {
 
 if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_smoke") {
-        goldValue = "84\nFoo\nDeallocated\n" +
-                "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
-                "true\ntrue\n" +
-                "Global string\nAnother global string\nnull\nglobal object\n" +
-                "5\n" +
-                "String macro\n" +
-                "CFString macro\n" +
-                "Deallocated\nDeallocated\n" +
-                "Class TestExportObjCClass34 has multiple implementations. Which one will be used is undefined.\n"
-
-        if (isNoopGC) {
-            // No deallocations for the no-op GC.
-            goldValue = goldValue.replace("Deallocated\n", "")
-        }
-
+        enabled = !isNoopGC
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'
-
         doBeforeBuild {
             mkdir(buildDir)
             execClangForCompilerTests(project.target) {
@@ -4751,6 +4608,33 @@ if (PlatformInfo.isAppleTarget(project)) {
                 into("$testOutputLocal/$name/$target/en.lproj/")
             }
         }
+        useGoldenData = true
+    }
+
+    interopTest("interop_objc_smoke_noopgc") {
+        enabled = isNoopGC
+        source = "interop/objc/smoke_noopgc.kt"
+        interop = 'objcSmoke'
+        doBeforeBuild {
+            mkdir(buildDir)
+            execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/smoke.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"
+                // Enable ARC optimizations to prevent some objects from leaking in Obj-C code due to exceptions:
+                args '-O2'
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjcsmoke.dylib")
+            }
+
+            copy {
+                from("interop/objc/Localizable.stringsdict")
+                into("$testOutputLocal/$name/$target/en.lproj/")
+            }
+        }
+        // No deallocations for the no-op GC.
+        useGoldenData = true
     }
 
     interopTestMultifile("interop_objc_tests") {
@@ -4785,7 +4669,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_global_initializer") {
-        goldValue = "OK\n"
+        useGoldenData = true
         source = "interop/objc_with_initializer/objc_test.kt"
         interop = 'objcMisc'
 
@@ -4838,9 +4722,9 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignExceptionMode_wrap") {
-        source = "interop/objc/foreignException/objcExceptionMode.kt"
+        source = "interop/objc/foreignException/objcExceptionMode_wrap.kt"
         interop = 'foreignExceptionMode_wrap'
-        goldValue = "OK: ForeignException\n"
+        useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
@@ -4857,9 +4741,9 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignExceptionMode_default") {
-        source = "interop/objc/foreignException/objcExceptionMode.kt"
+        source = "interop/objc/foreignException/objcExceptionMode_default.kt"
         interop = 'foreignExceptionMode_default'
-        goldValue = "OK: Ends with uncaught exception handler\n"
+        useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
@@ -4878,7 +4762,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_kt34467") {
         source = "interop/objc/kt34467/foo.kt"
         interop = 'objcKt34467'
-        goldValue = "OK\n42\n"
+        useGoldenData = true
     }
 
     interopTest("interop_objc_illegal_sharing_with_weak") {
@@ -4887,7 +4771,7 @@ if (PlatformInfo.isAppleTarget(project)) {
 
         if (isExperimentalMM) {
             // Experimental MM supports arbitrary object sharing.
-            goldValue = "Before\nAfter true\n"
+            outputChecker = { it == "Before\nAfter true\n" }
         } else {
             expectedExitStatusChecker = { it != 0 }
             outputChecker = {
@@ -4903,7 +4787,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/kt42172/main.kt"
         interop = "objc_kt42172"
         flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
-        goldValue = 'Executed finalizer\n'
+        useGoldenData = true
 
         doBeforeBuild {
             mkdir(buildDir)
@@ -4927,7 +4811,7 @@ if (PlatformInfo.isAppleTarget(project)) {
             }
         }
         source = "interop/objc_arc_contract/main.kt"
-        goldValue = "ok\n"
+        useGoldenData = true
         flags = ["-native-library", "$buildDir/objc_arc_contract.bc"]
     }
 }
@@ -4942,7 +4826,7 @@ standaloneTest("jsinterop_math") {
     }
     dependsOn ':kotlin-native:wasm32PlatformLibs'
     enabled = (project.testTarget == 'wasm32')
-    goldValue = "e = 2.718281828459045, pi = 3.141592653589793, sin(pi) = 1.2246467991473532E-16, sin(pi/2) = 1.0, ln(1) = 0.0, ln(e) = 1.0\n"
+    useGoldenData = true
     source = "jsinterop/math.kt"
     flags = ["-r", "$buildDir", "-l", "jsmath"]
 }
@@ -4950,14 +4834,14 @@ standaloneTest("jsinterop_math") {
 standaloneTest("interop_libiconv") {
     enabled = (project.testTarget == null)
     source = "interop/libiconv.kt"
-    goldValue = "72 72\n101 101\n108 108\n108 108\n111 111\n33 33\n"
+    useGoldenData = true
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
 standaloneTest("interop_zlib") {
     enabled = (project.testTarget == null)
     source = "interop/platform_zlib.kt"
-    goldValue = "Hello!\nHello!\n"
+    useGoldenData = true
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
@@ -4981,39 +4865,14 @@ dynamicTest("produce_dynamic") {
     disabled = (project.target.name != project.hostName)
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
-    goldValue = "Hello, dynamic!\n" +
-            "Base.foo\n" +
-            "Base.fooParam: a 1 q\n" +
-            "Child.fooParam: b 2 null\n" +
-            "Child.fooParam: c 3 null\n" +
-            "Impl1.I: d 4 Impl1\n" +
-            "Impl2.I: e 5 Impl2\n" +
-            "String is Kotlin/Native nullable is Hi null is OK\n" +
-            "RO property is 42\n" +
-            "RW property is 239\n" +
-            "enum100 = 100\n" +
-            "enum42 = 42\n" +
-            "object = 42\n" +
-            "singleton = I am single\n" +
-            "mutable = foo\n" +
-            "topLevel = 777 3\n" +
-            "IsInstance1 = PASS\n" +
-            "IsInstance2 = PASS\n" +
-            "getVector128 = (1, 2, 3, 4)\n" +
-            "Error handler: kotlin.Error: Expected error\n"
+    useGoldenData = true
 }
 
 dynamicTest("kt36639") {
     disabled = (project.target.name != project.hostName)
     source = "produce_dynamic/kt-36639/main.kt"
     cSource = "$projectDir/produce_dynamic/kt-36639/main.c"
-    goldValue = """|CFoo1::extfoo
-                   |CFoo1::extfoo
-                   |CFoo2::extfoo
-                   |CFoo2::extfoo
-                   |Int::extfoo
-                   |Int::extfoo
-                   |""".stripMargin()
+    useGoldenData = true
 }
 
 for (i in 0..2) {
@@ -5022,7 +4881,7 @@ for (i in 0..2) {
         disabled = (project.target.name != project.hostName)
         source = "produce_dynamic/kt-42796/main-${i}.kt"
         cSource = "$projectDir/produce_dynamic/kt-42796/main.cpp"
-        goldValue = ""
+        useGoldenData = true
         clangFlags = ["-DTEST=$i", "-Werror"]
     }
 }
@@ -5043,8 +4902,7 @@ dynamicTest("interop_concurrentRuntime") {
     source = "interop/concurrentTerminate/reverseInterop.kt"
     cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
     clangTool = "clang++"
-    goldValue = "Uncaught Kotlin exception: kotlin.RuntimeException: Example"
-    outputChecker = { str -> str.startsWith(goldValue) }
+    outputChecker = { str -> str.startsWith("Uncaught Kotlin exception: kotlin.RuntimeException: Example") }
     expectedExitStatus = 99
 }
 
@@ -5060,7 +4918,7 @@ dynamicTest("interop_cleaners_main_thread") {
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/main_thread.cpp"
     clangTool = "clang++"
-    goldValue = "42\n"
+    useGoldenData = true
     flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
@@ -5069,7 +4927,7 @@ dynamicTest("interop_cleaners_second_thread") {
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/second_thread.cpp"
     clangTool = "clang++"
-    goldValue = "42\n"
+    useGoldenData = true
     flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
@@ -5078,7 +4936,7 @@ dynamicTest("interop_cleaners_leak") {
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/leak.cpp"
     clangTool = "clang++"
-    goldValue = ""
+    useGoldenData = true
     flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
@@ -5154,10 +5012,10 @@ tasks.register("library_mismatch", KonanDriverTest) {
         "warning: skipping $dir/1.2/empty.klib. The library versions don't match. Expected '5.6', found '1.2'\n" +
         //"warning: skipping $dir/3.4/empty.klib. The target doesn't match. Expected '$currentTarget', found [$someOtherTarget]\n" +
         "Hello, versioned world!\n"
-    goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    messages = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
     outputChecker = { out ->
         def outV = out.split("\n").findAll{ !it.startsWith("WARNING: ") }.join("\n")
-        goldValue.split("\n")
+        messages.split("\n")
                 .collect { line -> outV.contains(line) }
                 .every { it == true }
     }
@@ -5178,12 +5036,10 @@ tasks.register("library_ir_provider_mismatch", KonanDriverTest) {
     source = "link/ir_providers/hello.kt"
     flags = ['-target', currentTarget, '-l', 'empty', '-r', "$dir/unsupported_ir_provider", '-r', "$dir/supported_ir_provider"]
     compilerMessages = true
-    def messages =
-            "warning: skipping $dir/unsupported_ir_provider/empty.klib. The library requires unknown IR provider UNSUPPORTED.\n" +
-                    "hello\n"
-    goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    def messages = "warning: skipping $dir/unsupported_ir_provider/empty.klib. The library requires unknown IR provider UNSUPPORTED.\nhello\n"
+    messages = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
     outputChecker = { out ->
-        goldValue.split("\n")
+        messages.split("\n")
                 .collect { line -> out.contains(line) }
                 .every { it == true }
     }
@@ -5200,26 +5056,26 @@ standaloneTest("fake_override_0") {
     }
     source = "$sources/main.kt"
     flags = ["-l", "use", "-r", "$dir"]
-    goldValue = "Moved\nMoved\nChild\nSuper\n"
+    useGoldenData = true
 }
 
 linkTest("private_fake_overrides_0") {
     source = "link/private_fake_overrides/inherit_main.kt"
     lib = "link/private_fake_overrides/inherit_lib.kt"
-    goldValue = "PASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\n"
+    useGoldenData = true
 }
 
 linkTest("private_fake_overrides_1") {
     source = "link/private_fake_overrides/override_main.kt"
     lib = "link/private_fake_overrides/override_lib.kt"
-    goldValue = "PASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\n"
+    useGoldenData = true
 }
 
 linkTest("remap_expect_property_refs") {
     source = "codegen/mpp/remap_expect_property_ref_main.kt"
     lib = "codegen/mpp/remap_expect_property_ref_lib.kt"
     flags = ["-Xmulti-platform"]
-    goldValue = "42\n"
+    useGoldenData = true
 }
 
 Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
@@ -5620,12 +5476,7 @@ tasks.register("metadata_compare_unable_to_import", MetadataComparisonTest) {
 
 standaloneTest("local_ea_arraysfieldwrite") {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
-    goldValue = "Array (constructor init):\nSize: 2\nContents: [1, 2]\n" +
-            "Array (constructor init):\nSize: 2\nContents: [3, 4]\n" +
-            "Array (default value init):\nSize: 2\nContents: [1, 2]\n" +
-            "Array (default value init):\nSize: 2\nContents: [3, 4]\n" +
-            "Array (init block):\nSize: 2\nContents: [1, 2]\n" +
-            "Array (init block):\nSize: 2\nContents: [3, 4]\n"
+    useGoldenData = true
     flags = ["-opt"]
     source = "codegen/localEscapeAnalysis/arraysFieldWrite.kt"
 }
@@ -5641,12 +5492,9 @@ tasks.register("override_konan_properties0", KonanDriverTest) {
     ]
     compilerMessages = true
     source = "link/ir_providers/hello.kt"
-    def messages =
-            "inline_threshold: 76\n" +
-            "hello\n"
-    goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    def messages = "inline_threshold: 76\nhello\n"
     outputChecker = { out ->
-        goldValue.split("\n")
+        messages.split("\n")
                 .collect { line -> out.contains(line) }
                 .every { it == true }
     }
@@ -5854,3 +5702,5 @@ if (UtilsKt.supportsRunningTestsOnDevice(target)) {
             }
             .configureEach { it.enabled = false }
 }
+
+

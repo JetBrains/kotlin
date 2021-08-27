@@ -1,0 +1,3 @@
+SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))
+Got kotlin.Unit
+OK

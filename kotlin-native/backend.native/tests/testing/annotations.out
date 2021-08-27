@@ -1,0 +1,47 @@
+Starting testing
+Starting iteration: 1
+Test suite ignored: kotlin.test.tests.IgnoredClass.IgnoredObject
+Test suite ignored: kotlin.test.tests.IgnoredClass
+Test suite ignored: kotlin.test.tests.IgnoredObject
+Starting test suite: kotlin.test.tests.A
+beforeClass (A.companion)
+Starting test case: test1 (kotlin.test.tests.A)
+before (A)
+test1 (A)
+after (A)
+Passed: test1 (kotlin.test.tests.A)
+Ignore: ignoredTest (kotlin.test.tests.A)
+afterClass (A.companion)
+Test suite finished: kotlin.test.tests.A
+Starting test suite: kotlin.test.tests.A.O
+beforeClass (A.object)
+Starting test case: test1 (kotlin.test.tests.A.O)
+before (A.object)
+test1 (A.object)
+after (A.object)
+Passed: test1 (kotlin.test.tests.A.O)
+Ignore: ignoredTest (kotlin.test.tests.A.O)
+afterClass (A.object)
+Test suite finished: kotlin.test.tests.A.O
+Starting test suite: kotlin.test.tests.O
+beforeClass (object)
+Starting test case: test1 (kotlin.test.tests.O)
+before (object)
+test1 (object)
+after (object)
+Passed: test1 (kotlin.test.tests.O)
+Ignore: ignoredTest (kotlin.test.tests.O)
+afterClass (object)
+Test suite finished: kotlin.test.tests.O
+Starting test suite: kotlin.test.tests.AnnotationsKt
+beforeClass (file)
+Starting test case: test1 (kotlin.test.tests.AnnotationsKt)
+before (file)
+test1 (file)
+after (file)
+Passed: test1 (kotlin.test.tests.AnnotationsKt)
+Ignore: ignoredTest (kotlin.test.tests.AnnotationsKt)
+afterClass (file)
+Test suite finished: kotlin.test.tests.AnnotationsKt
+Iteration finished: 1
+Testing finished

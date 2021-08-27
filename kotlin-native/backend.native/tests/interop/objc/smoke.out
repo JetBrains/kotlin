@@ -1,0 +1,19 @@
+84
+Foo
+Deallocated
+Hello, World!
+Kotlin says: Hello, everybody!
+Hello from Kotlin
+2, 1
+true
+true
+Global string
+Another global string
+null
+global object
+5
+String macro
+CFString macro
+Deallocated
+Deallocated
+Class TestExportObjCClass34 has multiple implementations. Which one will be used is undefined.
