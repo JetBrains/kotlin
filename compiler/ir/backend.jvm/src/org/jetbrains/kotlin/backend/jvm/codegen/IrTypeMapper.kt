@@ -270,6 +270,6 @@ private class IrTypeCheckerContextForTypeMapping(
     }
 
     override fun functionNTypeConstructor(n: Int): IrClassSymbol {
-        return backendContext.referenceClass(backendContext.builtIns.getFunction(n))
+        return backendContext.irBuiltIns.functionN(n).symbol
     }
 }
