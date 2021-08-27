@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -19,10 +20,21 @@ public abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent(
     ): KtExtensionApplicabilityResult
 }
 
-public enum class KtExtensionApplicabilityResult(public val isApplicable: Boolean) {
-    ApplicableAsExtensionCallable(isApplicable = true),
-    ApplicableAsFunctionalVariableCall(isApplicable = true),
-    NonApplicable(isApplicable = false),
+public sealed class KtExtensionApplicabilityResult {
+    public abstract val isApplicable: Boolean
+    public abstract val substitutor: KtSubstitutor
+
+    public class ApplicableAsExtensionCallable(override val substitutor: KtSubstitutor) : KtExtensionApplicabilityResult() {
+        override val isApplicable: Boolean get() = true
+    }
+
+    public class ApplicableAsFunctionalVariableCall(override val substitutor: KtSubstitutor) : KtExtensionApplicabilityResult() {
+        override val isApplicable: Boolean get() = true
+    }
+
+    public class NonApplicable(override val substitutor: KtSubstitutor) : KtExtensionApplicabilityResult() {
+        override val isApplicable: Boolean = false
+    }
 }
 
 public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
