@@ -144,6 +144,9 @@ class CompileServiceClientRMIWrapper(
         asyncCompileService.getDaemonInfo()
     }
 
+    override fun getKotlinVersion() = runBlocking {
+        asyncCompileService.getKotlinVersion()
+    }
 
     override fun getDaemonJVMOptions() = runBlocking {
         asyncCompileService.getDaemonJVMOptions()

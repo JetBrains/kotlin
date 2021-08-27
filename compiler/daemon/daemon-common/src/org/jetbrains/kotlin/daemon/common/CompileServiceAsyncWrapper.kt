@@ -58,6 +58,8 @@ class CompileServiceAsyncWrapper(
     override suspend fun getDaemonInfo() =
         rmiCompileService.getDaemonInfo()
 
+    override suspend fun getKotlinVersion() =
+        rmiCompileService.getKotlinVersion()
 
     override suspend fun getDaemonJVMOptions() =
         rmiCompileService.getDaemonJVMOptions()

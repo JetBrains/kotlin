@@ -20,6 +20,8 @@ interface CompileServiceAsync {
 
     suspend fun getDaemonInfo(): CompileService.CallResult<String>
 
+    suspend fun getKotlinVersion(): CompileService.CallResult<String>
+
     suspend fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions>
 
     suspend fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing>
