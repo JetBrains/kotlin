@@ -56,6 +56,10 @@ internal class KtFirImportOptimizer(
             .toSet()
 
         val referencesEntities = collectReferencedEntities(firFile)
+            .filterNot { (fqName, referencedByNames) ->
+                // when referenced by more than one name, we need to keep the imports with same package
+                fqName.parentOrNull() == file.packageFqName && referencedByNames.size == 1
+            }
 
         val requiredStarImports = referencesEntities.keys
             .asSequence()
@@ -168,11 +172,19 @@ internal class KtFirImportOptimizer(
             }
 
             private fun saveType(classId: ClassId) {
-                usedImports.getOrPut(classId.asSingleFqName()) { hashSetOf() } += classId.shortClassName
+                val importableName = classId.asSingleFqName()
+                val referencedByName = classId.shortClassName
+
+                saveReferencedItem(importableName, referencedByName)
             }
 
             private fun saveCallable(resolvedSymbol: FirCallableSymbol<*>, referencedByName: Name) {
                 val importableName = resolvedSymbol.computeImportableName() ?: return
+
+                saveReferencedItem(importableName, referencedByName)
+            }
+
+            private fun saveReferencedItem(importableName: FqName, referencedByName: Name) {
                 usedImports.getOrPut(importableName) { hashSetOf() } += referencedByName
             }
         })
