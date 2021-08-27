@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
+
+private val EXPERIMENTAL_CONTINUATION_FQ_NAME = FqName("kotlin.coroutines.experimental.Continuation")
 
 class TypeDeserializer(
     private val c: DeserializationContext,
@@ -197,7 +200,11 @@ class TypeDeserializer(
     private fun transformRuntimeFunctionTypeToSuspendFunction(funType: KotlinType): SimpleType? {
         val continuationArgumentType = funType.getValueParameterTypesFromFunctionType().lastOrNull()?.type ?: return null
         val continuationArgumentFqName = continuationArgumentType.constructor.declarationDescriptor?.fqNameSafe
-        if (continuationArgumentType.arguments.size != 1 || continuationArgumentFqName != CONTINUATION_INTERFACE_FQ_NAME) {
+        // Before 1.6 we put experimental continuation as last parameter of suspend functional types to .kotlin_metadata files.
+        // Read them as suspend functional types instead of ordinary types with experimental continuation parameter.
+        if (continuationArgumentType.arguments.size != 1 ||
+            !(continuationArgumentFqName == CONTINUATION_INTERFACE_FQ_NAME || continuationArgumentFqName == EXPERIMENTAL_CONTINUATION_FQ_NAME)
+        ) {
             return funType as SimpleType?
         }
 
