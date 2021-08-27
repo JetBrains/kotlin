@@ -1,3 +1,5 @@
+import kotlin.test.*
+
 fun main() {
-    println(foo())
+    assertEquals("OK", foo())
 }

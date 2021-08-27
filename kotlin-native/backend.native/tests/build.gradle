@@ -383,7 +383,6 @@ task slackReportNightly(type:NightlyReporter) {
 }
 
 linkTest("localDelegatedPropertyLink") {
-    goldValue = "OK\n"
     source = "lower/local_delegated_property_link/main.kt"
     lib = "lower/local_delegated_property_link/lib.kt"
 }
