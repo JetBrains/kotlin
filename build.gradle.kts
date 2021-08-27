@@ -740,7 +740,6 @@ tasks {
 
     register("miscCompilerTest") {
         dependsOn("nativeCompilerTest")
-        dependsOn("firCompilerTest")
 
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn("scriptingTest")
@@ -772,7 +771,6 @@ tasks {
 
     register("distTest") {
         dependsOn("compilerTest")
-        dependsOn("frontendApiTests")
         dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
