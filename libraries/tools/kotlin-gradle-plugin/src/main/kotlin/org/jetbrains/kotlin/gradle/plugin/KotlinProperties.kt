@@ -255,6 +255,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.native.disableCompilerDaemon")
 
     /**
+     * Switches Kotlin/Native tasks to using embeddable compiler jar,
+     * allowing to apply backend-agnostic compiler plugin artifacts.
+     * Will be default after proper migration.
+     */
+    val nativeUseEmbeddableCompilerJar: Boolean
+        get() = booleanProperty("kotlin.native.useEmbeddableCompilerJar") ?: false
+
+    /**
      * Allows a user to specify additional arguments of a JVM executing KLIB commonizer.
      */
     val commonizerJvmArgs: String?

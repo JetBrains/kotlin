@@ -76,6 +76,9 @@ abstract class AbstractKotlinNativeCompilation(
     override var enableEndorsedLibs: Boolean = false
 }
 
+internal val Project.nativeUseEmbeddableCompilerJar: Boolean
+    get() = PropertiesProvider(this).nativeUseEmbeddableCompilerJar
+
 internal fun addSourcesToKotlinNativeCompileTask(
     project: Project,
     taskName: String,
