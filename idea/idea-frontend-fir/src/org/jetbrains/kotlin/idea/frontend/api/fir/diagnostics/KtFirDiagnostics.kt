@@ -2612,4 +2612,20 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonJvmDefaultOverridesJavaDefault::class
     }
 
+    abstract class ExternalDeclarationCannotBeAbstract : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = ExternalDeclarationCannotBeAbstract::class
+    }
+
+    abstract class ExternalDeclarationCannotHaveBody : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = ExternalDeclarationCannotHaveBody::class
+    }
+
+    abstract class ExternalDeclarationInInterface : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = ExternalDeclarationInInterface::class
+    }
+
+    abstract class ExternalDeclarationCannotBeInlined : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = ExternalDeclarationCannotBeInlined::class
+    }
+
 }

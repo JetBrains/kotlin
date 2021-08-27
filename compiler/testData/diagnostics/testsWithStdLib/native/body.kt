@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.jvm.*
 
 <!EXTERNAL_DECLARATION_CANNOT_HAVE_BODY!>external fun foo()<!> {}

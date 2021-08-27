@@ -3756,4 +3756,28 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT) { firDiagnostic ->
+        ExternalDeclarationCannotBeAbstractImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY) { firDiagnostic ->
+        ExternalDeclarationCannotHaveBodyImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE) { firDiagnostic ->
+        ExternalDeclarationInInterfaceImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_INLINED) { firDiagnostic ->
+        ExternalDeclarationCannotBeInlinedImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

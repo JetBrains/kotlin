@@ -103,4 +103,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL by error<PsiElement>()
         val NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
+
+    val EXTERNAL_DECLARATION by object : DiagnosticGroup("External Declaration") {
+        val EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT by error<KtDeclaration>(PositioningStrategy.ABSTRACT_MODIFIER)
+        val EXTERNAL_DECLARATION_CANNOT_HAVE_BODY by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val EXTERNAL_DECLARATION_IN_INTERFACE by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val EXTERNAL_DECLARATION_CANNOT_BE_INLINED by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+    }
 }

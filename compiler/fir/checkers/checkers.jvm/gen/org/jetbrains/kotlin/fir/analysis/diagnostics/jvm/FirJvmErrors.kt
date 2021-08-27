@@ -83,4 +83,10 @@ object FirJvmErrors {
     val USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL by error0<PsiElement>()
     val NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
+    // External Declaration
+    val EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT by error0<KtDeclaration>(SourceElementPositioningStrategies.ABSTRACT_MODIFIER)
+    val EXTERNAL_DECLARATION_CANNOT_HAVE_BODY by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val EXTERNAL_DECLARATION_IN_INTERFACE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val EXTERNAL_DECLARATION_CANNOT_BE_INLINED by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+
 }
