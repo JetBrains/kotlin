@@ -142,6 +142,11 @@ class CompileServiceClientSideImpl(
         return readMessage(id)
     }
 
+    override suspend fun getKotlinVersion(): CompileService.CallResult<String> {
+        val id = sendMessage(GetKotlinVersionMessage())
+        return readMessage(id)
+    }
+
     override suspend fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions> {
         val id = sendMessage(GetDaemonJVMOptionsMessage())
         val res = readMessage<CompileService.CallResult<DaemonJVMOptions>>(id)
@@ -256,6 +261,11 @@ class CompileServiceClientSideImpl(
     class GetDaemonInfoMessage : Server.Message<CompileServiceServerSide>() {
         override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) =
             sendReply(server.getDaemonInfo())
+    }
+
+    class GetKotlinVersionMessage : Server.Message<CompileServiceServerSide>() {
+        override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) =
+            sendReply(server.getKotlinVersion())
     }
 
     class RegisterClientMessage(val aliveFlagPath: String?) : Server.Message<CompileServiceServerSide>() {

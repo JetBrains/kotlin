@@ -44,6 +44,10 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         server.getDaemonInfo()
     }
 
+    override fun getKotlinVersion() = runBlocking {
+        server.getKotlinVersion()
+    }
+
     override fun getDaemonJVMOptions() = runBlocking {
         server.getDaemonJVMOptions()
     }
