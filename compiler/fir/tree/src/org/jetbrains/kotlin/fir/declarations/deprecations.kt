@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
@@ -59,8 +59,8 @@ class DeprecationsPerUseSite(
 
     fun inheritableOnly(): DeprecationsPerUseSite =
         DeprecationsPerUseSite(
-            all?.takeIf { it.inheritable },
-            bySpecificSite?.filterValues { it.inheritable }
+            all?.takeIf { it.propagatesToOverrides },
+            bySpecificSite?.filterValues { it.propagatesToOverrides }
         )
 
     override fun toString(): String =

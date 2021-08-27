@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
-import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol

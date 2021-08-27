@@ -10,12 +10,11 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import org.jetbrains.kotlin.descriptors.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
-import org.jetbrains.kotlin.name.StandardClassIds
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
     hasAnnotation("kotlin/jvm/JvmSynthetic", annotationUseSiteTarget)
@@ -41,7 +40,7 @@ internal fun isHiddenByDeprecation(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null
 ): Boolean {
     return project.analyzeWithSymbolAsContext(symbol) {
-        symbol.getDeprecationStatus(annotationUseSiteTarget)?.level == DeprecationLevelValue.HIDDEN
+        symbol.getDeprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
     }
 }
 

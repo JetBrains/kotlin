@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*

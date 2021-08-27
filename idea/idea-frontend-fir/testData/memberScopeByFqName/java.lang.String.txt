@@ -320,7 +320,7 @@ KtFirFunctionSymbol:
     KtFirValueParameterSymbol(p3)
   ]
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=Deprecated in Java)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<kotlin/ByteArray, kotlin/ByteArray?>
@@ -1721,7 +1721,7 @@ KtFirConstructorSymbol:
     KtFirValueParameterSymbol(p3)
   ]
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=Deprecated in Java)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1747,7 +1747,7 @@ KtFirConstructorSymbol:
     KtFirValueParameterSymbol(p1)
   ]
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=Deprecated in Java)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1965,4 +1965,4 @@ KtFirConstructorSymbol:
     KtFirValueParameterSymbol(p2)
   ]
   visibility: PackageVisibility
-  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=Deprecated in Java)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=Deprecated in Java)

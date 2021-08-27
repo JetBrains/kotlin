@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import kotlinx.collections.immutable.ImmutableList
-import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable

@@ -25,7 +25,7 @@ internal sealed class DeprecatedByAnnotation(
     val annotation: AnnotationDescriptor,
     override val target: DeclarationDescriptor,
     override val propagatesToOverrides: Boolean
-) : Deprecation {
+) : DescriptorBasedDeprecation() {
     override val message: String?
         get() = annotation.argumentValue("message")?.safeAs<StringValue>()?.value
 
@@ -111,13 +111,13 @@ internal sealed class DeprecatedByAnnotation(
     }
 }
 
-internal data class DeprecatedByOverridden(private val deprecations: Collection<Deprecation>) : Deprecation {
+internal data class DeprecatedByOverridden(private val deprecations: Collection<DescriptorBasedDeprecation>) : DescriptorBasedDeprecation() {
     init {
         assert(deprecations.isNotEmpty())
         assert(deprecations.none { it is DeprecatedByOverridden })
     }
 
-    override val deprecationLevel: DeprecationLevelValue = deprecations.map(Deprecation::deprecationLevel).minOrNull()!!
+    override val deprecationLevel: DeprecationLevelValue = deprecations.map(DescriptorBasedDeprecation::deprecationLevel).minOrNull()!!
 
     override val target: DeclarationDescriptor
         get() = deprecations.first().target
@@ -134,8 +134,8 @@ internal data class DeprecatedByOverridden(private val deprecations: Collection<
 
 internal data class DeprecatedOperatorMod(
     val languageVersionSettings: LanguageVersionSettings,
-    val currentDeprecation: Deprecation
-) : Deprecation {
+    val currentDeprecation: DescriptorBasedDeprecation
+) : DescriptorBasedDeprecation() {
     init {
         assert(shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
             "Deprecation created for mod that shouldn't have any deprecations; languageVersionSettings: $languageVersionSettings"
@@ -159,7 +159,7 @@ internal data class DeprecatedOperatorMod(
 internal data class DeprecatedByVersionRequirement(
     val versionRequirement: VersionRequirement,
     override val target: DeclarationDescriptor
-) : Deprecation {
+) : DescriptorBasedDeprecation() {
     override val deprecationLevel: DeprecationLevelValue
         get() = when (versionRequirement.level) {
             DeprecationLevel.WARNING -> WARNING
@@ -189,7 +189,7 @@ internal data class DeprecatedByVersionRequirement(
 internal data class DeprecatedTypealiasByAnnotation(
     val typeAliasTarget: TypeAliasDescriptor,
     val nested: DeprecatedByAnnotation
-) : Deprecation {
+) : DescriptorBasedDeprecation() {
     override val target get() = typeAliasTarget
     override val deprecationLevel get() = nested.deprecationLevel
     override val message get() = nested.message

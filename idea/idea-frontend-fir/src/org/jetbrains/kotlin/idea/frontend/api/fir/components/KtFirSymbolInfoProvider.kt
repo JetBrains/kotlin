@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import org.jetbrains.kotlin.descriptors.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol

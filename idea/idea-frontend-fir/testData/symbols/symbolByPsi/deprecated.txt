@@ -28,9 +28,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i)
-  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i)
-  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
+  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -63,7 +63,7 @@ KtFirKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   visibility: Public
   deprecationStatus: null
-  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use getter of i2)
+  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i2)
   setterDeprecationStatus: null
 
 KtFirKotlinPropertySymbol:
@@ -98,7 +98,7 @@ KtFirKotlinPropertySymbol:
   visibility: Public
   deprecationStatus: null
   getterDeprecationStatus: null
-  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use getter of i3)
+  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i3)
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -134,8 +134,8 @@ KtFirKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   visibility: Public
   deprecationStatus: null
-  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use getter of i4)
-  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use getter of i4)
+  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
+  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -165,7 +165,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use f)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f)
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [
@@ -192,7 +192,7 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use MyClass)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use MyClass)
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -224,9 +224,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: MEMBER
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i2)
-  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i2)
-  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use i2)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
+  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -256,7 +256,7 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=true, message=don't use f2)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f2)
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -310,9 +310,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
-  deprecationStatus: Deprecation(level=ERROR, inheritable=true, message=null)
-  getterDeprecationStatus: Deprecation(level=ERROR, inheritable=true, message=null)
-  setterDeprecationStatus: Deprecation(level=ERROR, inheritable=true, message=null)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
+  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=null)
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -344,9 +344,9 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
-  deprecationStatus: Deprecation(level=HIDDEN, inheritable=true, message=null)
-  getterDeprecationStatus: Deprecation(level=HIDDEN, inheritable=true, message=null)
-  setterDeprecationStatus: Deprecation(level=HIDDEN, inheritable=true, message=null)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -378,6 +378,6 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: Public
-  deprecationStatus: Deprecation(level=WARNING, inheritable=false, message=null)
-  getterDeprecationStatus: Deprecation(level=WARNING, inheritable=false, message=null)
-  setterDeprecationStatus: Deprecation(level=WARNING, inheritable=false, message=null)
+  deprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  getterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  setterDeprecationStatus: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

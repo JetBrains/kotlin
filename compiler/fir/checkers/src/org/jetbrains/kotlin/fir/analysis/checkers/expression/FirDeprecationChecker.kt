@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.descriptors.Deprecation
-import org.jetbrains.kotlin.descriptors.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
@@ -58,7 +58,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
-        val diagnostic = when (deprecation.level) {
+        val diagnostic = when (deprecation.deprecationLevel) {
             DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.DEPRECATION_ERROR
             DeprecationLevelValue.WARNING -> FirErrors.DEPRECATION
         }
