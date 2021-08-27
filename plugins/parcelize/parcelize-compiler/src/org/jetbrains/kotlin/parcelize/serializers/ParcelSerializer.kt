@@ -148,6 +148,10 @@ interface ParcelSerializer {
                         PrimitiveTypeParcelSerializer.getInstance(asmType)
                 }
 
+                asmType.isUnsigned() -> {
+                    ParcelSerializerStub(asmType, type)
+                }
+
                 asmType.isString() -> {
                     NullCompliantObjectParcelSerializer(
                         asmType,
@@ -419,6 +423,11 @@ interface ParcelSerializer {
 
         private fun Type.isPrimitive(): Boolean = when (this.sort) {
             Type.BOOLEAN, Type.CHAR, Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE -> true
+            else -> false
+        }
+
+        private fun Type.isUnsigned(): Boolean = when (descriptor) {
+            "Lkotlin/UByte;", "Lkotlin/UShort;", "Lkotlin/UInt;", "Lkotlin/ULong;" -> true
             else -> false
         }
 

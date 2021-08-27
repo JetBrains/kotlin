@@ -35,6 +35,11 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/allPrimitiveTypes.kt");
     }
 
+    @TestMetadata("allUnsignedTypes.kt")
+    public void testAllUnsignedTypes() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/allUnsignedTypes.kt");
+    }
+
     @TestMetadata("arraySimple.kt")
     public void testArraySimple() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/arraySimple.kt");

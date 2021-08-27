@@ -4,9 +4,12 @@
  */
 package org.jetbrains.kotlin.parcelize.ir
 
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 // An IR builder with access to AndroidSymbols and convenience methods to build calls to some of these methods.
 class AndroidIrBuilder internal constructor(
@@ -86,5 +89,13 @@ class AndroidIrBuilder internal constructor(
 
     fun getTextUtilsCharSequenceCreator(): IrExpression {
         return irGetField(null, androidSymbols.textUtilsCharSequenceCreator.owner)
+    }
+
+    fun unsafeCoerce(value: IrExpression, fromType: IrType, toType: IrType): IrExpression {
+        return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, toType, androidSymbols.unsafeCoerceIntrinsic).apply {
+            putTypeArgument(0, fromType)
+            putTypeArgument(1, toType)
+            putValueArgument(0, value)
+        }
     }
 }

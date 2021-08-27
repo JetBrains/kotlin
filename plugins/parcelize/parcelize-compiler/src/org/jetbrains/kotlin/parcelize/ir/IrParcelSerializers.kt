@@ -79,6 +79,20 @@ class IrWrappedIntParcelSerializer(private val parcelType: IrType) : IrParcelSer
         )
 }
 
+class IrUnsafeCoerceWrappedSerializer(
+    private val serializer: IrParcelSerializer,
+    private val wrappedType: IrType,
+    private val underlyingType: IrType,
+) : IrParcelSerializer {
+    override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
+        return unsafeCoerce(readParcelWith(serializer, parcel), underlyingType, wrappedType)
+    }
+
+    override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
+        return writeParcelWith(serializer, parcel, flags, unsafeCoerce(value, wrappedType, underlyingType))
+    }
+}
+
 // Wraps a non-null aware parceler to handle nullable types.
 class IrNullAwareParcelSerializer(private val serializer: IrParcelSerializer) : IrParcelSerializer {
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {

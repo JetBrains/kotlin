@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.useTmpVar
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.parcelize.serializers.BoxedPrimitiveTypeParcelSerializer.Companion.BOXED_VALUE_METHOD_NAMES
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -782,6 +783,20 @@ internal open class PrimitiveTypeParcelSerializer private constructor(final over
 
     override fun readValue(v: InstructionAdapter) {
         v.invokevirtual(PARCEL_TYPE.internalName, readMethod.name, readMethod.signature, false)
+    }
+}
+
+internal class ParcelSerializerStub(override val asmType: Type, private val kotlinType: KotlinType) : ParcelSerializer {
+    private fun throwError() {
+        TODO("Type is only supported in the IR backend: ${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(kotlinType)}")
+    }
+
+    override fun writeValue(v: InstructionAdapter) {
+        throwError()
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        throwError()
     }
 }
 
