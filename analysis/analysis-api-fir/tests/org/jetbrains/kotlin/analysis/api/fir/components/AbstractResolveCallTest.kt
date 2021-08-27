@@ -87,11 +87,15 @@ private fun KtCall.stringRepresentation(): String {
     return buildString {
         append(callInfoClass.simpleName!!)
         append(":\n")
-        val propertyByName = callInfoClass.memberProperties.associateBy(KProperty1<*, *>::name)
-        callInfoClass.primaryConstructor!!.parameters.joinTo(this, separator = "\n") { parameter ->
-            val value = propertyByName[parameter.name]!!.javaGetter!!(this@stringRepresentation)?.stringValue()
-            "${parameter.name!!} = $value"
-        }
+        val propertyByName =
+            callInfoClass.memberProperties.associateBy(KProperty1<*, *>::name)
+        callInfoClass.primaryConstructor!!.parameters
+            .filter { it.name != "token" }
+            .joinTo(this, separator = "\n") { parameter ->
+                val name = parameter.name!!.removePrefix("_")
+                val value = propertyByName[name]!!.javaGetter!!(this@stringRepresentation)?.stringValue()
+                "$name = $value"
+            }
     }
 }
 
