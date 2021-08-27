@@ -7,7 +7,7 @@ import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.model.properties.mergeExtras
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableMerger
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.util.firstNotNullResult
 
 internal class DefaultDocumentableMerger(val context: DokkaContext) : DocumentableMerger {
     private val dependencyInfo = context.getDependencyInfo()
