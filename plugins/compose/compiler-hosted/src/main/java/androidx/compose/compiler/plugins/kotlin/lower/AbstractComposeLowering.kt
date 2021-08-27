@@ -27,7 +27,6 @@ import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
@@ -287,7 +286,7 @@ abstract class AbstractComposeLowering(
         if (!klass.isInline) return null
 
         // TODO: Apply type substitutions
-        val underlyingType = InlineClassAbi.getUnderlyingType(klass).unboxInlineClass()
+        val underlyingType = getUnderlyingType(klass).unboxInlineClass()
         if (!isNullable()) return underlyingType
         if (underlyingType.isNullable() || underlyingType.isPrimitiveType())
             return null
@@ -1283,3 +1282,5 @@ fun ParameterDescriptor.index(): Int =
         is ValueParameterDescriptor -> index
         else -> error("expected either receiver or value parameter, but got: $this")
     }
+
+fun getUnderlyingType(irClass: IrClass) = irClass.inlineClassRepresentation!!.underlyingType
