@@ -224,7 +224,7 @@ class ParcelizeIrTransformer(private val context: IrPluginContext, private val a
                         body = context.createIrBuilder(symbol).run {
                             irExprBody(
                                 parcelerNewArray(parcelerObject, sizeParameter)
-                                    ?: irCall(androidSymbols.arrayOfNulls, arrayType).apply {
+                                    ?: irCall(context.irBuiltIns.arrayOfNulls, arrayType).apply {
                                         putTypeArgument(0, arrayType)
                                         putValueArgument(0, irGet(sizeParameter))
                                     }
