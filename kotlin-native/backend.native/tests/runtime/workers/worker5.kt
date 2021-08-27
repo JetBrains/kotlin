@@ -7,7 +7,7 @@ import kotlin.test.*
 
 import kotlin.native.concurrent.*
 
-@Test fun runTest0() {
+fun runTest0() {
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { "zzz" }) {
         input -> input.length
@@ -21,7 +21,7 @@ import kotlin.native.concurrent.*
 
 var done = false
 
-@Test fun runTest1() {
+fun runTest1() {
     val worker = Worker.current
     done = false
     // Here we request execution of the operation on the current worker.
@@ -33,7 +33,7 @@ var done = false
 }
 
 // Ensure that termination of current worker on main thread doesn't lead to problems.
-@Test fun runTest2() {
+fun runTest2() {
     val worker = Worker.current
     val future = worker.requestTermination(false)
     worker.processQueue()
