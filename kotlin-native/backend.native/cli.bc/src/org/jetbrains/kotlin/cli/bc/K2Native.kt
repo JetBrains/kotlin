@@ -130,6 +130,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         with(KonanConfigKeys) {
             with(configuration) {
+                // Can be overwritten by explicit arguments below.
+                parseBinaryOptions(arguments, configuration).forEach { optionWithValue ->
+                    configuration.put(optionWithValue)
+                }
+
                 arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
                 put(NODEFAULTLIBS, arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
@@ -227,7 +232,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
-                val memoryModel = when (arguments.memoryModel) {
+                val memoryModelFromArgument = when (arguments.memoryModel) {
                     "relaxed" -> {
                         configuration.report(STRONG_WARNING, "Relaxed memory model is not yet fully functional")
                         MemoryModel.RELAXED
@@ -240,7 +245,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     }
                 }
 
-                // Can be overwritten after [parseBinaryOptions] below.
+                // TODO: revise priority and/or report conflicting values.
+                val memoryModel = get(BinaryOptions.memoryModel) ?: memoryModelFromArgument
                 put(BinaryOptions.memoryModel, memoryModel)
 
                 when {
@@ -360,10 +366,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     }
                 })
                 putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
-
-                parseBinaryOptions(arguments, configuration).forEach { optionWithValue ->
-                    configuration.put(optionWithValue)
-                }
             }
         }
     }
