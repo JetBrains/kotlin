@@ -1220,6 +1220,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     functionGenerationContext.condBr(isInstance, body, nextCheck)
 
                     functionGenerationContext.appendingTo(body) {
+                        functionGenerationContext.handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
                         genCatchBlock()
                     }
 

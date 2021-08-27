@@ -1622,7 +1622,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         slotsPhi = null
     }
 
-    private fun handleEpilogueForExperimentalMM(safePointFunction: LLVMValueRef) {
+    fun handleEpilogueForExperimentalMM(safePointFunction: LLVMValueRef) {
         if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
             if (!forbidRuntime) {
                 call(safePointFunction, emptyList())
