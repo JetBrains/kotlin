@@ -43,14 +43,14 @@ internal class KtFirPsiTypeProvider(
     override val token: ValidityToken,
 ) : KtPsiTypeProvider(), KtFirAnalysisSessionComponent {
 
-    override fun asPsiType(type: KtType, context: PsiElement, mode: TypeMappingMode): PsiType = withValidityAssertion {
+    override fun asPsiType(
+        type: KtType,
+        context: PsiElement,
+        mode: TypeMappingMode,
+    ): PsiType? = withValidityAssertion {
         type.coneType.asPsiType(rootModuleSession, analysisSession.firResolveState, mode, context)
     }
 }
-
-private fun PsiElement.nonExistentType() = JavaPsiFacade.getElementFactory(project)
-    .createTypeFromText("error.NonExistentClass", this)
-
 
 private fun ConeKotlinType.simplifyType(session: FirSession, state: FirModuleResolveState): ConeKotlinType {
     val substitutor = AnonymousTypesSubstitutor(session, state)
@@ -70,11 +70,12 @@ internal fun ConeKotlinType.asPsiType(
     state: FirModuleResolveState,
     mode: TypeMappingMode,
     psiContext: PsiElement,
-): PsiType {
+): PsiType? {
     val correctedType = simplifyType(session, state)
 
-    if (correctedType is ConeClassErrorType || correctedType !is SimpleTypeMarker) return psiContext.nonExistentType()
-    if (correctedType.typeArguments.any { it is ConeClassErrorType }) return psiContext.nonExistentType()
+    if (correctedType is ConeClassErrorType || correctedType !is SimpleTypeMarker) return null
+
+    if (correctedType.typeArguments.any { it is ConeClassErrorType }) return null
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
 
@@ -83,13 +84,14 @@ internal fun ConeKotlinType.asPsiType(
 
     val canonicalSignature = signatureWriter.toString()
 
-    if (canonicalSignature.contains("L<error>")) return psiContext.nonExistentType()
+    if (canonicalSignature.contains("L<error>")) return null
+
     require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
 
     val signature = StringCharacterIterator(canonicalSignature)
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
     val typeInfo = TypeInfo.fromString(javaType, false)
-    val typeText = TypeInfo.createTypeText(typeInfo) ?: return psiContext.nonExistentType()
+    val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
 
     val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
     return typeElement.type

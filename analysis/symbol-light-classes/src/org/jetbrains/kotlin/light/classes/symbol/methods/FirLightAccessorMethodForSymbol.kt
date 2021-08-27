@@ -149,14 +149,15 @@ internal class FirLightAccessorMethodForSymbol(
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
-    private val _returnedType: PsiType? by lazyPub {
+    private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
         analyzeWithSymbolAsContext(containingPropertySymbol) {
             containingPropertySymbol.annotatedType.type.asPsiType(this@FirLightAccessorMethodForSymbol)
+                ?: this@FirLightAccessorMethodForSymbol.nonExistentType()
         }
     }
 
-    override fun getReturnType(): PsiType? = _returnedType
+    override fun getReturnType(): PsiType = _returnedType
 
     override fun equals(other: Any?): Boolean =
         this === other ||

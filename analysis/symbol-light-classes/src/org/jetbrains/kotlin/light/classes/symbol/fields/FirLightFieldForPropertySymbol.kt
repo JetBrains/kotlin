@@ -30,6 +30,7 @@ internal class FirLightFieldForPropertySymbol(
     private val _returnedType: PsiType by lazyPub {
         analyzeWithSymbolAsContext(propertySymbol) {
             propertySymbol.annotatedType.type.asPsiType(this@FirLightFieldForPropertySymbol)
+                ?: this@FirLightFieldForPropertySymbol.nonExistentType()
         }
     }
 

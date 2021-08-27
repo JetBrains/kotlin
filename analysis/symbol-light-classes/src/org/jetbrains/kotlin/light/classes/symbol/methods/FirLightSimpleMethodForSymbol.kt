@@ -131,6 +131,7 @@ internal class FirLightSimpleMethodForSymbol(
         if (isVoidReturnType) return@lazyPub PsiType.VOID
         analyzeWithSymbolAsContext(functionSymbol) {
             functionSymbol.annotatedType.type.asPsiType(this@FirLightSimpleMethodForSymbol)
+                ?: this@FirLightSimpleMethodForSymbol.nonExistentType()
         }
     }
 

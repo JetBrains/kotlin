@@ -11,13 +11,21 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 
 public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
-    public abstract fun asPsiType(type: KtType, context: PsiElement, mode: TypeMappingMode): PsiType
+    public abstract fun asPsiType(type: KtType, context: PsiElement, mode: TypeMappingMode): PsiType?
 }
 
 public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
+    /**
+     * Converts the given [KtType] to [PsiType].
+     *
+     * Returns `null` if the conversion encounters any erroneous cases, e.g., errors in type arguments.
+     * A client can handle such case in its own way. For instance,
+     *   * UAST will return `UastErrorType` as a default error type.
+     *   * LC will return `NonExistentClass` from the [context].
+     */
     public fun KtType.asPsiType(
         context: PsiElement,
-        mode: TypeMappingMode = TypeMappingMode.DEFAULT
-    ): PsiType =
+        mode: TypeMappingMode = TypeMappingMode.DEFAULT,
+    ): PsiType? =
         analysisSession.psiTypeProvider.asPsiType(this, context, mode)
 }

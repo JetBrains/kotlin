@@ -41,6 +41,7 @@ internal class FirLightFieldForObjectSymbol(
     private val _type: PsiType by lazyPub {
         analyzeWithSymbolAsContext(objectSymbol) {
             objectSymbol.buildSelfClassType().asPsiType(this@FirLightFieldForObjectSymbol)
+                ?: this@FirLightFieldForObjectSymbol.nonExistentType()
         }
     }
 

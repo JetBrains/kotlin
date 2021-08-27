@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
@@ -32,3 +34,6 @@ internal inline fun <R> Project.analyzeWithSymbolAsContext(
 ): R {
     return KtAnalysisSessionProvider.getInstance(this).analyzeWithSymbolAsContext(contextSymbol, action)
 }
+
+internal fun PsiElement.nonExistentType(): PsiType =
+    JavaPsiFacade.getElementFactory(project).createTypeFromText("error.NonExistentClass", this)

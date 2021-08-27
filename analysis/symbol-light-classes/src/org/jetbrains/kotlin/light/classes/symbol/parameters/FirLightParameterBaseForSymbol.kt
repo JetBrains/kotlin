@@ -48,6 +48,7 @@ internal abstract class FirLightParameterBaseForSymbol(
     private val _type by lazyPub {
         val convertedType = analyzeWithSymbolAsContext(parameterSymbol) {
             parameterSymbol.annotatedType.type.asPsiType(this@FirLightParameterBaseForSymbol)
+                ?: this@FirLightParameterBaseForSymbol.nonExistentType()
         }
         if (convertedType is PsiArrayType && parameterSymbol.isVararg) {
             PsiEllipsisType(convertedType.componentType, convertedType.annotationProvider)
