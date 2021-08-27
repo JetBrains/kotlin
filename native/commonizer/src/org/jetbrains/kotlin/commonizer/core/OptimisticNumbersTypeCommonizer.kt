@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 private typealias BitWidth = Int
 
 private class SubstitutableNumbers(private val numbers: Map<CirEntityId, BitWidth>) {
+    operator fun contains(id: CirEntityId) = id in numbers
     fun choose(first: CirClassType, second: CirClassType): CirClassType? {
         val firstBitWidth = numbers[first.classifierId] ?: return null
         val secondBitWidth = numbers[second.classifierId] ?: return null
@@ -68,7 +69,7 @@ private val floatingPointVars = SubstitutableNumbers(
     )
 )
 
-object OptimisticNumbersTypeCommonizer : AssociativeCommonizer<CirClassType> {
+internal object OptimisticNumbersTypeCommonizer : AssociativeCommonizer<CirClassType> {
     override fun commonize(first: CirClassType, second: CirClassType): CirClassType? {
         return signedIntegers.choose(first, second)
             ?: unsignedIntegers.choose(first, second)
@@ -76,5 +77,19 @@ object OptimisticNumbersTypeCommonizer : AssociativeCommonizer<CirClassType> {
             ?: signedVarIntegers.choose(first, second)
             ?: unsignedVarIntegers.choose(first, second)
             ?: floatingPointVars.choose(first, second)
+    }
+
+    fun isOptimisticallySubstitutable(classId: CirEntityId): Boolean {
+        val firstPackageSegment = classId.packageName.segments.firstOrNull()
+        if (firstPackageSegment != "kotlinx" && firstPackageSegment != "kotlin") {
+            return false
+        }
+
+        return classId in signedIntegers
+                || classId in unsignedIntegers
+                || classId in floatingPoints
+                || classId in signedVarIntegers
+                || classId in unsignedVarIntegers
+                || classId in floatingPointVars
     }
 }

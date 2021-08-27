@@ -129,7 +129,7 @@ private fun <T : CirDeclaration, R : CirDeclaration, N : CirNode<T, R>> buildNod
     storageManager: StorageManager,
     size: Int,
     nodeRelationship: CirNodeRelationship?,
-    commonizerProducer: () -> Commonizer<T, R>,
+    commonizerProducer: () -> Commonizer<T, R?>,
     recursionMarker: R? = null,
     nodeProducer: (CommonizedGroup<T>, NullableLazyValue<R>) -> N
 ): N {
