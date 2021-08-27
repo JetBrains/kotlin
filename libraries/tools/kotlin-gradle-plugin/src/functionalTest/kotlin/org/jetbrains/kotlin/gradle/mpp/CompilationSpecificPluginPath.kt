@@ -137,6 +137,32 @@ internal class CompilationSpecificPluginPath {
     }
 
     @Test
+    fun `native should use regular artifact when embeddable compiler jar is used`() {
+        // Given plugin but with native-specific artifact
+        class NativeSpecificPlugin : FakeSubPlugin("common1", "native", { true })
+
+        // And plugin without native artifact but applicable on all platforms
+        class RegularPluginWithoutNativeArtifact : FakeSubPlugin("common2", null, { true })
+
+        // When applying these plugins
+        val project = buildProjectWithMPP {
+            plugins.apply(NativeSpecificPlugin::class.java)
+            plugins.apply(RegularPluginWithoutNativeArtifact::class.java)
+
+            // With kotlin.native.useEmbeddableCompilerJar=true
+            extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.native.useEmbeddableCompilerJar", "true")
+
+            kotlin {
+                linuxX64()
+            }
+        }
+        project.evaluate()
+
+        // Expect native target have both regular artifacts
+        assertEquals(listOf("common1", "common2"), project.subplugins("linuxX64"))
+    }
+
+    @Test
     fun `native plugin configuration should not be transitive`() {
         val project = buildProjectWithMPP {
             kotlin {
