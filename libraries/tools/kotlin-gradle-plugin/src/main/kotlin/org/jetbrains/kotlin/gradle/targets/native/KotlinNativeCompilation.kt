@@ -72,6 +72,9 @@ abstract class AbstractKotlinNativeCompilation(
         addSourcesToKotlinNativeCompileTask(project, compileKotlinTaskName, { sourceSet.kotlin }, addAsCommonSources)
     }
 
+    internal val useGenericPluginArtifact: Boolean
+        get() = project.nativeUseEmbeddableCompilerJar
+
     // Endorsed library controller.
     override var enableEndorsedLibs: Boolean = false
 }
