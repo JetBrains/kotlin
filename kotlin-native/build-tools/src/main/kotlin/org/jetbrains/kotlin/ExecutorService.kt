@@ -50,7 +50,7 @@ fun create(project: Project): ExecutorService {
     val configurables = project.testTargetConfigurables
 
     return when {
-        project.hasProperty("remote") -> sshExecutor(project)
+        project.hasProperty("remote") -> sshExecutor(project, testTarget)
         configurables is WasmConfigurables -> wasmExecutor(project)
         configurables is ConfigurablesWithEmulator && testTarget != HostManager.host -> emulatorExecutor(project, testTarget)
         configurables.targetTriple.isSimulator -> simulator(project)
@@ -299,7 +299,7 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
  *        Specify it as -Premote=user@host
  */
 @Suppress("KDocUnresolvedReference")
-private fun sshExecutor(project: Project): ExecutorService = object : ExecutorService {
+private fun sshExecutor(project: Project, testTarget: KonanTarget): ExecutorService = object : ExecutorService {
 
     private val remote: String = project.property("remote").toString()
     private val sshArgs: List<String> = System.getenv("SSH_ARGS")?.split(" ") ?: emptyList()
@@ -312,18 +312,28 @@ private fun sshExecutor(project: Project): ExecutorService = object : ExecutorSe
                 System.getProperty("user.name") + "_" + date).toString()
     }
 
+    private val environmentArgs: List<String> = when {
+        testTarget.family.isAppleFamily ->
+            listOf("export DYLD_LIBRARY_PATH=$remoteDir:\$DYLD_LIBRARY_PATH;")
+        testTarget.family in listOf(Family.LINUX, Family.ANDROID) ->
+            listOf("export LD_LIBRARY_PATH=$remoteDir:\$LD_LIBRARY_PATH;")
+        else -> emptyList()
+    }
+
     override fun execute(action: Action<in ExecSpec>): ExecResult {
-        var execFile: String? = null
+        lateinit var executableWithLibs: ExecutableWithDynamicLibs
 
         createRemoteDir()
         val execResult = project.exec {
             action.execute(this)
-            upload(executable)
-            this.executable = "$remoteDir/${File(executable).name}"
-            execFile = executable
-            commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + commandLine
+
+            executableWithLibs = ExecutableWithDynamicLibs(executable)
+            executableWithLibs.upload()
+
+            this.executable = executableWithLibs.remoteExecutable
+            commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + environmentArgs + commandLine
         }
-        cleanup(execFile!!)
+        executableWithLibs.cleanup()
         return execResult
     }
 
@@ -342,6 +352,36 @@ private fun sshExecutor(project: Project): ExecutorService = object : ExecutorSe
     private fun cleanup(fileName: String) {
         project.exec {
             commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + "rm" + fileName
+        }
+    }
+
+    inner class ExecutableWithDynamicLibs(val localExecutable: String) {
+
+        val remoteExecutable: String = "$remoteDir/${File(localExecutable).name}"
+
+        val localDynamicLibs: List<String> = collectLocalDynamicLibs()
+        val remoteDynamicLibs: List<String> = localDynamicLibs.map { "$remoteDir/${File(it).name}" }
+
+        fun upload() {
+            upload(localExecutable)
+            localDynamicLibs.forEach(::upload)
+        }
+
+        fun cleanup() {
+            cleanup(remoteExecutable)
+            remoteDynamicLibs.forEach(::cleanup)
+        }
+
+        private val String.remotePath
+            get() = "$remoteDir/${File(this).name}"
+
+        private fun collectLocalDynamicLibs(): List<String> {
+            val dynamicSuffix = CompilerOutputKind.DYNAMIC.suffix(testTarget)
+            val directory = File(localExecutable).parentFile?.takeIf { it.isDirectory }
+                    ?: return emptyList()
+            return directory.listFiles()
+                    .filter { it.isFile && it.name.endsWith(dynamicSuffix) }
+                    .map { it.path }
         }
     }
 }
