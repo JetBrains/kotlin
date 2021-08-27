@@ -31,7 +31,19 @@ internal abstract class FirLightMethodForSymbol(
     override fun isVarArgs(): Boolean = _isVarArgs
 
     private val _parametersList by lazyPub {
-        FirLightParameterList(this, functionSymbol, argumentsSkipMask)
+        FirLightParameterList(this, functionSymbol) { builder ->
+            functionSymbol.valueParameters.mapIndexed { index, parameter ->
+                val needToSkip = argumentsSkipMask?.get(index) == true
+                if (!needToSkip) {
+                    builder.addParameter(
+                        FirLightParameterForSymbol(
+                            parameterSymbol = parameter,
+                            containingMethod = this@FirLightMethodForSymbol
+                        )
+                    )
+                }
+            }
+        }
     }
 
     private val _identifier: PsiIdentifier by lazyPub {
