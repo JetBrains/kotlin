@@ -99,7 +99,10 @@ internal abstract class KotlinNativeToolRunner(
             """.trimIndent()
         }
 
-    final override val isolatedClassLoaderCacheKey get() = project.konanHome
+    data class IsolatedClassLoaderCacheKey(val classpath: Set<java.io.File>)
+
+    // TODO: can't we use this for other implementations too?
+    final override val isolatedClassLoaderCacheKey get() = IsolatedClassLoaderCacheKey(classpath)
 
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 

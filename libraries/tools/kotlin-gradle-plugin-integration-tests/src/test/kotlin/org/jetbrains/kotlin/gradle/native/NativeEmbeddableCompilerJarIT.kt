@@ -55,4 +55,25 @@ class NativeEmbeddableCompilerJarIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testSwitch() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+        build(":runDebugExecutableHost") {
+            assertSuccessful()
+            checkNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
+                assertTrue(it.includesRegularJar())
+                assertFalse(it.includesEmbeddableJar())
+            }
+        }
+
+        build(":clean") {} // Ensure the tasks aren't up-to-date.
+
+        build(":runDebugExecutableHost", "-Pkotlin.native.useEmbeddableCompilerJar=true") {
+            assertSuccessful()
+            checkNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
+                assertFalse(it.includesRegularJar())
+                assertTrue(it.includesEmbeddableJar())
+            }
+        }
+    }
 }
