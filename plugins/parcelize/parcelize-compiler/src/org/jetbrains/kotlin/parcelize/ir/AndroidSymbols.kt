@@ -6,20 +6,19 @@ package org.jetbrains.kotlin.parcelize.ir
 
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.starProjectedType
-import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -36,7 +35,9 @@ class AndroidSymbols(
     private val javaLang: IrPackageFragment = createPackage("java.lang")
     private val javaUtil: IrPackageFragment = createPackage("java.util")
 
+    private val kotlin: IrPackageFragment = createPackage("kotlin")
     private val kotlinJvm: IrPackageFragment = createPackage("kotlin.jvm")
+    private val kotlinJvmInternalPackage: IrPackageFragment = createPackage("kotlin.jvm.internal")
 
     private val androidOs: IrPackageFragment = createPackage("android.os")
     private val androidUtil: IrPackageFragment = createPackage("android.util")
@@ -101,6 +102,26 @@ class AndroidSymbols(
 
     private val javaUtilTreeSet: IrClassSymbol =
         createClass(javaUtil, "TreeSet", ClassKind.CLASS, Modality.OPEN)
+
+    val kotlinUByte: IrClassSymbol =
+        createClass(kotlin, "UByte", ClassKind.CLASS, Modality.FINAL, true).apply {
+            owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.byteType as IrSimpleType)
+        }
+
+    val kotlinUShort: IrClassSymbol =
+        createClass(kotlin, "UShort", ClassKind.CLASS, Modality.FINAL, true).apply {
+            owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.shortType as IrSimpleType)
+        }
+
+    val kotlinUInt: IrClassSymbol =
+        createClass(kotlin, "UInt", ClassKind.CLASS, Modality.FINAL, true).apply {
+            owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.intType as IrSimpleType)
+        }
+
+    val kotlinULong: IrClassSymbol =
+        createClass(kotlin, "ULong", ClassKind.CLASS, Modality.FINAL, true).apply {
+            owner.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("data"), irBuiltIns.longType as IrSimpleType)
+        }
 
     val androidOsParcelableCreator: IrClassSymbol = irFactory.buildClass {
         name = Name.identifier("Creator")
@@ -436,6 +457,18 @@ class AndroidSymbols(
         isStatic = true
     }.symbol
 
+    val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<unsafe-coerce>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val src = addTypeParameter("T", irBuiltIns.anyNType)
+            val dst = addTypeParameter("R", irBuiltIns.anyNType)
+            addValueParameter("v", src.defaultType)
+            returnType = dst.defaultType
+        }.symbol
+
     private fun createPackage(packageName: String): IrPackageFragment =
         IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
             moduleFragment.descriptor,
@@ -446,11 +479,13 @@ class AndroidSymbols(
         irPackage: IrPackageFragment,
         shortName: String,
         classKind: ClassKind,
-        classModality: Modality
+        classModality: Modality,
+        isInlineClass: Boolean = false
     ): IrClassSymbol = irFactory.buildClass {
         name = Name.identifier(shortName)
         kind = classKind
         modality = classModality
+        isInline = isInlineClass
     }.apply {
         parent = irPackage
         createImplicitParameterDeclarationWithWrappedDescriptor()
