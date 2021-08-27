@@ -8604,15 +8604,27 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("deprecatedInheritance.kt")
-            public void testDeprecatedInheritance() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedInheritance.kt");
+            @TestMetadata("deprecatedInheritance_after.kt")
+            public void testDeprecatedInheritance_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedInheritance_after.kt");
             }
 
             @Test
-            @TestMetadata("deprecatedPropertyInheritance.kt")
-            public void testDeprecatedPropertyInheritance() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedPropertyInheritance.kt");
+            @TestMetadata("deprecatedInheritance_before.kt")
+            public void testDeprecatedInheritance_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedInheritance_before.kt");
+            }
+
+            @Test
+            @TestMetadata("deprecatedPropertyInheritance_after.kt")
+            public void testDeprecatedPropertyInheritance_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedPropertyInheritance_after.kt");
+            }
+
+            @Test
+            @TestMetadata("deprecatedPropertyInheritance_before.kt")
+            public void testDeprecatedPropertyInheritance_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedPropertyInheritance_before.kt");
             }
 
             @Test

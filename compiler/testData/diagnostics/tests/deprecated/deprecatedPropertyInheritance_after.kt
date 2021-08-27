@@ -1,3 +1,4 @@
+// LANGUAGE: +StopPropagatingDeprecationThroughOverrides
 package foo
 
 interface HiddenDeprecated {
@@ -31,13 +32,13 @@ open class SetterDeprecated {
 }
 
 class WD: WarningDeprecated() {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {}
 }
 
 class ED: ErrorDeprecated() {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
@@ -65,7 +66,7 @@ class SDH: SetterDeprecated(), HiddenDeprecated {
 }
 
 class EDH: ErrorDeprecated(), HiddenDeprecated {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
@@ -109,23 +110,23 @@ fun use(
     hiddenDeprecated.<!UNRESOLVED_REFERENCE!>p<!>
     hiddenDeprecated.<!UNRESOLVED_REFERENCE!>p<!> = 1
 
-    wd.<!DEPRECATION!>p<!>
-    wd.<!DEPRECATION!>p<!> = 1
+    wd.p
+    wd.p = 1
 
-    ed.<!DEPRECATION_ERROR!>p<!>
-    ed.<!DEPRECATION_ERROR!>p<!> = 1
+    ed.p
+    ed.p = 1
 
-    gd.<!DEPRECATION!>p<!>
+    gd.p
     gd.p = 1
 
     sd.p
-    sd.<!DEPRECATION!>p<!> = 1
+    sd.p = 1
 
     sdh.p
-    sdh.<!DEPRECATION!>p<!> = 1
+    sdh.p = 1
 
-    edh.<!DEPRECATION_ERROR!>p<!>
-    edh.<!DEPRECATION_ERROR!>p<!> = 1
+    edh.p
+    edh.p = 1
 
     ned.p
     ned.p = 1

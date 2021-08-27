@@ -1,3 +1,4 @@
+// LANGUAGE: -StopPropagatingDeprecationThroughOverrides
 package foo
 
 interface WarningDeprecated {
@@ -28,19 +29,19 @@ interface NotDeprecated {
 }
 
 open class WE : WarningDeprecated, ErrorDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class WH : WarningDeprecated, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class EH : ErrorDeprecated, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
@@ -64,7 +65,7 @@ open class NH : HiddenDeprecated, NotDeprecated {
 }
 
 open class WEH: WarningDeprecated, ErrorDeprecated, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
@@ -88,19 +89,19 @@ interface E2: ErrorDeprecated
 interface W2: WarningDeprecated
 
 interface EW2: E2, W2 {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
     }
 }
 
 interface HEW2: EW2, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
     }
 }
 
 interface ExplicitError: HEW2 {
     @Deprecated("", level = DeprecationLevel.ERROR)
     override fun f() {
-        super.f()
+        super.<!DEPRECATION!>f<!>()
     }
 }
 
@@ -114,27 +115,27 @@ fun use(
 ) {
     wd.<!DEPRECATION!>f<!>()
     ed.<!DEPRECATION_ERROR!>f<!>()
-    hd.<!INVISIBLE_REFERENCE!>f<!>()
+    hd.<!UNRESOLVED_REFERENCE!>f<!>()
 
-    we.f()
-    wh.f()
-    eh.f()
+    we.<!DEPRECATION!>f<!>()
+    wh.<!DEPRECATION!>f<!>()
+    eh.<!DEPRECATION_ERROR!>f<!>()
 
     nw.f()
     ne.f()
     nh.f()
 
-    weh.f()
+    weh.<!DEPRECATION!>f<!>()
     nweh.f()
 
-    we2.f()
+    we2.<!DEPRECATION!>f<!>()
     nwe2.f()
     nwe3.f()
 
     e2.<!DEPRECATION_ERROR!>f<!>()
     w2.<!DEPRECATION!>f<!>()
-    ew2.f()
-    hew2.f()
+    ew2.<!DEPRECATION!>f<!>()
+    hew2.<!DEPRECATION!>f<!>()
 
     explicitError.<!DEPRECATION_ERROR!>f<!>()
 }

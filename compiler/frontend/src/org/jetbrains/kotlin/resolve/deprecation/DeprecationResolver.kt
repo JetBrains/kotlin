@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.resolve.deprecation
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.MavenComparableVersion
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -27,23 +24,46 @@ import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class DeprecationResolver(
     storageManager: StorageManager,
     private val languageVersionSettings: LanguageVersionSettings,
     private val deprecationSettings: DeprecationSettings
 ) {
-    private val deprecations = storageManager.createMemoizedFunction { descriptor: DeclarationDescriptor ->
-        val deprecations = descriptor.getOwnDeprecations()
-        when {
-            deprecations.isNotEmpty() -> deprecations
-            descriptor is CallableMemberDescriptor -> listOfNotNull(deprecationByOverridden(descriptor))
-            else -> emptyList()
+    private val deprecations: MemoizedFunctionToNotNull<DeclarationDescriptor, DeprecationInfo> =
+        storageManager.createMemoizedFunction { descriptor ->
+            val deprecations = descriptor.getOwnDeprecations()
+            when {
+                deprecations.isNotEmpty() -> DeprecationInfo(deprecations, hasInheritedDeprecations = false)
+                descriptor is CallableMemberDescriptor -> {
+                    val inheritedDeprecations = listOfNotNull(deprecationByOverridden(descriptor))
+                    when (inheritedDeprecations.isNotEmpty()) {
+                        true -> when (languageVersionSettings.supportsFeature(LanguageFeature.StopPropagatingDeprecationThroughOverrides)) {
+                            true -> DeprecationInfo(emptyList(), hasInheritedDeprecations = true, inheritedDeprecations)
+                            false -> DeprecationInfo(inheritedDeprecations, hasInheritedDeprecations = true)
+                        }
+                        false -> DeprecationInfo.EMPTY
+                    }
+                }
+                else -> DeprecationInfo.EMPTY
+            }
+        }
+
+    private data class DeprecationInfo(
+        val deprecations: List<DescriptorBasedDeprecation>,
+        val hasInheritedDeprecations: Boolean,
+        val hiddenInheritedDeprecations: List<DescriptorBasedDeprecation> = emptyList()
+    ) {
+        companion object {
+            val EMPTY = DeprecationInfo(emptyList(), hasInheritedDeprecations = false, emptyList())
         }
     }
 
@@ -52,7 +72,18 @@ class DeprecationResolver(
     }
 
     fun getDeprecations(descriptor: DeclarationDescriptor): List<DescriptorBasedDeprecation> =
-        deprecations(descriptor.original)
+        deprecations(descriptor.original).deprecations
+
+    @OptIn(ExperimentalContracts::class)
+    fun areDeprecationsInheritedFromOverriden(descriptor: DeclarationDescriptor): Boolean {
+        contract {
+            returns(true) implies (descriptor is CallableMemberDescriptor)
+        }
+        return deprecations(descriptor.original).hasInheritedDeprecations
+    }
+
+    fun getHiddenDeprecationsFromOverriden(descriptor: DeclarationDescriptor): List<DescriptorBasedDeprecation> =
+        deprecations(descriptor.original).hiddenInheritedDeprecations
 
     fun isDeprecatedHidden(descriptor: DeclarationDescriptor): Boolean =
         getDeprecations(descriptor).any { it.deprecationLevel == DeprecationLevelValue.HIDDEN }

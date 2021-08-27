@@ -1,3 +1,4 @@
+// LANGUAGE: -StopPropagatingDeprecationThroughOverrides
 package foo
 
 interface HiddenDeprecated {
