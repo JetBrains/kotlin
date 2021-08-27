@@ -3712,4 +3712,48 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_DEFAULT_NOT_IN_INTERFACE) { firDiagnostic ->
+        JvmDefaultNotInInterfaceImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET) { firDiagnostic ->
+        JvmDefaultInJvm6TargetImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_DEFAULT_REQUIRED_FOR_OVERRIDE) { firDiagnostic ->
+        JvmDefaultRequiredForOverrideImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_DEFAULT_IN_DECLARATION) { firDiagnostic ->
+        JvmDefaultInDeclarationImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_DEFAULT_THROUGH_INHERITANCE) { firDiagnostic ->
+        JvmDefaultThroughInheritanceImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL) { firDiagnostic ->
+        UsageOfJvmDefaultThroughSuperCallImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT) { firDiagnostic ->
+        NonJvmDefaultOverridesJavaDefaultImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
 }

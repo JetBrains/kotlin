@@ -2582,4 +2582,34 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IllegalJavaLangRecordSupertype::class
     }
 
+    abstract class JvmDefaultNotInInterface : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmDefaultNotInInterface::class
+    }
+
+    abstract class JvmDefaultInJvm6Target : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JvmDefaultInJvm6Target::class
+        abstract val annotation: String
+    }
+
+    abstract class JvmDefaultRequiredForOverride : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = JvmDefaultRequiredForOverride::class
+    }
+
+    abstract class JvmDefaultInDeclaration : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JvmDefaultInDeclaration::class
+        abstract val annotation: String
+    }
+
+    abstract class JvmDefaultThroughInheritance : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = JvmDefaultThroughInheritance::class
+    }
+
+    abstract class UsageOfJvmDefaultThroughSuperCall : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UsageOfJvmDefaultThroughSuperCall::class
+    }
+
+    abstract class NonJvmDefaultOverridesJavaDefault : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NonJvmDefaultOverridesJavaDefault::class
+    }
+
 }

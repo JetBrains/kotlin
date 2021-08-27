@@ -13,6 +13,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJvmExternalDeclarationChecker,
             FirJvmNameChecker,
+            FirJvmDefaultChecker
         )
 
     override val annotatedDeclarationCheckers: Set<FirAnnotatedDeclarationChecker>

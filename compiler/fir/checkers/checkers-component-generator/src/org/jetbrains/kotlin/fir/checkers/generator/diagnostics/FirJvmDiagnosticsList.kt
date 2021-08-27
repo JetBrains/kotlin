@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
@@ -88,4 +90,17 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error<PsiElement>()
     }
 
+    val JVM_DEFAULT by object : DiagnosticGroup("JVM Default") {
+        val JVM_DEFAULT_NOT_IN_INTERFACE by error<PsiElement>()
+        val JVM_DEFAULT_IN_JVM6_TARGET by error<PsiElement> {
+            parameter<String>("annotation")
+        }
+        val JVM_DEFAULT_REQUIRED_FOR_OVERRIDE by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val JVM_DEFAULT_IN_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("annotation")
+        }
+        val JVM_DEFAULT_THROUGH_INHERITANCE by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL by error<PsiElement>()
+        val NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+    }
 }

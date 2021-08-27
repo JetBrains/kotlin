@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStr
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 
 /*
@@ -71,5 +73,14 @@ object FirJvmErrors {
     val DELEGATION_BY_IN_JVM_RECORD by error0<PsiElement>()
     val JVM_RECORD_EXTENDS_CLASS by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
     val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error0<PsiElement>()
+
+    // JVM Default
+    val JVM_DEFAULT_NOT_IN_INTERFACE by error0<PsiElement>()
+    val JVM_DEFAULT_IN_JVM6_TARGET by error1<PsiElement, String>()
+    val JVM_DEFAULT_REQUIRED_FOR_OVERRIDE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val JVM_DEFAULT_IN_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JVM_DEFAULT_THROUGH_INHERITANCE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL by error0<PsiElement>()
+    val NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
 }

@@ -7,7 +7,6 @@ interface A {
 }
 
 interface <!JVM_DEFAULT_THROUGH_INHERITANCE!>B<!> : A {
-
 }
 
 

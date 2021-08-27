@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !JVM_TARGET: 1.6
 
 interface B {
