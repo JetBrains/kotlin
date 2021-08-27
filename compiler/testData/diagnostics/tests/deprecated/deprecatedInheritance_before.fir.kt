@@ -29,49 +29,49 @@ interface NotDeprecated {
 }
 
 open class WE : WarningDeprecated, ErrorDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class WH : WarningDeprecated, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class EH : ErrorDeprecated, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class NW : WarningDeprecated, NotDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class NE : ErrorDeprecated, NotDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class NH : HiddenDeprecated, NotDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class WEH: WarningDeprecated, ErrorDeprecated, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
 
 open class NWEH: NotDeprecated, WarningDeprecated, ErrorDeprecated, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
 
     }
 }
@@ -89,12 +89,12 @@ interface E2: ErrorDeprecated
 interface W2: WarningDeprecated
 
 interface EW2: E2, W2 {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
     }
 }
 
 interface HEW2: EW2, HiddenDeprecated {
-    override fun f() {
+    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
     }
 }
 

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
@@ -336,6 +337,7 @@ private object FirToKtConversionCreator {
         FqName::class,
         FirModuleData::class,
         ExpectActualCompatibility.Incompatible::class,
+        Deprecation::class,
     )
 
     private val KType.kClass: KClass<*>

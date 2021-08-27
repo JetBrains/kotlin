@@ -32,48 +32,48 @@ open class SetterDeprecated {
 }
 
 class WD: WarningDeprecated() {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {}
 }
 
 class ED: ErrorDeprecated() {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
 }
 
 class GD: GetterDeprecated() {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
 }
 
 class SD: SetterDeprecated() {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
 }
 
 class SDH: SetterDeprecated(), HiddenDeprecated {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
 }
 
 class EDH: ErrorDeprecated(), HiddenDeprecated {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
 }
 
 class NED: ErrorDeprecated(), NoDeprecation {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }

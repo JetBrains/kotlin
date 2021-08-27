@@ -58,13 +58,13 @@ interface I {
 }
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class X<!> : I {
-    override fun foo1() {
+    override fun <!OVERRIDE_DEPRECATION!>foo1<!>() {
     }
 }
 
 class B : A(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {
     // still can override it
-    override fun memberFun() {
+    override fun <!OVERRIDE_DEPRECATION!>memberFun<!>() {
         super.<!INVISIBLE_REFERENCE!>memberFun<!>() // but cannot call super :)
     }
 }

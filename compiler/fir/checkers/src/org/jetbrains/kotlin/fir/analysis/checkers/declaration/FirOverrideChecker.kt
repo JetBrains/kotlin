@@ -169,6 +169,23 @@ object FirOverrideChecker : FirClassChecker() {
         }
     }
 
+    private fun FirCallableSymbol<*>.checkDeprecation(
+        reporter: DiagnosticReporter,
+        overriddenSymbols: List<FirCallableSymbol<*>>,
+        context: CheckerContext
+    ) {
+        val ownDeprecation = this.deprecation
+        if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
+        for (overriddenSymbol in overriddenSymbols) {
+            val deprecationInfoFromOverridden = overriddenSymbol.deprecation ?: continue
+            val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden.all
+                ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()
+                ?: continue
+            reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, overriddenSymbol, deprecationFromOverriddenSymbol, context)
+            return
+        }
+    }
+
     // See [OverrideResolver#isReturnTypeOkForOverride]
     private fun FirCallableSymbol<*>.checkReturnType(
         overriddenSymbols: List<FirCallableSymbol<*>>,
@@ -265,6 +282,8 @@ object FirOverrideChecker : FirClassChecker() {
         }
 
         member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
+
+        member.checkDeprecation(reporter, overriddenMemberSymbols, context)
 
         val restriction = member.checkReturnType(
             overriddenSymbols = overriddenMemberSymbols,

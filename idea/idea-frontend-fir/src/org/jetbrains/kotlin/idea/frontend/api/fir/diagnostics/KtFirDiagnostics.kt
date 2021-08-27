@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.deprecation.Deprecation
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
 
@@ -546,6 +547,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class DeprecatedSinceKotlinOutsideKotlinSubpackage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = DeprecatedSinceKotlinOutsideKotlinSubpackage::class
+    }
+
+    abstract class OverrideDeprecation : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = OverrideDeprecation::class
+        abstract val overridenSymbol: KtSymbol
+        abstract val deprecationInfo: Deprecation
     }
 
     abstract class AnnotationOnSuperclassError : KtFirDiagnostic<KtAnnotationEntry>() {

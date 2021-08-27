@@ -761,6 +761,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.OVERRIDE_DEPRECATION) { firDiagnostic ->
+        OverrideDeprecationImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ANNOTATION_ON_SUPERCLASS.errorFactory) { firDiagnostic ->
         AnnotationOnSuperclassErrorImpl(
             firDiagnostic as FirPsiDiagnostic,
