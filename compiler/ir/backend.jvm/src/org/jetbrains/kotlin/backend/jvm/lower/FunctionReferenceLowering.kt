@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
+import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeToStringMethodsGenerator
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -559,7 +559,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 return
             }
 
-            SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) {
+            SamEqualsHashCodeToStringMethodsGenerator(backendContext, functionReferenceClass, samSuperType) {
                 val internalClass = when {
                     isAdaptedReference -> backendContext.ir.symbols.adaptedFunctionReference
                     else -> backendContext.ir.symbols.functionReferenceImpl
@@ -571,7 +571,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 irCallConstructor(constructor.symbol, emptyList()).apply {
                     generateConstructorCallArguments(this) { irGet(boundReceiverVar!!) }
                 }
-            }.generate()
+            }.generateEqualsHashCode()
         }
 
         private fun isEqualsFromAny(f: IrSimpleFunction): Boolean =

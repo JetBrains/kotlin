@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isHashCode
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isToString
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -231,18 +232,27 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             }
         }
 
-        if (superType.needEqualsHashCodeMethods)
-            generateEqualsHashCode(subclass, superType, field)
+        val needToStringMethod = (createFor as IrExpression).type.superTypes().any { it.isFunctionTypeOrSubtype() }
+        generateEqualsHashCodeAndOrToString(subclass, superType, field, superType.needEqualsHashCodeMethods, needToStringMethod)
 
         subclass.addFakeOverrides(context.typeSystem)
 
         return subclass
     }
 
-    private fun generateEqualsHashCode(klass: IrClass, superType: IrType, functionDelegateField: IrField) =
-        SamEqualsHashCodeMethodsGenerator(context, klass, superType) { receiver ->
+    private fun generateEqualsHashCodeAndOrToString(
+        klass: IrClass,
+        superType: IrType,
+        functionDelegateField: IrField,
+        needEqualsHashCodeMethods: Boolean,
+        needToStringMethod: Boolean
+    ) {
+        val generator = SamEqualsHashCodeToStringMethodsGenerator(context, klass, superType) { receiver ->
             irGetField(receiver, functionDelegateField)
-        }.generate()
+        }
+        if (needEqualsHashCodeMethods) generator.generateEqualsHashCode()
+        if (needToStringMethod) generator.generateToString(generateDelegate = !needToStringMethod)
+    }
 
     private fun getAdditionalSupertypes(supertype: IrType) =
         if (supertype.needEqualsHashCodeMethods)
@@ -251,7 +261,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 }
 
 /**
- * Generates equals and hashCode for SAM and fun interface wrappers, as well as an implementation of getFunctionDelegate
+ * Generates equals, hashCode, toString for SAM and fun interface wrappers, as well as an implementation of getFunctionDelegate
  * (inherited from kotlin.jvm.internal.FunctionAdapter), needed to properly implement them.
  * This class is used in two places:
  * - FunctionReferenceLowering, which is the case of SAM conversion of a (maybe adapted) function reference, e.g. `FunInterface(foo::bar)`.
@@ -261,7 +271,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
  * - SingleAbstractMethodLowering, which is the case of SAM conversion of any value of a functional type,
  *   e.g. `val f = {}; FunInterface(f)`.
  */
-class SamEqualsHashCodeMethodsGenerator(
+class SamEqualsHashCodeToStringMethodsGenerator(
     private val context: CommonBackendContext,
     private val klass: IrClass,
     private val samSuperType: IrType,
@@ -272,11 +282,19 @@ class SamEqualsHashCodeMethodsGenerator(
     private val builtIns: IrBuiltIns get() = context.irBuiltIns
     private val getFunctionDelegate = functionAdapterClass.functions.single { it.name.asString() == "getFunctionDelegate" }
 
-    fun generate() {
+    private val anyGenerator: MethodsFromAnyGeneratorForLowerings by lazy {
+        MethodsFromAnyGeneratorForLowerings(context, klass, IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION)
+    }
+
+    fun generateEqualsHashCode() {
         generateGetFunctionDelegate()
-        val anyGenerator = MethodsFromAnyGeneratorForLowerings(context, klass, IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION)
-        generateEquals(anyGenerator)
-        generateHashCode(anyGenerator)
+        generateEquals()
+        generateHashCode()
+    }
+
+    fun generateToString(generateDelegate: Boolean) {
+        if (generateDelegate) generateGetFunctionDelegate()
+        generateToString()
     }
 
     private fun generateGetFunctionDelegate() {
@@ -288,7 +306,7 @@ class SamEqualsHashCodeMethodsGenerator(
         }
     }
 
-    private fun generateEquals(anyGenerator: MethodsFromAnyGeneratorForLowerings) {
+    private fun generateEquals() {
         anyGenerator.createEqualsMethodDeclaration().apply {
             val other = valueParameters[0]
             body = context.createIrBuilder(symbol).run {
@@ -316,12 +334,27 @@ class SamEqualsHashCodeMethodsGenerator(
         }
     }
 
-    private fun generateHashCode(anyGenerator: MethodsFromAnyGeneratorForLowerings) {
+    private fun generateHashCode() {
         anyGenerator.createHashCodeMethodDeclaration().apply {
-            val hashCode = context.irBuiltIns.functionClass.owner.functions.single{ it.isHashCode() }.symbol
+            val hashCode = context.irBuiltIns.functionClass.owner.functions.single { it.isHashCode() }.symbol
             body = context.createIrBuilder(symbol).run {
                 irExprBody(
-                    irCall(hashCode).also {
+                    irCall(hashCode).also { it ->
+                        it.dispatchReceiver = irCall(getFunctionDelegate).also {
+                            it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun generateToString() {
+        anyGenerator.createToStringMethodDeclaration().apply {
+            val str = context.irBuiltIns.functionClass.owner.functions.single { it.isToString() }.symbol
+            body = context.createIrBuilder(symbol).run {
+                irExprBody(
+                    irCall(str).also { it ->
                         it.dispatchReceiver = irCall(getFunctionDelegate).also {
                             it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
                         }
