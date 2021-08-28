@@ -379,6 +379,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     }
 
     @Test
+    @TestMetadata("ResolveClassNameInCallExpression.kt")
+    public void testResolveClassNameInCallExpression() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/referenceResolve/ResolveClassNameInCallExpression.kt");
+    }
+
+    @Test
     @TestMetadata("ResolvePackageInProperty.kt")
     public void testResolvePackageInProperty() throws Exception {
         runTest("idea/idea-frontend-fir/testData/referenceResolve/ResolvePackageInProperty.kt");
