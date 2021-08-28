@@ -212,7 +212,7 @@ where function boundaries are represented by `==========` and state boundaries a
 the function generates the following code (simplified for now):
 ```kotlin
 val $result: Any? = null
-when(this.label) {
+when (this.label) {
     0 -> {
         this.label = 1
         $result = dummy(this)
@@ -418,7 +418,7 @@ The state-machine section touched upon the `$result` variable inside the `invoke
 function of `a`, but, unlike the previous example, with its signature:
 ```kotlin
 fun invokeSuspend($result: Any?): Any? {
-    when(this.label) {
+    when (this.label) {
         0 -> {
             this.label = 1
             $result = suspendMe(this)
@@ -491,7 +491,7 @@ Result$Failure(Throwable)`, which we cannot just pass to `plus`, at least, witho
 runtime. Thus, we check the `$result` variable and throw the exception if the variable holds it.
 ```kotlin
 fun invokeSuspend($result: Any?): Any? {
-    when(this.label) {
+    when (this.label) {
         0 -> {
             this.label = 1
             $result = suspendMe(this)
@@ -1853,7 +1853,7 @@ ARETURN
 I replaced inlined `println` with a call for clarity. After turning into a state-machine, the code becomes: 
 ```kotlin
 fun invokeSuspend($result: Any?): Any? {
-    when(this.label) {
+    when (this.label) {
         0 -> {
             this.label = 1
             $result = returnsUnit(this)
