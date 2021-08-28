@@ -88,6 +88,11 @@ val IrField.isGlobalNonPrimitive get() = when  {
         else -> storageKind == FieldStorageKind.GLOBAL
     }
 
+
+internal fun IrField.shouldBeFrozen(context: Context): Boolean =
+        this.storageKind == FieldStorageKind.SHARED_FROZEN &&
+                (context.memoryModel != MemoryModel.EXPERIMENTAL || context.config.freezing.freezeImplicit)
+
 internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
     val generator = RTTIGenerator(context)
 
@@ -341,7 +346,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(this)
         val initialValue = if (irField.initializer?.expression !is IrConst<*>?) {
             val initialization = evaluateExpression(irField.initializer!!.expression)
-            if (irField.storageKind == FieldStorageKind.SHARED_FROZEN)
+            if (irField.shouldBeFrozen(context))
                 freeze(initialization, currentCodeContext.exceptionHandler)
             initialization
         } else {
@@ -1754,7 +1759,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             )
             if (context.config.threadsAreAllowed && value.symbol.owner.storageKind == FieldStorageKind.GLOBAL)
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
-            if (value.symbol.owner.storageKind == FieldStorageKind.SHARED_FROZEN)
+            if (value.symbol.owner.shouldBeFrozen(context))
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
             functionGenerationContext.storeAny(valueToAssign, globalAddress, false)
         }
@@ -2629,6 +2634,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         overrideRuntimeGlobal("Kotlin_destroyRuntimeMode", Int32(context.config.destroyRuntimeMode.value))
         overrideRuntimeGlobal("Kotlin_gcAggressive", Int32(if (context.config.gcAggressive) 1 else 0))
         overrideRuntimeGlobal("Kotlin_workerExceptionHandling", Int32(context.config.workerExceptionHandling.value))
+        overrideRuntimeGlobal("Kotlin_freezingEnabled", Int32(if (context.config.freezing.enableFreezeAtRuntime) 1 else 0))
     }
 
     //-------------------------------------------------------------------------//

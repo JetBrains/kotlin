@@ -69,6 +69,8 @@ ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
     return Kotlin_runtimeLogs == nullptr ? std::string_view() : std::string_view(Kotlin_runtimeLogs);
 }
 
+bool freezingEnabled() noexcept;
+
 } // namespace compiler
 } // namespace kotlin
 
