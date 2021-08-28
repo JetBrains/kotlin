@@ -3338,6 +3338,36 @@ standaloneTest("mpp_optional_expectation") {
     ]
 }
 
+standaloneTest("freezing_control_basic_full") {
+    enabled = isExperimentalMM
+    source = "runtime/freezing_control/basic.kt"
+    flags = [
+            '-Xbinary=freezing=full',
+            '-friend-modules', project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
+    ]
+    arguments = ['full']
+}
+
+standaloneTest("freezing_control_basic_disabled") {
+    enabled = isExperimentalMM
+    source = "runtime/freezing_control/basic.kt"
+    flags = [
+            '-Xbinary=freezing=disabled',
+            '-friend-modules', project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
+    ]
+    arguments = ['disabled']
+}
+
+standaloneTest("freezing_control_basic_explicitOnly") {
+    enabled = isExperimentalMM
+    source = "runtime/freezing_control/basic.kt"
+    flags = [
+            '-Xbinary=freezing=explicitOnly',
+            '-friend-modules', project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
+    ]
+    arguments = ['explicitOnly']
+}
+
 task unit1(type: KonanLocalTest) {
     goldValue = "First\nkotlin.Unit\n"
     source = "codegen/basics/unit1.kt"
