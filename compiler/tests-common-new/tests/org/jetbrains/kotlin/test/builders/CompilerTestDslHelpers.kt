@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.CLASSIC_FRONTEND_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.FIR_HANDLERS_STEP_NAME
+import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JS_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.RAW_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
@@ -35,6 +36,7 @@ object CompilerStepsNames {
 
     const val JVM_BACKEND_STEP_NAME = "jvm backend"
     const val JVM_ARTIFACTS_HANDLERS_STEP_NAME = "jvm artifacts handlers"
+    const val JS_ARTIFACTS_HANDLERS_STEP_NAME = "js artifacts handlers"
 
 }
 
@@ -95,6 +97,12 @@ inline fun TestConfigurationBuilder.jvmArtifactsHandlersStep(
     namedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, init)
 }
 
+inline fun TestConfigurationBuilder.jsArtifactsHandlersStep(
+    init: HandlersStepBuilder<BinaryArtifacts.Js>.() -> Unit = {}
+) {
+    namedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, init)
+}
+
 // and those ones to configure already defined step
 inline fun TestConfigurationBuilder.configureClassicFrontendHandlersStep(
     init: HandlersStepBuilder<ClassicFrontendOutputArtifact>.() -> Unit = {}
@@ -118,4 +126,10 @@ inline fun TestConfigurationBuilder.configureJvmArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Jvm>.() -> Unit = {}
 ) {
     configureNamedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, init)
+}
+
+inline fun TestConfigurationBuilder.configureJsArtifactsHandlersStep(
+    init: HandlersStepBuilder<BinaryArtifacts.Js>.() -> Unit = {}
+) {
+    configureNamedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, init)
 }

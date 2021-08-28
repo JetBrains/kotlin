@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.js.testNew.handlers.JsAstHandler
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
+import org.junit.Assert
 import java.io.File
 import java.lang.Boolean.getBoolean
 
@@ -194,7 +196,7 @@ abstract class BasicIrBoxTest(
         super.doTest(filePath, expectedResult, mainCallParameters)
     }
 
-    override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
+    override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker else V8IrJsTestChecker
 
     override fun translateFiles(
         units: List<TranslationUnit>,
@@ -460,7 +462,9 @@ abstract class BasicIrBoxTest(
             dtsFile.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
         }
 
-        compiledOutput.jsProgram?.let { processJsProgram(it, units) }
+                compiledOutput.jsProgram?.let {
+                    JsAstHandler.processUnitsOfJsProgram(it, units, targetBackend = TargetBackend.JS_IR) { Assert.fail(it) }
+                }
     }
 
     private fun generateTestFile(outputDir: File, config: JsConfig, customTestModule: String?) {

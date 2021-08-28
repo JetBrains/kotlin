@@ -14,26 +14,3 @@ abstract class AbstractBoxJsTest : BasicBoxTest(
     override val runMinifierByDefault: Boolean = true
 }
 
-abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
-    "compiler/testData/codegen/box/",
-    "codegen/box/"
-)
-
-abstract class AbstractJsCodegenInlineTest : BasicBoxTest(
-    "compiler/testData/codegen/boxInline",
-    "codegen/boxInline"
-)
-
-
-abstract class AbstractJsLegacyPrimitiveArraysBoxTest : BasicBoxTest(
-    "compiler/testData/codegen/box/arrays/",
-    "codegen/box/arrays-legacy-primitivearrays/",
-    typedArraysEnabled = false
-)
-
-abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
-    TEST_DATA_DIR_PATH + "sourcemap/",
-    "sourcemap/",
-    generateSourceMap = true,
-    generateNodeJsRunner = false
-)

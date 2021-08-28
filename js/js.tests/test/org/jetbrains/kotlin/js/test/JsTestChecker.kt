@@ -154,7 +154,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
     }
 }
 
-class NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
+object NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
     override val preloadedScripts = listOf(
         BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
         "libraries/stdlib/js-v1/src/js/polyfills.js"

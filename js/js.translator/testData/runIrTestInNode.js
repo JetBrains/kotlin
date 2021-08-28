@@ -60,4 +60,4 @@ allFiles.forEach(function(path) {
 });
 
 // TODO: Support multimodule tests
-console.log(vm.runInContext("JS_TESTS.box()", sandbox));
+console.log(vm.runInContext("main.box()", sandbox));

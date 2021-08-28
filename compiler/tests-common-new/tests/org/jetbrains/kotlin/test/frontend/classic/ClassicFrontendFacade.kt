@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.Name
@@ -54,6 +53,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -244,18 +244,16 @@ class ClassicFrontendFacade(
         files: List<KtFile>,
         dependentDescriptors: List<ModuleDescriptorImpl>
     ): AnalysisResult {
-        val jsConfig = JsConfig(project, configuration, CompilerEnvironment)
-        val dependentDescriptorsIncludingLibraries = buildList {
-            addAll(dependentDescriptors)
-            addAll(jsConfig.moduleDescriptors)
-        }
+        // `dependentDescriptors` - modules with source dependency kind
+        // 'jsConfig.moduleDescriptors' - modules with binary dependency kind
+        val jsConfig = JsEnvironmentConfigurator.createJsConfig(project, configuration)
         return TopDownAnalyzerFacadeForJS.analyzeFiles(
             files,
-            project,
-            configuration,
-            moduleDescriptors = dependentDescriptorsIncludingLibraries,
-            friendModuleDescriptors = emptyList(),
-            CompilerEnvironment,
+            project = jsConfig.project,
+            configuration = jsConfig.configuration,
+            moduleDescriptors = dependentDescriptors + jsConfig.moduleDescriptors,
+            friendModuleDescriptors = jsConfig.friendModuleDescriptors,
+            targetEnvironment = jsConfig.targetEnvironment,
         )
     }
 
