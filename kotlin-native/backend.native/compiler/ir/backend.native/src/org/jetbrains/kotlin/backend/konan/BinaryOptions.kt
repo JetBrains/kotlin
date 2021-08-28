@@ -15,6 +15,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val runtimeAssertionsMode by option<RuntimeAssertsMode>()
 
     val memoryModel by option<MemoryModel>()
+
+    val freezing by option<Freezing>()
 }
 
 open class BinaryOption<T : Any>(

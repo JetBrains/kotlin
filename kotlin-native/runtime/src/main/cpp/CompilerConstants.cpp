@@ -13,6 +13,7 @@ using namespace kotlin;
 RUNTIME_WEAK int32_t Kotlin_destroyRuntimeMode = 1;
 RUNTIME_WEAK int32_t Kotiln_gcAggressive = 0;
 RUNTIME_WEAK int32_t Kotlin_workerExceptionHandling = 0;
+RUNTIME_WEAK int32_t Kotlin_freezingEnabled = 1;
 
 ALWAYS_INLINE compiler::DestroyRuntimeMode compiler::destroyRuntimeMode() noexcept {
     return static_cast<compiler::DestroyRuntimeMode>(Kotlin_destroyRuntimeMode);
@@ -24,4 +25,8 @@ ALWAYS_INLINE bool compiler::gcAggressive() noexcept {
 
 ALWAYS_INLINE compiler::WorkerExceptionHandling compiler::workerExceptionHandling() noexcept {
     return static_cast<compiler::WorkerExceptionHandling>(Kotlin_workerExceptionHandling);
+}
+
+ALWAYS_INLINE bool compiler::freezingEnabled() noexcept {
+    return Kotlin_freezingEnabled != 0;
 }

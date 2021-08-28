@@ -81,6 +81,19 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)!!
     val runtimeLogs: String? get() = configuration.get(KonanConfigKeys.RUNTIME_LOGS)
+    val freezing: Freezing by lazy {
+        val freezingMode = configuration.get(BinaryOptions.freezing)
+        when {
+            freezingMode == null -> Freezing.Default
+            memoryModel != MemoryModel.EXPERIMENTAL && freezingMode != Freezing.Default -> {
+                configuration.report(
+                        CompilerMessageSeverity.ERROR,
+                        "`freezing` can only be adjusted with experimental MM. Falling back to default behavior.")
+                Freezing.Default
+            }
+            else -> freezingMode
+        }
+    }
 
     val needVerifyIr: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_IR) == true

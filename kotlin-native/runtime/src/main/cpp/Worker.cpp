@@ -1167,7 +1167,7 @@ KNativePtr Kotlin_Worker_detachObjectGraphInternal(KInt transferMode, KRef produ
 }
 
 void Kotlin_Worker_freezeInternal(KRef object) {
-  if (object != nullptr)
+  if (object != nullptr && compiler::freezingEnabled())
     FreezeSubgraph(object);
 }
 
