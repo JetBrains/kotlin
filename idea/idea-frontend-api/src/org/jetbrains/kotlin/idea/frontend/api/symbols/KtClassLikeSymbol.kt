@@ -32,7 +32,10 @@ public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtClassLikeSymbol>
 }
 
-public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(), KtNamedSymbol {
+public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(),
+    KtSymbolWithTypeParameters,
+    KtSymbolWithVisibility,
+    KtNamedSymbol {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
 
     /**

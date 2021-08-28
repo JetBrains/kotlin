@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -33,6 +37,18 @@ internal class KtFirTypeAliasSymbol(
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
     override val name: Name get() = firRef.withFir { it.name }
     override val classIdIfNonLocal: ClassId get() = firRef.withFir { it.symbol.classId }
+
+    override val visibility: Visibility
+        get() = when (val possiblyRawVisibility = getVisibility(FirResolvePhase.RAW_FIR)) {
+            Visibilities.Unknown -> Visibilities.Public
+            else -> possiblyRawVisibility
+        }
+
+    override val typeParameters by firRef.withFirAndCache { fir ->
+        fir.typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
+            builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol.fir)
+        }
+    }
 
     override val expandedType: KtType by firRef.withFirAndCache(FirResolvePhase.SUPER_TYPES) { fir ->
         builder.typeBuilder.buildKtType(fir.expandedTypeRef)

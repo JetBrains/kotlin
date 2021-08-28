@@ -1,3 +1,3 @@
 class X<T>
 
-typealias Y<Z> = X<Z>
+private typealias Y<Z> = X<Z>

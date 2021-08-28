@@ -48,4 +48,8 @@ KtFirTypeAliasSymbol:
   name: Y
   origin: SOURCE
   symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtFirTypeParameterSymbol(Z)
+  ]
+  visibility: Private
   deprecationStatus: null
