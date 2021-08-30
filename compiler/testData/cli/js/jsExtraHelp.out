@@ -3,6 +3,8 @@ where advanced options include:
   -Xcache-directories=<path> A path to cache directories
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
+  -Xenable-extension-functions-in-externals
+                             Enable extensions functions members in external interfaces
   -Xfake-override-validator  Enable IR fake override validator
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export

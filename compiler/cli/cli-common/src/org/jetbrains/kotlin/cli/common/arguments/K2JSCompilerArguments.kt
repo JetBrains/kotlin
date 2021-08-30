@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 
@@ -214,6 +215,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var friendModules: String? by NullableStringFreezableVar(null)
 
+    @Argument(
+        value = "-Xenable-extension-functions-in-externals",
+        description = "Enable extensions functions members in external interfaces"
+    )
+    var extensionFunctionsInExternals: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xmetadata-only", description = "Generate *.meta.js and *.kjsm files only")
     var metadataOnly: Boolean by FreezableVar(false)
 
@@ -239,6 +246,14 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
                 CompilerMessageSeverity.ERROR,
                 "IR backend cannot be used with language or API version below 1.4"
             )
+        }
+    }
+
+    override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
+        return super.configureLanguageFeatures(collector).apply {
+            if (extensionFunctionsInExternals) {
+                this[LanguageFeature.JsEnableExtensionFunctionInExternals] = LanguageFeature.State.ENABLED
+            }
         }
     }
 }
