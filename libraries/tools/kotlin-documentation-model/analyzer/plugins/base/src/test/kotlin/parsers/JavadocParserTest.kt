@@ -6,6 +6,8 @@ import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.CodeBlock
 import org.jetbrains.dokka.model.doc.CodeInline
+import org.jetbrains.dokka.model.doc.P
+import org.jetbrains.dokka.model.doc.Pre
 import org.jetbrains.dokka.model.doc.Text
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -103,6 +105,111 @@ class JavadocParserTest : BaseAbstractTest() {
                 kotlin.test.assertEquals(
                     CodeBlock(children = listOf(Text(body = "\nSet<String> s2;\nSystem.out\n        .println(\"s2 = \" + s2);\n"))),
                     root.children[1]
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `literal tag`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * An example of using the literal tag
+            | * {@literal @}Entity
+            | * public class User {}
+            | */
+            | public class Test {}
+            """.trimIndent()
+        testInline(
+            source,
+            configuration,
+        ) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val root = docs.children.first().root
+
+                kotlin.test.assertEquals(
+                    listOf(
+                        Text(body = "An example of using the literal tag "),
+                        Text(body = "@"),
+                        Text(body = "Entity public class User {}"),
+                    ),
+                    root.children.first().children
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `literal tag nested under pre tag`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * An example of using the literal tag
+            | * <pre>
+            | * {@literal @}Entity
+            | * public class User {}
+            | * </pre>
+            | */
+            | public class Test  {}
+            """.trimIndent()
+        testInline(
+            source,
+            configuration,
+        ) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val root = docs.children.first().root
+
+                kotlin.test.assertEquals(
+                    listOf(
+                        P(children = listOf(Text(body = "An example of using the literal tag "))),
+                        Pre(children =
+                            listOf(
+                                Text(body = "@"),
+                                Text(body = "Entity\npublic class User {}\n")
+                            )
+                        )
+                    ),
+                    root.children
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `literal tag containing angle brackets`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * An example of using the literal tag
+            | * {@literal a<B>c}
+            | */
+            | public class Test  {}
+            """.trimIndent()
+        testInline(
+            source,
+            configuration,
+        ) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val root = docs.children.first().root
+
+                kotlin.test.assertEquals(
+                    listOf(
+                        P(children = listOf(
+                            Text(body = "An example of using the literal tag "),
+                            Text(body = "a<B>c")
+                        )),
+                    ),
+                    root.children
                 )
             }
         }
