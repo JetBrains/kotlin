@@ -15079,6 +15079,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt");
         }
 
+        @TestMetadata("boxNullableForFakeOverride.kt")
+        public void ignoreBoxNullableForFakeOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverride.kt");
+        }
+
         @TestMetadata("customIterator.kt")
         public void ignoreCustomIterator() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/customIterator.kt");
@@ -15160,11 +15165,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("boxImplDoesNotExecuteInitBlock.kt")
         public void testBoxImplDoesNotExecuteInitBlock() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlock.kt");
-        }
-
-        @TestMetadata("boxNullableForFakeOverride.kt")
-        public void testBoxNullableForFakeOverride() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverride.kt");
         }
 
         @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
