@@ -15,7 +15,7 @@ private class SubstitutableNumbers(private val numbers: Map<CirEntityId, BitWidt
     fun choose(first: CirClassType, second: CirClassType): CirClassType? {
         val firstBitWidth = numbers[first.classifierId] ?: return null
         val secondBitWidth = numbers[second.classifierId] ?: return null
-        return if (secondBitWidth > firstBitWidth) second else first
+        return if (secondBitWidth < firstBitWidth) second else first
     }
 }
 
