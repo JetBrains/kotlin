@@ -23,6 +23,7 @@ internal class KtFirEnumEntrySymbolPointer(
     private val ownerClassId: ClassId,
     private val name: Name
 ) : KtSymbolPointer<KtEnumEntrySymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtEnumEntrySymbol? {
         require(analysisSession is KtFirAnalysisSession)
         val enumClass = getEnumClass(analysisSession, ownerClassId)

@@ -41,6 +41,7 @@ class LazyJavaPackageFragmentProvider(
         }
     }
 
+    @Deprecated("for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)")
     override fun getPackageFragments(fqName: FqName) = listOfNotNull(getPackageFragment(fqName))
 
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) =

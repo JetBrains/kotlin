@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 internal class KtFirBackingFieldSymbolPointer(
     private val propertySymbolPointer: KtSymbolPointer<KtKotlinPropertySymbol>,
 ) : KtSymbolPointer<KtBackingFieldSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtBackingFieldSymbol? {
         require(analysisSession is KtFirAnalysisSession)
         @Suppress("DEPRECATION")

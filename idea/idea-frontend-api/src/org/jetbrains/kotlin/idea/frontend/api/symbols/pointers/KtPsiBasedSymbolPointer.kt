@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 
 public class KtPsiBasedSymbolPointer<S : KtSymbol>(private val psiPointer: SmartPsiElementPointer<out KtDeclaration>) :
     KtSymbolPointer<S>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
         val psi = psiPointer.element ?: return null
 

@@ -121,6 +121,7 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
             val konanSoftwareComponent = config.mainVariant
             val variantName = "${artifactNameWithoutSuffix}_${target.name}"
             val context = DefaultUsageContext(object:UsageContext {
+                @Suppress("OVERRIDE_DEPRECATION")
                 override fun getUsage(): Usage = linkUsage
                 override fun getName(): String = "${variantName}Link"
                 override fun getCapabilities(): MutableSet<out Capability> = mutableSetOf()

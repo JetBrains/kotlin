@@ -42,6 +42,7 @@ public class ExampleCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = EXAMPLE_PLUGIN_ID
     override val pluginOptions: Collection<CliOption> = listOf(EXAMPLE_OPTION, EXAMPLE_LEGACY_OPTION)
 
+    @Deprecated("Implement processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) instead.")
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             EXAMPLE_OPTION -> configuration.put(ExampleConfigurationKeys.EXAMPLE_KEY, value)

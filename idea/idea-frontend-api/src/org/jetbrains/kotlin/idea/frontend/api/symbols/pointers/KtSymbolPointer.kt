@@ -35,5 +35,6 @@ public abstract class KtSymbolPointer<out S : KtSymbol> {
 
 public inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysisSession) -> S?): KtSymbolPointer<S> =
     object : KtSymbolPointer<S>() {
+        @Deprecated("Consider using org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol")
         override fun restoreSymbol(analysisSession: KtAnalysisSession): S? = getSymbol(analysisSession)
     }

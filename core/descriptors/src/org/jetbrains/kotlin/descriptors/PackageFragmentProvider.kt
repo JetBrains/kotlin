@@ -26,6 +26,7 @@ interface PackageFragmentProvider {
     fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
     object Empty : PackageFragmentProvider {
+        @Deprecated("for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)")
         override fun getPackageFragments(fqName: FqName) = emptyList<PackageFragmentDescriptor>()
 
         override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = emptySet<FqName>()

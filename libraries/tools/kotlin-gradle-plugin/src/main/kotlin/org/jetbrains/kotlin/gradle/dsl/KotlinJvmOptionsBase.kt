@@ -38,6 +38,8 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         }
 
     private var includeRuntimeField: kotlin.Boolean? = null
+
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
     override var includeRuntime: kotlin.Boolean
         get() = includeRuntimeField ?: false
         set(value) {
@@ -51,6 +53,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             javaParametersField = value
         }
 
+    @Deprecated(message = "This option is not working well with Gradle caching and will be removed in the future.", level = DeprecationLevel.WARNING)
     override var jdkHome: kotlin.String? = null
 
     internal var jvmTargetField: kotlin.String? = null
@@ -70,6 +73,8 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         }
 
     private var noReflectField: kotlin.Boolean? = null
+
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
     override var noReflect: kotlin.Boolean
         get() = noReflectField ?: true
         set(value) {
@@ -77,6 +82,8 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         }
 
     private var noStdlibField: kotlin.Boolean? = null
+
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
     override var noStdlib: kotlin.Boolean
         get() = noStdlibField ?: true
         set(value) {
@@ -84,6 +91,8 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         }
 
     private var useIRField: kotlin.Boolean? = null
+
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.WARNING)
     override var useIR: kotlin.Boolean
         get() = useIRField ?: false
         set(value) {

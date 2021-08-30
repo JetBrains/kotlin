@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 
 class KtFirClassOrObjectInLibrarySymbolPointer(private val classId: ClassId) : KtSymbolPointer<KtNamedClassOrObjectSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtNamedClassOrObjectSymbol? {
         require(analysisSession is KtFirAnalysisSession)
         return analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByClassId(classId) as? KtNamedClassOrObjectSymbol

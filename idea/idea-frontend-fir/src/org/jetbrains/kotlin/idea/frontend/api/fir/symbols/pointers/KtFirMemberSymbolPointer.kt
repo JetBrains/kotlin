@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
     private val ownerClassId: ClassId,
 ) : KtSymbolPointer<S>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol")
     final override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
         require(analysisSession is KtFirAnalysisSession)
         val owner = analysisSession.getClassLikeSymbol(ownerClassId) as? FirRegularClass

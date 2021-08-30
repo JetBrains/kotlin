@@ -23,5 +23,6 @@ interface LanguageSettingsBuilder : LanguageSettings {
 
     fun optIn(annotationName: String)
 
+    @Deprecated("Unsupported and will be removed in next major releases", replaceWith = ReplaceWith("optInAnnotationsInUse"))
     override val experimentalAnnotationsInUse: Set<String>
 }

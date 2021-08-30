@@ -133,6 +133,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     override val annotationsForSamWithReceivers: List<String>
         get() = samWithReceiverAnnotations ?: super.annotationsForSamWithReceivers
 
+    @Deprecated("temporary workaround for missing functionality, will be replaced by the new API soon")
     override val additionalCompilerArguments: Iterable<String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         takeUnlessError {
             template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateAdditionalCompilerArguments>()?.let {

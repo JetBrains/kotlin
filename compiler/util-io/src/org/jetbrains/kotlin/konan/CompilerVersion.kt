@@ -48,6 +48,7 @@ data class CompilerVersionImpl(
     override val major: Int,
     override val minor: Int,
     override val maintenance: Int,
+    @Deprecated("Milestone is deprecated in favour to MetaVersion's M1 and M2")
     override val milestone: Int = -1,
     override val build: Int = -1
 ) : CompilerVersion {

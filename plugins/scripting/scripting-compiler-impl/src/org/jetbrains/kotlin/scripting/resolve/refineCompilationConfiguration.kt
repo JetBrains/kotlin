@@ -148,7 +148,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
         override val importedScripts: List<SourceCode>
             get() = configuration?.get(ScriptCompilationConfiguration.importScripts).orEmpty()
 
-        @Suppress("OverridingDeprecatedMember")
+        @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
         override val legacyDependencies: ScriptDependencies?
             get() = configuration?.toDependencies(dependenciesClassPath)
 
@@ -162,7 +162,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
         }
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
     class FromLegacy(
         script: SourceCode,
         override val legacyDependencies: ScriptDependencies?,

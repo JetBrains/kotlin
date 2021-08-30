@@ -72,7 +72,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         server.scheduleShutdown(graceful)
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun remoteCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -84,7 +84,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         operationsTracer: RemoteOperationsTracer?
     ) = deprecated()
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun remoteIncrementalCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -123,7 +123,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         server.clearJarCache()
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun leaseReplSession(
         aliveFlagPath: String?,
         targetPlatform: CompileService.TargetPlatform,
@@ -143,14 +143,17 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         server.releaseReplSession(sessionId)
     }
 
+    @Deprecated("The usages should be replaced with `replCheck` method", ReplaceWith("replCheck"))
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine) = deprecated()
 
+    @Deprecated("The usages should be replaced with `replCompile` method", ReplaceWith("replCompile"))
     override fun remoteReplLineCompile(
         sessionId: Int,
         codeLine: ReplCodeLine,
         history: List<ReplCodeLine>?
     ) = deprecated()
 
+    @Deprecated("Evaluation on daemon is not supported")
     override fun remoteReplLineEval(
         sessionId: Int,
         codeLine: ReplCodeLine,

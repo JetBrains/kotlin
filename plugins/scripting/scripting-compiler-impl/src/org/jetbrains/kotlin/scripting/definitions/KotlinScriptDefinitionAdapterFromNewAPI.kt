@@ -76,6 +76,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
             ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType }.orEmpty()
     }
 
+    @Deprecated("temporary workaround for missing functionality, will be replaced by the new API soon")
     override val additionalCompilerArguments: List<String>
         get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
             .orEmpty()

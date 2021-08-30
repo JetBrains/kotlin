@@ -108,7 +108,7 @@ class CompositeAnnotations(
 
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findAnnotation(fqName) }.firstOrNull()
 
-    @Suppress("DEPRECATION", "OverridingDeprecatedMember")
+    @Suppress("DEPRECATION", "OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
     override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
 
     override fun iterator() = delegates.asSequence().flatMap { it.asSequence() }.iterator()

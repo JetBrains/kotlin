@@ -108,6 +108,6 @@ private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens
 }
 
 private class TestCliScriptDefinitionProvider(private val standardDef: ScriptDefinition) : CliScriptDefinitionProvider() {
-    @Suppress("DEPRECATION", "OverridingDeprecatedMember")
+    @Suppress("DEPRECATION", "OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
     override fun getDefaultScriptDefinition(): KotlinScriptDefinition = standardDef.legacyDefinition
 }

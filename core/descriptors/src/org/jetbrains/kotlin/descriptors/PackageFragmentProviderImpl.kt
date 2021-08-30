@@ -29,6 +29,7 @@ class PackageFragmentProviderImpl(
     override fun isEmpty(fqName: FqName): Boolean =
         this.packageFragments.none { it.fqName == fqName }
 
+    @Deprecated("for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)")
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =
         packageFragments.filter { it.fqName == fqName }
 

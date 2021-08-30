@@ -61,7 +61,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         return "ScriptDefinition($name)"
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
     open class FromLegacy(
         override val hostConfiguration: ScriptingHostConfiguration,
         override val legacyDefinition: KotlinScriptDefinition,
@@ -127,7 +127,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     abstract class FromConfigurationsBase() : ScriptDefinition() {
 
-        @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+        @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
         override val legacyDefinition by lazy {
             KotlinScriptDefinitionAdapterFromNewAPI(
                 compilationConfiguration,
