@@ -96,7 +96,7 @@ where advanced options include:
                                * ignore
                                * strict
                                * warn (report a warning)
-  -Xparallel-backend-threads When using the IR backend, run lowerings by file in N parallel threads.
+  -Xbackend-threads=<N>      When using the IR backend, run lowerings by file in N parallel threads.
                              0 means use a thread per processor core.
                              Default value is 1
   -Xprofile=<profilerPath:command:outputDir>

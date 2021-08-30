@@ -128,7 +128,8 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var doNotClearBindingContext: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xparallel-backend-threads",
+        value = "-Xbackend-threads",
+        valueDescription = "<N>",
         description = "When using the IR backend, run lowerings by file in N parallel threads.\n" +
                 "0 means use a thread per processor core.\n" +
                 "Default value is 1"
