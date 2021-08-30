@@ -26,6 +26,6 @@ fun box(): String {
 // LOCAL VARIABLES JVM
 // test.kt:5 box: i:int=0:int
 // LOCAL VARIABLES JVM_IR
-// test.kt:5 box:
+// test.kt:5 box: i:int=0:int
 // LOCAL VARIABLES
 // test.kt:14 box:

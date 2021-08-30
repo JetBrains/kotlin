@@ -30199,6 +30199,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("forInIntRangeToConstWithBreak.kt")
+        public void testForInIntRangeToConstWithBreak() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInIntRangeToConstWithBreak.kt");
+        }
+
+        @Test
+        @TestMetadata("forInIntRangeToConstWithContinue.kt")
+        public void testForInIntRangeToConstWithContinue() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInIntRangeToConstWithContinue.kt");
+        }
+
+        @Test
         @TestMetadata("forInRangeLiteralWithMixedTypeBounds.kt")
         public void testForInRangeLiteralWithMixedTypeBounds() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/forInRangeLiteralWithMixedTypeBounds.kt");

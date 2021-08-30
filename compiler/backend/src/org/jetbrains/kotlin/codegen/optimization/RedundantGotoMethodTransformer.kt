@@ -75,7 +75,7 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
         }
 
         // Rewrite branch instructions.
-        if (!labelsToReplace.isEmpty()) {
+        if (labelsToReplace.isNotEmpty()) {
             insns.filterIsInstance<JumpInsnNode>().forEach { rewriteLabelIfNeeded(it, labelsToReplace) }
         }
 

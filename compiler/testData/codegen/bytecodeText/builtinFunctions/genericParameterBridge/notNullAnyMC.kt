@@ -9,7 +9,4 @@ abstract class A8 : MutableCollection<Any> {
 // 0 INSTANCEOF
 
 /* Only 1 null check should be within the contains method */
-// JVM_TEMPLATES:
-// 1 IFNULL
-// JVM_IR_TEMPLATES:
 // 1 IFNONNULL

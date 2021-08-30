@@ -33,10 +33,10 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
 
         val insns = methodNode.instructions.toArray()
 
-        forInsn@ for (i in 1 until insns.size) {
+        for (i in 1 until insns.size) {
             val insn = insns[i]
             val prev = insn.previous
-            val prevNonNop = insn.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue@forInsn
+            val prevNonNop = insn.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue
 
             when (insn.opcode) {
                 Opcodes.POP -> {
@@ -53,7 +53,7 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                 }
 
                 Opcodes.SWAP -> {
-                    val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue@forInsn
+                    val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue
                     if (prevNonNop.isPurePushOfSize1() && prevNonNop2.isPurePushOfSize1()) {
                         actions.add {
                             it.remove(insn)
@@ -83,7 +83,7 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                             it.remove(prevNonNop)
                         }
                     } else if (i > 1) {
-                        val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue@forInsn
+                        val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue
                         if (prevNonNop.isEliminatedByPop() && prevNonNop2.isEliminatedByPop()) {
                             actions.add {
                                 it.set(insn, InsnNode(Opcodes.NOP))
