@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.diagnostic.ErrorsParcelize
 import org.jetbrains.kotlin.parcelize.serializers.ParcelSerializer
@@ -234,13 +235,13 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
         val type = descriptor.type
 
         if (!type.isError && !containerClass.hasCustomParceler()) {
-            val asmType = typeMapper.mapType(type)
+            val asmType = typeMapper.mapType(type, mode = TypeMappingMode.CLASS_DECLARATION)
 
             try {
                 val parcelers = getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)
                 val context = ParcelSerializer.ParcelSerializerContext(
                     typeMapper,
-                    typeMapper.mapType(containerClass.defaultType),
+                    typeMapper.mapClass(containerClass),
                     parcelers,
                     FrameMap()
                 )
