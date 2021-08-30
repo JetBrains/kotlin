@@ -458,14 +458,19 @@ public abstract class StackValue {
     public static void boxInlineClass(
             @NotNull KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v, @NotNull KotlinTypeMapperBase typeMapper
     ) {
-        Type boxedType = typeMapper.mapTypeCommon(kotlinType, TypeMappingMode.CLASS_DECLARATION);
-        Type underlyingType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, typeMapper);
+        Type boxed = typeMapper.mapTypeCommon(kotlinType, TypeMappingMode.CLASS_DECLARATION);
+        Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, typeMapper);
+        boolean isNullable = typeMapper.getTypeSystem().isNullableType(kotlinType) && !isPrimitive(unboxed);
+        boxInlineClass(unboxed, boxed, isNullable, v);
+    }
 
-        if (typeMapper.getTypeSystem().isNullableType(kotlinType) && !isPrimitive(underlyingType)) {
-            boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxedType, underlyingType));
-        }
-        else {
-            invokeBoxMethod(v, boxedType, underlyingType);
+    public static void boxInlineClass(
+            @NotNull Type unboxed, @NotNull Type boxed, boolean isNullable, @NotNull InstructionAdapter v
+    ) {
+        if (isNullable) {
+            boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxed, unboxed));
+        } else {
+            invokeBoxMethod(v, boxed, unboxed);
         }
     }
 
@@ -488,17 +493,20 @@ public abstract class StackValue {
             @NotNull InstructionAdapter v,
             @NotNull KotlinTypeMapperBase typeMapper
     ) {
-        Type owner = typeMapper.mapTypeCommon(targetInlineClassType, TypeMappingMode.CLASS_DECLARATION);
+        Type boxed = typeMapper.mapTypeCommon(targetInlineClassType, TypeMappingMode.CLASS_DECLARATION);
+        Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType, typeMapper);
+        boolean isNullable = typeMapper.getTypeSystem().isNullableType(targetInlineClassType) && !isPrimitive(unboxed);
+        unboxInlineClass(type, boxed, unboxed, isNullable, v);
+    }
 
-        coerce(type, owner, v);
-
-        Type resultType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType, typeMapper);
-
-        if (typeMapper.getTypeSystem().isNullableType(targetInlineClassType) && !isPrimitive(resultType)) {
-            boxOrUnboxWithNullCheck(v, vv -> invokeUnboxMethod(vv, owner, resultType));
-        }
-        else {
-            invokeUnboxMethod(v, owner, resultType);
+    public static void unboxInlineClass(
+            @NotNull Type type, @NotNull Type boxed, @NotNull Type unboxed, boolean isNullable, @NotNull InstructionAdapter v
+    ) {
+        coerce(type, boxed, v);
+        if (isNullable) {
+            boxOrUnboxWithNullCheck(v, vv -> invokeUnboxMethod(vv, boxed, unboxed));
+        } else {
+            invokeUnboxMethod(v, boxed, unboxed);
         }
     }
 
