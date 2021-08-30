@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.deprecation
 
-abstract class Deprecation : Comparable<Deprecation> {
+abstract class DeprecationInfo : Comparable<DeprecationInfo> {
     abstract val deprecationLevel: DeprecationLevelValue
     abstract val propagatesToOverrides: Boolean
     abstract val message: String?
 
-    override fun compareTo(other: Deprecation): Int {
+    override fun compareTo(other: DeprecationInfo): Int {
         val lr = deprecationLevel.compareTo(other.deprecationLevel)
         //to prefer inheritable deprecation
         return if (lr == 0 && !propagatesToOverrides && other.propagatesToOverrides) 1
@@ -18,11 +18,11 @@ abstract class Deprecation : Comparable<Deprecation> {
     }
 }
 
-data class SimpleDeprecation(
+data class SimpleDeprecationInfo(
     override val deprecationLevel: DeprecationLevelValue,
     override val propagatesToOverrides: Boolean,
     override val message: String?
-) : Deprecation()
+) : DeprecationInfo()
 
 /**
  * This corresponds to [DeprecationLevel] in Kotlin standard library. A symbol annotated with [java.lang.Deprecated] is considered a

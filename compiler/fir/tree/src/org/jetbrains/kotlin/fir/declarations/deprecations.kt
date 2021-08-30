@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 
 class DeprecationsPerUseSite(
-    val all: Deprecation?,
-    val bySpecificSite: Map<AnnotationUseSiteTarget, Deprecation>?
+    val all: DeprecationInfo?,
+    val bySpecificSite: Map<AnnotationUseSiteTarget, DeprecationInfo>?
 ) {
-    fun forUseSite(vararg sites: AnnotationUseSiteTarget): Deprecation? {
+    fun forUseSite(vararg sites: AnnotationUseSiteTarget): DeprecationInfo? {
         if (bySpecificSite != null) {
             for (site in sites) {
                 bySpecificSite[site]?.let { return it }
@@ -68,11 +68,11 @@ class DeprecationsPerUseSite(
         else "org.jetbrains.kotlin.fir.declarations.DeprecationInfoForUseSites(all=$all, bySpecificSite=$bySpecificSite)"
 
     companion object {
-        fun fromMap(perUseSite: Map<AnnotationUseSiteTarget?, Deprecation>): DeprecationsPerUseSite {
+        fun fromMap(perUseSite: Map<AnnotationUseSiteTarget?, DeprecationInfo>): DeprecationsPerUseSite {
             if (perUseSite.isEmpty()) return EmptyDeprecationsPerUseSite
 
             @Suppress("UNCHECKED_CAST")
-            val specificCallSite = perUseSite.filterKeys { it != null } as Map<AnnotationUseSiteTarget, Deprecation>
+            val specificCallSite = perUseSite.filterKeys { it != null } as Map<AnnotationUseSiteTarget, DeprecationInfo>
             return DeprecationsPerUseSite(
                 perUseSite[null],
                 specificCallSite.takeIf { it.isNotEmpty() }

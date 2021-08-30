@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.diagnostics
 
 import kotlinx.collections.immutable.ImmutableList
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -197,9 +197,9 @@ class ConeUnsupportedDynamicType : ConeUnsupported("Dynamic types are not suppor
 class ConeDeprecated(
     val source: FirSourceElement?,
     override val candidateSymbol: FirBasedSymbol<*>,
-    val deprecation: Deprecation
+    val deprecationInfo: DeprecationInfo
 ) : ConeDiagnosticWithSingleCandidate {
-    override val reason: String get() = "Deprecated: ${deprecation.message}"
+    override val reason: String get() = "Deprecated: ${deprecationInfo.message}"
 }
 
 class ConeLocalVariableNoTypeOrInitializer(val variable: FirVariable) : ConeDiagnostic {

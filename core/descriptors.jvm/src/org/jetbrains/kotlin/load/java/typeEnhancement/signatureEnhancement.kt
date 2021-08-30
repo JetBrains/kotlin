@@ -215,7 +215,7 @@ class SignatureEnhancement(
         ) {
             val additionalUserData =
                 if (containsFunctionN)
-                    DEPRECATED_FUNCTION_KEY to DeprecationCausedByFunctionN(this)
+                    DEPRECATED_FUNCTION_KEY to DeprecationCausedByFunctionNInfo(this)
                 else
                     null
 

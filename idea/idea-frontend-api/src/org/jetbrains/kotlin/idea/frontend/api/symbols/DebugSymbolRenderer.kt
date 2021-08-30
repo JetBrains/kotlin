@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
@@ -103,7 +103,7 @@ public object DebugSymbolRenderer {
             append(INDENT, "psi: ${renderValue(value.psi)}")
         }
         is KtTypeAndAnnotations -> "${renderValue(value.annotations)} ${renderValue(value.type)}"
-        is Deprecation -> value.toString()
+        is DeprecationInfo -> value.toString()
         else -> value::class.simpleName!!
     }
 

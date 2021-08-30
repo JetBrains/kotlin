@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
@@ -97,7 +97,7 @@ private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: CallableMemberDes
     return false
 }
 
-internal fun ObjCExportMapper.getDeprecation(descriptor: DeclarationDescriptor): Deprecation? {
+internal fun ObjCExportMapper.getDeprecation(descriptor: DeclarationDescriptor): DeprecationInfo? {
     deprecationResolver?.getDeprecations(descriptor).orEmpty().maxByOrNull {
         when (it.deprecationLevel) {
             DeprecationLevelValue.WARNING -> 1

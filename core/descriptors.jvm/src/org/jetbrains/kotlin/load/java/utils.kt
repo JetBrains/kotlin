@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecation
+import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-class DeprecationCausedByFunctionN(override val target: DeclarationDescriptor) : DescriptorBasedDeprecation() {
+class DeprecationCausedByFunctionNInfo(override val target: DeclarationDescriptor) : DescriptorBasedDeprecationInfo() {
     override val deprecationLevel: DeprecationLevelValue
         get() = DeprecationLevelValue.ERROR
     override val message: String

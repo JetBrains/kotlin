@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.resolve.deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
-abstract class DescriptorBasedDeprecation : Deprecation() {
+abstract class DescriptorBasedDeprecationInfo : DeprecationInfo() {
     override val propagatesToOverrides: Boolean
         get() = true
 
     abstract val target: DeclarationDescriptor
 }
 
-val DEPRECATED_FUNCTION_KEY = object : CallableDescriptor.UserDataKey<DescriptorBasedDeprecation> {}
+val DEPRECATED_FUNCTION_KEY = object : CallableDescriptor.UserDataKey<DescriptorBasedDeprecationInfo> {}

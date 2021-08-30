@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
 
@@ -879,7 +879,7 @@ internal class DeprecatedSinceKotlinOutsideKotlinSubpackageImpl(
 
 internal class OverrideDeprecationImpl(
     override val overridenSymbol: KtSymbol,
-    override val deprecationInfo: org.jetbrains.kotlin.resolve.deprecation.Deprecation,
+    override val deprecationInfo: DeprecationInfo,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.OverrideDeprecation(), KtAbstractFirDiagnostic<KtNamedDeclaration> {

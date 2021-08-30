@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecation
+import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -33,8 +33,8 @@ private val LEVEL_NAME = Name.identifier("level")
 
 private val JAVA_ORIGINS = setOf(FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement)
 
-fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): Deprecation? {
-    val deprecationInfos = mutableListOf<Deprecation>()
+fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): DeprecationInfo? {
+    val deprecationInfos = mutableListOf<DeprecationInfo>()
     when (this) {
         is FirPropertySymbol ->
             if (callSite is FirVariableAssignment) {
@@ -53,7 +53,7 @@ fun FirBasedSymbol<*>.getDeprecation(callSite: FirElement?): Deprecation? {
 }
 
 fun FirAnnotationContainer.getDeprecationInfos(currentVersion: ApiVersion): DeprecationsPerUseSite {
-    val deprecationByUseSite = mutableMapOf<AnnotationUseSiteTarget?, Deprecation>()
+    val deprecationByUseSite = mutableMapOf<AnnotationUseSiteTarget?, DeprecationInfo>()
     val fromJava = JAVA_ORIGINS.contains(this.safeAs<FirDeclaration>()?.origin)
     annotations.extractDeprecationInfoPerUseSite(currentVersion, fromJava).toMap(deprecationByUseSite)
 
@@ -70,7 +70,7 @@ fun getDeprecationsFromAccessors(
     setter: FirFunction?,
     currentVersion: ApiVersion
 ): DeprecationsPerUseSite {
-    val perUseSite = buildMap<AnnotationUseSiteTarget, Deprecation> {
+    val perUseSite = buildMap<AnnotationUseSiteTarget, DeprecationInfo> {
         setter?.getDeprecationInfos(currentVersion)?.all?.let { put(AnnotationUseSiteTarget.PROPERTY_SETTER, it) }
         getter?.getDeprecationInfos(currentVersion)?.all?.let { put(AnnotationUseSiteTarget.PROPERTY_GETTER, it) }
     }
@@ -84,7 +84,7 @@ fun List<FirAnnotationCall>.getDeprecationInfosFromAnnotations(currentVersion: A
 
 fun FirBasedSymbol<*>.getDeprecationForCallSite(
     vararg sites: AnnotationUseSiteTarget
-): Deprecation? {
+): DeprecationInfo? {
     val deprecations = when (this) {
         is FirCallableSymbol<*> -> deprecation
         is FirClassLikeSymbol<*> -> deprecation
@@ -109,7 +109,7 @@ private fun FirAnnotationCall.getDeprecationLevel(): DeprecationLevelValue? {
 private fun List<FirAnnotationCall>.extractDeprecationInfoPerUseSite(
     currentVersion: ApiVersion,
     fromJava: Boolean
-): List<Pair<AnnotationUseSiteTarget?, Deprecation>> {
+): List<Pair<AnnotationUseSiteTarget?, DeprecationInfo>> {
     val annotations = getAnnotationsByFqName(StandardNames.FqNames.deprecated).map { it to false } +
             getAnnotationsByFqName(JAVA_DEPRECATED).map { it to true }
     return annotations.mapNotNull { (deprecated, fromJavaAnnotation) ->
@@ -127,7 +127,7 @@ private fun List<FirAnnotationCall>.extractDeprecationInfoPerUseSite(
 
         appliedLevel?.let {
             val inheritable = !fromJavaAnnotation && !fromJava
-            deprecated.useSiteTarget to SimpleDeprecation(it, inheritable, deprecated.getStringArgument(MESSAGE_NAME))
+            deprecated.useSiteTarget to SimpleDeprecationInfo(it, inheritable, deprecated.getStringArgument(MESSAGE_NAME))
         }
     }
 }

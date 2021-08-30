@@ -58,9 +58,9 @@ class DeprecationResolver(
         }
 
     private data class DeprecationInfo(
-        val deprecations: List<DescriptorBasedDeprecation>,
+        val deprecations: List<DescriptorBasedDeprecationInfo>,
         val hasInheritedDeprecations: Boolean,
-        val hiddenInheritedDeprecations: List<DescriptorBasedDeprecation> = emptyList()
+        val hiddenInheritedDeprecations: List<DescriptorBasedDeprecationInfo> = emptyList()
     ) {
         companion object {
             val EMPTY = DeprecationInfo(emptyList(), hasInheritedDeprecations = false, emptyList())
@@ -71,7 +71,7 @@ class DeprecationResolver(
         descriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings)
     }
 
-    fun getDeprecations(descriptor: DeclarationDescriptor): List<DescriptorBasedDeprecation> =
+    fun getDeprecations(descriptor: DeclarationDescriptor): List<DescriptorBasedDeprecationInfo> =
         deprecations(descriptor.original).deprecations
 
     @OptIn(ExperimentalContracts::class)
@@ -82,7 +82,7 @@ class DeprecationResolver(
         return deprecations(descriptor.original).hasInheritedDeprecations
     }
 
-    fun getHiddenDeprecationsFromOverriden(descriptor: DeclarationDescriptor): List<DescriptorBasedDeprecation> =
+    fun getHiddenDeprecationsFromOverriden(descriptor: DeclarationDescriptor): List<DescriptorBasedDeprecationInfo> =
         deprecations(descriptor.original).hiddenInheritedDeprecations
 
     fun isDeprecatedHidden(descriptor: DeclarationDescriptor): Boolean =
@@ -130,8 +130,8 @@ class DeprecationResolver(
         return isDeprecatedHidden(descriptor)
     }
 
-    private fun KotlinType.deprecationsByConstituentTypes(): List<DescriptorBasedDeprecation> =
-        SmartList<DescriptorBasedDeprecation>().also { deprecations ->
+    private fun KotlinType.deprecationsByConstituentTypes(): List<DescriptorBasedDeprecationInfo> =
+        SmartList<DescriptorBasedDeprecationInfo>().also { deprecations ->
             TypeUtils.contains(this) { type ->
                 type.constructor.declarationDescriptor?.let {
                     deprecations.addAll(getDeprecations(it))
@@ -140,9 +140,9 @@ class DeprecationResolver(
             }
         }
 
-    private fun deprecationByOverridden(root: CallableMemberDescriptor): DescriptorBasedDeprecation? {
+    private fun deprecationByOverridden(root: CallableMemberDescriptor): DescriptorBasedDeprecationInfo? {
         val visited = HashSet<CallableMemberDescriptor>()
-        val deprecations = LinkedHashSet<DescriptorBasedDeprecation>()
+        val deprecations = LinkedHashSet<DescriptorBasedDeprecationInfo>()
         var hasUndeprecatedOverridden = false
 
         fun traverse(node: CallableMemberDescriptor) {
@@ -190,12 +190,12 @@ class DeprecationResolver(
         //
         // Also, we don't ignore non-propagating deprecations in case of fake overrides
         // Because we don't want to depend on the choice of the base descriptor
-        if (root.kind.isReal && deprecations.none(DescriptorBasedDeprecation::propagatesToOverrides)) return null
+        if (root.kind.isReal && deprecations.none(DescriptorBasedDeprecationInfo::propagatesToOverrides)) return null
 
         return DeprecatedByOverridden(deprecations)
     }
 
-    private fun DeclarationDescriptor.getOwnDeprecations(): List<DescriptorBasedDeprecation> {
+    private fun DeclarationDescriptor.getOwnDeprecations(): List<DescriptorBasedDeprecationInfo> {
         // The problem is that declaration `mod` in built-ins has @Deprecated annotation but actually it was deprecated only in version 1.1
         if (isBuiltInOperatorMod && !shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
             return emptyList()
@@ -206,7 +206,7 @@ class DeprecationResolver(
             return emptyList()
         }
 
-        val result = SmartList<DescriptorBasedDeprecation>()
+        val result = SmartList<DescriptorBasedDeprecationInfo>()
 
         addDeprecationIfPresent(result)
 
@@ -228,7 +228,7 @@ class DeprecationResolver(
         return result.distinct()
     }
 
-    private fun DeclarationDescriptor.addDeprecationIfPresent(result: MutableList<DescriptorBasedDeprecation>) {
+    private fun DeclarationDescriptor.addDeprecationIfPresent(result: MutableList<DescriptorBasedDeprecationInfo>) {
         val annotation = annotations.findAnnotation(StandardNames.FqNames.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
         if (annotation != null) {
             val deprecatedByAnnotation =
@@ -269,7 +269,7 @@ class DeprecationResolver(
                 descriptor.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isInt) == true &&
                 languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3
 
-    private fun getDeprecationFromUserData(target: DeclarationDescriptor): DescriptorBasedDeprecation? =
+    private fun getDeprecationFromUserData(target: DeclarationDescriptor): DescriptorBasedDeprecationInfo? =
         target.safeAs<CallableDescriptor>()?.getUserData(DEPRECATED_FUNCTION_KEY)
 
     private fun getDeprecationByVersionRequirement(target: DeclarationDescriptor): List<DeprecatedByVersionRequirement> {

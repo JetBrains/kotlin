@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun DescriptorBasedDeprecation.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
+fun DescriptorBasedDeprecationInfo.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
 
-fun DescriptorBasedDeprecation.deprecatedByAnnotationReplaceWithExpression(): String? = (this as? DeprecatedByAnnotation)?.replaceWithValue
+fun DescriptorBasedDeprecationInfo.deprecatedByAnnotationReplaceWithExpression(): String? = (this as? DeprecatedByAnnotation)?.replaceWithValue
 
 // The function extracts value of warningSince/errorSince/hiddenSince from DeprecatedSinceKotlin annotation
 fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
@@ -39,7 +39,7 @@ fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVe
 }
 
 internal fun createDeprecationDiagnostic(
-    element: PsiElement, deprecation: DescriptorBasedDeprecation, languageVersionSettings: LanguageVersionSettings
+    element: PsiElement, deprecation: DescriptorBasedDeprecationInfo, languageVersionSettings: LanguageVersionSettings
 ): Diagnostic {
     val targetOriginal = deprecation.target.original
     return when (deprecation) {

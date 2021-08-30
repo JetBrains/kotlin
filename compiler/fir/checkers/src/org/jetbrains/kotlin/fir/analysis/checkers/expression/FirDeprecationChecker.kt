@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
@@ -54,22 +54,22 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
     internal fun reportDeprecation(
         source: FirSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
-        deprecation: Deprecation,
+        deprecationInfo: DeprecationInfo,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
-        val diagnostic = when (deprecation.deprecationLevel) {
+        val diagnostic = when (deprecationInfo.deprecationLevel) {
             DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.DEPRECATION_ERROR
             DeprecationLevelValue.WARNING -> FirErrors.DEPRECATION
         }
-        reporter.reportOn(source, diagnostic, referencedSymbol, deprecation.message ?: "", context)
+        reporter.reportOn(source, diagnostic, referencedSymbol, deprecationInfo.message ?: "", context)
     }
 
     private fun getWorstDeprecation(
         callSite: FirElement?,
         symbol: FirBasedSymbol<*>,
         context: CheckerContext
-    ): Deprecation? {
+    ): DeprecationInfo? {
         val deprecationInfos = listOfNotNull(
             symbol.getDeprecation(callSite),
             symbol.safeAs<FirConstructorSymbol>()

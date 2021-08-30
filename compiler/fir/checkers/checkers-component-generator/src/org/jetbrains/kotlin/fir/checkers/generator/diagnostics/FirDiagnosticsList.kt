@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
@@ -242,7 +242,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val OVERRIDE_DEPRECATION by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<Symbol>("overridenSymbol")
-            parameter<Deprecation>("deprecationInfo")
+            parameter<DeprecationInfo>("deprecationInfo")
         }
 
         val ANNOTATION_ON_SUPERCLASS by deprecationError<KtAnnotationEntry>(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)

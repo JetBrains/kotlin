@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -22,7 +22,7 @@ internal class KtFirSymbolInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtSymbolInfoProvider(), KtFirAnalysisSessionComponent {
-    override fun getDeprecation(symbol: KtSymbol): Deprecation? {
+    override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {
         if (symbol is KtFirBackingFieldSymbol || symbol is KtFirPackageSymbol) return null
         require(symbol is KtFirSymbol<*>)
         return symbol.firRef.withFir {
@@ -35,7 +35,7 @@ internal class KtFirSymbolInfoProvider(
         }
     }
 
-    override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): Deprecation? {
+    override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
         require(symbol is KtFirSymbol<*>)
         return symbol.firRef.withFir { firDeclaration ->
             if (annotationUseSiteTarget != null) {
@@ -46,14 +46,14 @@ internal class KtFirSymbolInfoProvider(
         }
     }
 
-    override fun getGetterDeprecation(symbol: KtPropertySymbol): Deprecation? {
+    override fun getGetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
         require(symbol is KtFirSymbol<*>)
         return symbol.firRef.withFir {
             it.symbol.getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
         }
     }
 
-    override fun getSetterDeprecation(symbol: KtPropertySymbol): Deprecation? {
+    override fun getSetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
         require(symbol is KtFirSymbol<*>)
         return symbol.firRef.withFir {
             it.symbol.getDeprecationForCallSite(AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)

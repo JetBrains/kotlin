@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.load.java.DeprecationCausedByFunctionN
+import org.jetbrains.kotlin.load.java.DeprecationCausedByFunctionNInfo
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -49,6 +49,6 @@ private fun findFirstBadJavaSignatureOverridden(descriptor: DeclarationDescripto
     if (descriptor !is CallableDescriptor) return null
 
     return descriptor.overriddenDescriptors.firstOrNull {
-            overridden -> overridden.getUserData(DEPRECATED_FUNCTION_KEY) is DeprecationCausedByFunctionN
+            overridden -> overridden.getUserData(DEPRECATED_FUNCTION_KEY) is DeprecationCausedByFunctionNInfo
     }
 }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
-import org.jetbrains.kotlin.resolve.deprecation.Deprecation
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -1339,7 +1339,7 @@ internal fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer,
 }
 
 
-private fun Deprecation.toDeprecationAttribute(): String {
+private fun DeprecationInfo.toDeprecationAttribute(): String {
     val attribute = when (deprecationLevel) {
         DeprecationLevelValue.WARNING -> "deprecated"
         DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> "unavailable"
