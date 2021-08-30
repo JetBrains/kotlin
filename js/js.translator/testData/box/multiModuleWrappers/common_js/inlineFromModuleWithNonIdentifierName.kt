@@ -1,5 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1284
-// MODULE: #my-libr@ry
+// MODULE: #my_libr@ry
 // FILE: bar.kt
 // MODULE_KIND: COMMON_JS
 // PROPERTY_NOT_WRITTEN_TO: baz
@@ -11,7 +11,7 @@ inline fun foo() = "foo"
 inline fun baz() = "baz"
 inline fun <reified T> boo() = "boo"
 
-// MODULE: main(#my-libr@ry)
+// MODULE: main(#my_libr@ry)
 // FILE: box.kt
 // MODULE_KIND: COMMON_JS
 // CHECK_CONTAINS_NO_CALLS: box except=assertEquals;assertEquals$default

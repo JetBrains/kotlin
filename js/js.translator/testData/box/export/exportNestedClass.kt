@@ -4,7 +4,7 @@
 // INFER_MAIN_MODULE
 // SKIP_DCE_DRIVEN
 
-// MODULE: export-nested-class
+// MODULE: export_nested_class
 // FILE: lib.kt
 
 abstract class A {
@@ -26,5 +26,5 @@ class B {
 
 // FILE: test.js
 function box() {
-    return new this["export-nested-class"].B.Foo().bar("K");
+    return new this["export_nested_class"].B.Foo().bar("K");
 }

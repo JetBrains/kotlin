@@ -1,17 +1,17 @@
 // SPLIT_PER_MODULE
 // EXPECTED_REACHABLE_NODES: 1316
-// MODULE: lib-1
-// FILE: lib-1.js
-define("lib-1", [], function() {
+// MODULE: lib_1
+// FILE: lib_1.js
+define("lib_1", [], function() {
     return function() {
         return "OK";
     }
 })
 
-// MODULE: lib2(lib-1)
+// MODULE: lib2(lib_1)
 // FILE: lib2.kt
 // MODULE_KIND: AMD
-@JsModule("lib-1")
+@JsModule("lib_1")
 external fun foo(): String
 
 // MODULE: lib3(lib2)

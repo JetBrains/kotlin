@@ -6,7 +6,7 @@
 // TODO: Fix tests on Windows
 // DONT_TARGET_EXACT_BACKEND: JS_IR
 
-// MODULE: overriden-external-method-with-same-stable-name-method
+// MODULE: overriden_external_method_with_same_stable_name_method
 // FILE: lib.kt
 external abstract class Foo {
     abstract fun o(): String

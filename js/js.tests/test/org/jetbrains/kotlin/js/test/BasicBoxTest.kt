@@ -1265,7 +1265,7 @@ abstract class BasicBoxTest(
         const val TEST_MODULE = "JS_TESTS"
         const val DEFAULT_MODULE = "main"
         private const val TEST_FUNCTION = "box"
-        private const val OLD_MODULE_SUFFIX = "-old"
+        private const val OLD_MODULE_SUFFIX = "_old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
         private val engineForMinifier = createScriptEngine()
