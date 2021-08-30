@@ -717,13 +717,13 @@ task stringTrim(type: KonanLocalTest) {
 
 standaloneTest("hello1") {
    useGoldenData = true
-   testData = "Hello World\n"
+   useTestData = true
    source = "runtime/basic/hello1.kt"
 }
 
 standaloneTest("hello2") {
    useGoldenData = true
-   testData = "Hello World\n"
+   useTestData = true
    source = "runtime/basic/hello2.kt"
 }
 
@@ -775,13 +775,13 @@ standaloneTest("entry4") {
 
 standaloneTest("readline0") {
     useGoldenData = true
-    testData = "41\r\n"
+    useTestData = true
     source = "runtime/basic/readline0.kt"
 }
 
 standaloneTest("readline1") {
     useGoldenData = true
-    testData = "\n"
+    useTestData = true
     source = "runtime/basic/readline1.kt"
 }
 
@@ -5694,7 +5694,7 @@ if (UtilsKt.supportsRunningTestsOnDevice(target)) {
     // Exclude tasks that cannot be run on device
     project.tasks
             .withType(KonanTest.class)
-            .matching { (it instanceof KonanLocalTest && ((KonanLocalTest) it).testData != null) ||
+            .matching { (it instanceof KonanLocalTest && ((KonanLocalTest) it).useTestData) ||
                     // Filter out tests that depend on libs. TODO: copy them too
                     it instanceof KonanInteropTest ||
                     it instanceof KonanDynamicTest ||

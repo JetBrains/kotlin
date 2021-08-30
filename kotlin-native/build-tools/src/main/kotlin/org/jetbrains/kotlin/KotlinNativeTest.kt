@@ -250,11 +250,25 @@ open class KonanLocalTest : KonanTest() {
     }
 
     /**
-     * Input test data to be passed to process' stdin.
+     * Input test data to be passed to process stdin.
      */
     @Input
     @Optional
-    var testData: String? = null
+    var useTestData: Boolean = false
+
+    @get:InputFile
+    val testDataFile: File
+        get() {
+            val sourceFile = project.file(source)
+            return sourceFile.parentFile.resolve(sourceFile.nameWithoutExtension + ".in")
+        }
+
+    private val testData: String?
+        get() = if (useTestData) {
+            check(testDataFile.isFile) { "Task $name. Test data file does not exist: $testDataFile" }
+            testDataFile.readText(Charsets.UTF_8)
+        } else
+            null
 
     /**
      * Should compiler message be read and validated with output checker or gold value.
@@ -278,8 +292,9 @@ open class KonanLocalTest : KonanTest() {
         var output = ProcessOutput("", "", 0)
         for (i in 1..times) {
             val args = arguments + (multiArguments?.get(i - 1) ?: emptyList())
+            val testData = this.testData
             output += if (testData != null)
-                runProcessWithInput({ project.executor.execute(it) }, executable, args, testData!!)
+                runProcessWithInput({ project.executor.execute(it) }, executable, args, testData)
             else
                 runProcess({ project.executor.execute(it) }, executable, args)
         }
