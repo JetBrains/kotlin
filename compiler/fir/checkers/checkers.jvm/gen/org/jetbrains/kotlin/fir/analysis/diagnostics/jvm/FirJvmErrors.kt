@@ -89,8 +89,9 @@ object FirJvmErrors {
     val EXTERNAL_DECLARATION_IN_INTERFACE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val EXTERNAL_DECLARATION_CANNOT_BE_INLINED by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
-    // Inapplicable
+    // Misc
     val INAPPLICABLE_JVM_FIELD by error1<KtAnnotationEntry, String>()
     val INAPPLICABLE_JVM_FIELD_WARNING by warning1<KtAnnotationEntry, String>()
+    val JVM_SYNTHETIC_ON_DELEGATE by error0<KtAnnotationEntry>()
 
 }

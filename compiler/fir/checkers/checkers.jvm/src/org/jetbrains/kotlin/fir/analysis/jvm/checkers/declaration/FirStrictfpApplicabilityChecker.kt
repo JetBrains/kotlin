@@ -13,10 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_FQ_NAME
 
 object FirStrictfpApplicabilityChecker : FirClassChecker() {
-    private val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
-
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotation = declaration.getAnnotationByFqName(STRICTFP_ANNOTATION_FQ_NAME) ?: return
         reporter.reportOn(annotation.source, FirJvmErrors.STRICTFP_ON_CLASS, context)

@@ -24,11 +24,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
 
 object FirOverloadsChecker : FirFunctionChecker() {
-
-    private val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
-
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotation = declaration.getAnnotationByFqName(JVM_OVERLOADS_FQ_NAME) ?: return
         //todo need to have expect declaration here to check if it has default values

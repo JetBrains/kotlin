@@ -111,12 +111,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val EXTERNAL_DECLARATION_CANNOT_BE_INLINED by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
 
-    val INAPPLICABLE by object : DiagnosticGroup("Inapplicable") {
+    val MISC by object : DiagnosticGroup("Misc") {
         val INAPPLICABLE_JVM_FIELD by error<KtAnnotationEntry> {
             parameter<String>("message")
         }
         val INAPPLICABLE_JVM_FIELD_WARNING by warning<KtAnnotationEntry> {
             parameter<String>("message")
         }
+        val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
     }
 }

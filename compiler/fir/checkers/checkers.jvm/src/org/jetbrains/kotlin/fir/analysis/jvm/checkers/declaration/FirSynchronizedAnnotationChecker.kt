@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_FQ_NAME
 
 object FirSynchronizedAnnotationChecker : FirFunctionChecker() {
-
-    private val SYNCHRONIZED_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Synchronized")
-
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotation = declaration.getAnnotationByFqName(SYNCHRONIZED_ANNOTATION_FQ_NAME) ?: return
 

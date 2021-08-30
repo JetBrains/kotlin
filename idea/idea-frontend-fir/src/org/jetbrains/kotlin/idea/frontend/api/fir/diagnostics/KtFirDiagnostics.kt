@@ -2638,4 +2638,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val message: String
     }
 
+    abstract class JvmSyntheticOnDelegate : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = JvmSyntheticOnDelegate::class
+    }
+
 }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirRealSourceElementKind
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -13,21 +13,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByFqName
-import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 
-object FirVolatileAnnotationChecker : FirPropertyChecker() {
+object FirJvmSyntheticApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.source?.kind != FirRealSourceElementKind) return
-
-        val fieldAnnotation = declaration.backingFieldSymbol.getAnnotationByFqName(VOLATILE_ANNOTATION_FQ_NAME)
-        if (fieldAnnotation != null && !declaration.isVar) {
-            reporter.reportOn(fieldAnnotation.source, FirJvmErrors.VOLATILE_ON_VALUE, context)
-        }
-
-        val delegateAnnotation = declaration.delegateFieldSymbol?.getAnnotationByFqName(VOLATILE_ANNOTATION_FQ_NAME)
-        if (delegateAnnotation != null) {
-            reporter.reportOn(delegateAnnotation.source, FirJvmErrors.VOLATILE_ON_DELEGATE, context)
+        val annotation = declaration.delegateFieldSymbol?.getAnnotationByFqName(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
+        if (annotation != null && annotation.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) {
+            reporter.reportOn(annotation.source, FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE, context)
         }
     }
-
 }
