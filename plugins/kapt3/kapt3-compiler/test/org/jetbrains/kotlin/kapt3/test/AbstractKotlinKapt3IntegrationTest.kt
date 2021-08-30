@@ -135,7 +135,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
         val project = myEnvironment.project
         val psiManager = PsiManager.getInstance(project)
 
-        val tmpDir = KtTestUtil.tmpDir("kaptTest")
+        val tmpDir = tmpDir("kaptTest")
 
         val ktFiles = ArrayList<KtFile>(files.size)
         for (file in files.sorted()) {
