@@ -987,6 +987,7 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         private enum class NativeToolSettingsKind(val title: String) {
+            COMPILER_CLASSPATH("Classpath"),
             COMMAND_LINE_ARGUMENTS("Arguments"),
             CUSTOM_ENV_VARIABLES("Custom ENV variables")
         }
@@ -1025,6 +1026,9 @@ class GeneralNativeIT : BaseGradleIT() {
         fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: String): List<String> =
             extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.COMMAND_LINE_ARGUMENTS).toList()
 
+        fun CompiledProject.extractNativeCompilerClasspath(taskPath: String? = null, toolName: String): List<String> =
+            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.COMPILER_CLASSPATH).toList()
+
         fun CompiledProject.extractNativeCustomEnvironment(taskPath: String? = null, toolName: String): Map<String, String> =
             extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.CUSTOM_ENV_VARIABLES).map {
                 val (key, value) = it.split("=")
@@ -1036,6 +1040,12 @@ class GeneralNativeIT : BaseGradleIT() {
             toolName: String = "konanc",
             check: (List<String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCommandLineArguments(taskPath, toolName)) }
+
+        fun CompiledProject.checkNativeCompilerClasspath(
+            vararg taskPaths: String,
+            toolName: String = "konanc",
+            check: (List<String>) -> Unit
+        ) = taskPaths.forEach { taskPath -> check(extractNativeCompilerClasspath(taskPath, toolName)) }
         
         fun CompiledProject.checkNativeCustomEnvironment(
             vararg taskPaths: String,
