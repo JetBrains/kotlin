@@ -77,7 +77,7 @@ private class UnsafeNumberAnnotation(val actualPlatformTypes: Map<String, CirEnt
 
     override val constantValueArguments: Map<CirName, CirConstantValue> = mapOf(
         CirName.create("actualPlatformTypes") to CirConstantValue.ArrayValue(
-            actualPlatformTypes.map { (platform, type) -> CirConstantValue.StringValue("$platform: $type") }
+            actualPlatformTypes.map { (platform, type) -> CirConstantValue.StringValue("$platform: ${type.toQualifiedNameString()}") }
         )
     )
 

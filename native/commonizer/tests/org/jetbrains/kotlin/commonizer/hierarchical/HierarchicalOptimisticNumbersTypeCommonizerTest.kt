@@ -41,7 +41,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Byte", "b: kotlin/Short"])
+                @UnsafeNumber(["a: kotlin.Byte", "b: kotlin.Short"])
                 typealias X = Byte
             """.trimIndent()
         )
@@ -58,7 +58,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Byte", "b: kotlin/Int"])
+                @UnsafeNumber(["a: kotlin.Byte", "b: kotlin.Int"])
                 typealias X = Byte
             """.trimIndent()
         )
@@ -75,7 +75,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Byte", "b: kotlin/Long"])
+                @UnsafeNumber(["a: kotlin.Byte", "b: kotlin.Long"])
                 typealias X = Byte
             """.trimIndent()
         )
@@ -92,7 +92,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Short", "b: kotlin/Byte"])
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Byte"])
                 typealias X = Byte
             """.trimIndent()
         )
@@ -125,7 +125,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Short", "b: kotlin/Int"])
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
                 typealias X = Short
             """.trimIndent()
         )
@@ -142,7 +142,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Short", "b: kotlin/Long"])
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Long"])
                 typealias X = Short
             """.trimIndent()
         )
@@ -159,7 +159,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Int", "b: kotlin/Byte"])
+                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Byte"])
                 typealias X = Byte
             """.trimIndent()
         )
@@ -176,7 +176,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Int", "b: kotlin/Short"])
+                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Short"])
                 typealias X = Short
             """.trimIndent()
         )
@@ -209,7 +209,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Int", "b: kotlin/Long"])
+                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
                 typealias X = Int
             """.trimIndent()
         )
@@ -226,7 +226,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Long", "b: kotlin/Byte"])
+                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Byte"])
                 typealias X = Byte
             """.trimIndent()
         )
@@ -243,7 +243,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Long", "b: kotlin/Short"])
+                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Short"])
                 typealias X = Short
             """.trimIndent()
         )
@@ -260,7 +260,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/Long", "b: kotlin/Int"])
+                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Int"])
                 typealias X = Int
             """.trimIndent()
         )
@@ -309,7 +309,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UByte", "b: kotlin/UShort"])
+                @UnsafeNumber(["a: kotlin.UByte", "b: kotlin.UShort"])
                 typealias X = UByte
             """.trimIndent()
         )
@@ -326,7 +326,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UByte", "b: kotlin/UInt"])
+                @UnsafeNumber(["a: kotlin.UByte", "b: kotlin.UInt"])
                 typealias X = UByte
             """.trimIndent()
         )
@@ -343,7 +343,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UByte", "b: kotlin/ULong"])
+                @UnsafeNumber(["a: kotlin.UByte", "b: kotlin.ULong"])
                 typealias X = UByte
             """.trimIndent()
         )
@@ -360,7 +360,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UShort", "b: kotlin/UByte"])
+                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.UByte"])
                 typealias X = UByte
             """.trimIndent()
         )
@@ -393,7 +393,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UShort", "b: kotlin/UInt"])
+                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.UInt"])
                 typealias X = UShort
             """.trimIndent()
         )
@@ -410,7 +410,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UShort", "b: kotlin/ULong"])
+                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.ULong"])
                 typealias X = UShort
             """.trimIndent()
         )
@@ -427,7 +427,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UInt", "b: kotlin/UByte"])
+                @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.UByte"])
                 typealias X = UByte
             """.trimIndent()
         )
@@ -444,7 +444,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UInt", "b: kotlin/UShort"])
+                @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.UShort"])
                 typealias X = UShort
             """.trimIndent()
         )
@@ -477,7 +477,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/UInt", "b: kotlin/ULong"])
+                @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.ULong"])
                 typealias X = UInt
             """.trimIndent()
         )
@@ -494,7 +494,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/ULong", "b: kotlin/UByte"])
+                @UnsafeNumber(["a: kotlin.ULong", "b: kotlin.UByte"])
                 typealias X = UByte
             """.trimIndent()
         )
@@ -511,7 +511,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/ULong", "b: kotlin/UShort"])
+                @UnsafeNumber(["a: kotlin.ULong", "b: kotlin.UShort"])
                 typealias X = UShort
             """.trimIndent()
         )
@@ -528,7 +528,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized(
             "(a, b)",
             """
-                @UnsafeNumber(["a: kotlin/ULong", "b: kotlin/UInt"])
+                @UnsafeNumber(["a: kotlin.ULong", "b: kotlin.UInt"])
                 typealias X = UInt
             """.trimIndent()
         )
@@ -566,7 +566,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(a, b)", """
-                @UnsafeNumber(["a: kotlinx/cinterop/UIntVarOf", "b: kotlinx/cinterop/ULongVarOf"])
+                @UnsafeNumber(["a: kotlinx.cinterop.UIntVarOf", "b: kotlinx.cinterop.ULongVarOf"])
                 typealias X = kotlinx.cinterop.UIntVarOf
             """.trimIndent()
         )
@@ -582,7 +582,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(a, b)", """
-                @UnsafeNumber(["a: kotlinx/cinterop/IntVarOf", "b: kotlinx/cinterop/LongVarOf"])
+                @UnsafeNumber(["a: kotlinx.cinterop.IntVarOf", "b: kotlinx.cinterop.LongVarOf"])
                 typealias X = kotlinx.cinterop.IntVarOf
             """.trimIndent()
         )
@@ -613,11 +613,11 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(a, b)", """
-                @UnsafeNumber(["a: kotlin/Int", "b: kotlin/Long"])
+                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
                 typealias A = Int
-                @UnsafeNumber(["a: kotlin/Int", "b: kotlin/Long"])
+                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
                 typealias B = A
-                @UnsafeNumber(["a: kotlin/Int", "b: kotlin/Long"])
+                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
                 typealias X = Int
             """.trimIndent()
         )
@@ -663,7 +663,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(a, b)", """
-                @UnsafeNumber(["a: kotlin/Int", "b: kotlin/Long"])
+                @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
                 typealias X = Int
                 expect fun x(p: X)
             """.trimIndent()
@@ -706,7 +706,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(a, b)", """
-                @UnsafeNumber(["a: kotlin/UShort", "b: kotlin/ULong"])
+                @UnsafeNumber(["a: kotlin.UShort", "b: kotlin.ULong"])
                 typealias X = UShort
                 expect val x: X 
             """.trimIndent()
@@ -727,7 +727,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(a, b)", """
-                @UnsafeNumber(["a: kotlin/Short", "b: kotlin/Int"])
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
                 typealias X = Short
             """.trimIndent()
         )
@@ -740,21 +740,21 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
 
         result.assertCommonized(
             "(e, f)", """
-                @UnsafeNumber(["e: kotlin/Long", "f: kotlin/Int"])
+                @UnsafeNumber(["e: kotlin.Long", "f: kotlin.Int"])
                 typealias X = Int
             """.trimIndent()
         )
 
         result.assertCommonized(
             "(c, d, e, f)", """
-                @UnsafeNumber(["c: kotlin/Int", "d: kotlin/Int", "e: kotlin/Long", "f: kotlin/Int"])
+                @UnsafeNumber(["c: kotlin.Int", "d: kotlin.Int", "e: kotlin.Long", "f: kotlin.Int"])
                 typealias X = Int
             """.trimIndent()
         )
 
         result.assertCommonized(
             "(a, b, c, d, e, f)", """
-                @UnsafeNumber(["a: kotlin/Short", "b: kotlin/Int" ,"c: kotlin/Int", "d: kotlin/Int","e: kotlin/Long", "f: kotlin/Int"])
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int" ,"c: kotlin.Int", "d: kotlin.Int","e: kotlin.Long", "f: kotlin.Int"])
                 typealias X = Short
             """.trimIndent()
         )
