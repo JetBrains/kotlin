@@ -1,5 +1,5 @@
 operator fun Int.invoke(): String {}
 
-fun call(x: kotlin.int) {
+fun call(x: kotlin.Int) {
     <expr>x()</expr>
 }

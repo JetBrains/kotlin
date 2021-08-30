@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirFunctionCall.isImplicitFunctionCall(): Boolean {
-    if (dispatchReceiver !is FirQualifiedAccessExpression) return false
+    if (extensionReceiver !is FirQualifiedAccessExpression && dispatchReceiver !is FirQualifiedAccessExpression) return false
     return calleeReference.getCandidateSymbols().any(FirBasedSymbol<*>::isInvokeFunction)
 }
 
