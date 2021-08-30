@@ -206,6 +206,10 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Kotl
     val kotlinNativeVersion: String
         get() = project.konanVersion.toString()
 
+    @get:Input
+    internal val useEmbeddableCompilerJar: Boolean
+        get() = project.nativeUseEmbeddableCompilerJar
+
     @Internal
     open val outputFile: Provider<File> = project.provider {
         val prefix = outputKind.prefix(konanTarget)

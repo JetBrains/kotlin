@@ -66,10 +66,13 @@ class NativeEmbeddableCompilerJarIT : BaseGradleIT() {
             }
         }
 
-        build(":clean") {} // Ensure the tasks aren't up-to-date.
+        build(":runDebugExecutableHost") {
+            assertTasksUpToDate(":linkDebugExecutableHost", ":compileKotlinHost")
+        }
 
         build(":runDebugExecutableHost", "-Pkotlin.native.useEmbeddableCompilerJar=true") {
             assertSuccessful()
+            assertTasksExecuted(":linkDebugExecutableHost", ":compileKotlinHost")
             checkNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
                 assertFalse(it.includesRegularJar())
                 assertTrue(it.includesEmbeddableJar())
