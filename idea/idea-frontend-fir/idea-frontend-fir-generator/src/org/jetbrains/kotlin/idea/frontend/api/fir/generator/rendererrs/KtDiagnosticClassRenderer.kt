@@ -20,26 +20,28 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     private fun SmartPrinter.printDiagnosticClasses(diagnosticList: HLDiagnosticList) {
         inBracketsWithIndent("sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI>") {
             for (diagnostic in diagnosticList.diagnostics) {
-                printDiagnosticClass(diagnostic)
+                printDiagnosticClass(diagnostic, diagnosticList)
                 println()
             }
         }
     }
 
-    private fun SmartPrinter.printDiagnosticClass(diagnostic: HLDiagnostic) {
+    private fun SmartPrinter.printDiagnosticClass(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
         print("abstract class ${diagnostic.className} : KtFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
         print(">()")
         inBracketsWithIndent {
             println("override val diagnosticClass get() = ${diagnostic.className}::class")
-            printDiagnosticParameters(diagnostic)
+            printDiagnosticParameters(diagnostic, diagnosticList)
         }
     }
 
-    private fun SmartPrinter.printDiagnosticParameters(diagnostic: HLDiagnostic) {
+    private fun SmartPrinter.printDiagnosticParameters(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
         diagnostic.parameters.forEach { parameter ->
             print("abstract val ${parameter.name}: ")
-            printTypeWithShortNames(parameter.type)
+            printTypeWithShortNames(parameter.type) { type ->
+                diagnosticList.containsClashingBySimpleNameType(type)
+            }
             println()
         }
     }

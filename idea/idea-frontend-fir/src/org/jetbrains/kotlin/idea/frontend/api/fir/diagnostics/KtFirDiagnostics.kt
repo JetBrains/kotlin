@@ -552,7 +552,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class OverrideDeprecation : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = OverrideDeprecation::class
         abstract val overridenSymbol: KtSymbol
-        abstract val deprecationInfo: Deprecation
+        abstract val deprecationInfo: org.jetbrains.kotlin.resolve.deprecation.Deprecation
     }
 
     abstract class AnnotationOnSuperclassError : KtFirDiagnostic<KtAnnotationEntry>() {

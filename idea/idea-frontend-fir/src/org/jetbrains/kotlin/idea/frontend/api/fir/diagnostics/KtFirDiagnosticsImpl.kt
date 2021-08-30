@@ -879,7 +879,7 @@ internal class DeprecatedSinceKotlinOutsideKotlinSubpackageImpl(
 
 internal class OverrideDeprecationImpl(
     override val overridenSymbol: KtSymbol,
-    override val deprecationInfo: Deprecation,
+    override val deprecationInfo: org.jetbrains.kotlin.resolve.deprecation.Deprecation,
     firDiagnostic: FirPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.OverrideDeprecation(), KtAbstractFirDiagnostic<KtNamedDeclaration> {

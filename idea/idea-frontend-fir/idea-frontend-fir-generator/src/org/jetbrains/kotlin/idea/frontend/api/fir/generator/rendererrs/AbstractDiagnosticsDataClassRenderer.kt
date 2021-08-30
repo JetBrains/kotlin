@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinter
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticConverter
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticParameter
+import org.jetbrains.kotlin.idea.frontend.api.fir.generator.simpleName
 import org.jetbrains.kotlin.util.SmartPrinter
 import java.io.File
+import kotlin.reflect.KType
 
 abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
     override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
@@ -47,6 +49,10 @@ abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
                 addAll(collectImportsForDiagnosticParameter(diagnosticParameter))
             }
         }
+    }
+
+    protected fun HLDiagnosticList.containsClashingBySimpleNameType(type: KType): Boolean {
+        return diagnostics.any { it.className == type.simpleName }
     }
 
     protected abstract fun collectImportsForDiagnosticParameter(diagnosticParameter: HLDiagnosticParameter): Collection<String>

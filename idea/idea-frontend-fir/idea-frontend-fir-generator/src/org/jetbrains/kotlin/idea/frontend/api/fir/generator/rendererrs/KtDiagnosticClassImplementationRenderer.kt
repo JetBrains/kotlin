@@ -22,15 +22,15 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
 
     private fun SmartPrinter.printDiagnosticClassesImplementation(diagnosticList: HLDiagnosticList) {
         for (diagnostic in diagnosticList.diagnostics) {
-            printDiagnosticImplementation(diagnostic)
+            printDiagnosticImplementation(diagnostic, diagnosticList)
             println()
         }
     }
 
-    private fun SmartPrinter.printDiagnosticImplementation(diagnostic: HLDiagnostic) {
+    private fun SmartPrinter.printDiagnosticImplementation(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
         println("internal class ${diagnostic.implClassName}(")
         withIndent {
-            printParameters(diagnostic)
+            printParameters(diagnostic, diagnosticList)
         }
         print(") : KtFirDiagnostic.${diagnostic.className}(), KtAbstractFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
@@ -40,17 +40,19 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         }
     }
 
-    private fun SmartPrinter.printParameters(diagnostic: HLDiagnostic) {
+    private fun SmartPrinter.printParameters(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
         for (parameter in diagnostic.parameters) {
-            printParameter(parameter)
+            printParameter(parameter, diagnosticList)
         }
         println("firDiagnostic: FirPsiDiagnostic,")
         println("override val token: ValidityToken,")
     }
 
-    private fun SmartPrinter.printParameter(parameter: HLDiagnosticParameter) {
+    private fun SmartPrinter.printParameter(parameter: HLDiagnosticParameter, diagnosticList: HLDiagnosticList) {
         print("override val ${parameter.name}: ")
-        printTypeWithShortNames(parameter.type)
+        printTypeWithShortNames(parameter.type) {
+            diagnosticList.containsClashingBySimpleNameType(it)
+        }
         println(",")
     }
 
