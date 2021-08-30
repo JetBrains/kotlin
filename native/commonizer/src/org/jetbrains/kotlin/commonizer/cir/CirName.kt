@@ -106,6 +106,12 @@ class CirEntityId private constructor(val packageName: CirPackageName, val relat
         relativeNameSegments.joinTo(this, ".")
     }
 
+    fun toQualifiedNameString(): String = buildString {
+        packageName.segments.joinTo(this, ".")
+        if (packageName.segments.isNotEmpty()) append(".")
+        relativeNameSegments.joinTo(this, ".")
+    }
+
     val isNestedEntity: Boolean get() = relativeNameSegments.size > 1
 
     fun createNestedEntityId(entityName: CirName): CirEntityId = create(packageName, relativeNameSegments + entityName)
