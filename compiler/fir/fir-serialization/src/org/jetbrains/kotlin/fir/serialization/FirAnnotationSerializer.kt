@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.name.Name
 
 class FirAnnotationSerializer(private val session: FirSession, internal val stringTable: FirElementAwareStringTable) {
     fun serializeAnnotation(annotation: FirAnnotationCall): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
-        val annotationSymbol = annotation.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)
-        val annotationClass = annotationSymbol?.fir ?: error("Annotation type is not a class: ${annotationSymbol?.fir}")
+        val lookupTag = annotation.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
+            ?: error { "Annotation without proper lookup tag: ${annotation.annotationTypeRef.coneType}" }
 
-        id = stringTable.getFqNameIndex(annotationClass)
+        id = lookupTag.toSymbol(session)?.let { stringTable.getFqNameIndex(it.fir) }
+            ?: stringTable.getQualifiedClassNameIndex(lookupTag.classId)
 
         fun addArgument(argumentExpression: FirExpression, parameterName: Name) {
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
