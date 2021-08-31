@@ -28,7 +28,7 @@ FILE: NoWarning.kt
         lval a: R|kotlin/ranges/IntProgression| = Int(4).R|kotlin/ranges/downTo|(Int(3))
         lval v: R|kotlin/Int| = Int(1)
         when () {
-            Int(-5).R|kotlin/ranges/downTo|(Int(-6)).R|kotlin/collections/contains|<R|kotlin/Int|>(R|<local>/v|) ->  {
+            Int(-5).R|kotlin/ranges/downTo|(Int(-6)).R|kotlin/ranges/IntProgression.contains|(R|<local>/v|) ->  {
             }
         }
 

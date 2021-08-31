@@ -4287,16 +4287,30 @@ public final class kotlin/random/URandomKt {
 	public static final fun nextULong-jmpaW-c (Lkotlin/random/Random;JJ)J
 }
 
-public class kotlin/ranges/CharProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/CharProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/CharProgression$Companion;
+	public fun add (C)Z
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (C)Z
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst ()C
 	public final fun getLast ()C
+	public fun getSize ()I
 	public final fun getStep ()I
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public synthetic fun iterator ()Ljava/util/Iterator;
 	public fun iterator ()Lkotlin/collections/CharIterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4346,16 +4360,30 @@ public final class kotlin/ranges/ClosedRange$DefaultImpls {
 	public static fun isEmpty (Lkotlin/ranges/ClosedRange;)Z
 }
 
-public class kotlin/ranges/IntProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/IntProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/IntProgression$Companion;
+	public fun add (I)Z
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (I)Z
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst ()I
 	public final fun getLast ()I
+	public fun getSize ()I
 	public final fun getStep ()I
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public synthetic fun iterator ()Ljava/util/Iterator;
 	public fun iterator ()Lkotlin/collections/IntIterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4382,16 +4410,30 @@ public final class kotlin/ranges/IntRange$Companion {
 	public final fun getEMPTY ()Lkotlin/ranges/IntRange;
 }
 
-public class kotlin/ranges/LongProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/LongProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/LongProgression$Companion;
+	public fun add (J)Z
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (J)Z
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst ()J
 	public final fun getLast ()J
+	public fun getSize ()I
 	public final fun getStep ()J
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public synthetic fun iterator ()Ljava/util/Iterator;
 	public fun iterator ()Lkotlin/collections/LongIterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4525,15 +4567,29 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun until (SS)Lkotlin/ranges/IntRange;
 }
 
-public class kotlin/ranges/UIntProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/UIntProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/UIntProgression$Companion;
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun add-WZ4Q5Ns (I)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun contains-WZ4Q5Ns (I)Z
+	public fun containsAll (Ljava/util/Collection;)Z
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst-pVg5ArA ()I
 	public final fun getLast-pVg5ArA ()I
+	public fun getSize ()I
 	public final fun getStep ()I
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public final fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4560,15 +4616,29 @@ public final class kotlin/ranges/UIntRange$Companion {
 	public final fun getEMPTY ()Lkotlin/ranges/UIntRange;
 }
 
-public class kotlin/ranges/ULongProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+public class kotlin/ranges/ULongProgression : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/ULongProgression$Companion;
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun add-VKZWuLQ (J)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun contains-VKZWuLQ (J)Z
+	public fun containsAll (Ljava/util/Collection;)Z
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst-s-VKNKU ()J
 	public final fun getLast-s-VKNKU ()J
+	public fun getSize ()I
 	public final fun getStep ()J
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public final fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public fun toString ()Ljava/lang/String;
 }
 

@@ -27,6 +27,10 @@ import java.io.PrintWriter
 class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     override fun getPackage() = "kotlin.ranges"
+    override fun getFileAnnotations(): List<String> =
+        // TODO: make source retention annotations ignored by LoadBuiltinsTest and move closer to usage
+        listOf("""Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") // preserve parameter name of 'contains' override""")
+
     private fun generateDiscreteBody(kind: ProgressionKind) {
         val t = kind.capitalized
         val progression = "${t}Progression"
@@ -170,7 +174,7 @@ public open class $progression
     }
 
     @SinceKotlin("1.6")
-    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: $t): Boolean = when {
+    override fun contains(value: $t): Boolean = when {
         step > $zero && value >= first && value <= last -> value mod step == first mod step
         step < $zero && value <= first && value >= last -> value mod step == first mod step
         else -> false

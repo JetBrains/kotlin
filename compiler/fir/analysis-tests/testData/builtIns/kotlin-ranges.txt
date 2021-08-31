@@ -1,10 +1,14 @@
-public open class CharProgression : R|kotlin/collections/Iterable<kotlin/Char>| {
+public open class CharProgression : R|kotlin/collections/Collection<kotlin/Char>| {
     public final companion object Companion : R|kotlin/Any| {
         public final fun fromClosedRange(rangeStart: R|kotlin/Char|, rangeEnd: R|kotlin/Char|, step: R|kotlin/Int|): R|kotlin/ranges/CharProgression|
 
         private constructor(): R|kotlin/ranges/CharProgression.Companion|
 
     }
+
+    @R|kotlin/SinceKotlin|(version = String(1.6)) public open operator fun contains(value: R|kotlin/Char|): R|kotlin/Boolean|
+
+    @R|kotlin/SinceKotlin|(version = String(1.6)) public open fun containsAll(elements: R|kotlin/collections/Collection<kotlin/Char>|): R|kotlin/Boolean|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -21,6 +25,9 @@ public open class CharProgression : R|kotlin/collections/Iterable<kotlin/Char>| 
 
     public final val last: R|kotlin/Char|
         public get(): R|kotlin/Char|
+
+    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.6)) public open val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
 
     public final val step: R|kotlin/Int|
         public get(): R|kotlin/Int|
@@ -94,13 +101,17 @@ public abstract interface ClosedRange<T : R|kotlin/Comparable<T>|> : R|kotlin/An
 
 }
 
-public open class IntProgression : R|kotlin/collections/Iterable<kotlin/Int>| {
+public open class IntProgression : R|kotlin/collections/Collection<kotlin/Int>| {
     public final companion object Companion : R|kotlin/Any| {
         public final fun fromClosedRange(rangeStart: R|kotlin/Int|, rangeEnd: R|kotlin/Int|, step: R|kotlin/Int|): R|kotlin/ranges/IntProgression|
 
         private constructor(): R|kotlin/ranges/IntProgression.Companion|
 
     }
+
+    @R|kotlin/SinceKotlin|(version = String(1.6)) public open operator fun contains(value: R|kotlin/Int|): R|kotlin/Boolean|
+
+    @R|kotlin/SinceKotlin|(version = String(1.6)) public open fun containsAll(elements: R|kotlin/collections/Collection<kotlin/Int>|): R|kotlin/Boolean|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -116,6 +127,9 @@ public open class IntProgression : R|kotlin/collections/Iterable<kotlin/Int>| {
         public get(): R|kotlin/Int|
 
     public final val last: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.6)) public open val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
     public final val step: R|kotlin/Int|
@@ -177,13 +191,17 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
 
 }
 
-public open class LongProgression : R|kotlin/collections/Iterable<kotlin/Long>| {
+public open class LongProgression : R|kotlin/collections/Collection<kotlin/Long>| {
     public final companion object Companion : R|kotlin/Any| {
         public final fun fromClosedRange(rangeStart: R|kotlin/Long|, rangeEnd: R|kotlin/Long|, step: R|kotlin/Long|): R|kotlin/ranges/LongProgression|
 
         private constructor(): R|kotlin/ranges/LongProgression.Companion|
 
     }
+
+    @R|kotlin/SinceKotlin|(version = String(1.6)) public open operator fun contains(value: R|kotlin/Long|): R|kotlin/Boolean|
+
+    @R|kotlin/SinceKotlin|(version = String(1.6)) public open fun containsAll(elements: R|kotlin/collections/Collection<kotlin/Long>|): R|kotlin/Boolean|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -200,6 +218,9 @@ public open class LongProgression : R|kotlin/collections/Iterable<kotlin/Long>| 
 
     public final val last: R|kotlin/Long|
         public get(): R|kotlin/Long|
+
+    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.6)) public open val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
 
     public final val step: R|kotlin/Long|
         public get(): R|kotlin/Long|

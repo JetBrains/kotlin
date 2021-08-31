@@ -1,14 +1,18 @@
 package-fragment kotlin.ranges
 
-public open class CharProgression : kotlin.collections.Iterable<kotlin.Char> {
+public open class CharProgression : kotlin.collections.Collection<kotlin.Char> {
     /*primary*/ internal constructor CharProgression(/*0*/ start: kotlin.Char, /*1*/ endInclusive: kotlin.Char, /*2*/ step: kotlin.Int)
     public final val first: kotlin.Char
         public final fun <get-first>(): kotlin.Char
     public final val last: kotlin.Char
         public final fun <get-last>(): kotlin.Char
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ val size: kotlin.Int
+        public open override /*1*/ fun <get-size>(): kotlin.Int
     public final val step: kotlin.Int
         public final fun <get-step>(): kotlin.Int
-    public open fun isEmpty(): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ fun contains(/*0*/ value: kotlin.Char): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.Char>): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.collections.CharIterator
 
     public companion object Companion {
@@ -42,11 +46,14 @@ public final class CharRange : kotlin.ranges.CharProgression, kotlin.ranges.Clos
         public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Char
     public final override /*1*/ /*fake_override*/ val last: kotlin.Char
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Char
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun <get-size>(): kotlin.Int
     public open override /*1*/ val start: kotlin.Char
         public open override /*1*/ fun <get-start>(): kotlin.Char
     public final override /*1*/ /*fake_override*/ val step: kotlin.Int
         public final override /*1*/ /*fake_override*/ fun <get-step>(): kotlin.Int
-    public open override /*1*/ fun contains(/*0*/ value: kotlin.Char): kotlin.Boolean
+    public open override /*2*/ fun contains(/*0*/ value: kotlin.Char): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.Char>): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.CharIterator
 
@@ -66,15 +73,19 @@ public interface ClosedRange</*0*/ T : kotlin.Comparable<T>> {
     public open fun isEmpty(): kotlin.Boolean
 }
 
-public open class IntProgression : kotlin.collections.Iterable<kotlin.Int> {
+public open class IntProgression : kotlin.collections.Collection<kotlin.Int> {
     /*primary*/ internal constructor IntProgression(/*0*/ start: kotlin.Int, /*1*/ endInclusive: kotlin.Int, /*2*/ step: kotlin.Int)
     public final val first: kotlin.Int
         public final fun <get-first>(): kotlin.Int
     public final val last: kotlin.Int
         public final fun <get-last>(): kotlin.Int
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ val size: kotlin.Int
+        public open override /*1*/ fun <get-size>(): kotlin.Int
     public final val step: kotlin.Int
         public final fun <get-step>(): kotlin.Int
-    public open fun isEmpty(): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ fun contains(/*0*/ value: kotlin.Int): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.collections.IntIterator
 
     public companion object Companion {
@@ -108,11 +119,14 @@ public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.Closed
         public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Int
     public final override /*1*/ /*fake_override*/ val last: kotlin.Int
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Int
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun <get-size>(): kotlin.Int
     public open override /*1*/ val start: kotlin.Int
         public open override /*1*/ fun <get-start>(): kotlin.Int
     public final override /*1*/ /*fake_override*/ val step: kotlin.Int
         public final override /*1*/ /*fake_override*/ fun <get-step>(): kotlin.Int
-    public open override /*1*/ fun contains(/*0*/ value: kotlin.Int): kotlin.Boolean
+    public open override /*2*/ fun contains(/*0*/ value: kotlin.Int): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.IntIterator
 
@@ -123,15 +137,19 @@ public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.Closed
     }
 }
 
-public open class LongProgression : kotlin.collections.Iterable<kotlin.Long> {
+public open class LongProgression : kotlin.collections.Collection<kotlin.Long> {
     /*primary*/ internal constructor LongProgression(/*0*/ start: kotlin.Long, /*1*/ endInclusive: kotlin.Long, /*2*/ step: kotlin.Long)
     public final val first: kotlin.Long
         public final fun <get-first>(): kotlin.Long
     public final val last: kotlin.Long
         public final fun <get-last>(): kotlin.Long
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ val size: kotlin.Int
+        public open override /*1*/ fun <get-size>(): kotlin.Int
     public final val step: kotlin.Long
         public final fun <get-step>(): kotlin.Long
-    public open fun isEmpty(): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ fun contains(/*0*/ value: kotlin.Long): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.Long>): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.collections.LongIterator
 
     public companion object Companion {
@@ -165,11 +183,14 @@ public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.Clos
         public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Long
     public final override /*1*/ /*fake_override*/ val last: kotlin.Long
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Long
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun <get-size>(): kotlin.Int
     public open override /*1*/ val start: kotlin.Long
         public open override /*1*/ fun <get-start>(): kotlin.Long
     public final override /*1*/ /*fake_override*/ val step: kotlin.Long
         public final override /*1*/ /*fake_override*/ fun <get-step>(): kotlin.Long
-    public open override /*1*/ fun contains(/*0*/ value: kotlin.Long): kotlin.Boolean
+    public open override /*2*/ fun contains(/*0*/ value: kotlin.Long): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.6") public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<kotlin.Long>): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.LongIterator
 
