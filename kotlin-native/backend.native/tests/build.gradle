@@ -5642,7 +5642,7 @@ Task pluginTest(String name, String pluginName, Closure configureClosure) {
 
 pluginTest("runtime_basic_init", "nopPlugin") {
     disabled = (project.testTarget == 'wasm32')
-    source = "runtime/basic/hello3.kt"
+    source = "runtime/basic/runtime_basic_init.kt"
     flags = ["-tr"]
 }
 
