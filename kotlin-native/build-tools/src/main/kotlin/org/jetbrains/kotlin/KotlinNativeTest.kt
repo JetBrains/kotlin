@@ -227,18 +227,27 @@ open class KonanLocalTest : KonanTest() {
     var useGoldenData: Boolean = false
 
     @get:InputFile
-    open val goldenDataFile: File
+    @get:Optional
+    open val goldenDataFile: File?
         get() {
-            val sourceFile = project.file(source)
-            return sourceFile.parentFile.resolve(sourceFile.nameWithoutExtension + ".out")
+            val goldenDataFile = computeGoldenDataFile()
+            return if (useGoldenData) {
+                check(goldenDataFile.isFile) { "Task $name. Golden data file does not exist: $goldenDataFile" }
+                goldenDataFile
+            } else {
+                check(!goldenDataFile.exists()) { "Task $name. Golden data file should not exist: $goldenDataFile" }
+                null
+            }
         }
 
+    @Internal
+    protected open fun computeGoldenDataFile(): File {
+        val sourceFile = project.file(source)
+        return sourceFile.parentFile.resolve(sourceFile.nameWithoutExtension + ".out")
+    }
+
     private val goldenData: String?
-        get() = if (useGoldenData) {
-            check(goldenDataFile.isFile) { "Task $name. Golden data file does not exist: $goldenDataFile" }
-            goldenDataFile.readText(Charsets.UTF_8)
-        } else
-            null
+        get() = goldenDataFile?.readText(Charsets.UTF_8)
 
     /**
      * Checks test's output against gold value and returns true if the output matches the expectation.
@@ -257,18 +266,22 @@ open class KonanLocalTest : KonanTest() {
     var useTestData: Boolean = false
 
     @get:InputFile
-    val testDataFile: File
+    @get:Optional
+    val testDataFile: File?
         get() {
             val sourceFile = project.file(source)
-            return sourceFile.parentFile.resolve(sourceFile.nameWithoutExtension + ".in")
+            val testDataFile = sourceFile.parentFile.resolve(sourceFile.nameWithoutExtension + ".in")
+            return if (useTestData) {
+                check(testDataFile.isFile) { "Task $name. Test data file does not exist: $testDataFile" }
+                testDataFile
+            } else {
+                check(!testDataFile.exists()) { "Task $name. Test data file should not exist: $testDataFile" }
+                null
+            }
         }
 
     private val testData: String?
-        get() = if (useTestData) {
-            check(testDataFile.isFile) { "Task $name. Test data file does not exist: $testDataFile" }
-            testDataFile.readText(Charsets.UTF_8)
-        } else
-            null
+        get() = testDataFile?.readText(Charsets.UTF_8)
 
     /**
      * Should compiler message be read and validated with output checker or gold value.
@@ -490,12 +503,11 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     @Optional
     var interop: String? = null
 
-    override val goldenDataFile: File
-        get() {
-            val sourceFile = project.file(source)
-            val cSourceFile = File(cSource)
-            return sourceFile.parentFile.resolve(sourceFile.nameWithoutExtension + "-" + cSourceFile.nameWithoutExtension + ".out")
-        }
+    override fun computeGoldenDataFile(): File {
+        val sourceFile = project.file(source)
+        val cSourceFile = File(cSource)
+        return sourceFile.parentFile.resolve(sourceFile.nameWithoutExtension + "-" + cSourceFile.nameWithoutExtension + ".out")
+    }
 
     // Replace testlib_api.h and all occurrences of the testlib with the actual name of the test
     private fun processCSource(): String {
