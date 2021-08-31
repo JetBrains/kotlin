@@ -28,6 +28,7 @@ import org.jetbrains.dokka.base.translators.descriptors.DefaultDescriptorToDocum
 import org.jetbrains.dokka.base.translators.documentables.DefaultDocumentableToPageTranslator
 import org.jetbrains.dokka.base.translators.psi.DefaultPsiToDocumentableTranslator
 import org.jetbrains.dokka.base.generation.SingleModuleGeneration
+import org.jetbrains.dokka.base.renderers.html.command.consumers.ReplaceVersionsConsumer
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
@@ -242,7 +243,9 @@ class DokkaBase : DokkaPlugin() {
     val resolveLinkConsumer by extending {
         immediateHtmlCommandConsumer with ResolveLinkConsumer
     }
-
+    val replaceVersionConsumer by extending {
+        immediateHtmlCommandConsumer providing ::ReplaceVersionsConsumer
+    }
     val pathToRootConsumer by extending {
         immediateHtmlCommandConsumer with PathToRootConsumer
     }

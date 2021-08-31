@@ -46,6 +46,9 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
         report("Rendering")
         render(transformedPages)
 
+        report("Running post-actions")
+        runPostActions()
+
         reportAfterRendering()
     }
 
@@ -74,6 +77,10 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
 
     fun render(transformedPages: RootPageNode) {
         context.single(CoreExtensions.renderer).render(transformedPages)
+    }
+
+    fun runPostActions() {
+        context[CoreExtensions.postActions].forEach { it() }
     }
 
     fun validityCheck(context: DokkaContext) {
