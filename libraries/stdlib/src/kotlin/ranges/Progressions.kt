@@ -5,6 +5,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
+@file:Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") // preserve parameter name of 'contains' override
 package kotlin.ranges
 
 import kotlin.internal.getProgressionLastElement
@@ -64,7 +65,7 @@ public open class CharProgression
         get() = if (isEmpty()) 0 else (last - first) / step + 1
 
     @SinceKotlin("1.9")
-    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: Char): Boolean = when {
+    override fun contains(value: Char): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Char) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0 && value >= first && value <= last ||
         step < 0 && value <= first && value >= last -> value.code.mod(step) == first.code.mod(step)
@@ -149,7 +150,7 @@ public open class IntProgression
         }
 
     @SinceKotlin("1.9")
-    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: Int): Boolean = when {
+    override fun contains(value: Int): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Int) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0 && value >= first && value <= last ||
         step < 0 && value <= first && value >= last -> value.mod(step) == first.mod(step)
@@ -234,7 +235,7 @@ public open class LongProgression
         }
 
     @SinceKotlin("1.9")
-    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: Long): Boolean = when {
+    override fun contains(value: Long): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Long) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0L && value >= first && value <= last ||
         step < 0L && value <= first && value >= last -> value.mod(step) == first.mod(step)

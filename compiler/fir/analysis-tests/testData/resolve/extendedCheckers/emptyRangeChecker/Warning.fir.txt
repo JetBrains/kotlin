@@ -28,7 +28,7 @@ FILE: Warning.kt
         lval a: R|kotlin/ranges/IntProgression| = Int(-3).R|kotlin/ranges/downTo|(Int(4))
         lval v: R|kotlin/Int| = Int(1)
         when () {
-            Int(0).R|kotlin/ranges/downTo|(Int(6)).R|kotlin/collections/contains|<R|kotlin/Int|>(R|<local>/v|) ->  {
+            Int(0).R|kotlin/ranges/downTo|(Int(6)).R|kotlin/ranges/IntProgression.contains|(R|<local>/v|) ->  {
             }
         }
 
