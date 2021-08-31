@@ -12836,6 +12836,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt24209.kt")
+            public void testKt24209() throws Exception {
+                runTest("compiler/testData/codegen/box/elvis/kt24209.kt");
+            }
+
+            @Test
             @TestMetadata("kt6694ExactAnnotationForElvis.kt")
             public void testKt6694ExactAnnotationForElvis() throws Exception {
                 runTest("compiler/testData/codegen/box/elvis/kt6694ExactAnnotationForElvis.kt");
@@ -31775,6 +31781,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt47279.kt")
+            public void testKt47279() throws Exception {
+                runTest("compiler/testData/codegen/box/regressions/kt47279.kt");
+            }
+
+            @Test
             @TestMetadata("kt5056.kt")
             public void testKt5056() throws Exception {
                 runTest("compiler/testData/codegen/box/regressions/kt5056.kt");
@@ -37433,6 +37445,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt48498.kt")
+            public void testKt48498() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/delegatedProperty/kt48498.kt");
+            }
+
+            @Test
             @TestMetadata("local.kt")
             public void testLocal() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/delegatedProperty/local.kt");
@@ -37856,6 +37874,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             @TestMetadata("innerInlineFunCapturesOuterWithInlineClass.kt")
             public void testInnerInlineFunCapturesOuterWithInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/innerClasses/innerInlineFunCapturesOuterWithInlineClass.kt");
+            }
+
+            @Test
+            @TestMetadata("kt12126.kt")
+            public void testKt12126() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/innerClasses/kt12126.kt");
             }
         }
 

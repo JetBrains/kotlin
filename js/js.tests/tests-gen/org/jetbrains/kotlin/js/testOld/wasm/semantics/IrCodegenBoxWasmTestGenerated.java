@@ -9852,6 +9852,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/elvis/genericNull.kt");
         }
 
+        @TestMetadata("kt24209.kt")
+        public void testKt24209() throws Exception {
+            runTest("compiler/testData/codegen/box/elvis/kt24209.kt");
+        }
+
         @TestMetadata("kt6694ExactAnnotationForElvis.kt")
         public void testKt6694ExactAnnotationForElvis() throws Exception {
             runTest("compiler/testData/codegen/box/elvis/kt6694ExactAnnotationForElvis.kt");
@@ -24559,6 +24564,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("kt4281.kt")
         public void testKt4281() throws Exception {
             runTest("compiler/testData/codegen/box/regressions/kt4281.kt");
+        }
+
+        @TestMetadata("kt47279.kt")
+        public void testKt47279() throws Exception {
+            runTest("compiler/testData/codegen/box/regressions/kt47279.kt");
         }
 
         @TestMetadata("kt5056.kt")

@@ -2173,6 +2173,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         }
 
         @Test
+        @TestMetadata("kt48498.kt")
+        public void testKt48498() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/delegatedProperty/kt48498.kt");
+        }
+
+        @Test
         @TestMetadata("local.kt")
         public void testLocal() throws Exception {
             runTest("compiler/testData/codegen/boxInline/delegatedProperty/local.kt");
@@ -2642,6 +2648,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         @TestMetadata("kt10259.kt")
         public void testKt10259() throws Exception {
             runTest("compiler/testData/codegen/boxInline/innerClasses/kt10259.kt");
+        }
+
+        @Test
+        @TestMetadata("kt12126.kt")
+        public void testKt12126() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/innerClasses/kt12126.kt");
         }
     }
 

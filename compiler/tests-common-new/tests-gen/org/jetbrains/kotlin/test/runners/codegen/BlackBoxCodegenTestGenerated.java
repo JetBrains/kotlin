@@ -15306,6 +15306,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt24209.kt")
+        public void testKt24209() throws Exception {
+            runTest("compiler/testData/codegen/box/elvis/kt24209.kt");
+        }
+
+        @Test
         @TestMetadata("kt6694ExactAnnotationForElvis.kt")
         public void testKt6694ExactAnnotationForElvis() throws Exception {
             runTest("compiler/testData/codegen/box/elvis/kt6694ExactAnnotationForElvis.kt");
@@ -26002,6 +26008,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt12189_noClashOnDifferentCase.kt")
+        public void testKt12189_noClashOnDifferentCase() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/kt12189_noClashOnDifferentCase.kt");
+        }
+
+        @Test
         @TestMetadata("kt47328.kt")
         public void testKt47328() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/kt47328.kt");
@@ -29515,6 +29527,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
             runTest("compiler/testData/codegen/box/parametersMetadata/innerClass.kt");
+        }
+
+        @Test
+        @TestMetadata("jvmOverloads.kt")
+        public void testJvmOverloads() throws Exception {
+            runTest("compiler/testData/codegen/box/parametersMetadata/jvmOverloads.kt");
         }
 
         @Test
@@ -40251,6 +40269,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt44993.kt")
         public void testKt44993() throws Exception {
             runTest("compiler/testData/codegen/box/regressions/kt44993.kt");
+        }
+
+        @Test
+        @TestMetadata("kt47279.kt")
+        public void testKt47279() throws Exception {
+            runTest("compiler/testData/codegen/box/regressions/kt47279.kt");
         }
 
         @Test
