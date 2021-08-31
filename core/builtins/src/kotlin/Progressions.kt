@@ -71,13 +71,15 @@ public open class CharProgression
 
     @SinceKotlin("1.6")
     override fun contains(value: Char): Boolean = when {
+        @Suppress("USELESS_CAST") (value as Any? !is Char) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0 && value >= first && value <= last -> value mod step == first mod step
         step < 0 && value <= first && value >= last -> value mod step == first mod step
         else -> false
     }
 
     @SinceKotlin("1.6")
-    override fun containsAll(elements: Collection<Char>): Boolean = if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+    override fun containsAll(elements: Collection<Char>): Boolean =
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
     companion object {
         /**
@@ -192,13 +194,15 @@ public open class IntProgression
 
     @SinceKotlin("1.6")
     override fun contains(value: Int): Boolean = when {
+        @Suppress("USELESS_CAST") (value as Any? !is Int) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0 && value >= first && value <= last -> value mod step == first mod step
         step < 0 && value <= first && value >= last -> value mod step == first mod step
         else -> false
     }
 
     @SinceKotlin("1.6")
-    override fun containsAll(elements: Collection<Int>): Boolean = if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+    override fun containsAll(elements: Collection<Int>): Boolean =
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
     companion object {
         /**
@@ -313,13 +317,15 @@ public open class LongProgression
 
     @SinceKotlin("1.6")
     override fun contains(value: Long): Boolean = when {
+        @Suppress("USELESS_CAST") (value as Any? !is Long) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0L && value >= first && value <= last -> value mod step == first mod step
         step < 0L && value <= first && value >= last -> value mod step == first mod step
         else -> false
     }
 
     @SinceKotlin("1.6")
-    override fun containsAll(elements: Collection<Long>): Boolean = if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+    override fun containsAll(elements: Collection<Long>): Boolean =
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
     companion object {
         /**

@@ -175,13 +175,15 @@ public open class $progression
 
     @SinceKotlin("1.6")
     override fun contains(value: $t): Boolean = when {
+        @Suppress("USELESS_CAST") (value as Any? !is $t) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > $zero && value >= first && value <= last -> value mod step == first mod step
         step < $zero && value <= first && value >= last -> value mod step == first mod step
         else -> false
     }
 
     @SinceKotlin("1.6")
-    override fun containsAll(elements: Collection<$t>): Boolean = if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+    override fun containsAll(elements: Collection<$t>): Boolean =
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
     companion object {
         /**

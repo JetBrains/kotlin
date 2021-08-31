@@ -20,7 +20,9 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
     override val start: ULong get() = first
     override val endInclusive: ULong get() = last
 
-    override fun contains(value: ULong): Boolean = first <= value && value <= last
+    override fun contains(value: ULong): Boolean = 
+        @Suppress("USELESS_CAST") (value as Any? is ULong) && // TODO: Eliminate this check after KT-30016 gets fixed.
+        first <= value && value <= last
 
     /**
      * Checks if the range is empty.
@@ -107,6 +109,7 @@ internal constructor(
     @SinceKotlin("1.6")
     override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: ULong): Boolean =
         when {
+            @Suppress("USELESS_CAST") (value as Any? !is ULong) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
             step > 0 && value >= first && value <= last -> (value - first) % step.toULong() == 0UL
             step < 0 && value <= first && value >= last -> (first - value) % (-step).toULong() == 0UL
             else -> false
@@ -114,7 +117,7 @@ internal constructor(
 
     @SinceKotlin("1.6")
     override fun containsAll(elements: Collection<ULong>): Boolean =
-        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
 
     companion object {

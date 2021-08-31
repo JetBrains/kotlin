@@ -14,7 +14,9 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
     override val start: Char get() = first
     override val endInclusive: Char get() = last
 
-    override fun contains(value: Char): Boolean = first <= value && value <= last
+    override fun contains(value: Char): Boolean = 
+        @Suppress("USELESS_CAST") (value as Any? is Char) && // TODO: Eliminate this check after KT-30016 gets fixed.
+        first <= value && value <= last
 
     /** 
      * Checks whether the range is empty.
@@ -45,7 +47,9 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
     override val start: Int get() = first
     override val endInclusive: Int get() = last
 
-    override fun contains(value: Int): Boolean = first <= value && value <= last
+    override fun contains(value: Int): Boolean = 
+        @Suppress("USELESS_CAST") (value as Any? is Int) && // TODO: Eliminate this check after KT-30016 gets fixed.
+        first <= value && value <= last
 
     /** 
      * Checks whether the range is empty.
@@ -76,7 +80,9 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
     override val start: Long get() = first
     override val endInclusive: Long get() = last
 
-    override fun contains(value: Long): Boolean = first <= value && value <= last
+    override fun contains(value: Long): Boolean = 
+        @Suppress("USELESS_CAST") (value as Any? is Long) && // TODO: Eliminate this check after KT-30016 gets fixed.
+        first <= value && value <= last
 
     /** 
      * Checks whether the range is empty.

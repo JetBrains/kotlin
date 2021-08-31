@@ -20,6 +20,15 @@ public inline fun <T, R> Array<out T>.fold(initial: R, operation: (acc: R, T) ->
     return accumulator
 }
 
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
+    if (this is Collection && isEmpty()) return true
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
 
 public actual fun Throwable.stackTraceToString(): String = toString()
 

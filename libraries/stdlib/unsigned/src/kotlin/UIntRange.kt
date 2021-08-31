@@ -20,7 +20,9 @@ public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start,
     override val start: UInt get() = first
     override val endInclusive: UInt get() = last
 
-    override fun contains(value: UInt): Boolean = first <= value && value <= last
+    override fun contains(value: UInt): Boolean = 
+        @Suppress("USELESS_CAST") (value as Any? is UInt) && // TODO: Eliminate this check after KT-30016 gets fixed.
+        first <= value && value <= last
 
     /**
      * Checks if the range is empty.
@@ -107,6 +109,7 @@ internal constructor(
     @SinceKotlin("1.6")
     override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: UInt): Boolean =
         when {
+            @Suppress("USELESS_CAST") (value as Any? !is UInt) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
             step > 0 && value >= first && value <= last -> (value - first) % step.toUInt() == 0U
             step < 0 && value <= first && value >= last -> (first - value) % (-step).toUInt() == 0U
             else -> false
@@ -114,7 +117,7 @@ internal constructor(
 
     @SinceKotlin("1.6")
     override fun containsAll(elements: Collection<UInt>): Boolean =
-        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
 
     companion object {
