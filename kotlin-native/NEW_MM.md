@@ -193,5 +193,9 @@ Please note that this option works only with the new MM.
 If you want not just workaround the problem, but actually track down the source of the exceptions then
 [`ensureNeverFrozen`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/ensure-never-frozen.html) is your best friend.
 
----
-**TODO**: A place to submit feedback
+## Feedback
+
+In our measurements we observed performance regressions with a slowdown up to a factor of 5.
+If you observe anything much more significant, please report to [the performance meta issue](https://youtrack.jetbrains.com/issue/KT-48526).
+
+Other problems encountered during migration to the new MM can be reported to [this meta issue](https://youtrack.jetbrains.com/issue/KT-48525).
