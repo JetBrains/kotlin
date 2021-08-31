@@ -38,10 +38,10 @@ public @interface Source {
 
 // FILE: usage.kt
 
-@Runtime @Runtime
+@Runtime <!NON_SOURCE_REPEATED_ANNOTATION!>@Runtime<!>
 class UseRuntime
 
-@Clazz @Clazz
+@Clazz <!NON_SOURCE_REPEATED_ANNOTATION!>@Clazz<!>
 class UseClazz
 
 @Source @Source

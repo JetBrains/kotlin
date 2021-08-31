@@ -89,6 +89,11 @@ object FirJvmErrors {
     val EXTERNAL_DECLARATION_IN_INTERFACE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val EXTERNAL_DECLARATION_CANNOT_BE_INLINED by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
+    // Repeatable Annotations
+    val NON_SOURCE_REPEATED_ANNOTATION by error0<KtAnnotationEntry>()
+    val REPEATED_ANNOTATION_TARGET6 by error0<KtAnnotationEntry>()
+    val REPEATED_ANNOTATION_WITH_CONTAINER by error2<KtAnnotationEntry, FqName, FqName>()
+
     // Misc
     val INAPPLICABLE_JVM_FIELD by error1<KtAnnotationEntry, String>()
     val INAPPLICABLE_JVM_FIELD_WARNING by warning1<KtAnnotationEntry, String>()

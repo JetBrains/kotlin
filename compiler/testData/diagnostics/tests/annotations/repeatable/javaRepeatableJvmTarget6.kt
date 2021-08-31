@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +RepeatableAnnotations
 // !JVM_TARGET: 1.6
 // FULL_JDK

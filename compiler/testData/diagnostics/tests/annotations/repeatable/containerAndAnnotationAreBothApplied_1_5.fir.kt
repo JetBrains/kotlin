@@ -50,12 +50,12 @@ fun jr1() {}
 
 @JR
 @JR.Container()
-@JR
+<!NON_SOURCE_REPEATED_ANNOTATION!>@JR<!>
 fun jr2() {}
 
 @JR
 @JR.Container(JR())
-@JR
+<!NON_SOURCE_REPEATED_ANNOTATION!>@JR<!>
 fun jr3() {}
 
 @JR

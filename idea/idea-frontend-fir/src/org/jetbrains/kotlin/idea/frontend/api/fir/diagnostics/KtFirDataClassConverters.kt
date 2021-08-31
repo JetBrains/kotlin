@@ -2520,7 +2520,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.b,
             firDiagnostic.c.mapKeys { (incompatible, _) ->
                 incompatible
-            }.mapValues { (_, collection) -> 
+            }.mapValues { (_, collection) ->
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                 }
@@ -2534,7 +2534,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir),
             firDiagnostic.b.mapKeys { (incompatible, _) ->
                 incompatible
-            }.mapValues { (_, collection) -> 
+            }.mapValues { (_, collection) ->
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                 }
@@ -2569,7 +2569,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.b.map { pair ->
                 firSymbolBuilder.buildSymbol(pair.first.fir) to pair.second.mapKeys { (incompatible, _) ->
                                     incompatible
-                                }.mapValues { (_, collection) -> 
+                                }.mapValues { (_, collection) ->
                                     collection.map { firBasedSymbol ->
                                                             firSymbolBuilder.buildSymbol(firBasedSymbol.fir)
                                                         }
@@ -3776,6 +3776,26 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_INLINED) { firDiagnostic ->
         ExternalDeclarationCannotBeInlinedImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.NON_SOURCE_REPEATED_ANNOTATION) { firDiagnostic ->
+        NonSourceRepeatedAnnotationImpl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATED_ANNOTATION_TARGET6) { firDiagnostic ->
+        RepeatedAnnotationTarget6Impl(
+            firDiagnostic as FirPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.REPEATED_ANNOTATION_WITH_CONTAINER) { firDiagnostic ->
+        RepeatedAnnotationWithContainerImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic,
             token,
         )

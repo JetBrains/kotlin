@@ -2628,6 +2628,20 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExternalDeclarationCannotBeInlined::class
     }
 
+    abstract class NonSourceRepeatedAnnotation : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = NonSourceRepeatedAnnotation::class
+    }
+
+    abstract class RepeatedAnnotationTarget6 : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatedAnnotationTarget6::class
+    }
+
+    abstract class RepeatedAnnotationWithContainer : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = RepeatedAnnotationWithContainer::class
+        abstract val name: FqName
+        abstract val explicitContainerName: FqName
+    }
+
     abstract class InapplicableJvmField : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableJvmField::class
         abstract val message: String
