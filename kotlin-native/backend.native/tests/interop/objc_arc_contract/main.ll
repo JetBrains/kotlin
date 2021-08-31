@@ -3,7 +3,8 @@
 
 declare void @llvm.objc.clang.arc.use(...) nounwind
 
-define void @test(i8* %a, i8* %b) {
+; define as weak, so we don't have a problem in a two-stage scenario.
+define weak void @test(i8* %a, i8* %b) {
   call void (...) @llvm.objc.clang.arc.use(i8* %a, i8* %b) nounwind
   ret void
 }
