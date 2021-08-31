@@ -36,7 +36,7 @@ Together with the new MM we are bringing in another set of changes:
 
 ### Update the Kotlin/Native compiler
 
-Update to Kotlin/Native 1.6.0-M1-124 and enable dev repositories:
+Update to Kotlin/Native 1.6.0-M1-139 and enable dev repositories:
 ```kotlin
 // build.gradle.kts
 
