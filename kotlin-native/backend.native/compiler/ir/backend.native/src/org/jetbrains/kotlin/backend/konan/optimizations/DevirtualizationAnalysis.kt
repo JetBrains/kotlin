@@ -1098,15 +1098,7 @@ internal object DevirtualizationAnalysis {
                         doCast(function, fieldNode, actualType)
                 }
 
-                fun writeField(field: DataFlowIR.Field, actualType: DataFlowIR.Type.Declared, value: Node) {
-                    val fieldNode = fieldNode(field)
-                    val expectedType = field.type.resolved()
-                    val castedValue = if (!useTypes || actualType == expectedType)
-                        value
-                    else
-                        doCast(function, value, actualType)
-                    addEdge(castedValue, fieldNode)
-                }
+                fun writeField(field: DataFlowIR.Field, value: Node) = addEdge(value, fieldNode(field))
 
                 if (node is DataFlowIR.Node.Variable && node.kind != DataFlowIR.VariableKind.Temporary) {
                     var variableNode = variables[node]
@@ -1227,7 +1219,7 @@ internal object DevirtualizationAnalysis {
                             val type = node.field.type.resolved()
                             if (entryPoint == null && type.isFinal)
                                 addInstantiatingClass(type)
-                            writeField(node.field, node.type.resolved(), edgeToConstraintNode(node.value))
+                            writeField(node.field, edgeToConstraintNode(node.value))
                             constraintGraph.voidNode
                         }
 
@@ -1235,7 +1227,7 @@ internal object DevirtualizationAnalysis {
                             readField(constraintGraph.arrayItemField, node.type.resolved())
 
                         is DataFlowIR.Node.ArrayWrite -> {
-                            writeField(constraintGraph.arrayItemField, node.type.resolved(), edgeToConstraintNode(node.value))
+                            writeField(constraintGraph.arrayItemField, edgeToConstraintNode(node.value))
                             constraintGraph.voidNode
                         }
 

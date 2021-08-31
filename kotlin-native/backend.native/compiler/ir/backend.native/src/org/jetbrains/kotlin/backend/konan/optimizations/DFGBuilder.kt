@@ -859,8 +859,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 DataFlowIR.Node.FieldWrite(
                                         receiver,
                                         value.symbol.owner.toDataFlowIRField(),
-                                        expressionToEdge(value.value),
-                                        mapReturnType(value.value.type, value.symbol.owner.type)
+                                        expressionToEdge(value.value)
                                 )
                             }
 

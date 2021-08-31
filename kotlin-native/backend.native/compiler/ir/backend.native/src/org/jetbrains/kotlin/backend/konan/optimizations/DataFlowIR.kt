@@ -266,7 +266,7 @@ internal object DataFlowIR {
 
         class FieldRead(val receiver: Edge?, val field: Field, val type: Type, val ir: IrGetField?) : Node()
 
-        class FieldWrite(val receiver: Edge?, val field: Field, val value: Edge, val type: Type) : Node()
+        class FieldWrite(val receiver: Edge?, val field: Field, val value: Edge) : Node()
 
         class ArrayRead(val callee: FunctionSymbol, val array: Edge, val index: Edge, val type: Type, val irCallSite: IrCall?) : Node()
 
