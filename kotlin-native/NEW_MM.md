@@ -97,6 +97,8 @@ To fix this, specify the engine explicitly, by replacing `HttpClient()` with `Ht
 (see [the documentation](https://ktor.io/docs/http-client-engines.html#native) for more details).
 
 Other libraries might also have compatibility issues. If you encounter any, please report to the library authors.
+Known issues:
+* SQLDelight: https://github.com/cashapp/sqldelight/issues/2556
 
 ## Performance issues
 
